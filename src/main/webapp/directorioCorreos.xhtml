@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>     
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>    
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+        <h2 class="align-center">
+                 Directorio de Correos Institucionales.
+        </h2>
+
+    <ui:define name="body">
+
+        <header title="Directorio de Correos Institucionales"/>
+        <h:form>
+            <p:tabView>
+                <p:tab title="Personal">
+
+                    <p:dataTable id="personales" var="listCorreos" paginator="true" rows="15" rendered="true"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,20,25,30"
+                                 sortBy="#{listCorreos.areaSuperior}" expandableRowGroups="true"
+                                 value="#{controladorPersonalAltasYBajas.listaPersonalTotal}" >
+
+                        <p:headerRow>
+                            <p:column colspan="2" style="background: #2796cb; color: #FFFFFF;">
+                                <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(listCorreos.actividad.actividad eq 1?listCorreos.areaOperativa:listCorreos.areaSuperior)}" />
+                            </p:column>
+                        </p:headerRow>
+
+                        <p:column headerText="Nombre"
+                                  sortBy="#{listCorreos.nombre}"
+                                  filterBy="#{listCorreos.nombre}"
+                                  filterMatchMode="contains">
+                            <h:outputText value="#{listCorreos.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Correo Institucional">
+                            <h:outputText value="#{listCorreos.correoElectronico2}" />
+                        </p:column>
+
+                    </p:dataTable>
+
+
+                </p:tab>
+                <p:tab title="Áreas">
+                    <p:dataTable id="areas" var="listCorreosA" paginator="true" rows="15"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,20,25,30"
+                                 value="#{controladorDirectorioCorreos.listCorrreosAreas}">
+
+                        <p:column headerText="Nombre Área"
+                                  sortBy="#{listCorreosA.nombreArea}"
+                                  filterBy="#{listCorreosA.nombreArea}"
+                                  filterMatchMode="contains">
+                            <h:outputText value="#{listCorreosA.nombreArea}" />
+                        </p:column>
+
+                        <p:column headerText="Correo Institucional">
+                            <h:outputText value="#{listCorreosA.correoInstitucional}" />
+                        </p:column>
+                        <p:column headerText="Correo Institucional del responable">
+                            <h:outputText value="#{listCorreosA.correoPerRespondableA}" />
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:tab>
+
+
+            </p:tabView>
+        </h:form>
+
+
+        <p:panel id="errort" header="Error de tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+
+
+
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

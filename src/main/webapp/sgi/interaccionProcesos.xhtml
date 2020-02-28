@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <!-- Inicio estilos par proceso electoral -->
+            <link rel="stylesheet" type="text/css" href="resources/css/procesoElectoral.css" media="screen" />
+            <!-- Fin estilos par proceso electoral -->
+        </c:if>
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <style>
+            .description-block{
+                text-align: justify;
+            }
+
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado{
+                background-color: #00a65a !important;
+            }
+            .pendiente{
+                background-color: #f39c12 !important;
+            }
+            .denegado{
+                background-color: #dd4b39 !important
+            }
+
+        </style>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <section class="content">
+                <div class="row">
+                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                    <div class="col-md-10">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <p:link href="/capitalHumano/perfiEmpleado.xhtml">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>      
+                            </div>
+                            <p:tabView>
+                                <p:tab title="Estadias">
+                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                        <div class="col-md-12">
+                                            <div class="box box-widget widget-user-2">
+                                                <div class="row">
+                                                    <div class="col-sm-12 border-right">
+                                                        <div class="description-block">
+                                                            <object type="application/pdf" style="width: 100%;height: 850px;" data="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/PROCESO ESTADIA TECNICA.pdf#toolbar=0"/>      
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr/>                                                        
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p:tab>
+                            </p:tabView>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

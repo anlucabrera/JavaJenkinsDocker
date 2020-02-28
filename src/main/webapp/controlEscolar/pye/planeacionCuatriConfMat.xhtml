@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <style type="text/css">
+            @media print{
+                /* indicamos el salto de pagina */
+                .saltoDePagina{
+                    display:block;
+                    page-break-inside:auto  !important;
+                }
+            }
+        </style>
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{reportePlaneacionCuatrimestralAreasA.cargado}">
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <adm:breadcrumb title="Asignación de Indicadores por Criterio"/>
+
+        <p:panel id="informacion">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-10">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+
+                                <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
+                                    <div class="box box-primary">
+                                        <div id="main-buttons" class="hidden-sm hidden-xs" >
+                                            <p:panel header="Área Academica">
+                                                <div class="row">
+                                                    <div class="col-sm-12 col-md-12 col-lg-3">
+                                                        <p:selectOneMenu id="periodo" value="#{reportePlaneacionCuatrimestralAreasA.escolar}" converter="entityConverter" styleClass="form-control" >
+                                                            <f:selectItems value="#{reportePlaneacionCuatrimestralAreasA.escolareses}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                            <p:ajax process="@this" listener="#{reportePlaneacionCuatrimestralAreasA.cambiarPeriodo}"/>
+                                                            <p:autoUpdate />
+                                                        </p:selectOneMenu>
+                                                        <p:outputLabel value="Periodo" for="periodo"/>
+                                                        <p:message for="periodo" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-21 col-lg-9">
+                                                        <p:outputPanel id="linea">  
+                                                            <p:outputLabel for="lineaAccion"  value="Linea de acción" />
+                                                            <p:selectOneMenu filter="true" filterMatchMode="contains" id="lineaAccion" value="#{reportePlaneacionCuatrimestralAreasA.au}"  converter="entityConverter">
+                                                                <f:selectItems value="#{reportePlaneacionCuatrimestralAreasA.aus}" var="lineasAccion" itemValue="#{lineasAccion}" itemLabel="#{lineasAccion.area} -- #{lineasAccion.nombre}" />
+                                                                <p:ajax update=":frmEventos" listener="#{reportePlaneacionCuatrimestralAreasA.mostrarLista()}"/>
+                                                            </p:selectOneMenu> 
+                                                            <p:message for="lineaAccion" display="tooltip" />
+                                                        </p:outputPanel>
+                                                    </div>                                                    
+                                                </div>
+                                            </p:panel>
+                                        </div>
+                                    </div>
+                                </h:form>
+
+                                <h:form id="frmEventos"> 
+                                    <p:tabView>
+                                        <p:tab title="Configuraciones ">
+                                            <p:commandButton value="Imprimir Configuración" icon="fa fa-print" class="btn-success">                                        
+                                                <p:printer target="reporte" />
+                                            </p:commandButton>
+                                            <p:panel id="reporte">   
+                                                <p:dataTable id="tbAsigInd1" var="pcR" value="#{reportePlaneacionCuatrimestralAreasA.rs}" 
+                                                             sortBy="#{pcR.docente}#{pcR.materia}#{pcR.literal}"
+                                                             styleClass="saltoDePagina">
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column rowspan="2" headerText="Programa Educativo" style="width: 10%;font-size: small;"  />                                                 
+                                                            <p:column rowspan="2" headerText="Grupo" style="width: 7%;font-size: small;"  /> 
+                                                            <p:column colspan="3" headerText="Evaluación" style="width: 43%; font-size: small;"  /> 
+                                                            <p:column colspan="2" headerText="Criterios" style="width: 20%;font-size: small;"/>
+                                                            <p:column colspan="2" headerText="Instrumentos" style="width: 20%;font-size: small;"/> 
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Unidad" style="font-size: small;"/>
+                                                            <p:column headerText="Periodo" style="font-size: small;"/>
+                                                            <p:column headerText="Valor" style="font-size: small;"/>
+                                                            <p:column headerText="Nombre" style="font-size: small;"/>
+                                                            <p:column headerText="Valor" style="font-size: small;"/>
+                                                            <p:column headerText="Nombre" style="font-size: small;"/>
+                                                            <p:column headerText="Valor" style="font-size: small;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:headerRow>
+                                                        <p:column colspan="2" style="font-size: small; background: #00a7d0  !important">
+                                                            <h:outputText value="#{pcR.docente}" style="text-align: center;"/>
+                                                        </p:column>     
+                                                        <p:column colspan="2" style="font-size: small; background: #00a7d0  !important">
+                                                            <h:outputText value="#{pcR.claveMateria}" style="text-align: center;"/>
+                                                            <br/>
+                                                            <h:outputText value="#{pcR.materia}" style="text-align: center;"/>
+                                                        </p:column>  
+                                                        <p:column colspan="5" style="font-size: small; background: #00a7d0  !important">
+                                                            <h:outputText value="#{pcR.objetivo}" style="text-align: center;"/>
+                                                        </p:column>  
+                                                    </p:headerRow>
+
+                                                    <p:column colspan="#{pcR.nombreUnidad eq 'T.I.'?3:0}" groupRow="true" >
+                                                        <h:outputText value="#{pcR.descripcion}" style="text-align: center; writing-mode: vertical-lr; transform: rotate(180deg); white-space: nowrap; word-wrap: break-word;"/>
+                                                    </p:column>
+                                                    <p:column colspan="#{pcR.nombreUnidad eq 'T.I.'?3:0}" groupRow="true" style="font-size: small;">
+                                                        <h:outputText value="#{pcR.grado}° #{pcR.literal}" style="text-align: center; "/>
+                                                    </p:column>
+
+
+                                                    <p:column colspan="#{pcR.nombreUnidad eq 'T.I.'?3:0}" groupRow="true" style="font-size: small;">
+                                                        <h:outputText value="#{pcR.nombreUnidad eq 'T.I.'?'':pcR.noUnidad}#{pcR.nombreUnidad eq 'T.I.'?'':'.-'} #{pcR.nombreUnidad eq 'T.I.'?'Tarea Integradora':pcR.nombreUnidad}" style="text-align: center;word-wrap: break-word;"/>
+                                                    </p:column>
+                                                    <p:column colspan="#{pcR.nombreUnidad eq 'T.I.'?2:0}" groupRow="true" style="border: #000000 !important;text-align: center;font-size: small;">
+                                                        <h:outputText value="#{pcR.fechaInicio}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                                                        <h:outputText value=" al " style="text-align: center;" />
+                                                        <h:outputText value="#{pcR.fechaFin}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column colspan="#{pcR.nombreUnidad eq 'T.I.'?2:0}" groupRow="true" style="border: #000000 !important;text-align: center;font-size: small;">
+                                                        <h:outputText value="#{pcR.porUnidad}" style="text-align: center; "/>
+                                                    </p:column>
+
+                                                    <p:column groupRow="true" style="border: #000000 !important;font-size: small;#{pcR.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" rendered="#{pcR.nombreUnidad eq 'T.I.'?false:true}">
+                                                        <h:outputText value="#{pcR.nombreUnidad eq 'T.I.'?'':pcR.criterio}" style="text-align: center;"/>
+                                                    </p:column>
+                                                    <p:column groupRow="true" style="border: #000000 !important;text-align: center;font-size: small; #{pcR.nombreUnidad eq 'T.I.'?'background: #000000':''}" rendered="#{pcR.nombreUnidad eq 'T.I.'?false:true}">
+                                                        <h:outputText value="#{pcR.nombreUnidad eq 'T.I.'?'':pcR.porCriterio}" style="text-align: center;"/>
+                                                    </p:column>
+                                                    <p:column style="border: #000000 !important;font-size: small;#{pcR.nombreUnidad eq 'T.I.'?'background: #000000':''}" rendered="#{pcR.nombreUnidad eq 'T.I.'?false:true}">
+                                                        <h:outputText value="#{pcR.nombreUnidad eq 'T.I.'?'':pcR.indicador}" />
+                                                    </p:column>
+                                                    <p:column style="border: #000000 !important;text-align: center;font-size: small;#{pcR.nombreUnidad eq 'T.I.'?'background: #000000':''}" rendered="#{pcR.nombreUnidad eq 'T.I.'?false:true}">
+                                                        <h:outputText value="#{pcR.nombreUnidad eq 'T.I.'?'':pcR.porcentajeInd}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
+                                                    </p:column>
+                                                </p:dataTable> 
+
+                                            </p:panel>
+                                        </p:tab>
+                                        <p:tab title="Concentrado Totales ">
+                                            <p:commandButton value="Imprimir Configuración" icon="fa fa-print" class="btn-success">                                        
+                                                <p:printer target="reporte" />
+                                            </p:commandButton>
+                                            <p:panel id="reporteTotales">   
+                                                <p:dataTable id="tbAsigInd2" var="confR" value="#{reportePlaneacionCuatrimestralAreasA.rcs}" 
+                                                             sortBy="#{confR.docente}#{confR.materia}#{confR.grupo}"
+                                                             styleClass="saltoDePagina">
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column rowspan="2" headerText="Programa Educativo" style="width: 40%;font-size: small;"  />                                                 
+                                                            <p:column rowspan="2" headerText="Grupo" style="width: 5%;font-size: small;"  /> 
+                                                            <p:column rowspan="2" headerText="Unidad" style="width: 25%; font-size: small;"/>
+                                                            <p:column colspan="2" headerText="Ser" style="width: 10%; font-size: small;"  /> 
+                                                            <p:column colspan="2" headerText="Saber" style="width: 10%;font-size: small;"/>
+                                                            <p:column colspan="2" headerText="Saber H" style="width: 10%;font-size: small;"/> 
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Valor" style="font-size: small;"/>
+                                                            <p:column headerText="Instrumentos" style="font-size: small;"/>
+                                                            <p:column headerText="Valor" style="font-size: small;"/>
+                                                            <p:column headerText="Instrumentos" style="font-size: small;"/>
+                                                            <p:column headerText="Valor" style="font-size: small;"/>
+                                                            <p:column headerText="Instrumentos" style="font-size: small;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:headerRow>
+                                                        <p:column colspan="2" style="font-size: small; background: #00a7d0  !important">
+                                                            <h:outputText value="#{confR.docente}" style="text-align: center;"/>
+                                                        </p:column>     
+                                                        <p:column colspan="2" style="font-size: small; background: #00a7d0  !important">
+                                                            <h:outputText value="#{confR.materia}" style="text-align: center;"/>
+                                                        </p:column>  
+                                                        <p:column colspan="5" style="font-size: small; background: #00a7d0  !important">
+                                                            <h:outputText value="#{confR.objetivo}" style="text-align: center;"/>
+                                                        </p:column>  
+                                                    </p:headerRow>
+
+                                                    <p:column>
+                                                        <h:outputText value="#{confR.programa}" style="text-align: center;word-wrap: break-word;"/>
+                                                    </p:column>
+                                                    <p:column style="font-size: small;">
+                                                        <h:outputText value="#{confR.grupo}" style="text-align: center; "/>
+                                                    </p:column>
+                                                    <p:column style="font-size: small;">
+                                                        <h:outputText value="#{confR.unidad}" style="text-align: center;word-wrap: break-word;"/>
+                                                    </p:column>
+
+                                                    <p:column style="border: #000000 !important;text-align: center;font-size: small;">
+                                                        <h:outputText value="#{confR.ser}" style="text-align: center;"/>
+                                                    </p:column>
+                                                    <p:column style="border: #000000 !important;text-align: center;font-size: small;">
+                                                        <h:outputText value="#{confR.sab}" style="text-align: center;"/>
+                                                    </p:column>
+                                                    <p:column style="border: #000000 !important;text-align: center;font-size: small;">
+                                                        <h:outputText value="#{confR.sah}" style="text-align: center;"/>
+                                                    </p:column>
+                                                    
+                                                    <p:column style="border: #000000 !important;text-align: center;font-size: small;">
+                                                        <h:outputText value="#{confR.inSer}" style="text-align: center;"/>
+                                                    </p:column>
+                                                    <p:column style="border: #000000 !important;text-align: center;font-size: small;">
+                                                        <h:outputText value="#{confR.inSab}" style="text-align: center;"/>
+                                                    </p:column>
+                                                    <p:column style="border: #000000 !important;text-align: center;font-size: small;">
+                                                        <h:outputText value="#{confR.inSah}" style="text-align: center;"/>
+                                                    </p:column>
+                                                    
+                                                </p:dataTable> 
+
+                                            </p:panel>
+                                        </p:tab>
+                                    </p:tabView>
+
+
+
+                                </h:form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </c:if>
+        </p:panel>
+        </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+</ui:composition>

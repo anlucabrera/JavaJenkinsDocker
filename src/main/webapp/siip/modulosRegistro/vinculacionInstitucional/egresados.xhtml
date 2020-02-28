@@ -1,0 +1,1505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="true"/>        
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <h:outputScript library="js" name="dialogs.js" />
+    </ui:define>
+    <ui:define name="title">
+        Egresados
+    </ui:define>
+
+    <ui:define name="description">
+        Vinculación Institucional
+    </ui:define>
+
+    <ui:define name="body"> 
+        <adm:breadcrumb title="Vinculación Institucional - Egresados"/>
+        <adm:sidebar collapsed="true"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <p:outputPanel >
+                        <p:autoUpdate/>
+                        <p:toolbar id="tb"> 
+                            <f:facet name="left">
+                                <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                                    <p:spacer width="10" />
+                                    <c:if test="#{controladorArchivoEgresados.etapa eq etapa.MOSTRAR}">
+                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                        <p:outputLabel value="Ejercicio: " for="anioConsulta" />
+                                        <p:spacer width="5" />
+                                        <p:selectOneMenu id="anioConsulta"
+                                                         value="#{controladorEgresados.dto.anioConsulta}"
+                                                         valueChangeListener="#{controladorEgresados.actualizarMeses}"
+                                                         class="form-control"
+                                                         style="padding-top: 0px">
+                                            <f:selectItems value="#{controladorEgresados.dto.aniosConsulta}" 
+                                                           var="anio" 
+                                                           itemValue="#{anio}" 
+                                                           itemLabel="#{anio}" />
+                                            <p:ajax process="@this" listener="#{controladorEgresados.buscaEgresados()}" update="@(form)" />
+                                        </p:selectOneMenu>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Mes: " for="mesConsulta" />
+                                        <p:spacer width="5" />
+                                        <p:selectOneMenu id="mesConsulta"
+                                                         value="#{controladorEgresados.dto.mesConsulta}"
+                                                         class="form-control"
+                                                         style="padding-top:  0px">
+                                            <f:selectItems value="#{controladorEgresados.dto.mesesConsulta}" 
+                                                           var="mes" 
+                                                           itemValue="#{mes}" 
+                                                           itemLabel="#{mes}" />
+                                            <p:ajax process="@this" listener="#{controladorEgresados.buscaEgresados()}" update="@(form)" />
+                                        </p:selectOneMenu>
+                                    </c:if>
+                                </h:form>
+                            </f:facet>
+                            <f:facet name="right">
+                                <h:form id="frmReporte">
+                                    <div class="btn-group">
+                                        <p:commandButton value="Cargar Archivo de Excel" 
+                                                         icon="fa fa-file-excel-o" 
+                                                         onclick="PF('modalCargaArchivo').show()" 
+                                                         class="btn btn-primary btn-sm"/>
+                                    </div>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <c:if test="#{controladorArchivoEgresados.etapa eq etapa.CARGAR}">
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="egresados?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
+                                        <p:spacer width="3" />
+                                    </c:if>
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarReporteEgresados()}" target="_blank" title="Descargar Reporte de Egresados"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                    <p:spacer width="3" />
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarPlantillaEgresados()}" target="_blank" title="Descargar Plantilla Egresados"><i class="fa fa-download" /></p:commandLink>
+                                    <p:spacer width="3" />
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>  
+                                </h:form>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:sticky target="tb" />
+                    </p:outputPanel>
+                </div>
+                <p:separator/>
+
+                <div class="box-body">
+
+                    <!-- Sección de visualización y eliminación -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formMuestraDatosActivos">
+                                <p:remoteCommand name="actualizar" update="@form:formMuestraDatosActivos" />
+                                <c:if test="#{controladorArchivoEgresados.etapa eq etapa.MOSTRAR}">
+                                    <p:toolbar>
+                                        <f:facet name="left">
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Este es un reporte parcial de su información mostrando únicamente 100 registros, si desea descargar el reporte completo favor de dirigirse a la parte superior derecha y dar clic en descargar reporte." style="padding-top: 5px;" />
+                                            <p></p>
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Si presenta algún incoveniente en el sistema favor de dirigirse con el administrador del sistema." style="padding-top: 5px;" />
+                                            <p></p>
+                                        </f:facet>
+                                    </p:toolbar>
+                                    <center>
+                                        <p:tabView id="tabEgresadosEliminacionConsulta">
+                                            <p:tab id="tabAEGEliminacionConsulta" title="Actividad del Egresado/a">
+                                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorEgresados.dto.anioConsulta} y Mes: #{controladorEgresados.dto.mesConsulta}"
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             id="dtbActividadEgresadosEliminacionConsulta"
+                                                             var="actividadEgresado" value="#{controladorEgresados.dto.listaActividadEgresado}"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column headerText="Opciones"             width="120" />
+                                                            <p:column headerText="Fecha de corte"       width="100" />
+                                                            <p:column headerText="Generación"           width="100" />
+                                                            <p:column headerText="Programa Educativo"   width="600" />
+                                                            <p:column headerText="Tipo de Actividad"    width="350" />
+                                                            <p:column headerText="Hombres"              width="100" />
+                                                            <p:column headerText="Mujeres"              width="100" />
+                                                            <p:column headerText="Total"                width="100" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <c:set var="actividadEgresadoEliminar" value="#{actividadEgresado.actividadEgresadoGeneracion.registro}"/>
+                                                    <p:column style="text-align: center;">
+                                                        <div class="btn-group">
+                                                            <p:commandButton class="btn btn-info btn-sm" 
+                                                                             icon="fa fa-trash"
+                                                                             actionListener="#{controladorEgresados.eliminarRegistro(actividadEgresadoEliminar)}"
+                                                                             onsuccess="actualizar();" 
+                                                                             title="Eliminar registro."
+                                                                             rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                <p:confirm header="Eliminar registro"
+                                                                           message="¿Está seguro de eliminar el registro de la generación: #{actividadEgresado.generacion}?"
+                                                                           icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                            <p:spacer width="3" />
+                                                            <c:set var="evidencias" value="#{controladorEgresados.consultarEvidencias(actividadEgresadoEliminar)}" />
+                                                            <p:commandButton actionListener="#{controladorEgresados.seleccionarRegistro(actividadEgresado)}" 
+                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                             icon="fa fa-image"
+                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                            <p:spacer width="3" />
+                                                            <p:commandButton actionListener="#{controladorEgresados.abrirAlineacionPOA(actividadEgresado)}"
+                                                                             class="btn btn-sm #{controladorEgresados.verificaAlineacion(actividadEgresadoEliminar)?'btn-info':'btn-warning'}"
+                                                                             icon="fa fa-cog"
+                                                                             title="Alineación a POA."/>
+                                                        </div>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.fecha}">
+                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.generacion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.actividad.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.hombres}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.mujeres}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.total}"/>
+                                                    </p:column>
+
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorEgresados.dto.mesConsulta} hay un total de: #{fn:length(controladorEgresados.dto.listaActividadEgresado)} registros de Actividad del Egresado/a.
+                                                    </f:facet>
+                                                </p:dataTable>
+                                            </p:tab>
+
+                                            <p:tab id="tabAEEGEliminacionConsulta" title="Actividad Económica Egresados/as">
+                                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorEgresados.dto.anioConsulta} y Mes: #{controladorEgresados.dto.mesConsulta}"
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             id="dtbActividadEconomicaEgresadosEliminacionConsulta"
+                                                             var="actividadEconomicaEgresado" value="#{controladorEgresados.dto.listaActividadEconomicaEgresado}"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column headerText="Opciones"             width="120" />
+                                                            <p:column headerText="Fecha de corte"       width="100" />
+                                                            <p:column headerText="Generación"           width="100" />
+                                                            <p:column headerText="Programa Educativo"   width="600" />
+                                                            <p:column headerText="Sector de Trabajo"    width="200" />
+                                                            <p:column headerText="Cantidad"             width="100" />
+                                                            <p:column headerText="Actividad Económica"  width="300" />
+                                                            <p:column headerText="Cantidad"             width="100" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <c:set var="actividadEconomicaEgresadoEliminar" value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.registro}"/>
+                                                    <p:column style="text-align: center;">
+                                                        <div class="btn-group">
+                                                            <p:commandButton class="btn btn-info btn-sm" 
+                                                                             icon="fa fa-trash"
+                                                                             actionListener="#{controladorEgresados.eliminarRegistro(actividadEconomicaEgresadoEliminar)}"
+                                                                             onsuccess="actualizar();" 
+                                                                             title="Eliminar registro."
+                                                                             rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                <p:confirm header="Eliminar registro"
+                                                                           message="¿Está seguro de eliminar el registro de la generación: #{actividadEconomicaEgresado.generacion}?"
+                                                                           icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                            <p:spacer width="3" />
+                                                            <c:set var="evidencias" value="#{controladorEgresados.consultarEvidencias(actividadEconomicaEgresadoEliminar)}" />
+                                                            <p:commandButton actionListener="#{controladorEgresados.seleccionarRegistroAEE(actividadEconomicaEgresado)}" 
+                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                             icon="fa fa-image"
+                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                            <p:spacer width="3" />
+                                                            <p:commandButton actionListener="#{controladorEgresados.abrirAlineacionPOAAEE(actividadEconomicaEgresado)}"
+                                                                             class="btn btn-sm #{controladorEgresados.verificaAlineacion(actividadEconomicaEgresadoEliminar)?'btn-info':'btn-warning'}"
+                                                                             icon="fa fa-cog"
+                                                                             title="Alineación a POA."/>
+                                                        </div>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.fecha}">
+                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.generacion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.sector.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.cantSector}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.giro.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.cantGiro}"/>
+                                                    </p:column>
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorEgresados.dto.mesConsulta} hay un total de: #{fn:length(controladorEgresados.dto.listaActividadEconomicaEgresado)} registros de Actividad Económica del Egresado/a.
+                                                    </f:facet>
+                                                </p:dataTable>
+                                            </p:tab>
+
+                                            <p:tab id="tabNivelOcupacionEliminacionConsulta" title="Nivel Ocupación">
+                                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorEgresados.dto.anioConsulta} y Mes: #{controladorEgresados.dto.mesConsulta}"
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             id="dtbNivelOcupacionEliminacionConsulta"
+                                                             var="nivelOcupacionEG" value="#{controladorEgresados.dto.listaNivelOcupacionEgresado}"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column   headerText="Opciones"             width="120"  />
+                                                            <p:column   headerText="Fecha de corte"       width="100" />
+                                                            <p:column   headerText="Generación"           width="100" />
+                                                            <p:column   headerText="Programa Educativo"   width="600" />
+                                                            <p:column   headerText="Ocupación"            width="200" />
+                                                            <p:column   headerText="Hombres"              width="100" />
+                                                            <p:column   headerText="Mujeres"              width="100" />
+                                                            <p:column   headerText="Total"                width="100" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <c:set var="nivelOcupacionEGEliminar" value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.registro}"/>
+                                                    <p:column style="text-align: center;">
+                                                        <div class="btn-group">
+                                                            <p:commandButton class="btn btn-info btn-sm" 
+                                                                             icon="fa fa-trash"
+                                                                             actionListener="#{controladorEgresados.eliminarRegistro(nivelOcupacionEGEliminar)}"
+                                                                             onsuccess="actualizar();" 
+                                                                             title="Eliminar registro."
+                                                                             rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                <p:confirm header="Eliminar registro"
+                                                                           message="¿Está seguro de eliminar el registro de la generación: #{nivelOcupacionEG.generacion}?"
+                                                                           icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                            <p:spacer width="3" />
+                                                            <c:set var="evidencias" value="#{controladorEgresados.consultarEvidencias(nivelOcupacionEGEliminar)}" />
+                                                            <p:commandButton actionListener="#{controladorEgresados.seleccionarRegistroNOE(nivelOcupacionEG)}" 
+                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                             icon="fa fa-image"
+                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                            <p:spacer width="3" />
+                                                            <p:commandButton actionListener="#{controladorEgresados.abrirAlineacionPOANOE(nivelOcupacionEG)}"
+                                                                             class="btn btn-sm #{controladorEgresados.verificaAlineacion(nivelOcupacionEGEliminar)?'btn-info':'btn-warning'}"
+                                                                             icon="fa fa-cog"
+                                                                             title="Alineación a POA."/>
+                                                        </div>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.fecha}">
+                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.generacion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.ocupacion.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.hombres}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.mujeres}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.total}"/>
+                                                    </p:column>
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorEgresados.dto.mesConsulta} hay un total de: #{fn:length(controladorEgresados.dto.listaNivelOcupacionEgresado)} registros de Nivel de Ocupación.
+                                                    </f:facet>
+                                                </p:dataTable>
+                                            </p:tab>
+
+                                            <p:tab id="tabNivelIngresosEliminacionConsulta" title="Nivel Ingresos">
+                                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorEgresados.dto.anioConsulta} y Mes: #{controladorEgresados.dto.mesConsulta}"
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             id="dtbNivelIngresosEliminacionConsulta"
+                                                             var="nivelIngresoEG" value="#{controladorEgresados.dto.listaNivelIngresoEgresado}"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column headerText="Opciones"             width="120"  />
+                                                            <p:column headerText="Fecha de corte"       width="100" />
+                                                            <p:column headerText="Generación"           width="100" />
+                                                            <p:column headerText="Programa Educativo"   width="600" />
+                                                            <p:column headerText="Ingreso"              width="200" />
+                                                            <p:column headerText="Hombres"              width="100" />
+                                                            <p:column headerText="Mujeres"              width="100" />
+                                                            <p:column headerText="Total"                width="100" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <c:set var="nivelIngresoEGEliminar" value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.registro}"/>
+                                                    <p:column style="text-align: center;">
+                                                        <div class="btn-group">
+                                                            <p:commandButton class="btn btn-info btn-sm" 
+                                                                             icon="fa fa-trash"
+                                                                             actionListener="#{controladorEgresados.eliminarRegistro(nivelIngresoEGEliminar)}"
+                                                                             onsuccess="actualizar();" 
+                                                                             title="Eliminar registro."
+                                                                             rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                <p:confirm header="Eliminar registro"
+                                                                           message="¿Está seguro de eliminar el registro de la generación: #{nivelIngresoEG.generacion}?"
+                                                                           icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                            <p:spacer width="3" />
+                                                            <c:set var="evidencias" value="#{controladorEgresados.consultarEvidencias(nivelIngresoEGEliminar)}" />
+                                                            <p:commandButton actionListener="#{controladorEgresados.seleccionarRegistroNIE(nivelIngresoEG)}" 
+                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                             icon="fa fa-image"
+                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                            <p:spacer width="3" />
+                                                            <p:commandButton actionListener="#{controladorEgresados.abrirAlineacionPOANIE(nivelIngresoEG)}"
+                                                                             class="btn btn-sm #{controladorEgresados.verificaAlineacion(nivelIngresoEGEliminar)?'btn-info':'btn-warning'}"
+                                                                             icon="fa fa-cog"
+                                                                             title="Alineación a POA."/>
+                                                        </div>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.fecha}">
+                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.generacion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.ingreso.ingresos}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.hombres}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.mujeres}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.total}"/>
+                                                    </p:column>
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorEgresados.dto.mesConsulta} hay un total de: #{fn:length(controladorEgresados.dto.listaNivelIngresoEgresado)} registros de Nivel de Ingresos.
+                                                    </f:facet>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true"
+                                                                 showEffect="fade"
+                                                                 hideEffect="fade"
+                                                                 styleClass="panel panel-primary"
+                                                                 width="500"
+                                                                 closeOnEscape="true">
+                                                    <p:commandButton value="Si"
+                                                                     type="button"
+                                                                     styleClass="ui-confirmdialog-yes btn btn-primary" 
+                                                                     icon="ui-icon-check" />
+                                                    <p:commandButton value="No" 
+                                                                     type="button" 
+                                                                     styleClass="ui-confirmdialog-no btn btn-primary" 
+                                                                     icon="ui-icon-close" />
+                                                </p:confirmDialog>
+                                            </p:tab>
+                                        </p:tabView>
+                                    </center>
+                                </c:if>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <!-- Sección de evidencias - Actividad Egresado-->
+                    <p:dialog id="modalCargaEvidencia" 
+                              widgetVar="modalCargaEvidencia" 
+                              width="700" 
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{controladorEgresados.dto.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true"
+                              draggable="true"
+                              header="Carga de evidencias"
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar>
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top:  5px"/>
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidencia" 
+                                                enctype="multipart/form-data"
+                                                class="form-inline">
+                                            <o:inputFile id="files"
+                                                         value="#{controladorEgresados.dto.archivos}"
+                                                         multiple="true"
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf"     
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}"
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true"
+                                                         requiredMessage="Debe elegir al menos un archivo" 
+                                                         >
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFileEvidencia" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorEgresados.subirEvidencias()}"
+                                                             />
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidencias">
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Generación: #{controladorEgresados.dto.registroActividadEgresado.generacion}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
+                                    <p:dataTable id="tblEvidencias"
+                                                 value="#{controladorEgresados.dto.listaEvidencias}"
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de este registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" 
+                                                                 icon="fa fa-trash" 
+                                                                 actionListener="#{controladorEgresados.eliminarEvidencia(evidencia)}" 
+                                                                 onsuccess="actualizar2();" 
+                                                                 title="Eliminar evidencia."
+                                                                 rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:spacer width="5" />
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorEgresados.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorEgresados.dto.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Sección de evidencias - Actividad Económica Egresados-->
+                    <p:dialog id="modalCargaEvidenciaAEE" 
+                              widgetVar="modalCargaEvidenciaAEE" 
+                              width="700" 
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{controladorEgresados.dto.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true"
+                              draggable="true"
+                              header="Carga de evidencias"
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar>
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top:  5px"/>
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidenciaAEE" 
+                                                enctype="multipart/form-data"
+                                                class="form-inline">
+                                            <o:inputFile id="filesAEE"
+                                                         value="#{controladorEgresados.dto.archivos}"
+                                                         multiple="true"
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf"     
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}"
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true"
+                                                         requiredMessage="Debe elegir al menos un archivo" 
+                                                         >
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFileEvidenciaAEE" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorEgresados.subirEvidenciasAEE()}"
+                                                             />
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidenciasAEE">
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Generación: #{controladorEgresados.dto.registroActividadEconomicaEgresado.generacion}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizar3" update="@form:tblEvidenciasAEE" />
+                                    <p:dataTable id="tblEvidenciasAEE"
+                                                 value="#{controladorEgresados.dto.listaEvidencias}"
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de este registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" 
+                                                                 icon="fa fa-trash" 
+                                                                 actionListener="#{controladorEgresados.eliminarEvidenciaAEE(evidencia)}" 
+                                                                 onsuccess="actualizar3();" 
+                                                                 title="Eliminar evidencia."
+                                                                 rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:spacer width="5" />
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorEgresados.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorEgresados.dto.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Sección de evidencias - Nivel de Ocupación Egresados-->
+                    <p:dialog id="modalCargaEvidenciaNOE" 
+                              widgetVar="modalCargaEvidenciaNOE" 
+                              width="700" 
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{controladorEgresados.dto.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true"
+                              draggable="true"
+                              header="Carga de evidencias"
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar>
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top:  5px"/>
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidenciaNOE" 
+                                                enctype="multipart/form-data"
+                                                class="form-inline">
+                                            <o:inputFile id="filesNOE"
+                                                         value="#{controladorEgresados.dto.archivos}"
+                                                         multiple="true"
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf"     
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}"
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true"
+                                                         requiredMessage="Debe elegir al menos un archivo" 
+                                                         >
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFileEvidenciaNOE" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorEgresados.subirEvidenciasNOE()}"
+                                                             />
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidenciasNOE">
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Generación: #{controladorEgresados.dto.registroNivelOcupacionEgresado.generacion}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizar4" update="@form:tblEvidenciasNOE" />
+                                    <p:dataTable id="tblEvidenciasNOE"
+                                                 value="#{controladorEgresados.dto.listaEvidencias}"
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de este registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" 
+                                                                 icon="fa fa-trash" 
+                                                                 actionListener="#{controladorEgresados.eliminarEvidenciaNOE(evidencia)}" 
+                                                                 onsuccess="actualizar4();" 
+                                                                 title="Eliminar evidencia."
+                                                                 rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:spacer width="5" />
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorEgresados.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorEgresados.dto.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Sección de evidencias - Nivel de Ingresos Egresados-->
+                    <p:dialog id="modalCargaEvidenciaNIE" 
+                              widgetVar="modalCargaEvidenciaNIE" 
+                              width="700" 
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{controladorEgresados.dto.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true"
+                              draggable="true"
+                              header="Carga de evidencias"
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar>
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top:  5px"/>
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidenciaNIE" 
+                                                enctype="multipart/form-data"
+                                                class="form-inline">
+                                            <o:inputFile id="filesNIE"
+                                                         value="#{controladorEgresados.dto.archivos}"
+                                                         multiple="true"
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf"     
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}"
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true"
+                                                         requiredMessage="Debe elegir al menos un archivo" 
+                                                         >
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFileEvidenciaNIE" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorEgresados.subirEvidenciasNIE()}"
+                                                             />
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidenciasNIE">
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Generación: #{controladorEgresados.dto.registroNivelngresoEgresado.generacion}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizar5" update="@form:tblEvidenciasNIE" />
+                                    <p:dataTable id="tblEvidenciasNIE"
+                                                 value="#{controladorEgresados.dto.listaEvidencias}"
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de este registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" 
+                                                                 icon="fa fa-trash" 
+                                                                 actionListener="#{controladorEgresados.eliminarEvidenciaNIE(evidencia)}" 
+                                                                 onsuccess="actualizar5();" 
+                                                                 title="Eliminar evidencia."
+                                                                 rendered="#{controladorEgresados.dto.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorEgresados.dto.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:spacer width="5" />
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorEgresados.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorEgresados.dto.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Sección de alineación a POA - Actividad Egresado-->
+                    <p:dialog id="modalAlineacion"
+                              widgetVar="modalAlineacion"
+                              width="900"
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacion">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar>
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{controladorEgresados.eliminarAlineacion()}" rendered="#{controladorEgresados.verificaAlineacion(controladorEgresados.dto.registroActividadEgresado.actividadEgresadoGeneracion.registro)}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorEgresados.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Generación: #{controladorEgresados.dto.registroActividadEgresado.generacion}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="eje" value="#{controladorEgresados.dto.alineacionEje}" valueChangeListener="#{controladorEgresados.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="eje"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategia" value="#{controladorEgresados.dto.alineacionEstrategia}" valueChangeListener="#{controladorEgresados.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccion" value="#{controladorEgresados.dto.alineacionLinea}" valueChangeListener="#{controladorEgresados.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccion" update="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividad" value="#{controladorEgresados.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividad"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Sección de alineación a POA - Actividad Economica Egresado-->
+                    <p:dialog id="modalAlineacionAEE"
+                              widgetVar="modalAlineacionAEE"
+                              width="900"
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacionAEE">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar >
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{controladorEgresados.eliminarAlineacionAEE()}" rendered="#{controladorEgresados.verificaAlineacion(controladorEgresados.dto.registroActividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.registro)}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorEgresados.alinearRegistroAEE()}" oncomplete="PF('modalAlineacionAEE').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Generación: #{controladorEgresados.dto.registroActividadEconomicaEgresado.generacion}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="ejeParticipante" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="ejeParticipante" value="#{controladorEgresados.dto.alineacionEje}" valueChangeListener="#{controladorEgresados.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="ejeParticipante" update="@form:estrategiaParticipante,@form:lineaAccionParticipante,@form:actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="ejeParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategiaParticipante" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategiaParticipante" value="#{controladorEgresados.dto.alineacionEstrategia}" valueChangeListener="#{controladorEgresados.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategiaParticipante" update="lineaAccionParticipante,actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategiaParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccionParticipante" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccionParticipante" value="#{controladorEgresados.dto.alineacionLinea}" valueChangeListener="#{controladorEgresados.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccionParticipante" update="actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccionParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividadParticipante" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividadParticipante" value="#{controladorEgresados.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividadParticipante" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividadParticipante"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Sección de alineación a POA - Nivel Ocupación Egresado-->
+                    <p:dialog id="modalAlineacionNOE"
+                              widgetVar="modalAlineacionNOE"
+                              width="900"
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacionNOE">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar>
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{controladorEgresados.eliminarAlineacionNOE()}" rendered="#{controladorEgresados.verificaAlineacion(controladorEgresados.dto.registroNivelOcupacionEgresado.nivelOcupacionEgresadosGeneracion.registro)}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorEgresados.alinearRegistroNOE()}" oncomplete="PF('modalAlineacionNOE').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Generación: #{controladorEgresados.dto.registroNivelOcupacionEgresado.generacion}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="ejeParticipante2" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="ejeParticipante2" value="#{controladorEgresados.dto.alineacionEje}" valueChangeListener="#{controladorEgresados.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="ejeParticipante2" update="@form:estrategiaParticipante2,@form:lineaAccionParticipante2,@form:actividadParticipante2" />
+                                    </p:selectOneMenu>
+                                    <p:message for="ejeParticipante2"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategiaParticipante2" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategiaParticipante2" value="#{controladorEgresados.dto.alineacionEstrategia}" valueChangeListener="#{controladorEgresados.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategiaParticipante2" update="lineaAccionParticipante2,actividadParticipante2" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategiaParticipante2"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccionParticipante2" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccionParticipante2" value="#{controladorEgresados.dto.alineacionLinea}" valueChangeListener="#{controladorEgresados.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccionParticipante2" update="actividadParticipante2" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccionParticipante2"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividadParticipante2" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividadParticipante2" value="#{controladorEgresados.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividadParticipante2" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividadParticipante2"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Sección de alineación a POA - Nivel Ingresos Egresado-->
+                    <p:dialog id="modalAlineacionNIE"
+                              widgetVar="modalAlineacionNIE"
+                              width="900"
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacionNIE">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar>
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{controladorEgresados.eliminarAlineacionNIE()}" rendered="#{controladorEgresados.verificaAlineacion(controladorEgresados.dto.registroNivelngresoEgresado.nivelIngresosEgresadosGeneracion.registro)}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorEgresados.alinearRegistroNIE()}" oncomplete="PF('modalAlineacionNIE').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Generación: #{controladorEgresados.dto.registroNivelOcupacionEgresado.generacion}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="ejeParticipante3" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="ejeParticipante3" value="#{controladorEgresados.dto.alineacionEje}" valueChangeListener="#{controladorEgresados.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="ejeParticipante3" update="@form:estrategiaParticipante3,@form:lineaAccionParticipante3,@form:actividadParticipante3" />
+                                    </p:selectOneMenu>
+                                    <p:message for="ejeParticipante3"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategiaParticipante3" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategiaParticipante3" value="#{controladorEgresados.dto.alineacionEstrategia}" valueChangeListener="#{controladorEgresados.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategiaParticipante3" update="lineaAccionParticipante3,actividadParticipante3" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategiaParticipante3"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccionParticipante3" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccionParticipante3" value="#{controladorEgresados.dto.alineacionLinea}" valueChangeListener="#{controladorEgresados.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccionParticipante3" update="actividadParticipante3" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccionParticipante3"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividadParticipante3" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividadParticipante3" value="#{controladorEgresados.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorEgresados.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividadParticipante3" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividadParticipante3"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Sección de subida -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formPrevisualizacionDatos" prependId="false">
+                                <c:if test="#{controladorArchivoEgresados.etapa eq etapa.CARGAR}">
+                                    <center>
+                                        <p:tabView id="tabEgresados">
+                                            <p:tab id="tabAEG" title="Actividad del Egresado/a">
+                                                <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             id="dtbActividadEgresados"
+                                                             var="actividadEgresado" value="#{controladorEgresados.dto.listaActividadEgresado}"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <f:facet name="header">
+                                                        Previsualización de datos
+                                                    </f:facet>
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column headerText="Fecha de corte" width="100" />
+                                                            <p:column headerText="Generación" width="100" />
+                                                            <p:column headerText="Programa Educativo" width="600" />
+                                                            <p:column headerText="Tipo de Actividad" width="350" />
+                                                            <p:column headerText="Hombres" width="100" />
+                                                            <p:column headerText="Mujeres" width="100" />
+                                                            <p:column headerText="Total" width="100" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.fecha}">
+                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.generacion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.actividad.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.hombres}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.actividadEgresadoGeneracion.mujeres}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEgresado.total}"/>
+                                                    </p:column>
+
+                                                    <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorEgresados.dto.listaActividadEgresado)} registros de Actividad del Egresado/a.
+                                                    </f:facet>
+                                                </p:dataTable>
+                                            </p:tab>
+
+                                            <p:tab id="tabAEEG" title="Actividad Económica Egresados/as">
+                                                <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             id="dtbActividadEconomicaEgresados"
+                                                             var="actividadEconomicaEgresado" value="#{controladorEgresados.dto.listaActividadEconomicaEgresado}"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <f:facet name="header">
+                                                        Previsualización de datos
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column headerText="Fecha de corte" width="100" />
+                                                            <p:column headerText="Generación" width="100" />
+                                                            <p:column headerText="Programa Educativo" width="600" />
+                                                            <p:column headerText="Sector de Trabajo" width="200" />
+                                                            <p:column headerText="Cantidad" width="100" />
+                                                            <p:column headerText="Actividad Económica" width="300" />
+                                                            <p:column headerText="Cantidad" width="100" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.fecha}">
+                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.generacion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.sector.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.cantSector}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.giro.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{actividadEconomicaEgresado.actividadEconomicaEgresadoGeneracion.cantGiro}"/>
+                                                    </p:column>
+
+                                                    <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorEgresados.dto.listaActividadEconomicaEgresado)} registros de Actividad Económica del Egresado/a.
+                                                    </f:facet>
+                                                </p:dataTable>
+                                            </p:tab>
+
+                                            <p:tab id="tabNivelOcupacion" title="Nivel Ocupación">
+                                                <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             id="dtbNivelOcupacion"
+                                                             var="nivelOcupacionEG" value="#{controladorEgresados.dto.listaNivelOcupacionEgresado}"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <f:facet name="header">
+                                                        Previsualización de datos
+                                                    </f:facet>
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column headerText="Fecha de corte" width="100" />
+                                                            <p:column headerText="Generación" width="100" />
+                                                            <p:column headerText="Programa Educativo" width="600" />
+                                                            <p:column headerText="Ocupación" width="200" />
+                                                            <p:column headerText="Hombres" width="100" />
+                                                            <p:column headerText="Mujeres" width="100" />
+                                                            <p:column headerText="Total" width="100" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.fecha}">
+                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.generacion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.ocupacion.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.hombres}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.nivelOcupacionEgresadosGeneracion.mujeres}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelOcupacionEG.total}"/>
+                                                    </p:column>
+
+                                                    <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorEgresados.dto.listaNivelOcupacionEgresado)} registros de Nivel de Ocupación.
+                                                    </f:facet>
+                                                </p:dataTable>
+                                            </p:tab>
+
+                                            <p:tab id="tabNivelIngresos" title="Nivel Ingresos">
+                                                <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             id="dtbNivelIngresos"
+                                                             var="nivelIngresoEG" value="#{controladorEgresados.dto.listaNivelIngresoEgresado}"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <f:facet name="header">
+                                                        Previsualización de datos
+                                                    </f:facet>
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column headerText="Fecha de corte" width="100" />
+                                                            <p:column headerText="Generación" width="100" />
+                                                            <p:column headerText="Programa Educativo" width="600" />
+                                                            <p:column headerText="Ingreso" width="200" />
+                                                            <p:column headerText="Hombres" width="100" />
+                                                            <p:column headerText="Mujeres" width="100" />
+                                                            <p:column headerText="Total" width="100" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.fecha}">
+                                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.generacion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.ingreso.ingresos}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.hombres}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.nivelIngresosEgresadosGeneracion.mujeres}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{nivelIngresoEG.total}"/>
+                                                    </p:column>
+                                                    <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorEgresados.dto.listaNivelIngresoEgresado)} registros de Nivel de Ingresos.
+                                                    </f:facet>
+                                                </p:dataTable>
+                                            </p:tab>
+
+                                        </p:tabView>
+                                        <p></p>
+                                        <p:commandButton id="btnGuardar" value="Guardar Datos" actionListener="#{controladorEgresados.guardaEgresados()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatos"/>
+                                        <p:spacer width="5" />
+                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{controladorEgresados.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
+                                    </center>
+                                </c:if>
+                            </h:form>
+                        </div>
+                    </div>
+
+                </div>
+
+                <p:dialog widgetVar="modalCargaArchivo" 
+                          width="400" 
+                          height="auto" 
+                          showEffect="fade" 
+                          hideEffect="fade" 
+                          modal="true" 
+                          header="Carga de Archivo" 
+                          styleClass="panel panel-primary" 
+                          responsive="true" 
+                          resizable="false" 
+                          maximizable="false">
+                    <center>
+                        <h:form id="formularioContenedor" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <o:inputFile id="file" 
+                                                 value="#{controladorArchivoEgresados.file}" 
+                                                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+                                                 acceptMessage="Solo se permiten archivos XLSX." 
+                                                 maxsize="#{100*1024*1024}" 
+                                                 maxsizeMessage="El tamaño máximo permitido son 100MB." 
+                                                 required="true" 
+                                                 requiredMessage="Debe elegir un archivo." >
+                                    </o:inputFile>
+                                    <p:messages for="file" ><p:autoUpdate/></p:messages>
+                                </div>
+                                <p:separator />
+                                <div class="col-md-12">
+                                    <h:commandButton id="btnuploadFile"
+                                                     value="Subir archivo" 
+                                                     class="btn btn-primary" 
+                                                     action="#{controladorArchivoEgresados.subirExcelEgresados()}" />
+                                </div>
+                            </div>
+                        </h:form>
+                        <p:blockUI block="formularioContenedor" 
+                                   widgetVar="bloqueoCargaFile" 
+                                   trigger="formularioContenedor:btnuploadFile">
+                            Cargando archivo espere por favor.<br />
+                        </p:blockUI>
+                    </center>
+                </p:dialog>
+
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Programa de Trabajo Anual
+    </ui:define>
+
+    <ui:define name="description">
+        Reporte final
+    </ui:define>
+
+    <ui:define name="body">
+
+        <c:if test="#{areaPoaReporte.cargado}">
+        <h:form id="Parametros">
+            <div class="box box-primary">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <div class="row">
+                        <div class="col-sm-2 border-right">
+                            <p:outputLabel for="anio" value="Año" />
+                            <p:selectOneMenu  id="anio" value="#{areaPoaReporte.ejercicioFiscal}" valueChangeListener="#{areaPoaReporte.numeroAnioAsiganado}">
+                                <f:selectItems value="#{utilidadesAcceso.aniosReportes}" var="anio" itemValue="#{anio.ejercicioFiscal}" itemLabel="#{anio.anio}" />
+                                <p:ajax listener="#{areaPoaReporte.imprimirValores()}" process="anio" update="frm"/>
+                            </p:selectOneMenu >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <h:form id="frm" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div class="box box-solid">
+                        <div class="box-body">
+                            <p:commandButton value="Imprimir POA" icon="fa fa-print" class="btn-success">                                        
+                                <p:printer target="CV" />
+                            </p:commandButton>
+                            <p:panel id="CV" style="overflow: hidden !important">
+                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                    <div class="col-md-12">
+                                        <div class="box box-widget widget-user-2">
+
+                                            <div class="row">
+                                                <div class="col-sm-3 border-right pull-left">
+                                                    <div class="description-block" style="text-align: center">
+                                                        <img src="../../resources/img/utxj.png" alt="" width="150px"/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 border-right pull-left">
+                                                    <div class="row">
+                                                        <div class="row">
+                                                            <div id="tituloCV" class="col-sm-12">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h3><strong>Programa de Trabajo Anual 20#{areaPoaReporte.ejercicioFiscal+1}</strong></h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div id="tituloCV" class="col-sm-12">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h4>Universidad Tecnológica De Xicotepec de Juárez</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h5><strong>#{controladorEmpleado.nuevaAreasUniversidadPOA.nombre}</strong></h5>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 border-right">
+                                                    <div class="description-block" style="text-align: center">
+                                                        <img src="../../resources/img/sii.png" alt=""/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <c:forEach var="i" begin="0" end="#{areaPoaReporte.ejeses.size()-1}">
+                                                    <c:set var="eje" value="#{areaPoaReporte.ejeses.get(i)}"/>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <h4 class="eje" style="color: white!important;"><strong style="color: #ffffff !important;"><p:spacer width="10px"/>#{eje.ejesRegistro.eje}.#{eje.ejesRegistro.nombre}</strong></h4>
+
+                                                                <c:if test="#{eje.estrategiases.size() ne 0}">
+                                                                    <c:forEach var="j" begin="0" end="#{eje.estrategiases.size()-1}">
+                                                                        <c:set var="estrategia" value="#{eje.estrategiases.get(j)}"/>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12 border-right">
+                                                                                <div class="description-block">
+                                                                                    <h5 class="est" style="color: #ffffff !important;"><strong style="color: #ffffff !important;"><p:spacer width="20px"/>#{eje.ejesRegistro.eje}.#{estrategia.estrategias.numero} -- #{estrategia.estrategias.nombre}</strong></h5>
+                                                                                    <c:if test="#{estrategia.lineasAccions.size() ne 0}">
+                                                                                        <c:forEach var="k" begin="0" end="#{estrategia.lineasAccions.size()-1}">
+                                                                                            <c:set var="linea" value="#{estrategia.lineasAccions.get(k)}"/>
+                                                                                            <div class="row">
+                                                                                                <div class="col-sm-12 border-right">
+                                                                                                    <div class="description-block">
+                                                                                                        <h6 class="lac"><strong><p:spacer width="30px"/>#{eje.ejesRegistro.eje}.#{estrategia.estrategias.numero}.#{linea.lineasAccion.numero} -- #{linea.lineasAccion.nombre}</strong></h6>
+                                                                                                        <div class="row">
+                                                                                                            <div class="col-sm-12 border-right">
+                                                                                                                <div class="description-block">
+                                                                                                                    <p:dataTable value="#{linea.actividadesPoas}" var="poa"                                                           expandedRow="true"
+                                                                                                                                 expandableRowGroups="true" rowStyleClass="#{poa.numeroS eq 0?'actividad':'subactiviades'}" emptyMessage="No hay actividades registradas">
+
+                                                                                                                        <p:columnGroup type="header">
+                                                                                                                            <p:row class="success">
+                                                                                                                                <p:column rowspan="2" headerText="No." style="width: 5%;font-size: xx-small;"/>
+                                                                                                                                <p:column rowspan="2" headerText="Actividad" style="width: 20%;font-size: xx-small;"/>
+                                                                                                                                <p:column rowspan="2" headerText="Unidad de medida" style="width:10%;font-size: xx-small;"/>
+                                                                                                                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 60%;font-size: xx-small;"/>
+                                                                                                                                <p:column rowspan="2" headerText="Total" style="width: 5%;font-size: xx-small;"/>
+                                                                                                                            </p:row>
+                                                                                                                            <p:row class="success">
+                                                                                                                                <p:column headerText="Ene" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                <p:column headerText="Feb" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                <p:column headerText="Mar" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                <p:column headerText="Abr" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                <p:column headerText="May" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                <p:column headerText="Jun" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                <p:column headerText="Jul" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                <p:column headerText="Ago" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                <p:column headerText="Sep" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                <p:column headerText="Oct" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                <p:column headerText="Nov" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                <p:column headerText="Dic" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                            </p:row>
+                                                                                                                        </p:columnGroup>
+
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.numeroP}.#{poa.numeroS}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.denominacion}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.unidadMedida.nombre}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.NPEnero}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.NPFebrero}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.NPMarzo}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.NPAbril}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.NPMayo}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.NPJunio}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.NPJulio}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.NPAgosto}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.NPSeptiembre}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.NPOctubre}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.NPNoviembre}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.NPDiciembre}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:column>
+                                                                                                                            <h:outputText value="#{poa.total}" style="font-size: xx-small"/>
+                                                                                                                        </p:column>
+                                                                                                                        <p:rowExpansion rendered="#{poa.recursosActividadList.size() eq 0?false:true}">
+                                                                                                                            <p:dataTable id="dtbBajas" var="recurso"
+                                                                                                                                         style="background:  #cccccc"
+                                                                                                                                         sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{poa.recursosActividadList}">
+
+                                                                                                                                <f:facet name="header"></f:facet>
+
+                                                                                                                                <p:columnGroup type="header">
+                                                                                                                                    <p:row class="success">
+                                                                                                                                        <p:column rowspan="2" headerText="Producto" style="width:20%;font-size: xx-small " />
+                                                                                                                                        <p:column colspan="12" headerText="Calendarización de Metas" style="width: 70%;font-size: xx-small"/>
+                                                                                                                                        <p:column rowspan="2" headerText="Total" style="width: 10%;font-size: xx-small"/>
+                                                                                                                                    </p:row>
+                                                                                                                                    <p:row class="success">
+                                                                                                                                        <p:column headerText="Ene" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                        <p:column headerText="Feb" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                        <p:column headerText="Mar" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                        <p:column headerText="Abr" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                        <p:column headerText="May" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                        <p:column headerText="Jun" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                        <p:column headerText="Jul" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                        <p:column headerText="Ago" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                        <p:column headerText="Sep" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                        <p:column headerText="Oct" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                        <p:column headerText="Nov" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                        <p:column headerText="Dic" style="font-size: xx-small" styleClass="hederTablesTitle"/>
+                                                                                                                                    </p:row>
+                                                                                                                                </p:columnGroup>
+
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.RPEnero}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.RPFebero}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.RPMarzo}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.RPAbril}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.RPMayo}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.RPJunio}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.RPJulio}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.RPAgosto}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.RPSeptiembre}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.RPOctubre}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.RPNoviembre}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.RPDiciembre}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                                <p:column>
+                                                                                                                                    <h:outputText value="#{recurso.total}" style="font-size: xx-small"/>
+                                                                                                                                </p:column>
+                                                                                                                            </p:dataTable>
+                                                                                                                        </p:rowExpansion>
+                                                                                                                    </p:dataTable>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </c:forEach>
+                                                                                    </c:if>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </c:forEach>
+                                                                </c:if>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </c:forEach>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:panel>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        </c:if>
+    </ui:define>
+</ui:composition>

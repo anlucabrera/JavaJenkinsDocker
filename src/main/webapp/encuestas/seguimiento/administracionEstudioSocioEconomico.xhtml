@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:ice="http://www.icefaces.org/icefaces/core"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+
+    <ui:define name="head-end">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .description-block{
+                text-align: justify;
+            }
+
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado {
+                background-color: #00a7d0  !important;
+                text-align: left !important;
+            }
+            .denegado{
+                background-color: #f39c12 !important;
+            }
+            .ui-progressbar{
+                position: relative;
+                height: 2em;
+            }
+
+            .ui-progressbar .ui-progressbar-label {
+                color: #000000;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                display: none;
+                font-weight: bold;
+            }
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento de avance por carrera
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{administracionEncuesta.cargado}">
+        <!--adm:breadcrumb title="Grupo : tutorado"/-->
+        <div id="main-buttons"  >
+            <p:toolbar id="tb">
+                <f:facet name="left">
+                    <p:outputLabel value="Administracion de encuestas, satisfacción de egresados de Ingeniería" />                            
+                </f:facet>
+                <f:facet name="right"></f:facet>
+            </p:toolbar>
+            <p:sticky target="tb" />
+        </div>
+        <p:tabView>
+            <p:tab title="Porcentaje de avance por Programa Educativo">
+                <h:form>
+                    <p:outputPanel>
+                        <!--Aqui va el dataTable-->
+                    </p:outputPanel>
+
+                </h:form>
+            </p:tab>   
+        </p:tabView>
+        </c:if>
+    </ui:define>
+</ui:composition>

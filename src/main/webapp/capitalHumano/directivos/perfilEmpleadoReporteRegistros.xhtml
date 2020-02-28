@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{controladorEmpleadoReporteRegistros.cargado}">
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador' || controladorEmpleado.nuevoOBJListaPersonal.clave eq 563}">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-9">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView>                            
+                                    <p:tab title="Reporte de registros del área #{controladorEmpleadoReporteRegistros.area}">
+                                        <p:outputPanel deferred="true">
+                                            <h:form id="frmDyC">
+                                                <p:dataTable id="dtbmandosMediosDyC" var="rdrDyC" paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" value="#{controladorEmpleadoReporteRegistros.listareporteRegistrosPersonal}"
+                                                             rowStyleClass="#{rdrDyC.tipo eq 'A'?'denegado':rdrDyC.tipo eq 'B'?'pendiente':'aceptado'}">
+                                                    <f:facet name="header">
+                                                        FA=Formación Académica <p:spacer width="5px"/>
+                                                        EL=Experiencia Laboral<p:spacer width="5px"/>
+                                                        CA=Actualización Profesional<p:spacer width="5px"/>
+                                                        ID=Idiomas<p:spacer width="5px"/>
+                                                        DT=Desarrollo Tecnológico<p:spacer width="5px"/>
+                                                        PR=Premios<p:spacer width="5px"/>
+                                                        LP=Libros Publicados<p:spacer width="5px"/>
+                                                        AP=Articulos Publicados<p:spacer width="5px"/>
+                                                        MP=Memorias Publicadas<p:spacer width="5px"/>
+                                                        HI=Habilidades Informáticas<p:spacer width="5px"/>
+                                                        LI=Lenguas Indígenas<p:spacer width="5px"/>
+                                                        IN=Innovaciones<p:spacer width="5px"/>
+                                                        DS=Desarrollo de Software<p:spacer width="5px"/>
+                                                        IV=Investigaciones<p:spacer width="5px"/>
+                                                        CO=Congresos<p:spacer width="5px"/>
+                                                        TT=Total de registros
+                                                    </f:facet>
+
+                                                    <p:column headerText="Empleado"> <h:outputText value="#{rdrDyC.clave} -- #{rdrDyC.nombre}" /> </p:column>
+
+                                                    <p:column headerText="FA" style="width: 4%"> <h:outputText value="#{rdrDyC.fa}" /> </p:column>
+                                                    <p:column headerText="EL" style="width: 4%"> <h:outputText value="#{rdrDyC.el}" /> </p:column> 
+                                                    <p:column headerText="CA" style="width: 4%"> <h:outputText value="#{rdrDyC.ca}" /> </p:column>
+                                                    <p:column headerText="ID" style="width: 4%"> <h:outputText value="#{rdrDyC.id}" /> </p:column> 
+                                                    <p:column headerText="DT" style="width: 4%"> <h:outputText value="#{rdrDyC.dt}" /> </p:column>
+                                                    <p:column headerText="PR" style="width: 4%"> <h:outputText value="#{rdrDyC.pr}" /> </p:column> 
+                                                    <p:column headerText="LP" style="width: 4%"> <h:outputText value="#{rdrDyC.lp}" /> </p:column>
+                                                    <p:column headerText="AP" style="width: 4%"> <h:outputText value="#{rdrDyC.ap}" /> </p:column> 
+                                                    <p:column headerText="MP" style="width: 4%"> <h:outputText value="#{rdrDyC.mp}" /> </p:column> 
+                                                    <p:column headerText="HI" style="width: 4%"> <h:outputText value="#{rdrDyC.hi}" /> </p:column>
+                                                    <p:column headerText="LI" style="width: 4%"> <h:outputText value="#{rdrDyC.li}" /> </p:column> 
+                                                    <p:column headerText="IN" style="width: 4%"> <h:outputText value="#{rdrDyC.in}" /> </p:column>
+                                                    <p:column headerText="DS" style="width: 4%"> <h:outputText value="#{rdrDyC.ds}" /> </p:column> 
+                                                    <p:column headerText="IV" style="width: 4%"> <h:outputText value="#{rdrDyC.iv}" /> </p:column>
+                                                    <p:column headerText="CO" style="width: 4%"> <h:outputText value="#{rdrDyC.co}" /> </p:column>
+                                                    <p:column headerText="TT" style="width: 4%"> <h:outputText value="#{rdrDyC.tt}" /> </p:column> 
+                                                </p:dataTable>
+                                            </h:form>
+                                        </p:outputPanel>
+                                    </p:tab>
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </c:if>
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Administrativo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
+                <h1>
+                    Esta página está disponible solo para directivos.
+                </h1>
+            </c:if>
+        </p:panel>
+            </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

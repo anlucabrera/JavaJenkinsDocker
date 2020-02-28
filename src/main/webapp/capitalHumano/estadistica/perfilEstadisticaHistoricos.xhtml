@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{historicoPlantillaPersonalEstadistica.cargado}">
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 148}">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-9">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>    
+
+                                <p:tabView>
+                                    <p:tab title="Currículum vitae">
+                                        <h:form id="frmBajas">
+                                            <p:dataTable id="dtbBajas" var="historico" paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30"
+                                                         value="#{historicoPlantillaPersonalEstadistica.nuevaListaHistoricoplantillapersonal}">
+
+                                                <p:column> <h:outputText value="#{historico.historico}" /> </p:column>
+                                                <p:column headerText="Mes"> <h:outputText value="#{historico.mescaptura}" /> </p:column>
+                                                <p:column headerText="Año"> <h:outputText value="#{historico.anio}" /> </p:column>
+                                                <p:column headerText="Descargar"> <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{historico.rutaArchivo}" target="_blank">
+                                                        <i class="fa fa-download"></i>
+                                                        <span>Descargar plantilla</span>
+                                                    </p:link></p:column>
+
+                                            </p:dataTable>
+                                        </h:form>
+                                    </p:tab>
+                                </p:tabView>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </c:if>
+            <c:if test="#{!(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 148)}">
+                <h1>
+                    Esta página está disponible solo para personal adscrito al área de personal
+                </h1>
+            </c:if>
+        </p:panel>
+            </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

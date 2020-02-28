@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Grupos
+    </ui:define>
+    
+    <ui:define name="description">
+        Configuración para grupos
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{procesoInscripcion.cargado}">
+        <adm:sidebar collapsed="true"/> 
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:tabView id="tabw1">
+            <p:tab title="Apertura de Grupos">
+                <p:panel id="informacion" class="hidden-xs hidden-sm" styleClass="box box-primary">
+                    <section class="content">
+                        <h:form id="frmGrupos">
+                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                <div class="col-md-12">
+                                    <div class="box box-widget widget-user-2">
+                                        <div class="row">
+                                            <div class="col-sm-12 border-right">
+                                                <div class="description-block">
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="periodo" style="font-size: large" value="Periodo"/>
+                                                                <p:selectOneMenu id="periodo" value="#{utilToolAcademicas.periodo}">
+                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                    <f:selectItems value="#{utilToolAcademicas.listaPeriodos}"/>
+                                                                    <p:ajax update=":tabw1:frmListaGrupos" listener="#{utilToolAcademicas.listadoGrupos()}"/>
+                                                                </p:selectOneMenu>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="pe" style="font-size: large" value="Programa Educativo"/>
+                                                                <p:selectOneMenu id="pe" class="form-control" style="width: 100%;" value="#{utilToolAcademicas.grupo.idPe}">
+                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                    <f:selectItems var="pe" value="#{procesoInscripcion.listaAreasUniversidad}" itemLabel="#{pe.nombre}" itemValue="#{pe.area}"/>
+                                                                    <p:ajax listener="#{utilToolAcademicas.getPlanesEstudioXCarrera()}" update="planEstudio"/>
+                                                                </p:selectOneMenu>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="planEstudio" style="font-size: large" value="Plan de Estudios"/>
+                                                                <p:selectOneMenu id="planEstudio" class="form-control" style="width: 100%;" value="#{utilToolAcademicas.planSelect}" converter="entidadCEConverter" required="true" requiredMessage="Es necesario elegir un plan de estudios">
+                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                    <f:selectItems var="plan" value="#{utilToolAcademicas.planesEstudio}" itemLabel="#{plan.descripcion}" itemValue="#{plan}"/>
+                                                                </p:selectOneMenu>
+                                                                <p:messages for="planEstudio"><p:autoUpdate/> </p:messages>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="cuatrimestre" style="font-size: large" value="Cuatrimestre"/>
+                                                                <p:selectOneMenu id="cuatrimestre" value="#{utilToolAcademicas.grupo.grado}">
+                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                    <f:selectItem itemValue="1" itemLabel="1"/>
+                                                                    <f:selectItem itemValue="2" itemLabel="2"/>
+                                                                    <f:selectItem itemValue="3" itemLabel="3"/>
+                                                                    <f:selectItem itemValue="4" itemLabel="4"/>
+                                                                    <f:selectItem itemValue="5" itemLabel="5"/>
+                                                                    <f:selectItem itemValue="6" itemLabel="6"/>
+                                                                    <f:selectItem itemValue="7" itemLabel="7"/>
+                                                                    <f:selectItem itemValue="8" itemLabel="8"/>
+                                                                    <f:selectItem itemValue="9" itemLabel="9"/>
+                                                                    <f:selectItem itemValue="10" itemLabel="10"/>
+                                                                    <f:selectItem itemValue="11" itemLabel="11"/>
+                                                                </p:selectOneMenu>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="sistema1" style="font-size: large" value="Sistema"/>
+                                                                <p:selectOneMenu id="sistema1" value="#{utilToolAcademicas.grupo.idSistema}" converter="entidadCEConverter">
+                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                    <f:selectItems var="sistema" value="#{FichaAdmision.listaSistema}" itemLabel="#{sistema.nombre}" itemValue="#{sistema}"/>
+                                                                </p:selectOneMenu>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="noG" style="font-size: large" value="No. Grupos"/><br/>
+                                                                <p:spinner id="noG" required="true" value="#{utilToolAcademicas.noGrupos}" maxlength="3" min="0" max="27" size="2" requiredMessage="Ingrese el número maximo de estudiantes." >
+                                                                </p:spinner>
+                                                            </div>
+                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                <p:outputLabel for="noEstu" style="font-size: large" value="Capacidad Maxima Estudiantes"/><br/>
+                                                                <p:spinner id="noEstu" required="true" value="#{utilToolAcademicas.grupo.capMaxima}" maxlength="3" min="25" max="25" size="2" requiredMessage="Ingrese la cantidad de días." >
+                                                                </p:spinner>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr/>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                <p:commandButton id="btnGuardaGrupos" value="Guardar Grupos" icon="fa fa-floppy-o"
+                                                                                 class="btn-primary btn-block col-md-3" process="@form" update="@form,:tabw1:frmListaGrupos" actionListener="#{utilToolAcademicas.agregarGrupos()}"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                        <h:form id="frmListaGrupos">
+                            <p:dataTable var="grupo" value="#{utilToolAcademicas.listaGrupos}" sortBy="#{grupo.idPe}" expandableRowGroups="true" styleClass="box-primary 'no-border':''"
+                                         editable="true"
+                                         editMode="cell" emptyMessage="No hay grupos resgistrados para este periodo">
+                                <p:headerRow>
+                                    <p:column colspan="6" style="background-color: #00b5ad;">
+                                        <h:outputText value="#{procesoInscripcion.nombrePE(grupo.idPe)}" />
+                                    </p:column>
+                                </p:headerRow>
+                                <p:ajax event="cellEdit" listener="#{utilToolAcademicas.onCellEdit}"/>
+                                <p:column style="text-align: center;width: 40px;">
+                                    <p:commandButton icon="fa fa-trash" styleClass="btn-warning" actionListener="#{utilToolAcademicas.eliminaGrupo(grupo)}" disabled="#{!(grupo.estudianteList.size() == 0)}" update="@form"/>
+                                </p:column>
+                                <p:column headerText="Cuatrimestre" style="width: 120px;text-align: center;">
+                                    <h:outputText value="#{grupo.grado}"/>
+                                </p:column>
+                                <p:column headerText="Grupo" style="width: 120px;text-align: center;">
+                                    <h:outputText value="#{grupo.literal}"/>
+                                </p:column>
+                                <p:column headerText="Sistema" style="width: 120px;text-align: center;">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{grupo.idSistema.nombre}" /></f:facet>
+                                        <f:facet name="input">
+                                            <p:selectOneMenu id="sistema1" value="#{grupo.idSistema}" converter="entidadCEConverter">
+                                                <f:selectItem itemValue="#{null}"/>
+                                                <f:selectItems var="sistema" value="#{fichaAdm.listaSistema}" itemLabel="#{sistema.nombre}" itemValue="#{sistema}"/>
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Turno" style="width: 120px;text-align: center;">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{grupo.idTurno.nombre}" /></f:facet>
+                                        <f:facet name="input">
+                                            <p:selectOneMenu id="turno" value="#{grupo.idTurno}" converter="entidadCEConverter">
+                                                <f:selectItem itemValue="#{null}"/>
+                                                <f:selectItems var="turno" value="#{utilToolAcademicas.listaTurno}" itemLabel="#{turno.nombre}" itemValue="#{turno}"/>
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Capacidad Maxima" style="width: 120px;text-align: center;">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{grupo.capMaxima}" /></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{grupo.capMaxima}" style="width:96%" label="Year"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </section>
+                </p:panel>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+</c:if>
+</ui:composition>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="true"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <h:outputScript library="js" name="dialogs.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <h:outputStylesheet library="css" name="procesoElectoral.css" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+    <ui:define name="title">
+        Asesorías y tutorías
+    </ui:define>
+
+    <ui:define name="description">
+        Asegurar la Calidad Académica
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Asegurar la Calidad Académica - Asesorías y tutorías cuatrimestral"/>
+        <adm:sidebar collapsed="true"/>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <p:outputPanel >
+                        <p:autoUpdate/>
+                        <p:toolbar id="tb">
+                            <f:facet name="left">
+                                <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                                    <p:spacer width="10" />
+                                    <p:outputLabel value="Periodo: " for="periodo" />
+                                    <p:spacer width="3" />
+                                    <p:selectOneMenu id="periodo" converter="entityConverter"
+                                                     value="#{controladorAsesoriasTutoriasCuatrimestrales.dto.periodo}" valueChangeListener="#{controladorAsesoriasTutoriasCuatrimestrales.actualizarMeses}"
+                                                     class="form-control" style="padding-top: 0px;">
+                                        <f:selectItems value="#{controladorAsesoriasTutoriasCuatrimestrales.dto.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" itemDescription="#{caster.periodoToString(periodo)}" />
+                                        <p:ajax process="@this" update="@(form)" />
+                                    </p:selectOneMenu>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:outputLabel value="Mes: " for="mes" />
+                                    <p:spacer width="3" />
+                                    <p:selectOneMenu id="mes" value="#{controladorAsesoriasTutoriasCuatrimestrales.dto.eventoSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
+                                        <f:selectItems value="#{controladorAsesoriasTutoriasCuatrimestrales.dto.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" itemDescription="#{evento.mes}"  />
+                                        <p:ajax process="@this" listener="#{controladorAsesoriasTutoriasCuatrimestrales.cargarListaPorEvento()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                </h:form>
+                            </f:facet>
+                            <f:facet name="right">
+                                <h:form id="frmReporte">
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:spacer width="3" />
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+                                </h:form>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:sticky target="tb" />
+                    </p:outputPanel>
+                </div>
+                <p:separator/>
+
+                <div class="box-body">
+                    <h:form id="abrirNuevoRegistroInfo">
+                        <c:if test="#{controladorAsesoriasTutoriasCuatrimestrales.dto.mensaje ne ''}">
+                            <div class="col-sm-12 col-md-12" style="margin-bottom: 5px">
+                                <div class="callout callout-info">
+                                    <p style="font-weight: bold;">Mensaje de verificación:</p>
+                                    <p><code style="color:#4185A0;">#{controladorAsesoriasTutoriasCuatrimestrales.dto.mensaje}</code></p>
+                                </div>
+                                <p:outputLabel id="mensaje" value=""/>
+                            </div>  
+                        </c:if>
+                    </h:form>
+                    <!-- Sección de visualización y eliminación -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formMuestraDatosActivos">
+                                <p:remoteCommand name="actualizar" update="@form:dtbAsesoriasTutoriasPrevia" global="false"/>
+                                <p:dataTable id="dtbAsesoriasTutoriasPrevia" 
+                                             emptyMessage="Sin datos en el periodo seleccionado." 
+                                             value="#{controladorAsesoriasTutoriasCuatrimestrales.dto.listaDtoAsesoriasTutoriasCuatrimestrales}" 
+                                             var="asesoriaTutoria"
+                                             paginator="true" 
+                                             rows="10" 
+                                             rowsPerPageTemplate="10,20,30,40,50" 
+                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                             resizeMode="expand"
+                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                             editable="true"
+                                             editMode="cell"
+                                             >
+                                    <p:ajax event="cellEdit" listener="#{controladorAsesoriasTutoriasCuatrimestrales.onCellEditAsesoriaTutoria}" process="@form:dtbAsesoriasTutoriasPrevia" update="@form:dtbAsesoriasTutoriasPrevia"/>
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column headerText="Periodo Escolar"          width="80"  />
+                                            <p:column headerText="Tipo"                     width="50"  />
+                                            <p:column headerText="Dato Asesoría Tutoría"    width="400" />
+                                            <p:column headerText="Hombres"                  width="60"  />
+                                            <p:column headerText="Mujeres"                  width="60"  />
+                                            <p:column headerText="Total"                    width="60"  />
+                                            <p:column headerText="Matricula total al inicio del cuatrimestre"   width="60"/>
+                                            <p:column headerText="Porcentaje"               width="60"  />
+                                            <p:column headerText="Actualizar"               width="40" />
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column><h:outputText value="#{caster.periodoToString(asesoriaTutoria.periodosEscolares)}"/></p:column>
+                                    <p:column><h:outputText value="#{asesoriaTutoria.asesoriaTutoriaCuatrimestral.datoAsesoriaTutoria.tipo}"/></p:column>
+                                    <p:column><h:outputText value="#{asesoriaTutoria.asesoriaTutoriaCuatrimestral.datoAsesoriaTutoria.descripcion}"/></p:column>
+
+                                    <p:column style="text-align: center;">
+                                        <p:cellEditor>
+                                            <f:facet name="output" id="inhombres">
+                                                 <p:inputNumber decimalPlaces="0" 
+                                                               required="true"
+                                                               minValue="0" 
+                                                               maxValue="10000"
+                                                               value="#{asesoriaTutoria.asesoriaTutoriaCuatrimestral.hombres}"
+                                                               size="9"
+                                                               title="Favor de ingresar el valor correspondiente a la cantidad de hombres"
+                                                               />
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputNumber decimalPlaces="0" 
+                                                               required="true"
+                                                               minValue="0" 
+                                                               maxValue="10000"
+                                                               value="#{asesoriaTutoria.asesoriaTutoriaCuatrimestral.hombres}"
+                                                               size="8"
+                                                               title="Favor de ingresar el valor correspondiente a la cantidad de hombres"
+                                                               />
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column> 
+                                    <p:column style="text-align: center;">
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <p:inputNumber decimalPlaces="0" 
+                                                               required="true"
+                                                               minValue="0" 
+                                                               maxValue="10000"
+                                                               value="#{asesoriaTutoria.asesoriaTutoriaCuatrimestral.mujeres}"
+                                                               size="9"
+                                                               title="Favor de ingresar el valor correspondiente a la cantidad de mujeres"
+                                                               />
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputNumber decimalPlaces="0" 
+                                                               required="true"
+                                                               minValue="0" 
+                                                               maxValue="10000"
+                                                               value="#{asesoriaTutoria.asesoriaTutoriaCuatrimestral.mujeres}"
+                                                               title="Favor de ingresar el valor correspondiente a la cantidad de mujeres"
+                                                               size="8"
+                                                               />
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{asesoriaTutoria.asesoriaTutoriaCuatrimestral.hombres + asesoriaTutoria.asesoriaTutoriaCuatrimestral.mujeres}"/></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{controladorAsesoriasTutoriasCuatrimestrales.dto.matriculaInicial}"/></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{asesoriaTutoria.promedio} %"/></p:column>
+                                    <p:column style="text-align: center;"><p:commandButton id="actualizar" onclick="actualizar()" global="false" icon="fa fa-refresh" class="btn-primary btn-sm" title="En caso de que el total y el promedio no correspondan con los parametros, dar clic aquí"/></p:column>
+                                </p:dataTable>
+                            </h:form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

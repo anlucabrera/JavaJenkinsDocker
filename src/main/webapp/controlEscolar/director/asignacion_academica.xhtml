@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Asignación académica
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{asignacionAcademicaDirector.cargado}">
+        <adm:breadcrumb title="Asignación académica"/>
+
+        <div class="contenedor">
+            <c:if test="#{asignacionAcademicaDirector.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(asignacionAcademicaDirector.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <p:remoteCommand id="cmdActualizarmaterias" name="actualizarmaterias" actionListener="#{asignacionAcademicaDirector.actualizarMaterias}" update="@(.ui-datatable) @(.ui-material) @(.ui-tabs)" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{asignacionAcademicaDirector.rol.periodo}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{asignacionAcademicaDirector.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this" update="@form" oncomplete="actualizarmaterias();" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="programa" value="#{asignacionAcademicaDirector.rol.programa}" converter="entityConverter">
+                                                    <f:selectItems value="#{asignacionAcademicaDirector.rol.programas}" var="programa" itemValue="#{programa}" itemLabel="#{programa.nombre}" />
+                                                    <p:ajax update="@this, grupo" process="@this" oncomplete="actualizarmaterias();" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Programa" for="programa"/>
+                                                <p:message for="programa" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla3}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="grupo" value="#{asignacionAcademicaDirector.rol.grupo}" converter="entityConverter">
+                                                    <f:selectItems value="#{asignacionAcademicaDirector.rol.grupos}" var="grupo"
+                                                                   itemValue="#{grupo}" itemLabel="#{grupo.grado}#{grupo.literal}"/>
+                                                    <p:ajax update="@this" process="@this" oncomplete="actualizarmaterias();" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Grupo" for="grupo"/>
+                                                <p:message for="grupo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:autoComplete id="docente" value="#{asignacionAcademicaDirector.rol.docente}" completeMethod="#{asignacionAcademicaDirector.completeDocentes}" queryDelay="800"
+                                                                valueChangeListener="#{asignacionAcademicaDirector.cambiarDocente}"
+                                                                var="docente" itemValue="#{docente}" itemLabel="#{docente.personal.nombre}" converter="entityConverter" forceSelection="true" size="35"
+                                                                readonly="#{asignacionAcademicaDirector.rol.soloLectura}">
+                                                    <p:column>#{docente.personal.clave}</p:column>
+                                                    <p:column>#{docente.personal.nombre}</p:column>
+                                                    <p:ajax event="itemSelect" update="@this" process="@this" oncomplete="actualizarmaterias();" />
+                                                </p:autoComplete>
+                                                <p:outputLabel value="Docente" for="docente"/>
+                                                <p:message for="docente" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info text-center">
+                                            <p:tabView id="tab">
+                                                <p:tab title="Materias del grupo">
+                                                    <p:dataTable var="materia" rendered="true"
+                                                                 emptyMessage="Sin registros."
+                                                                 value="#{asignacionAcademicaDirector.rol.materiasPorGrupo}"
+                                                                 id="tbl" rowIndexVar="rowIndex"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                 tableStyle="vertical-align: middle;">
+                                                        <p:column headerText="Clave" style="width: 70px;"><h:outputText value="#{materia.materia.idMateria}"/></p:column>
+                                                        <p:column headerText="Materia"><h:outputText value="#{materia.materia.nombre}"/></p:column>
+                                                        <p:column headerText="Estado"><h:outputText value="#{empty materia.dtoCargaAcademica?'Por asignar':'Asignada'}"/></p:column>
+                                                        <p:column headerText="Docente"><h:outputText value="#{empty materia.dtoCargaAcademica?'Pendiente':materia.dtoCargaAcademica.docente.personal.nombre}" /></p:column>
+                                                        <p:column headerText="Horas/Semana">
+                                                            <h:outputText value="#{materia.horasPorSemana}" />
+                                                        </p:column>
+                                                        <p:column headerText="Opciones">
+                                                            <div class="btn-group">
+                                                                <p:commandLink
+                                                                        class="#{true?'btn btn-info btn-sm':'btn btn-warning btn-sm'}"
+                                                                        rendered="#{asignacionAcademicaDirector.mostrarBotonHoras(materia)}"
+                                                                        actionListener="#{asignacionAcademicaDirector.seleccionarMateria(materia)}"
+                                                                        oncomplete="PF('modalHoras').show();"
+                                                                        title="Cambiar horas por semana."><i
+                                                                        class="fa fa-clock-o"/>
+                                                                </p:commandLink>
+                                                                <p:commandLink
+                                                                        class="#{!empty materia.dtoCargaAcademica?'btn btn-info btn-sm':'btn btn-warning btn-sm'}"
+                                                                        rendered="#{asignacionAcademicaDirector.mostrarBotonAsignacion(materia)}"
+                                                                        actionListener="#{asignacionAcademicaDirector.asignarMateria(materia)}"
+                                                                        oncomplete="actualizarmaterias();"
+                                                                        disabled="#{asignacionAcademicaDirector.rol.soloLectura}"
+                                                                        title="Asignar materia al docente."><i
+                                                                        class="fa fa-check"/>
+                                                                </p:commandLink>
+                                                                <p:commandLink
+                                                                        class="#{!empty materia.dtoCargaAcademica?'btn btn-info btn-sm':'btn btn-warning btn-sm'}"
+                                                                        rendered="#{asignacionAcademicaDirector.mostrarBotonReasignacion(materia)}"
+                                                                        actionListener="#{asignacionAcademicaDirector.actualizarAsignacion(materia)}"
+                                                                        oncomplete="actualizarmaterias();"
+                                                                        disabled="#{asignacionAcademicaDirector.rol.soloLectura}"
+                                                                        title="Reasignar materia al docente."><i
+                                                                        class="fa fa-exchange"/>
+                                                                    <p:confirm header="Modificar asignación" message="¿Está seguro que desea cambiar el docente de la asignación de la materia?" />
+                                                                </p:commandLink>
+                                                                <p:commandLink
+                                                                        class="#{true?'btn btn-info btn-sm':'btn btn-warning btn-sm'}"
+                                                                        rendered="#{!empty materia.dtoCargaAcademica}"
+                                                                        actionListener="#{asignacionAcademicaDirector.eliminarAsignacion(materia)}"
+                                                                        oncomplete="actualizarmaterias();"
+                                                                        disabled="#{asignacionAcademicaDirector.rol.soloLectura}"
+                                                                        title="Eliminar asignación de materia al docente."><i
+                                                                        class="fa fa-trash"/>
+                                                                    <p:confirm header="Eliminar asignación" message="¿Está seguro que desea eliminar la asignación de la materia?" />
+                                                                </p:commandLink>
+                                                            </div>
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                </p:tab>
+                                                <p:tab title="Materias asignadas al docente" disabled="#{empty asignacionAcademicaDirector.rol.docente}">
+                                                    <p:dataTable var="carga" rendered="true"
+                                                                 emptyMessage="Sin registros."
+                                                                 value="#{asignacionAcademicaDirector.rol.cargas}"
+                                                                 id="tbl2" rowIndexVar="rowIndex"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                 tableStyle="vertical-align: middle;">
+                                                        <p:column headerText="Programa"><h:outputText value="#{carga.programa.nombre}"/></p:column>
+                                                        <p:column headerText="Grupo"><h:outputText value="#{carga.cargaAcademica.cveGrupo.grado}#{carga.cargaAcademica.cveGrupo.literal}"/></p:column>
+                                                        <p:column headerText="Clave"><h:outputText value="#{carga.materia.idMateria}"/></p:column>
+                                                        <p:column headerText="Materia"><h:outputText value="#{carga.materia.nombre}"/></p:column>
+                                                        <p:column headerText="Opciones">
+                                                            <div class="btn-group">
+                                                                <p:commandLink
+                                                                        class="#{true?'btn btn-info btn-sm':'btn btn-warning btn-sm'}"
+                                                                        rendered="#{true}"
+                                                                        actionListener="#{asignacionAcademicaDirector.eliminarAsignacionPorDocente(carga)}"
+                                                                        oncomplete="actualizarmaterias();"
+                                                                        disabled="#{asignacionAcademicaDirector.rol.soloLectura}"
+                                                                        title="Eliminar asignación de materia al docente."><i
+                                                                        class="fa fa-trash"/>
+                                                                    <p:confirm header="Eliminar asignación" message="¿Está seguro que desea eliminar la asignación de la materia?" />
+                                                                </p:commandLink>
+                                                            </div>
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                </p:tab>
+                                            </p:tabView>
+
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                                             styleClass="panel panel-primary" width="500"
+                                                             closable="false" closeOnEscape="true">
+                                                <p:commandButton value="Si" type="button"
+                                                                 styleClass="ui-confirmdialog-yes btn btn-primary"
+                                                                 icon="ui-icon-check"/>
+                                                <p:commandButton value="No" type="button"
+                                                                 styleClass="ui-confirmdialog-no btn btn-primary"
+                                                                 icon="ui-icon-close"/>
+                                            </p:confirmDialog>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty asignacionAcademicaDirector.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{asignacionAcademicaDirector.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para una asignación académica</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{asignacionAcademicaDirector.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                <p:dialog id="modalHoras"
+                          widgetVar="modalHoras" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="#{asignacionAcademicaDirector.rol.materia.materia.nombre}" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <p:autoUpdate />
+                    <div class="box box-primary">
+                        <c:if test="#{!empty asignacionAcademicaDirector.rol.materia}">
+                            <c:if test="#{!empty asignacionAcademicaDirector.rol.materia.dtoCargaAcademica}">
+                                <h:form>
+                                    <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Docente: #{asignacionAcademicaDirector.rol.materia.dtoCargaAcademica.docente.personal.nombre} / Grupo: #{asignacionAcademicaDirector.rol.materia.dtoCargaAcademica.grupo.grado}#{asignacionAcademicaDirector.rol.materia.dtoCargaAcademica.grupo.literal}</h3></div>
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p:outputLabel value="Horas por semana: " for="horas"/>
+                                                <p:inputText id="horas" value="#{asignacionAcademicaDirector.rol.materia.dtoCargaAcademica.cargaAcademica.horasSemana}" size="5" converter="javax.faces.Integer" />
+                                                <p:message for="horas" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix no-border">
+                                        <p:button styleClass="btn btn-primary pull-right" onclick="PF('modalHoras').hide();" value="Cancelar" icon="fa fa-times" />
+                                        <p:commandButton styleClass="btn btn-primary pull-right" actionListener="#{asignacionAcademicaDirector.actualizarHorasPorSemana}" process="@form" update="@(form)" value="Aceptar" icon="fa fa-clock-o" oncomplete="actualizarmaterias();PF('modalHoras').hide();" />
+                                    </div>
+                                </h:form>
+                            </c:if>
+                        </c:if>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!asignacionAcademicaDirector.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a directores de área académica."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

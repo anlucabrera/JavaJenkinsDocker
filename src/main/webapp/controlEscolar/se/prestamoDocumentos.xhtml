@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+                >
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputStylesheet library="css" name="timepicker.css"/>
+        <h:outputStylesheet library="primefaces62" name="inputnumber.css" />
+        <h:outputScript library="js" name="dialogs.js"/>        
+        <h:outputScript library="js" name="calendario.js"/>
+        <h:outputScript library="primefaces62" name="inputnumber.js"  />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Préstamo de documentos
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{prestamoDocumentoServiciosEscolares.cargado}">
+            <adm:breadcrumb title="Préstamo de documentos"/>
+
+            <div class="contenedor">
+                <c:if test="#{prestamoDocumentoServiciosEscolares.tieneAcceso}">
+                    <!-- zona de importación de enums -->
+                    <p:importEnum type="mx.edu.utxj.pye.sgi.enums.DocumentosEstudiante" var="documentoEstudiante" allSuffix="DOCUMENTOS" />
+
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h:form id="frmEncabezado" prependId="false" class="form-inline">
+                                <div id="main-buttons" class="hidden-sm hidden-xs">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
+                                                           onclick="PF('modalAyuda').show();"
+                                                           process="@this"
+                                                           title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
+                                            </p:commandLink>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </h:form>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info">
+                                            <div class="row margin-bottom" style="margin-bottom: 10px;">
+
+                                                <h:form id="remoteComand" prependId="false" class="form-inline">
+                                                    <p:remoteCommand id="actualizarPrestamo" name="actualizarPrestamo" actionListener="#{prestamoDocumentoServiciosEscolares.actualizar}" process="@this" update="frmBusquedaEstudiante,frmRegistroDocumento,frmListadoDocumentos"/>
+                                                </h:form>
+
+                                                <h:form id="frmBusquedaEstudiante" prependId="false" class="form-inline">
+                                                    <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                                                        <p:outputLabel value="1.- Ingrese la matricula ó nombre del estudiante si desea realizar un préstamo de documento."></p:outputLabel>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 10px;">
+                                                        <div class="ui-material">
+                                                            <p:autoComplete id="pdEstudiante" 
+                                                                            value="#{prestamoDocumentoServiciosEscolares.rol.estudianteSeguimientoSeleccionado}" 
+                                                                            completeMethod="#{prestamoDocumentoServiciosEscolares.completeEstudiantes}" 
+                                                                            queryDelay="800"
+                                                                            valueChangeListener="#{prestamoDocumentoServiciosEscolares.cambiarEstudianteSeleccionado}"
+                                                                            var="estudiante" 
+                                                                            itemValue="#{estudiante}" 
+                                                                            itemLabel="#{estudiante.datosComplete}" 
+                                                                            converter="entityConverter" 
+                                                                            forceSelection="true"
+                                                                            minQueryLength="4"
+                                                                            required="true"
+                                                                            requiredMessage="Favor de seleccionar un estudiante"
+                                                                            styleClass="campoAutocompleteEstudiante"
+                                                                            scrollHeight="300"
+                                                                            style="width: 25em;"
+                                                                            >
+                                                                <p:column>#{estudiante.datosComplete}</p:column>
+                                                                <p:column>#{caster.clavePeriodoToString(estudiante.estudiantes.periodo)}</p:column>
+                                                                <p:ajax event="itemSelect" 
+                                                                        process="@this" 
+                                                                        oncomplete="actualizarPrestamo();"
+                                                                        />
+                                                            </p:autoComplete>
+                                                        </div>
+                                                        <p:watermark for="pdEstudiante" value="190000 ó Nayeli Martinez Lechuga" />
+                                                        <p:message for="pdEstudiante" />
+                                                        <p>Estudiante</p>
+                                                    </div>
+
+                                                    <c:if test="#{prestamoDocumentoServiciosEscolares.rol.estudianteSeleccionado.idEstudiante ne null}">
+                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                                                            <p:outputLabel value="2.- Ingrese los datos del préstamo o entrega de documento."></p:outputLabel>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                                                            <p:outputLabel value="Documentos del estudiante"></p:outputLabel>
+                                                            <p></p>
+                                                            <h:panelGrid columns="2" cellpadding="5">
+                                                                <p:selectBooleanCheckbox value="#{prestamoDocumentoServiciosEscolares.rol.documentosentregadosestudiante.actaNacimiento}" itemLabel="Acta de Nacimiento" disabled="true"/>
+                                                                <p:selectBooleanCheckbox value="#{prestamoDocumentoServiciosEscolares.rol.documentosentregadosestudiante.certificadoIems}" itemLabel="Certificado de IEMS" disabled="true"/>
+                                                            </h:panelGrid>
+                                                            <p></p>
+                                                        </div>
+
+                                                        <!--    estudiante                      -> Obtención automática
+                                                                tipo_prestamo                   -> Elegida por el usuario Interfaz
+                                                                tipo_documento                  -> Elegida por el usuario Interfaz
+                                                                fecha_prestamo                  -> Ingresada por el usuario Interfaz    No requerido obligatorio
+                                                                fecha_devolucion_estudiante     -> Ingresada por el usuario Interfaz    No requerido obligatorio
+                                                                fecha_devolucion                -> Obtención automática                 No requerido obligatorio
+                                                                motivo                          -> Elegida por el usuario Interfaz
+                                                                observaciones                   -> Ingresada por el usuario DataTable   No requerido obligatorio
+                                                                entregado_estudiante            -> Determinado en Datatable
+                                                                persona                         -> Obtención automática
+                                                        -->
+                                                    </c:if>
+                                                </h:form>
+
+                                                <h:form id="frmRegistroDocumento" prependId="false" class="form-inline">
+                                                    <c:if test="#{prestamoDocumentoServiciosEscolares.rol.estudianteSeleccionado.idEstudiante ne null}">
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-3" style="margin-bottom: 15px;">
+                                                            <p:selectOneButton id="pdTipoPrestamo"
+                                                                               label="pdTipoPrestamo"
+                                                                               value="#{prestamoDocumentoServiciosEscolares.rol.prestamoDocumento.tipoPrestamo}"
+                                                                               required="true"
+                                                                               requiredMessage="Seleccione el tipo de préstamo"
+                                                                               >
+                                                                <f:selectItem itemLabel="Préstamo" itemValue="Préstamo" />
+                                                                <f:selectItem itemLabel="Entrega" itemValue="Entrega" />
+                                                            </p:selectOneButton>
+                                                            <p>Tipo de préstamo</p>
+                                                            <p:message for="pdTipoPrestamo" />
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-3" style="margin-bottom: 15px;">
+                                                            <p:selectOneButton id="pdTipoDocumento"
+                                                                               label="pdTipoDocumento"
+                                                                               value="#{prestamoDocumentoServiciosEscolares.rol.prestamoDocumento.tipoDocumento}"
+                                                                               required="true"
+                                                                               requiredMessage="Seleccione el tipo de documento"
+                                                                               >
+                                                                <f:selectItem itemLabel="#{documentoEstudiante.ACTA_NACIMIENTO.label}" itemValue="#{documentoEstudiante.ACTA_NACIMIENTO.label}" />
+                                                                <f:selectItem itemLabel="#{documentoEstudiante.CERTIFICADO_IEMS.label}" itemValue="#{documentoEstudiante.CERTIFICADO_IEMS.label}" />
+                                                            </p:selectOneButton>
+                                                            <p>Tipo de documento</p>
+                                                            <p:message for="pdTipoDocumento" />
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-3">
+                                                            <div class="ui-material">
+                                                                <p:calendar id="pdFechaPrestamo"
+                                                                            label="pdFechaPrestamo"
+                                                                            value="#{prestamoDocumentoServiciosEscolares.rol.fechaInicioRegistro}"
+                                                                            valueChangeListener="#{prestamoDocumentoServiciosEscolares.valifaFechaInicioRegistro}"
+                                                                            pattern="yyyy-MM-dd"
+                                                                            style="width: 18em;"
+                                                                            locale="es"
+                                                                            readonlyInput="true"
+                                                                            mask="true"
+                                                                            >
+                                                                    <p:ajax event="dateSelect" global="false" process="@this" update="pdFechaDevolucionEstudiante"/>
+                                                                </p:calendar>
+                                                            </div>
+                                                            <p:watermark for="pdFechaPrestamo" value="2019-10-01 (aa-MM-dd)*" />
+                                                            <p:message for="pdFechaPrestamo" />
+                                                            <p>Fecha de préstamo del documento (Requerido si ha seleccionado Préstamo)</p>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-3">
+                                                            <div class="ui-material">
+                                                                <p:calendar id="pdFechaDevolucionEstudiante"
+                                                                            label="pdFechaDevolucionEstudiante"
+                                                                            value="#{prestamoDocumentoServiciosEscolares.rol.fechaFinRegistro}"
+                                                                            valueChangeListener="#{prestamoDocumentoServiciosEscolares.validaFechaFinRegistro}"
+                                                                            pattern="yyyy-MM-dd"
+                                                                            style="width: 18em;"
+                                                                            locale="es"
+                                                                            readonlyInput="true"
+                                                                            mask="true"
+                                                                            title="Fecha en la que el estudiante tiene previsto entregar el documento"
+                                                                            >
+                                                                    <p:ajax event="dateSelect" global="false" process="@this" update="pdFechaPrestamo"/>
+                                                                </p:calendar>
+                                                            </div>
+                                                            <p:watermark for="pdFechaDevolucionEstudiante" value="2019-10-01 (aa-MM-dd)*" />
+                                                            <p:message for="pdFechaDevolucionEstudiante" />
+                                                            <p>Fecha de la devolución del documento (Requerido si ha seleccionado Préstamo)</p>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 15px;">
+                                                            <div class="ui-material">
+                                                                <p:inputTextarea id="pdMotivoPrestamo"
+                                                                                 rows="3" 
+                                                                                 cols="80"
+                                                                                 counter="displayMotivo" 
+                                                                                 maxlength="3000" 
+                                                                                 counterTemplate="{0} caracteres en total." 
+                                                                                 autoResize="true"
+                                                                                 required="true"
+                                                                                 class="form-control"
+                                                                                 requiredMessage="Es requerido el campo de motivo"
+                                                                                 value="#{prestamoDocumentoServiciosEscolares.rol.prestamoDocumento.motivo}"
+                                                                                 />
+                                                                <h:outputText id="displayMotivo" />
+                                                                <p:watermark for="pdMotivoPrestamo" value="Ejemplo del motivo del préstamo del documento *" />
+                                                                <p:message for="pdMotivoPrestamo" />
+                                                                <p:outputLabel for="pdMotivoPrestamo" value="Motivo del préstamo del documento al estudiante" />
+                                                            </div>
+                                                            <p:message for="pdMotivoPrestamo" />
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-12">
+                                                            <p:commandButton id="btnGuardarPrestamoDocumento" 
+                                                                             value="Guardar préstamo del documento"
+                                                                             icon="fa fa-pencil-square-o" 
+                                                                             class="btn-primary" 
+                                                                             style="width:20em;" 
+                                                                             title="Guardar préstamo del documento"
+                                                                             actionListener="#{prestamoDocumentoServiciosEscolares.guardarPrestamoDocumento()}"
+                                                                             oncomplete="actualizarPrestamo();" 
+                                                                             />
+                                                        </div>
+
+                                                    </c:if>
+                                                </h:form>
+
+                                                <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 20px;"></div>
+                                                <h:form id="frmListadoDocumentos" prependId="false" class="form-inline">
+                                                    <c:if test="#{prestamoDocumentoServiciosEscolares.rol.listaPrestamosDocumentos ne null or !empty prestamoDocumentoServiciosEscolares.rol.listaPrestamosDocumentos}">
+                                                        <!--Consulta de prestamo y listado de documentos-->
+                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                                                            <p:outputLabel value="3.- Seleccione una fecha de inicio y una fecha límite para una búsqueda personalizada (Puede realizar búsquedas mediante un periodo seleccionado de un estudiante específico o de manera general)."></p:outputLabel>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <p:outputLabel for="fechaInicio" value="Fecha de inicio:" />
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-5">
+                                                            <div class="ui-material">
+                                                                <p:calendar id="fechaInicio"
+                                                                            label="fechaInicio"
+                                                                            required="true"
+                                                                            requiredMessage="Ingrese fecha de inicio del periodo que desea consultar"
+                                                                            value="#{prestamoDocumentoServiciosEscolares.rol.fechaInicio}"
+                                                                            valueChangeListener="#{prestamoDocumentoServiciosEscolares.valifaFechaInicio}"
+                                                                            pattern="yyyy-MM-dd"
+                                                                            style="width: 18em;"
+                                                                            locale="es"
+                                                                            showOn="both"
+                                                                            placeholder="2019-12-01 *"
+                                                                            readonlyInput="true"
+                                                                            mask="true"
+                                                                            >
+                                                                    <p:ajax event="dateSelect" global="false" process="@this" update="fechaFin"/>
+                                                                </p:calendar>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6">
+                                                            <p:outputLabel for="fechaFin" value="Fecha límite:" />
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-5" style="margin-bottom: 20px;">
+                                                            <div class="ui-material">
+                                                                <p:calendar id="fechaFin"
+                                                                            label="fechaFin"
+                                                                            required="true"
+                                                                            requiredMessage="Ingrese fecha límite del periodo que desea consultar"
+                                                                            value="#{prestamoDocumentoServiciosEscolares.rol.fechaFin}"
+                                                                            valueChangeListener="#{prestamoDocumentoServiciosEscolares.validaFechaFin}"
+                                                                            pattern="yyyy-MM-dd"
+                                                                            style="width: 18em;"
+                                                                            locale="es"
+                                                                            showOn="both"
+                                                                            placeholder="2019-12-01 *"
+                                                                            readonlyInput="true"
+                                                                            mask="true"
+                                                                            >
+                                                                    <p:ajax event="dateSelect" global="false" process="@this" update="fechaInicio" oncomplete="actualizarPrestamosPorEstudianteOfecha();"/>
+                                                                </p:calendar>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row margin-bottom" style="margin-top: 20px;">
+                                                            <div class="col-sm-12 col-md-12 col-lg-12" >
+                                                                <p:remoteCommand id="actualizarPrestamosPorEstudianteOfecha" name="actualizarPrestamosPorEstudianteOfecha" actionListener="#{prestamoDocumentoServiciosEscolares.mostrarDocumentosPorFechaOEstudiante()}" process="@this" update="frmBusquedaEstudiante,frmRegistroDocumento,frmListadoDocumentos"/>
+                                                                <p:toolbar>
+                                                                    <f:facet name="left">
+                                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                        <p:outputLabel value="Listado de préstamo de documentos mas recientes" style="padding-top: 5px;" />
+                                                                        <p></p>
+                                                                    </f:facet>
+                                                                </p:toolbar>
+                                                                <center>
+                                                                    <p:dataTable id="dtPrestamoDocumentos" 
+                                                                                 var="prestamoDocumento" 
+                                                                                 value="#{prestamoDocumentoServiciosEscolares.rol.listaPrestamosDocumentos}" 
+                                                                                 filteredValue="#{prestamoDocumentoServiciosEscolares.rol.filtroListaPrestamosDocumentos}"
+                                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                                 resizeMode="expand"
+                                                                                 emptyMessage="Aún no se han registrado préstamo de documentos"
+                                                                                 >
+                                                                        <p:columnGroup type="header">
+                                                                            <p:row class="sucess">
+                                                                                <p:column headerText="Liberar préstamo"                         width="200"/>
+                                                                                <p:column headerText="Observaciones"                            width="500"/>
+                                                                                <p:column headerText="Préstamo"                                 width="80"/>
+                                                                                <p:column headerText="Matricula"                                width="100"/>
+                                                                                <p:column headerText="Estudiante"                               width="200"/>
+                                                                                <p:column headerText="Tipo Prestamo"                            width="100"/>
+                                                                                <p:column headerText="Tipo Documento"                           width="200"/>
+                                                                                <p:column headerText="Fecha de registro"                        width="100"/>
+                                                                                <p:column headerText="Fecha devolución por el estudiante"       width="150"/>
+                                                                                <p:column headerText="Fecha de devolución"                      width="100"/>
+                                                                                <p:column headerText="Motivo"                                   width="500"/>
+                                                                                <p:column headerText="Personal que realizó el préstamo"         width="400"/>
+                                                                            </p:row>
+
+                                                                        </p:columnGroup>
+
+                                                                        <p:column>
+                                                                            <p:selectBooleanButton value="#{prestamoDocumento.entregadoEstudiante}" 
+                                                                                                   onLabel="Liberado" 
+                                                                                                   offLabel="Pendiente de entrega" 
+                                                                                                   valueChangeListener="#{prestamoDocumentoServiciosEscolares.liberarPrestamoDocumento}"
+                                                                                                   onIcon="ui-icon-check"
+                                                                                                   offIcon="ui-icon-close"
+                                                                                                   style="text-align: left"
+                                                                                                   >
+                                                                                <p:ajax process="@this"
+                                                                                        oncomplete="actualizarPrestamo();"
+                                                                                        />
+                                                                                <f:attribute name="prestamoDocumento" 
+                                                                                             value="#{prestamoDocumento}" 
+                                                                                             />
+                                                                            </p:selectBooleanButton>
+                                                                        </p:column>
+
+                                                                        <p:column>
+                                                                            <p:inputTextarea rows="1" 
+                                                                                             cols="74"
+                                                                                             maxlength="3000" 
+                                                                                             autoResize="true"
+                                                                                             required="true"
+                                                                                             requiredMessage="Es requerido el campo de observaciones"
+                                                                                             class="form-control"
+                                                                                             title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en cualquier parte de la pantalla"
+                                                                                             value="#{prestamoDocumento.observaciones}"
+                                                                                             valueChangeListener="#{prestamoDocumentoServiciosEscolares.actualizarComentariosPrestamoDocumento}"
+                                                                                             >
+                                                                                <p:ajax process="@this" 
+                                                                                        update="dtPrestamoDocumentos" 
+                                                                                        global="false"
+                                                                                        /> 
+                                                                                <f:attribute name="prestamoDocumento" 
+                                                                                             value="#{prestamoDocumento}" 
+                                                                                             />
+                                                                            </p:inputTextarea>
+                                                                        </p:column>
+
+                                                                        <p:column>
+                                                                            <h:outputText value="#{prestamoDocumento.prestamoDocumento}" />
+                                                                        </p:column>
+
+                                                                        <p:column>
+                                                                            <h:outputText value="#{prestamoDocumento.estudiante.matricula}" />
+                                                                        </p:column>
+
+                                                                        <p:column>
+                                                                            <h:outputText value="#{prestamoDocumento.estudiante.aspirante.idPersona.apellidoPaterno} #{prestamoDocumento.estudiante.aspirante.idPersona.apellidoMaterno} #{prestamoDocumento.estudiante.aspirante.idPersona.nombre}" />
+                                                                        </p:column>
+
+                                                                        <p:column>
+                                                                            <h:outputText value="#{prestamoDocumento.tipoPrestamo}" />
+                                                                        </p:column>
+
+                                                                        <p:column>
+                                                                            <h:outputText value="#{prestamoDocumento.tipoDocumento}" />
+                                                                        </p:column>
+
+                                                                        <p:column>
+                                                                            <h:outputText value="#{prestamoDocumento.fechaPrestamo}">
+                                                                                <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                                            </h:outputText>
+                                                                        </p:column>
+
+                                                                        <p:column>
+                                                                            <h:outputText value="#{prestamoDocumento.fechaDevolucionEstudiante}">
+                                                                                <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                                            </h:outputText>
+                                                                        </p:column>
+
+                                                                        <p:column>
+                                                                            <h:outputText value="#{prestamoDocumento.fechaDevolucion}">
+                                                                                <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                                            </h:outputText>
+                                                                        </p:column>
+
+                                                                        <p:column>
+                                                                            <h:outputText value="#{prestamoDocumento.motivo}" />
+                                                                        </p:column>
+
+                                                                        <p:column>
+                                                                            <h:outputText value="#{caster.personalActivoLabel(prestamoDocumento.persona)}" />
+                                                                        </p:column>
+
+                                                                        <f:facet name="footer">
+                                                                            <div style="text-align: left">
+                                                                                <p:column style="text-align: left;">
+                                                                                    <p:commandButton actionListener="#{prestamoDocumentoServiciosEscolares.mostrarPrestamoDocumentos}" 
+                                                                                                     icon="fa fa-search" 
+                                                                                                     class="btn-primary" 
+                                                                                                     value="Mostrar últimos 10 registros de préstamos"
+                                                                                                     title="Presione este botón para mostrar los últimos 10 registros de préstamos"
+                                                                                                     process="@this"
+                                                                                                     global="false"
+                                                                                                     oncomplete="actualizarPrestamo();"
+                                                                                                     />
+                                                                                    <p:commandButton actionListener="#{prestamoDocumentoServiciosEscolares.mostrarPrestamoTipoEntregadosEstudiante}" 
+                                                                                                     icon="fa fa-search" 
+                                                                                                     class="btn-primary" 
+                                                                                                     value="Mostrar documentos entregados por estudiante"
+                                                                                                     title="Asegurese de elegir previamente a un estudiante"
+                                                                                                     process="@this"
+                                                                                                     global="false"
+                                                                                                     oncomplete="actualizarPrestamo();"
+                                                                                                     />
+                                                                                </p:column>
+                                                                                <p:column style="text-align: left;">
+                                                                                    Se ha registrado un total de: #{fn:length(prestamoDocumentoServiciosEscolares.rol.listaPrestamosDocumentos)} préstamo(s) de documento(s).
+                                                                                </p:column>
+                                                                            </div>
+                                                                        </f:facet>
+
+                                                                    </p:dataTable>
+                                                                </center>
+                                                            </div>
+                                                        </div>
+                                                    </c:if>
+                                                </h:form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <c:if test="#{!empty prestamoDocumentoServiciosEscolares.alertas || true}">
+                        <div class="box box-info">
+                            <div class="box-header">
+                                <ui:include src="/includes/alertas.xhtml">
+                                    <ui:param name="alertas" value="#{prestamoDocumentoServiciosEscolares.alertas}"></ui:param>
+                                </ui:include>
+                            </div>
+                        </div>
+                    </c:if>
+                    <!-- Zona de cuadros de diálogo -->
+                    <p:dialog id="modalAyuda"
+                              widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                              modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                        <div class="box box-primary">
+                            <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para prestamo de documentos</h3></div>
+                            <div class="box-body">
+                                <ul class="todo-list">
+                                    <c:forEach items="#{prestamoDocumentoServiciosEscolares.rol.instrucciones}" var="instruccion">
+                                        <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                            <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                        </div>
+                    </p:dialog>
+
+                </c:if>
+                <c:if test="#{!prestamoDocumentoServiciosEscolares.tieneAcceso}">
+                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="El acceso solo está autorizado a personal de servicios escolares."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+                <div style="display: none;">
+                    <!-- Es necesario este bloque para que se cargue en el navegador el soporte para el control inputnumber -->
+                    <h:form>
+                        <p:inputNumber />
+                    </h:form>
+                </div>
+            </div>
+            <script>
+                //collapseSidebar(); activar para colapsar barra lateral
+            </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

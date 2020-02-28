@@ -1,0 +1,941 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="true"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <h:outputScript library="js" name="dialogs.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <h:outputStylesheet library="css" name="procesoElectoral.css" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+    <ui:define name="title">
+        Actividades de Formación Integral
+    </ui:define>
+
+    <ui:define name="description">
+        Asegurar la Calidad Académica
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Asegurar la Calidad Académica - Actividades de Formación Integral"/>
+        <adm:sidebar collapsed="true"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <c:if test="#{actFormIntegral.listaReg ne null}">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                            <p:outputPanel >
+                                <p:autoUpdate/>
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <c:if test="#{controladorArchivoActFormIntegral.etapa eq etapa.MOSTRAR}">
+                                            <p:outputLabel value="Periodo: " for="periodo" />
+                                            <p:spacer width="3" />
+                                            <p:selectOneMenu id="periodo" converter="entityConverter"
+                                                             value="#{actFormIntegral.dto.periodo}" valueChangeListener="#{actFormIntegral.actualizarMeses}"
+                                                             class="form-control" style="padding-top: 0px;">
+                                                <f:selectItems value="#{actFormIntegral.dto.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" itemDescription="#{caster.periodoToString(periodo)}" />
+                                                <p:ajax process="@this" update="@(form)" />
+                                            </p:selectOneMenu>
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Mes: " for="mes" />
+                                            <p:spacer width="3" />
+                                            <p:selectOneMenu id="mes" value="#{actFormIntegral.dto.eventoSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
+                                                <f:selectItems value="#{actFormIntegral.dto.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" itemDescription="#{evento.mes}"  />
+                                                <p:ajax process="@this" listener="#{actFormIntegral.cargarListaPorEvento()}" update="@(form)" />
+                                            </p:selectOneMenu>
+                                        </c:if>
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <div class="btn-group">
+                                            <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
+                                        </div>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <c:if test="#{controladorArchivoActFormIntegral.etapa eq etapa.CARGAR}">
+                                            <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="actFormacionIntegral?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
+                                        </c:if>
+                                        <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{actFormIntegral.descargarPlantilla()}" title="Descargar Plantilla Actividad Formación Integral"><i class="fa fa-download" /></p:commandLink>
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reporteRegistros.descargarReporteAFI(actFormIntegral.dto.area.area)}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+
+                                    </f:facet>
+                                </p:toolbar>
+                                <p:sticky target="tb" />
+                            </p:outputPanel>
+                        </h:form>
+                    </div>
+                    <p:separator/>
+
+                    <div class="box-body">
+                        <!-- Sección de visualización y eliminación -->
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <center>
+                                    <p:tabView>
+                                        <c:if test="#{controladorArchivoActFormIntegral.etapa eq etapa.MOSTRAR}">
+                                            <p:tab id="twbAFIAct" title="Actividades de Formación Integral">
+                                                <h:form id="formMuestraDatosActivos">
+                                                    <p:remoteCommand name="actualizar" update="@form:dtbActFormInt" />
+                                                    <p:dataTable id="dtbActFormInt" emptyMessage="Sin datos en el periodo seleccionado." value="#{actFormIntegral.dto.lista}" var="ActFormInt"
+                                                                 paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                 resizeMode="expand"
+                                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                        <c:set var="actForIntReg" value="#{ActFormInt.actividadesFormacionIntegral.registro}"/>
+                                                        <c:set var="actForIntClave" value="#{ActFormInt.actividadesFormacionIntegral.actividadFormacionIntegral}"/>
+
+                                                        <p:column headerText="Opciones" style="width: 200px; text-align: center;">
+                                                            <div class="btn-group">
+                                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{actFormIntegral.eliminarRegistro(actForIntReg, actForIntClave)}" onsuccess="actualizar(); actualizar1();" title="Eliminar registro." disabled="#{actFormIntegral.dto.eventoActual ne actFormIntegral.dto.eventoSeleccionado}">
+                                                                    <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la Actividad #{ActFormInt.actividadesFormacionIntegral.nombre}?" icon="ui-icon-alert" />
+                                                                </p:commandButton>
+                                                                <c:set var="evidencias" value="#{actFormIntegral.consultarEvidencias(ActFormInt)}" />
+                                                                <p:commandButton actionListener="#{actFormIntegral.seleccionarRegistro(ActFormInt)}"
+                                                                                 class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                                 icon="fa fa-image"
+                                                                                 title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                                <p:commandButton actionListener="#{actFormIntegral.abrirAlineacionPOA(ActFormInt)}"
+                                                                                 class="btn btn-sm #{!empty ActFormInt.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
+                                                                                 title="Alineación a POA." />
+                                                                <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{actFormIntegral.descargarPlantillaPartAFI(actForIntClave)}" title="Descargar Plantilla Participantes"><i class="fa fa-download" /></p:commandLink>
+                                                                <p:commandButton icon="fa fa-users" onclick="PF('modalCargaArchivoPart').show()" class="btn btn-primary btn-sm" title="Subir Participantes"/>
+
+                                                                <p:commandButton actionListener="#{actFormIntegral.editarRegistro(ActFormInt)}"
+                                                                                 class="btn btn-sm btn-primary" 
+                                                                                 icon="fa fa-edit"
+                                                                                 title="Editar registro" disabled="#{actFormIntegral.dto.eventoActual ne actFormIntegral.dto.eventoSeleccionado}"/>
+                                                            </div>
+                                                        </p:column>
+                                                        <p:column headerText="Clave" style="width: 150px; text-align: center;">
+                                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.actividadFormacionIntegral}"/>
+                                                        </p:column>
+
+                                                        <p:column headerText="Periodo Escolar" style="width: 250px; text-align: center;">
+                                                            <h:outputText value="#{ActFormInt.periodosEscolares.mesInicio.mes} - #{ActFormInt.periodosEscolares.mesFin.mes}"/>
+                                                        </p:column>
+
+                                                        <p:column headerText="Fecha Inicio" style="width: 100px; text-align: center;">
+                                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </p:column>
+
+                                                        <p:column headerText="Fecha Fin" style="width: 100px; text-align: center;">
+                                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </p:column>
+
+                                                        <p:column headerText="Nombre de la Actividad" style="width: 250px;">
+                                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.nombre}"/>
+                                                        </p:column>
+
+                                                        <p:column headerText="Tipo de Actividad" style="width: 200px; text-align: center;">
+                                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.actividadTipo.nombre}"/>
+                                                        </p:column>
+
+                                                        <p:column headerText="Tipo de Evento" style="width: 200px; text-align: center;">
+                                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.eventoTipo.nombre}"/>
+                                                        </p:column>
+
+                                                        <p:column headerText="Organiza / Participa" style="width: 200px; text-align: center;">
+                                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.organizaParticipa}"/>
+                                                        </p:column>
+
+                                                        <p:column headerText="Lugar de realización" style="width: 250px;">
+                                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.lugarRealizacion}"/>
+                                                        </p:column>
+
+                                                        <p:column headerText="Duración" style="width: 80px; text-align: center;">
+                                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.duracion}"/>
+                                                        </p:column>
+
+                                                        <p:column headerText="Facilitador o Empresa" style="width: 250px;">
+                                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.facilitadorEmpresa}"/>
+                                                        </p:column>
+
+                                                        <p:column headerText="Equipos Participantes" style="width: 150px; text-align: center;">
+                                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.equiposParticipantes}"/>
+                                                        </p:column>
+
+                                                        <p:column headerText="Equipos Ganadores" style="width: 150px; text-align: center;">
+                                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.equiposGanadores}"/>
+                                                        </p:column>
+
+                                                        <p:column headerText="Objetivo" style="width: 400px;">
+                                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.objetivo}"/>
+                                                        </p:column>
+
+                                                        <p:column headerText="Participantes" style="width: 400px;">
+
+                                                            <center> #{fn:length(ActFormInt.actividadesFormacionIntegral.participantesActividadesFormacionIntegralList)} Consultar <p:commandButton actionListener="#{partActFormInt.seleccionarParticipantes(actForIntClave)}"
+                                                                                                                                                                                                    class="btn btn-sm #{!empty ActFormInt.actividadesFormacionIntegral.participantesActividadesFormacionIntegralList?'btn-info':'btn-danger'}" 
+                                                                                                                                                                                                    icon="fa fa-search"
+                                                                                                                                                                                                    title="#{!empty ActFormInt.actividadesFormacionIntegral.participantesActividadesFormacionIntegralList?'Consultar participantes registrados':'No se han registrado participantes'}" />
+                                                            </center>
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
+                                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                                    </p:confirmDialog>
+                                                </h:form>
+                                            </p:tab>
+                                            <p:tab id="twbPAFIAct" title="Participantes de Formación Integral">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <h:form id="formMuestraDatosActivosPAFI" prependId="false">
+                                                        <div style="text-align: left">
+                                                            <p:toolbar>
+                                                                <f:facet name="left">
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Este es un reporte parcial de su información mostrando únicamente 100 registros, si desea descargar el reporte completo favor de dirigirse a la parte superior derecha y dar clic en descargar reporte." style="padding-top: 5px;" />
+                                                                    <p></p>
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Si presenta algún incoveniente en el sistema favor de dirigirse con el administrador del sistema." style="padding-top: 5px;" />
+                                                                    <p></p>
+                                                                </f:facet>
+                                                            </p:toolbar>
+                                                        </div>    
+                                                        <p:remoteCommand name="actualizar1" update="@form:dtbPartActFormInt" />
+                                                        <p:dataTable  id="dtbPartActFormInt" emptyMessage="Sin datos en el periodo seleccionado." value="#{actFormIntegral.dtopart.lista}" var="partAFI"
+                                                                      paginator="true" rows="10" rowsPerPageTemplate="5,10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                      resizeMode="expand"
+                                                                      tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                            <c:set var="PartActForEliminado" value="#{partAFI.participantesActividadesFormacionIntegral.registro}"/>
+                                                            <p:column headerText="Opciones" style="text-align: center;" width="100">
+                                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{actFormIntegral.eliminarRegistroParticipante(PartActForEliminado)}" onsuccess="actualizar1();actualizar();" title="Eliminar registro." disabled="#{actFormIntegral.dto.eventoActual ne actFormIntegral.dto.eventoSeleccionado}">
+                                                                    <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de Participación del estudiante #{partAFI.participantesActividadesFormacionIntegral.matriculaPeriodosEscolares.matricula} en la Actividad #{partAFI.participantesActividadesFormacionIntegral.actividadFormacionIntegral.nombre}?" icon="ui-icon-alert" />
+                                                                </p:commandButton>
+                                                                <c:set var="evidencias" value="#{partActFormInt.consultarEvidencias(partAFI)}" />
+                                                                <p:commandButton actionListener="#{partActFormInt.seleccionarRegistro(partAFI)}"
+                                                                                 class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                                 icon="fa fa-image"
+                                                                                 title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                                <p:commandButton actionListener="#{partActFormInt.abrirAlineacionPOA(partAFI)}"
+                                                                                 class="btn btn-sm #{!empty partAFI.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
+                                                                                 title="Alineación a POA." />
+                                                            </p:column>
+                                                            <p:column headerText="Clave" style="width: 100px; text-align: center;">
+                                                                <h:outputText value="#{partAFI.participantesActividadesFormacionIntegral.actividadFormacionIntegral.actividadFormacionIntegral}">
+                                                                </h:outputText>
+                                                            </p:column>
+
+                                                            <p:column headerText="Nombre de la Actividad" style="width: 150px;">
+                                                                <h:outputText value="#{partAFI.participantesActividadesFormacionIntegral.actividadFormacionIntegral.nombre}"/>
+                                                            </p:column>
+
+                                                            <p:column headerText="Fecha Inicio" style="width: 100px; text-align: center;">
+                                                                <h:outputText value="#{partAFI.participantesActividadesFormacionIntegral.actividadFormacionIntegral.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                            </p:column>
+
+                                                            <p:column headerText="Fecha Fin" style="width: 100px; text-align: center;">
+                                                                <h:outputText value="#{partAFI.participantesActividadesFormacionIntegral.actividadFormacionIntegral.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                            </p:column>
+
+                                                            <p:column headerText="Matricula" style="width: 100px; text-align: center;">
+                                                                <h:outputText value="#{partAFI.participantesActividadesFormacionIntegral.matriculaPeriodosEscolares.matricula}"/>
+                                                            </p:column>
+
+                                                            <p:column headerText="Programa Educativo" style="width: 200px; text-align: justify;">
+                                                                <h:outputText value="#{partAFI.programaEducativo.nombre}"/>
+                                                            </p:column>
+
+                                                            <p:column headerText="Género" style="width: 80px; text-align: center;">
+                                                                <h:outputText value="#{partAFI.genero}"/>
+                                                            </p:column>
+
+                                                            <p:column headerText="Grupo" style="width: 150px; text-align: center;">
+                                                                <h:outputText value="#{partAFI.matriculaPeriodosEscolares.cuatrimestre}°#{partAFI.matriculaPeriodosEscolares.grupo}"/>
+                                                            </p:column>
+
+                                                        </p:dataTable>
+                                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
+                                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                                        </p:confirmDialog>
+                                                    </h:form>
+                                                </div>
+                                            </p:tab>
+                                        </c:if>
+                                    </p:tabView>
+                                </center>
+                            </div>
+                        </div>
+                        <!-- Modal Evidencia Actividad de Formación Integral -->
+                        <p:dialog id="modalCargaEvidencia" 
+                                  widgetVar="modalCargaEvidencia" 
+                                  width="700" 
+                                  height="auto"  
+                                  closeOnEscape="true" 
+                                  visible="#{actFormIntegral.dto.forzarAperturaDialogo}"
+                                  showEffect="fade" 
+                                  hideEffect="fade" 
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Carga de evidencias" 
+                                  onHide="actualizar();"
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+                                            <p:spacer width="10" />
+                                            <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
+                                            <p:spacer width="10" />
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <o:form id="formularioEvidencia" 
+                                                    enctype="multipart/form-data" 
+                                                    class="form-inline"  >
+                                                <o:inputFile id="files" 
+                                                             value="#{actFormIntegral.dto.archivos}"  
+                                                             multiple="true" 
+                                                             class="form-control"
+                                                             accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                             acceptMessage="Solo se permiten imágenes JPG/PNG y documentos PDF."
+                                                             maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                             maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                             required="true" 
+                                                             requiredMessage="Debe elegir al menos un archivo." >
+                                                </o:inputFile>
+                                                <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{actFormIntegral.subirEvidencias()}" />
+                                            </o:form>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <h:form id="frmEvidencias" >
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Actividad: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.nombre}" /></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Fecha: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:outputLabel></div>
+                                </div>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
+                                        <p:dataTable id="tblEvidencias" value="#{actFormIntegral.dto.listaEvidencias}" var="evidencia"
+                                                     emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                     paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                     >
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column headerText="Opciones" width="80"/>
+                                                    <p:column headerText="Archivo" />
+                                                    <p:column headerText="Tipo"     width="80" />
+                                                    <p:column headerText="Tamanio"  width="80" />
+                                                </p:row>
+                                            </p:columnGroup>
+                                            <p:column style="text-align: center;">
+                                                <div class="btn-group">
+                                                    <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{actFormIntegral.eliminarEvidencia(evidencia)}" onsuccess="actualizar2();" title="Eliminar evidencia.">
+                                                        <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{actFormIntegral.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                                </div>
+                                            </p:column>
+                                            <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                            <f:facet name="footer">
+                                                <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(actFormIntegral.dto.listaEvidencias)}.</span>
+                                            </f:facet>
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </p:dialog>
+                        <!-- Modal Alineación Actividad de Formación Integral -->
+                        <p:dialog id="modalAlineacion" widgetVar="modalAlineacion" width="900" height="auto"  closeOnEscape="true"
+                                  showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." onHide="actualizar();"
+                                  styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">                        
+                            <h:form id="frmAlineacion" >
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:toolbar>
+                                            <f:facet name="left">
+
+                                            </f:facet>
+                                            <f:facet name="right">
+                                                <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{actFormIntegral.eliminarAlineacion()}" rendered="#{!empty actFormIntegral.dto.registro.actividadAlineada}" >
+                                                    <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{actFormIntegral.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                            </f:facet>
+                                        </p:toolbar>
+                                    </div>
+                                </div>                            
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Actividad: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.nombre}" /></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Fecha: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:outputLabel></div>
+                                </div>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                                <c:set var="col1" value="#{'col-md-2'}" />
+                                <c:set var="col2" value="#{'col-md-10'}" />
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="eje" value="#{actFormIntegral.dto.alineacionEje}" valueChangeListener="#{actFormIntegral.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{actFormIntegral.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                            <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="eje"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="estrategia" value="#{actFormIntegral.dto.alineacionEstrategia}" valueChangeListener="#{actFormIntegral.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{actFormIntegral.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                            <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="lineaAccion" value="#{actFormIntegral.dto.alineacionLinea}" valueChangeListener="#{actFormIntegral.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{actFormIntegral.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                            <p:ajax process="lineaAccion" update="actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="actividad" value="#{actFormIntegral.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{actFormIntegral.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                            <p:ajax process="actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="actividad"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </p:dialog>
+                        <!-- Modal Participantes Actividad de Formación Integral -->
+                        <p:dialog id="modalParticipantes" 
+                                  widgetVar="modalParticipantes" 
+                                  width="700" 
+                                  height="auto"  
+                                  closeOnEscape="true" 
+                                  visible="#{partActFormInt.dto.forzarAperturaDialogo}"
+                                  showEffect="fade" 
+                                  hideEffect="fade" 
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Participantes por Actividad" 
+                                  onHide="actualizarModPart();"
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">
+
+                            <h:form id="frmModalParticipantes" >
+                                <p:remoteCommand name="actualizarModPart" update="@form:tblModalPart" />
+                                <p:dataTable id="tblModalPart" value="#{partActFormInt.dto.listaParticipantesAFI}" var="participanteAct"
+                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                             paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                             >
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column headerText="Matricula"  width="80" />
+                                            <p:column headerText="Programa Educativo"  width="200"/>
+                                            <p:column headerText="Género"  width="80"/>
+                                            <p:column headerText="Grupo"  width="50" />
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAct.matriculaPeriodosEscolares.matricula}" /></p:column>
+                                    <p:column style="text-align: justify;"><h:outputText value="#{participanteAct.carrera}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAct.sexo}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAct.matriculaPeriodosEscolares.cuatrimestre}° #{participanteAct.matriculaPeriodosEscolares.grupo}" /></p:column>
+                                    <f:facet name="footer">
+                                        <span style="font-size: smaller; font-weight: bold;">Total de participantes registrados: #{fn:length(partActFormInt.dto.listaParticipantesAFI)}.</span>
+                                    </f:facet>
+                                </p:dataTable>
+                            </h:form>
+                        </p:dialog>
+                        <!-- Modal Evidencia Participantes Actividad de Formación Integral -->
+                        <p:dialog id="modalCargaEvidenciaPart" 
+                                  widgetVar="modalCargaEvidenciaPart" 
+                                  width="700" 
+                                  height="auto"  
+                                  closeOnEscape="true" 
+                                  visible="#{partActFormInt.dto.forzarAperturaDialogo}"
+                                  showEffect="fade" 
+                                  hideEffect="fade" 
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Carga de evidencias" 
+                                  onHide="actualizar1();"
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar id="tbPart">
+                                        <f:facet name="left">
+                                            <p:spacer width="10" />
+                                            <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
+                                            <p:spacer width="10" />
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <o:form id="formularioEvidenciaPart" 
+                                                    enctype="multipart/form-data" 
+                                                    class="form-inline"  >
+                                                <o:inputFile id="filesPart" 
+                                                             value="#{partActFormInt.dto.archivos}"  
+                                                             multiple="true" 
+                                                             class="form-control"
+                                                             accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                             acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                             maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                             maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                             required="true" 
+                                                             requiredMessage="Debe elegir al menos un archivo." >
+                                                </o:inputFile>
+                                                <h:commandButton id="btnuploadFilesPart" value="Subir archivos" class="btn btn-primary" actionListener="#{partActFormInt.subirEvidencias()}" />
+                                            </o:form>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <h:form id="frmEvidenciasPart" >
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Actividad: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{partActFormInt.dto.registro.participantesActividadesFormacionIntegral.actividadFormacionIntegral.nombre}" /></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Matricula: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{partActFormInt.dto.registro.participantesActividadesFormacionIntegral.matriculaPeriodosEscolares.matricula}" /></div>
+                                </div>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:remoteCommand name="actualizar3" update="@form:tblEvidenciasPart" />
+                                        <p:dataTable id="tblEvidenciasPart" value="#{partActFormInt.dto.listaEvidencias}" var="evidenciaPart"
+                                                     emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                     paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                     >
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column headerText="Opciones" width="80"/>
+                                                    <p:column headerText="Archivo" />
+                                                    <p:column headerText="Tipo"     width="80" />
+                                                    <p:column headerText="Tamanio"  width="80" />
+                                                </p:row>
+                                            </p:columnGroup>
+                                            <p:column style="text-align: center;">
+                                                <div class="btn-group">
+                                                    <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{partActFormInt.eliminarEvidencia(evidenciaPart)}" onsuccess="actualizar3();" title="Eliminar evidencia.">
+                                                        <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidenciaPart.ruta)}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{partActFormInt.descargarEvidencia(evidenciaPart)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                                </div>
+                                            </p:column>
+                                            <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidenciaPart.ruta)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidenciaPart.mime)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidenciaPart.tamanioBytes)}" /></p:column>
+                                            <f:facet name="footer">
+                                                <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(partActFormInt.dto.listaEvidencias)}.</span>
+                                            </f:facet>
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </p:dialog>
+                        <p:dialog id="modalAlineacionPart" widgetVar="modalAlineacionPart" width="900" height="auto"  closeOnEscape="true"
+                                  showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." onHide="actualizar1();"
+                                  styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">                        
+                            <h:form id="frmAlineacionPart" >
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:toolbar>
+                                            <f:facet name="left">
+
+                                            </f:facet>
+                                            <f:facet name="right">
+                                                <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{partActFormInt.eliminarAlineacion()}" rendered="#{!empty partActFormInt.dto.registro.actividadAlineada}" >
+                                                    <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{partActFormInt.alinearRegistro()}" oncomplete="PF('modalAlineacionPart').hide();" />
+                                            </f:facet>
+                                        </p:toolbar>
+                                    </div>
+                                </div>                            
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Actividad: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{partActFormInt.dto.registro.participantesActividadesFormacionIntegral.actividadFormacionIntegral.nombre}" /></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Matricula: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{partActFormInt.dto.registro.participantesActividadesFormacionIntegral.matriculaPeriodosEscolares.matricula}" /></div>
+                                </div>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                                <c:set var="col1" value="#{'col-md-2'}" />
+                                <c:set var="col2" value="#{'col-md-10'}" />
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="eje" value="#{partActFormInt.dto.alineacionEje}" valueChangeListener="#{partActFormInt.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{partActFormInt.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                            <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="eje"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="estrategia" value="#{partActFormInt.dto.alineacionEstrategia}" valueChangeListener="#{partActFormInt.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{partActFormInt.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                            <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="lineaAccion" value="#{partActFormInt.dto.alineacionLinea}" valueChangeListener="#{partActFormInt.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{partActFormInt.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                            <p:ajax process="lineaAccion" update="actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="actividad" value="#{partActFormInt.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{partActFormInt.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                            <p:ajax process="actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="actividad"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </p:dialog>
+                        <div class="row">
+                            <!-- Sección de carga de excel -->
+                            <div class="col-lg-12 col-md-12">
+                                <center>
+                                    <p:tabView>
+                                        <c:if test="#{controladorArchivoActFormIntegral.etapa eq etapa.CARGAR}">
+                                            <p:tab id="twbAFIPrev" title="Actividades de Formación Integral">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <p></p>
+                                                    <center>
+                                                        <h:form id="formPrevisualizacionDatosAFI" prependId="false">
+                                                            <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                                         paginator="true"
+                                                                         rows="10"
+                                                                         rowsPerPageTemplate="5,10,20,30,40,50"
+                                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                         id="dtbActFormInt"
+                                                                         var="actFormInt" value="#{actFormIntegral.dto.lista}"
+                                                                         resizeMode="expand"
+                                                                         tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+
+                                                                <p:column headerText="Clave" style="width: 150px; text-align: center;">
+                                                                    <h:outputText value="#{actFormInt.actividadesFormacionIntegral.actividadFormacionIntegral}"/>
+                                                                </p:column>
+
+                                                                <p:column headerText="Fecha Inicio" style="width: 100px; text-align: center;">
+                                                                    <h:outputText value="#{actFormInt.actividadesFormacionIntegral.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Fecha Fin" style="width: 100px; text-align: center;">
+                                                                    <h:outputText value="#{actFormInt.actividadesFormacionIntegral.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                </p:column>
+
+                                                                <p:column headerText="Nombre de la Actividad" style="width: 250px;">
+                                                                    <h:outputText value="#{actFormInt.actividadesFormacionIntegral.nombre}"/>
+                                                                </p:column>
+
+                                                                <p:column headerText="Tipo de Actividad" style="width: 200px; text-align: center;">
+                                                                    <h:outputText value="#{actFormInt.actividadesFormacionIntegral.actividadTipo.nombre}"/>
+                                                                </p:column>
+
+                                                                <p:column headerText="Tipo de Evento" style="width: 200px; text-align: center;">
+                                                                    <h:outputText value="#{actFormInt.actividadesFormacionIntegral.eventoTipo.nombre}"/>
+                                                                </p:column>
+
+                                                                <p:column headerText="Organiza / Participa" style="width: 200px; text-align: center;">
+                                                                    <h:outputText value="#{actFormInt.actividadesFormacionIntegral.organizaParticipa}"/>
+                                                                </p:column>
+
+                                                                <p:column headerText="Lugar de realización" style="width: 250px;">
+                                                                    <h:outputText value="#{actFormInt.actividadesFormacionIntegral.lugarRealizacion}"/>
+                                                                </p:column>
+
+                                                                <p:column headerText="Duración" style="width: 80px; text-align: center;">
+                                                                    <h:outputText value="#{actFormInt.actividadesFormacionIntegral.duracion}"/>
+                                                                </p:column>
+
+                                                                <p:column headerText="Facilitador o Empresa" style="width: 250px;">
+                                                                    <h:outputText value="#{actFormInt.actividadesFormacionIntegral.facilitadorEmpresa}"/>
+                                                                </p:column>
+
+                                                                <p:column headerText="Equipos Participantes" style="width: 150px; text-align: center;">
+                                                                    <h:outputText value="#{actFormInt.actividadesFormacionIntegral.equiposParticipantes}"/>
+                                                                </p:column>
+
+                                                                <p:column headerText="Equipos Ganadores" style="width: 150px; text-align: center;">
+                                                                    <h:outputText value="#{actFormInt.actividadesFormacionIntegral.equiposGanadores}"/>
+                                                                </p:column>
+
+                                                                <p:column headerText="Objetivo" style="width: 400px;">
+                                                                    <h:outputText value="#{actFormInt.actividadesFormacionIntegral.objetivo}"/>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p></p>
+                                                            <center>
+                                                                <p:commandButton id="btnGuardarAFI" value="Guardar Datos" actionListener="#{actFormIntegral.guardaActformacionIntegral()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatosAFI"/>
+                                                                <p:spacer width="5" />
+                                                                <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{actFormIntegral.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update="@form"/>
+                                                            </center>
+                                                        </h:form>
+                                                    </center>
+                                                </div>
+                                            </p:tab>
+                                            <p:tab id="twbPAFIPrev" title="Participantes de Actividades de Formación Integral">
+                                                <p></p>
+                                                <center>
+                                                    <h:form id="formPrevisualizacionDatosPAFI" prependId="false">
+                                                        <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                                     paginator="true"
+                                                                     rows="10"
+                                                                     rowsPerPageTemplate="5,10,20,30,40,50"
+                                                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                     id="dtbPartActFormacionIntegral"
+                                                                     var="partAFI" value="#{partActFormInt.dto.lista}"
+                                                                     resizeMode="expand"
+                                                                     tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+
+                                                            <p:column headerText="Clave" style="width: 120px; text-align: center;">
+                                                                <h:outputText value="#{partAFI.participantesActividadesFormacionIntegral.actividadFormacionIntegral.actividadFormacionIntegral}">
+                                                                </h:outputText>
+                                                            </p:column>
+                                                            <p:column headerText="Matricula" style="width: 120px; text-align: center;">
+                                                                <h:outputText value="#{partAFI.participantesActividadesFormacionIntegral.matriculaPeriodosEscolares.matricula}"/>
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                        <p></p>
+                                                        <center>
+                                                            <p:commandButton id="btnGuardarPAFI" value="Guardar Datos" actionListener="#{partActFormInt.guardaPartActFormInt()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatosPAFI"/>
+                                                            <p:spacer width="5" />
+                                                            <p:commandButton id="btnCancelarPAFI" value="Cancelar" actionListener="#{partActFormInt.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update="@form"/>
+                                                        </center>
+                                                    </h:form>
+                                                </center>
+                                            </p:tab>
+                                        </c:if>
+                                    </p:tabView>
+                                </center>
+                            </div>
+                        </div>  
+
+                    </div>
+                    <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                        <center>
+                            <h:form id="formularioContenedor" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <o:inputFile id="file" value="#{controladorArchivoActFormIntegral.file}" 
+                                                     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" acceptMessage="Solo se permiten archivos XLSX." 
+                                                     maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." 
+                                                     required="true" requiredMessage="Debe elegir un archivo." >
+                                        </o:inputFile>
+                                        <p:messages for="file" ><p:autoUpdate/></p:messages>
+                                    </div>
+                                    <p:separator />
+                                    <div class="col-md-12">
+                                        <h:commandButton id="btnuploadFile" value="Subir archivo" class="btn btn-primary" action="#{controladorArchivoActFormIntegral.subirExcelActFormInt()}" />
+                                    </div>
+                                </div>
+                            </h:form>
+                            <p:blockUI block="formularioContenedor" widgetVar="bloqueoCargaFile" trigger="formularioContenedor:btnuploadFile">
+                                Cargando archivo espere por favor.<br />
+                            </p:blockUI>
+                        </center>
+                    </p:dialog>
+                    <p:dialog widgetVar="modalCargaArchivoPart" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                        <center>
+                            <h:form id="formularioContenedorPart" enctype="multipart/form-data">
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <o:inputFile id="filePart" value="#{controladorArchivoActFormIntegral.file}" 
+                                                     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" acceptMessage="Solo se permiten archivos XLSX." 
+                                                     maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." 
+                                                     required="true" requiredMessage="Debe elegir un archivo." >
+                                        </o:inputFile>
+                                        <p:messages for="filePart" ><p:autoUpdate/></p:messages>
+                                    </div>
+                                    <p:separator />
+                                    <div class="col-md-12">
+                                        <h:commandButton id="btnuploadFilePart" value="Subir archivo" class="btn btn-primary" action="#{controladorArchivoActFormIntegral.subirExcelPartActFormInt()}" />
+                                    </div>
+                                </div>
+                            </h:form>
+                            <p:blockUI block="formularioContenedorPart" widgetVar="bloqueoCargaFile" trigger="formularioContenedorPart:btnuploadFilePart">
+                                Cargando archivo espere por favor.<br />
+                            </p:blockUI>
+                        </center>
+                    </p:dialog>
+                    <!-- Modal para editar registro seleccionado -->
+                    <p:dialog id="modalEdicion" 
+                              widgetVar="modalEdicion" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{actFormIntegral.dto.forzarAperturaDialogo}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Editar registro" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+
+                        <o:form id="frmModalEdicion" enctype="multipart/form-data"> 
+                            <p:outputPanel>
+                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                    <div class="col-md-12">
+                                        <div class="box box-widget widget-user-2">
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                        <p:outputLabel for="clave" value="Clave"/>                                
+                                                        <p:inputText id="clave" class="form-control" disabled="true" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.actividadFormacionIntegral}"/>
+                                                        <p:message for="clave" display="tooltip" />
+                                                        <hr/>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                        <p:outputLabel for="nombre" value="Nombre de la Actividad"/>
+                                                        <p:inputText id="nombre" class="form-control" disabled="true" size="300" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.nombre}"/>
+                                                        <p:message for="nombre" display="tooltip" />
+                                                        <hr/>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                        <p:outputLabel value="Tipo de Actividad" for="actividad"/>
+                                                        <p:inputText id="actividad" disabled="true" class="form-control" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.actividadTipo.nombre}"/>
+                                                        <p:message for="actividad" display="tooltip" />
+                                                        <hr/>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                        <p:outputLabel for="evento" value="Tipo de Evento"/>
+                                                        <p:inputText id="evento" class="form-control" disabled="true" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.eventoTipo.nombre}"/>
+                                                        <p:message for="evento" display="tooltip" />
+                                                        <hr/>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                        <p:outputLabel for="duracion" value="Duración"/>
+                                                        <p:inputMask id="duracion" class="form-control" mask="99:99:99" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.duracion}"/>
+                                                        <p:message for="duracion" display="tooltip" />
+                                                        <hr/>
+                                                    </div>  
+                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                        <p:outputLabel for="lugar" value="Lugar de realización"/>
+                                                        <p:inputText id="lugar" class="form-control" placeholder="Lugar de realización" size="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.lugarRealizacion}"/> 
+                                                        <p:message for="lugar" display="tooltip" />
+                                                        <hr/>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                        <p:outputLabel for="facilitador" value="Facilitador/a o Empresa"/>
+                                                        <p:inputText id="facilitador" class="form-control" placeholder="Facilitador/a o Empresa" size="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.facilitadorEmpresa}"/> 
+                                                        <p:message for="facilitador" display="tooltip" />
+                                                        <hr/>
+                                                    </div>  
+                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                        <p:outputLabel for="eqpart" value="Equipos Participantes"/>
+                                                        <p:inputText id="eqpart" class="form-control" placeholder="Equipos Participantes" size="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.equiposParticipantes}"/> 
+                                                        <p:message for="eqpart" display="tooltip" />
+                                                        <hr/>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                        <p:outputLabel for="eqgan" value="Equipos Ganadores"/>
+                                                        <p:inputText id="eqgan" class="form-control" placeholder="Equipos Ganadores" size="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.equiposGanadores}"/> 
+                                                        <p:message for="eqgan" display="tooltip" />
+                                                        <hr/>
+                                                    </div>  
+                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                        <p:outputLabel for="objetivo" value="Objetivo"/>
+                                                        <p:inputTextarea id="objetivo" class="form-control" placeholder="Objetivo" maxlength="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.objetivo}"/> 
+                                                        <p:message for="objetivo" display="tooltip" />
+                                                        <hr/>
+                                                    </div>  
+                                                    <div class="col-sm-12 col-md-4 col-lg-3">
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                        <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{actFormIntegral.guardarEdicion()}" 
+                                                                         icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
+                                                                         update="@form"  process="@form" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-3 col-lg-3">
+                                                    </div>  
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </o:form>
+                    </p:dialog>
+                </div>
+            </div>
+        </c:if>
+    </ui:define>
+</ui:composition>

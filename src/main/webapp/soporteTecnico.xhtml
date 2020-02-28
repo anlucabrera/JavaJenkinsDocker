@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:hf="http://highfaces.org"
+                template="#{layoutMB.template}">
+
+    <ui:param name="renderBreadCrumb" value="false"/>
+
+    <ui:define name="head-end">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        <h2 class="align-center">
+            Soporte técnico
+        </h2>
+
+    </ui:define>
+    <ui:define name="body">        
+        <div class="box box-primary">
+            <div class="box box-solid">
+                <div class="box-body">  
+                    <div class="row">     
+                        <div class="col-lg-6 col-md-6 col-xs-12">
+                            <div class="small-box bg-yellow">
+                                <div class="inner">
+                                    <h3>Correo</h3>
+                                    <p>sistemas@utxicotepec.edu.mx</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fa fa-at"/>
+                                </div>
+                            </div>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>    
+    </ui:define>
+</ui:composition>

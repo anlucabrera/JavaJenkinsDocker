@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+
+        <link href="../resources/demo/css/primitives.latest.css?219" media="screen" rel="stylesheet" type="text/css" />
+        <!-- Inicio estilos par proceso electoral -->            
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{controladorFunciones.cargado}">
+        <style>
+            .ui-organigram .ui-organigram-node{
+                padding: 0px;
+            }
+        </style>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <c:if test="#{controladorEmpleado.fechaLimiteFunciones}">
+            <div class="box box-primary">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Fecha límite</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">  
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="info-box">
+                                    <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                    <div class="info-box-content">
+                                        <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                        <span class="info-box-number">#{controladorEmpleado.fechaLimiteRegistroFunciones}.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                
+                    </div>
+                </div>
+            </div>
+        </c:if>
+        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador' || controladorEmpleado.nuevoOBJListaPersonal.clave eq 563}">
+            <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-10">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <h:form >
+                                        <div class="col-lg-3 col-xs-3"/>
+                                        <div class="col-lg-2 col-xs-2">
+                                            <p:commandButton id="comentarios" rendered="#{controladorFunciones.listaPersonalLogeado.areaOperativa eq 28?true:false}" disabled="#{controladorFunciones.totalC eq 0? true:false}" title="#{controladorFunciones.totalC} Observaciones pendientes " value="Observaciones" icon="fa fa-info-circle" class="btn btn-info" oncomplete="PF('dlgObser').show();"/>                                                                    
+                                        </div> 
+                                        <p:outputPanel>            
+                                            <p:autoUpdate/>
+                                            <div class="col-lg-3 col-xs-3">
+                                                <p:commandButton id="puestosEspecificos" rendered="# {controladorFunciones. puestoTipo eq 'Administrativo'?true:false}" value="Nuevo puesto específico" icon="fa fa-id-card-o" class="btn btn-info" oncomplete="PF('dlgNewP').show();"/>                                                                    
+                                            </div> 
+                                        </p:outputPanel>
+                                        <div class="col-lg-2 col-xs-2">
+                                            <p:commandButton id="info" value="Ayuda" icon="fa fa-info-circle" class="btn btn-info" oncomplete="PF('dlgAyuda').show();" rendered="#{controladorEmpleado.fechaLimiteFunciones}"/>                                                                    
+                                        </div> 
+                                        <div class="col-lg-2 col-xs-2">
+                                            <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                                <i class="fa fa-reply"></i>
+                                                <span>Regresar a mi perfil</span>
+                                            </p:link>
+                                        </div> 
+                                    </h:form>
+                                </div>
+                                <p:tabView>
+                                    <p:tab title="Registro de Funciones">
+                                        <h:form id="frmInci"> 
+                                            <p:outputPanel>
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                    <p:outputLabel value="Categoria" />
+                                                                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{controladorFunciones.asignarPerosnalFunciones}">
+                                                                                        <f:selectItem itemValue="0" itemLabel="Todos las funciones"/>
+                                                                                        <f:selectItems value="#{controladorFunciones.categoriasOyEporArea}" var="personal" itemValue="#{personal.clave}" itemLabel="#{controladorFunciones.nombreArea(personal.areaOperativa)} -- #{personal.categoriaOperativa.nombre} -- #{personal.categoriaEspecifica.nombreCategoria}" />
+                                                                                        <p:ajax update="@form" oncomplete="actualizarTabla()" listener="#{controladorFunciones.metodoBase()}"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="eje" display="tooltip" />
+                                                                                    <p:outputLabel for="funcion" style="font-size: large" value="Función"/>                                
+                                                                                    <p:inputTextarea id="funcion" class="form-control" placeholder="Función" value="#{controladorFunciones.nuevoOBJFunciones.nombre}"/>
+                                                                                    <p:message for="funcion" display="tooltip" />
+                                                                                    <hr/> 
+                                                                                    <p:outputLabel for="tipo" style="font-size: large" value="Tipo"/>                                
+                                                                                    <p:selectOneRadio id="tipo" value="#{controladorFunciones.nuevoOBJFunciones.tipo}" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
+                                                                                        <f:selectItem itemValue="GENERAL" itemLabel="General"/>
+                                                                                        <f:selectItem itemValue="ESPECIFICA" itemLabel="Especifica"/>
+                                                                                    </p:selectOneRadio>  
+                                                                                    <p:message for="tipo" display="tooltip" />         
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{controladorFunciones.agregarFuncion()}" process="@form"
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmListaDistinciones')update();" update="@form"
+                                                                                                         disabled="#{controladorFunciones.delateDisable(controladorFunciones.perosnalCategoriasFunciones.categoriaOperativa.categoria)}"/>                                                                                        
+                                                                                    </p:outputPanel>                                                                                    
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>                                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:outputPanel>
+                                        </h:form>
+                                        <h:form id="frmListaDistinciones">
+                                            <p:outputPanel >
+                                                <p:remoteCommand name="actualizarTabla" actionListener="#{controladorFunciones.metodoBase()}" update="tblDistinciones" />
+                                                <p:dataTable id="tblDistinciones" value="#{controladorFunciones.funcioneses}" var="funciones" rendered="true"
+                                                             emptyMessage="No premios registrados" paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30"
+                                                             editable="true" editMode="row">
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column colspan="3" rowspan="2" headerText="Opciones" style="width:150px" />
+                                                            <p:column rowspan="2" headerText="Categoría/Puesto" style="width: 150px;" />
+                                                            <p:column rowspan="2" headerText="Área" style="width: 150px;" />
+                                                            <p:column rowspan="2" headerText="Categoría/Puesto especifico" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Descripción" style="width: 600px;"/>
+                                                            <p:column rowspan="2" headerText="Tipo" style="width: 100px;"/> 
+                                                        </p:row>
+                                                    </p:columnGroup>
+
+                                                    <p:ajax event="rowEdit" listener="#{controladorFunciones.actualizarFuncion}" update="@this" oncomplete="actualizarTabla()"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+
+                                                    <p:column>
+                                                        <p:commandButton actionListener="#{controladorFunciones.eliminarFuncion(funciones)}" update="tblDistinciones" oncomplete="actualizarTabla()" 
+                                                                         icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación"
+                                                                         disabled="#{controladorFunciones.delateDisable(funciones.categoriaOperativa.categoria)}">
+                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación de la Funcion #{funciones.categoriaOperativa.nombre}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column>
+
+                                                    <p:column >
+                                                        <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" 
+                                                             style="align-content: center; visibility:#{controladorFunciones.editVisible(funciones.categoriaOperativa.categoria) eq false?'hidden':'visible'};">
+                                                            <a href="#" class="ui-row-editor-pencil">
+                                                                <span class="ui-icon ui-icon-pencil"></span>
+                                                            </a>
+                                                            <a href="#" class="ui-row-editor-check">
+                                                                <span class="ui-icon ui-icon-check ui-c"></span>
+                                                            </a>
+                                                            <p:spacer width="20px"/>
+                                                            <a href="#" class="ui-row-editor-close">
+                                                                <span class="ui-icon ui-icon-close ui-c"></span>
+                                                            </a>
+                                                        </div>
+                                                    </p:column >
+                                                    <p:column >
+                                                        <p:commandButton id="btnRecurso" process="@this" update=":frmComent:pnlAgregarComentario" oncomplete="PF('dlgcoment').show()" icon="fa fa-comments" 
+                                                                         actionListener="#{controladorFunciones.consultarComentariosFunciones(funciones)}"
+                                                                         styleClass="#{funciones.comentariosfuncionesList.size() eq 0?'btn-primary':'btn-success'}"
+                                                                         disabled="#{controladorFunciones.comentDisable(funciones.categoriaOperativa.categoria)}"
+                                                                         title="Agregar recurso" onsuccess="actualizarTabla()">
+                                                            <f:setPropertyActionListener target="#{controladorFunciones.nuevoOBJFuncionesSelect}" value="#{funciones}" />
+                                                        </p:commandButton>
+                                                    </p:column>
+
+                                                    <p:column >
+                                                        <h:outputText value="#{funciones.categoriaOperativa.nombre}" />
+                                                    </p:column>                                         
+                                                    <p:column >
+                                                        <h:outputText value="#{controladorFunciones.nombreArea(funciones.areaOperativa)}" />
+                                                    </p:column>                                      
+                                                    <p:column >
+                                                        <h:outputText value="#{funciones.categoriaEspesifica.nombreCategoria}" />
+                                                    </p:column> 
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{funciones.nombre}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputTextarea value="#{funciones.nombre}"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{funciones.tipo}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <h:selectOneMenu value="#{funciones.tipo}">
+                                                                    <f:selectItem itemValue="#{'GENERAL'}" itemLabel="#{'GENERAL'}"/>
+                                                                    <f:selectItem itemValue="#{'ESPECIFICA'}" itemLabel="#{'ESPECIFICA'}"/>
+                                                                </h:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                </p:dataTable>
+                                            </p:outputPanel>                                 
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
+                                        </h:form>    
+                                    </p:tab>
+                                    <p:tab title="Funciones">
+                                        <c:if test="#{!controladorEmpleado.fechaLimiteFunciones}">
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header">Función genérica</h5>
+                                                                    <c:forEach var="i" begin="0" end="#{controladorEmpleadoLogeado.listaFuncionesLogeado.size()-1}">
+                                                                        <c:set var="eje" value="#{controladorEmpleadoLogeado.listaFuncionesLogeado.get(i)}"/>
+                                                                        <c:if test="#{eje.tipo eq 'GENERAL'}">
+                                                                            <br/>
+                                                                            <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                            <br/>
+                                                                        </c:if>                                                                    
+                                                                    </c:forEach>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header">Funciones específicas</h5>
+                                                                    <c:forEach var="i" begin="0" end="#{controladorEmpleadoLogeado.listaFuncionesLogeado.size()-1}">
+                                                                        <c:set var="eje" value="#{controladorEmpleadoLogeado.listaFuncionesLogeado.get(i)}"/>
+                                                                        <c:if test="#{eje.tipo ne 'GENERAL'}">
+                                                                            <br/>
+                                                                            <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                            <br/>
+                                                                        </c:if>                                                                    
+                                                                    </c:forEach>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                    </p:tab>
+                                    <p:tab title="Organigrama oficial">
+                                        <h:form id="form1">
+                                            <p:growl id="grow1" />
+
+                                            <div class="row">
+                                                <div class="col-md-.5"/>
+                                                <div class="col-md-12">
+                                                    <p:organigram id="organigram"
+                                                                  widgetVar="organigram"
+                                                                  value="#{organigramView2.rootNode}"
+                                                                  var="node"
+                                                                  leafNodeConnectorHeight="#{organigramView2.leafNodeConnectorHeight}"
+                                                                  autoScrollToSelection="#{organigramView2.autoScrollToSelection}"
+                                                                  zoom="#{organigramView2.zoom}"
+                                                                  selection="#{organigramView2.selection}"
+                                                                  style="#{organigramView2.style}">
+
+                                                        <p:organigramNode>
+                                                            <h:outputText value="#{node.data}" />
+                                                        </p:organigramNode>
+
+                                                        <p:organigramNode type="root"
+                                                                          style="border-radius: 10px;">
+                                                            <h:outputText value="#{node.data}" />
+                                                        </p:organigramNode>
+
+                                                        <p:organigramNode type="division"
+                                                                          styleClass="division"
+                                                                          icon="ui-icon-suitcase"
+                                                                          iconPos="left"
+                                                                          style="border-radius: 15px;"
+                                                                          class="collapsed">
+                                                            <h:outputText value="#{node.data}" />
+                                                        </p:organigramNode>
+
+                                                        <p:organigramNode type="division2"
+                                                                          styleClass="division2"
+                                                                          icon="ui-icon-suitcase"
+                                                                          iconPos="left"
+                                                                          style="border-radius: 15px;"
+                                                                          class="collapsed">
+                                                            <h:outputText value="#{node.data}" />
+                                                        </p:organigramNode>
+
+                                                        <p:organigramNode type="division3"
+                                                                          styleClass="division3"
+                                                                          icon="ui-icon-suitcase"
+                                                                          style="border-radius: 15px;"
+                                                                          iconPos="left">
+                                                            <h:outputText value="#{node.data}" />
+                                                        </p:organigramNode>
+
+                                                        <p:organigramNode type="employee"
+                                                                          styleClass="employee"
+                                                                          icon="ui-icon-person"
+                                                                          rendered="false">
+                                                            <h:outputText value="#{node.data}" />
+                                                        </p:organigramNode>
+                                                    </p:organigram>
+                                                </div>
+                                            </div>
+
+                                        </h:form>
+
+                                    </p:tab>
+                                    <p:tab title="Puestos específicos">
+                                        <h:form id="frmBajas">
+                                            <p:dataTable id="dtbBajas" var="ByR" paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30"
+                                                         value="#{controladorFunciones.subordinadosPersonals}" editable="true" style="margin-bottom:20px">
+                                                <f:facet name="header">
+                                                    Subordinados y puestos específicos
+                                                </f:facet>
+
+                                                <p:ajax event="rowEdit" listener="#{controladorFunciones.onRowEditPersonal}" update="dtbBajas" />
+                                                <p:ajax event="rowEditCancel" listener="#{controladorFunciones.onRowCancel}" update="dtbBajas" />
+
+                                                <p:column headerText="Clave"
+                                                          sortBy="#{ByR.clave}" 
+                                                          filterBy="#{ByR.clave}" 
+                                                          filterMatchMode="contains" 
+                                                          style="width: 75px">
+                                                    <h:outputText value="#{ByR.clave}" />
+                                                </p:column>
+
+                                                <p:column headerText="Nombre"
+                                                          sortBy="#{ByR.nombre}" 
+                                                          filterBy="#{ByR.nombre}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{ByR.nombre}" />
+                                                </p:column>
+
+                                                <p:column headerText="Actividad"
+                                                          sortBy="#{ByR.categoriaOperativa.nombre}" 
+                                                          filterBy="#{ByR.categoriaOperativa.nombre}" 
+                                                          filterMatchMode="contains">
+                                                    <h:outputText value="#{ByR.categoriaOperativa.nombre}" />
+                                                </p:column>
+
+                                                <p:column headerText="Categoría especifica"
+                                                          sortBy="#{ByR.categoriaEspecifica.nombreCategoria}" 
+                                                          filterBy="#{ByR.categoriaEspecifica.nombreCategoria}" 
+                                                          filterMatchMode="contains">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="#{ByR.categoriaEspecifica.nombreCategoria}"/></f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{ByR.categoriaEspecifica.categoriaEspecifica}" style="width:100%">
+                                                                <f:selectItems value="#{controladorFunciones.categoriasespecificasfuncioneses}" var="estatus" itemLabel="#{estatus.nombreCategoria}" itemValue="#{estatus.categoriaEspecifica}" />
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+
+                                                <p:column style="width:32px">
+                                                    <p:rowEditor />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:form>
+                                    </p:tab>                                   
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </p:panel>
+
+            <h:form id="frmComent" >
+                <p:dialog header="Comentarios para: #{controladorFunciones.nuevoOBJFuncionesSelect.nombre}" widgetVar="dlgcoment" modal="true" showEffect="fade" 
+                          hideEffect="fade" resizable="false" width="650" closeOnEscape="true" height="650px"
+                          visible="#{controladorFunciones.visibleComentarios}">
+                    <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
+                        <p:outputPanel rendered="#{controladorFunciones.listaPersonalLogeado.areaOperativa eq 2?false:true}" style="visibility:#{controladorFunciones.listaPersonalLogeado.areaOperativa eq 2?'hidden':'visible'};">
+                            <p:autoUpdate/>
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <p:outputLabel value="Comentario" for="ct"/>
+                                <p:inputTextarea id="ct" value="#{controladorFunciones.nuevoOBJComentariosfunciones.comentario}" required="true" requiredMessage="El comentario es obligatorio." class="col-md-12"/>
+                                <p:message for="ct"/>  
+                            </div>
+                            <p:commandButton id="btnAceptar" value="Guardar comentario" class="btn btn-primary" actionListener="#{controladorFunciones.crearComentariosfunciones()}" 
+                                             process="@this" icon="fa fa-plus" styleClass="btn-primary" update="tblDistinciones"/>                                                 
+
+                        </p:outputPanel>
+                        <p:outputPanel id="actividadesVarias">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <p:remoteCommand name="actualizarTabla2" actionListener="#{controladorFunciones.metodoBase()}" update="tblDistinciones" />
+
+                                <p:dataList id="tblDistinciones" value="#{controladorFunciones.comentariosfuncioneses}" var="comentario" type="unordered" 
+                                            itemType="none" paginator="true" rows="5" styleClass="paginated">
+                                    <f:facet name="header">
+                                        Comentarios
+                                    </f:facet>    
+                                    <h:outputText value="#{comentario.idPersonal.nombre}:" style="display:inline-block; font-style: oblique"/>
+                                    <br/>
+                                    <h:outputText value="#{comentario.comentario}" style="display:inline-block"/>                                
+                                    <hr/>
+                                </p:dataList>                               
+                            </div>
+                        </p:outputPanel>
+                    </p:panelGrid>
+                </p:dialog> 
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog> 
+            </h:form>
+
+            <h:form id="frmayuda" >
+                <p:dialog id="dlgAyuda" header="Ayuda" widgetVar="dlgAyuda" minimizable="true" maximizable="true" position="center">
+                    <f:facet name="footer">
+                        <p:commandButton id="btncancelar" value="Cerrar" class="btn btn-primary" icon="fa fa-times" process="@form" update="@form" onsuccess="PF('dlgAyuda').hide();"/>
+                    </f:facet>
+                    <p:outputPanel>            
+                        <p:autoUpdate/>
+                        <h:panelGrid columns="1"  class="col-md-12">
+                            <object width="800" height="400" data="../../resources/documentos/registro_de_funciones.pdf" style="#{utilidadesAcceso.procesoElectoralActivo eq false?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}"/>
+                        </h:panelGrid>
+                    </p:outputPanel>
+                </p:dialog>
+            </h:form>
+
+            <h:form id="frmNewP" >
+                <p:dialog id="dlgNewP" header="Puesto especifico" widgetVar="dlgNewP" minimizable="true" maximizable="true" position="center">
+                    <f:facet name="footer">
+                        <p:commandButton id="btncancelar" value="Cancelar" class="btn btn-primary" icon="fa fa-times" process="@form" update="@form" onsuccess="PF('dlgNewP').hide();"/>
+                        <p:commandButton id="btnAceptar" value="Guarda puesto específico" class="btn btn-primary" actionListener="#{controladorFunciones.agregarYactualizarCategoriasEspecificas()}" icon="fa fa-check" process="@form" update="@form" oncomplete="PF('dlgNewP').hide();"/>
+                    </f:facet>
+                    <p:outputPanel style="max-width: 650px; max-height: 600px">
+                        <p:autoUpdate/>
+                        <p:scrollPanel style="width:600px">
+                            <h:panelGrid columns="1"  class="col-md-12">
+                                <p:outputLabel value="Nombre del puesto específico" for="nomPE"/>
+                                <p:inputText id="nomPE" value="# {controladorFunciones.nombreCategoriaEspecifica}" style="text-align: justify" class="col-md-12"/>
+                                <p:message for="nomPE"/>
+
+                                <!--p:outputLabel value="Empleados para nuevo puesto específico" for="empleNP"/>
+                                <p:selectManyCheckbox id="empleNP" value="# {controladorFunciones.listaClavesEmpleados}" layout="responsive" columns="1">
+                                    <f:selectItems value="# {controladorFunciones.subordinadosListaPersonals}" var="subordinado" itemLabel="# {subordinado.nombre} - # {subordinado.categoriaOperativaNombre}" itemValue="# {subordinado.clave}" />
+                                </p:selectManyCheckbox>
+                                <p:message for="empleNP"/-->
+                            </h:panelGrid>
+                        </p:scrollPanel>
+                    </p:outputPanel>
+                </p:dialog>                
+            </h:form>
+
+            <h:form id="frmObser" >
+                <p:dialog id="dlgObser" header="Comentarios" widgetVar="dlgObser" minimizable="true" maximizable="true" position="center">
+                    <p:dataTable id="tblComents"  value="#{controladorFunciones.comentariosfuncioneses}"  var="comentario"
+                                 paginator="true" rows="5"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,20,25,30"
+                                 emptyMessage="No se encontraron funciones." rendered="true"
+                                 editable="true" style="width:1000px; margin-bottom:20px">
+
+                        <p:ajax event="rowEdit" listener="#{controladorFunciones.onRowEditComent}" update="tblComents" />
+                        <p:ajax event="rowEditCancel" listener="#{controladorFunciones.onRowCancel}" update="tblComents" />
+
+                        <p:column headerText="Empleado" 
+                                  sortBy="#{comentario.idPersonal.nombre}" 
+                                  filterBy="#{comentario.idPersonal.nombre}" 
+                                  filterMatchMode="contains"
+                                  style="width:130px; text-align: justify">
+                            <h:outputText value="#{comentario.idPersonal.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Categoría de función" 
+                                  sortBy="#{comentario.idFuncion.categoriaOperativa.nombre}" 
+                                  filterBy="#{comentario.idFuncion.categoriaOperativa.nombre}" 
+                                  filterMatchMode="contains"
+                                  style="width:150px; text-align: justify">
+                            <h:outputText value="#{comentario.idFuncion.categoriaOperativa.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Función" 
+                                  sortBy="#{comentario.idFuncion.nombre}" 
+                                  filterBy="#{comentario.idFuncion.nombre}" 
+                                  filterMatchMode="contains"
+                                  style="width:200px; text-align: justify">
+                            <h:outputText value="#{comentario.idFuncion.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Observación" 
+                                  sortBy="#{comentario.comentario}" 
+                                  filterBy="#{comentario.comentario}" 
+                                  filterMatchMode="contains"
+                                  style="width:200px; text-align: justify">
+                            <h:outputText value="#{comentario.comentario}" />
+                        </p:column>
+
+                        <p:column headerText="Fecha" 
+                                  sortBy="#{comentario.fechaHoraC}" 
+                                  filterBy="#{comentario.fechaHoraC}" 
+                                  filterMatchMode="contains"
+                                  style="width:130px; text-align: justify">
+                            <h:outputLabel value="#{comentario.fechaHoraC}"><f:convertDateTime locale="es" pattern="dd/MMMM/yyyy HH:mm:ss"/></h:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="Estatus" 
+                                  sortBy="#{comentario.esatus}" 
+                                  filterBy="#{comentario.esatus}" 
+                                  filterMatchMode="contains"
+                                  style="width:130px; text-align: justify">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{comentario.esatus eq 0?'Pendiente':'Resuelta'}" /></f:facet>
+                                <f:facet name="input">
+                                    <h:selectOneMenu value="#{comentario.esatus}">
+                                        <f:selectItems itemLabel="#{'Pendiente'}" itemValue="#{0}" />
+                                        <f:selectItems itemLabel="#{'Resuelta'}" itemValue="#{1}" />
+                                    </h:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Editar" style="width:50px">
+                            <p:rowEditor />
+                        </p:column>                  
+                    </p:dataTable>  
+                </p:dialog>
+            </h:form>   
+
+
+        </c:if>
+        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Administrativo' || controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Docente'}">
+            <h1>
+                Esta página está disponible solo para directivos.
+            </h1>
+        </c:if>
+            </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

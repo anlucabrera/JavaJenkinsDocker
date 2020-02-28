@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="head-end">
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+            .ui-selectbooleanbutton.ui-button{
+                top: 10px;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="title">
+        Administración de evaluaciones al personal
+    </ui:define>
+    <ui:define name="description">
+
+    </ui:define>
+    <ui:define name="body">
+        <c:if test="#{adminEvaluacion360.cargado}">
+        <adm:breadcrumb title="Admin 360"/>
+        <h:form id="frm" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:outputPanel >
+                            <p:autoUpdate/>
+                            <p:toolbar id="tb">
+                                <f:facet name="right">
+                                    <h:panelGrid columns="12">
+                                        <p:selectOneMenu value="#{adminEvaluacion360.nivelOperacion}" id="som1" >
+                                            <f:selectItem itemLabel="Seleccione una opcion" />
+                                            <!--<f:selectItem itemValue="2" itemDescription="Visualiza y administra las combinaciones de evaluaciones"  itemLabel="Combinaciones" />-->
+                                            <f:selectItem itemValue="1" itemDescription="Agrega una nueva evaluación" itemLabel="Nueva Evaluacion" />
+                                            <f:selectItem itemValue="3" itemDescription="Listado de evaluaciones" itemLabel="Lista de Evaluaciones" />
+                                            <p:ajax process="som1" update="pnl1" />
+                                        </p:selectOneMenu>
+                                        <p:spacer width="15px"/>
+
+                                        <p:outputPanel id="pnl1" >
+                                            <p:autoUpdate/>
+                                            <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq(2)}" style="margin-top: 4px; margin-bottom: -3px;">
+                                                <p:spacer width="15px"/>
+                                                <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}">
+                                                    <p:ajax process="@this" update="@form:tb"/>
+                                                </p:selectBooleanButton>
+                                                <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño°" value="#{adminEvaluacion360.edesempenio}">
+                                                    <p:ajax process="@this" update="@form:tb"/>
+                                                </p:selectBooleanButton>
+                                            </p:outputPanel>
+
+                                            <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq (1)}">
+                                                <p:spacer width="15px"/>
+                                                <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}">
+                                                    <p:ajax process="@this" update="@form:tb"/>
+                                                </p:selectBooleanButton>
+                                                <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño" value="#{adminEvaluacion360.edesempenio}" >
+                                                    <p:ajax process="@this" update="@form:tb"/>
+                                                </p:selectBooleanButton>
+                                                <p:commandButton class="btn btn-primary" value="Agregar" icon="fa fa-plus" oncomplete="PF('modalNEvaluacion').show()" actionListener="#{adminEvaluacion360.validarNuevaEvaluacion()}"/>
+                                            </p:outputPanel>
+
+                                            <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq (3)}" id="nivel3">
+                                                <p:spacer width="15px"/>
+                                                <f:ajax execute="nivel3">
+                                                    <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}" >
+                                                        <p:ajax process="@this" update="@form:tb"/>
+                                                    </p:selectBooleanButton>
+                                                    <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño°" value="#{adminEvaluacion360.edesempenio}" >
+                                                        <p:ajax process="@this" update="@form:tb"/>
+                                                    </p:selectBooleanButton>
+                                                    <p:commandButton class="btn btn-primary" value="Ver" icon="fa fa-eye"  actionListener="#{adminEvaluacion360.verListaEvaluaciones()}" process="@this" update="tblEvaluaciones"/>
+                                                </f:ajax>
+                                            </p:outputPanel>
+                                        </p:outputPanel>
+                                    </h:panelGrid>
+                                </f:facet>
+                            </p:toolbar>
+                            <p:sticky target="tb" />
+                        </p:outputPanel>
+                    </div>
+                    <div class="box box-solid">
+                        <div class="box-body">          
+                            <p:panel id="panelTblCombinaciones">
+                                <p:dataTable id="tblEvaluaciones" lazy="false" value="#{adminEvaluacion360.listaEvaluaciones}"   var="listaEncuesta" filterDelay="700" 
+                                             paginator="true" rows="5"
+                                             rowsPerPageTemplate="10,20,30,40,50"
+                                             emptyMessage="No se encontrarono registros"  >
+                                    <f:facet name="footer">
+                                        Total de registros: #{adminEvaluacion360.listaEvaluaciones.size()}
+                                    </f:facet>
+                                    <p:column headerText="Periodo" filterBy="#{listaEncuesta.periodo}" filterMatchMode="contains" sortBy="#{listaEncuesta.periodo}"   >                           
+                                        <h:outputText value="#{listaEncuesta.periodo}" />
+                                    </p:column>
+                                    <p:column headerText="Fecha inicio"  filterBy="#{listaEncuesta.fechaI}" filterMatchMode="contains" sortBy="#{listaEncuesta.fechaI}"  >                           
+                                        <h:outputText value="#{listaEncuesta.fechaI}" >
+                                            <f:convertDateTime locale="es" pattern="dd' de ' MMMM' de ' YYYY"/>
+                                        </h:outputText> 
+                                    </p:column>
+
+                                    <p:column headerText="Fecha fin" filterBy="#{listaEncuesta.fechaF}" filterMatchMode="contains" sortBy="#{listaEncuesta.fechaF}"  >     
+                                        <h:outputText value="#{listaEncuesta.fechaF}" >
+                                            <f:convertDateTime locale="es" pattern="dd' de ' MMMM' de ' YYYY"/>
+                                        </h:outputText> 
+                                    </p:column>
+
+                                    <p:column headerText="Estatus" filterBy="#{listaEncuesta.status}" filterMatchMode="contains"    sortBy="#{listaEncuesta.status}"  >   
+
+                                        <h:outputText value="#{listaEncuesta.status}" title="#{listaEncuesta.status}" />
+
+                                    </p:column>
+
+                                    <p:column headerText="Acciones" >                           
+                                        <p:commandButton  class="btn btn-primary " icon="fa fa-clipboard" title="Listado de combinaciones por evaluacion" value="Combinaciones"
+                                                          actionListener="#{adminEvaluacion360.getListaCombinaciones(listaEncuesta.evaluacion)}" 
+                                                          oncomplete="PF('modalCombioonacione').show()"
+                                                          update="modalcombinaciones" />
+                                        <p:commandButton  class="btn btn-info " icon="fa fa-book" title="Edita las fechas de apertura y cierre de las evaluaciones" value="Editar"
+                                                          actionListener="#{adminEvaluacion360.validaEdicion(listaEncuesta.evaluacion)}"
+                                                          oncomplete="PF('modalEdvaluacion').show()"/>
+                                        <!--<p:commandButton  class="btn btn-danger " icon="fa fa-trash"/>-->
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                            <!--# {adminEvaluacion360.resultados}-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        <!--Crea Evaluacion-->
+        <p:dialog widgetVar="modalNEvaluacion" modal="true" showEffect="fade" hideEffect="fade" resizable="false" >
+            <p:outputPanel id="pnlGeneralModal" >
+                <p:autoUpdate/>
+                <h:form>
+                    <p:outputPanel id="pnlAE360" rendered="#{adminEvaluacion360.e360b and !adminEvaluacion360.edesempenio}" >
+                        <p:autoUpdate/>
+                        <p:outputLabel value="Agrega una nueva evaluacion 360°" />
+                        <br/><br/>
+                        <f:ajax execute="pnlNEB" >
+                            <p:outputPanel id="pnlNEB">
+                                <p:outputLabel value="Periodo de evaluación"/>
+                                <p:selectOneMenu id="som360P" value="#{adminEvaluacion360.periodoEvaluacion}"  autoWidth="true" effect="fade" required="true" requiredMessage="Debe seleccionar un periodo.">
+                                    <f:selectItem itemLabel="Elija un periodo: " itemValue="" />
+                                    <f:selectItems value="#{adminEvaluacion360.SIPeriodos}" 
+                                                   var="periodo" itemValue="#{periodo.value}" itemLabel="#{periodo.label}" 
+                                                   itemDescription="#{periodo.description}"  >
+                                    </f:selectItems>
+                                </p:selectOneMenu>
+                                <p:message for="som360P" />
+                                <br/>
+                                <p:outputLabel value="Selecione un rango de fechas"/>
+                                <br/>
+                                De: <p:calendar id="fechaA" value="#{adminEvaluacion360.fechaA}" locale="es" pattern="dd/MM/yyyy" readonlyInput="true" required="true" requiredMessage="Seleccione una fecha de inicio." />
+                                <p:message for="fechaA" />
+                                a: <p:calendar id="fechaB" value="#{adminEvaluacion360.fechaB}" locale="es" pattern="dd/MM/yyyy" readonlyInput="true" required="true" requiredMessage="Seleccione una fecha de fin." />
+                                <p:message for="fechaB" />
+                            </p:outputPanel>
+                        </f:ajax>
+                        <div style="text-align: center;">
+                            <p:commandButton process="pnlAE360" update="panelTblCombinaciones"  icon="fa fa-floppy-o" value="Guardar" title="Guarda una nueva evaluación 360"
+                                             class="btb btn-primary" actionListener="#{adminEvaluacion360.genera360()}">
+                                <p:confirm header="Mensaje" message="¿Desea confirmar la creación de combinaciones, es caso de existir se reemplazan?" icon="ui-icon-alert"  />
+                            </p:commandButton>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
+                                    <p:commandButton value="Continuar" class="btn btn-primary"  styleClass="ui-confirmdialog-yes" icon="fa fa-check-circle" />
+                                    <p:commandButton value="Cerrar" class="btn btn-warning"  styleClass="ui-confirmdialog-no" icon="fa fa-times-circle" oncomplete="location.reload(true)"/>
+                            </p:confirmDialog>
+                        </div>
+                    </p:outputPanel>
+
+                    <p:outputPanel id="pnlAED" rendered="#{adminEvaluacion360.edesempenio and !adminEvaluacion360.e360b}" >
+                        <p:autoUpdate/>
+                        <p:outputLabel value="Agrega una nueva evaluacion Desempeño" />
+                        <br/><br/>
+                        <p:outputLabel value="Periodo de evaluació"/>
+                        <p:selectOneMenu id="domDes" value="#{adminEvaluacion360.periodoEvaluacion}"  autoWidth="true" effect="fade" >
+                            <f:selectItem itemLabel="Elija un periodo: " itemValue="" />
+                            <f:selectItems value="#{adminEvaluacion360.SIPeriodos}" 
+                                           var="periodo" itemValue="#{periodo.value}" itemLabel="#{periodo.label}" 
+                                           itemDescription="#{periodo.description}"  >
+                            </f:selectItems>
+                        </p:selectOneMenu>
+                        <br/>
+                        <p:outputLabel value="Selecione un rango de fechas"/>
+                        <br/>
+                        <p:calendar value="#{adminEvaluacion360.fechaA}" locale="es" /> <p:calendar value="#{adminEvaluacion360.fechaB}" locale="es" />
+                        <center>
+                            <br/><br/>
+                            <p:commandButton process="pnlAED" update="panelTblCombinaciones"  icon="fa fa-floppy-o" value="Guradar" title="Guarda una nueva evaluación 360" 
+                                             class="btb btn-primary" actionListener="#{adminEvaluacion360.generaEvlaucionDesempenio()}" 
+                                             oncomplete="alert('La evaluacion fue creada Correctamente!'); PF('modalNEvaluacion').hide()"/>
+                        </center>        
+                    </p:outputPanel>
+                    <p:outputPanel rendered="#{adminEvaluacion360.edesempenio and adminEvaluacion360.e360b}">
+                        <h1>Solo debe seleccionar un tipo de evaluacion a la vez!</h1>
+                    </p:outputPanel>
+                </h:form>
+            </p:outputPanel>
+        </p:dialog>
+        <!--edita evaluacion-->
+        <p:dialog widgetVar="modalEdvaluacion" header="Edición de evaluaciones" modal="true" showEffect="fade" hideEffect="fade" resizable="false"  >
+            <p:outputPanel id="pnlEdEva" >
+                <p:autoUpdate/>
+                <h:form>
+                    <p:outputPanel id="pnlAE360"  rendered="#{adminEvaluacion360.e360b}">
+                        <p:outputLabel value="Agrega una nueva evaluacion 360°" />
+                        <br/><br/>
+                        <p:outputLabel value="Modifique el lapso de tiempo para la evaluación seleccionada"/>
+
+                        <br/>
+                        <p:calendar value="#{adminEvaluacion360.fechaA}" locale="es" /> <p:calendar value="#{adminEvaluacion360.fechaB}" locale="es" />
+                        <center>
+                            <br/><br/>
+                            <p:commandButton process="pnlAE360" update="panelTblCombinaciones"  icon="fa fa-floppy-o" value="Guradar" title="Guarda una nueva evaluación 360" 
+                                             class="btb btn-primary" actionListener="#{adminEvaluacion360.editaEvaluacion(adminEvaluacion360.evEd)}" 
+                                             oncomplete="alert('Le evaluacion fue editada correctamente!'); PF('modalEdvaluacion').hide()"/>
+                        </center>        
+                    </p:outputPanel>
+
+                    <p:outputPanel id="pnlAED"  rendered="#{adminEvaluacion360.edesempenio}" >
+                        <p:outputLabel value="Modifique el lapso de fechas para la evaluación seleccionada" />
+                        <br/>
+                        <p:calendar value="#{adminEvaluacion360.fechaA}" locale="es" /> <p:calendar value="#{adminEvaluacion360.fechaB}" locale="es" />
+                        <center>
+                            <br/><br/>
+                            <p:commandButton process="pnlAED" update="panelTblCombinaciones"  icon="fa fa-floppy-o" value="Guradar" title="Guarda una nueva evaluación 360" 
+                                             class="btb btn-primary" actionListener="#{adminEvaluacion360.editaEvaluacion(adminEvaluacion360.evEd)}" 
+                                             oncomplete="alert('La evaluacion fue modificada correctamente'); PF('modalEdvaluacion').hide()"/>
+                        </center>        
+                    </p:outputPanel>
+                </h:form>
+            </p:outputPanel>
+        </p:dialog>
+        <!--combinaciones--> 
+        <p:dialog  id="modalcombinaciones" widgetVar="modalCombioonacione" modal="true" showEffect="fade" hideEffect="fade" resizable="false" header="Listado de combinaciones" >
+
+            <p:outputPanel id="pnlCombinacion" >
+                <h:form>
+                    <p:outputPanel id="pnlAE360"  rendered="#{adminEvaluacion360.e360b }" >
+                        <p:dataTable id="tblCombinacion360" lazy="false" value="#{adminEvaluacion360.listaCombinacion360}"   
+                                     filteredValue="#{adminEvaluacion360.listaCombinaciones360Filtro}"
+                                     var="listaEncuesta" filterDelay="700" 
+                                     paginator="true" rows="7"
+                                     rowsPerPageTemplate="10,20,30,40,50"
+                                     emptyMessage="No se encontrarono registros"  >
+                            <f:facet name="footer">
+                                Total de registros: #{adminEvaluacion360.listaCombinacion360.size()}
+                            </f:facet>
+                            <f:facet name="header">
+                                <div style="align-content: flex-end">
+                                    <p:commandButton  class="btn btn-primary " value="Nueva combinacion" icon="fa fa-plus" title="Agrega nueva combinacion"  oncomplete="PF('modalNCombinacion360').show()"/>
+                                </div>
+                            </f:facet>
+                            <p:column headerText="# nomina" filterBy="#{listaEncuesta.nominaEvaluado}" filterMatchMode="contains" sortBy="#{listaEncuesta.nominaEvaluado}"   >                           
+                                <h:outputText value="#{listaEncuesta.nominaEvaluado}" />
+                            </p:column>
+                            <p:column headerText="Nombre evaluado" filterBy="#{listaEncuesta.nombreEvaluado}" filterMatchMode="contains" sortBy="#{listaEncuesta.nombreEvaluado}"   >                           
+                                <h:outputText value="#{listaEncuesta.nombreEvaluado}" />
+                            </p:column>
+                            <p:column headerText="Area evaluado" filterBy="#{listaEncuesta.AOperativaEvaluado}" filterMatchMode="contains" sortBy="#{listaEncuesta.AOperativaEvaluado}"   >                           
+                                <h:outputText value="#{listaEncuesta.AOperativaEvaluado}" />
+                            </p:column>
+                            <p:column headerText="Puesto evaluado" filterBy="#{listaEncuesta.COperativaEvaluado}" filterMatchMode="contains" sortBy="#{listaEncuesta.COperativaEvaluado}"   >                           
+                                <h:outputText value="#{listaEncuesta.COperativaEvaluado}" />
+                            </p:column>
+                            <p:column headerText="Habilidad del evaluado" filterBy="#{listaEncuesta.habilidadEvaluado}" filterMatchMode="contains" sortBy="#{listaEncuesta.habilidadEvaluado}"   >                           
+                                <h:outputText value="#{listaEncuesta.habilidadEvaluado}" />
+                            </p:column>
+                            <p:column headerText="Tipo evaluacion" filterBy="#{listaEncuesta.tipo}" filterMatchMode="contains" sortBy="#{listaEncuesta.tipo}"   >                           
+                                <h:outputText value="#{listaEncuesta.tipo}" />
+                            </p:column>
+                            <p:column headerText="# nomina" filterBy="#{listaEncuesta.nominaEvaluador}" filterMatchMode="contains" sortBy="#{listaEncuesta.nominaEvaluador}"   >                           
+                                <h:outputText value="#{listaEncuesta.nominaEvaluador}" />
+                            </p:column>
+                            <p:column headerText="Nombre evaluador" filterBy="#{listaEncuesta.nombreEvaluador}" filterMatchMode="contains" sortBy="#{listaEncuesta.nombreEvaluador}"   >                           
+                                <h:outputText value="#{listaEncuesta.nombreEvaluador}" />
+                            </p:column>
+                            <p:column headerText="Area evaluador" filterBy="#{listaEncuesta.AOperativaEvaluador}" filterMatchMode="contains" sortBy="#{listaEncuesta.AOperativaEvaluador}"   >                           
+                                <h:outputText value="#{listaEncuesta.AOperativaEvaluador}" />
+                            </p:column>
+                            <p:column headerText="Puesto evaluador" filterBy="#{listaEncuesta.COperativaEvaluador}" filterMatchMode="contains" sortBy="#{listaEncuesta.COperativaEvaluador}"   >                           
+                                <h:outputText value="#{listaEncuesta.COperativaEvaluador}" />
+                            </p:column>
+                            <p:column headerText="Acciones" > 
+                                <p:commandButton  class="btn btn-info " icon="fa fa-book" title="Cambia la combinacion del personal o el área a la que este pertenece" 
+                                                  actionListener="#{adminEvaluacion360.validaEdicionCombinaciones360(listaEncuesta)}"
+                                                  oncomplete="PF('modalEditaCombinacion').show()"/>
+                                <p:commandButton update="@this"  oncomplete="" icon="fa fa-trash" title="Eliminar la combinacion" class="btb btn-danger" actionListener="#{adminEvaluacion360.eliminaCombinacion360(listaEncuesta)}" >
+                                    <p:confirm header="Mensaje" message="Esta seguro que desea eliminar la combinación, una vez eliminada no podra revertir la acción." icon="ui-icon-alert" />
+                                </p:commandButton>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <center>
+                                        <p:commandButton value="Continuar" class="btn btn-success"  styleClass="ui-confirmdialog-yes" icon="fa fa-check-circle"  oncomplete="alert('La combinación se elimino correctamente'), PF('modalCombioonacione').show(), location.reload()"/>
+                                        <p:commandButton value="Cerrar" class="btn btn-danger"  styleClass="ui-confirmdialog-no" icon="fa fa-times-circle" />
+                                    </center> 
+                                </p:confirmDialog>
+                            </p:column>
+                        </p:dataTable>             
+                    </p:outputPanel>
+                    <p:outputPanel id="pnlAEDes" rendered="#{adminEvaluacion360.edesempenio}" >
+                        <p:autoUpdate/>
+                        <c:if test="#{adminEvaluacion360.listadoEvaluacionDesempenio.size() eq 0}">
+                            <h1>Aun no hay registros de esta evaluacion, los registros se generan automaticamente cuando el evaluador accede al sistema</h1>
+                        </c:if>
+                        <c:if test="#{adminEvaluacion360.listadoEvaluacionDesempenio.size() ne 0}">
+                            <p:dataTable id="tblCombinacionDes" lazy="false" value="#{adminEvaluacion360.listadoEvaluacionDesempenio}" 
+                                         filteredValue="#{adminEvaluacion360.listaEvaluacionDesempeñoFiltro}"
+                                         var="listaEncuesta" filterDelay="700" 
+                                         paginator="true" rows="7"
+                                         rowsPerPageTemplate="10,20,30,40,50"
+                                         emptyMessage="No se encontrarono registros"  >
+                                <f:facet name="footer">
+                                    Total de registros: #{adminEvaluacion360.listaCombinacion360.size()}
+                                </f:facet>
+                                <f:facet name="header">
+                                    <div style="align-content: flex-end">
+                                        <p:commandButton  class="btn btn-primary " value="Nueva combinacion" icon="fa fa-plus" title="Agrega nueva combinacion"  oncomplete="PF('modalNCombinacionDes').show()"/>
+                                    </div>
+                                </f:facet>
+                                <p:column headerText="# nomina" filterBy="#{listaEncuesta.evaluador}" filterMatchMode="contains" sortBy="#{listaEncuesta.evaluador}"   >                           
+                                    <h:outputText value="#{listaEncuesta.evaluador}" />
+                                </p:column>
+                                <p:column headerText="Nombre evaluador" filterBy="#{listaEncuesta.nombreEvaluador}" filterMatchMode="contains" sortBy="#{listaEncuesta.nombreEvaluador}"   >                           
+                                    <h:outputText value="#{listaEncuesta.nombreEvaluador}" />
+                                </p:column>
+                                <p:column headerText="Area" filterBy="#{listaEncuesta.nombreArea}" filterMatchMode="contains" sortBy="#{listaEncuesta.nombreArea}"   >                           
+                                    <h:outputText value="#{listaEncuesta.nombreArea}" />
+                                </p:column>
+                                <p:column headerText="# nomina" filterBy="#{listaEncuesta.evaluado}" filterMatchMode="contains" sortBy="#{listaEncuesta.evaluado}"   >                           
+                                    <h:outputText value="#{listaEncuesta.evaluado}" />
+                                </p:column>
+                                <p:column headerText="Nombre evaluado" filterBy="#{listaEncuesta.nombreEvaluado}" filterMatchMode="contains" sortBy="#{listaEncuesta.nombreEvaluado}"   >                           
+                                    <h:outputText value="#{listaEncuesta.nombreEvaluado}" />
+                                </p:column>
+
+                                <p:column headerText="Acciones" > 
+                                    <p:commandButton  class="btn btn-info " icon="fa fa-book" title="Edita la combinacion del personal a evaluar" value="Edita"
+                                                      actionListener="#{adminEvaluacion360.validaEdicionCombinacionesDes(listaEncuesta)}"
+                                                      oncomplete="PF('modalEditaCombinacionD').show()" />
+                                    <p:commandButton update="@this" value="Eliminar" icon="fa fa-trash" 
+                                                     title="Eliminar la combinacion" class="btb btn-danger" actionListener="#{adminEvaluacion360.eliminaCombinacionDes(listaEncuesta)}" >
+                                        <p:confirm header="Mensaje" message="Esta seguro que desea eliminar la combinación, una vez eliminada no podra revertir la acción." 
+                                                   icon="ui-icon-alert" />
+                                    </p:commandButton>
+
+                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                        <center>
+                                            <p:commandButton value="Continuar" class="btn btn-success"  styleClass="ui-confirmdialog-yes" icon="fa fa-check-circle" oncomplete="alert('La combinación se elimino correctamente'), PF('modalCombioonacione').show(), location.reload()"/>
+                                            <p:commandButton value="Cerrar" class="btn btn-danger"  styleClass="ui-confirmdialog-no" icon="fa fa-times-circle" />
+                                        </center> 
+                                    </p:confirmDialog>
+
+                                </p:column>
+                            </p:dataTable> 
+                        </c:if>
+
+                    </p:outputPanel>
+
+                </h:form>
+            </p:outputPanel>
+        </p:dialog>
+
+        <!--Agrega combinaciones para la evaluacion-->
+        <p:dialog widgetVar="modalNCombinacion360" 
+                  id="modalNuevaCombinacion360" onShow="alert('Tenga en cuenta que al agregar una combinacion nueva, debe de tener\n la certeza de que al agregar dicha combinación no afectara los resultados.')" 
+                  modal="true" showEffect="fade" hideEffect="fade" resizable="false" header="Agrega nueva combinacion 360">
+            <h:form>
+                <p:outputPanel>
+                    <p:outputLabel value="Seleccion de evaluador" />
+                    <p:outputLabel value="Nombre: " /><br/>
+                    <p:autoComplete id="txtNuevoEvaluador360" value="#{adminEvaluacion360.evaluadorAu}" completeMethod="#{adminEvaluacion360.completePersonal}" 
+                                    inputStyle="width: 350px;" queryDelay="700" maxResults="10"
+                                    var="persona" itemLabel="#{persona.nombre}" itemValue="#{persona}" converter="personalConverter" forceSelection="true" minQueryLength="2"
+                                    placeholder="Escriba el nombre del evaluado y seleccione." ><br/>
+                        <p:column><h:outputText value="#{persona.clave}" /></p:column>
+                        <p:column><h:outputText value="#{persona.nombre}" /></p:column>
+                        <p:column><h:outputText value="#{persona.categoriaOficial.nombre}" /></p:column>
+                        <p:ajax event="itemSelect" update="" />
+                    </p:autoComplete>
+                    <br/>
+                    <p:outputLabel value="Seleccion de evaluado" /><br/>
+                    <p:autoComplete id="txtNuevoEvaluado360" value="#{adminEvaluacion360.evaluadoAu}" completeMethod="#{adminEvaluacion360.completePersonal}" 
+                                    inputStyle="width: 350px;" queryDelay="700" maxResults="10"
+                                    var="persona" itemLabel="#{persona.nombre}" itemValue="#{persona}" converter="personalConverter" forceSelection="true" minQueryLength="2"
+                                    placeholder="Escriba el nombre del evaluador y seleccione." ><br/>
+                        <p:column><h:outputText value="#{persona.clave}" /></p:column>
+                        <p:column><h:outputText value="#{persona.nombre}" /></p:column>
+                        <p:column><h:outputText value="#{persona.categoriaOficial.nombre}" /></p:column>
+                        <p:ajax event="itemSelect" update="" />
+                    </p:autoComplete>
+                    <br/>
+                    <p:outputLabel value="Habilidades del evaluado" />
+                    <br/>
+                    <p:autoComplete id="txtCategoria360" value="#{adminEvaluacion360.categoria}" completeMethod="#{adminEvaluacion360.completePersonalCategorias}" 
+                                    inputStyle="width: 350px;" queryDelay="700" maxResults="10"
+                                    var="pc" itemLabel="#{pc.nombre}" itemValue="#{pc}" converter="personalCategoriaConverter" forceSelection="true" minQueryLength="2"
+                                    placeholder="Escriba la categoria y seleccione." >
+                        <p:column><h:outputText value="#{pc.categoria}" /></p:column>
+                        <p:column><h:outputText value="#{pc.nombre}" /></p:column>
+                        <!--<p:column><h:outputText value="# {pc.categoriaOficial.nombre}" /></p:column>-->
+                        <p:ajax event="itemSelect" update="" />
+                    </p:autoComplete>
+                    <br/>
+                    <p:outputLabel value="Seleccion de tipo de evaluación" /><br/>
+                    <p:selectOneMenu value="#{adminEvaluacion360.tipoEvaluacion}" id="som1" >
+                        <f:selectItem itemLabel="Seleccione una opcion" />
+                        <f:selectItem itemValue="Autoevaluación" itemDescription="Auto evaluacion"  itemLabel="Autoevaluación" />
+                        <f:selectItem itemValue="Igual" itemDescription="evaluado por un igual" itemLabel="Igual" />
+                        <f:selectItem itemValue="Subordinado" itemDescription="evaluado por un Subordinado" itemLabel="Subordinado" />
+                        <f:selectItem itemValue="Superior" itemDescription="Evaluado por un superior" itemLabel="Superior" />
+                        <p:ajax process="som1" update="pnl1" />
+                    </p:selectOneMenu>
+                    <br/>
+                    <center>
+                        <p:commandButton icon="fa fa-floppy-o" value="Guardar cambios" class="btn btn-primary" actionListener="#{adminEvaluacion360.agregaCombinacion360()}" 
+                                         oncomplete="alert('Se creó la combinacion, vuelva a consultar la lista de combinaciones para corroborar'),PF('modalNCombinacion360').hide(), PF('modalCombioonacione').hide(), location.reload()"/>
+                    </center>
+                </p:outputPanel>
+            </h:form> 
+        </p:dialog>
+
+        <!--Agrega combinacion desempeño--> 
+        <p:dialog widgetVar="modalNCombinacionDes" id="modalNuevaCombinaciondes" 
+                  onShow="alert('Tenga en cuenta que al agregar una combinacion nueva, debe de tener\n la certeza de que al agregar dicha combinación no afectara los resultados.')"
+                  modal="true" showEffect="fade" hideEffect="fade" resizable="false" header="Agrega nueva combinacion desempeño">
+            <h:form>
+                <p:outputPanel>
+                    <p:outputLabel value="Seleccion de evaluador" />
+                    <p:outputLabel value="Nombre: " /><br/>
+                    <p:autoComplete id="txtNuevoEvaluadordes" value="#{adminEvaluacion360.evaluadorAu}" completeMethod="#{adminEvaluacion360.completePersonal}" 
+                                    inputStyle="width: 350px;" queryDelay="700" maxResults="10"
+                                    var="persona" itemLabel="#{persona.nombre}" itemValue="#{persona}" converter="personalConverter" forceSelection="true" minQueryLength="2"
+                                    placeholder="Escriba el nombre del evaluado y seleccione." ><br/>
+                        <p:column><h:outputText value="#{persona.clave}" /></p:column>
+                        <p:column><h:outputText value="#{persona.nombre}" /></p:column>
+                        <p:column><h:outputText value="#{persona.categoriaOficial.nombre}" /></p:column>
+                        <p:ajax event="itemSelect" update="" />
+                    </p:autoComplete>
+                    <br/>
+                    <p:outputLabel value="Seleccion de evaluado" /><br/>
+                    <p:autoComplete id="txtNuevoEvaluadodes" value="#{adminEvaluacion360.evaluadoAu}" completeMethod="#{adminEvaluacion360.completePersonal}" 
+                                    inputStyle="width: 350px;" queryDelay="700" maxResults="10"
+                                    var="persona" itemLabel="#{persona.nombre}" itemValue="#{persona}" converter="personalConverter" forceSelection="true" minQueryLength="2"
+                                    placeholder="Escriba el nombre del evaluador y seleccione." ><br/>
+                        <p:column><h:outputText value="#{persona.clave}" /></p:column>
+                        <p:column><h:outputText value="#{persona.nombre}" /></p:column>
+                        <p:column><h:outputText value="#{persona.categoriaOficial.nombre}" /></p:column>
+                        <p:ajax event="itemSelect" update="" />
+                    </p:autoComplete>
+                    <br/>
+                    <center>
+                        <p:commandButton icon="fa fa-floppy-o" value="Guardar cambios" class="btn btn-primary" actionListener="#{adminEvaluacion360.agregaCombinacionDes()}" 
+                                         oncomplete="alert('Se creó la combinacion, vuelva a consultar la lista de combinaciones para corroborar'),PF('modalNCombinacionDes').hide(), PF('modalCombioonacione').hide(), location.reload()"/>
+                    </center>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+
+        <!--edita combinaciones 360-->
+        <p:dialog widgetVar="modalEditaCombinacion" onShow="alert('Tenga en cuenta que al editar una combinacion, debe de tener\n la certeza de que al editar dicha combinación no afectara los resultados.')" modal="true" showEffect="fade" hideEffect="fade" resizable="false" header="Edita combinación">
+            <h:form>
+                <p:outputPanel>
+                    <p:outputLabel value="Seleccion de evaluador" />
+                    <p:outputLabel value="Nombre: " /><br/>
+                    <p:autoComplete id="txtEditaEvaluador" value="#{adminEvaluacion360.evaluadorAu}" completeMethod="#{adminEvaluacion360.completePersonal}" 
+                                    inputStyle="width: 350px;" queryDelay="700" maxResults="10"
+                                    var="persona" itemLabel="#{persona.nombre}" itemValue="#{persona}" converter="personalConverter" forceSelection="true" minQueryLength="2"
+                                    placeholder="Escriba el nombre del evaluado y seleccione." ><br/>
+                        <p:column><h:outputText value="#{persona.clave}" /></p:column>
+                        <p:column><h:outputText value="#{persona.nombre}" /></p:column>
+                        <p:column><h:outputText value="#{persona.categoriaOficial.nombre}" /></p:column>
+                        <p:ajax event="itemSelect" update="" />
+                    </p:autoComplete>
+                    <br/>
+                    <p:outputLabel value="Seleccion de evaluado" /><br/>
+                    <p:autoComplete id="txtNuevoEvaluado" value="#{adminEvaluacion360.evaluadoAu}" completeMethod="#{adminEvaluacion360.completePersonal}" 
+                                    inputStyle="width: 350px;" queryDelay="700" maxResults="10"
+                                    var="persona" itemLabel="#{persona.nombre}" itemValue="#{persona}" converter="personalConverter" forceSelection="true" minQueryLength="2"
+                                    placeholder="Escriba el nombre del evaluador y seleccione." ><br/>
+                        <p:column><h:outputText value="#{persona.clave}" /></p:column>
+                        <p:column><h:outputText value="#{persona.nombre}" /></p:column>
+                        <p:column><h:outputText value="#{persona.categoriaOficial.nombre}" /></p:column>
+                        <p:ajax event="itemSelect" update="" />
+                    </p:autoComplete>
+                    <br/>
+                    <p:outputLabel value="Habilidades del evaluado" />
+                    <br/>
+                    <p:autoComplete id="txtAgregaCategoria" value="#{adminEvaluacion360.categoria}" completeMethod="#{adminEvaluacion360.completePersonalCategorias}" 
+                                    inputStyle="width: 350px;" queryDelay="700" maxResults="10"
+                                    var="pc" itemLabel="#{pc.nombre}" itemValue="#{pc}" converter="personalCategoriaConverter" forceSelection="true" minQueryLength="2"
+                                    placeholder="Escriba la categoria y seleccione." >
+                        <p:column><h:outputText value="#{pc.categoria}" /></p:column>
+                        <p:column><h:outputText value="#{pc.nombre}" /></p:column>
+                        <!--<p:column><h:outputText value="# {pc.categoriaOficial.nombre}" /></p:column>-->
+                        <p:ajax event="itemSelect" update="" />
+                    </p:autoComplete>
+                    <br/>
+                    <p:outputLabel value="Seleccion de tipo de evaluación" /><br/>
+                    <p:selectOneMenu value="#{adminEvaluacion360.tipoEvaluacion}" id="som1" >
+                        <f:selectItem itemLabel="Seleccione una opcion" />
+                        <f:selectItem itemValue="Autoevaluación" itemDescription="Auto evaluacion"  itemLabel="Autoevaluación" />
+                        <f:selectItem itemValue="Igual" itemDescription="evaluado por un igual" itemLabel="Igual" />
+                        <f:selectItem itemValue="Subordinado" itemDescription="evaluado por un Subordinado" itemLabel="Subordinado" />
+                        <f:selectItem itemValue="Superior" itemDescription="Evaluado por un superior" itemLabel="Superior" />
+                        <p:ajax process="som1" update="pnl1" />
+                    </p:selectOneMenu>
+                    <br/>
+                    <center>
+                        <p:commandButton icon="fa fa-floppy-o" value="Guardar cambios" class="btn btn-primary" actionListener="#{adminEvaluacion360.editaCombinación()}" 
+                                         oncomplete="alert('Se Edito la combinacion, vuelva a consultar la lista de combinaciones para corroborar'),PF('modalEditaCombinacion').hide(), PF('modalCombioonacione').hide(), location.reload()"/>
+                    </center>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+
+        <!--edita combinaciones desempeño-->
+        <p:dialog widgetVar="modalEditaCombinacionD" onShow="alert('Tenga en cuenta que al editar una combinacion, debe de tener\n la certeza de que al editar dicha combinación no afectara los resultados.')" modal="true" showEffect="fade" hideEffect="fade" resizable="false" header="Edita combinación">
+            <h:form>
+                <p:outputPanel>
+                    <p:outputLabel value="Seleccion de evaluador" />
+                    <br/>
+                    <p:autoComplete id="txtEditaEvaluadorD" value="#{adminEvaluacion360.evaluadorAu}" completeMethod="#{adminEvaluacion360.completePersonal}" 
+                                    inputStyle="width: 350px;" queryDelay="700" maxResults="10"
+                                    var="persona" itemLabel="#{persona.nombre}" itemValue="#{persona}" converter="personalConverter" forceSelection="true" minQueryLength="2"
+                                    placeholder="Escriba el nombre del evaluado y seleccione." >
+                        <p:column><h:outputText value="#{persona.clave}" /></p:column>
+                        <p:column><h:outputText value="#{persona.nombre}" /></p:column>
+                        <p:column><h:outputText value="#{persona.categoriaOficial.nombre}" /></p:column>
+                        <p:ajax event="itemSelect" update="" />
+                    </p:autoComplete>
+                    <br/>
+                    <p:outputLabel value="Seleccion de evaluado" />
+                    <br/>
+                    <p:autoComplete id="txtNuevoEvaluadoD" value="#{adminEvaluacion360.evaluadoAu}" completeMethod="#{adminEvaluacion360.completePersonal}" 
+                                    inputStyle="width: 350px;" queryDelay="700" maxResults="10"
+                                    var="persona" itemLabel="#{persona.nombre}" itemValue="#{persona}" converter="personalConverter" forceSelection="true" minQueryLength="2"
+                                    placeholder="Escriba el nombre del evaluador y seleccione." ><br/>
+                        <p:column><h:outputText value="#{persona.clave}" /></p:column>
+                        <p:column><h:outputText value="#{persona.nombre}" /></p:column>
+                        <p:column><h:outputText value="#{persona.categoriaOficial.nombre}" /></p:column>
+                        <p:ajax event="itemSelect" update="" />
+                    </p:autoComplete>
+                    <br/>
+                    <center>
+                        <p:commandButton icon="fa fa-floppy-o" value="Guardar cambios" class="btn btn-primary" actionListener="#{adminEvaluacion360.editaCombinaciónDesempeño()}" 
+                                         oncomplete="alert('Se Edito la combinacion, vuelva a consultar la lista de combinaciones para corroborar'),PF('modalEditaCombinacion').hide(), PF('modalCombioonacione').hide(), location.reload()"/>
+                    </center>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+        </c:if>
+    </ui:define>
+</ui:composition>

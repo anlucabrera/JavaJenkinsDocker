@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+                >
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Tutorías Grupales
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <style type="text/css">
+            .ui-datatable .ui-row-toggler {
+                cursor: pointer;
+                text-decoration: #3C8DBC;
+                color: #3C8DBC;
+                font-weight: 600;
+            }
+        </style>
+        <adm:breadcrumb title="Tutorías Grupales"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{validacionTutoriaGrupalEstudiante.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.ParticipanteTutoriaGrupalAcuerdos" var="ptga" allSuffix="ALL" />
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+
+                        <h:form id="frmEncabezado" prependId="false" class="form-inline">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(validacionTutoriaGrupalEstudiante.rol.periodoActivo)} " />
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Evento de registro activo: #{validacionTutoriaGrupalEstudiante.rol.eventoRegistroActivo.mes}" />
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Antes de realizar la firma electrónica favor de verificar que los filtros seleccionados seán los correctos" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
+                                                       onclick="PF('modalAyuda').show();"
+                                                       process="@this"
+                                                       title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </h:form>
+
+                        <div class="box box-solid">
+                            <div class="box-body">
+                                <h:form id="frmFiltros" prependId="false" class="form-inline">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-6 col-lg-4'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{validacionTutoriaGrupalEstudiante.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" disabled="#{validacionTutoriaGrupalEstudiante.rol.comentarioPendiente eq true}">
+                                                    <f:selectItems value="#{validacionTutoriaGrupalEstudiante.rol.periodosConTutoriasGrupales}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this" update="@this mes contenedor" listener="#{validacionTutoriaGrupalEstudiante.cambiarPeriodo}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="mes" value="#{validacionTutoriaGrupalEstudiante.rol.eventoSeleccionado}" converter="entityConverter" styleClass="form-control" disabled="#{validacionTutoriaGrupalEstudiante.rol.comentarioPendiente eq true}">
+                                                    <f:selectItems value="#{validacionTutoriaGrupalEstudiante.rol.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" />
+                                                    <p:ajax process="@this" update="@this contenedor" listener="#{validacionTutoriaGrupalEstudiante.cambiarEventoRegistro}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Mes" for="mes"/>
+                                                <p:message for="mes" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </h:form>
+                                <h:form id="frmRegistro" prependId="false" class="form-inline">
+                                    <p:remoteCommand id="actualizarParticipantes" name="actualizarParticipantes" actionListener="#{validacionTutoriaGrupalEstudiante.actualizar()}" process="@this" update="contenedor periodo mes" />
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info">
+                                            <p:outputPanel id="contenedor">
+                                                <div style="margin-bottom: 10px">
+                                                    <p:toolbar>
+                                                        <f:facet name="left">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Lista de tutorías grupales en las que el estudiante ha asistido." style="padding-top: 5px;" />
+                                                            <p></p>
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Para guardar su firma solo de clic en los botones según sea el caso y se guardará de manera automática." style="padding-top: 5px;" />
+                                                            <p></p>
+                                                            <p></p>
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Para guardar comentarios dirigidos al tutor solo registrelos en el campo de comentarios y se guardarán de manera automática" style="padding-top: 5px;" />
+                                                            <p></p>
+                                                        </f:facet>
+                                                    </p:toolbar>
+
+                                                    <center>
+                                                        <p:dataTable id="dtTutoriasGrupales" 
+                                                                     var="participanteTutoriaGrupal"
+                                                                     value="#{validacionTutoriaGrupalEstudiante.rol.listaParticipantesTutoriaGrupal}"
+                                                                     filteredValue="#{validacionTutoriaGrupalEstudiante.rol.filtroListaParticipantesTutoriaGrupal}"
+                                                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                     resizeMode="expand"
+                                                                     emptyMessage="Aún no se ha registrado ninguna asistencia en tutorías grupales"
+                                                                     >
+                                                            <p:columnGroup type="header">
+                                                                <p:row class="sucess">
+                                                                    <p:column headerText="Contenido de la tutoría"           width="70"/>
+                                                                    <!--<p:column headerText="Avisos"                           width="60"/>-->
+                                                                    <p:column headerText="Aceptación de acuerdos"           width="410"/>
+                                                                    <p:column headerText="Comentarios del estudiante"       width="500"/>
+                                                                    <!--<p:column headerText="Jefe de grupo"                    width="300"/>-->
+                                                                    <p:column headerText="Fecha"                            width="100"/>
+                                                                    <p:column headerText="Hora Inicio"                      width="100"/>
+                                                                    <p:column headerText="Hora Cierre"                      width="100"/>
+                                                                    <!--                                                                    <p:column headerText="Orden del día"                    width="500"/>
+                                                                                                                                        <p:column headerText="Acuerdos"                         width="500"/>
+                                                                                                                                        <p:column headerText="Observaciones"                    width="500"/>
+                                                                                                                                        <p:column headerText="Grado"                            width="50" />
+                                                                                                                                        <p:column headerText="Grupo"                            width="80" />
+                                                                                                                                        <p:column headerText="Modalidad"                        width="100" />
+                                                                                                                                        <p:column headerText="Carrera"                          width="400" />-->
+                                                                </p:row>
+                                                            </p:columnGroup>
+
+                                                            <!--                                                            <p:column>
+                                                            
+                                                                                                                        </p:column>-->
+
+                                                            <p:column style="width:16px;align-content: center;text-align: center">
+                                                                <p:rowToggler expandLabel="Mostrar contenido" collapseLabel="Ocultar contenido"/>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <p:selectOneButton value="#{participanteTutoriaGrupal.aceptacionAcuerdos}"
+                                                                                   valueChangeListener="#{validacionTutoriaGrupalEstudiante.actualizarAceptacionAcuerdos}"
+                                                                                   disabled="#{validacionTutoriaGrupalEstudiante.rol.comentarioPendiente eq true}"
+                                                                                   >
+                                                                    <f:selectItem itemLabel="#{participanteTutoriaGrupal.asistencia?ptga.ASISTI_ESTOY_DE_ACUERDO.label:ptga.NO_ASISTI_ESTOY_DE_ACUERDO.label}" itemValue="#{participanteTutoriaGrupal.asistencia?ptga.ASISTI_ESTOY_DE_ACUERDO.label:ptga.NO_ASISTI_ESTOY_DE_ACUERDO.label}" />
+                                                                    <f:selectItem itemLabel="#{participanteTutoriaGrupal.asistencia?ptga.ASISTI_NO_ESTOY_DE_ACUERDO.label:ptga.NO_ASISTI_NO_ESTOY_DE_ACUERDO.label}" itemValue="#{participanteTutoriaGrupal.asistencia?ptga.ASISTI_NO_ESTOY_DE_ACUERDO.label:ptga.NO_ASISTI_NO_ESTOY_DE_ACUERDO.label}" />
+                                                                    <p:ajax event="change"
+                                                                            process="@this"
+                                                                            oncomplete="actualizarParticipantes();"
+                                                                            />
+                                                                    <f:attribute name="participanteTutoriaGrupal" 
+                                                                                 value="#{participanteTutoriaGrupal}" 
+                                                                                 />
+                                                                </p:selectOneButton>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <p:inputTextarea rows="1" 
+                                                                                 cols="76"
+                                                                                 maxlength="3000" 
+                                                                                 autoResize="true"
+                                                                                 required="true"
+                                                                                 requiredMessage="Es requerido el campo de comentarios"
+                                                                                 class="form-control"
+                                                                                 title="Si desea actualizar dar clic aquí y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
+                                                                                 value="#{participanteTutoriaGrupal.comentarios}"
+                                                                                 valueChangeListener="#{validacionTutoriaGrupalEstudiante.actualizarComentarios}"
+                                                                                 >
+                                                                    <p:ajax process="@this" 
+                                                                            oncomplete="actualizarParticipantes();"
+                                                                            global="false"
+                                                                            /> 
+                                                                    <f:attribute name="participanteTutoriaGrupal" 
+                                                                                 value="#{participanteTutoriaGrupal}" 
+                                                                                 />
+                                                                </p:inputTextarea>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{participanteTutoriaGrupal.tutoriasGrupales.fecha}">
+                                                                    <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                                </h:outputText>
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{caster.parseHoraMinutos(participanteTutoriaGrupal.tutoriasGrupales.horaInicio)}" />
+                                                            </p:column>
+
+                                                            <p:column>
+                                                                <h:outputText value="#{caster.parseHoraMinutos(participanteTutoriaGrupal.tutoriasGrupales.horaCierre)}" />
+                                                            </p:column>
+
+                                                            <p:rowExpansion>
+                                                                <p:panelGrid style="width: 100%">
+
+                                                                    <f:facet name="header">
+                                                                        <p:row>
+                                                                            <p:column colspan="5">
+                                                                                <h:outputText value="#{participanteTutoriaGrupal.tutoriasGrupales.fecha}">
+                                                                                    <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                                                </h:outputText>
+                                                                            </p:column>
+                                                                        </p:row>
+                                                                    </f:facet>
+
+                                                                    <p:row>
+                                                                        <p:column>
+                                                                            <h:outputText value="Jefe de Grupo:" style="font-weight: 600;"/>
+                                                                        </p:column>
+                                                                        <p:column colspan="4" style="font-weight: 600;">
+                                                                            <h:outputText value="#{participanteTutoriaGrupal.tutoriasGrupales.jefeGrupo.aspirante.idPersona.apellidoPaterno} #{participanteTutoriaGrupal.tutoriasGrupales.jefeGrupo.aspirante.idPersona.apellidoMaterno} #{participanteTutoriaGrupal.tutoriasGrupales.jefeGrupo.aspirante.idPersona.nombre}"/>
+                                                                        </p:column>
+                                                                    </p:row>
+
+                                                                    <p:row>
+                                                                        <p:column>
+                                                                            <h:outputText value="Orden del día:" style="font-weight: 600;"/>
+                                                                        </p:column>
+                                                                        <p:column colspan="4" style="font-weight: 600;">
+                                                                            <h:outputText value="#{participanteTutoriaGrupal.tutoriasGrupales.ordenDia}"/>
+                                                                        </p:column>
+                                                                    </p:row>
+
+                                                                    <p:row>
+                                                                        <p:column>
+                                                                            <h:outputText value="Acuerdos:" style="font-weight: 600;"/>
+                                                                        </p:column>
+                                                                        <p:column colspan="4" style="font-weight: 600;">
+                                                                            <h:outputText value="#{participanteTutoriaGrupal.tutoriasGrupales.acuerdos}"/>
+                                                                        </p:column>
+                                                                    </p:row>
+
+                                                                    <p:row>
+                                                                        <p:column>
+                                                                            <h:outputText value="Observaciones:" style="font-weight: 600;"/>
+                                                                        </p:column>
+                                                                        <p:column colspan="4" style="font-weight: 600;">
+                                                                            <h:outputText value="#{participanteTutoriaGrupal.tutoriasGrupales.observaciones}"/>
+                                                                        </p:column>
+                                                                    </p:row>
+
+                                                                    <p:row>
+                                                                        <p:column>
+                                                                            <h:outputText value="Grado:" style="font-weight: 600;"/>
+                                                                        </p:column>
+                                                                        <p:column colspan="4" style="font-weight: 600;">
+                                                                            <h:outputText value="#{participanteTutoriaGrupal.estudiante1.grupo.grado}° #{participanteTutoriaGrupal.estudiante1.grupo.literal}"/>
+                                                                        </p:column>
+                                                                    </p:row>
+
+                                                                    <p:row>
+                                                                        <p:column>
+                                                                            <h:outputText value="Modalidad:" style="font-weight: 600;"/>
+                                                                        </p:column>
+                                                                        <p:column colspan="4" style="font-weight: 600;">
+                                                                            <h:outputText value="#{participanteTutoriaGrupal.estudiante1.grupo.idSistema.nombre}"/>
+                                                                        </p:column>
+                                                                    </p:row>
+
+                                                                    <p:row>
+                                                                        <p:column>
+                                                                            <h:outputText value="Carrera:" style="font-weight: 600;"/>
+                                                                        </p:column>
+                                                                        <p:column colspan="4" style="font-weight: 600;">
+                                                                            <h:outputText value="#{caster.getNombreCarrera(participanteTutoriaGrupal.estudiante1.grupo.idPe).nombre}"/>
+                                                                        </p:column>
+                                                                    </p:row>
+                                                                </p:panelGrid>
+                                                            </p:rowExpansion>
+
+                                                            <f:facet name="footer">
+                                                                <div style="text-align: left">
+                                                                    <p:column style="text-align: left;">
+                                                                        Se han encontrado un total de: #{fn:length(validacionTutoriaGrupalEstudiante.rol.listaParticipantesTutoriaGrupal)} tutoría(s) grupal(es).
+                                                                    </p:column>
+                                                                </div>
+                                                            </f:facet>
+
+                                                        </p:dataTable>
+                                                    </center>
+                                                </div>
+                                            </p:outputPanel>
+                                        </div>
+                                    </div>
+                                </h:form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Zona de cuadros de diálogo -->
+            </c:if>
+            <c:if test="#{!validacionTutoriaGrupalEstudiante.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para estudiantes."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+    </ui:define>
+</ui:composition>

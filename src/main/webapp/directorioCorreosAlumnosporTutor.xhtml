@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>     
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>    
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        <h2 class="align-center">
+            Consulta de Correos Institucionales de los Estudiantes Tutorados 
+        </h2>
+    </ui:define>
+    <ui:define name="body">
+        <h:form id="btn">
+            <p:toolbar id="tb2">
+                <f:facet name="right">
+                    <p:outputPanel>
+                        <p:commandButton id="guardarh" value="Nuevo Registro" ajax="true"
+                                         class="btn-primary " update="@form"
+                                         onclick="PF('modalNuevo').show()"
+                                         >
+                        </p:commandButton>
+                    </p:outputPanel> 
+                </f:facet>
+                <f:facet name="left">
+                    <p:outputLabel value="¡NOTA IMPORTANTE!: Si algún estudiante, no se encuentra dentro del listado, conoce su matricula y correo institucional, puede registrarlo.
+                                   "/>
+                    <br/>
+                    <h:outputLabel value="Si encuentra algún correo incorrecto, favor de dar aviso a la Coordinación de Desarrollo de Software."/>
+                </f:facet>
+            </p:toolbar>
+        </h:form>
+        <h:form id="table">
+            <p:tabView>
+                <p:tab title="Alumnos Tutorados">
+                    <p:dataTable id="alumnos" var="listCorreos" paginator="true" rows="15" rendered="true"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,20,25,30"
+                                 sortBy="#{listCorreos.grado}" expandableRowGroups="true"
+                                 value="#{controladorCorreosAlumnosTutores.listCorreosAlumnosporTutor}" >
+
+                        <p:headerRow>
+                            <p:column colspan="4" style="background: #2796cb; color: #FFFFFF;">
+                                <h:outputText value="#{listCorreos.grado}" />
+                            </p:column>
+                        </p:headerRow>
+
+                        <p:column headerText="Nombre"
+                                  sortBy="#{listCorreos.nombre}"
+                                  filterBy="#{listCorreos.nombre}"
+                                  filterMatchMode="contains"
+                                  style="width: 250px">
+                            <h:outputText value="#{listCorreos.nombre}" />
+                        </p:column>
+                        <p:column headerText="Grado" style="width: 55px">
+                            <h:outputText value="#{listCorreos.grado}" />
+                        </p:column>
+                        <p:column headerText="Grupo" style="width: 55px">
+                            <h:outputText value="#{listCorreos.grupo}" />
+                        </p:column>
+
+                        <p:column headerText="Correo Institucional">
+                            <h:outputText value="#{listCorreos.correoinstitucional}" />
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+
+            </p:tabView>
+        </h:form>
+        <!--seccion de dialogo para agregar un nuevo correo-->
+        <p:dialog widgetVar="modalNuevo" modal="true" id="idModalNuevo" showEffect="fade" hideEffect="fade" resizable="false" width="450" height="200">
+            <h:form>
+                <p:outputPanel>
+                    <p:autoUpdate/>
+                    <p:spacer width="40px"/>
+                    <p:outputLabel  value="Nuevo Registro de Correo Institucional" style="text-transform: uppercase"/>
+                    <p:panelGrid columns="2" style="border: #FFFFFF">
+                        <h:outputLabel value="Matricula:"/>
+
+                        <p:inputText value="#{controladorCorreosAlumnosTutores.matricula}" style="width: 80px" />
+                        <h:outputLabel value="Correo Institucional:"/>
+                        <p:inputText value="#{controladorCorreosAlumnosTutores.correo}" />
+
+                    </p:panelGrid>
+                    <br/>
+                    <div class="align-center">
+                        <p:commandButton id="guardarh" value="Guardar" ajax="true"
+                                         class="fa fa-floppy-o btn btn-primary " update="@form"
+                                         actionListener="#{controladorCorreosAlumnosTutores.saveCorreo()}"
+                                         oncomplete="#{controladorCorreosAlumnosTutores.getListaCorreosAlumnos()},PF('modalNuevo').hide()"
+                                         >
+                        </p:commandButton>
+                    </div>
+
+                </p:outputPanel>
+            </h:form>
+
+        </p:dialog>
+
+
+        <p:panel id="errort" header="Error de tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+
+
+
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

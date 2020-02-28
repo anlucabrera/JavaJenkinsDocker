@@ -1,0 +1,953 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <f:metadata>
+            <f:viewParam name="activa" value="#{controladorEstReg.pestaniaActiva}"/>
+        </f:metadata>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <h:outputScript library="js" name="calendario.js" />
+         <style type="text/css">
+            .ui-progressbar .ui-progressbar-label {
+                color: #ffffff;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <section class="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <p:link outcome="registroExpediente">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>      
+                            </div>
+                                <br/>
+                                <br/> 
+                                <c:if test="#{controladorEstReg.procesosIntexp eq null}">
+                                <br/>
+                                <h4 style="text-align: center;">
+                                            Por el momento no existe proceso de integración activo, para conocer las fechas en la que puedes realizar este procedimiento puedes comunicarte<br />
+                                            al teléfono <strong>764-764-5240 ext. 3215 </strong>o enviar un correo electrónico a la dirección: <strong>coordinacion.titulacion@utxicotepec.edu.mx</strong>
+                                </h4>
+                                </c:if>
+                                <c:if test="#{controladorEstReg.procesosIntexp ne null}">
+                                <c:if test="#{controladorEstReg.expValidado}">
+                                <h5 style="text-align: center;"><strong>Progreso Integración de Expediente</strong></h5>
+                                <br/>
+                                <p:progressBar value="100" labelTemplate="{value}%" displayOnly="true"/>
+                                <br/>
+                                <br/>
+                                <h4 style="text-align: center;">
+                                            La información ya no se puede modificar debido a que el expediente ya ha sido validado por el Área de Titulación. Acude al departamento para continuar con el proceso. <br />
+                                            Si tienes alguna duda puedes comunicarte al teléfono <strong>764-764-5240 ext. 3215</strong> o enviar un correo electrónico a la dirección: <strong>coordinacion.titulacion@utxicotepec.edu.mx</strong>
+                                </h4>
+                                </c:if>
+                                <c:if test="#{!controladorEstReg.expValidado}">
+                                <h5 style="text-align: center;"><strong>Progreso Integración de Expediente</strong></h5>
+                                <br/>
+                                <p:progressBar value="#{controladorEstReg.progresoExpediente}" labelTemplate="{value}%" displayOnly="true"><p:autoUpdate/></p:progressBar>
+                                <br/><br/>
+                                    <c:if test="#{!controladorEstReg.valDatPer}">
+                                        <h4 style="text-align: justify;">
+                                            Para iniciar el registro de tu expediente de titulación es importante que verifiques que tus datos personales sean correctos, si los datos son correctos no realices ningún cambio, en caso contrario realiza los cambios y procede a guardar la información. Una vez que guardes puedes volver a ingresar y actualizarla, siempre y cuando el Departamento de Titulación no haya validado tu expediente previamente.
+                                        </h4>
+                                        <br/>
+                                    </c:if>  
+                                    <p:tabView activeIndex="#{controladorEstReg.pestaniaActiva}">
+                                        <!-- Pestaña Datos Personales -->
+                                        <p:tab title="Datos personales">
+                                            <c:if test="#{!controladorEstReg.valDatPer}">
+                                                <o:form id="frmDatPer"> 
+                                                    <p:outputPanel>
+                                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                            <div class="col-md-12">
+                                                                <div class="box box-widget widget-user-2">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                <p:outputLabel for="mat" style="font-size: medium" value="Matricula"/>                                
+                                                                                <p:inputText id="mat" class="form-control" value="#{controladorEstReg.estudiante.matricula}" disabled="true" />
+                                                                                <p:message for="mat" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="gradoAcad" style="font-size: medium" value="Grado Académico"/>                                
+                                                                                <p:inputText id="gradoAcad" class="form-control" value="#{controladorEstReg.nuevoDTOdatTit.gradoAcademico}" disabled="true"/>
+                                                                                <p:message for="gradoAcad" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                <p:outputLabel for="progAcad" style="font-size: medium" value="Programa Académico"/>                                
+                                                                                <p:inputText id="progAcad" class="form-control" value="#{controladorEstReg.nuevoDTOdatTit.programaAcademico}" disabled="true"/>
+                                                                                <p:message for="progAcad" display="tooltip" />
+                                                                            </div>
+                                                                            <br/><br/><br/><br/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="nombre" style="font-size: medium" value="Nombre*"/>                                
+                                                                                <p:inputText id="nombre" class="form-control" value="#{controladorEstReg.nuevoOBJpersona.nombre}" required="true" requiredMessage="Es necesario que ingrese su nombre"/>
+                                                                                <p:message for="nombre" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="apellidoPat" style="font-size: medium" value="Apellido Paterno*"/>
+                                                                                <p:inputText id="apellidoPat" class="form-control" value="#{controladorEstReg.nuevoOBJpersona.apellidoPat}" required="true" requiredMessage="Es necesario que ingrese su apellido paterno"/>
+                                                                                <p:message for="apellidoPat" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="apellidoMat" style="font-size: medium" value="Apellido Materno*"/>
+                                                                                <p:inputText id="apellidoMat" class="form-control" value="#{controladorEstReg.nuevoOBJpersona.apellidoMat}" required="true" requiredMessage="Es necesario que ingrese su apellido materno"/>
+                                                                                <p:message for="apellidoMat" display="tooltip" />
+                                                                            </div>
+                                                                            <br/><br/><br/><br/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                <p:outputLabel for="genero" style="font-size: medium" value="Género*"/>
+                                                                                <p:selectOneMenu id="genero" value="#{controladorEstReg.nuevoOBJpersona.sexo}" required="true" requiredMessage="Es necesario que ingrese su género">
+                                                                                    <f:selectItems value="#{controladorEstReg.listaGeneros}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="genero"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                <p:outputLabel for="fechaNac" style="height: 100%; width: 100%; object-fit: contain; font-size: medium" value="Fecha de Nacimiento*"/>
+                                                                                <p:calendar style="object-fit: contain; font-size: medium" locale="es" id="fechaNac" value="#{controladorEstReg.nuevoOBJpersona.fechaNacimiento}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Es necesario que ingrese su fecha de nacimiento"/>
+                                                                                <p:message for="fechaNac" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                <p:outputLabel for="curpE" style="font-size: medium" value="CURP*"/>                                
+                                                                                <p:inputText id="curpE" class="form-control" value="#{controladorEstReg.nuevoOBJpersona.curp}" required="true" requiredMessage="Es necesario que ingrese su curp"/>
+                                                                                <p:message for="curpE" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-3">   
+                                                                                <br/>
+                                                                                <br/>
+                                                                                <h:outputLink value="https://www.gob.mx/curp/" target="blank">Consulta tu CURP</h:outputLink>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/>
+                                                                    <br/>      
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:commandButton id="btnGuardarDatPer" value="Guardar informacion" actionListener="#{controladorEstReg.guardarDatosPersonales()}" 
+                                                                                                 icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmActDatPer')update();"
+                                                                                                 update="@form"  process="@form" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:outputPanel>
+                                                </o:form>
+                                            </c:if>
+                                            <c:if test="#{controladorEstReg.valDatPer}">
+                                                <o:form id="frmActDatPer"> 
+                                                    <p:outputPanel>
+                                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                            <div class="col-md-12">
+                                                                <div class="box box-widget widget-user-2">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                <p:outputLabel for="matE" style="font-size: medium" value="Matricula"/>                                
+                                                                                <p:inputText id="matE" class="form-control" value="#{controladorEstReg.nuevoOBJegresado.matricula}" disabled="true"/>
+                                                                                <p:message for="matE" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="gradoAcad" style="font-size: medium" value="Grado Académico"/>                                
+                                                                                <p:inputText id="gradoAcad" class="form-control" value="#{controladorEstReg.nuevoDTOdatTit.gradoAcademico}" disabled="true"/>
+                                                                                <p:message for="gradoAcad" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                <p:outputLabel for="progAcad" style="font-size: medium" value="Programa Académico"/>                                
+                                                                                <p:inputText id="progAcad" class="form-control" value="#{controladorEstReg.nuevoDTOdatTit.programaAcademico}" disabled="true"/>
+                                                                                <p:message for="progAcad" display="tooltip" />
+                                                                            </div>
+                                                                            <br/><br/><br/><br/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="nombreE" style="font-size: medium" value="Nombre*"/>                                
+                                                                                <p:inputText id="nombreE" class="form-control" value="#{controladorEstReg.nuevoOBJegresado.nombre}" required="true" requiredMessage="Es necesario que ingrese su nombre"/>
+                                                                                <p:message for="nombreE" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="apellidoPatE" style="font-size: medium" value="Apellido Paterno*"/>
+                                                                                <p:inputText id="apellidoPatE" class="form-control" value="#{controladorEstReg.nuevoOBJegresado.apellidoPaterno}" required="true" requiredMessage="Es necesario que ingrese su apellido paterno"/>
+                                                                                <p:message for="apellidoPatE" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="apellidoMatE" style="font-size: medium" value="Apellido Materno*"/>
+                                                                                <p:inputText id="apellidoMatE" class="form-control" value="#{controladorEstReg.nuevoOBJegresado.apellidoMaterno}" required="true" requiredMessage="Es necesario que ingrese su apellido materno"/>
+                                                                                <p:message for="apellidoMatE" display="tooltip" />
+                                                                            </div>
+                                                                            <br/><br/><br/><br/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                <p:outputLabel for="generoE" style="font-size: medium" value="Género*"/>
+                                                                                <p:selectOneMenu id="generoE" value="#{controladorEstReg.nuevoOBJegresado.genero}" required="true" requiredMessage="Es necesario que ingrese su género">
+                                                                                    <f:selectItems value="#{controladorEstReg.listaGeneros}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="generoE"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                <p:outputLabel for="fechaNacE" style="height: 100%; width: 100%; object-fit: contain; font-size: medium" value="Fecha de Nacimiento*"/>
+                                                                                <p:calendar style="object-fit: contain; font-size: medium" locale="es" id="fechaNacE" value="#{controladorEstReg.nuevoOBJegresado.fechaNacimiento}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Es necesario que ingrese su fecha de nacimiento"/>
+                                                                                <p:message for="fechaNacE" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                <p:outputLabel for="curpE" style="font-size: medium" value="CURP*"/>                                
+                                                                                <p:inputText id="curpE" class="form-control" value="#{controladorEstReg.nuevoOBJegresado.curp}" required="true" requiredMessage="Es necesario que ingrese su curp"/>
+                                                                                <p:message for="curpE" display="tooltip" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/>
+                                                                    <br/> 
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                                                                <p:commandButton id="btnActualizarDatPer" value="Actualizar información" actionListener="#{controladorEstReg.actualizarDatosPersonales()}" 
+                                                                                                 icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmActDatPer')update();"
+                                                                                                 update="@form"  process="@form" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/> 
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:outputPanel>
+                                                </o:form>
+                                            </c:if>
+                                        </p:tab>
+                                        <!-- Pestaña Datos de Contacto y Domicilio -->
+                                        <p:tab title="Datos de Contacto y Domicilio" disabled="#{!controladorEstReg.valDatPer}">
+                                            <c:if test="#{!controladorEstReg.valDatCont}">
+                                                <o:form id="frmDatCont"> 
+                                                    <p:outputPanel>
+                                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                            <div class="col-md-12">
+                                                                <div class="box box-widget widget-user-2">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="celular" style="font-size: medium" value="Celular*"/>                                
+                                                                                <p:inputMask id="celular" class="form-control" value="#{controladorEstReg.consultaOBJcelular.dato}" mask="(999)999-9999" required="true" requiredMessage="Es necesario que ingrese un número de contacto"/>
+                                                                                <p:message for="celular" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="email" style="font-size: medium" value="Email*"/>                                
+                                                                                <p:inputText id="email" class="form-control" value="#{controladorEstReg.consultaOBJemail.dato}" required="true" requiredMessage="Es necesario que ingrese un correo electrónico"/>
+                                                                                <p:message for="email" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="emailC" style="font-size: medium" value="Confirmar Email*"/>                                
+                                                                                <p:inputText id="emailC" class="form-control" value="#{controladorEstReg.consultaOBJemail.dato}" required="true" requiredMessage="Es necesario que ingrese un correo electrónico">
+                                                                                <o:validateEqual id="equal" components="email emailC" message="No coinciden los correos electrónicos" showMessageFor="emailC" />
+                                                                                <p:ajax event="blur" process="email emailC equal" update="emailC" /></p:inputText>
+                                                                                <p:message for="emailC" ><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="calle" style="font-size: medium" value="Calle*"/>
+                                                                                <p:inputText id="calle" class="form-control" placeholder="Calle" value="#{controladorEstReg.nuevoOBJdomicilio.calle}" required="true" requiredMessage="Es necesario que ingrese el nombre de la calle"/>
+                                                                                <p:message for="calle"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="colonia" style="font-size: medium" value="Colonia*"/>
+                                                                                <p:inputText id="colonia" class="form-control" placeholder="Colonia" value="#{controladorEstReg.nuevoOBJdomicilio.colonia}" required="true" requiredMessage="Es necesario que ingrese el nombre de la colonia"/>
+                                                                                <p:message for="colonia"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                <p:outputLabel for="numExt" style="font-size: medium" value="Número Exterior*"/>
+                                                                                <p:inputText id="numExt" class="form-control" placeholder="14,14-B"  value="#{controladorEstReg.nuevoOBJdomicilio.numExterior}" required="true" requiredMessage="Es necesario que ingrese el número exterior"/>
+                                                                                <p:message for="numExt"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                <p:outputLabel for="numInt" style="font-size: medium" value="Número Interior"/>
+                                                                                <p:inputText id="numInt" class="form-control" placeholder="14,14-B"  value="#{controladorEstReg.nuevoOBJdomicilio.numInterior}"/>
+                                                                                <p:message for="numInt"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <br/><br/><br/><br/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="estadoR" style="font-size: medium" value="Estado*"/>
+                                                                                <p:selectOneMenu id="estadoR" value="#{controladorEstReg.nuevoOBJdomicilio.estado}" required="true" requiredMessage="Es necesario que seleccione el estado">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaEstadosDomicilioRadica}"/>
+                                                                                    <p:ajax listener="#{controladorEstReg.selectMunicipio()}" update="municipioR"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="estadoR"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="municipioR" style="font-size: medium" value="Municipio*"/>
+                                                                                <p:selectOneMenu id="municipioR" value="#{controladorEstReg.nuevoOBJdomicilio.municipio}" required="true" requiredMessage="Es necesario que seleccione el municipio">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaMunicipiosRadica}"/>
+                                                                                    <p:ajax listener="#{controladorEstReg.selectAsentamiento()}" update="asentamientoR"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="municipioR"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="asentamientoR" style="font-size: medium" value="Localidad*"/>
+                                                                                <p:selectOneMenu id="asentamientoR" value="#{controladorEstReg.nuevoOBJdomicilio.localidad}" filter="true" filterMatchMode="startsWith" style="width:  375px" required="true" requiredMessage="Es necesario que seleccione la localidad">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaAsentamientos}"/>
+                                                                                    <p:ajax/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="asentamientoR"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/>
+                                                                    <br/>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:commandButton id="btnGuardarDatPer" value="Guardar informacion" actionListener="#{controladorEstReg.guardaComunicacionDomicilio()}" 
+                                                                                                 icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmActDatContDom')update();"
+                                                                                                 update="@form"  process="@form" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:outputPanel>
+                                                </o:form>
+                                            </c:if>
+                                            <c:if test="#{controladorEstReg.valDatCont}">
+                                                <o:form id="frmActDatContDom"> 
+                                                    <p:outputPanel>
+                                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                            <div class="col-md-12">
+                                                                <div class="box box-widget widget-user-2">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="celularE" style="font-size: medium" value="Celular*"/>                                
+                                                                                <p:inputMask id="celularE" class="form-control" value="#{controladorEstReg.nuevoOBJdatosCont.celular}" required="true" mask="(999)999-9999" requiredMessage="Es necesario que ingrese un número de contacto"/>
+                                                                                <p:message for="celularE" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="emailE" style="font-size: medium" value="Email*"/>
+                                                                                <p:inputText id="emailE" class="form-control" value="#{controladorEstReg.nuevoOBJdatosCont.email}" required="true"/>
+                                                                                <p:message for="emailE" display="tooltip" />
+                                                                            </div>
+                                                                             <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="emailC" style="font-size: medium" value="Confirmar Email*"/>                                
+                                                                                <p:inputText id="emailC" class="form-control" value="#{controladorEstReg.nuevoOBJdatosCont.email}" required="true" requiredMessage="Es necesario que ingrese un correo electrónico">
+                                                                                <o:validateEqual id="equal" components="emailE emailC" message="No coinciden los correos electrónicos" showMessageFor="emailC" />
+                                                                                <p:ajax event="blur" process="emailE emailC equal" update="emailC" /></p:inputText>
+                                                                                <p:message for="emailC" ><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <br/><br/><br/><br/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="calle" style="font-size: medium" value="Calle*"/>
+                                                                                <p:inputText id="calle" class="form-control" placeholder="Calle" value="#{controladorEstReg.nuevoOBJdomicilio.calle}" required="true" requiredMessage="Es necesario que ingrese el nombre de la calle"/>
+                                                                                <p:message for="calle"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-3 col-lg-4">
+                                                                                <p:outputLabel for="colonia" style="font-size: medium" value="Colonia*"/>
+                                                                                <p:inputText id="colonia" class="form-control" placeholder="Colonia" value="#{controladorEstReg.nuevoOBJdomicilio.colonia}" required="true" requiredMessage="Es necesario que ingrese el nombre de la colonia"/>
+                                                                                <p:message for="colonia"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                <p:outputLabel for="numExt" style="font-size: medium" value="Número Exterior*"/>
+                                                                                <p:inputText id="numExt" class="form-control" placeholder="14,14-B"  value="#{controladorEstReg.nuevoOBJdomicilio.numExterior}" required="true" requiredMessage="Es necesario que ingrese el número exterior"/>
+                                                                                <p:message for="numExt"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                <p:outputLabel for="numInt" style="font-size: medium" value="Número Interior"/>
+                                                                                <p:inputText id="numInt" class="form-control" placeholder="14,14-B"  value="#{controladorEstReg.nuevoOBJdomicilio.numInterior}"/>
+                                                                                <p:message for="numInt"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <br/><br/><br/><br/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="estadoR" style="font-size: medium" value="Estado*"/>
+                                                                                <p:selectOneMenu id="estadoR" value="#{controladorEstReg.nuevoOBJdomicilio.estado}" required="true" requiredMessage="Es necesario que seleccione el estado">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaEstadosDomicilioRadica}"/>
+                                                                                    <p:ajax listener="#{controladorEstReg.selectMunicipio()}" update="municipioR"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="estadoR"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="municipioR" style="font-size: medium" value="Municipio*"/>
+                                                                                <p:selectOneMenu id="municipioR" value="#{controladorEstReg.nuevoOBJdomicilio.municipio}" required="true" requiredMessage="Es necesario que seleccione el municipio">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaMunicipiosRadica}"/>
+                                                                                    <p:ajax listener="#{controladorEstReg.selectAsentamiento()}" update="asentamientoR"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="municipioR"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="asentamientoR" style="font-size: medium" value="Localidad*"/>
+                                                                                <p:selectOneMenu id="asentamientoR" value="#{controladorEstReg.nuevoOBJdomicilio.localidad}" filter="true" filterMatchMode="startsWith" style="width:  375px" required="true" requiredMessage="Es necesario que seleccione la localidad">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaAsentamientos}"/>
+                                                                                    <p:ajax/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="asentamientoR"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/>
+                                                                    <br/>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:commandButton id="btnActualizarDatContDom" value="Actualizar información" actionListener="#{controladorEstReg.actualizarDatosContDom()}"
+                                                                                                 icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmActDatContDom')update();"
+                                                                                                 update="@form"  process="@form" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:outputPanel>
+                                                </o:form>
+                                            </c:if>
+                                            <h4 style="text-align: justify;">* Campos que debes llenar obligatoriamente </h4>
+                                            <br/>
+                                            <h4 style="text-align: center; color: red;">Notas Importantes:</h4>
+                                            <h4 style="text-align: justify;">1. El correo electrónico que proporciones debe ser personal (no institucional) y verifica previamente que tengas acceso a el.</h4>
+                                        </p:tab>
+
+                                        <!-- Pestaña Antecedentes Académicos -->
+                                        <p:tab title="Antecedentes Académicos" disabled="#{!controladorEstReg.valDatCont}">
+                                            <c:if test="#{!controladorEstReg.valDatAcad}">
+                                                <o:form id="frmDatAcad"> 
+                                                    <p:outputPanel>
+                                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                            <div class="col-md-12">
+                                                                <div class="box box-widget widget-user-2">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="gradAnt" style="object-fit: contain; font-size: medium" value="Grado Académico"/>                                
+                                                                                <p:inputText id="gradAnt" class="form-control" value="#{controladorEstReg.nuevoOBJantAcad.gradoAcademico}" style="object-fit: contain; font-size: medium" disabled="true"/>
+                                                                                <p:message for="gradAnt" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"></div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"></div>
+                                                                            <br/><br/><br/><br/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="estado" style="object-fit: contain; font-size: medium" value="Estado*"/>
+                                                                                <p:selectOneMenu id="estado" value="#{controladorEstReg.estadoIEMS}" required="true" requiredMessage="Es necesario que seleccione el estado" style="object-fit: contain; font-size: medium" valueChangeListener="#{controladorEstReg.cambiarEstado}">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaEstadosIEMS}"/>
+                                                                                    <p:ajax listener="#{controladorEstReg.selectMunicipioIems()}" update="municipio, localidad, iems"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="estado"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="municipio" style="object-fit: contain; font-size: medium" value="Municipio*"/>
+                                                                                <p:selectOneMenu id="municipio" value="#{controladorEstReg.municipioIEMS}" required="true" requiredMessage="Es necesario que seleccione el municipio" style="object-fit: contain; font-size: medium" valueChangeListener="#{controladorEstReg.cambiarMunicipio}">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaMunicipiosIEMS}"/>
+                                                                                    <p:ajax listener="#{controladorEstReg.selectLocalidadIems()}" update="localidad, iems"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="municipio"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="localidad" style="object-fit: contain; font-size: medium" value="Localidad*"/>
+                                                                                <p:selectOneMenu id="localidad" value="#{controladorEstReg.localidadIEMS}" required="true" requiredMessage="Es necesario que seleccione la localidad" style="object-fit: contain; font-size: medium" valueChangeListener="#{controladorEstReg.cambiarLocalidad}">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaLocalidadesIEMS}"/>
+                                                                                    <p:ajax listener="#{controladorEstReg.selectIems()}" update="iems"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="localidad"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <br/><br/><br/><br/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-8">
+                                                                                <p:outputLabel for="iems" style="object-fit: contain; font-size: medium" value="IEMS*"/>
+                                                                                <p:selectOneMenu id="iems" value="#{controladorEstReg.nuevoOBJantAcad.iems}" filter="true" filterMatchMode="startsWith" required="true" requiredMessage="Es necesario que seleccione el IEMS" style="object-fit: contain; font-size: medium">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaIEMS}"/>
+                                                                                    <p:ajax/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="iems"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"> 
+                                                                                <p:outputLabel for="fecTer" style="height: 100%; width: 100%; object-fit: contain; font-size: medium" value="Fecha Terminación*"/>                                
+                                                                                <p:calendar locale="es" id="fecTer" value="#{controladorEstReg.nuevoOBJantAcad.fechaTerminacion}" pattern="dd-MM-yyyy" mask="true" style="object-fit: contain; font-size: medium" required="true" requiredMessage="Es necesario que ingrese la fecha de terminación"/>
+                                                                                <p:message for="fecTer" display="tooltip" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/>
+                                                                    <br/>      
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:commandButton id="btnGuardarDatAcad" value="Guardar informacion" actionListener="#{controladorEstReg.guardaDatosAcademicos()}" 
+                                                                                                 icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmActDatAcad')update();"
+                                                                                                 update="@form"  process="@form" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:outputPanel>
+                                                </o:form>
+                                            </c:if>
+                                            <c:if test="#{controladorEstReg.valDatAcad}">
+                                                <o:form id="frmActDatAcad"> 
+                                                    <p:outputPanel>
+                                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                            <div class="col-md-12">
+                                                                <div class="box box-widget widget-user-2">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="gradAnt" style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Grado Académico"/>                                
+                                                                                <p:inputText id="gradAnt" class="form-control" value="#{controladorEstReg.nuevoOBJantAcad.gradoAcademico}" disabled="true" style="height:100%; width: 100%; object-fit: contain;"/>
+                                                                                <p:message for="gradAnt" display="tooltip" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"></div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"></div>
+                                                                            <br/><br/><br/><br/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="estado" style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Estado*"/>
+                                                                                <p:selectOneMenu id="estado" value="#{controladorEstReg.estadoIEMS}" required="true" requiredMessage="Es necesario que seleccione el estado" style="height:100%; width: 100%; object-fit: contain;" valueChangeListener="#{controladorEstReg.cambiarEstado}">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaEstadosIEMS}"/>
+                                                                                    <p:ajax listener="#{controladorEstReg.selectMunicipioIems()}" update="municipio, localidad, iems"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="estado"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="municipio" style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Municipio*"/>
+                                                                                <p:selectOneMenu id="municipio" value="#{controladorEstReg.municipioIEMS}" required="true" requiredMessage="Es necesario que seleccione el municipio" style="height:100%; width: 100%; object-fit: contain;" valueChangeListener="#{controladorEstReg.cambiarMunicipio}">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaMunicipiosIEMS}"/>
+                                                                                    <p:ajax listener="#{controladorEstReg.selectLocalidadIems()}" update="localidad, iems"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="municipio"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="localidad" style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Localidad*"/>
+                                                                                <p:selectOneMenu id="localidad" value="#{controladorEstReg.localidadIEMS}" required="true" requiredMessage="Es necesario que seleccione la localidad" style="height:100%; width: 100%; object-fit: contain;" valueChangeListener="#{controladorEstReg.cambiarLocalidad}">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaLocalidadesIEMS}"/>
+                                                                                    <p:ajax listener="#{controladorEstReg.selectIems()}" update="iems"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="localidad"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <br/><br/><br/><br/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-8">
+                                                                                <p:outputLabel for="iems" style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="IEMS*"/>
+                                                                                <p:selectOneMenu id="iems" value="#{controladorEstReg.nuevoOBJantAcad.iems}" filter="true" filterMatchMode="startsWith" required="true" requiredMessage="Es necesario que seleccione el IEMS" style="height:100%; width: 100%; object-fit: contain;">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{controladorEstReg.listaIEMS}"/>
+                                                                                    <p:ajax/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="iems"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:outputLabel for="fecTer" style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Fecha Terminación*"/>                                
+                                                                                <p:calendar locale="es" id="fecTer" value="#{controladorEstReg.nuevoOBJantAcad.fechaTerminacion}" pattern="dd-MM-yyyy" mask="true" style="height:100%; width: 100%; object-fit: contain;" required="true" requiredMessage="Es necesario que ingrese la fecha de terminación"/>
+                                                                                <p:message for="fecTer" display="tooltip" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/>
+                                                                    <br/>      
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <p:commandButton id="btnActualizarDatAcad" value="Actualizar informacion" actionListener="#{controladorEstReg.actualizarDatosAcademicos()}" 
+                                                                                                 icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmActDatAcad')update();"
+                                                                                                 update="@form"  process="@form" />
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:outputPanel>
+                                                </o:form>
+                                            </c:if>
+                                            <h4 style="text-align: justify;">* Campos que debes llenar obligatoriamente </h4>
+                                            <br/>
+                                            <h4 style="text-align: center; color: red;">Notas Importantes:</h4>
+                                            <h4 style="text-align: justify;">1. La fecha de terminación es en la que se expidió tu certificado de bachillerato.</h4>
+                                            <h4 style="text-align: justify;">2. Soló en caso de que el certificado de bachillerato sea un duplicado, tomar la fecha de terminación que viene en el reverso. </h4>
+                                        </p:tab>
+                                        <!-- Pestaña Documentos para Expediente -->
+                                        <p:tab title="Documentos para Expediente" disabled="#{!controladorEstReg.valDatAcad}">
+                                            <p:outputPanel>
+                                                <p:autoUpdate/>
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+<!--                                                                        <div class="row">
+                                                                             <div class="col-sm-12 col-md-3 col-lg-4"></div>
+                                                                                <div class="col-sm-12 col-md-3 col-lg-4">
+                                                                                <h4 style="text-align: center; color: red;">Notas Importantes:</h4>
+                                                                                <h5 style="text-align: justify;">Los documentos deben cumplir con las siguientes especificaciones:</h5>
+                                                                                <ul style="text-align: justify;">
+                                                                                    <li>SIN dobleces, para evitar distorsiones en la digitalización.</li>
+                                                                                    <li>SIN tachaduras, enmendaduras y/o alteraciones.</li>
+                                                                                    <li>VISUALIZACIÓN CORRECTA del troquelado o sellos.</li>
+                                                                                    <li>DIGITALIZAR EL DOCUMENTO COMPLETO (sin omitir encabezados y pie de página).</li>
+                                                                                </ul>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-3 col-lg-4"></div>
+                                                                        </div>
+                                                                        <br/>
+                                                                        <div class="row">
+                                                                            <h4 style="text-align: center;">Lee atentamente las notas ubicadas en la parte inferior del nombre del documento antes de subir el archivo</h4>
+                                                                            <br/>
+                                                                            <div class="form-group">
+                                                                                <o:form id="frmDocExp" enctype="multipart/form-data">
+                                                                                <c:set var="expediente" value="# {controladorArchExp.expediente.expediente}"/>
+                                                                                <c:set var="existeCURP" value="# {controladorArchExp.docExiste(1, expediente)}"/>
+                                                                                <c:if test="# {!existeCURP}">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                        <p:outputPanel>            
+                                                                                            <p:autoUpdate/>
+                                                                                            <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="CURP" />
+                                                                                            <h5 style="text-align: center;">Nuevo Formato<br/> (<a style="color: #3385b0;" href="https://www.gob.mx/curp/" target="_blank">https://www.gob.mx/curp/</a>)</h5>
+                                                                                        </p:outputPanel>
+                                                                                        <br/>
+                                                                                        <center><o:inputFile id="fileC" value="# {controladorArchExp.fileC}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="# {caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son # {caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFileC" for="fileC" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="# {controladorArchExp.subirDocumentoCURP}" />
+                                                                                        <br/>
+                                                                                        <br/>
+                                                                                    </div>
+                                                                               </c:if>
+                                                                                <c:set var="existeAN" value="# {controladorArchExp.docExiste(2, expediente)}"/>
+                                                                                <c:if test="# {!existeAN}">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                        <p:outputPanel>            
+                                                                                            <p:autoUpdate/>
+                                                                                            <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Acta de Nacimiento" />
+                                                                                            <h5 style="text-align: center;">Formato Actualizado<br/> La fecha de registro de nacimiento no debe ser mayor a 10 años</h5>
+                                                                                        </p:outputPanel>
+                                                                                        <br/>
+                                                                                        <center><o:inputFile id="fileAN" value="# {controladorArchExp.fileAN}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="# {caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son # {caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFileAN" for="fileAN" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="# {controladorArchExp.subirDocumentoActNac}" />
+                                                                                        <br/>
+                                                                                        <br/>
+                                                                                    </div>
+                                                                                </c:if>
+                                                                                <c:set var="existeCB" value="# {controladorArchExp.docExiste(3, expediente)}"/>
+                                                                                <c:if test="# {!existeCB}">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                        <p:outputPanel>            
+                                                                                            <p:autoUpdate/>
+                                                                                            <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Certificado de Bachillerato" />
+                                                                                            <h5 style="text-align: center;">Digitalizar ambos lados (Anverso y Reverso)<br/> Digitalizar legalización por separado sin que se muestren las calificaciones</h5>
+                                                                                        </p:outputPanel>
+                                                                                        <br/>
+                                                                                        <center><o:inputFile id="fileCB" value="# {controladorArchExp.fileCB}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="# {caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son # {caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFileCB" for="fileCB" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="# {controladorArchExp.subirDocumentoCertBach}" />
+                                                                                        <br/>
+                                                                                        <br/>
+                                                                                    </div>
+                                                                                </c:if>
+                                                                                <c:set var="existeAEst" value="# {controladorArchExp.docExiste(11, expediente)}"/>
+                                                                                <c:if test="# {!existeAEst}">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                        <p:outputPanel>            
+                                                                                            <p:autoUpdate/>
+                                                                                            <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Acreditación de Estadia Ing. o Lic." />
+                                                                                            <h5 style="text-align: center;">Original con sellos de recibido de:<br/> Vinculación y Servicios Escolares</h5>
+                                                                                        </p:outputPanel>
+                                                                                        <br/>
+                                                                                        <center><o:inputFile id="fileAE" value="# {controladorArchExp.fileAE}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="# {caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son # {caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFileAE" for="fileAE" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="# {controladorArchExp.subirDocumentoAcredEstIL}" />
+                                                                                        <br/>
+                                                                                        <br/>
+                                                                                    </div>
+                                                                                </c:if>
+                                                                                <c:set var="existeAEE" value="# {controladorArchExp.docExiste(13, expediente)}"/>
+                                                                                <c:if test="# {!existeAEE}">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                        <p:outputPanel>            
+                                                                                            <p:autoUpdate/>
+                                                                                            <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Acta de Exención de Examen Ing. o Lic." />
+                                                                                            <h5 style="text-align: center;">Original, este documento es entregado por<br/> el Departamento de Servicios Escolares</h5>
+                                                                                        </p:outputPanel>
+                                                                                        <br/>
+                                                                                        <center><o:inputFile id="fileAEE" value="# {controladorArchExp.fileAEE}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="# {caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son # {caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFileAEE" for="fileAEE" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="# {controladorArchExp.subirDocumentoActExenIL}" />
+                                                                                        <br/>
+                                                                                        <br/>
+                                                                                    </div>
+                                                                                </c:if>
+                                                                                <c:set var="existeCSS" value="# {controladorArchExp.docExiste(14, expediente)}"/>
+                                                                                <c:if test="# {!existeCSS}">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                        <p:outputPanel>            
+                                                                                            <p:autoUpdate/>
+                                                                                            <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Constancia de Servicio Social Ing. o Lic." />
+                                                                                            <h5 style="text-align: center;">Original, este documento es entregado por<br/> el Departamento de Servicios Escolares</h5>
+                                                                                        </p:outputPanel>
+                                                                                        <br/>
+                                                                                        <center><o:inputFile id="fileCSS" value="# {controladorArchExp.fileCSS}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="# {caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son # {caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFileCSS" for="fileCSS" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="# {controladorArchExp.subirDocumentoConsServIL}" />
+                                                                                        <br/>
+                                                                                        <br/>
+                                                                                    </div>
+                                                                                </c:if>
+                                                                                <c:set var="existeCEI" value="# {controladorArchExp.docExiste(15, expediente)}"/>
+                                                                                <c:if test="# {!existeCEI}">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                        <p:outputPanel>            
+                                                                                            <p:autoUpdate/>
+                                                                                            <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Certificado de Estudios Ing. o Lic." />
+                                                                                            <h5 style="text-align: center;">Original, este documento es entregado por<br/> el Departamento de Servicios Escolares</h5>
+                                                                                        </p:outputPanel>
+                                                                                        <br/>
+                                                                                        <center><o:inputFile id="fileCEIL" value="# {controladorArchExp.fileCEIL}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="# {caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son # {caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFileCEIL" for="fileCEIL" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="# {controladorArchExp.subirDocumentoCertEstIL}" />
+                                                                                        <br/>
+                                                                                        <br/>
+                                                                                    </div>
+                                                                                </c:if>
+                                                                                <c:set var="existeCTT" value="# {controladorArchExp.docExiste(18, expediente)}"/>
+                                                                                <c:if test="# {!existeCTT}">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                        <p:outputPanel>            
+                                                                                            <p:autoUpdate/>
+                                                                                            <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Copia de Titulo de T.S.U." />
+                                                                                            <h5 style="text-align: center;">Este documento es entregado por<br/> el Departamento de Titulación</h5>
+                                                                                        </p:outputPanel>
+                                                                                        <br/>
+                                                                                        <center><o:inputFile id="fileCTTSU" value="# {controladorArchExp.fileCTTSU}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="# {caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son # {caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFileCTTSU" for="fileCTTSU" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="# {controladorArchExp.subirDocumentoCopiaTituloTSU}" />
+                                                                                        <br/>
+                                                                                        <br/>
+                                                                                    </div>
+                                                                                </c:if>
+                                                                                <c:set var="existeLSC" value="# {controladorArchExp.docExiste(19, expediente)}"/>
+                                                                                <c:if test="# {!existeLSC}">
+                                                                                    <c:set var="ltf" value="LTF" />
+                                                                                    <c:if test="# {controladorEstReg.nuevoOBJexpediente.programaEducativo eq ltf}">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                        <p:outputPanel>            
+                                                                                            <p:autoUpdate/>
+                                                                                            <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Liberación Servicio Social (1 Año)" />
+                                                                                        </p:outputPanel>
+                                                                                        <br/>
+                                                                                        <center><o:inputFile id="fileLibSCLTF" value="# {controladorArchExp.fileLibSCLTF}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="# {caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son # {caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFileLibSCLTF" for="fileLibSCLTF" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="# {controladorArchExp.subirDocumentoLibSCLTF}" />
+                                                                                        <br/>
+                                                                                        <br/>
+                                                                                    </div>
+                                                                                    </c:if>
+                                                                                </c:if>
+                                                                            </o:form>
+                                                                            </div>
+                                                                        </div>
+                                                                        <br/>-->
+                                                            <c:if test="#{controladorArchExp.expediente.nivel ne 1}">
+                                                                        <div class="row">
+                                                                            <o:form id="frmFotoExp" enctype="multipart/form-data">
+                                                                                <c:set var="expediente" value="#{controladorArchExp.expediente.expediente}"/> <!--Se agregó pero una vez descomentando la parte superior se debe quitar para no repetirse -->
+                                                                                <c:set var="existeFI" value="#{controladorArchExp.docExiste(12, expediente)}"/>
+                                                                                <c:if test="#{!existeFI}">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Fotografía Ing. o Lic." />
+                                                                                        <h5 style="text-align: justify;">La fotografía debe ser de estudio, no descolorida y con las características correspondientes:</h5>
+                                                                                        <ul style="text-align: justify;">
+                                                                                            <li>La fotografía debe ser a COLOR con FONDO BLANCO y SIN SOMBRAS.</li>
+                                                                                            <li>Se recomienda un tamaño de 6x9 cm.</li>
+                                                                                            <li>La fotografía deberá ser una en la que el solicitante esté mirando directamente a la cámara</li>
+                                                                                            <li>El solicitante no puede estar mirando hacia abajo o a los lados</li>
+                                                                                            <li>La cabeza del solicitante, incluyendo tanto la cara como el cabello, deben ser mostrados en su totalidad con la frente y las orejas descubiertas</li>
+                                                                                            <li>El solicitante no deberá usar gorras ni ningún otro accesorio que cubra total o parcialmente su cara</li>
+                                                                                            <li>La imagen no debe ser tratada con "filtros" o "retoques"</li>
+                                                                                        </ul>
+                                                                                    </p:outputPanel>
+                                                                                    <br/>
+                                                                                    <center><o:inputFile id="fileFotoIL" value="#{controladorArchExp.fileFotoIL}" accept="image/png,image/jpg,image/jpeg" acceptMessage="Sólo se permiten imágenes JPG/PNG." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFileFotoIL" for="fileFotoIL" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchExp.subirDocumentoFotoIL}" />
+                                                                                    <br/>
+                                                                                    <br/>
+                                                                                </div>
+                                                                            </c:if>
+                                                                            </o:form>
+                                                                        </div>
+                                                            </c:if>
+                                                            <c:if test="#{controladorArchExp.expediente.nivel eq 1}">
+                                                                        <div class="row">
+                                                                            <o:form id="frmFotoExpTSU" enctype="multipart/form-data">
+                                                                                <c:set var="expediente" value="#{controladorArchExp.expediente.expediente}"/> <!--Se agregó pero una vez descomentando la parte superior se debe quitar para no repetirse -->
+                                                                                <c:set var="existeFI" value="#{controladorArchExp.docExiste(5, expediente)}"/>
+                                                                                <c:if test="#{!existeFI}">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Fotografía T.S.U." />
+                                                                                        <h5 style="text-align: justify;">La fotografía debe ser de estudio, no descolorida y con las características correspondientes:</h5>
+                                                                                        <ul style="text-align: justify;">
+                                                                                            <li>La fotografía debe ser a COLOR con FONDO BLANCO y SIN SOMBRAS.</li>
+                                                                                            <li>Se recomienda un tamaño de 6x9 cm.</li>
+                                                                                            <li>La fotografía deberá ser una en la que el solicitante esté mirando directamente a la cámara</li>
+                                                                                            <li>El solicitante no puede estar mirando hacia abajo o a los lados</li>
+                                                                                            <li>La cabeza del solicitante, incluyendo tanto la cara como el cabello, deben ser mostrados en su totalidad con la frente y las orejas descubiertas</li>
+                                                                                            <li>El solicitante no deberá usar gorras ni ningún otro accesorio que cubra total o parcialmente su cara</li>
+                                                                                            <li>La imagen no debe ser tratada con "filtros" o "retoques"</li>
+                                                                                        </ul>
+                                                                                    </p:outputPanel>
+                                                                                    <br/>
+                                                                                    <center><o:inputFile id="fileFotoTSU" value="#{controladorArchExp.fileFotoTSU}" accept="image/png,image/jpg,image/jpeg" acceptMessage="Sólo se permiten imágenes JPG/PNG." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFileFotoTSU" for="fileFotoIL" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchExp.subirDocumentoFotoTSU}" />
+                                                                                    <br/>
+                                                                                    <br/>
+                                                                                </div>
+                                                                            </c:if>
+                                                                            </o:form>
+                                                                        </div>
+                                                            </c:if>
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <br/>
+                                                                                <br/>
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Expediente Actual" />
+                                                                                <br/>
+                                                                                <br/>
+                                                                                <br/>
+                                                                            </div>
+                                                                            <div class="col-md-12">
+                                                                                <h:form id="frmDocsExp">
+                                                                                    <p:remoteCommand name="actualizarListaDocs" update="@form:tblDocsExp" />
+                                                                                    <p:dataTable id="tblDocsExp" emptyMessage="Sin datos en el periodo seleccionado." value="#{controladorArchExp.listaDocsExp}" var="docsExp"
+                                                                                                 resizeMode="expand"
+                                                                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                                                        <p:columnGroup type="header">
+                                                                                            <p:row>
+                                                                                                <p:column headerText="Opciones" width="120"/>
+                                                                                                <p:column headerText="Archivo" width="200" />
+                                                                                                <p:column headerText="Fecha de Carga" width="100" />
+                                                                                                <p:column headerText="Validado" width="80" />
+                                                                                                <p:column headerText="Observaciones" width="200" />
+                                                                                                <p:column headerText="Fecha de Validación" width="100" />
+                                                                                            </p:row>
+                                                                                        </p:columnGroup>
+                                                                                        <c:set var="status" value="#{controladorEstReg.consultarStatusDocumento(docsExp.docExpediente)}" />
+                                                                                        <p:column style="text-align: center;">
+                                                                                            <div class="btn-group">
+                                                                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{controladorArchExp.eliminarDocumento(docsExp)}" onsuccess="actualizarListaDocs();" title="Eliminar documento." disabled="#{!empty status}">
+                                                                                                    <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento #{caster.rutaToArchivoNombre(docsExp.ruta)}?" icon="ui-icon-alert" />
+                                                                                                </p:commandButton>
+                                                                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                                                                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                                                                                                </p:confirmDialog>  
+                                                                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorArchExp.descargarDocumento(docsExp)}" target="_blank" title="Descargar documento."><i class="fa fa-download" /></p:commandLink>
+                                                                                            </div>
+                                                                                        </p:column>
+                                                                                        <p:column style="text-align: justify;"><h:outputText value="#{caster.rutaToArchivoNombre(docsExp.ruta)}" /></p:column>
+                                                                                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
+                                                                                        <p:column style="text-align: center;"><h:outputText value="#{!empty status?'Si':'No'}"/></p:column>
+                                                                                        <p:column style="text-align: justify;"><h:outputText value="#{docsExp.observaciones}" /></p:column>
+                                                                                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+<!--                                                                                        <f:facet name="footer">
+                                                                                            <span style="font-size: smaller; font-weight: bold;">Total de Archivos cargados: # {fn:length(controladorArchExp.listaDocsExp)} de # {controladorEstReg.numTotalDocs}.</span>
+                                                                                        </f:facet>-->
+                                                                                    </p:dataTable>
+                                                                                </h:form>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                                      
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:outputPanel>  
+                                        </p:tab>
+                                        <p:blockUI block="informacion" widgetVar="bloqueoCargaFile">
+                                            Cargando archivo espere por favor.<br />
+                                        </p:blockUI>
+                                    </p:tabView>
+                                </c:if>
+                                </c:if>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

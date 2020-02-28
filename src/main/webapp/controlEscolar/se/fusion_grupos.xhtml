@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Fusión de grupos
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <style type="text/css">
+            .table-bordered>tbody>tr>td{
+                padding-top: 0px !important;
+                padding-right: 0px !important;
+                padding-bottom: 0px !important;
+                padding-left: 0px !important;
+            }
+            .ui-chkbox {
+                display: inline-grid;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{fusionGruposServiciosEscolares.cargado}">
+        <adm:breadcrumb title="Fusion de grupos"/>
+        <div class="contenedor">
+            <c:if test="#{fusionGruposServiciosEscolares.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel style="font-weight: bold" value="Periodo activo: #{caster.clavePeriodoToString(fusionGruposServiciosEscolares.rol.periodoActivo)}" />
+                                        <p:spacer width="30" />
+                                        <p:outputLabel style="font-weight: bold" value="Fecha disponible para realizar cambios de grupo: Del
+                                        #{caster.fechaEventoEscolarToString(fusionGruposServiciosEscolares.rol.eventoActivo.inicio, fusionGruposServiciosEscolares.rol.eventoActivo.fin)}"/>
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-8 col-lg-4'}" />
+                                    <c:set var="index" value="#{0}" />
+                                    <!--p:remoteCommand id="cmdActualizarmaterias" name="actualizarmaterias" actionListener="#" update="@(.ui-datatable) @(.ui-material) @(.ui-tabs)" /-->
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla4}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="division" value="#{fusionGruposServiciosEscolares.rol.areaUniversidad}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{fusionGruposServiciosEscolares.rol.divisiones}" var="division" itemValue="#{division}"
+                                                                   itemLabel="#{division.nombre}"/>
+                                                    <p:ajax process="@this" update="@this, tbl2, programa, grupo" listener="#{fusionGruposServiciosEscolares.obtenerProgramasEductaivos()}"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Área académica" for="division"/>
+                                                <p:message for="division" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla4}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="programa" value="#{fusionGruposServiciosEscolares.rol.programa}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{fusionGruposServiciosEscolares.rol.programas}" var="programa" itemValue="#{programa}"
+                                                                   itemLabel="#{programa.nombre}" />
+                                                    <p:ajax process="@this" update="@this, grupo, tbl2" listener="#{fusionGruposServiciosEscolares.obtenerGruposProgramaEducativo()}"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Programa educativo" for="programa"/>
+                                                <p:message for="programa" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla4}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="grupo" value="#{fusionGruposServiciosEscolares.rol.grupoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItem value="#{null}" itemLabel="Cambiar grupo"/>
+                                                    <f:selectItems value="#{fusionGruposServiciosEscolares.rol.grupos}" var="grupo" itemValue="#{grupo}"
+                                                                   itemLabel="#{grupo.grado}° #{grupo.literal}" />
+                                                    <p:ajax process="@this" update="@this, tbl2" listener="#{fusionGruposServiciosEscolares.obtenerEstudiatesGrupoSeleccionado()}"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Grupo" for="grupo"/>
+                                                <p:message for="grupo" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row margin-bottom" style="margin-top: 20px">
+                                        <p:dataTable var="estudiante" value="#{fusionGruposServiciosEscolares.rol.listaEstudiantes}"
+                                                     rows="100" selection="#{fusionGruposServiciosEscolares.rol.listaEstudiantesDestino}"
+                                                     rendered="true" emptyMessage="Sin registros." id="tbl2" rowIndexVar="rowIndex"
+                                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                     rowKey="#{estudiante.idEstudiante}"
+                                                     tableStyle="vertical-align: middle;">
+                                            <p:column selectionMode="multiple" style="width:10px;text-align:center"/>
+                                            <p:column headerText="No." style="width: 5px;text-align: center; font-size: small">
+                                                <c:forEach var="estudent" items="#{fusionGruposServiciosEscolares.rol.listaEstudiantes}">
+                                                    <c:set var="index" value="#{index + 1}"/>
+                                                    <h:outputText rendered="#{estudiante.idEstudiante eq estudent.idEstudiante}" value="#{index}"/>
+                                                </c:forEach>
+                                            </p:column>
+                                            <p:column headerText="Cuatrimestre" style="width: 120px;text-align: center; font-size: small">
+                                                <h:outputText value="#{estudiante.matricula}"/>
+                                            </p:column>
+                                            <p:column headerText="Grupo" style="width: 120px;text-align: center; font-size: small;">
+                                                <h:outputText value="#{estudiante.aspirante.idPersona.nombre}
+                                                                     #{estudiante.aspirante.idPersona.apellidoPaterno}
+                                                                     #{estudiante.aspirante.idPersona.apellidoMaterno}"/>
+                                            </p:column>
+                                            <p:column headerText="Situación" style="width: 120px;text-align: center; font-size: small;">
+                                                <h:outputText rendered="#{estudiante.aspirante.estatus eq true}" value="Regular" />
+                                                <h:outputText rendered="#{estudiante.aspirante.estatus eq false}" value="Baja" />
+                                            </p:column>
+                                            <p:column headerText="Grado actual" style="width: 120px;text-align: center; font-size: small;">
+                                                <h:outputText value="#{estudiante.grupo.grado}° #{estudiante.grupo.literal}" />
+                                            </p:column>
+                                            <p:column headerText="Calificación asignada" style="width: 120px;text-align: center; font-size: small;">
+                                                <h:outputText rendered="#{estudiante.calificacionList.size() > 0}" value="Si"/>
+                                            </p:column>
+                                            <f:facet name="footer">
+                                                <c:forEach var="grupo" items="#{fusionGruposServiciosEscolares.rol.grupos}">
+                                                    <div class="btn-group">
+                                                        <p:commandLink
+                                                                update="tbl2"
+                                                                class="#{true?'btn btn-info btn-sm':'btn btn-warning btn-sm'}"
+                                                                rendered="#{grupo ne fusionGruposServiciosEscolares.rol.grupoSeleccionado}"
+                                                                actionListener="#{fusionGruposServiciosEscolares.fusionarGrupo(grupo)}"
+                                                                title="Mover al grupo: #{grupo.literal}">
+                                                                Mover al grupo: #{grupo.literal}
+                                                            <p:confirm header="Mover al grupo: #{grupo.literal}"
+                                                                       message="¿Está seguro que desea mover el/los estudiantes al grupo #{grupo.grado}° #{grupo.literal} ?"/>
+                                                        </p:commandLink>
+                                                    </div>
+                                                </c:forEach>
+                                            </f:facet>
+                                        </p:dataTable>
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                                         styleClass="panel panel-primary" width="500"
+                                                         closable="false" closeOnEscape="true">
+                                            <p:commandButton value="Si" type="button"
+                                                             styleClass="ui-confirmdialog-yes btn btn-primary"
+                                                             icon="ui-icon-check"/>
+                                            <p:commandButton value="No" type="button"
+                                                             styleClass="ui-confirmdialog-no btn btn-primary"
+                                                             icon="ui-icon-close"/>
+                                        </p:confirmDialog>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty fusionGruposServiciosEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{fusionGruposServiciosEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para una asignación académica</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{fusionGruposServiciosEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!fusionGruposServiciosEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a directores de área académica."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

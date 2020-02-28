@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <style type="text/css">
+
+        </style>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Generación de grupos
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{generacionGruposServiciosEscolares.cargado}">
+        <adm:breadcrumb title="Generación de grupos"/>
+        <div class="contenedor">
+            <c:if test="#{generacionGruposServiciosEscolares.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <h:form prependId="false" class="form-inline">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+                                            <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(generacionGruposServiciosEscolares.rol.periodoActivo)}"/>
+                                            <p:spacer width="50" />
+                                            <p:outputLabel value="Generación: #{generacionGruposServiciosEscolares.rol.generaciones.inicio} -
+                                            #{generacionGruposServiciosEscolares.rol.generaciones.fin}"/>
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <div class="btn-group">
+                                                <p:commandLink
+                                                        actionListener="#{generacionGruposServiciosEscolares.generarGrupo}"
+                                                        type="submit"
+                                                        class="btn btn-primary"
+                                                        rendered="#{true}"
+                                                        disabled="#{false}"
+                                                        process=":frmGeneral:noEstu @this" update=":frmGeneral :frmTabla">
+                                                    <i class="fa fa-save"/>
+                                                </p:commandLink>
+                                                <p:commandButton id="guardar" actionListener="#{generacionGruposServiciosEscolares.generarGrupo}" style="display: none" icon="fa fa-save"
+                                                                 styleClass="btn btn-primary"  process=":frmGeneral:noEstu @this" update=":frmGeneral :frmTabla"/>
+                                                <p:commandLink
+                                                        class="btn btn-info"
+                                                        rendered="#{true}"
+                                                        disabled="#{false}"
+                                                        onclick="PF('modalAyuda').show();"
+                                                        title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                        class="fa fa-question"/>
+                                                </p:commandLink>
+                                                <p:commandLink
+                                                        class="btn btn-warning"
+                                                        rendered="#{true}"
+                                                        disabled="#{false}"
+                                                        onclick="PF('modalSugerencia').show();"
+                                                        title="Presione el botón para visualizar la sugerencia de creacion de los grupos, en base al total de aspirantes existentes"><i
+                                                        class="fa fa-commenting"/>
+                                                </p:commandLink>
+                                            </div>
+                                        </f:facet>
+                                    </p:toolbar>
+                                    <p:sticky target="tb"/>
+                                </h:form>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="panel" value="#{'col-sm-12 col-md-12 col-lg-12'}"/>
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-6 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-3 col-md-3 col-lg-3'}"/>
+                                    <c:set var="casilla5" value="#{'col-sm-4 col-md-4 col-lg-4'}"/>
+                                    <c:set var="casilla6" value="#{'col-sm-8 col-md-8 col-lg-8'}"/>
+                                    <c:set var="casilla7" value="#{'col-sm-6 col-md-6 col-lg-6'}"/>
+                                    <!--p:remoteCommand id="cmdActualizarmaterias" name="actualizarmaterias" update="@(.ui-datatable) @(.ui-material) @(.ui-tabs)" /-->
+                                    <div class="row margin-bottom" style="margin-bottom: 20px">
+                                        <h:form id="frmGeneral">
+                                            <div class="row">
+                                                <div class="#{panel}">
+                                                    <div class="box box-primary">
+                                                        <div class="box-header panel-heading with-border">
+                                                            <div class="pull-left">
+                                                                <i class="fa fa-plus-square "></i>
+                                                                <span class="box-title">  Agregar grupos</span>
+                                                            </div>
+                                                            <div class="box-tools pull-right">
+                                                                <button class="btn btn-box-tool" data-widget="collapse">
+                                                                    <i class="fa fa-minus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="box-body">
+                                                            <p:separator style="border: 0"/>
+                                                            <div class="row">
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="periodo" value="#{generacionGruposServiciosEscolares.rol.periodoAct}">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{generacionGruposServiciosEscolares.rol.periodos}"/>
+                                                                            <p:ajax update=":frmTabla" process="@this" listener="#{generacionGruposServiciosEscolares.obtenerGrupos()}"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="periodo" value="Periodo"/>
+                                                                        <p:message for="periodo"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="pe" class="form-control" style="width: 100%;" requiredMessage="Debe seleccionar el programa educativo"
+                                                                                         value="#{generacionGruposServiciosEscolares.rol.grupo.idPe}" required="true">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems var="pe" value="#{generacionGruposServiciosEscolares.rol.areasUniversidades}"
+                                                                                           itemLabel="#{pe.nombre}" itemValue="#{pe.area}"/>
+                                                                            <p:ajax listener="#{generacionGruposServiciosEscolares.obtenerPlanesEstudioPorPE()}" process="@this"
+                                                                                    update="planEstudio"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="pe" value="Programa Educativo"/>
+                                                                        <p:message for="pe"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="planEstudio" class="form-control" style="width: 100%;"
+                                                                                         value="#{generacionGruposServiciosEscolares.rol.planEstudio}" converter="entidadCEConverter"
+                                                                                         required="true" requiredMessage="Es necesario elegir un plan de estudios">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems var="plan" value="#{generacionGruposServiciosEscolares.rol.planEstudios}"
+                                                                                           itemLabel="#{plan.descripcion}" itemValue="#{plan}"/>
+                                                                            <p:ajax process="@this" update="@this"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="planEstudio" value="Plan de Estudios"/>
+                                                                        <p:messages for="planEstudio"><p:autoUpdate/> </p:messages>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="cuatrimestre" value="#{generacionGruposServiciosEscolares.rol.grupo.grado}" required="true"
+                                                                            requiredMessage="Debe seleccionar el cuatrimestre a registrar">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <c:if test="#{generacionGruposServiciosEscolares.rol.periodo.mesInicio.numero eq 9}">
+                                                                                <f:selectItem itemValue="1" itemLabel="1"/>
+                                                                                <f:selectItem itemValue="4" itemLabel="4"/>
+                                                                                <f:selectItem itemValue="7" itemLabel="7"/>
+                                                                                <f:selectItem itemValue="10" itemLabel="10"/>
+                                                                            </c:if>
+                                                                            <c:if test="#{generacionGruposServiciosEscolares.rol.periodo.mesInicio.numero eq 1}">
+                                                                                <f:selectItem itemValue="2" itemLabel="2"/>
+                                                                                <f:selectItem itemValue="5" itemLabel="5"/>
+                                                                                <f:selectItem itemValue="8" itemLabel="8"/>
+                                                                                <f:selectItem itemValue="11" itemLabel="11"/>
+                                                                            </c:if>
+                                                                            <c:if test="#{generacionGruposServiciosEscolares.rol.periodo.mesInicio.numero eq 5}">
+                                                                                <f:selectItem itemValue="3" itemLabel="3"/>
+                                                                                <f:selectItem itemValue="6" itemLabel="6"/>
+                                                                                <f:selectItem itemValue="9" itemLabel="9"/>
+                                                                            </c:if>
+                                                                            <p:ajax process="@this" update="@this"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="cuatrimestre" value="Cuatrimestre"/>
+                                                                        <p:message for="cuatrimestre"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/><br/>
+                                                            <div class="row">
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:outputLabel for="sistema2" value="Sistema"
+                                                                                       style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/>
+                                                                        <p:selectOneMenu id="sistema2" value="#{generacionGruposServiciosEscolares.rol.grupo.idSistema}" converter="entidadCEConverter"
+                                                                                         required="true" requiredMessage="Debe seleccionar el sistema para dicho grupo">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems var="sistema" value="#{FichaAdmision.listaSistema}" itemLabel="#{sistema.nombre}"
+                                                                                           itemValue="#{sistema}"/>
+                                                                            <p:ajax update="@this" process="@this"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:message for="sistema2"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:outputLabel for="noG" value="No. grupos"
+                                                                                       style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/><br/>
+                                                                        <p:spinner id="noG" required="true" value="#{generacionGruposServiciosEscolares.rol.noGrupos}"
+                                                                                   maxlength="3" min="0" max="30" size="2" requiredMessage="Ingrese el número maximo de estudiantes.">
+                                                                            <p:ajax process="@this" update="@this"/>
+                                                                        </p:spinner>
+                                                                        <p:message for="noG"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:outputLabel for="noEstu" value="Capacidad Maxima Estudiantes"
+                                                                                       style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/><br/>
+                                                                        <p:spinner id="noEstu" required="true"  maxlength="3" readonly="true" value="#{generacionGruposServiciosEscolares.rol.capMax}"
+                                                                                   min="30" max="30" size="2" requiredMessage="Ingrese la cantidad de días." rendered="true">
+                                                                            <p:ajax process="@this" update="@this"/>
+                                                                        </p:spinner>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </h:form>
+                                        <h:form id="frmTabla">
+                                            <div class="row">
+                                                <div class="#{panel}">
+                                                    <div class="box box-warning">
+                                                        <div class="box-header panel-heading with-border">
+                                                            <div class="pull-left">
+                                                                <i class="fa fa-list-alt"></i>
+                                                                <span class="box-title">Lista de grupos existentes</span>
+                                                            </div>
+                                                            <div class="box-tools pull-right">
+                                                                <button class="btn btn-box-tool" data-widget="collapse">
+                                                                    <i class="fa fa-minus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="box-body">
+                                                            <p:dataTable var="grupo" value="#{generacionGruposServiciosEscolares.rol.grupos}" sortBy="#{grupo.idPe}" expandableRowGroups="true"
+                                                                         paginator="true" rows="10" paginatorPosition="top" rowsPerPageTemplate="10,20,30,40,50"
+                                                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                                         {RowsPerPageDropdown}" rendered="true" emptyMessage="Sin registros." id="tbl2" rowIndexVar="rowIndex" editable="true"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                         tableStyle="vertical-align: middle;" editMode="cell">
+                                                                <p:headerRow>
+                                                                    <p:column colspan="6" style="background-color: #00b5ad;">
+                                                                        <h:outputText value="#{procesoInscripcion.nombrePE(grupo.idPe)}" />
+                                                                    </p:column>
+                                                                </p:headerRow>
+                                                                <p:ajax event="cellEdit" listener="#{generacionGruposServiciosEscolares.actualizarGrupo}"/>
+                                                                <p:column style="text-align: center;width: 40px;">
+                                                                    <p:commandButton icon="fa fa-trash" styleClass="btn-warning"
+                                                                                     disabled="#{grupo.estudianteList.size() eq 0 ? false:true}"
+                                                                                     actionListener="#{generacionGruposServiciosEscolares.eliminarGrupo(grupo)}" update="tbl2"/>
+                                                                </p:column>
+                                                                <p:column headerText="Cuatrimestre" style="width: 120px;text-align: center;">
+                                                                    <h:outputText value="#{grupo.grado}"/>
+                                                                </p:column>
+                                                                <p:column headerText="Grupo" style="width: 120px;text-align: center;">
+                                                                    <h:outputText value="#{grupo.literal}"/>
+                                                                </p:column>
+                                                                <p:column headerText="Sistema" style="width: 120px;text-align: center;">
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output"><h:outputText value="#{grupo.idSistema.nombre}" /></f:facet>
+                                                                        <f:facet name="input">
+                                                                            <p:selectOneMenu id="sistema1" value="#{grupo.idSistema}" converter="entidadCEConverter">
+                                                                                <f:selectItem itemValue="#{null}"/>
+                                                                                <f:selectItems var="sistema" value="#{FichaAdmision.listaSistema}" itemLabel="#{sistema.nombre}" itemValue="#{sistema}"/>
+                                                                            </p:selectOneMenu>
+                                                                        </f:facet>
+                                                                    </p:cellEditor>
+                                                                </p:column>
+                                                                <p:column headerText="Turno" style="width: 120px;text-align: center;">
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output"><h:outputText value="#{grupo.idTurno.nombre}" /></f:facet>
+                                                                        <f:facet name="input">
+                                                                            <p:selectOneMenu id="turno" value="#{grupo.idTurno}" converter="entidadCEConverter">
+                                                                                <f:selectItem itemValue="#{null}"/>
+                                                                                <f:selectItems var="turno" value="#{utilToolAcademicas.listaTurno}" itemLabel="#{turno.nombre}"
+                                                                                               itemValue="#{turno}"/>
+                                                                            </p:selectOneMenu>
+                                                                        </f:facet>
+                                                                    </p:cellEditor>
+                                                                </p:column>
+                                                                <p:column headerText="Capacidad Maxima" style="width: 120px;text-align: center;">
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output"><h:outputText value="#{grupo.capMaxima}" /></f:facet>
+                                                                        <f:facet name="input"><p:inputText value="#{grupo.capMaxima}" style="width:96%" label="Year"/></f:facet>
+                                                                    </p:cellEditor>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </h:form>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <c:if test="#{!empty generacionGruposServiciosEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{generacionGruposServiciosEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para la generación de grupos</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{generacionGruposServiciosEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();">
+                            <i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                <p:dialog id="modalSugerencia"
+                          widgetVar="modalSugerencia" width="1500" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Tabla de sugerencias para la generación de grupos aproximados</h3></div>
+                        <div class="box-body">
+                            <p:dataTable var="sugerencia" value="#{generacionGruposServiciosEscolares.rol.listaSugerencia}"
+                                         paginator="true" rows="10" paginatorPosition="top" rowsPerPageTemplate="10,20,30,40,50"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rendered="true" emptyMessage="Sin registros." id="tbl3"
+                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                         tableStyle="vertical-align: middle;">
+                                <p:column headerText="Siglas" style="width: 200px;text-align: center; display: none">
+                                    <h:outputText value="#{sugerencia.siglas}"/>
+                                </p:column>
+                                <p:column headerText="Programa educativo" style="width: 120px;text-align: center;">
+                                    <h:outputText value="#{sugerencia.nombre}"/>
+                                </p:column>
+                                <p:column headerText="Total de aspirantes" style="width: 120px;text-align: center;">
+                                    <h:outputText value="#{sugerencia.totalAspirantes}" />
+                                </p:column>
+                                <p:column headerText="No. de grupos sugeridos" style="width: 120px;text-align: center;">
+                                    <h:outputText value="#{sugerencia.totalGrupos}" />
+                                </p:column>
+                                <p:column headerText="No. de grupos existentes" style="width: 120px;text-align: center;">
+                                    <h:outputText value="#{sugerencia.gruposExistentes}" />
+                                </p:column>
+                                <p:column headerText="Sistema" style="width: 120px;text-align: center;">
+                                    <h:outputText value="#{sugerencia.sistemaOpcion}" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalSugerencia').hide();">
+                            <i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!generacionGruposServiciosEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado al personal perteneciente a servicios escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

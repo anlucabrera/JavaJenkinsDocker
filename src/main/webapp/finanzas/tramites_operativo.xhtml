@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="comisionMapa.css"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento a trámites
+    </ui:define>
+
+    <ui:define name="description">
+        Ejercicio: #{caster.ejercicioFiscal}
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Seguimiento a trámites"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.ComisionOficioEstatus" var="ComisionOficioEstatus" allSuffix="ALL_ComisionOficioEstatus" />
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.ValorVacio" var="valorVacio" />
+        <div class="contenedor">
+            <c:if test="#{tramitesOperativo.tieneAcceso}">
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandButton id="btnAgregar"
+                                                         action="tramites_comisionar?faces-redirect=true"
+                                                         value="Comisionar" process="@this" icon="fa fa-plus"
+                                                         styleClass="btn-primary"/>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info text-center">
+                                            <p:remoteCommand name="actualizarTS" update="tblSCC"/>
+                                            <p:dataTable value="#{tramitesOperativo.rolOperativo.tramites}"
+                                                         var="tramite"
+                                                         emptyMessage="Sin registros."
+                                                         id="tblSCC"
+                                                         paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50"
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                         tableStyle="vertical-align: middle;">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column headerText="Oficio de comisión"
+                                                                  style="width: 130px;"/>
+                                                        <p:column headerText="Folio" style="width: 80px;"/>
+                                                        <p:column headerText="Comisionado"/>
+                                                        <p:column headerText="Siguiendo"/>
+                                                        <p:column headerText="Lugar" style="width: 200px;"/>
+                                                        <p:column headerText="Inicio" style="width: 90px;"/>
+                                                        <p:column headerText="Fin" style="width: 90px;"/>
+                                                        <p:column headerText="Estatus"/>
+                                                        <p:column headerText="Opciones" style="width: 80px;"/>
+                                                        <p:column headerText="Liberar" style="width: 80px;"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <p:column><h:outputText
+                                                        value="#{tramite.tramite.comisionOficios.oficio}"/></p:column>
+                                                <p:column><h:outputText value="#{tramite.tramite.folio}"/></p:column>
+                                                <p:column><h:outputText value="#{tramite.comisionado.personal.nombre}"/></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{tramite.personalSiguiendoTramite.personal.nombre}"/></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{caster.tramiteToDestino(tramite.tramite)}"/></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{tramite.tramite.comisionOficios.fechaComisionInicio}"><f:convertDateTime
+                                                        pattern="yyyy-MM-dd"/></h:outputText></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{tramite.tramite.comisionOficios.fechaComisionFin}"><f:convertDateTime
+                                                        pattern="yyyy-MM-dd"/></h:outputText></p:column>
+                                                <p:column ><h:outputText
+                                                        value="#{caster.comisionOficioEstatusToLabel(tramite.comisionOficioEstatus)}" title="Observaciones: #{tramite.tramite.comisionOficios.observaciones}"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:commandLink
+                                                            class="#{(!empty tramite.tramite.comisionOficios.ruta and (tramite.tramite.comisionOficios.ruta ne valorVacio.PENDIENTE.label))?'btn btn-info btn-sm':'btn btn-warning btn-sm'}"
+                                                            actionListener="#{tramitesOperativo.seleccionarTramite(tramite)}"
+                                                            rendered="#{!tramite.liberado}"
+                                                            oncomplete="PF('dlgSubirEvidencia').show();return false"
+                                                            title="Subir evidencia que justifique la comisión."><i
+                                                            class="fa fa-upload"/>
+                                                    </p:commandLink>
+                                                    <p:link outcome="tramites_comisionar" ajax="false"
+                                                            class="btn btn-info btn-sm" includeViewParams="true"
+                                                            rendered="#{!tramite.liberado}"
+                                                            title="Modificar comisión."><i
+                                                            class="fa fa-pencil" />
+                                                        <f:param name="tramiteid" value="#{tramite.tramite.tramite}"  />
+                                                    </p:link>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:selectBooleanCheckbox value="#{tramite.liberado}" disabled="#{tramite.liberado}">
+                                                        <p:ajax process="@this" listener="#{tramitesOperativo.liberarTramite(tramite)}"  />
+                                                    </p:selectBooleanCheckbox>
+                                                </p:column>
+                                            </p:dataTable>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                                             styleClass="panel panel-primary" width="500"
+                                                             closable="false" closeOnEscape="true">
+                                                <p:commandButton value="Si" type="button"
+                                                                 styleClass="ui-confirmdialog-yes btn btn-primary"
+                                                                 icon="ui-icon-check"/>
+                                                <p:commandButton value="No" type="button"
+                                                                 styleClass="ui-confirmdialog-no btn btn-primary"
+                                                                 icon="ui-icon-close"/>
+                                            </p:confirmDialog>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <p:dialog id="dlgSubirEvidencia"
+                          header="Evidencia para comisión: #{tramitesOperativo.rolOperativo.tramite.tramite.comisionOficios.oficio}"
+                          styleClass="box-primary" widgetVar="dlgSubirEvidencia" minHeight="100" modal="true"
+                          appendTo="@(body)" resizable="false">
+                    <p:autoUpdate/>
+                    <div class="row">
+                        <div class="col-md-12" style="text-align: center;">
+                            <h:form id="frmSubirPDF" enctype="multipart/form-data" prependId="false" rendered="#{caster.tramiteEditablePorOperativo(tramitesOperativo.rolOperativo.tramite.tramite, logonMB.personal)}"
+                                    class="form-inline">
+                                <o:inputFile id="ulfPDF" value="#{tramitesOperativo.rolOperativo.file}"
+                                             class="form-control"
+                                             accept="application/pdf" acceptMessage="Solo se aceptan archivos PDF."
+                                             required="true" requiredMessage="Debe elegir un archivo PDF."
+                                             title="Pulse para eligir el archivo PDF a registrar."/>
+                                <h:commandButton value="Subir"
+                                                 actionListener="#{tramitesOperativo.subirTramiteEvidencia}"
+                                                 class="btn-primary form-control"/>
+                            </h:form>
+                        </div>
+                    </div>
+                    <c:if test="#{!empty tramitesOperativo.rolOperativo.tramite.tramite.comisionOficios.ruta and tramitesOperativo.rolOperativo.tramite.tramite.comisionOficios.ruta ne valorVacio.PENDIENTE.label}">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align: center;">
+                                <h:form id="frmDescargarPDF" prependId="false" class="form-inline">
+                                    Ya hay una evidencia asignada, para consultar presione el siguiente botón:
+                                    <p:commandLink class="btn btn-info" ajax="false"
+                                                   action="#{tramitesOperativo.descargarTramiteEvidencia()}"
+                                                   target="_blank"><i
+                                            class="fa fa-external-link-square"/></p:commandLink>
+                                </h:form>
+                            </div>
+                        </div>
+                    </c:if>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!tramitesOperativo.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText
+                                value="El acceso solo está autorizado a directivos y coordinadores con personal a cargo."/>
+                    </h:panelGrid>
+                    <f:facet name="footer">
+
+                    </f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar();
+        </script>
+    </ui:define>
+</ui:composition>

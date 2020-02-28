@@ -1,0 +1,100 @@
+.table-bordered{
+    border: 1px solid #000000;
+}
+body .ui-datatable th[role="columnheader"].ui-state-default, body .ui-treetable th[role="columnheader"].ui-state-default{
+    border: 1px solid #000000;
+    color: #fff !important;
+    background-color: #3c8dbc !important;
+}
+
+table[role="grid"]{
+    margin-bottom: 0px !important;
+}
+
+.table-bordered>thead>tr>th,
+.table-bordered>tbody>tr>th, 
+.table-bordered>tfoot>tr>th, 
+.table-bordered>thead>tr>td, 
+.table-bordered>tbody>tr>td, 
+.table-bordered>tfoot>tr>td{
+    border: 1px solid #000000;
+    vertical-align: middle;
+    padding: 3px !important;
+}
+
+.ui-dialog-buttonpane{
+    margin-top: 2px  !important;
+    margin-bottom: 2px !important;
+}
+
+.ui-dialog-title{
+    font-size: larger !important;
+    margin: auto;
+}
+
+.panel-heading{
+    text-align: center;
+}
+
+.ui-dialog-titlebar-icon{
+    margin-top: 15px !important;
+    display: inline;
+}
+
+.ui-selectonemenu{
+    padding-top: 0px !important;
+}
+
+.campo2Partes input {
+   width: 20.5em;
+}
+
+.campoAutocompleteEstudiante input {
+   width: 19em;
+}
+
+.campoAutocompleteDocente input {
+   width: 30em;
+}
+
+.campoAutocompleteCT input {
+   width: 50em;
+}
+
+.campo3Partes input {
+   width: 14em;
+}
+
+.campo4Partes input {
+   width: 10.5em;
+}
+
+.campoRecursosObtenidos input{
+    width: 45.5em
+}
+
+.campoTiempo input{
+    width: 10em
+}
+
+.campoTutoriaGrupalDT input {
+   width: 8em;
+}
+
+.alert{
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-bottom: 5px;
+}
+body .ui-datatable .ui-datatable-header, body .ui-treetable .ui-datatable-header, body .ui-datatable .ui-treetable-header, body .ui-treetable .ui-treetable-header, body .ui-datatable .ui-datatable-footer, body .ui-treetable .ui-datatable-footer, body .ui-datatable .ui-treetable-footer, body .ui-treetable .ui-treetable-footer {
+    background: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    border-color: #f4f4f4;
+}
+
+.casoCriticoTG {
+    background-color: #fca752 !important;
+    background-image: none !important;
+    color: #000000 !important;
+}

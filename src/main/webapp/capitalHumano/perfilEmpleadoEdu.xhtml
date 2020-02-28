@@ -1,0 +1,940 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:o="http://omnifaces.org/ui"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <f:metadata>
+            <f:viewParam name="activa" value="#{cvEducacion.pestaniaActiva}"/>
+        </f:metadata>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{cvEducacion.cargado}">
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <!--p:panel id="errort" header="Error de tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel-->
+        <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'otro'}">
+                <div class="box box-primary">
+                    <div class="box box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Fecha límite</h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">  
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                            <span class="info-box-number">#{controladorEmpleado.fechaLimiteCurriculumVitae}.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+        </c:if>
+        <p:panel id="informacion"   >
+            <section class="content">
+                <div class="row">
+                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                    <div class="col-md-10">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-sm-2 col-xs-12">
+                                    <p:link outcome="perfilEmpleado">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>
+                            </div>
+                            <p:tabView activeIndex="#{cvEducacion.pestaniaActiva}">
+                                <p:tab id="tab1" title="Formación académica">
+                                    <o:form id="frmForAc"  enctype="multipart/form-data"> 
+                                        <p:outputPanel id="registro">
+                                            <p:autoUpdate rendered="#{cvEducacion.claveR eq 0?false:true}"/>
+                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputLabel for="estudio" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nivel de estudios" />
+                                                                                    <p:selectOneMenu id="estudio" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvEducacion.grado}" required="true">
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione Uno"/>
+                                                                                        <f:selectItems value="#{cvEducacion.listaGrados}" var="grados" itemValue="#{grados.grado}" itemLabel="#{grados.nombre}" />
+                                                                                        <p:ajax listener="#{cvEducacion.filtrarInfoEducacion()}" process="estudio" />
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="estudio" display="tooltip" />
+                                                                                    <hr/> 
+                                                                                </div>    
+                                                                                <p:outputPanel >
+                                                                                    <p:autoUpdate/>                                                                            
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                        <p:outputLabel for="titulacion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Forma titulación" />
+                                                                                        <p:selectOneMenu id="titulacion" disabled="#{!cvEducacion.formaTyC}" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvEducacion.nuevoOBJFormacionAcademica.modoTitulacion}" >
+                                                                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                            <f:selectItem itemValue="Tesis Individual y Examen Profesional" itemLabel="Tesis individual y examen profesional"/>
+                                                                                            <f:selectItem itemValue="Tesis Grupal y Examen Profesional" itemLabel="Tesis grupal y examen profesional"/>
+                                                                                            <f:selectItem itemValue="Tesis" itemLabel="Tesis"/>
+                                                                                            <f:selectItem itemValue="Examen Profesional" itemLabel="Examen profesional"/>
+                                                                                            <f:selectItem itemValue="Promedio" itemLabel="Promedio"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="titulacion" display="tooltip" />                                                             
+                                                                                        <hr/>
+                                                                                    </div>                                                                                    
+                                                                                </p:outputPanel>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputLabel for="institucion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Institución" />
+                                                                                    <p:inputText id="institucion" style="height:100%; width: 100%; object-fit: contain; font-size: large" required="true" requiredMessage="No puede tener un campo vacío" placeholder="Institución" value="#{cvEducacion.nuevoOBJFormacionAcademica.institucion}"/>
+                                                                                    <p:message for="institucion" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <p:outputPanel >
+                                                                                    <p:autoUpdate/>  
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                        <p:outputLabel for="perfInst" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre de la carrera" />
+                                                                                        <p:inputText id="perfInst" disabled="#{!cvEducacion.nomCarrera}" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre de la carrera" value="#{cvEducacion.nuevoOBJFormacionAcademica.nombreCarrera}"/>
+                                                                                        <p:message for="perfInst" display="tooltip" />
+                                                                                        <hr/>  
+                                                                                    </div>  
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                        <p:outputLabel for="cedula" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Número de cédula profesional" />
+                                                                                        <p:inputText id="cedula" disabled="#{!cvEducacion.formaTyC}" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Número de cédula profesional" value="#{cvEducacion.nuevoOBJFormacionAcademica.cedulaProfesional}"/>
+                                                                                        <p:message for="cedula" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>                                                                                    
+                                                                                </p:outputPanel>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de obtención" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaIn" value="#{cvEducacion.nuevoOBJFormacionAcademica.fechaObtencion}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Seleccione la fecha" />
+                                                                                    <p:message for="fechaIn" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                    <p:outputLabel for="messages" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de evidencia a subir" />
+                                                                                    <br/>
+                                                                                    <p:outputPanel >
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:selectOneRadio id="rutas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvEducacion.evidencia}" 
+                                                                                                          layout="responsive" columns="2" required="true" requiredMessage="El tipo de evidencia es necesrio para acargar la evidencia"> 
+                                                                                            <f:selectItem itemValue = "Cedula" itemDisabled="#{!cvEducacion.formaTyC}" itemLabel = "Cedula #{cvEducacion.nuevoOBJFormacionAcademica.evidenciaCedula eq null?'':'(ya cuenta con el archivo cargado)'}" /> 
+                                                                                            <f:selectItem itemValue = "EvidenciaTitulacion" itemLabel = "Evidencia titulacion / culminacion #{cvEducacion.nuevoOBJFormacionAcademica.evidenciaTitulo eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                        </p:selectOneRadio> 
+                                                                                    </p:outputPanel>
+                                                                                    <o:inputFile id="file" value="#{cvEducacion.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFile" for="file" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{cvEducacion.agregarEvidenciasEducacion()}"/>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+                                                                            <p:outputPanel >
+                                                                                <p:autoUpdate/>
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                                    <div id="div1" class="col-sm-12 col-md-4 col-lg-4">
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{cvEducacion.createFormacion()}" disabled="#{cvEducacion.direccionInt.toString() eq '0' ?true:false }"
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('registro')update();" onsuccess="PF('frmListaFormacionAcademica')update();"
+                                                                                                         update="@form" process="@form" /> 
+
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </p:outputPanel>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>                                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                <div class="box-body">  
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="info-box">
+                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                <div class="info-box-content">
+                                                                    <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                
+                                                </div>
+                                            </c:if>
+                                        </p:outputPanel> 
+                                    </o:form>
+                                    <h:form id="frmListaFormacionAcademica">
+                                        <p:outputPanel>
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{cvEducacion.metodoBase()}" update="tblFormacion" />
+                                            <p:dataTable id="tblFormacion" value="#{cvEducacion.nuevaListaFormacionAcademica}" var="estudios" 
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{estudios.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         editable="true" editMode="row">
+
+
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                        <p:column rowspan="2" headerText="Grado" style="width: 300px;" />
+                                                        <p:column rowspan="2" headerText="Institución" style="width: 300px;"/>
+                                                        <p:column rowspan="2" headerText="Fecha" style="width: 200px;"/> 
+                                                        <p:column rowspan="2" headerText="Forma titulación" style="width: 300px;"/>
+                                                        <p:column rowspan="2" headerText="Número cédula" style="width: 300px;"/>
+                                                        <p:column colspan="2" headerText="Evidencias" style="width: 150px;"/>
+                                                    </p:row>
+                                                    <p:row class="success">
+                                                        <p:column headerText="Culminacion"/>
+                                                        <p:column headerText="Cédula"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                                <p:ajax event="rowEdit" listener="#{cvEducacion.updateFormacion}" update="@this" oncomplete="actualizarTabla()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+                                                <f:facet name="header">
+                                                    <p:outputLabel value="Registro aceptado" class="aceptado" style="font-weight: bold"/>  
+                                                    <p:spacer width="15px"/>
+                                                    <p:outputLabel value="Registro pendiente" class="denegado" style="font-weight: bold; color: #000000"/> 
+                                                </f:facet>
+
+                                                <p:column >
+                                                    <p:commandButton actionListener="#{cvEducacion.deleteFormacion(estudios)}" update="tblFormacion" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del grado: #{estudios.nivelEscolaridad.nombre}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+
+                                                <p:column >
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center;visibility: #{estudios.estatus eq 'Aceptado'?'hidden':'visible'}">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{estudios.nivelEscolaridad.nombre}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{estudios.institucion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputTextarea value="#{estudios.institucion}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{estudios.fechaObtencion}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{estudios.fechaObtencion}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column >
+                                                    <h:outputText value="#{estudios.modoTitulacion}" />
+                                                </p:column>
+                                                <p:column >
+                                                    <h:outputText value="#{estudios.cedulaProfesional}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(estudios.evidenciaTitulo)}" target="_blank" style="color: #000000">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                </p:column>   
+                                                <p:column>
+                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(estudios.evidenciaCedula)}" target="_blank" style="color: #000000">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                </p:column>   
+                                            </p:dataTable>  
+
+                                        </p:outputPanel> 
+
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
+
+                                    </h:form>
+                                </p:tab>                               
+                                <p:tab id="tab2" title="Experiencia laboral">
+                                    <o:form id="frmExLab" enctype="multipart/form-data">
+                                        <p:outputPanel id="registro2">
+                                            <p:autoUpdate rendered="#{cvEducacion.claveREX eq 0?false:true}"/>
+                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputLabel for="institucion" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Institución o empresa"/>
+                                                                                    <p:inputText id="institucion" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Institución o empresa" value="#{cvEducacion.nuevoOBJExpeienciasLaborales.institucionEmpresa}"/>
+                                                                                    <p:message for="institucion" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputLabel for="puesto" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Puesto desempeñado" />
+                                                                                    <p:inputText id="puesto" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Puesto desempeñado" value="#{cvEducacion.nuevoOBJExpeienciasLaborales.puestoDesepenado}"/>
+                                                                                    <p:message for="puesto" display="tooltip"/>                                                                         
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaIn" value="#{cvEducacion.nuevoOBJExpeienciasLaborales.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechaIn" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha fin" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaFin" value="#{cvEducacion.nuevoOBJExpeienciasLaborales.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechaFin" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputLabel for="funciones" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Funciones que desempeñó" />
+                                                                                    <p:inputTextarea id="funciones" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Funciones que desempeñó" value="#{cvEducacion.nuevoOBJExpeienciasLaborales.funcionesDesempenio}"/>
+                                                                                    <p:message for="funciones" display="tooltip" />
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Comprobante #{cvEducacion.nuevoOBJExpeienciasLaborales.evidenciaNombremiento eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                    </p:outputPanel>
+                                                                                    <o:inputFile id="file" value="#{cvEducacion.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFile4" for="file" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" value="Subir archivo" class="btn-primary btn-info" action="#{cvEducacion.agregarEvidenciaExperienciaLab}" />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+                                                                            <p:outputPanel>            
+                                                                                <p:autoUpdate/>
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4">                                                                                
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información"   
+                                                                                                         disabled="#{cvEducacion.direccionInt3.toString() eq '0' ?true:false }"
+                                                                                                         actionListener="#{cvEducacion.guardarEmpleo()}" 
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" 
+                                                                                                         update="@form" process="@form" oncomplete="PF('frmListaEmpleos')update();" /> 
+                                                                                    </div>
+                                                                                </div>
+                                                                            </p:outputPanel>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>                                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                <div class="box-body">  
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="info-box">
+                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                <div class="info-box-content">
+                                                                    <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                
+                                                </div>
+                                            </c:if>
+                                        </p:outputPanel>
+                                    </o:form>
+                                    <h:form id="frmListaEmpleos">
+                                        <p:outputPanel>
+                                            <p:remoteCommand name="actualizarTabla2" actionListener="#{cvEducacion.metodoBase()}" update="tblEmpleos" />
+                                            <p:dataTable id="tblEmpleos" value="#{cvEducacion.nuevaListaExperienciasLaborales}" var="trabajaos" 
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{trabajaos.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         editable="true" editMode="row">
+
+
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                        <p:column rowspan="2" headerText="Puesto" style="width: 300px;" />
+                                                        <p:column rowspan="2" headerText="Institución" style="width: 300px;"/>
+                                                        <p:column colspan="2" headerText="Fecha" style="width: 200px;"/> 
+                                                        <p:column rowspan="2" headerText="Funciones" style="width: 300px;"/>
+                                                        <p:column rowspan="2" headerText="Evidencia" style="width: 50px;"/>
+                                                    </p:row>
+                                                    <p:row class="success">
+                                                        <p:column headerText="Inicio"/>
+                                                        <p:column headerText="Fin"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                                <p:ajax event="rowEdit" listener="#{cvEducacion.updateExperienciaLaboral}" update="@this" oncomplete="actualizarTabla2()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
+
+                                                <p:column >
+                                                    <p:commandButton actionListener="#{cvEducacion.eliminarEmpleos(trabajaos)}" update="tblEmpleos" oncomplete="actualizarTabla2()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación del trabajo: #{trabajaos.puestoDesepenado}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+
+                                                <p:column >
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center;visibility: #{trabajaos.estatus eq 'Aceptado'?'hidden':'visible'}">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{trabajaos.puestoDesepenado}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{trabajaos.puestoDesepenado}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{trabajaos.institucionEmpresa}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{trabajaos.institucionEmpresa}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{trabajaos.fechaInicio}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{trabajaos.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{trabajaos.fechaFin}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{trabajaos.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{trabajaos.funcionesDesempenio}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputTextarea value="#{trabajaos.funcionesDesempenio}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(trabajaos.evidenciaNombremiento)}" target="_blank" style="color: #000000">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                </p:column>   
+                                            </p:dataTable> 
+                                        </p:outputPanel>  
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
+                                    </h:form>
+                                </p:tab>                              
+                                <p:tab id="tab3" title="Actualización profesional">
+                                    <o:form id="frmCapacit" enctype="multipart/form-data">
+                                        <p:outputPanel id="registro3">
+                                            <p:autoUpdate rendered="#{cvEducacion.claveRAP eq 0?false:true}"/>
+                                            <c:if test="#{controladorEmpleado.fechaLimiteCV}">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <h2>Revisar las actualizaciones profesionales que ya han sido precargadas, y agregar las faltantes.</h2>
+                                                                            <hr/>
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                                    <p:outputLabel for="tipoCurso" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de capacitación  tomada" />
+                                                                                    <p:selectOneMenu id="tipoCurso" style="height:100%; width: 100%; object-fit: contain; font-size: large" onchange="mostrarCaja(this.value);" value="#{cvEducacion.tipoCur}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItems value="#{cvEducacion.listaCursos}" var="cursos" itemValue="#{cursos.tipo}" itemLabel="#{cursos.nombre}" />
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="tipoCurso" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                                    <p:outputLabel for="modalidad" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Modalidad del curso tomado" />
+                                                                                    <p:selectOneMenu id="modalidad" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvEducacion.modalida}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItems value="#{cvEducacion.listaModalidades}" var="modalidad" itemValue="#{modalidad.modalidad}" itemLabel="#{modalidad.nombre}" />
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="modalidad" display="tooltip" />
+                                                                                    <hr/>  
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                                    <p:outputLabel for="tipoAP" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Tipo de actualización" />
+                                                                                    <p:selectOneMenu id="tipoAP" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvEducacion.nuevoOBJCapacitacionespersonal.tipoCapacitacion}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="Externa" itemLabel="Externa"/>
+                                                                                        <f:selectItem itemValue="Interna" itemLabel="Interna"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="tipoAP" display="tooltip" />
+                                                                                    <hr/>   
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-3">
+                                                                                    <p:outputLabel for="categoriaAP" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoria de actualización" />
+                                                                                    <p:selectOneMenu id="categoriaAP" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{cvEducacion.nuevoOBJCapacitacionespersonal.categoriaCapacitacion}" >
+                                                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                                                        <f:selectItem itemValue="pedagógica" itemLabel="pedagógica"/>
+                                                                                        <f:selectItem itemValue="profesional" itemLabel="profesional"/>
+                                                                                        <f:selectItem itemValue="Tecnologías de la información" itemLabel="Tecnologías de la información"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="categoriaAP" display="tooltip" />
+                                                                                    <hr/>   
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <div id="divPrincipal" >
+                                                                                        <div id="cursoOutputlabel">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del curso" />
+                                                                                        </div> 
+                                                                                        <div id="tallerOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del taller" />
+                                                                                        </div>    
+                                                                                        <div id="congresoOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del congreso" />
+                                                                                        </div>    
+                                                                                        <div id="seminarioOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del seminario" />
+                                                                                        </div>    
+                                                                                        <div id="cursoTallerOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del curso-taller" />
+                                                                                        </div>    
+                                                                                        <div id="maestriaOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre de la maestría " />
+                                                                                        </div>    
+                                                                                        <div id="diplomadoOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del diplomado" />
+                                                                                        </div>    
+                                                                                        <div id="simposioOutputlabel" style="display: none">
+                                                                                            <p:outputLabel for="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" rendered="true" value="Nombre del simposio" />
+                                                                                        </div>    
+                                                                                        <p:inputText id="curso" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre" value="#{cvEducacion.nuevoOBJCapacitacionespersonal.nombre}"/>
+                                                                                        <p:message for="curso" display="tooltip" />
+                                                                                    </div>                                                                                
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="empresa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Empresa impartidora" />
+                                                                                    <p:inputText id="empresa" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Empresa impartidora" value="#{cvEducacion.nuevoOBJCapacitacionespersonal.empresaImpartidora}"/>
+                                                                                    <p:message for="empresa" display="tooltip" /> 
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Lugar de la capacitación" />
+                                                                                    <p:inputText id="lugar" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Lugar de la capacitación" value="#{cvEducacion.nuevoOBJCapacitacionespersonal.lugar}"/>
+                                                                                    <p:message for="lugar" display="tooltip"/>                                                                                                                                                                                                                                       
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-4 col-lg-2">
+                                                                                    <p:outputLabel for="durH" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Duración en horas" />
+                                                                                    <p:inputText id="durH" type="number" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Duracion en horas" value="#{cvEducacion.nuevoOBJCapacitacionespersonal.duracionHoras}"/>
+                                                                                    <p:message for="durH" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-4 col-lg-2">
+                                                                                    <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaIn" value="#{cvEducacion.nuevoOBJCapacitacionespersonal.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechaIn" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-4 col-lg-2">
+                                                                                    <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin" />
+                                                                                    <p:calendar navigator="true" locale="es" id="fechaFin" value="#{cvEducacion.nuevoOBJCapacitacionespersonal.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                    <p:message for="fechaFin" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                    <p:outputLabel for="objetivo" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Objetivo" />
+                                                                                    <p:inputTextarea id="objetivo" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Objetivo de la capacitación" value="#{cvEducacion.nuevoOBJCapacitacionespersonal.objetivo}"/>
+                                                                                    <p:message for="objetivo" display="tooltip" />
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Comprobante: #{cvEducacion.nuevoOBJCapacitacionespersonal.evidenciaCapacitacion eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                    </p:outputPanel>
+                                                                                    <o:inputFile id="file" value="#{cvEducacion.file}" accept="application/pdf" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFile5" for="file" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cvEducacion.agregarEvidenciaCapacitacion}" />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+                                                                            <p:outputPanel>            
+                                                                                <p:autoUpdate/>
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4"/>
+                                                                                    <div class="col-sm-12 col-md-4 col-lg-4">                                                                                
+                                                                                        <p:commandButton id="btnBuscarActiuvidades" value="Guardar información"       
+                                                                                                         disabled="#{cvEducacion.direccionInt4.toString() eq '0' ?true:false }"
+                                                                                                         actionListener="#{cvEducacion.guardarCapacitacion()}" 
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" 
+                                                                                                         update="@form" process="@form" oncomplete="PF('frmListaCapacitaciones')update();" /> 
+                                                                                    </div>
+                                                                                </div>
+                                                                            </p:outputPanel>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>                                                      
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="#{!controladorEmpleado.fechaLimiteCV}">
+                                                <div class="box-body">  
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="info-box">
+                                                                <span class="info-box-icon bg-red"><i class="fa fa-exclamation"></i></span>
+
+                                                                <div class="info-box-content">
+                                                                    <span class="info-box-number" style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #cccccc':'color: #E53935'}">NOTA</span>
+                                                                    <span class="info-box-number">La fecha límite para la actualización de currículum se ha vencido <p style="#{utilidadesAcceso.procesoElectoralActivo ==true ?'color: #999999':'color: #0675ca'}">GRACIAS POR SU COLABORACIÓN</p></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                
+                                                </div>
+                                            </c:if>
+                                        </p:outputPanel>  
+                                    </o:form>
+                                    <h:form id="frmListaCapacitacionesInstitucionales" >
+                                        <p:outputPanel >
+                                            <p:remoteCommand name="actualizarTabla3" actionListener="#{cvEducacion.metodoBase()}" update="tblActualizacionesProfesionalesUTXJ" />
+                                            <p:dataTable id="tblActualizacionesProfesionalesUTXJ" value="#{cvEducacion.nuevaListaCapacitaciones}" var="capacitaciones" 
+                                                         emptyMessage="No premios registrados" paginator="true" rows="10"
+                                                         sortBy="#{capacitaciones.tipoCapacitacion}" expandableRowGroups="true" rowStyleClass="#{capacitaciones.estatus eq 'Aceptado'?'aceptado':'denegado'}"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30"
+                                                         editable="true" editMode="row">
+
+                                                <p:headerRow>
+                                                    <p:column colspan="14">
+                                                        <h:outputText value="#{capacitaciones.tipoCapacitacion}" />
+                                                    </p:column>
+                                                </p:headerRow>
+
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:150px"/>
+                                                        <p:column rowspan="2" headerText="Nombre" style="width: 250px;" />
+                                                        <p:column rowspan="2" headerText="Tipo" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="Modalidad" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="Categoria" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="Empresa" style="width: 300px;"/>
+                                                        <p:column rowspan="2" headerText="Lugar" style="width: 300px;"/>
+                                                        <p:column rowspan="2" headerText="Duracion" style="width: 50px;"/>
+                                                        <p:column rowspan="2" headerText="Objetivo" style="width: 400px;"/>
+                                                        <p:column colspan="2" headerText="Fecha" style="width: 200px;"/> 
+                                                        <p:column rowspan="2" headerText="Tipo" style="width: 50px;"/>
+                                                        <p:column rowspan="2" headerText="Evidencia" style="width: 50px;"/>
+                                                    </p:row>
+                                                    <p:row class="success">
+                                                        <p:column headerText="Inicio"/>
+                                                        <p:column headerText="Fin"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                                <p:ajax event="rowEdit" listener="#{cvEducacion.updateCapacitacion}" update="@this" oncomplete="actualizarTabla3()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla3()"/>
+
+                                                <p:column >
+                                                    <p:commandButton actionListener="#{cvEducacion.eliminarCapacitacion(capacitaciones)}" update="tblActualizacionesProfesionalesUTXJ" oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de la capacitacion: #{capacitaciones.nombre}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+
+                                                <p:column >
+                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center;visibility: #{capacitaciones.estatus eq 'Aceptado'?'hidden':'visible'}">
+                                                        <a href="#" class="ui-row-editor-pencil">
+                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                        </a>
+                                                        <a href="#" class="ui-row-editor-check">
+                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                        </a>
+                                                        <p:spacer width="20px"/>
+                                                        <a href="#" class="ui-row-editor-close">
+                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                        </a>
+                                                    </div>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.nombre}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{capacitaciones.nombre}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.tipo.nombre}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{capacitaciones.tipo.tipo}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItems value="#{cvEducacion.listaCursos}" var="cursos" itemValue="#{cursos.tipo}" itemLabel="#{cursos.nombre}" />
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.modalidad.nombre}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{capacitaciones.modalidad.modalidad}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItems value="#{cvEducacion.listaModalidades}" var="modalidad" itemValue="#{modalidad.modalidad}" itemLabel="#{modalidad.nombre}" />
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.categoriaCapacitacion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{capacitaciones.categoriaCapacitacion}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'pedagógica'}" itemLabel="#{'pedagógica'}"/>
+                                                                <f:selectItem itemValue="#{'profesional'}" itemLabel="#{'profesional'}"/>
+                                                                <f:selectItem itemValue="#{'Tecnologías de la información'}" itemLabel="#{'Tecnologías de la información'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.empresaImpartidora}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{capacitaciones.empresaImpartidora}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.lugar}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{capacitaciones.lugar}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.duracionHoras} Hora/s" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{capacitaciones.duracionHoras}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.objetivo}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputTextarea value="#{capacitaciones.objetivo}"/>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.fechaInicio}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{capacitaciones.fechaInicio}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.fechaFin}" ><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{capacitaciones.fechaFin}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column >
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{capacitaciones.tipoCapacitacion}" />
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <h:selectOneMenu value="#{capacitaciones.tipoCapacitacion}" style="width:100%">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{'Seleccione uno'}"/>
+                                                                <f:selectItem itemValue="#{'Externa'}" itemLabel="#{'Externa'}"/>
+                                                                <f:selectItem itemValue="#{'Interna'}" itemLabel="#{'Interna'}"/>
+                                                            </h:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(capacitaciones.evidenciaCapacitacion)}" target="_blank" style="color: #000000">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                </p:column>   
+                                            </p:dataTable>  
+                                        </p:outputPanel>
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
+                                    </h:form>
+
+                                </p:tab>
+                                <p:blockUI block="informacion" widgetVar="bloqueoCargaFile">
+                                    Cargando archivo espere por favor.<br />
+                                </p:blockUI>
+                            </p:tabView>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+
+        <script type="text/javascript" src="js/jquery.js"></script>
+
+        <h:outputScript library="js" name="funciones.js" />
+       </c:if>
+    </ui:define>
+
+</ui:composition>

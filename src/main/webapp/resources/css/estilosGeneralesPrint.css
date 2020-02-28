@@ -1,0 +1,114 @@
+.actividad{
+    background-color: #cdd5e0 !important;
+    color: #000000 !important;
+}
+.principal{
+    background-color: #999999!important;
+    color: #ffffff!important;
+}
+.eje{
+    background-color: #00204a!important;
+    color: #ffffff!important;
+}
+.est{
+    background-color: #005792!important;
+    color: #ffffff!important;
+}
+.lac{
+    background-color: #89a4c7!important;
+    color: #000000!important;
+}
+body .ui-datatable table tbody td, body .ui-treetable table tbody td, body .ui-datatable table thead th, body .ui-treetable table thead th {
+    padding: 1px 1px;
+}
+h1, .h1, h2, .h2, h3, .h3 {
+    margin-top: 2px;
+    margin-bottom: 1px;
+}
+hr {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+h4, .h4, h5, .h5, h6, .h6 {
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+.description-block {
+    display: block;
+    margin: 1px 0;
+    text-align: center;
+}
+@media print {
+ .actividad{
+        background-color: #cdd5e0 !important;
+        color: #000000 !important;
+     font-size: xx-small;
+    }
+    .subactiviades{
+        font-size: xx-small;
+    }
+    .eje{
+        background-color: #00204a !important;
+        color: #ffffff !important;
+        text-align: justify !important;
+    }
+    .est{
+        background-color: #005792 !important;
+        color: #ffffff !important;
+        text-align: justify !important;
+    }
+    .lac{
+        background-color: #89a4c7 !important;
+        color: #000000 !important;
+        text-align: justify !important;
+    }
+    thead {
+        display: table-header-group;
+        vertical-align: middle;
+        border-color: inherit;
+        display:table-header-group!important;
+    }
+
+    body .ui-datatable tbody>tr.ui-widget-content, body .ui-treetable tbody>tr.ui-widget-content{
+        page-break-inside:avoid!important;
+        page-break-after:auto!important;
+    }
+    body .ui-datatable table tbody td, body .ui-treetable table tbody td, body .ui-datatable table thead th, body .ui-treetable table thead th {
+        padding: 1px 5px;
+    }
+    h1, .h1, h2, .h2, h3, .h3 {
+        margin-top: 2px;
+        margin-bottom: 1px;
+    }
+
+    hr {
+        margin-top: 2px;
+        margin-bottom: 2px;
+        border: 0;
+        border-top: 1px solid #eee;
+    }
+
+    h4, .h4, h5, .h5, h6, .h6 {
+        margin-top: 1px;
+        margin-bottom: 1px;
+    }
+
+    .description-block {
+        display: block;
+        margin: 1px 0;
+        text-align: center;
+    }
+    .row {
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    div.ui-panel .ui-panel-content {
+        padding: 1px 1px;
+    }   
+    .hrclas{
+      page-break-inside:avoid; page-break-after:auto    
+    }
+}

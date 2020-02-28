@@ -1,0 +1,1340 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ul class="sidebar-menu" data-widget="tree">
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.UsuarioTipo" var="usuarioTipo" />
+        <c:if test="#{logonMB.acceso}">
+            <li>
+                <p:link href="#{request.contextPath}/index.xhtml" onclick="clearBreadCrumbs()">
+                    <i class="fa fa-home"></i>
+                    <span>Inicio</span>
+                </p:link>
+            </li>
+            <li>
+                <p:link href="http://siip.utxicotepec.edu.mx/prontuario-service2" target="_blank">
+                    <i class="fa fa-bar-chart-o"></i>
+                    <span>Prontuario</span>
+                </p:link>
+            </li>
+            <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.TRABAJADOR}">  
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Perfil del personal</li>
+                <li>
+                    <p:link href="#{request.contextPath}/capitalHumano/perfilEmpleado.xhtml">
+                        <i class="fa fa-user"></i>
+                        <span>Perfil</span>
+                    </p:link>
+                </li>
+                <c:if test="#{controladorEmpleado.listaDocencias.size() != 0}">
+                    <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoExDoc.xhtml"><i class="fa fa-book"></i>
+                            <span>Experiencia docente UTXJ</span>
+                        </p:link>
+                    </li>
+                </c:if>
+                <li>
+                    <p:link href="#{request.contextPath}/capitalHumano/contactoE.xhtml">
+                        <i class="fa fa-book"></i>
+                        <span>Contacto de emergencias</span>
+                    </p:link>
+                </li>
+
+                <c:if test="#{controlEscolarMenu.tieneElementos()}">
+                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Control escolar</li>
+                    <!--Usuarios especiales -->
+                    <c:if test="#{fichaAdmisionReporte.mostrarEnDesarrollo(request) and fichaAdmisionReporte.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reporteFichaAdmision.xhtml"><i class="fa fa-clipboard"></i><span>Reporte de Aspirantes <small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+
+                    <!-- Administrador -->
+                    <c:if test="#{permisoAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaAdministrador.tieneAcceso}">
+
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-calendar"></i> <span>Apertura Extemporánea</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <li><p:link href="#{request.contextPath}/controlEscolar/pye/permisoAperturaExtemporanea.xhtml"><i class="fa fa-users"></i><span>Grupal</span></p:link></li>
+                                <li><p:link href="#{request.contextPath}/controlEscolar/pye/permisoAperturaExtemporaneaPorEstudiante.xhtml"><i class="fa fa-user-plus"></i><span>Estudiante</span></p:link></li>
+                            </ul>
+                        </li>
+                    </c:if>
+
+                    <!--                    <c:if test="# {validacionAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and validacionAperturaExtemporaneaAdministrador.tieneAcceso}"> <li><p:link href="# {request.contextPath}/controlEscolar/pye/validacionAperturaExtemporanea.xhtml"><i class="fa fa-check-square-o"></i><span>Validación Aperturas</span></p:link></li></c:if>-->
+
+                    <!-- Secretaría Académica -->
+                    <c:if test="#{concentradoCalificacionesSecAca.mostrarEnDesarrollo(request) and concentradoCalificacionesSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/secAcademica/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span></p:link></li></c:if>
+                    <c:if test="#{avanceProgramaticoSecAca.mostrarEnDesarrollo(request) and avanceProgramaticoSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/secAcademica/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
+
+                    <!-- Director Área Académica -->
+                    <c:if test="#{administracionPlanEstudioDirector.mostrarEnDesarrollo(request) and administracionPlanEstudioDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/plan_estudio.xhtml"><i class="fa fa-users"></i><span>Admin Plan Estudio</span></p:link></li></c:if>
+                    <c:if test="#{asignacionAcademicaDirector.mostrarEnDesarrollo(request) and asignacionAcademicaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/asignacion_academica.xhtml"><i class="fa fa-tags"></i><span>Asignación académica</span></p:link></li></c:if>
+                    <c:if test="#{asignacionTutorAcademico.mostrarEnDesarrollo(request) and asignacionTutorAcademico.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/asignacion_tutores.xhtml"><i class="fa fa-users"></i><span>Asignación Tutor de Grupo</span></p:link></li></c:if>
+                    <c:if test="#{planeacionCuatrimestralValidacion.mostrarEnDesarrollo(request) and planeacionCuatrimestralValidacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/planeacionCuatrimestralValidacion.xhtml"><i class="fa fa-print"></i><span>Planeación Cuatrimestral<br/> Validacion</span> <span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{listasAsistenciaDirector.mostrarEnDesarrollo(request) and listasAsistenciaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/ListasAsistencias.xhtml"><i class="fa fa-users"></i><span>Listas de Asistencia</span></p:link></li></c:if>
+                    <c:if test="#{reporteAsistenciasDirector.mostrarEnDesarrollo(request) and reporteAsistenciasDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/reporteAsistenciasDirector.xhtml"><i class="fa fa-file-text-o"></i><span>Concentrado Asistencias</span></p:link></li></c:if>
+                    <c:if test="#{validacionBajaDirector.mostrarEnDesarrollo(request) and validacionBajaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacionBaja.xhtml"><i class="fa fa-check-square-o"></i><span>Validación Baja</span></p:link></li></c:if>
+                    <c:if test="#{concentradoCalificacionesDirector.mostrarEnDesarrollo(request) and concentradoCalificacionesDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span></p:link></li></c:if>
+                    <c:if test="#{fusionGruposDirector.mostrarEnDesarrollo(request) and fusionGruposDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/fusion_grupos.xhtml"><i class="fa fa-exchange"></i><span>Fusión de grupos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{avanceProgramaticoDirector.mostrarEnDesarrollo(request) and avanceProgramaticoDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
+                    <c:if test="#{cedulaIdentificacionDirector.mostrarEnDesarrollo(request) and cedulaIdentificacionDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cedulaIdentificacionDirector.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
+                    <c:if test="#{validacionPlanAccionTutorialDirector.mostrarEnDesarrollo(request) and validacionPlanAccionTutorialDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacion_plan_accion_tutorial.xhtml"><i class="fa fa-check-square-o"></i><span>Validación de Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+
+                    <!-- Servicios Escolares -->
+                    <c:if test="#{generacionGruposServiciosEscolares.mostrarEnDesarrollo(request) and generacionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/generacionGrupos.xhtml"><i class="fa fa-users"></i><span>Generación de grupos</span></p:link></li></c:if>
+                    <c:if test="#{procesoInscripcion.mostrarEnDesarrollo(request) and procesoInscripcion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-users"></i><span>Proceso de inscripción</span></p:link></li></c:if>
+                    <c:if test="#{reincorporacionServiciosEscolares.mostrarEnDesarrollo(request) and reincorporacionServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reincorporaciones.xhtml"><i class="fa fa-user-plus"></i><span>Reincorporaciones</span></p:link></li></c:if>
+                    <c:if test="#{credencializacionSE.mostrarEnDesarrollo(request) and credencializacionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/credencializacion.xhtml"><i class="fa fa-address-card"></i><span>Credencialización</span></p:link></li></c:if>
+                    <c:if test="#{registrarBajaServiciosEscolares.mostrarEnDesarrollo(request) and registrarBajaServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registrarBajas.xhtml"><i class="fa fa-user-times"></i><span>Registrar Bajas</span></p:link></li></c:if>
+                    <c:if test="#{reporteBajasServiciosEscolares.mostrarEnDesarrollo(request) and reporteBajasServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reporteBajas.xhtml"><i class="fa fa-file-text-o"></i><span>Reporte Bajas</span><span class="pull-right-container"><small class="label pull-right bg-green">Actualizado</small></span></p:link></li></c:if>
+                    <c:if test="#{historialMovEstServiciosEscolares.mostrarEnDesarrollo(request) and historialMovEstServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/historialMovEstudiante.xhtml"><i class="fa fa-folder"></i><span>Historial Movimientos</span><span class="pull-right-container"><small class="label pull-right bg-green">Actualizado</small></span></p:link></li></c:if>
+                    <c:if test="#{fusionGruposServiciosEscolares.mostrarEnDesarrollo(request) and fusionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/fusion_grupos.xhtml"><i class="fa fa-exchange"></i><span>Fusión de grupos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{cedulaIdentificacionSE.mostrarEnDesarrollo(request) and cedulaIdentificacionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/cedulaIdentificacionSE.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
+                    <c:if test="#{prestamoDocumentoServiciosEscolares.mostrarEnDesarrollo(request) and prestamoDocumentoServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/prestamoDocumentos.xhtml"><i class="fa fa-folder-open"></i><span>Préstamo de documentos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{reinscripcionExtemporaneaSE.mostrarEnDesarrollo(request) and reinscripcionExtemporaneaSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reinscripcionSeguimientoSE.xhtml"><i class="fa fa-history"></i><span>Reinscripciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+
+                    <!-- Psicopedagogía -->
+                    <c:if test="#{dictamenBajaPsicopedagogia.mostrarEnDesarrollo(request) and dictamenBajaPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/dictamenBaja.xhtml"><i class="fa fa-edit"></i><span>Dictamen Baja</span></p:link></li></c:if>
+                    <c:if test="#{cedulaIdentificacionPsicopedagogia.mostrarEnDesarrollo(request) and cedulaIdentificacionPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/cedulaIdentificacion.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
+                    <c:if test="#{validacionPlanAccionTutorialPsicopedagogia.mostrarEnDesarrollo(request) and validacionPlanAccionTutorialPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/validacion_plan_accion_tutorial_psicopedagogia.xhtml"><i class="fa fa-slideshare"></i><span>Planes de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{plantillaPlanAccionTutorialPsicopedagogia.mostrarEnDesarrollo(request) and plantillaPlanAccionTutorialPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/plantilla_plan_accion_tutorial.xhtml"><i class="fa fa-slideshare"></i><span>Plantilla Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+
+                    <!-- Docente -->
+                    <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}">
+                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Docente</li>
+                    </c:if>
+                    <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/captura_calificaciones.xhtml"><i class="fa fa-users"></i><span>Captura de <br/>calificaciones</span></p:link></li></c:if>
+                    <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/captura_integradora.xhtml"><i class="fa fa-users"></i><span>Tarea integradora /<br/>Nivelación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{configuracionUnidadMateriaDocente.mostrarEnDesarrollo(request) and configuracionUnidadMateriaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/configuracionUnidadMateria.xhtml"><i class="fa fa-percent"></i><span>Configuración Unidad Materia</span></p:link></li></c:if>
+                    <c:if test="#{asignacionIndicadoresCriteriosDocente.mostrarEnDesarrollo(request) and asignacionIndicadoresCriteriosDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/asignacionIndicadoresCriterios.xhtml"><i class="fa fa-plus-circle"></i><span>Asignación Indicadores Criterio</span></p:link></li></c:if>
+                    <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-print"></i><span>Planeación Cuatrimestral</span></p:link></li></c:if>
+                    <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/paseLista.xhtml"><i class="fa fa-list"></i><span>Lista de asistencia</span></p:link></li></c:if>
+                    <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/seguimientoPaseLista.xhtml"><i class="fa fa-calendar"></i><span>Seguimiento Pase de <br/>Lista Docente</span></p:link></li></c:if>
+                    <c:if test="#{avanceProgramaticoDocente.mostrarEnDesarrollo(request) and avanceProgramaticoDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
+                    <c:if test="#{registroAsesoriaDocente.mostrarEnDesarrollo(request) and registroAsesoriaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/registro_asesorias.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Asesorías</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <!--                    <c:if test="# {permisoAperturaExtemporaneaDocente.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaDocente.tieneAcceso}">
+                                        <li class="treeview">
+                                            <a href="#">
+                                                <i class="fa fa-calendar"></i> <span>Solicitar Apertura</span>
+                                                <span class="pull-right-container">
+                                                    <i class="fa fa-angle-left pull-right"></i>
+                                                </span>
+                                            </a>
+                                            <ul class="treeview-menu" style="display: none;">
+                                                <li><p:link href="# {request.contextPath}/controlEscolar/docente/solicitarAperExtGrupal.xhtml"><i class="fa fa-users"></i><span>Grupal</span></p:link></li>
+                                                <li><p:link href="# {request.contextPath}/controlEscolar/docente/solicitarAperExtPorEstudiante.xhtml"><i class="fa fa-user-plus"></i><span>Estudiante</span></p:link></li>
+                                            </ul>
+                                        </li>
+                                        </c:if>-->
+
+                    <!-- Tutor -->
+                    <c:if test="#{reporteAsistenciasTutor.mostrarEnDesarrollo(request) and reporteAsistenciasTutor.tieneAcceso}">
+                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Tutor</li>
+                    </c:if>
+                    <c:if test="#{reporteAsistenciasTutor.mostrarEnDesarrollo(request) and reporteAsistenciasTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/reporteAsistenciasTutor.xhtml"><i class="fa fa-file-text-o"></i><span>Concentrado Asistencias</span></p:link></li></c:if>
+                    <c:if test="#{tramitarBajaTutor.mostrarEnDesarrollo(request) and tramitarBajaTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/tramitarBaja.xhtml"><i class="fa fa-user-times"></i><span>Tramitar Baja</span></p:link></li></c:if>
+                    <c:if test="#{concentradoCalificacionesTutor.mostrarEnDesarrollo(request) and concentradoCalificacionesTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/concentradoCal.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span></p:link></li></c:if>
+                    <c:if test="#{cedulaIdentificacionTutor.mostrarEnDesarrollo(request) and cedulaIdentificacionTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/cedulaIdentificacionTutor.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
+                    <c:if test="#{registroPlanTutoriaTutor.mostrarEnDesarrollo(request) and registroPlanTutoriaTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/plan_accion_tutorial.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{registroTutoriaGrupal.mostrarEnDesarrollo(request) and registroTutoriaGrupal.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_grupal.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Grupales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{registroTutoriaIndividual.mostrarEnDesarrollo(request) and registroTutoriaIndividual.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_individual.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Individuales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{consultaPlanesAccionTutoralCoordinadorTutores.mostrarEnDesarrollo(request) and consultaPlanesAccionTutoralCoordinadorTutores.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/consulta_plan_accion_tutorial_tutores.xhtml"><i class="fa fa-slideshare"></i><span>Planes de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+
+                    <!-- Especialista -->
+                    <c:if test="#{seguimientoCasoCriticoEspecialista.mostrarEnDesarrollo(request) and seguimientoCasoCriticoEspecialista.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento Caso Crítico Especialista</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+
+                    <!-- Consulta multiples -->
+                    <c:if test="#{consultaCalificaciones.mostrarEnDesarrollo(request) and consultaCalificaciones.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/consultarCalificaciones.xhtml"><i class="fa fa-list-ol"></i><span>Consultar calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    
+                    <!-- Registro multiple -->
+                    <c:if test="#{registroNotificacionesGeneral.mostrarEnDesarrollo(request) and registroNotificacionesGeneral.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/registro_notificaciones.xhtml"><i class="fa fa-list-ol"></i><span>Registrar Notificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    
+                </c:if>
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluación del Personal</li>
+                <c:if test="#{controlEscolarMenu.tieneElementos()}">
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-list-alt"></i> <span>Evaluaciones</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <c:if test="#{evaluacionConocimientoCodigoEtica.mostrarEnDesarrollo(request) and evaluacionConocimientoCodigoEtica.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml"><i class="fa fa-check-square"></i><span>Evaluación de Ética</span></p:link></li></c:if>
+                            <c:if test="#{evaluacionDesempenioAmbiental.mostrarEnDesarrollo(request) and evaluacionDesempenioAmbiental.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/evaluacionDesempenioAmbiental.xhtml"><i class="fa fa-check-square"></i><span>Evaluación de Desempeño Ambiental</span></p:link></li></c:if>
+                        </ul>
+                    </li>
+                </c:if>
+                <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacionControlInterno.cargada || climaLaboral.cargada}">
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-list-alt"></i> <span>Evaluaciones</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <c:if test="#{evaluacionDesempenioAdmin.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/desempenio.xhtml"><i class="fa fa-line-chart"></i><span>Desempeño</span></p:link></li></c:if>
+                            <c:if test="#{evaluacion360Admin1.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/360_1.xhtml"><i class="fa fa-group"></i><span>360 grados</span></p:link></li></c:if>
+                            <c:if test="#{evaluacionControlInterno.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/evaControlInterno.xhtml"><i class="fa fa-group"></i><span>Evaluación de control interno</span></p:link></li></c:if>
+                        </ul>
+                    </li>
+                </c:if>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-list-alt"></i> <span>Administración evaluaciones</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <!--secretarÃ­a acadÃ©mica-->
+                        <c:if test="#{utilidadesAdministracionEvaluaciones.secretariaAc}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionPersonalSA.xhtml" ><i class="fa fa-clipboard"></i><span>Evaluaciones por carrera</span></p:link></li></c:if>
+
+                        <!-- Seguimiento de Evaluacion y Encuestas por parte de: Dirección de Planeación, Secretaría Académica, Departamento de Información y Estadística,
+                               Directores Académicos y Tutores-->
+                        <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor}">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-check-square-o"></i> <span>Seguimiento encuestas</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu" style="display: none;">
+                                    <c:if test="#{administracionEncuesta.dto.ESTsuActiva}"><li><p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEncuestaTSU.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción TSU</span></p:link></li></c:if>
+                                    <c:if test="#{administracionEncuesta.dto.ESIngActiva}"><li><p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEncuestaING.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta satisfacción ING</span></p:link></li></c:if>
+                                    <c:if test="#{administracionEncuesta.dto.ESActiva}"><li><p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEncuestaServicios.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li></c:if>
+                                    <c:if test="#{administracionEncuesta.dto.EEActiva}"><li><p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEvaluacionEstadia.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li></c:if>
+                                </ul>
+                            </li>
+                        </c:if>
+
+                        <c:if test="#{controlEscolarMenu.tieneElementos()}">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-check-square-o"></i> <span>Seguimiento Evaluaciones</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu" style="display: none;">
+                                    <c:if test="#{administracionEvaluacionAmbiental.mostrarEnDesarrollo(request) and administracionEvaluacionAmbiental.tieneAcceso}">
+                                        <li>
+                                            <p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEvaluacionAmbiental.xhtml">
+                                                <i class="fa fa-list-ol"></i><span>Seguimiento Evaluación Ambiental</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span>
+                                            </p:link>
+                                        </li>
+                                    </c:if>
+                                </ul>
+                            </li>
+                        </c:if>
+                        <!-- Segumiento de Evaluciones  a Tutor y Evaluacion a Docente-->
+                        <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.tutorCe or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-check-square-o"></i> <span>Seguimiento Evaluaciones</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu" style="display: none;">
+                                    <c:if test="#{administracionEncuesta.dto.ETutorActiva }"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionEvaluacionTutor.xhtml"><i class="fa fa-list-ol"></i><span>Evalución a Tutor</span></p:link></li></c:if>
+                                    <c:if test="#{administracionEncuesta.dto.EDocenteActiva and !administracionEncuesta.dto.esPsicopedagogia}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionEvaluacionDocente.xhtml"><i class="fa fa-list-ol"></i><span>Evalución a Docente</span></p:link></li></c:if>
+                                </ul>
+                            </li>
+                        </c:if>
+
+
+
+
+                        <!--Directivos/Directores de carrera-->
+
+                        <c:if test="#{utilidadesAdministracionEvaluaciones.directorDeCarrera}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Administración de evaluaciones</span></p:link></li></c:if>
+                        <c:if test="#{utilidadesAdministracionEvaluaciones.directivo}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Resultados subordinados</span></p:link></li></c:if>
+
+
+                        <!--************ administradores especiales********-->
+                        <!--Jefe de personal-->
+                        <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/admin360.xhtml" ><i class="fa fa-clipboard"></i><span>Genera Evaluaciones</span></p:link></li></c:if>
+                        <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionPersonalSA.xhtml" ><i class="fa fa-clipboard"></i><span>Resultados generales</span></p:link></li></c:if>
+
+                        <!--Seguimiento a egresados-->
+                        <c:if test="#{logonMB.personal.clave eq 518 or logonMB.personal.clave eq 394}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/estudioEgresadosAdministrador.xhtml" ><i class="fa fa-clipboard"></i><span>Estudio egresado</span></p:link></li></c:if>
+                        <c:if test="#{logonMB.personal.clave eq 518 or logonMB.personal.clave eq 394}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/estudioEgresadosReportes.xhtml" ><i class="fa fa-clipboard"></i><span>Reporte egresados</span></p:link></li></c:if>
+                        <!--Visible para todos los trabajadores-->
+                        <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoEvaluaciones.xhtml"><i class="fa fa-exclamation"></i><span>Resultados de evaluaciones</span></p:link></li>
+                    </ul>
+                </li>
+                <!-- Seccion de becas para Servicios Estudiantiles -->
+                <c:if test="#{administracionEncuesta.dto.esServEst2 or administracionEncuesta.dto.director}">
+                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Seguimiento de becas</li>
+                    <li><p:link href="#{request.contextPath}/becas/reporteBecas.xhtml"><i class="fa fa-file-text-o"></i><span>Reporte Becas</span></p:link></li>
+                </c:if>
+
+
+                <!-- condicional para que se carge el menu de planeaciones cuatrimestrales -->
+                <c:if test="#{planeacionCuatrimestral.activa}">
+                    <c:if test="#{((controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29) and controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2) or (controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
+                        <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Planeacion Cuatrimestral</li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-file-text-o"></i> <span>Planeacion</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <c:if test="#{((controladorEmpleado.nuevoOBJListaPersonal.areaOperativa ge 24 and controladorEmpleado.nuevoOBJListaPersonal.areaOperativa le 29) and controladorEmpleado.nuevoOBJListaPersonal.actividad eq 2)}">
+                                    <li><p:link href="#{request.contextPath}/docencia/planeacionDirector.xhtml"><i class="fa fa-id-card-o"></i>
+                                            <span>Director</span>
+                                        </p:link>
+                                    </li>
+                                </c:if>
+                                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
+
+                                    <li><p:link href="#{request.contextPath}/docencia/planeacionSecAcademico.xhtml"><i class="fa fa-graduation-cap"></i>
+                                            <span>Sec. Academica</span>
+                                        </p:link>
+                                    </li>
+                                </c:if>
+                                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49}">
+                                    <li><p:link href="#{request.contextPath}/docencia/planeacionDirPersonal.xhtml"><i class="fa fa-list-ol"></i>
+                                            <span>Dir. Personal</span>
+                                        </p:link>
+                                    </li>
+                                </c:if>
+                            </ul>
+                        </li>
+                    </c:if>
+                </c:if>
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Curriculum vitae</li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>Curriculum vitae</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoDatosPer.xhtml"><i class="fa fa-id-card-o"></i>
+                                <span>Datos personales</span>
+                            </p:link>
+                        </li>        
+                        <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoEdu.xhtml"><i class="fa fa-graduation-cap"></i>
+                                <span>Educación</span>
+                            </p:link>
+                        </li>
+                        <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoHab.xhtml"><i class="fa fa-list-ol"></i>
+                                <span>Habilidades</span>
+                            </p:link>
+                        </li>
+                        <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoTecno.xhtml"><i class="fa fa-usb"></i>
+                                <span>Tecnología</span>
+                            </p:link>
+                        </li>
+                        <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoPremios.xhtml"><i class="fa fa-trophy"></i>
+                                <span>Premios</span>
+                            </p:link>
+                        </li>
+                        <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoProduccion.xhtml"><i class="fa fa-newspaper-o"></i>
+                                <span>Producción profesional</span>
+                            </p:link>
+                        </li>
+                    </ul>
+                </li>
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Registros de información</li>
+                <li>
+                    <p:link href="#{request.contextPath}/siip/modulosRegistro/menu_general.xhtml">
+                        <i class="fa fa-archive"></i>
+                        <span>Módulos Registro</span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link href="#{request.contextPath}/siip/modulosRegistro/repositorio_archivos.xhtml">
+                        <i class="fa fa-archive"></i>
+                        <span>Repositorio de Archivos</span>
+                    </p:link>
+                </li>
+                <c:if test="#{controladorEmpleado.tienePOA}">
+                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Registro POA</li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-clipboard"></i> <span>POA Áreas</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                            <!--span class="pull-right-container">
+                                <small class="label pull-right bg-green">Prioritario</small>
+                            </span-->
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <c:if test="#{controladorEmpleado.procesopoa.activaEtapa1}">
+                                <c:if test="#{controladorEmpleado.poaProces.get(0)}">
+                                    <li>
+                                        <p:link href="#{request.contextPath}/poa/areas/registroActividades.xhtml"><i class="fa fa-edit"></i>
+                                            <span>Registro</span>
+                                        </p:link>
+                                    </li>
+                                </c:if>
+                                <c:if test="#{controladorEmpleado.poaProces.get(1)}">
+                                    <li>
+                                        <p:link href="#{request.contextPath}/poa/areas/recursoActividad.xhtml"><i class="fa fa-usd"></i>
+                                            <span>Recurso</span>
+                                        </p:link>
+                                    </li>
+                                </c:if>
+                                <c:if test="#{controladorEmpleado.poaProces.get(2)}">
+                                    <li>
+                                        <p:link href="#{request.contextPath}/poa/areas/justificacion.xhtml"><i class="fa fa-wechat"></i>
+                                            <span>Justificación</span>
+                                        </p:link>
+                                    </li>
+                                </c:if>
+                            </c:if>                        
+                            <c:if test="#{controladorEmpleado.procesopoa.activaEtapa2}">
+                                <c:if test="#{controladorEmpleado.evaluable}">
+                                    <li>
+                                        <p:link href="#{request.contextPath}/poa/areas/evaluacion.xhtml"><i class="fa fa-list"></i>
+                                            <span>Evaluación</span>
+                                        </p:link>
+                                    </li>
+                                </c:if>
+                            </c:if>
+                            <li>
+                                <p:link href="#{request.contextPath}/poa/areas/consulta.xhtml"><i class="fa fa-search"></i>
+                                    <span>Consulta</span>
+                                </p:link>
+                            </li> 
+                            <c:if test="#{controladorEmpleado.procesopoa.activaEtapa2}">
+                                <li>
+                                    <p:link href="#{request.contextPath}/poa/areas/areaCMI.xhtml"><i class="fa fa-bar-chart"></i>
+                                        <span>CMI Área</span>
+                                    </p:link>
+                                </li> 
+                            </c:if>
+                            <li>
+                                <p:link href="#{request.contextPath}/poa/dpye/universidadCMI.xhtml"><i class="fa fa-line-chart"></i>
+                                    <span>CMI Institucional</span>
+                                </p:link>
+                            </li> 
+                        </ul>
+                    </li>
+                </c:if>
+
+                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 60}">
+                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Titulación</li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-folder"></i><span>Expedientes</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <li>
+                                <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/registrarExpediente.xhtml" target="_blank"><i class="fa fa-user-plus"></i>
+                                    <span>Registrar Expediente</span>
+                                </p:link>
+                            </li>
+                            <li>
+                                <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/seguimientoExpMatricula.xhtml" target="_blank"><i class="fa fa-user-o"></i>
+                                    <span>Seguimiento por Matricula</span>
+                                </p:link>
+                            </li>
+                            <li>
+                                <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/seguimientoExpGeneracionING.xhtml" target="_blank"><i class="fa fa-group"></i>
+                                    <span>Seguimiento Nivel ING/LIC</span>
+                                </p:link>
+                            </li>
+                            <li>
+                                <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/seguimientoExpGeneracionTSU.xhtml" target="_blank"><i class="fa fa-group"></i>
+                                    <span>Seguimiento Nivel TSU</span>
+                                </p:link>
+                            </li>
+                        </ul>
+                    </li>
+                    <!--                    <li class="treeview">
+                                            <a href="#">
+                                                <i class="fa fa-id-badge"></i><span>Títulos</span>
+                                                <span class="pull-right-container">
+                                                    <i class="fa fa-angle-left pull-right"></i>
+                                                </span>
+                                            </a>
+                                            <ul class="treeview-menu" style="display: none;">
+                                                <li>
+                                                    <p:link href="# {request.contextPath}/expedienteTitulacion/titulacion/cargarTituloExpediente.xhtml" target="_blank"><i class="fa fa-upload"></i>
+                                                        <span>Cargar Título Electrónico</span>
+                                                    </p:link>
+                                                </li>
+                                                <li>
+                                                    <p:link href="# {request.contextPath}/expedienteTitulacion/titulacion/listadoTitulados.xhtml" target="_blank"><i class="fa fa-list-ul"></i>
+                                                        <span>Listado de Titulados</span>
+                                                    </p:link>
+                                                </li>
+                                            </ul>
+                                        </li>-->
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-folder"></i><span>Catálogos - Reportes</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <li>
+                                <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/fechasDocumentos.xhtml" target="_blank"><i class="fa fa-calendar"></i>
+                                    <span>Registrar Fechas Documentos</span>
+                                </p:link>
+                            </li>
+                            <li>
+                                <p:link href="#{request.contextPath}/expedienteTitulacion/titulacion/reporteEstadistico.xhtml" target="_blank"><i class="fa fa-table"></i>
+                                    <span>Reporte por Generación y P.E.</span>
+                                </p:link>
+                            </li>
+                        </ul>
+                    </li>
+                </c:if>
+
+                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 10}">
+                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Titulación</li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-folder"></i><span>Expedientes</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <li>
+                                <p:link href="#{request.contextPath}/expedienteTitulacion/escolares/seguimientoExpMatricula.xhtml" target="_blank"><i class="fa fa-user-o"></i>
+                                    <span>Seguimiento por Matricula</span>
+                                </p:link>
+                            </li>
+                        </ul>
+                    </li>
+                </c:if>
+
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Justificación de asistencias</li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>Justificación de Asistencia</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li>
+                            <p:link href="#{request.contextPath}/capitalHumano/incidencias.xhtml"><i class="fa fa-clock-o"></i>
+                                <span>Incidencias</span>
+                            </p:link>
+                        </li>      
+                        <li>
+                            <p:link href="#{request.contextPath}/capitalHumano/incapacidades.xhtml"><i class="fa fa-ambulance"></i>
+                                <span>Incapacidades</span>
+                            </p:link>
+                        </li>   
+                        <li>
+                            <p:link href="#{request.contextPath}/capitalHumano/cuidados.xhtml"><i class="fa fa-users"></i>
+                                <span>Cuidados</span>
+                            </p:link>
+                        </li>
+                    </ul>
+                </li>
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Funciones y organigrama</li>
+                <li>
+                    <p:link href="#{request.contextPath}/capitalHumano/organigramaOperativo.xhtml">
+                        <i class="fa fa-sitemap"></i>
+                        <span>Organigrama operativo</span>
+                    </p:link>
+                </li>
+                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Directivo' or controladorEmpleado.nuevoOBJListaPersonal.actividadNombre eq 'Coordinador'}">
+                    <li>
+                        <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoFun.xhtml"><i class="fa fa-list-alt"></i>
+                            <span>Consulta</span>
+                        </p:link>
+                    </li>
+                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Herramientas directivos</li>            
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-user"></i> <span>Directivo</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+
+                        <ul class="treeview-menu" style="display: none;">
+                            <li>
+                                <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoSubordinados.xhtml"><i class="fa fa-users"></i>
+                                    <span>Perfil de subordinados(as)</span>
+                                </p:link>
+                            </li>   
+                            <li>
+                                <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
+                                    <span>Reporte de Registros</span>
+                                </p:link>
+                            </li>
+                            <li>
+                                <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilSubordinadosIn.xhtml"><i class="fa fa-calendar-check-o"></i>
+                                    <span>Incidencias Subordinados</span>
+                                </p:link>
+                            </li>
+                        </ul>
+                    </li>  
+                </c:if>
+
+
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">SGI</li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>Procesos</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li>
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/interaccion_procesos.pdf#toolbar=0" target="_blank">
+                                <span>Interacción</span>
+                            </p:link>
+                        </li>
+                        <li>
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/PROCESO_ESTADIA_TECNICA.pdf#toolbar=0" target="_blank">
+                                <span>Estadía técnica</span>
+                            </p:link>
+                        </li>
+                        <li>
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/proceso_tutoria_asesoria.pdf#toolbar=0" target="_blank">
+                                <span>Tutorías y Asesorías</span>
+                            </p:link>
+                        </li>  
+                        <li>
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/Formacion_Integral_Visitas.pdf#toolbar=0" target="_blank">
+                                <span>Visitas</span>
+                            </p:link>
+                        </li>  
+                    </ul>
+                </li>    
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>Procedimientos</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li>
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos/Procedimiento de atencion a quejas 025.pdf#toolbar=0" target="_blank">
+                                <span>Atencion a quejas</span>
+                            </p:link>
+                        </li>  
+                    </ul>
+                </li> 
+
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-archive"></i> <span>Formatos</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-file"></i> <span>Mandatorios</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/AccionesCorrectivas.docx">
+                                        <span>Acciones Correctivas</span>
+                                    </p:link>
+                                </li>      
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/ListadoRegistros.xls">
+                                        <span>Listado de Registros</span>
+                                    </p:link>
+                                </li>   
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/ListaMaestraDocumentosExternos.xls">
+                                        <span>Lista Maestra Docs. Externos</span>
+                                    </p:link>
+                                </li>
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/ListaMaestraDocumentosInternos.xls">
+                                        <span>Lista Maestra Docs. Internos</span>
+                                    </p:link>
+                                </li>      
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/RegistroSalidaNoConforme.docx">
+                                        <span>Registro de Salida No Conforme</span>
+                                    </p:link>
+                                </li>   
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/RevisionAprobacionDocumentos.xlsx">
+                                        <span>Revisión y Aprobación de Docs</span>
+                                    </p:link>
+                                </li>
+                            </ul>
+                        </li>  
+                        <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71)or (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) or (controladorEmpleado.nuevoOBJListaPersonal.clave eq 518 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 394 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-file-o"></i> <span>Estadía</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu" style="display: none;">
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/1_ESPACIOS_CONCERTADOS_DE_ESTADIA_2020.xlsx">
+                                            <span>1. Espacios concertados</span>
+                                        </p:link>
+                                    </li>      
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/2_CONCENTRADO_DE_ESTADIAS_2020.xlsx">
+                                            <span>2. Concentrado de estadías</span>
+                                        </p:link>
+                                    </li>       
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/3_CARTA_DE_PRESENTACION_2020.docx">
+                                            <span>3. Carta de presentación</span>
+                                        </p:link>
+                                    </li>       
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/4_CARTA_DE_ACEPTACION_2020.docx">
+                                            <span>4. Carta de aceptación</span>
+                                        </p:link>
+                                    </li>   
+                                    <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71) or (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
+                                        <li>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/5_Seguimiento_Estadia_Tecnica_2020.xls">
+                                                <span>5. Seguimiento de la estadía</span>
+                                            </p:link>
+                                        </li>       
+                                        <li>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/6_Informe_Mensual_2020.doc">
+                                                <span>6. Informe mensual</span>
+                                            </p:link>
+                                        </li>       
+                                        <li>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/7_EVALUACION_POR_ASESOR_EMPRESARIAL_2020.docx">
+                                                <span>7. Evaluación asesor <br/>empresarial</span>
+                                            </p:link>
+                                        </li>       
+                                        <li>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/8_CARTA_DE_LIBERACION_2020.docx">
+                                                <span>8. Carta de liberación <br/>empresarial</span>
+                                            </p:link>
+                                        </li>       
+                                        <li>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/9_Carta_de_evaluacion_y_acreditacion_de_estadia_2020.doc">
+                                                <span>9. Evaluación, acreditación <br/>estadía</span>
+                                            </p:link>
+                                        </li> 
+                                    </c:if>
+                                </ul>
+                            </li>
+                        </c:if>
+                        <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71) or (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 18 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 227)}">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-file-text-o"></i> <span>Tutorías y Asesorías</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu" style="display: none;">
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/2. Plan Acción Tutorial modif.docx">
+                                            <span>2. Plan Acción Tutorial</span>
+                                        </p:link>
+                                    </li>      
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/3. Cédula de Identificacion del Tutorado modif.xlsx">
+                                            <span>3. Cédula de Identificacion del<br/>Tutorado </span>
+                                        </p:link>
+                                    </li>       
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/4. Tutoría Grupal.xls">
+                                            <span>4. Tutoría Grupal</span>
+                                        </p:link>
+                                    </li>       
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/5. Tutoria Indiv y Casos Critícos modif.xlsx">
+                                            <span>5. Tutoria Indiv y Casos Critícos</span>
+                                        </p:link>
+                                    </li>   
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/6. Justificante modif.xls">
+                                            <span>6. Justificante</span>
+                                        </p:link>
+                                    </li>      
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/7. Asesorias.xlsx">
+                                            <span>7. Asesorias</span>
+                                        </p:link>
+                                    </li>       
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/8. Citatorio modif.doc">
+                                            <span>8. Citatorio</span>
+                                        </p:link>
+                                    </li>  
+                                </ul>
+                            </li>
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-file-text-o"></i> <span>Plan de Acción Tutorial</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu" style="display: none;">
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_1.docx">
+                                            <span>Propuesto 1°</span>
+                                        </p:link>
+                                    </li>     
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_2.docx">
+                                            <span>Propuesto 2°</span>
+                                        </p:link>
+                                    </li>     
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_4.docx">
+                                            <span>Propuesto 4°</span>
+                                        </p:link>
+                                    </li>
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_5.docx">
+                                            <span>Propuesto 5°</span>
+                                        </p:link>
+                                    </li>
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_7.docx">
+                                            <span>Propuesto 7°</span>
+                                        </p:link>
+                                    </li>
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_8.docx">
+                                            <span>Propuesto 8°</span>
+                                        </p:link>
+                                    </li>
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_10.docx">
+                                            <span>Propuesto 10°</span>
+                                        </p:link>
+                                    </li>   
+                                </ul>
+                            </li>
+                        </c:if>
+                        <c:if test="#{
+                              (controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71) 
+                                  or (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 5 or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9)
+                                  or (controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-file-text-o"></i> <span>Visitas</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu" style="display: none;">
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/2. programa de visitas.xls">
+                                            <span>2. Programa de visitas</span>
+                                        </p:link>
+                                    </li>      
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/3._Confirmacion_Itinerario_informe_de_Visitas_2020.xlsx">
+                                            <span>3. Confirmación, Itinerario e <br/>einforme de Visitas 2020</span>
+                                        </p:link>
+                                    </li>       
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/4. Listado de estudiantes con SS vigente.xlsx">
+                                            <span>4. Listado de estudiantes con <br/>eSS vigente</span>
+                                        </p:link>
+                                    </li>       
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/5. Carta Responsiva.docx">
+                                            <span>5. Carta Responsiva</span>
+                                        </p:link>
+                                    </li>   
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/6. Encuesta Proceso de Visitas.docx">
+                                            <span>6. Encuesta Proceso de Visitas</span>
+                                        </p:link>
+                                    </li>      
+                                </ul>
+                            </li>
+                        </c:if>
+                    </ul>
+                </li>   
+
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-chain "></i> <span>Procedimientos Mandatorios</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li>
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_de_Acciones_Correctivas.pdf" target="_blank">
+                                <span>Acciones Correctivas</span>
+                            </p:link>
+                        </li> 
+                        <li>
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_de_quejas_observaciones_y_sugerencias.pdf" target="_blank">
+                                <span>Quejas, observaciones y sugerencias</span>
+                            </p:link>
+                        </li> 
+                        <li>
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_de_Salida_No_Conforme.pdf" target="_blank">
+                                <span>Salida No Conforme</span>
+                            </p:link>
+                        </li> 
+                        <li>
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_del_Control_de_Registros.pdf" target="_blank">
+                                <span>Control de Registros</span>
+                            </p:link>
+                        </li> 
+                        <li>
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_para_el_control_de_documentos.pdf" target="_blank">
+                                <span>Control de documentos</span>
+                            </p:link>
+                        </li> 
+                    </ul>
+                </li>
+
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-university "></i> <span>Contexto de la UTXJ</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-file"></i> <span>14001</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/4.1_Comprension_de_la_UTXJ_y_su_contexto.pdf" target="_blank">
+                                        <span>4.1.Comprensión de la UTXJ <br/>y su contexto</span>
+                                    </p:link>
+                                </li>   
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/4.2_Comprension_de_las_necesidades_y_expectativas_de_Partes_Interesadas.pdf" target="_blank">
+                                        <span>4.2.Comprensión de las <br/>necesidades y expectativas de <br/>Partes Interesadas</span>
+                                    </p:link>
+                                </li>   
+                                <li class="treeview">
+                                    <a href="#">
+                                        <i class="fa fa-file"></i> <span>Matriz AspectosS <br/>Ambientales</span>
+                                        <span class="pull-right-container">
+                                            <i class="fa fa-angle-left pull-right"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="treeview-menu" style="display: none;">
+                                        <li>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/MATRIZ_ASPECTOS_AMBIENTALES_ADMINISTRATIVO" target="_blank">
+                                                <span>Administrativo</span>
+                                            </p:link>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/MATRIZ_ASPECTOS_AMBIENTALES_ENSENANZA_APRENDIZAJE.pdf" target="_blank">
+                                                <span>Enseñanza Aprendizaje</span>
+                                            </p:link>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/MATRIZ_ASPECTOS_AMBIENTALES_MODIFICACIONES.pdf" target="_blank">
+                                                <span>Modificaciones</span>
+                                            </p:link>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/MATRIZ_ASPECTOS_AMBIENTALES_SERVICIOS_MATERIALES.pdf" target="_blank">
+                                                <span>Servicios Materiales</span>
+                                            </p:link>
+                                        </li>
+                                    </ul>
+                                </li>     
+                                <li class="treeview">
+                                    <a href="#">
+                                        <i class="fa fa-file"></i> <span>Obligaciones Legales</span>
+                                        <span class="pull-right-container">
+                                            <i class="fa fa-angle-left pull-right"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="treeview-menu" style="display: none;">
+                                        <li>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/OBLIGACIONES_LEGALES_FEDERALES.pdf" target="_blank">
+                                                <span>Federales</span>
+                                            </p:link>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/OBLIGACIONES_LEGALES_ESTATALES.pdf" target="_blank">
+                                                <span>Estatales</span>
+                                            </p:link>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/OBLIGACIONES_LEGALES_MUNICIPALES.pdf" target="_blank">
+                                                <span>Municipales</span>
+                                            </p:link>
+                                        </li>
+                                    </ul>
+                                </li>     
+                                <li class="treeview">
+                                    <a href="#">
+                                        <i class="fa fa-file"></i> <span>Acciones para afrontar <br/>Riesgos y Oportunidades</span>
+                                        <span class="pull-right-container">
+                                            <i class="fa fa-angle-left pull-right"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="treeview-menu" style="display: none;">
+                                        <li>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/6.1_Acciones_para_afrontar_Riesgos_y_Oportunidades_AMBIENTAL_1.pdf" target="_blank">
+                                                <span>Ambiental 1</span>
+                                            </p:link>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/6.1_Acciones_para_afrontar_Riesgos_y_Oportunidades_AMBIENTAL_2.pdf" target="_blank">
+                                                <span>Ambiental 2</span>
+                                            </p:link>
+                                        </li>
+                                    </ul>
+                                </li>                                                                                                     
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/PROCEDIMIENTO_PARA_EL_ALMACENAMIENTO_DE_RESIDUOS.pdf" target="_blank">
+                                        <span>Procedimiento para el <br/>almacenamiento de <br/>residuos</span>
+                                    </p:link>
+                                </li> 
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/PROCEDIMIENTO_PARA_MANEJO_INTEGRAL_DE_RESIDUOS_QUIMICOS_PELIGROSOS_REV2.pdf" target="_blank">
+                                        <span>procedimiento para manejo <br/>integral de residuos <br/>químicos peligrosos <br/>Rev 2</span>
+                                    </p:link>
+                                </li> 
+                            </ul>
+                        </li>  
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-file"></i> <span>9001</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/4.1_Comprension_de_la_UTXJ_y_de_su_contexto_FODA.pdf" target="_blank">
+                                        <span>4.1 Comprensión de la UTXJ <br/>y de su contexto-FODA</span>
+                                    </p:link>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/4.2_Comprension_de_las_necesidades_y_expectativas_de_Partes_Interesadas.pdf" target="_blank">
+                                        <span>4.2 Comprensión de las <br/>necesidades y expectativas de <br/>Partes Interesadas</span>
+                                    </p:link>
+                                    <li class="treeview">
+                                        <a href="#">
+                                            <i class="fa fa-file"></i> <span>6.1 Acciones para afrontar <br/>Riesgos y Oportunidades Act</span>
+                                            <span class="pull-right-container">
+                                                <i class="fa fa-angle-left pull-right"></i>
+                                            </span>
+                                        </a>
+                                        <ul class="treeview-menu" style="display: none;">
+                                            <li>
+                                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/6.1_ACADEMIA.pdf" target="_blank">
+                                                    <span>Academia</span>
+                                                </p:link>
+                                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/6.1_ADMON_REC.pdf" target="_blank">
+                                                    <span>Rectoría</span>
+                                                </p:link>
+                                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/6.1_ESCOLARES.pdf" target="_blank">
+                                                    <span>Escolares</span>
+                                                </p:link>
+                                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/6.1_PLANEACION.pdf" target="_blank">
+                                                    <span>Planeación</span>
+                                                </p:link>
+                                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/6.1_VINCULACION.pdf" target="_blank">
+                                                    <span>Vinculación</span>
+                                                </p:link>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/7.1.6_Capital_del_Conocimiento.pdf" target="_blank">
+                                        <span>7.1.6 Capital del Conocimiento</span>
+                                    </p:link>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/7.4_Cedula_de_Comunicacion_Institucional.pdf" target="_blank">
+                                        <span>7.4 Cédula de Comunicación <br/>Institucional</span>
+                                    </p:link>
+                                </li>      
+                            </ul>
+                        </li>  
+                    </ul>
+                </li>
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Manuales de Asignatura <small class="label pull-right bg-green">Nuevo</small></li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i> <span>Manuales de Asignatura</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li>
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/FORMACION_SOCIOCULTURAL.pdf" target="_blank">
+                                <span>Formación Sociocultural</span>
+                            </p:link>
+                        </li>  
+                        <li>
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_PRACTICAS_UTXJ_EOyE_II.docx" target="_blank">
+                                <span>Manual de Prácticas UTXJ <br/> EOyE II</span>
+                            </p:link>
+                        </li>  
+                        <li>
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_PRACTICAS_UTXJ_FORMACION_SOCIOCULTURAL_II.docx" target="_blank">
+                                <span>Manual de Prácticas UTXJ <br/>Formación Sociocultural II</span>
+                            </p:link>
+                        </li>  
+                    </ul>
+                </li>
+
+                <c:forEach var="i" begin="0" end="#{controladorEmpleado.menus.size()-1}">
+                    <c:set var="n1" value="#{controladorEmpleado.menus.get(i)}"/>
+                    <c:if test="#{controladorEmpleado.menus.size() ne 0 and n1.nivel2s.size() ne 0}">
+                        <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">#{n1.titulo}</li>
+                        <c:forEach var="j" begin="0" end="#{n1.nivel2s.size()-1}">
+                            <c:set var="n2" value="#{n1.nivel2s.get(j)}"/>
+                            <c:if test="#{n2.nivel3s.size() eq 0}">
+                                <li>
+                                    <p:link href="#{request.contextPath}#{n2.enlace}">
+                                        <i class="#{n2.icono}"></i>
+                                        <span>#{n2.titulo}</span>
+                                        <c:if test="#{n2.estaus eq 'Nuevo'}">
+                                            <span class="pull-right-container">
+                                                <small class="label pull-right bg-green">#{n2.estaus}</small>
+                                            </span>
+                                        </c:if>
+                                    </p:link>
+                                </li>                          
+                            </c:if>
+                            <c:if test="#{n2.nivel3s.size() ne 0}">
+                                <li class="treeview">
+                                    <a href="#{n2.enlace}">
+                                        <i class="#{n2.icono}"></i> <span>#{n2.titulo}</span>
+                                        <span class="pull-right-container">                                        
+                                            <i class="fa fa-angle-left pull-right"></i>
+                                        </span>
+                                    </a>          
+                                    <ul class="treeview-menu" style="display: none;">
+                                        <c:forEach var="k" begin="0" end="#{n2.nivel3s.size()-1}">
+                                            <c:set var="n3" value="#{n2.nivel3s.get(k)}"/>
+                                            <c:if test="#{n3.nivel4s.size() eq 0}">
+                                                <li>
+                                                    <p:link href="#{request.contextPath}#{n3.enlace}">
+                                                        <i class="#{n3.icono}"></i>
+                                                        <span>#{n3.titulo}</span>
+                                                        <c:if test="#{n3.estaus eq 'Nuevo'}">
+                                                            <span class="pull-right-container">
+                                                                <small class="label pull-right bg-green">#{n3.estaus}</small>
+                                                            </span>
+                                                        </c:if>
+                                                    </p:link>
+                                                </li>                             
+                                            </c:if>
+                                            <c:if test="#{n3.nivel4s.size() ne 0}">
+                                                <li class="treeview">
+                                                    <a href="#{n3.enlace}">
+                                                        <i class="#{n3.icono}"></i> <span>#{n3.titulo}</span>
+                                                        <span class="pull-right-container">
+                                                            <i class="fa fa-angle-left pull-right"></i>
+                                                        </span>
+                                                    </a>          
+                                                    <ul class="treeview-menu" style="display: none;">
+                                                        <c:forEach var="l" begin="0" end="#{n3.nivel4s.size()-1}">
+                                                            <c:set var="n4" value="#{n3.nivel4s.get(l)}"/>
+                                                            <li>
+                                                                <p:link href="#{request.contextPath}#{n4.enlace}">
+                                                                    <i class="#{n4.icono}"></i>
+                                                                    <span>#{n4.titulo}</span>
+                                                                    <c:if test="#{n4.estaus eq 'Nuevo'}">
+                                                                        <span class="pull-right-container">
+                                                                            <small class="label pull-right bg-green">#{n4.estaus}</small>
+                                                                        </span>
+                                                                    </c:if>
+                                                                </p:link>
+                                                            </li>                           
+                                                        </c:forEach>
+                                                    </ul>
+                                                </li>   
+                                            </c:if>
+                                        </c:forEach>
+                                    </ul>
+                                </li>   
+                            </c:if>
+                        </c:forEach>
+                    </c:if>
+                </c:forEach> 
+                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                    <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564}">
+                        <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Personal</li>
+                    </c:if>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-users"></i> <span>Plantilla laboral</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 501 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                                <li> 
+                                    <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonal.xhtml"><i class="fa fa-user-circle-o"></i>
+                                        <span>Activo</span>
+                                    </p:link>
+                                </li>
+                                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564}">
+                                    <li>
+                                        <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalAltaYBajas.xhtml"><i class="fa fa-user-times"></i>
+                                            <span>Altas y bajas</span>
+                                        </p:link>
+                                    </li>
+                                </c:if>
+
+                                <li>
+                                    <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalconfiguracion.xhtml"><i class="fa fa-cogs"></i>
+                                        <span>Configuración</span>
+                                    </p:link>
+                                </li>
+                            </c:if>
+                            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 530 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 647}">
+                                <li>
+                                    <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalIn.xhtml">
+                                        <i class="fa fa-folder-open"></i>
+                                        <span>Incidencias Personal</span>
+                                    </p:link>
+                                </li>
+                            </c:if>
+                            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564}">
+                                <li>
+                                    <p:link href="#{request.contextPath}/capitalHumano/personal/perfilContactosE.xhtml">
+                                        <i class="fa fa-list-alt"></i>
+                                        <span>Contactos de emergencia</span>
+                                    </p:link>
+                                </li>
+                            </c:if>
+                            <li>
+                                <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
+                                    <span>Reporte de Registros</span>
+                                </p:link>
+                            </li>
+                        </ul>
+                    </li>
+                </c:if>
+                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 148}">
+                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Estadistica</li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-history"></i> <span>Estadística</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <li><p:link href="#{request.contextPath}/capitalHumano/estadistica/perfilEstadisticaPersonal.xhtml"><i class="fa fa-book"></i>
+                                    <span>Plantilla Personal</span>
+                                </p:link>
+                            </li>
+                            <li><p:link href="#{request.contextPath}/capitalHumano/estadistica/perfilEstadisticaHistoricos.xhtml"><i class="fa fa-book"></i>
+                                    <span>Histórico Plantilla Personal</span>
+                                </p:link>
+                            </li>
+                        </ul>
+                    </li>
+                </c:if>
+                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 53 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
+                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Fortalecimiento</li>
+                    <li>
+                        <p:link href="#{request.contextPath}/capitalHumano/fda/perfilPersonalDocente.xhtml">
+                            <i class="fa fa-users"></i>
+                            <span>Plantilla docente</span>
+                        </p:link>
+                    </li>
+                </c:if>
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Comunicacion interna</li>
+                <li>
+                    <p:link href="#{request.contextPath}/directorioCorreos.xhtml">
+                        <i class="fa fa-envelope" />
+                        <span>Directorio de Correos</span>
+                    </p:link>
+                </li>
+                <c:if test="#{utilidadesAdministracionEvaluaciones.tutor}">
+                    <li>
+                        <p:link href="#{request.contextPath}/directorioCorreosAlumnosporTutor.xhtml">
+                            <i class="fa fa-envelope" />
+                            <span>Directorio Estudiantes <br/>Tutorados</span>
+                        </p:link>
+                    </li>
+
+                </c:if>
+                <li>
+                    <p:link href="#{request.contextPath}/siiFaces.xhtml">
+                        <i class="fa fa-comments"></i>
+                        <span>Mensajería</span>
+                    </p:link>
+                </li>
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Documentacion</li>
+                <li>
+                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Manual de Organización 2018 con Anexo de Funciones FINAL.pdf#toolbar=0" target="_blank">
+                        <i class="fa fa-book"></i>
+                        <span>Manual de Organización</span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Manual de Procedimientos Administrativos 2018.pdf#toolbar=0" target="_blank">
+                        <i class="fa fa-book"></i>
+                        <span>Manual de Procedimientos <br/>Administrativos</span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/CODIGO DE CONDUCTA.pdf#toolbar=0" target="_blank">
+                        <i class="fa fa-book"></i>
+                        <span>Código de conducta</span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Código de etica.pdf#toolbar=0" target="_blank">
+                        <i class="fa fa-book"></i>
+                        <span>Código de ética</span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/documentacion/Modelo_Nacional_Tutorias_CGUTyP.pdf#toolbar=0" target="_blank">
+                        <i class="fa fa-book"></i>
+                        <span>Modelo Nacional de<br/>Tutorias de la CGUTyP <small class="label pull-right bg-green">Nuevo</small></span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/documentacion/PROGRAMA_INSTITUCIONAL_TUTORIAS.pdf#toolbar=0" target="_blank">
+                        <i class="fa fa-book"></i>
+                        <span>Programa Institucional de <br/>Tutorías <small class="label pull-right bg-green">Nuevo</small><small class="label pull-right bg-yellow">(En revisión para actualización)</small></span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/documentacion/RESUMEN_Modelo_Nacional_Tutorias.pdf#toolbar=0" target="_blank">
+                        <i class="fa fa-book"></i>
+                        <span>Resumen del Modelo<br/>Nacional de Tutorías de la CGUTyP <small class="label pull-right bg-green">Nuevo</small></span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link href="#{request.contextPath}/soporteTecnico.xhtml">
+                        <i class="fa fa-wrench"></i>
+                        <span>Soporte técnico</span>
+                    </p:link>
+                </li>
+                <c:if test="#{controladorEmpleado.tienePOA}">
+                    <li>                    
+                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Calendario de Evaluacion SIIP 2020.pdf#toolbar=0"  target="_blank">
+                            <i class="fa fa-calendar"></i>
+                            <span>Calendario</span>
+                        </p:link>
+                    </li>
+                </c:if>   
+            </c:if>
+        </c:if>
+    </ul>
+</ui:composition>

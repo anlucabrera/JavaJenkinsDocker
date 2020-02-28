@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+        <style type="text/css">
+            .custom-search-form{
+                margin-top:5px;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="title">
+        Reinscripción Autónoma
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Reinscripción Autónoma"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{reinscripcionAutonomaEstudiante.tieneAcceso}">
+                <c:if test="#{!reinscripcionAutonomaEstudiante.rol.reinscrito}">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <h:form prependId="false" class="form-inline">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+                                            <p:outputLabel value="Periodo para reinscripción: #{caster.clavePeriodoToString(reinscripcionAutonomaEstudiante.rol.eventoReinscripcion.periodo)}"/>
+                                            <p:spacer width="5" />
+
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandLink
+                                                    class="btn btn-info"
+                                                    rendered="#{true}"
+                                                    disabled="#{false}"
+                                                    onclick="PF('modalAyuda').show();"
+                                                    title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                    class="fa fa-question"/>
+                                            </p:commandLink>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </h:form>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <p:outputPanel>
+                                        <p:autoUpdate/>
+                                        <h:form id="frmStep">
+                                            <!--Stepes -->
+                                            <h3 style="margin-top:0">Pasos para la reinscripción.</h3>
+                                            <p:steps activeIndex="#{reinscripcionAutonomaEstudiante.step}" >
+                                                <p:menuitem value="Actualiza tus datos personales." />
+                                                <p:menuitem value="Conoce tus materias y reinscribete." />
+                                                <p:menuitem value="Confirmación" />
+                                            </p:steps>
+                                        </h:form>
+                                    </p:outputPanel>
+
+                                    <c:set var="panel" value="#{'col-sm-12 col-md-6'}"/>
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-6 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-3 col-md-3 col-lg-3'}"/>
+                                    <c:set var="casilla5" value="#{'col-sm-4 col-md-4 col-lg-4'}"/>
+                                    <c:set var="casilla6" value="#{'col-sm-8 col-md-8 col-lg-8'}"/>
+                                    <c:set var="casilla7" value="#{'col-sm-6 col-md-6 col-lg-6'}"/>
+                                    <!--p:remoteCommand id="cmdActualizarmaterias" name="actualizarmaterias" update="@(.ui-datatable) @(.ui-material) @(.ui-tabs)" /-->
+                                    <p:outputPanel>
+                                        <p:autoUpdate/>
+                                        <p:tabView id="tabView" activeIndex="#{reinscripcionAutonomaEstudiante.step}" >
+                                            <p:tab disabled="#{reinscripcionAutonomaEstudiante.tab1}">
+                                                <f:facet name="title"><i class="fa fa-user"> </i><span> Actualización de datos.</span></f:facet>
+                                                <!--Apartado de los panel's disponibles en la vista-->
+                                                <div class="row margin-bottom" style="margin-bottom: 20px">
+                                                    <h:form id="frmGeneral">
+                                                        <div class="row">
+                                                            <div class="#{panel}">
+                                                                <div class="box box-success">
+                                                                    <div class="box-header panel-heading with-border">
+                                                                        <div class="pull-left"><i class="fa fa-map-marker"></i></div>
+                                                                        <h3 class="box-title">Domicilio</h3>
+                                                                        <div class="box-tools pull-right">
+                                                                            <button class="btn btn-box-tool" data-widget="collapse">
+                                                                                <i class="fa fa-minus"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="box-body">
+                                                                        <div class="row">
+                                                                            <div class="#{casilla5}">
+                                                                                <div class="ui-material">
+                                                                                    <p:inputText id="calle1" class="form-control" value="#{reinscripcionAutonomaEstudiante.rol.domicilio.calle}"
+                                                                                                 required="true" requiredMessage="La calle de recidencia es requerida"/>
+                                                                                    <p:outputLabel for="calle1" value="Calle*"/>
+                                                                                    <p:message for="calle1"><p:autoUpdate/></p:message>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="#{casilla5}">
+                                                                                <div class="ui-material">
+                                                                                    <p:inputText id="numero1" class="form-control"  value="#{reinscripcionAutonomaEstudiante.rol.domicilio.numero}"
+                                                                                                 required="true" requiredMessage="El numero de casa de recidencia es requerido"/>
+                                                                                    <p:outputLabel for="numero1" value="Número*"/>
+                                                                                    <p:message for="numero1"><p:autoUpdate/></p:message>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="#{casilla5}">
+                                                                                <div class="ui-material">
+                                                                                    <p:selectOneMenu id="estadoR1" value="#{reinscripcionAutonomaEstudiante.rol.domicilio.idEstado}" required="true"
+                                                                                                     requiredMessage="El estado de recidencia es requerido">
+                                                                                        <f:selectItem itemValue="#{null}"/>
+                                                                                        <f:selectItems value="#{reinscripcionAutonomaEstudiante.rol.estados}" var="estados" itemLabel="#{estados.nombre}" itemValue="#{estados.idestado}"/>
+                                                                                        <p:ajax listener="#{reinscripcionAutonomaEstudiante.getMunicipioByEstado}" update="municipioR1"/>
+                                                                                    </p:selectOneMenu>
+                                                                                    <p:outputLabel for="estadoR1" value="Estado*"/>
+                                                                                    <p:message for="estadoR1"><p:autoUpdate/></p:message>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <br/><br/>
+                                                                        <div class="row">
+                                                                            <div class="#{casilla5}">
+                                                                                <div class="ui-material">
+                                                                                    <p:selectOneMenu id="municipioR1" value="#{reinscripcionAutonomaEstudiante.rol.domicilio.idMunicipio}"
+                                                                                                     required="true" requiredMessage="El municipio de recidencia es requerido">
+                                                                                        <f:selectItem itemValue="#{null}"/>
+                                                                                        <f:selectItems value="#{reinscripcionAutonomaEstudiante.rol.municipios}" var="muncipios" itemLabel="#{muncipios.nombre}" itemValue="#{muncipios.municipioPK.claveMunicipio}"/>
+                                                                                        <p:ajax listener="#{reinscripcionAutonomaEstudiante.getAsentamientoByMunicipioEstado}" update="asentamientoR1"/>
+                                                                                    </p:selectOneMenu>
+                                                                                    <p:outputLabel for="municipioR1" value="Municipio*"/>
+                                                                                    <p:message for="municipioR1"><p:autoUpdate/></p:message>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="#{casilla5}">
+                                                                                <div class="ui-material">
+                                                                                    <p:selectOneMenu id="asentamientoR1" value="#{reinscripcionAutonomaEstudiante.rol.domicilio.idAsentamiento}"
+                                                                                                     filter="true" filterMatchMode="startsWith" required="true"
+                                                                                                     requiredMessage="El asentamiento de recidencia es requerido">
+                                                                                        <f:selectItem itemValue="#{null}"/>
+                                                                                        <f:selectItems value="#{reinscripcionAutonomaEstudiante.rol.asentamientos}" var="asentamientos" itemValue="#{asentamientos.asentamientoPK.asentamiento}" itemLabel="CP:#{asentamientos.codigoPostal.concat(' |').concat(asentamientos.nombreAsentamiento)}"/>
+                                                                                        <p:ajax process="@this"/>
+                                                                                    </p:selectOneMenu>
+                                                                                    <p:outputLabel for="asentamientoR1" value="Asentamiento*"/>
+                                                                                    <p:message for="asentamientoR1"><p:autoUpdate/></p:message>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="#{casilla5}">
+                                                                                <div class="ui-material">
+                                                                                    <p:inputText id="tiempoResidencoa1" styleClass="form-control" placeholder="Ejem: 1 año"
+                                                                                                 value="#{reinscripcionAutonomaEstudiante.rol.domicilio.tiempoResidencia}" required="true"
+                                                                                                 requiredMessage="El tiempo de recidenca es requerido">
+                                                                                        <p:ajax process="@this"/>
+                                                                                    </p:inputText>
+                                                                                    <p:outputLabel for="tiempoResidencoa1" value="Tiempo de recidencia*"/>
+                                                                                    <p:message for="tiempoResidencoa1"><p:autoUpdate/></p:message>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <br/><br/>
+                                                                        <div class="row">
+                                                                            <div class="#{casilla5}">
+                                                                                <div class="ui-material">
+                                                                                    <p:inputText id="vives1" class="form-control" placeholder="Padres,Tios.."
+                                                                                                 value="#{reinscripcionAutonomaEstudiante.rol.domicilio.vivesCon}" required="true"
+                                                                                                 requiredMessage="Indicar el con que personas vives">
+                                                                                        <p:ajax process="@this"/>
+                                                                                    </p:inputText>
+                                                                                    <p:outputLabel for="vives1" value="Vives con*"/>
+                                                                                    <p:message for="vives1"><p:autoUpdate/></p:message>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="#{panel}">
+                                                                <div class="box box-warning">
+                                                                    <div class="box-header panel-heading with-border">
+                                                                        <div class="pull-left"><i class="fa fa-phone"></i></div>
+                                                                        <h3 class="box-title">Datos de contacto</h3>
+                                                                        <div class="box-tools pull-right">
+                                                                            <button class="btn btn-box-tool" data-widget="collapse">
+                                                                                <i class="fa fa-minus"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="box-body">
+                                                                        <div class="row">
+                                                                            <div class="#{casilla5}">
+                                                                                <div class="ui-material">
+                                                                                    <p:inputMask mask="(99)(999)999-9999" id="telFijo1" class="form-control" required="true" requiredMessage="Teléfono fijo requerido"
+                                                                                                 value="#{reinscripcionAutonomaEstudiante.rol.datosContacto.telefonoFijo}" >
+                                                                                        <p:ajax process="@this"/>
+                                                                                    </p:inputMask>
+                                                                                    <p:outputLabel for="telFijo1" value="Teléfono fijo*"/>
+                                                                                    <p:message for="telFijo1"><p:autoUpdate/></p:message>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="#{casilla5}">
+                                                                                <div class="ui-material">
+                                                                                    <p:inputMask mask="(999)999-9999" id="telMovil1" class="form-control"
+                                                                                                 required="Télefono movil"
+                                                                                                 requiredMessage="Teléfono móvil requerido"
+                                                                                                 value="#{reinscripcionAutonomaEstudiante.rol.datosContacto.telefonoMovil}">
+                                                                                        <p:ajax process="@this"/>
+                                                                                    </p:inputMask>
+                                                                                    <p:outputLabel for="telMovil1" value="Teléfono Móvil*"/>
+                                                                                    <p:message for="telMovil1"><p:autoUpdate/></p:message>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <br/><br/>
+                                                                        <div class="row">
+                                                                            <div class="#{casilla5}">
+                                                                                <div class="ui-material">
+                                                                                    <p:inputText id="email1" class="form-control"
+                                                                                                 required="true"
+                                                                                                 requiredMessage="Correo electrónico requerido"
+                                                                                                 value="#{reinscripcionAutonomaEstudiante.rol.datosContacto.email}">
+                                                                                        <p:ajax process="@this"/>
+                                                                                    </p:inputText>
+                                                                                    <p:outputLabel for="email1" value="Correo Electrónico*"  />
+                                                                                    <p:message for="email1"><p:autoUpdate/></p:message>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-12 col-md-12">
+                                                                <div class="row">
+                                                                    <div class="col-sm-5 col-md-5 col-lg-5"/>
+                                                                    <div class="#{casilla5}">
+                                                                        <p:commandButton value="Actualizar datos"  styleClass="btn-primary" actionListener="#{reinscripcionAutonomaEstudiante.actualizaDatos}" >
+                                                                            <p:ajax update=":tabView:frmGeneral,:frmStep" process=":tabView:frmGeneral,:frmStep"/>
+                                                                        </p:commandButton>
+                                                                    </div>
+
+                                                                </div>
+
+                                                            </div>
+
+
+                                                        </div>
+                                                    </h:form>
+                                                </div>
+                                            </p:tab>
+                                            <p:tab disabled="#{reinscripcionAutonomaEstudiante.tab2}">
+                                                <f:facet name="title"><i class="fa fa-book "></i><span> Listado de materias</span></f:facet>
+
+                                                <div class="row margin-bottom" style="margin-top: 20px;">
+                                                    <h:form id="frmDP">
+                                                        <h3> Materias #{reinscripcionAutonomaEstudiante.rol.nuevoGrupo.grado} - #{reinscripcionAutonomaEstudiante.rol.nuevoGrupo.literal}</h3>
+                                                        <p:dataTable var="materias" rendered="true"
+                                                                     emptyMessage="Aún no existen registros. El director de carrera se encoentra asignando los docentes que te impartirán clases."
+                                                                     value="#{reinscripcionAutonomaEstudiante.rol.nuevasMaterias}"
+                                                                     id="tbl" rowIndexVar="rowIndex"
+                                                                     style="size: 200px"
+                                                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                     tableStyle="vertical-align: middle;">
+                                                            <p:column headerText="Materia" style="height: auto"><h:outputText value="#{materias.nombreMateria}" style="position: center"/></p:column>
+                                                            <p:column headerText="Docente que imparte"><h:outputText value="#{empty materias.docenteImparte?'Pendiente':materias.docenteImparte.nombre}" /></p:column>
+
+                                                        </p:dataTable>
+                                                        <br></br>
+                                                        <div class="col-sm-12 col-md-12">
+                                                            <div class="row">
+                                                                <div class="col-sm-5 col-md-5 col-lg-5"/>
+                                                                <div class="#{casilla5}">
+                                                                    <p:commandButton value="Reinscribirse al #{reinscripcionAutonomaEstudiante.rol.nuevoGrupo.grado}- #{reinscripcionAutonomaEstudiante.rol.nuevoGrupo.literal}"  styleClass="btn-primary" actionListener="#{reinscripcionAutonomaEstudiante.reinscribirEstudiante}" >
+                                                                        <p:ajax update=":tabView:frmGeneral,:tabView:frmDP,:frmStep" process=":tabView:frmGeneral,:frmStep,:tabView:frmDP,:tabView:frmConfirm"/>
+                                                                    </p:commandButton>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                    </h:form>
+                                                </div>
+                                            </p:tab>
+                                            <p:tab disabled="#{reinscripcionAutonomaEstudiante.tab3}">
+                                                <f:facet name="title"><i class="fa fa-check"></i><span> Confirmación</span></f:facet>
+                                                <div class="row margin-bottom" style="margin-top: 20px;">
+                                                    <h:form id="frmConfirm">
+                                                        <section class="content">
+                                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                                <div class="col-md-12">
+                                                                    <div class="container-fluid">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12 col-md-12">
+                                                                                <div class="alert alert-success">
+                                                                                    <h4><i class="icon fa fa-check"></i> ¡Te haz reinscrito con exito al grupo #{reinscripcionAutonomaEstudiante.rol.nuevoGrupo.grado} - #{reinscripcionAutonomaEstudiante.rol.nuevoGrupo.literal}  en el periodo #{caster.clavePeriodoToString(reinscripcionAutonomaEstudiante.rol.eventoReinscripcion.periodo)} !</h4>
+                                                                                    Favor de revisar sus datos personales. Si existe algún error en tu nombre y/o CURP, favor de informar en Servicios Escolares.
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <br></br>
+                                                                            <br></br>
+                                                                            <hr></hr>
+                                                                            <div class="col-md-2">
+                                                                                <div class="card card-primary card-outline">
+                                                                                    <div class="card-body box-profile">
+                                                                                        <br/>
+                                                                                        <div class="text-center">
+                                                                                            <img class="profile-img img-fluid img-circle"
+                                                                                                 src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{reinscripcionAutonomaEstudiante.rol.estudiante.matricula}.jpg"
+                                                                                                 alt="User profile picture"></img>
+                                                                                        </div>
+                                                                                        <br/>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-sm-10 col-md-10">
+                                                                                <div class="box box-success">
+                                                                                    <div class="box-header panel-heading with-border">
+                                                                                        <div class="pull-left"><i class="fa fa-user"></i></div>
+                                                                                        <h3 class="box-title">Datos Generales</h3>
+                                                                                        <div class="box-tools pull-right">
+                                                                                            <button class="btn btn-box-tool" data-widget="collapse">
+                                                                                                <i class="fa fa-minus"></i>
+                                                                                            </button>
+                                                                                        </div>
+
+                                                                                        <div class="box-body">
+                                                                                            <br></br>
+                                                                                            <div class="row">
+                                                                                                <c:set var="persona" value="#{reinscripcionAutonomaEstudiante.rol.estudiante.aspirante.idPersona}"/>
+                                                                                                <div class="#{casilla4}">
+                                                                                                    <div class="ui-material">
+                                                                                                        <p:inputText  id="nombreC" class="form-control" required="true" readonly="true"
+                                                                                                                     value="#{persona.nombre.concat(' ').concat(persona.apellidoPaterno).concat(' ').concat(persona.apellidoMaterno)}" >
+
+                                                                                                        </p:inputText>
+                                                                                                        <p:outputLabel for="nombreC" value="Nombre completo"/>
+                                                                                                        <p:message for="nombreC"><p:autoUpdate/></p:message>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="#{casilla4}">
+                                                                                                    <div class="ui-material">
+                                                                                                        <p:inputText  id="curp" class="form-control" required="true" readonly="true"
+                                                                                                                      value="#{persona.curp}" >
+
+                                                                                                        </p:inputText>
+                                                                                                        <p:outputLabel for="curp" value="CURP"/>
+                                                                                                        <p:message for="curp"><p:autoUpdate/></p:message>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="#{casilla4}">
+                                                                                                    <div class="ui-material">
+                                                                                                        <p:inputText  id="fechaN" class="form-control" required="true" readonly="true"
+                                                                                                                      value="#{persona.fechaNacimiento}" >
+                                                                                                            <f:convertDateTime pattern="dd-MM-YYYY"/>
+                                                                                                        </p:inputText>
+                                                                                                        <p:outputLabel for="fechaN" value="Fecha de naciemiento"/>
+                                                                                                        <p:message for="fechaN"><p:autoUpdate/></p:message>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="#{casilla4}">
+                                                                                                    <div class="ui-material">
+                                                                                                        <p:inputText  id="edoCivil" class="form-control" required="true" readonly="true"
+                                                                                                                      value="#{persona.estadoCivil}" >
+                                                                                                        </p:inputText>
+                                                                                                        <p:outputLabel for="edoCivil" value="Estado civil"/>
+                                                                                                        <p:message for="edoCivil"><p:autoUpdate/></p:message>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <br/><br/>
+                                                                                            <div class="row">
+                                                                                                <div class="#{casilla4}">
+                                                                                                    <div class="ui-material">
+                                                                                                        <p:inputText id="email" class="form-control"
+                                                                                                                     readonly="true"
+                                                                                                                     value="#{reinscripcionAutonomaEstudiante.rol.datosContacto.email}">
+                                                                                                            <p:ajax process="@this"/>
+                                                                                                        </p:inputText>
+                                                                                                        <p:outputLabel for="email" value="Correo Electrónico*"  />
+                                                                                                        <p:message for="email"><p:autoUpdate/></p:message>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="#{casilla4}">
+                                                                                                    <div class="ui-material">
+                                                                                                        <p:inputText id="telFijo" class="form-control"
+                                                                                                                     readonly="true"
+                                                                                                                     value="#{reinscripcionAutonomaEstudiante.rol.datosContacto.telefonoFijo}">
+                                                                                                            <p:ajax process="@this"/>
+                                                                                                        </p:inputText>
+                                                                                                        <p:outputLabel for="telFijo" value="Telefono fijo"  />
+                                                                                                        <p:message for="telFijo"><p:autoUpdate/></p:message>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="#{casilla4}">
+                                                                                                    <div class="ui-material">
+                                                                                                        <p:inputText id="tel" class="form-control"
+                                                                                                                     readonly="true"
+                                                                                                                     value="#{reinscripcionAutonomaEstudiante.rol.datosContacto.telefonoMovil}">
+                                                                                                            <p:ajax process="@this"/>
+                                                                                                        </p:inputText>
+                                                                                                        <p:outputLabel for="tel" value="Telefono móvil"  />
+                                                                                                        <p:message for="tel"><p:autoUpdate/></p:message>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
+
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+                                                        </section>
+
+                                                    </h:form>
+                                                </div>
+                                            </p:tab>
+
+                                        </p:tabView>
+                                    </p:outputPanel>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </c:if>
+                <!-- zona de importación de enums -->
+
+            </c:if>
+            <c:if test="#{reinscripcionAutonomaEstudiante.tieneAcceso}">
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para la reinscripcióm autónoma del estudiante</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{reinscripcionAutonomaEstudiante.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!reinscripcionAutonomaEstudiante.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado al estudiantes que no adeuden materias."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+            <c:if test="#{reinscripcionAutonomaEstudiante.rol.reinscrito}">
+                <p:panel id="box-colors-panel2" header="Reinscripción Autónoma" styleClass="box-warning box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="Ya estas reinscrito en el periodo programado."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+    </ui:define>
+</ui:composition>

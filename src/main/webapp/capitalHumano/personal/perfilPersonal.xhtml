@@ -1,0 +1,1747 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>        
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{controladorPersonal.cargado}">
+        <style>
+            .description-block{
+                text-align: justify;
+            }
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            button, input, optgroup, select, textarea{
+                color: black;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-right{
+                right: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+            .ui-tabs .ui-tabs-navscroller-btn-left{
+                left: .1em;
+                background: white;
+                block-size: 2.6em;
+            }
+            .aceptado{
+                background-color: white;
+            }
+            .denegado{
+                background-color: #f39c12;
+            }
+        </style>
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                <div class="row">
+                    <h:form id="frmFunciones">
+                        <p:outputLabel value="Subordinados(as)" for="clave" class="col-sm-2 control-label"/>
+                        <div class="col-sm-3">
+                            <p:selectOneMenu id="clave" value="#{controladorPersonal.contactoDestino}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
+                                <f:selectItem itemValue="0" itemLabel=" Regresar "/>
+                                <f:selectItems value="#{controladorPersonal.listaPersonal}" var="personal" itemValue="#{personal.clave}" itemLabel="#{personal.clave} - #{personal.nombre} - #{personal.categoriaOperativa.nombre}" />
+                                <p:ajax update="@form :frmFunciones :informacion panelDatos" process="@form :frmFunciones" listener="#{controladorPersonal.mostrarPerfilSubordinado()}"/>
+                            </p:selectOneMenu>  
+                            <p:message for="clave"/>
+                        </div>
+                        <div class="col-sm-3">
+                            <p:commandButton id="plantillaPersonal" value="Descargar plantilla del personal activo" actionListener="#{exelPlantillaPersonal.generarPlantillaPersoanl()}" icon="fa fa-download" class="btn-primary btn-block col-md-3"/> 
+                        </div>
+                        <div class="col-sm-2">
+                            <p:commandButton id="zip" value="Descargar evidencias" actionListener="#{controladorPersonal.descargarEvidenciasCH()}" disabled="#{controladorPersonal.contactoDestino eq 0}" icon="fa fa-download" class="btn-primary btn-block col-md-3"/> 
+                        </div>
+                    </h:form>
+                </div> 
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilPersonal.xhtml"/>
+                        <div class="col-md-9">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView>
+                                    <p:tab title="Currículum vitae">
+                                        <h:form>
+                                            <p:commandButton value="Imprimir currículum vitae" icon="fa fa-print" class="btn-success">                                        
+                                                <p:printer target="CV" />
+                                            </p:commandButton>
+                                            <p:panel id="CV" >
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h1><strong>Currículum vitae</strong></h1>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div id="tituloCV" class="col-sm-12">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h2>Universidad Tecnológica De Xicotepec de Juárez</h2>
+                                                                        <h3>Contenido de currículum para expedientes</h3>
+                                                                        <h4>Departamento de personal</h4>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos personales</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div  id="fotoPersonal" class="col-sm-2 pull-left">
+                                                                                            <div class="description-block" style="text-align: center" >
+                                                                                                <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{controladorPersonal.nuevoOBJListaPersonal.clave}.jpg" alt="#{controladorPersonal.nuevoOBJListaPersonal.clave}" title="Personal #{controladorPersonal.nuevoOBJListaPersonal.clave}" style="width: 140px; height: 140px; align-content: center;"/>
+                                                                                            </div>  
+                                                                                        </div>
+                                                                                        <div class="col-sm-6">
+                                                                                            <div  id="dstoasPerosonalesPersonal1" class="col-sm-3 pull-left" style="width: 250px;">        
+                                                                                                <div class="description-block" style="text-align: justify">
+                                                                                                    <strong>Nombre completo</strong>
+                                                                                                    <p class="text-muted">
+                                                                                                        #{controladorPersonal.nuevoOBJListaPersonal.nombre}
+                                                                                                    </p>
+                                                                                                    <hr/>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div  id="dstoasPerosonalesPersonal2" class="col-sm-3 pull-left" style="width: 200px;"> 
+                                                                                                <div class="description-block" style="text-align: justify">
+                                                                                                    <strong>CURP</strong>
+                                                                                                    <p class="text-muted" style="text-transform: uppercase">
+                                                                                                        #{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.curp}
+                                                                                                    </p>
+                                                                                                    <hr/>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div  id="dstoasPerosonalesPersonal1" class="col-sm-3 pull-left" style="width: 250px;">        
+                                                                                                <div class="description-block" style="text-align: justify">
+                                                                                                    <strong>Lugar de nacimiento</strong>
+                                                                                                    <p class="text-muted">
+                                                                                                        #{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.lugarProcedencia}
+                                                                                                    </p> 
+                                                                                                    <hr/>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div  id="dstoasPerosonalesPersonal2" class="col-sm-3 pull-left" style="width: 200px;"> 
+                                                                                                <div class="description-block" style="text-align: justify">
+                                                                                                    <strong>RFC</strong>
+                                                                                                    <p class="text-muted" style="text-transform: uppercase">
+                                                                                                        #{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.rfc}
+                                                                                                    </p>
+                                                                                                    <hr/>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal3" class="col-sm-2 pull-left" style="width: 150px;"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Edad</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.edad} años
+                                                                                                </p>                                                             
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal4" class="col-sm-2 pull-left" style="width: 180px;"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Estado civil</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.estadoCivil}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+
+
+                                                                                        <div  id="dstoasPerosonalesPersonal3" class="col-sm-2 pull-left" style="width: 150px;"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Sexo</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorPersonal.nuevoOBJListaPersonal.generoNombre}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal4" class="col-sm-2 pull-left" style="width: 180px;"> 
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Fecha de nacimiento</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <h:outputLabel value="#{controladorPersonal.nuevoOBJListaPersonal.fechaNacimiento}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                                </p>                                                                
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div> 
+                                                                                    <div class="row">
+                                                                                        <div  id="dstoasPerosonalesPersonal5" class="col-sm-4 pull-left" style="width: 250px;">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Dirección</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.direccion}
+                                                                                                </p>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal6" class="col-sm-4 pull-left" style="width: 200px;">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Correo electrónico</strong>
+                                                                                                <ul style="list-style-type: square">
+                                                                                                    <li>
+                                                                                                        #{controladorPersonal.nuevoOBJListaPersonal.correoElectronico}
+                                                                                                        <br/>
+                                                                                                        #{controladorPersonal.nuevoOBJListaPersonal.correoElectronico2}
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div  id="dstoasPerosonalesPersonal7" class="col-sm-4 pull-left" style="width: 200px;">        
+                                                                                            <div class="description-block" style="text-align: justify">
+                                                                                                <strong>Número de teléfono</strong>
+                                                                                                <ul style="list-style-type: square">
+                                                                                                    <li>
+                                                                                                        Casa: #{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.numTelFijo}
+                                                                                                    </li>
+                                                                                                    <li>
+                                                                                                        Cel.: #{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.numTelMovil}
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaFormacionAcademica.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblFormaciónAcadémica" value="#{controladorPersonal.listaFormacionAcademica}" var="formaAL"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaFormacionAcademica.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Formación académica</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 20%" headerText="Estudio realizado" >
+                                                                                    <h:outputText value="#{formaAL.nivelEscolaridad.nombre}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="Carrera" >
+                                                                                    <h:outputText value="#{formaAL.nombreCarrera}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="Fecha" >
+                                                                                    <h:outputLabel value="#{formaAL.fechaObtencion}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="Institución" >
+                                                                                    <h:outputText value="#{formaAL.institucion}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="Modo titulación" >
+                                                                                    <h:outputText value="#{formaAL.modoTitulacion}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="No. cédula profesional" >
+                                                                                    <h:outputText value="#{formaAL.cedulaProfesional}" />
+                                                                                </p:column>
+
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaExperienciasLaborales.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblExperienciaLaboral" value="#{controladorPersonal.listaExperienciasLaborales}" var="experiencL"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaExperienciasLaborales.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Experiencia laboral</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 20%" headerText="Empresa o institución" >
+                                                                                    <h:outputText value="#{experiencL.institucionEmpresa}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Fechas" >   
+                                                                                    <h:outputLabel value="del"/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{experiencL.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>                                                                                
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="al"/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{experiencL.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Puesto" >
+                                                                                    <h:outputText value="#{experiencL.puestoDesepenado}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 40%" headerText="Funciones realizadas" >
+                                                                                    <h:outputText value="#{experiencL.funcionesDesempenio}" />
+                                                                                </p:column>
+
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaCapacitacionespersonal.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblCapacitación" value="#{controladorPersonal.listaCapacitacionespersonal}" var="capaci"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaCapacitacionespersonal.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Actualización profesional</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 50%" headerText="Nombre de la capacitación" >
+                                                                                    <h:outputText value="#{capaci.nombre}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 30%" headerText="Lugar" >
+                                                                                    <h:outputText value="#{capaci.lugar}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Fechas" >   
+                                                                                    <h:outputLabel value="del "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{capaci.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="al "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{capaci.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaIdiomas.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblIdiomas" value="#{controladorPersonal.listaIdiomas}" var="idiomasD"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaIdiomas.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Idiomas</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 25%" headerText="Idioma">
+                                                                                    <h:outputText value="#{idiomasD.idiomaHablado}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de conversación">
+                                                                                    <h:outputText value="#{idiomasD.nivelConversacion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de escritura">
+                                                                                    <h:outputText value="#{idiomasD.nivelEscritura}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de lectura">
+                                                                                    <h:outputText value="#{idiomasD.nivelLectura}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaHabilidadesInformaticas.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblInformática" value="#{controladorPersonal.listaHabilidadesInformaticas}" var="informaticD"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaHabilidadesInformaticas.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Habilidades informáticas </h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 30%" headerText="Conocimiento informático" >
+                                                                                    <h:outputText value="#{informaticD.tipoConocimiento}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Programa dominado">
+                                                                                    <h:outputText value="#{informaticD.programaDominante}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Nivel de dominio">
+                                                                                    <h:outputText value="#{informaticD.nivelConocimiento}" />
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaLenguas.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblLenguas" value="#{controladorPersonal.listaLenguas}" var="lenguasD"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaLenguas.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Lenguas indígenas</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 25%" headerText="Lengua">
+                                                                                    <h:outputText value="#{lenguasD.tipoLengua}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de conversación">
+                                                                                    <h:outputText value="#{lenguasD.nivelConversacion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de escritura">
+                                                                                    <h:outputText value="#{lenguasD.nivelEscritura}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="% de lectura">
+                                                                                    <h:outputText value="#{lenguasD.nivelLectura}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaDesarrollosTecnologicos.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblTrabajosdeInvestigación" value="#{controladorPersonal.listaDesarrollosTecnologicos}" var="des"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaDesarrollosTecnologicos.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Desarrollos tecnológicos</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 30%" headerText="Tipo de desarrollo">
+                                                                                    <h:outputText value="#{des.tipoDesarrollo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Objetivo" >
+                                                                                    <h:outputText value="#{des.objetivoDesarrollo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Resumen">
+                                                                                    <h:outputLabel value="#{des.resumenDesarrollo}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaInnovaciones.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblinnnovacion" value="#{controladorPersonal.listaInnovaciones}" var="ino"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaInnovaciones.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Innovaciones</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column headerText="Tipo de innovación">
+                                                                                    <h:outputText value="#{ino.tipoInnovacion}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Cobertura">
+                                                                                    <h:outputText value="#{ino.potencialCobertura}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Aplicación">
+                                                                                    <h:outputText value="#{ino.aplicacionInnovacion}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaDesarrolloSoftwar.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tbldesSof" value="#{controladorPersonal.listaDesarrolloSoftwar}" var="dess"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaDesarrolloSoftwar.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Desarrollo de Software</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 20%" headerText="Tipo">
+                                                                                    <h:outputText value="#{dess.tipoDesarrollo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Lugar">
+                                                                                    <h:outputText value="#{dess.lugar}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="Horas invertidas">
+                                                                                    <h:outputText value="#{dess.horasHombre}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 45%" headerText="Logros">
+                                                                                    <h:outputText value="#{dess.logros}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaDistinciones.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tbldistin" value="#{controladorPersonal.listaDistinciones}" var="dist"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaDistinciones.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Premios y Distinciones</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 30%" headerText="Instituto">
+                                                                                    <h:outputText value="#{dist.institucion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Nombre">
+                                                                                    <h:outputText value="#{dist.nombreDistincion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Motivo">
+                                                                                    <h:outputText value="#{dist.motivoDescripcion}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaLibrosPubs.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tbllibros" value="#{controladorPersonal.listaLibrosPubs}" var="libro"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaLibrosPubs.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Libros Publicados</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 15%" headerText="ISBN">
+                                                                                    <h:outputText value="#{libro.isbn}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 55%" headerText="Título">
+                                                                                    <h:outputText value="#{libro.titulo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="Idioma">
+                                                                                    <h:outputText value="#{libro.idioma}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="País">
+                                                                                    <h:outputText value="#{libro.pasi}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaArticulosp.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblarticulos" value="#{controladorPersonal.listaArticulosp}" var="articulo"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaArticulosp.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold"> Artículos Publicados</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 15%" headerText="ISBN electrónico">
+                                                                                    <h:outputText value="#{articulo.issnElectronico}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Nombre">
+                                                                                    <h:outputText value="#{articulo.nombre}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Título">
+                                                                                    <h:outputText value="#{articulo.tituloArticulo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="País">
+                                                                                    <h:outputText value="#{articulo.pais}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaMemoriaspub.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblmemorias" value="#{controladorPersonal.listaMemoriaspub}" var="memoria"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaMemoriaspub.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Memorias Publicadas</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 29%" headerText="Título de memoria">
+                                                                                    <h:outputText value="#{memoria.tituloDeMemoria}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 29%" headerText="Título de publicación">
+                                                                                    <h:outputText value="#{memoria.tituloDePublicacion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 29%" headerText="Título de obra">
+                                                                                    <h:outputText value="#{memoria.tituloDeObra}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 13%" headerText="País">
+                                                                                    <h:outputText value="#{memoria.pais}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaCongresos.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblcongreso" value="#{controladorPersonal.listaCongresos}" var="idiomasD"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaCongresos.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Congresos</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 20%" headerText="Tipo de participación">
+                                                                                    <h:outputText value="#{idiomasD.participacion}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 35%" headerText="Nombre de congreso">
+                                                                                    <h:outputText value="#{idiomasD.nombreCongreso}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 30%" headerText="Título de trabajo">
+                                                                                    <h:outputText value="#{idiomasD.tituloTrabajo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 15%" headerText="País">
+                                                                                    <h:outputText value="#{idiomasD.lugarPais}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: #{controladorPersonal.listaInvestigacion.size() != 0?'inline':'none'} ">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <p:dataTable id="tblInvestigaciones" value="#{controladorPersonal.listaInvestigacion}" var="invest"
+                                                                                         emptyMessage="No se encontraron datos registrados." rendered="#{controladorPersonal.listaInvestigacion.size() != 0?true:false}">
+
+                                                                                <f:facet name="header">
+                                                                                    <h4 style="font-weight: bold">Investigación</h4>
+                                                                                </f:facet>
+
+                                                                                <p:column style="width: 10%" headerText="Tipo de Investigación">
+                                                                                    <h:outputText value="#{invest.tipo}"/>
+                                                                                </p:column>
+                                                                                <p:column style="width: 25%" headerText="Nombre de la Investigación" >
+                                                                                    <h:outputText value="#{invest.nombreInvestigacion}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 30%" headerText="Descripción" >
+                                                                                    <h:outputText value="#{invest.decripcion}" />
+                                                                                </p:column>
+                                                                                <p:column style="width: 20%" headerText="Fechas" >   
+                                                                                    <h:outputLabel value="del "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{invest.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="al "/>
+                                                                                    <p:spacer width="10px"/>
+                                                                                    <h:outputLabel value="#{invest.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                </p:column>  
+                                                                                <p:column style="width: 15%" headerText="Institución">
+                                                                                    <h:outputText value="#{invest.institucion}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:panel>
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Funciones">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <h5 class="description-header">Función genérica</h5>
+                                                                <c:forEach var="i" begin="0" end="#{controladorPersonal.listaFuncioneSubordinado.size()-1}">
+                                                                    <c:set var="eje" value="#{controladorPersonal.listaFuncioneSubordinado.get(i)}"/>
+                                                                    <c:if test="#{eje.tipo eq 'GENERAL'}">
+                                                                        <br/>
+                                                                        <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                        <br/>
+                                                                    </c:if>                                                                    
+                                                                </c:forEach>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr/>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <h5 class="description-header">Funciones específicas </h5>
+                                                                <c:forEach var="f" begin="0" end="#{controladorPersonal.listaFuncioneSubordinado.size()-1}">
+                                                                    <c:set var="eje" value="#{controladorPersonal.listaFuncioneSubordinado.get(f)}"/>
+                                                                    <c:if test="#{eje.tipo ne 'GENERAL'}">
+                                                                        <br/>
+                                                                        <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
+                                                                        <br/>
+                                                                    </c:if>                                                                    
+                                                                </c:forEach>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </p:tab>
+                                    <p:tab title="Configuración">
+                                        <h:form id="datosPer">
+                                            <p:outputPanel >
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">                                                           
+                                                                        <label class="col-sm-12 control-label"><h1 style="text-align: center">Datos personales</h1></label>
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="nombre" class="col-sm-12 control-label">Nombre</label>
+                                                                                <p:inputText class="form-control" id="nombre" placeholder="Nombre" value="#{controladorPersonal.nuevOBJPersonalSubordinado.nombre}" disabled="true"/>
+                                                                                <hr/>                                                                     
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="fechaN" class="col-sm-12 control-label">Fecha de nacimiento</label>
+                                                                                <p:inputText  class="form-control" id="fechaN" placeholder="Fecha de nacimiento" value="#{controladorPersonal.nuevOBJPersonalSubordinado.fechaNacimiento}" disabled="true"><f:convertDateTime pattern="dd/MM/yyyy"/></p:inputText>
+                                                                                <hr/>                                                                       
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="genero" class="col-sm-12 control-label">Sexo</label>
+                                                                                <p:inputText class="form-control" id="genero" placeholder="Sexo" value="#{controladorPersonal.nuevOBJPersonalSubordinado.genero.nombre}"/>
+                                                                                <hr/>                                                                     
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="pais" class="col-sm-12 control-label">País</label>
+                                                                                <p:inputText  class="form-control" id="pais" placeholder="País" value="#{controladorPersonal.nuevOBJPersonalSubordinado.pais}"/>
+                                                                                <hr/>                                                                     
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">                                                                              
+                                                                                <label for="estado" class="col-sm-12 control-label">Estado</label>
+                                                                                <p:inputText  class="form-control" id="estado" placeholder="Estado" value="#{controladorPersonal.nuevOBJPersonalSubordinado.estado}"/>
+                                                                                <hr/>                                                                     
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="municipio" class="col-sm-12 control-label">Municipio</label>
+                                                                                <p:inputText  class="form-control" id="municipio" placeholder="Municipio" value="#{controladorPersonal.nuevOBJPersonalSubordinado.municipio}"/>
+                                                                                <hr/>                                                                     
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="localidad" class="col-sm-12 control-label">Localidad</label>
+                                                                                <p:inputText  class="form-control" id="localidad" placeholder="Localidad" value="#{controladorPersonal.nuevOBJPersonalSubordinado.localidad}"/>
+                                                                                <hr/>                                                                      
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="correo1" class="col-sm-12 control-label">Correo electrónico 2</label>
+                                                                                <p:inputText type="email"  class="form-control" id="correo2" placeholder="Correo electrónico 2" value="#{controladorPersonal.nuevOBJPersonalSubordinado.correoElectronico2}"/>
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="correo1" class="col-sm-12 control-label">Correo electrónico</label>
+                                                                                <p:inputText type="email"  class="form-control" id="correo1" placeholder="Correo electrónico" value="#{controladorPersonal.nuevOBJPersonalSubordinado.correoElectronico}"/>
+                                                                                <hr/>
+                                                                            </div>
+                                                                        </div>
+                                                                        <label class="col-sm-12 control-label"><h1 style="text-align: center">Datos de trabajo</h1></label>
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <label for="clave" class="col-sm-12 control-label">Clave</label>
+                                                                                <p:inputText class="form-control" id="clave" placeholder="Clave" value="#{controladorPersonal.nuevOBJPersonalSubordinado.clave}" disabled="true"/>
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <label for="status" class="col-sm-12 control-label">Estatus</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" id="status" value="#{controladorPersonal.nuevOBJPersonalSubordinado.status}">
+                                                                                    <f:selectItem itemValue="A" itemLabel="Activo"/>
+                                                                                    <f:selectItem itemValue="B" itemLabel="Baja"/>
+                                                                                    <f:selectItem itemValue="R" itemLabel="Reingreso"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/> 
+                                                                            </div>
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <label for="actividad" class="col-sm-12 control-label">Actividad</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" id="actividad" value="#{controladorPersonal.actividad}">
+                                                                                    <f:selectItems value="#{controladorPersonal.listaActividades}" var="activ" itemValue="#{activ.actividad}" itemLabel="#{activ.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/> 
+                                                                            </div>
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <label for="fechaI" class="col-sm-12 control-label">Fecha de Ingreso</label>
+                                                                                <p:inputText class="form-control" id="fechaI" placeholder="Fecha de Ingreso" value="#{controladorPersonal.nuevOBJPersonalSubordinado.fechaIngreso}" disabled="true"><f:convertDateTime pattern="dd/MM/yyyy"/></p:inputText>
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                <label for="categoriaOP" class="col-sm-12 control-label">Categoría operativa</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="categoriaOP" value="#{controladorPersonal.categoriaOP}">
+                                                                                    <f:selectItems value="#{controladorPersonal.listaPersonalCategorias}" var="caOP" itemValue="#{caOP.categoria}" itemLabel="#{caOP.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/> 
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                <label for="areaOp" class="col-sm-12 control-label">Área operativa</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="areaOp" value="#{controladorPersonal.nuevOBJPersonalSubordinado.areaOperativa}">
+                                                                                    <f:selectItems value="#{controladorPersonal.listaAreasUniversidads}" var="arOP" itemValue="#{arOP.area}" itemLabel="#{arOP.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/> 
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                <label for="categoriaOf" class="col-sm-12 control-label">Categoría oficial</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="categoriaOf" value="#{controladorPersonal.categoriaOF}">
+                                                                                    <f:selectItems value="#{controladorPersonal.listaPersonalCategorias}" var="caOF" itemValue="#{caOF.categoria}" itemLabel="#{caOF.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                <label for="areaOf" class="col-sm-12 control-label">Área oficial</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="areaOf" value="#{controladorPersonal.nuevOBJPersonalSubordinado.areaOficial}">
+                                                                                    <f:selectItems value="#{controladorPersonal.listaAreasUniversidads}" var="arOF" itemValue="#{arOF.area}" itemLabel="#{arOF.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/> 
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6"> 
+                                                                                <label for="areaSu" class="col-sm-12 control-label">Área superior</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="areaSu" value="#{controladorPersonal.nuevOBJPersonalSubordinado.areaSuperior}">
+                                                                                    <f:selectItems value="#{controladorPersonal.listareasSuperiores}" var="arSP" itemValue="#{arSP.area}" itemLabel="#{arSP.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/> 
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                <label for="categoria360" class="col-sm-12 control-label">Categoría 360°</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="categoria360" value="#{controladorPersonal.categoria360}">
+                                                                                    <f:selectItems value="#{controladorPersonal.listaPersonalCategorias360}" var="caOF" itemValue="#{caOF.categoria}" itemLabel="#{caOF.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/>
+                                                                            </div>
+                                                                        </div>
+                                                                        <label class="col-sm-12 control-label"><h1 style="text-align: center">Estudios</h1></label>
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="grado" class="col-sm-12 control-label">Grado</label>
+                                                                                <p:selectOneMenu style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" id="grado" value="#{controladorPersonal.grado}">
+                                                                                    <f:selectItems value="#{controladorPersonal.listaGrados}" var="grad" itemValue="#{grad.grado}" itemLabel="#{grad.nombre}" />
+                                                                                </p:selectOneMenu> 
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="experienciadoc" class="col-sm-12 control-label">Experiencia docente</label>
+                                                                                <p:inputText  class="form-control" id="experienciadoc" placeholder="Experiencia docente" value="#{controladorPersonal.nuevOBJPersonalSubordinado.experienciaDocente}"/>
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <label for="experienciaLab" class="col-sm-12 control-label">Experiencia laboral</label>
+                                                                                <p:inputText  class="form-control" id="experienciaLab" placeholder="Experiencia laboral" value="#{controladorPersonal.nuevOBJPersonalSubordinado.experienciaLaboral}"/>
+                                                                                <hr/>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <label for="perfilPro" class="col-sm-12 control-label">Perfil profesional</label>
+                                                                                <p:inputText  class="form-control" id="perfilPro" placeholder="Perfil profesional" value="#{controladorPersonal.nuevOBJPersonalSubordinado.perfilProfesional}"/>
+                                                                                <hr/>
+                                                                            </div>
+                                                                        </div>
+                                                                        <p:spacer height="50px"/>
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-offset-2 col-sm-10">
+                                                                                <p:commandButton id="btnActualizarPersonal" value="Actualizar" type="submit" actionListener="#{controladorPersonal.actualizarEmpleado()}" icon="fa fa-paper-plane" class="btn-primary btn-block col-md-3" update="@form" process="@form" /> 
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                                                    
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:outputPanel>
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Registro" titletip="#{controladorPersonal.total} registros nuevos" titleStyle="#{controladorPersonal.total eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">
+                                                                <p:tabView scrollable="true">
+                                                                    <p:tab title="Formación académica" titletip="#{controladorPersonal.tv1} registros nuevos" titleStyle="#{controladorPersonal.tv1 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaFormacionAcademica.size() eq 0 ?false:true}">
+                                                                        <h:form id="frmFA"> 
+                                                                            <p:dataTable id="fAc" var="fac" value="#{controladorPersonal.listaFormacionAcademica}" editable="true" style="margin-bottom:20px" rowStyleClass="#{fac.estatus eq 'Denegado' ?'denegado':'aceptado'}"
+                                                                                         paginator="true" rows="5"
+                                                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                                         rowsPerPageTemplate="5,10,15,20,25,30">
+                                                                                <f:facet name="header">
+                                                                                    Formación académica
+                                                                                </f:facet>
+
+                                                                                <p:ajax event="rowEdit" listener="#{controladorPersonal.onRowEdit}" update="@this" />
+                                                                                <p:ajax event="rowEditCancel" listener="#{controladorPersonal.onRowCancel}" update="@this" />
+
+                                                                                <p:column headerText="Nivel de escolaridad">
+                                                                                    <h:outputText value="#{fac.nivelEscolaridad.nombre}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Institución">
+                                                                                    <h:outputText value="#{fac.institucion}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Fecha de obtención"  style="width: 100px">
+                                                                                    <h:outputText value="#{fac.fechaObtencion}">
+                                                                                        <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                                                                    </h:outputText>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Estatus" style="width: 100px">
+                                                                                    <p:cellEditor>
+                                                                                        <f:facet name="output"><h:outputText value="#{fac.estatus}" /></f:facet>
+                                                                                        <f:facet name="input">
+                                                                                            <h:selectOneMenu value="#{fac.estatus}" style="width:100%">
+                                                                                                <f:selectItems value="#{controladorPersonal.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                                                            </h:selectOneMenu>
+                                                                                        </f:facet>
+                                                                                    </p:cellEditor>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Editar" style="width:80px; ">
+                                                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                                                        <a href="#" class="ui-row-editor-pencil">
+                                                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                                                        </a>
+                                                                                        <a href="#" class="ui-row-editor-check">
+                                                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                                                        </a>
+                                                                                        <p:spacer width="20px"/>
+                                                                                        <a href="#" class="ui-row-editor-close">
+                                                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(fac.evidenciaTitulo)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver Título</span>
+                                                                                    </p:link>
+                                                                                    <hr/>
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(fac.evidenciaCedula)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver Cedula</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
+
+                                                                        </h:form>
+                                                                    </p:tab>
+                                                                    <p:tab title="Experiencia laboral" titletip="#{controladorPersonal.tv2} registros nuevos" titleStyle="#{controladorPersonal.tv2 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaExperienciasLaborales.size() eq 0 ?false:true}">
+                                                                        <h:form id="frmEL"> 
+                                                                            <p:dataTable id="eLa" var="ela" value="#{controladorPersonal.listaExperienciasLaborales}" editable="true" style="margin-bottom:20px" rowStyleClass="#{ela.estatus eq 'Denegado' ?'denegado':'aceptado'}"
+                                                                                         paginator="true" rows="5"
+                                                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                                         rowsPerPageTemplate="5,10,15,20,25,30">
+                                                                                <f:facet name="header">
+                                                                                    Experiencia laboral
+                                                                                </f:facet>
+
+                                                                                <p:ajax event="rowEdit" listener="#{controladorPersonal.onRowEdit}" update="@this" />
+                                                                                <p:ajax event="rowEditCancel" listener="#{controladorPersonal.onRowCancel}" update="@this" />
+
+                                                                                <p:column headerText="Institución" style="width: 200px">
+                                                                                    <h:outputText value="#{ela.institucionEmpresa}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Puesto" style="width: 250px">
+                                                                                    <h:outputText value="#{ela.puestoDesepenado}"/>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Funciones">
+                                                                                    <h:outputText value="#{ela.funcionesDesempenio}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Estatus" style="width: 100px">
+                                                                                    <p:cellEditor>
+                                                                                        <f:facet name="output"><h:outputText value="#{ela.estatus}" /></f:facet>
+                                                                                        <f:facet name="input">
+                                                                                            <h:selectOneMenu value="#{ela.estatus}" style="width:100%">
+                                                                                                <f:selectItems value="#{controladorPersonal.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                                                            </h:selectOneMenu>
+                                                                                        </f:facet>
+                                                                                    </p:cellEditor>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Editar" style="width:80px; ">
+                                                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                                                        <a href="#" class="ui-row-editor-pencil">
+                                                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                                                        </a>
+                                                                                        <a href="#" class="ui-row-editor-check">
+                                                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                                                        </a>
+                                                                                        <p:spacer width="20px"/>
+                                                                                        <a href="#" class="ui-row-editor-close">
+                                                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Evidencia" style="width:80px;text-align: center">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(ela.evidenciaNombremiento)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
+                                                                        </h:form>
+                                                                    </p:tab>
+                                                                    <p:tab title="Actualización profesional" titletip="#{controladorPersonal.tv3} registros nuevos" titleStyle="#{controladorPersonal.tv3 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaCapacitacionespersonal.size() eq 0 ?false:true}">
+                                                                        <h:form id="frmAcP"> 
+                                                                            <p:dataTable id="acp" var="aP" value="#{controladorPersonal.listaCapacitacionespersonal}" editable="true" style="margin-bottom:20px" rowStyleClass="#{aP.estatus eq 'Denegado' ?'denegado':'aceptado'}"
+                                                                                         paginator="true" rows="5"
+                                                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                                         rowsPerPageTemplate="5,10,15,20,25,30">
+                                                                                <f:facet name="header">
+                                                                                    Actualización profesional
+                                                                                </f:facet>
+
+                                                                                <p:ajax event="rowEdit" listener="#{controladorPersonal.onRowEdit}" update="@this" />
+                                                                                <p:ajax event="rowEditCancel" listener="#{controladorPersonal.onRowCancel}" update="@this" />
+
+                                                                                <p:column headerText="Nombre" style="width: 150px">
+                                                                                    <h:outputText value="#{aP.nombre}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Empresa impartidora" style="width: 150px">
+                                                                                    <h:outputText value="#{aP.empresaImpartidora}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Objetivo">
+                                                                                    <h:outputText value="#{aP.objetivo}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Tipo de actualización" style="width: 100px">
+                                                                                    <h:outputText value="#{aP.tipo.nombre}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Modalidad de actualización" style="width: 100px">
+                                                                                    <h:outputText value="#{aP.modalidad.nombre}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Estatus" style="width: 100px">
+                                                                                    <p:cellEditor>
+                                                                                        <f:facet name="output"><h:outputText value="#{aP.estatus}" /></f:facet>
+                                                                                        <f:facet name="input">
+                                                                                            <h:selectOneMenu value="#{aP.estatus}" style="width:100%">
+                                                                                                <f:selectItems value="#{controladorPersonal.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                                                            </h:selectOneMenu>
+                                                                                        </f:facet>
+                                                                                    </p:cellEditor>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Editar" style="width:80px; ">
+                                                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                                                        <a href="#" class="ui-row-editor-pencil">
+                                                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                                                        </a>
+                                                                                        <a href="#" class="ui-row-editor-check">
+                                                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                                                        </a>
+                                                                                        <p:spacer width="20px"/>
+                                                                                        <a href="#" class="ui-row-editor-close">
+                                                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Evidencia" style="width:80px;text-align: center">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(aP.evidenciaCapacitacion)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
+                                                                        </h:form>
+                                                                    </p:tab>
+                                                                    <p:tab title="Idiomas" titletip="#{controladorPersonal.tv4} registros nuevos" titleStyle="#{controladorPersonal.tv4 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaIdiomas.size() eq 0 ?false:true}">
+                                                                        <h:form id="frmLengIndi"> 
+                                                                            <p:dataTable id="iDi" var="habidi" value="#{controladorPersonal.listaIdiomas}" editable="true" style="margin-bottom:20px" rowStyleClass="#{habidi.estatus eq 'Denegado' ?'denegado':'aceptado'}"
+                                                                                         paginator="true" rows="5"
+                                                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                                         rowsPerPageTemplate="5,10,15,20,25,30">
+                                                                                <f:facet name="header">
+                                                                                    Idiomas
+                                                                                </f:facet>
+
+                                                                                <p:ajax event="rowEdit" listener="#{controladorPersonal.onRowEdit}" update="@this" />
+                                                                                <p:ajax event="rowEditCancel" listener="#{controladorPersonal.onRowCancel}" update="@this" />
+
+                                                                                <p:column headerText="Instituto">
+                                                                                    <h:outputText value="#{habidi.institucionOtorgante}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Idioma" style="width: 150px">
+                                                                                    <h:outputText value="#{habidi.idiomaHablado}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Grado de dominio" style="width: 150px">
+                                                                                    <h:outputText value="#{habidi.gradoDominio}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Vigencia" style="width: 150px">
+                                                                                    <h:outputText value="#{habidi.fechaVigenciaDe}">
+                                                                                        <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                                                                    </h:outputText>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Estatus" style="width: 100px">
+                                                                                    <p:cellEditor>
+                                                                                        <f:facet name="output"><h:outputText value="#{habidi.estatus}" /></f:facet>
+                                                                                        <f:facet name="input">
+                                                                                            <h:selectOneMenu value="#{habidi.estatus}" style="width:100%">
+                                                                                                <f:selectItems value="#{controladorPersonal.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                                                            </h:selectOneMenu>
+                                                                                        </f:facet>
+                                                                                    </p:cellEditor>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Editar" style="width:80px; ">
+                                                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                                                        <a href="#" class="ui-row-editor-pencil">
+                                                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                                                        </a>
+                                                                                        <a href="#" class="ui-row-editor-check">
+                                                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                                                        </a>
+                                                                                        <p:spacer width="20px"/>
+                                                                                        <a href="#" class="ui-row-editor-close">
+                                                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Evidencia" style="width:80px;text-align: center">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(habidi.evidenciaDoc)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
+                                                                        </h:form>
+                                                                    </p:tab>
+                                                                    <p:tab title="Desarrollos tecnológicos" titletip="#{controladorPersonal.tv5} registros nuevos" titleStyle="#{controladorPersonal.tv5 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaDesarrollosTecnologicos.size() eq 0 ?false:true}">
+                                                                        <h:form id="frmDT"> 
+                                                                            <p:dataTable id="dTe" var="dte" value="#{controladorPersonal.listaDesarrollosTecnologicos}" editable="true" style="margin-bottom:20px" rowStyleClass="#{dte.estatus eq 'Denegado' ?'denegado':'aceptado'}"
+                                                                                         paginator="true" rows="5"
+                                                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                                         rowsPerPageTemplate="5,10,15,20,25,30">
+                                                                                <f:facet name="header">
+                                                                                    Desarrollos tecnológicos
+                                                                                </f:facet>
+
+                                                                                <p:ajax event="rowEdit" listener="#{controladorPersonal.onRowEdit}" update="@this" />
+                                                                                <p:ajax event="rowEditCancel" listener="#{controladorPersonal.onRowCancel}" update="@this" />
+
+                                                                                <p:column headerText="Tipo de desarrollo" style="width: 150px">
+                                                                                    <h:outputText value="#{dte.tipoDesarrollo}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Objetivo">
+                                                                                    <h:outputText value="#{dte.objetivoDesarrollo}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Resumen">
+                                                                                    <h:outputText value="#{dte.resumenDesarrollo}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Estatus" style="width: 100px">
+                                                                                    <p:cellEditor>
+                                                                                        <f:facet name="output"><h:outputText value="#{dte.estatus}" /></f:facet>
+                                                                                        <f:facet name="input">
+                                                                                            <h:selectOneMenu value="#{dte.estatus}" style="width:100%">
+                                                                                                <f:selectItems value="#{controladorPersonal.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                                                            </h:selectOneMenu>
+                                                                                        </f:facet>
+                                                                                    </p:cellEditor>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Editar" style="width:80px; ">
+                                                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                                                        <a href="#" class="ui-row-editor-pencil">
+                                                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                                                        </a>
+                                                                                        <a href="#" class="ui-row-editor-check">
+                                                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                                                        </a>
+                                                                                        <p:spacer width="20px"/>
+                                                                                        <a href="#" class="ui-row-editor-close">
+                                                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Evidencia" style="width:80px;text-align: center">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(dte.documentoRespaldo)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
+                                                                        </h:form>
+                                                                    </p:tab>  
+                                                                    <p:tab title="Premios" titletip="#{controladorPersonal.tv6} registros nuevos" titleStyle="#{controladorPersonal.tv6 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaDistinciones.size() eq 0 ?false:true}">
+                                                                        <h:form id="frmDP"> 
+                                                                            <p:dataTable id="dP" var="dp" value="#{controladorPersonal.listaDistinciones}" editable="true" style="margin-bottom:20px" rowStyleClass="#{dp.estatus eq 'Denegado' ?'denegado':'aceptado'}"
+                                                                                         paginator="true" rows="5"
+                                                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                                         rowsPerPageTemplate="5,10,15,20,25,30">
+                                                                                <f:facet name="header">
+                                                                                    Premios y distinciones 
+                                                                                </f:facet>
+
+                                                                                <p:ajax event="rowEdit" listener="#{controladorPersonal.onRowEdit}" update="@this"/>
+                                                                                <p:ajax event="rowEditCancel" listener="#{controladorPersonal.onRowCancel}" update="@this"/>
+
+                                                                                <p:column headerText="Nombre">
+                                                                                    <h:outputText value="#{dp.nombreDistincion}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Motivo">
+                                                                                    <h:outputText value="#{dp.motivoDescripcion}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Institución">
+                                                                                    <h:outputText value="#{dp.institucion}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Estatus" style="width: 100px">
+                                                                                    <p:cellEditor>
+                                                                                        <f:facet name="output"><h:outputText value="#{dp.estatus}" /></f:facet>
+                                                                                        <f:facet name="input">
+                                                                                            <h:selectOneMenu value="#{dp.estatus}" style="width:100%">
+                                                                                                <f:selectItems value="#{controladorPersonal.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                                                            </h:selectOneMenu>
+                                                                                        </f:facet>
+                                                                                    </p:cellEditor>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Editar" style="width:80px; ">
+                                                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                                                        <a href="#" class="ui-row-editor-pencil">
+                                                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                                                        </a>
+                                                                                        <a href="#" class="ui-row-editor-check">
+                                                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                                                        </a>
+                                                                                        <p:spacer width="20px"/>
+                                                                                        <a href="#" class="ui-row-editor-close">
+                                                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Evidencia" style="width:80px;text-align: center">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(dp.evidenciaDistincion)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
+                                                                        </h:form>
+                                                                    </p:tab>
+                                                                    <p:tab title="Libros publicados" titletip="#{controladorPersonal.tv7} registros nuevos" titleStyle="#{controladorPersonal.tv7 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaLibrosPubs.size() eq 0 ?false:true}">
+                                                                        <h:form id="frmLP"> 
+                                                                            <p:dataTable id="lp" var="lp" value="#{controladorPersonal.listaLibrosPubs}" editable="true" style="margin-bottom:20px" rowStyleClass="#{lp.estatus eq 'Denegado' ?'denegado':'aceptado'}"
+                                                                                         paginator="true" rows="5"
+                                                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                                         rowsPerPageTemplate="5,10,15,20,25,30">
+                                                                                <f:facet name="header">
+                                                                                    Libros publicados
+                                                                                </f:facet>
+
+                                                                                <p:ajax event="rowEdit" listener="#{controladorPersonal.onRowEdit}" update="@this" />
+                                                                                <p:ajax event="rowEditCancel" listener="#{controladorPersonal.onRowCancel}" update="@this" />
+
+                                                                                <p:column headerText="Título" style="width: 250px">
+                                                                                    <h:outputText value="#{lp.titulo}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Palabras Clave" style="width: 150px">
+                                                                                    <h:outputText value="#{lp.palabraC1} - #{lp.palabraC2} - #{lp.palabraC3}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Editorial">
+                                                                                    <h:outputText value="#{lp.editorial}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Estatus" style="width: 100px">
+                                                                                    <p:cellEditor>
+                                                                                        <f:facet name="output"><h:outputText value="#{lp.estatus}" /></f:facet>
+                                                                                        <f:facet name="input">
+                                                                                            <h:selectOneMenu value="#{lp.estatus}" style="width:100%">
+                                                                                                <f:selectItems value="#{controladorPersonal.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                                                            </h:selectOneMenu>
+                                                                                        </f:facet>
+                                                                                    </p:cellEditor>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Editar" style="width:80px; ">
+                                                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                                                        <a href="#" class="ui-row-editor-pencil">
+                                                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                                                        </a>
+                                                                                        <a href="#" class="ui-row-editor-check">
+                                                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                                                        </a>
+                                                                                        <p:spacer width="20px"/>
+                                                                                        <a href="#" class="ui-row-editor-close">
+                                                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Evidencia" style="width:80px;text-align: center">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(lp.evidencia)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
+                                                                        </h:form>
+                                                                    </p:tab>
+                                                                    <p:tab title="Artículos publicados" titletip="#{controladorPersonal.tv8} registros nuevos" titleStyle="#{controladorPersonal.tv8 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaArticulosp.size() eq 0 ?false:true}">
+                                                                        <h:form id="frmAP"> 
+                                                                            <p:dataTable id="ape" var="ap" value="#{controladorPersonal.listaArticulosp}" editable="true" style="margin-bottom:20px" rowStyleClass="#{ap.estatus eq 'Denegado' ?'denegado':'aceptado'}"
+                                                                                         paginator="true" rows="5"
+                                                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                                         rowsPerPageTemplate="5,10,15,20,25,30">
+                                                                                <f:facet name="header">
+                                                                                    Artículos publicados
+                                                                                </f:facet>
+
+                                                                                <p:ajax event="rowEdit" listener="#{controladorPersonal.onRowEdit}" update="@this" />
+                                                                                <p:ajax event="rowEditCancel" listener="#{controladorPersonal.onRowCancel}" update="@this" />
+
+                                                                                <p:column headerText="Título">
+                                                                                    <h:outputText value="#{ap.tituloArticulo}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Palabras clave" style="width: 200px">
+                                                                                    <h:outputText value="#{ap.palabraC1} - #{ap.palabraC2} - #{ap.palabraC3}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="ISSN" style="width: 250px">
+                                                                                    <h:outputText value="Impreso: #{ap.issnNimpreso}, Electrónico: #{ap.issnElectronico}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Estatus" style="width: 100px">
+                                                                                    <p:cellEditor>
+                                                                                        <f:facet name="output"><h:outputText value="#{ap.estatus}" /></f:facet>
+                                                                                        <f:facet name="input">
+                                                                                            <h:selectOneMenu value="#{ap.estatus}" style="width:100%">
+                                                                                                <f:selectItems value="#{controladorPersonal.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                                                            </h:selectOneMenu>
+                                                                                        </f:facet>
+                                                                                    </p:cellEditor>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Editar" style="width:80px; ">
+                                                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                                                        <a href="#" class="ui-row-editor-pencil">
+                                                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                                                        </a>
+                                                                                        <a href="#" class="ui-row-editor-check">
+                                                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                                                        </a>
+                                                                                        <p:spacer width="20px"/>
+                                                                                        <a href="#" class="ui-row-editor-close">
+                                                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Evidencia" style="width:80px;text-align: center">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(ap.evidencia)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
+                                                                        </h:form>
+                                                                    </p:tab>
+                                                                    <p:tab title="Memorias publicadas" titletip="#{controladorPersonal.tv9} registros nuevos" titleStyle="#{controladorPersonal.tv9 eq 0 ?'':(utilidadesAcceso.procesoElectoralActivo == true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;')}" rendered="#{controladorPersonal.listaMemoriaspub.size() eq 0 ?false:true}">
+                                                                        <h:form id="frmMP"> 
+                                                                            <p:dataTable id="mpe" var="mp" value="#{controladorPersonal.listaMemoriaspub}" editable="true" style="margin-bottom:20px" rowStyleClass="#{mp.estatus eq 'Denegado' ?'denegado':'aceptado'}"
+                                                                                         paginator="true" rows="5" 
+                                                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                                         rowsPerPageTemplate="5,10,15,20,25,30">
+                                                                                <f:facet name="header">
+                                                                                    Memorias publicadas
+                                                                                </f:facet>
+
+                                                                                <p:ajax event="rowEdit" listener="#{controladorPersonal.onRowEdit}" update="@this" />
+                                                                                <p:ajax event="rowEditCancel" listener="#{controladorPersonal.onRowCancel}" update="@this" />
+
+                                                                                <p:column headerText="Título de memoria">
+                                                                                    <h:outputText value="#{mp.tituloDeMemoria}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Título de obra">
+                                                                                    <h:outputText value="#{mp.tituloDeObra}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Título de publicación">
+                                                                                    <h:outputText value="#{mp.tituloDePublicacion}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Palabras claves">
+                                                                                    <h:outputText value="#{mp.palabraC1} - #{mp.palabraC2} - #{mp.palabraC3}" />
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Estatus" style="width: 100px">
+                                                                                    <p:cellEditor>
+                                                                                        <f:facet name="output"><h:outputText value="#{mp.estatus}" /></f:facet>
+                                                                                        <f:facet name="input">
+                                                                                            <h:selectOneMenu value="#{mp.estatus}" style="width:100%">
+                                                                                                <f:selectItems value="#{controladorPersonal.estatus}" var="estatus" itemLabel="#{estatus}" itemValue="#{estatus}" />
+                                                                                            </h:selectOneMenu>
+                                                                                        </f:facet>
+                                                                                    </p:cellEditor>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Editar" style="width:80px; ">
+                                                                                    <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                                                        <a href="#" class="ui-row-editor-pencil">
+                                                                                            <span class="ui-icon ui-icon-pencil"></span>
+                                                                                        </a>
+                                                                                        <a href="#" class="ui-row-editor-check">
+                                                                                            <span class="ui-icon ui-icon-check ui-c"></span>
+                                                                                        </a>
+                                                                                        <p:spacer width="20px"/>
+                                                                                        <a href="#" class="ui-row-editor-close">
+                                                                                            <span class="ui-icon ui-icon-close ui-c"></span>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </p:column>
+
+                                                                                <p:column headerText="Evidencia" style="width:80px;text-align: center">
+                                                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(mp.evidencia)}" target="_blank" style="color: #000000">
+                                                                                        <i class="fa fa-search"></i>
+                                                                                        <span>Ver</span>
+                                                                                    </p:link>
+                                                                                </p:column>   
+                                                                            </p:dataTable>  
+                                                                        </h:form>
+                                                                    </p:tab>     
+
+                                                                </p:tabView>
+                                                            </div>
+                                                        </div>
+                                                    </div>                                                
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </p:tab>
+                                    <p:tab title="Datos Personales">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                <div class="box box-widget widget-user-2">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 border-right">
+                                                            <div class="description-block">                                                               
+                                                                <p:tabView orientation="left">
+                                                                    <p:tab title="Datos generales">
+                                                                        <p:panelGrid columns="2">
+                                                                            <p:outputLabel value="Lugar de procedencia" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.lugarProcedencia}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="Dirección" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.direccion}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="Edad" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.edad} años" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="CURP" style="height:100%; width: 100%; object-fit: contain; font-size: large; text-transform: uppercase" />
+                                                                            <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.curp}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="RFC" style="height:100%; width: 100%; object-fit: contain; font-size: large; text-transform: uppercase" />
+                                                                            <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.rfc}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="Teléfono móvil" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.numTelMovil}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="Teléfono fijo" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.numTelFijo}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="Estado civil" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                            <p:outputLabel value="#{controladorPersonal.nuevoOBJInformacionAdicionalPersonal.estadoCivil}" style="height:100%; width: 100%; object-fit: contain; font-size: large" />
+                                                                        </p:panelGrid>
+                                                                    </p:tab>
+                                                                    <p:tab title="Acta de nacimiento" >
+                                                                        <p:outputPanel id="evidenicas1" style="text-align:center;width: 100%;height: 100%" >
+                                                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaActa)}" target="_blank">
+                                                                                <i class="fa fa-book"></i>
+                                                                                <span>Ver Acta de nacimiento</span>
+                                                                            </p:link>
+                                                                            <!--p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;# {utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/# {utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaActa)}"/>       
+                                                                            </p:panelGrid-->
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                    <p:tab title="Comprobante de domicilio" >
+                                                                        <p:outputPanel id="evidenicas2" style="text-align:center;width: 100%;height: 100%" >
+                                                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio)}" target="_blank">
+                                                                                <i class="fa fa-book"></i>
+                                                                                <span>Ver Comprobante de domicilio</span>
+                                                                            </p:link>
+                                                                            <!--p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;# {utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/# {utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaDomicilio)}"/>       
+                                                                            </p:panelGrid-->
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                    <p:tab title="CURP" >
+                                                                        <p:outputPanel id="evidenicas3" style="text-align:center;width: 100%;height: 100%" >
+                                                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp)}" target="_blank">
+                                                                                <i class="fa fa-book"></i>
+                                                                                <span>Ver CURP</span>
+                                                                            </p:link>
+                                                                            <!--p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;# {utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/# {utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaCurp)}"/>       
+                                                                            </p:panelGrid-->
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                    <p:tab title="RFC" >
+                                                                        <p:outputPanel id="evidenicas4" style="text-align:center;width: 100%;height: 100%" >
+                                                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaRfc)}" target="_blank">
+                                                                                <i class="fa fa-book"></i>
+                                                                                <span>Ver RFC</span>
+                                                                            </p:link>
+                                                                            <!--p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;# {utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/# {utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaRfc)}"/>       
+                                                                            </p:panelGrid-->
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                    <p:tab title="INE" >
+                                                                        <p:outputPanel id="evidenicas5" style="text-align:center;width: 100%;height: 100%" >
+                                                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaIne)}" target="_blank">
+                                                                                <i class="fa fa-book"></i>
+                                                                                <span>Ver INE</span>
+                                                                            </p:link>
+                                                                            <!--p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <object type="application/pdf" style="width: 100%;height: 800px;# {utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" data="http://siip.utxicotepec.edu.mx/archivos/# {utilidadesCH.convertirRuta(controladorPersonal.nuevoOBJInformacionAdicionalPersonal.evidenciaIne)}"/>       
+                                                                            </p:panelGrid-->
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                </p:tabView>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </p:tab>
+                                    <p:tab title="Resultado Evaluaciones">
+                                        <h:form id="frmresEva">                                               
+                                            <p:outputPanel >
+
+                                                <div class="progress-bar progress-bar-danger progress-bar-striped active pgD" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:25%">
+                                                    Deficiente
+                                                </div>
+                                                <div class="progress-bar progress-bar-warning progress-bar-striped active pgW" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:25%">
+                                                    Regular
+                                                </div>
+                                                <div class="progress-bar progress-bar-info progress-bar-striped active pgI" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:25%">
+                                                    Bueno
+                                                </div>
+                                                <div class="progress-bar progress-bar-success progress-bar-striped active pgS" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:25%">
+                                                    Excelente
+                                                </div>
+
+                                                <p:dataTable id="tblActividades"  value="#{controladorPersonal.listaResultadoEva}"  var="resultadoEva"
+                                                             paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30"
+                                                             emptyMessage="No se encontraron Registros." rendered="true">                                               
+
+                                                    <p:column headerText="Evaluación" 
+                                                              sortBy="#{resultadoEva.tipoEvaluacion}" 
+                                                              filterBy="#{resultadoEva.tipoEvaluacion}" 
+                                                              filterMatchMode="contains"
+                                                              style="width: 25%">
+                                                        <h:outputText value="#{resultadoEva.tipoEvaluacion}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Periodo" 
+                                                              sortBy="#{resultadoEva.inicio}" 
+                                                              filterBy="#{resultadoEva.inicio}" 
+                                                              filterMatchMode="contains"
+                                                              style="width: 25%">
+                                                        <h:outputText value="#{resultadoEva.inicio} - #{resultadoEva.fin} #{resultadoEva.anio}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Promedio" 
+                                                              sortBy="#{resultadoEva.promedio}" 
+                                                              filterBy="#{resultadoEva.promedio}" 
+                                                              filterMatchMode="contains"
+                                                              style="width: 50%">
+
+                                                        <div class="progress" style=" #{resultadoEva.tipoEvaluacion eq 'Evaluación 360°'?'visibility: visible; ':'display:none;'}">
+
+                                                            <div style=" #{resultadoEva.tipoClas eq 'success'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-success progress-bar-striped active pgS" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
+                                                                    #{resultadoEva.promedio} de 4
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'info'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-info progress-bar-striped active pgI" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
+                                                                    #{resultadoEva.promedio} de 4
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'warning'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-warning progress-bar-striped active pgW" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
+                                                                    #{resultadoEva.promedio} de 4
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'danger'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-danger progress-bar-striped active pgD" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 25}%">
+                                                                    #{resultadoEva.promedio} de 4
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'proceso'?'visibility: visible; ':'display:none;'}">
+                                                                En proceso de evaluación
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="progress" style="#{resultadoEva.tipoEvaluacion eq 'Evaluación Desempeño'?'visibility: visible; ':'display:none;'}">
+                                                            <div style=" #{resultadoEva.tipoClas eq 'success'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-success progress-bar-striped active pgS" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
+                                                                    #{resultadoEva.promedio} de 5
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'info'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-info progress-bar-striped active pgI" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
+                                                                    #{resultadoEva.promedio} de 5
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'warning'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-warning progress-bar-striped active pgW" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
+                                                                    #{resultadoEva.promedio} de 5
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'danger'?'visibility: visible; ':'display:none;'}">
+                                                                <div class="progress-bar progress-bar-danger progress-bar-striped active pgD" role="progressbar" aria-valuenow="#{resultadoEva.promedio * 20}" aria-valuemin="0" aria-valuemax="100" style="width:#{resultadoEva.promedio * 20}%">
+                                                                    #{resultadoEva.promedio} de 5
+                                                                </div>
+                                                            </div>
+                                                            <div style=" #{resultadoEva.tipoClas eq 'proceso'?'visibility: visible; ':'display:none;'}">
+                                                                En proceso de evaluación
+                                                            </div>                                                        
+                                                        </div>
+                                                    </p:column>    
+                                                </p:dataTable>  
+                                            </p:outputPanel>    
+                                        </h:form>
+                                    </p:tab>
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>  
+                </section>
+
+                <h:form id="frmPlantillaActiva" >
+                    <p:dialog id="dlgPlantillaActiva" modal="true" header="Plantilla activa" widgetVar="dlgPlantillaActiva" minimizable="true" maximizable="true" position="center">
+
+                        <p:outputPanel >
+
+                            <h:panelGrid columns="1"  class="col-md-12">
+                                <h2 class="align-center"> 
+                                    <p:outputLabel value="Descargar Plantilla Activa"/>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{exelPlantillaPersonal.direccionDescarga}" target="_blank">
+                                        <i class="fa fa-download"></i>
+                                        <span>Descargar plantilla</span>
+                                    </p:link>
+                                </h2>
+                            </h:panelGrid>
+
+                        </p:outputPanel>
+
+                    </p:dialog>
+                </h:form>
+
+                <h:form id="frmEvidencias" >
+                    <p:dialog id="dlgEvidencias" modal="true" header="Plantilla activa" widgetVar="dlgEvidencias" minimizable="true" maximizable="true" position="center">
+
+                        <p:outputPanel >
+
+                            <h:panelGrid columns="1"  class="col-md-12">
+                                <h2 class="align-center"> 
+                                    <p:outputLabel value="Descargar Plantilla Activa"/>
+                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/zips/#{controladorPersonal.contactoDestino}.zip" target="_blank">
+                                        <i class="fa fa-download"></i>
+                                        <span>Descargar plantilla</span>
+                                    </p:link>
+                                </h2>
+                            </h:panelGrid>
+
+                        </p:outputPanel>
+
+                    </p:dialog>
+                </h:form>
+
+            </c:if>
+            <c:if test="#{!(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564)}">
+                <h1>
+                    Esta página está disponible solo para personal adscrito al área de personal
+                </h1>
+            </c:if>
+        </p:panel>
+            </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

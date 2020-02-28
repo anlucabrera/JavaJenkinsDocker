@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="comisionMapa.css"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{controladorEmpleado.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Administración de trámites
+    </ui:define>
+
+    <ui:define name="description">
+        Ejercicio: #{caster.ejercicioFiscal}
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Administración de trámites "/>
+
+        <div class="contenedor">
+            <c:if test="#{tramitesSupervisor.tieneAcceso}">
+                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.TramitesSupervisorFiltro"
+                              var="TramitesSupervisorFiltro" allSuffix="ALL_FILTROS"/>
+                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.ComisionOficioEstatus" var="ComisionOficioEstatus"/>
+                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.TarifaTipo" var="TarifaTipo"/>
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <p:autoUpdate/>
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Área:" for="area"/>
+                                        <p:selectOneMenu id="area" value="#{tramitesSupervisor.rol.area}" var="var_area"
+                                                         filter="true" filterMatchMode="contains"
+                                                         styleClass="form-control" converter="entityConverter"
+                                                         style="max-width: 300px;">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Todas"/>
+                                            <f:selectItems value="#{tramitesSupervisor.rol.areasPOA}" var="area"
+                                                           itemValue="#{area}" itemLabel="#{area.nombre}"
+                                                           itemDescription="#{area.nombre}"/>
+                                            <p:column><h:outputText
+                                                    value="#{var_area.categoria.descripcion}"/></p:column>
+                                            <p:column><h:outputText value="#{var_area.nombre}"/></p:column>
+                                            <p:ajax process="@this" listener="#{tramitesSupervisor.filtrarTramites}"
+                                                    update="@form"/>
+                                        </p:selectOneMenu>
+                                        <p:spacer width="5"/>
+                                        <p:outputLabel value="Filtro:" for="filtro"/>
+                                        <p:selectOneMenu id="filtro" value="#{tramitesSupervisor.rol.supervisorFiltro}"
+                                                         converter="entityConverter" styleClass="form-control">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Todos"/>
+                                            <f:selectItems value="#{TramitesSupervisorFiltro.ALL_FILTROS}" var="filtro"
+                                                           itemValue="#{filtro}"
+                                                           itemLabel="#{caster.enumLabelToString(filtro.label)}"/>
+                                            <p:ajax process="@this" listener="#{tramitesSupervisor.filtrarTramites}"
+                                                    update="@form"/>
+                                        </p:selectOneMenu>
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandButton styleClass="btn-primary" value="Validar"/>
+                                        <p:commandButton styleClass="btn-primary" value="Asignar tarifas"/>
+                                        <p:commandButton styleClass="btn-primary" value="Validar facturas"/>
+                                        <p:commandButton styleClass="btn-primary" value="Autorizar formatos"/>
+                                        <p:commandButton styleClass="btn-primary" value="Liquidar"/>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info text-center">
+                                            <p:remoteCommand name="actualizarTS" update="tblSCC"/>
+                                            <p:dataTable value="#{tramitesSupervisor.rol.tramites}" var="tramite"
+                                                         emptyMessage="Sin registros."
+                                                         rowStyleClass="#{tramite.comisionOficioEstatus.id eq 3.2?'warning':''}"
+                                                         id="tblSCC" rowIndexVar="rowIndex"
+                                                         paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50"
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                         tableStyle="vertical-align: middle;">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column headerText="Oficio de comisión"
+                                                                  style="width: 130px;"/>
+                                                        <p:column headerText="Folio" style="width: 80px;"/>
+                                                        <p:column headerText="Área"/>
+                                                        <p:column headerText="Comisionado"/>
+                                                        <p:column headerText="Lugar" style="width: 200px;"/>
+                                                        <p:column headerText="Inicio" style="width: 90px;"/>
+                                                        <p:column headerText="Fin" style="width: 90px;"/>
+                                                        <p:column headerText="Estatus"/>
+                                                        <p:column headerText="Evidencia" style="width: 150px;"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <p:column><h:outputText
+                                                        value="#{tramite.tramite.comisionOficios.oficio}"/></p:column>
+                                                <p:column><h:outputText value="#{tramite.tramite.folio}"/></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{tramite.comisionado.areaOperativa.nombre}"/></p:column>
+                                                <p:column><h:outputText value="#{tramite.comisionado.personal.nombre}"/></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{caster.tramiteToDestino(tramite.tramite)}"/></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{tramite.tramite.comisionOficios.fechaComisionInicio}"><f:convertDateTime
+                                                        pattern="yyyy-MM-dd"/></h:outputText></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{tramite.tramite.comisionOficios.fechaComisionFin}"><f:convertDateTime
+                                                        pattern="yyyy-MM-dd"/></h:outputText></p:column>
+                                                <p:column><h:outputText
+                                                        value="#{caster.comisionOficioEstatusToLabel(tramite.comisionOficioEstatus)}"/></p:column>
+                                                <p:column>
+                                                    <p:commandLink
+                                                            class="#{(!empty tramite.tramite.comisionOficios.ruta and (tramite.tramite.comisionOficios.ruta ne valorVacio.PENDIENTE.label))?'btn btn-info btn-sm':'btn btn-warning btn-sm'}"
+                                                            actionListener="#{tramitesSupervisor.seleccionarTramite(tramite)}"
+                                                            oncomplete="PF('dlgSubirEvidencia').show();return false"
+                                                            title="Subir evidencia que justifique la comisión."><i
+                                                            class="fa fa-upload"/>
+                                                    </p:commandLink>
+                                                    <p:commandLink
+                                                            class="#{tramite.comisionOficioEstatus ne ComisionOficioEstatus.VALIDADO_POR_FISCALIZACION?'btn btn-warning btn-sm':'btn btn-info btn-sm'}"
+                                                            actionListener="#{tramitesSupervisor.seleccionarTramite(tramite)}"
+                                                            oncomplete="PF('dlgValidarComision').show();return false"
+                                                            title="Validar comisión para que el comisionado pueda imprimir su oficio y pliego de comisión."><i
+                                                            class="fa fa-check"/>
+                                                    </p:commandLink>
+                                                    <p:commandLink
+                                                            class="#{tramite.comisionOficioEstatus ne ComisionOficioEstatus.TARIAS_ASIGNADAS_POR_FISCALIZACION?'btn btn-warning btn-sm':'btn btn-info btn-sm'}"
+                                                            actionListener="#{tramitesSupervisor.seleccionarTramite(tramite)}"
+                                                            oncomplete="PF('dlgAsignartarifas').show();return false"
+                                                            rendered="#{tramite.comisionOficioEstatus.validado}"
+                                                            update="dlgAsignartarifas"
+                                                            title="Asignar tarifas de viáticos y viaje a la comisión."><i
+                                                            class="fa fa-money"/>
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                                             styleClass="panel panel-primary" width="500"
+                                                             closable="false" closeOnEscape="true">
+                                                <p:commandButton value="Si" type="button"
+                                                                 styleClass="ui-confirmdialog-yes btn btn-primary"
+                                                                 icon="ui-icon-check"/>
+                                                <p:commandButton value="No" type="button"
+                                                                 styleClass="ui-confirmdialog-no btn btn-primary"
+                                                                 icon="ui-icon-close"/>
+                                            </p:confirmDialog>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <p:dialog id="dlgSubirEvidencia"
+                          header="Evidencia para comisión: #{tramitesSupervisor.rol.tramite.tramite.comisionOficios.oficio}"
+                          styleClass="box-primary" widgetVar="dlgSubirEvidencia" minHeight="100" modal="true"
+                          appendTo="@(body)" resizable="false">
+                    <p:autoUpdate/>
+                    <div class="row">
+                        <div class="col-md-12" style="text-align: center;">
+                            <h:form id="frmSubirPDF" enctype="multipart/form-data" prependId="false"
+                                    class="form-inline">
+                                <o:inputFile id="ulfPDF" value="#{tramitesSupervisor.rol.file}" class="form-control"
+                                             accept="application/pdf" acceptMessage="Solo se aceptan archivos PDF."
+                                             required="true" requiredMessage="Debe elegir un archivo PDF."
+                                             title="Pulse para eligir el archivo PDF a registrar."/>
+                                <h:commandButton value="Subir"
+                                                 actionListener="#{tramitesSupervisor.subirTramiteEvidencia}"
+                                                 class="btn-primary form-control"/>
+                            </h:form>
+                        </div>
+                    </div>
+                    <p:importEnum type="mx.edu.utxj.pye.sgi.enums.ValorVacio" var="valorVacio"/>
+                    <c:if test="#{! empty tramitesSupervisor.rol.tramite.tramite.comisionOficios.ruta and tramitesSupervisor.rol.tramite.tramite.comisionOficios.ruta ne valorVacio.PENDIENTE.label}">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align: center;">
+                                <h:form id="frmDescargarPDF" prependId="false" class="form-inline">
+                                    Ya hay una evidencia asignada, para consultar presione el siguiente botón:
+                                    <p:commandLink class="btn btn-info" ajax="false"
+                                                   action="#{tramitesSupervisor.descargarTramiteEvidencia()}"
+                                                   target="_blank"><i
+                                            class="fa fa-external-link-square"/></p:commandLink>
+                                </h:form>
+                            </div>
+                        </div>
+                    </c:if>
+                </p:dialog>
+                <p:dialog id="dlgValidarComision"
+                          header="Validar comisión: #{tramitesSupervisor.rol.tramite.tramite.comisionOficios.oficio}"
+                          styleClass="box-primary" widgetVar="dlgValidarComision" minHeight="100" modal="true"
+                          style="max-width: 550px;"
+                          appendTo="@(body)" resizable="false">
+                    <p:autoUpdate/>
+                    <div class="row">
+                        <div class="col-md-3" style="text-align: right;"><p:outputLabel value="Comisionado: "/></div>
+                        <div class="col-md-9"><h:outputLabel
+                                value="#{tramitesSupervisor.rol.tramite.comisionado.personal.nombre}"/></div>
+
+                        <div class="col-md-3" style="text-align: right;"><p:outputLabel value="No. Oficio: "/></div>
+                        <div class="col-md-9"><h:outputLabel
+                                value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.oficio}"/></div>
+
+                        <div class="col-md-3" style="text-align: right;"><p:outputLabel value="Destino: "/></div>
+                        <div class="col-md-9"><h:outputLabel
+                                value="#{caster.tramiteToDestino(tramitesSupervisor.rol.tramite.tramite)}"/></div>
+                    </div>
+                    <p:separator/>
+
+                    <h:form id="frmValidarTramite" prependId="false">
+                        <div class="row">
+                            <div class="col-md-3" style="text-align: right;"><p:outputLabel value="Observaciones: "/>
+                            </div>
+                            <div class="col-md-9">
+                                <p:inputTextarea id="observaciones"
+                                                 value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.observaciones}"
+                                                 styleClass="form-control" rows="5" maxlength="500" autoResize="true"/>
+                            </div>
+                        </div>
+                        <div class="row" style="padding-top: 15px;">
+                            <div class="col-md-3 " style="text-align: right;"><p:outputLabel value="Estado: "
+                                                                                             for="estado"/></div>
+                            <div class="col-md-9">
+                                <p:selectOneButton id="estado"
+                                                   value="#{tramitesSupervisor.rol.tramite.comisionOficioEstatus}"
+                                                   converter="entityConverter">
+                                    <f:selectItems value="#{tramitesSupervisor.rol.validacionOpciones}" var="opcion"
+                                                   itemValue="#{opcion}"
+                                                   itemLabel="#{caster.enumLabelToString(opcion.label)}"/>
+                                    <p:ajax process="@form" listener="#{tramitesSupervisor.validarComisionOficio}"/>
+                                </p:selectOneButton>
+                            </div>
+                        </div>
+                    </h:form>
+                </p:dialog>
+                <p:dialog id="dlgAsignartarifas"
+                          header="Asignar tarifa a comisión: #{tramitesSupervisor.rol.tramite.tramite.comisionOficios.oficio}"
+                          styleClass="box-primary" widgetVar="dlgAsignartarifas" minHeight="100" modal="true"
+                          style="max-width: 1500px; min-width: 1000px;"
+                          appendTo="@(body)" resizable="true">
+
+                    <div class="row">
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Comisionado: "/></div>
+                        <div class="col-md-4"><h:outputLabel
+                                value="#{tramitesSupervisor.rol.tramite.comisionado.personal.nombre}"/></div>
+
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="No. Oficio: "/></div>
+                        <div class="col-md-4"><h:outputLabel
+                                value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.oficio}"/></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Destino: "/></div>
+                        <div class="col-md-4"><h:outputLabel
+                                value="#{caster.tramiteToDestino(tramitesSupervisor.rol.tramite.tramite)}"/></div>
+
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Fechas: "/></div>
+                        <div class="col-md-4">
+                            <h:outputLabel
+                                    value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.fechaComisionInicio}"><f:convertDateTime
+                                    pattern="yyyy-MM-dd"/></h:outputLabel> a
+                            <h:outputLabel
+                                    value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.fechaComisionFin}"><f:convertDateTime
+                                    pattern="yyyy-MM-dd"/></h:outputLabel>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Pernoctando: "/></div>
+                        <div class="col-md-4"><h:outputLabel
+                                value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.comisionAvisos.pernoctando}"/>
+                        </div>
+
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Sábados: "/></div>
+                        <div class="col-md-4"><h:outputLabel
+                                value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.sabadosSolicitados?'Si':'No'}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Sin pernoctar: "/></div>
+                        <div class="col-md-4"><h:outputLabel
+                                value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.comisionAvisos.sinPernoctar}"/>
+                        </div>
+
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Domingos: "/></div>
+                        <div class="col-md-4"><h:outputLabel
+                                value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.domingosSolicitados?'Si':'No'}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Pasajes: "/></div>
+                        <div class="col-md-4"><h:outputLabel
+                                value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.comisionAvisos.pasajes?'Si':'No'}"/>
+                        </div>
+
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Casetas: "/></div>
+                        <div class="col-md-4"><h:outputLabel
+                                value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.comisionAvisos.casetas?'Si':'No'}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Actividades: "/></div>
+                        <div class="col-md-10"><h:outputLabel
+                                value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.actividades}"/></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Otros gastos: "/></div>
+                        <div class="col-md-4">
+                            <h:outputLabel
+                                    value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.comisionAvisos.otros}"><f:convertNumber
+                                    currencySymbol="$" type="currency"/> </h:outputLabel>
+                        </div>
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Distancia: "/></div>
+                        <div class="col-md-4 btn-info">
+                            <h:outputLabel id="distancia" value="#{tramitesSupervisor.rol.distancia}"><f:convertNumber
+                                    pattern="####.00 Km"/></h:outputLabel>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Estatus de la comsión: "/></div>
+                        <div class="col-md-10"><h:outputLabel
+                                value="#{caster.enumLabelToString(tramitesSupervisor.rol.tramite.comisionOficioEstatus.label)}"/></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Justificación: "/></div>
+                        <div class="col-md-10"><h:outputLabel
+                                value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.comisionAvisos.comentarios}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Observaciones: "/></div>
+                        <div class="col-md-10"><h:outputLabel
+                                value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.observaciones}"/></div>
+                    </div>
+                    <p:separator/>
+                    <h:form prependId="true" rendered="#{! empty tramitesSupervisor.rol.tramite}">
+                        <p:wizard backLabel="Atrás" nextLabel="Siguiente"
+                                  flowListener="#{tramitesSupervisor.onFlowProcess}">
+                            <p:tab id="Calcular_distancia" title="Calcular distancia">
+                                <div class="row">
+                                    <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Origen: "
+                                                                                                    for="origen"/></div>
+                                    <div class="col-md-10">
+                                        <p:inputText id="origen" value="#{tramitesSupervisor.rol.origen}"
+                                                     class="form-control origen" required="true"
+                                                     requiredMessage="Origen"/>
+                                        <p:message for="origen"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Destino: "
+                                                                                                    for="destino"/>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <p:inputText id="destino" value="#{tramitesSupervisor.rol.destino}"
+                                                     class="form-control destino" required="true"
+                                                     requiredMessage="Destino"/>
+                                        <p:message for="destino"/>
+                                    </div>
+                                </div>
+                                <div class="row" style="display: none;">
+                                    <div class="col-md-12 col-lg-3">
+                                        <p:commandButton id="cmdbuscar" styleClass="btn-info pull-right"
+                                                         value="Consultar" process="origen, destino" update="@form"
+                                                         onsuccess="buscar();"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12" style="height: 400px;">
+                                        <iframe id="winMapa" name="winMapa"
+                                                src="#{request.contextPath}/servletMap/#{tramitesSupervisor.rol.origen}/#{tramitesSupervisor.rol.destino}"
+                                                width="100%"
+                                                height="100%" frameborder="0"/>
+                                    </div>
+                                </div>
+                                <p:remoteCommand name="rcActualizarDistancia"
+                                                 actionListener="#{tramitesSupervisor.actualizarDistancia}"
+                                                 process="@this" update="distancia"/>
+                                <p:remoteCommand name="rcActualizarOrigen"
+                                                 actionListener="#{tramitesSupervisor.actualizarOrigen}" process="@this"
+                                                 update="origen"/>
+                                <p:remoteCommand name="rcActualizarDestino"
+                                                 actionListener="#{tramitesSupervisor.actualizarDestino}"
+                                                 process="@this" update="destino"/>
+                            </p:tab>
+                            <p:tab id="Tarifa_de_viáticos" title="Tarifa de viáticos">
+                                <div class="row">
+                                    <div class="col-md-2" style="text-align: right;"><p:outputLabel
+                                            value="Tipo de tarifa: "/></div>
+                                    <div class="col-md-4"><h:outputLabel
+                                            value="#{tramitesSupervisor.rol.tramite.tarifaViatico.tipo}"/></div>
+
+                                    <div class="col-md-2" style="text-align: right;"><p:outputLabel
+                                            value="Nivel del servidor: "/></div>
+                                    <div class="col-md-4"><h:outputLabel
+                                            value="#{tramitesSupervisor.rol.nivelServidor.descripcion}"/></div>
+                                </div>
+                                <c:if test="#{tramitesSupervisor.rol.tramite.tarifaViatico.tipo eq TarifaTipo.POR_ZONA.label}">
+                                    <div class="row">
+                                        <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Zona: "/>
+                                        </div>
+                                        <div class="col-md-4"><h:outputLabel value="#{tramitesSupervisor.rol.zona}"/>
+                                        </div>
+
+                                        <div class="col-md-2" style="text-align: right;"><p:outputLabel
+                                                value="Viáticos: "/></div>
+                                        <div class="col-md-4"><h:outputLabel
+                                                value="#{tramitesSupervisor.rol.totalViatico}"><f:convertNumber
+                                                type="currency"/></h:outputLabel></div>
+                                    </div>
+                                </c:if>
+                                <c:if test="#{tramitesSupervisor.rol.tramite.tarifaViatico.tipo eq TarifaTipo.POR_KILOMETRO.label}">
+                                    <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Viáticos: "/>
+                                    </div>
+                                    <div class="col-md-4"><h:outputLabel value="#{tramitesSupervisor.rol.totalViatico}"><f:convertNumber
+                                            type="currency"/></h:outputLabel></div>
+                                </c:if>
+                                <div class="row">
+                                    <div class="col-md-2" style="text-align: right;"><p:outputLabel
+                                            value="Cuota sin pernoctar: "/></div>
+                                    <div class="col-md-4"><h:outputLabel value="#{tramitesSupervisor.rol.sinPernoctar}"><f:convertNumber
+                                            type="currency"/></h:outputLabel></div>
+
+                                    <div class="col-md-2" style="text-align: right;"><p:outputLabel
+                                            value="Cuota pernoctando: "/></div>
+                                    <div class="col-md-4"><h:outputLabel
+                                            value="#{tramitesSupervisor.rol.pernoctando}"><f:convertNumber
+                                            type="currency"/></h:outputLabel></div>
+                                </div>
+                                <div class="row">
+                                    <c:if test="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.comisionAvisos.pasajes}">
+                                        <div class="col-md-2" style="text-align: right;"><p:outputLabel
+                                                value="Pasajes (viaje redondo): "/></div>
+                                        <div class="col-md-4">
+                                            <p:inputNumber
+                                                    value="#{tramitesSupervisor.rol.tramite.tarifaViaje.tarifasViajes.costoPasajesViajeRedondo}"
+                                                    symbol="$" symbolPosition="p" decimalPlaces="2" decimalSeparator="."
+                                                    thousandSeparator=","/>
+                                        </div>
+                                    </c:if>
+
+                                    <c:if test="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.comisionAvisos.casetas}">
+                                        <div class="col-md-2" style="text-align: right;"><p:outputLabel
+                                                value="Peajes (viaje redondo): "/></div>
+                                        <div class="col-md-4">
+                                            <p:inputNumber
+                                                    value="#{tramitesSupervisor.rol.tramite.tarifaViaje.tarifasViajes.costoCasetasViajeRedondo}"
+                                                    symbol="$" symbolPosition="p" decimalPlaces="2" decimalSeparator="."
+                                                    thousandSeparator=","/>
+                                        </div>
+                                    </c:if>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2" style="text-align: right;"><p:outputLabel
+                                            value="Otros gastos: "/></div>
+                                    <div class="col-md-4">
+                                        <p:inputNumber
+                                                value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.comisionAvisos.otros}"
+                                                symbol="$" symbolPosition="p" decimalPlaces="2" decimalSeparator="."
+                                                thousandSeparator=","/>
+                                    </div>
+                                </div>
+                            </p:tab>
+                            <p:tab id="Confirmar" title="Confirmar">
+                                <div class="row">
+                                    <div class="col-md-2" style="text-align: right;">   <p:outputLabel value="Área: "/></div>
+                                    <div class="col-md-10">                              <p:outputLabel value="#{tramitesSupervisor.rol.tramite.alineacionArea.nombre}"/></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2" style="text-align: right;">   <p:outputLabel value="Eje: "/></div>
+                                    <div class="col-md-10">                              <p:outputLabel value="#{tramitesSupervisor.rol.tramite.alineacionEje.eje}. #{tramitesSupervisor.rol.tramite.alineacionEje.nombre}"/></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2" style="text-align: right;">   <p:outputLabel value="Estrategia: "/></div>
+                                    <div class="col-md-10">                              <p:outputLabel value="#{tramitesSupervisor.rol.tramite.alineacionEstrategia.numero}. #{tramitesSupervisor.rol.tramite.alineacionEstrategia.nombre}"/></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2" style="text-align: right;">   <p:outputLabel value="Línea de acción: "/></div>
+                                    <div class="col-md-10">                              <p:outputLabel value="#{tramitesSupervisor.rol.tramite.alineacionLinea.numero}. #{tramitesSupervisor.rol.tramite.alineacionLinea.nombre}"/></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2" style="text-align: right;">   <p:outputLabel value="Actividad: "/></div>
+                                    <div class="col-md-10">                              <p:outputLabel value="#{tramitesSupervisor.rol.tramite.alineacionActividad.numeroP}. #{tramitesSupervisor.rol.tramite.alineacionActividad.numeroS}.#{tramitesSupervisor.rol.tramite.alineacionActividad.denominacion}"/></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2" style="text-align: right;">   <p:outputLabel value="Víaticos sin pernoctar: "/></div>
+                                    <div class="col-md-4">                              <p:outputLabel value="#{tramitesSupervisor.rol.totalSinPernoctar}"><f:convertNumber pattern="$###,###,###.00" /></p:outputLabel></div>
+                                    <div class="col-md-2" style="text-align: right;">   <p:outputLabel value="Víaticos pernoctando: "/></div>
+                                    <div class="col-md-4">                              <p:outputLabel value="#{tramitesSupervisor.rol.totalPernoctando}"><f:convertNumber pattern="$###,###,###.00" /></p:outputLabel></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2" style="text-align: right;">   <p:outputLabel value="Pasajes: "/></div>
+                                    <div class="col-md-4">                              <p:outputLabel value="#{tramitesSupervisor.rol.tramite.tarifaViaje.tarifasViajes.costoPasajesViajeRedondo}"/></div>
+                                    <div class="col-md-2" style="text-align: right;">   <p:outputLabel value="Otros gastos: "/></div>
+                                    <div class="col-md-4">                              <p:outputLabel value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.comisionAvisos.otros}"><f:convertNumber pattern="$###,###,###.00" /></p:outputLabel></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2 col-md-offset-6" style="text-align: right;">   <p:outputLabel value="Total: "/></div>
+                                    <div class="col-md-4">                              <p:outputLabel value="#{tramitesSupervisor.rol.total}"><f:convertNumber pattern="$###,###,###.00" /></p:outputLabel></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Observaciones: "/>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <p:inputTextarea
+                                                         value="#{tramitesSupervisor.rol.tramite.tramite.comisionOficios.observaciones}"
+                                                         styleClass="form-control" rows="5" maxlength="500" autoResize="true" onblur="if(this.value.trim() == '') this.value = 'Ninguna';"/>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 15px;">
+                                    <div class="col-md-2" style="text-align: right;"><p:outputLabel value="Estado: "
+                                                                                                     for="estado"/></div>
+                                    <div class="col-md-10">
+                                        <p:selectOneButton
+                                                           value="#{tramitesSupervisor.rol.tramite.comisionOficioEstatus}"
+                                                           converter="entityConverter" required="true" requiredMessage="Debe elegir un valor.">
+                                            <f:selectItems value="#{tramitesSupervisor.rol.validacionOpciones}" var="opcion"
+                                                           itemValue="#{opcion}"
+                                                           itemLabel="#{caster.enumLabelToString(opcion.label)}"/>
+                                            <p:ajax process="@form" listener="#{tramitesSupervisor.validarComisionOficio}"/>
+                                        </p:selectOneButton>
+                                    </div>
+                                </div>
+                            </p:tab>
+                        </p:wizard>
+                    </h:form>
+                </p:dialog>
+                <script>
+                    function actualizarDistancia(distancia) {
+                        // console.log('Se recibió la orden de actualizar la distancia en el xhtml desde el jsp: ' + distancia);
+                        rcActualizarDistancia([{name: 'distancia', value: distancia * 2}]);
+                    }
+
+                    function actualizarOrigen(direccion) {
+                        // console.log('Se recibió la orden de actualizar el origen en el xhtml desde el jsp: ' + direccion);
+                        rcActualizarOrigen([{name: 'origen', value: direccion}]);
+                    }
+
+                    function actualizarDestino(direccion) {
+                        // console.log('Se recibió la orden de actualizar el destino en el xhtml desde el jsp: ' + direccion);
+                        rcActualizarDestino([{name: 'destino', value: direccion}]);
+                    }
+
+                    function mensajear(mensaje) {
+                        console.log('Se recibió la orden de mostrar mensaje en el xhtml desde el jsp: ' + mensaje);
+                    }
+
+                    function getOrigen() {
+                        var direccion = document.getElementsByClassName('origen')[0].value;
+                        // console.log('Se recibió la orden de enviar el origen desde el xhtml desde el jsp: ' + direccion);
+                        return direccion;
+                    }
+
+                    function getDestino() {
+                        var direccion = document.getElementsByClassName('destino')[0].value;
+                        // console.log('Se recibió la orden de enviar el destino desde el xhtml desde el jsp: ' + direccion);
+                        return direccion;
+                    }
+
+                    function buscar() {
+                        document.getElementById('winMapa').contentWindow.buscar();
+                    }
+                </script>
+            </c:if>
+            <c:if test="#{!tramitesSupervisor.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <p:graphicImage name="demo/images/godfather1.jpg"/>
+                        <h:outputText
+                                value="El acceso solo está autorizado a personal del área fiscalizadora."/>
+                    </h:panelGrid>
+                    <f:facet name="footer">
+
+                    </f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar();
+        </script>
+    </ui:define>
+</ui:composition>

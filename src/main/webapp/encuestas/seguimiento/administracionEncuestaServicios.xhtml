@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:ice="http://www.icefaces.org/icefaces/core"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+
+    <ui:define name="head-end">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .description-block{
+                text-align: justify;
+            }
+
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado {
+                background-color: #00a7d0  !important;
+                text-align: left !important;
+            }
+            .denegado{
+                background-color: #f39c12 !important;
+            }
+            .ui-progressbar{
+                position: relative;
+                height: 2em;
+            }
+
+            .ui-progressbar .ui-progressbar-label {
+                color: #000000;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                display: none;
+                font-weight: bold;
+            }
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento de avance por carrera
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{administracionEncuesta.cargado}">
+        <!--adm:breadcrumb title="Grupo : tutorado"/-->
+        <div id="main-buttons"  >
+            <p:toolbar id="tb">
+                <f:facet name="left">
+                    <p:outputLabel value="Administración de encuesta: Servicios" />
+                </f:facet>
+                <f:facet name="right"></f:facet>
+            </p:toolbar>
+            <p:sticky target="tb" />
+        </div>
+        <p:tabView id="tabView">
+            <c:if test="#{administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.planeacion}">
+                <p:tab title="Estudiantes con encuesta completa">
+                    <h:form id="fr1">
+                        <p:outputPanel>
+                            <p:dataTable id="tblResEncIngTer" value="#{administracionEncuestaServicios.dto.listaEvaCompleta}"
+                                         paginator="true" rows="10" emptyMessage="No se encontraron registros" paginatorPosition="top"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,20,30,40,50"
+                                         var="encuestaRes" filteredValue="#{administracionEncuestaServicios.dto.listaFiltrado}">
+
+                                <f:facet name="header">
+                                    <p:commandLink  ajax="false">
+                                        <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                        <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblResEncIngTer"
+                                                        fileName="Reporte_encuesta_completa"/>
+                                    </p:commandLink>
+
+                                </f:facet>
+                                <p:column headerText="Matricula"
+                                          filterBy="#{encuestaRes.clave}"
+                                          sortBy="#{encuestaRes.clave}"
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{encuestaRes.clave}" />
+                                </p:column>
+                                <p:column headerText="Nombre"
+                                          filterBy="#{encuestaRes.nombre} "
+                                          sortBy="#{encuestaRes.nombre} "
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{encuestaRes.nombre}" />
+                                </p:column>
+                                <p:column headerText="Grado"
+                                          filterBy="#{encuestaRes.grado}"
+                                          sortBy="#{encuestaRes.grado}"
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{encuestaRes.grado}" />
+                                </p:column>
+                                <p:column headerText="Carrera"
+                                          filterBy="#{encuestaRes.siglas}"
+                                          sortBy="#{encuestaRes.siglas}"
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{encuestaRes.siglas}" />
+                                </p:column>
+                                <p:column headerText="Grupo"
+                                          filterBy="#{encuestaRes.grupo}"
+                                          sortBy="#{encuestaRes.grupo}"
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{encuestaRes.grupo}" />
+                                </p:column>
+                                <c:if test="#{!administracionEncuesta.dto.tutor}">
+                                    <p:column headerText="Tutor"
+                                              filterBy="#{encuestaRes.tutor}"
+                                              sortBy="#{encuestaRes.tutor}"
+                                              filterMatchMode="contains">
+                                        <h:outputText value="#{encuestaRes.tutor}" />
+                                    </p:column>
+                                </c:if>
+                                <f:facet name="footer">
+                                    <c:if test="#{administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.planeacion}">
+                                        <p:commandButton actionListener="#{administracionEncuestaServicios.seguimientoEncuestaServiciosIyE()}" value="Actualizar información" icon="fa fa-refresh"
+                                                         class="btn btn-primary" update="tabView:fr1:tblResEncIngTer tabView:fr2:tblResEncIngIncom" process="@form"/>
+                                    </c:if>
+                                    <c:if test="#{administracionEncuesta.dto.director}">
+                                        <p:commandButton actionListener="#{administracionEncuestaServicios.seguimientoEncuestaServiciosDirector()}" value="Actualizar información" icon="fa fa-refresh"
+                                                         class="btn btn-primary" update="tabView:fr1:tblResEncIngTer tabView:fr2:tblResEncIngIncom" process="@form"/>
+                                    </c:if>
+                                    <c:if test="#{administracionEncuesta.dto.tutor}">
+                                        <p:commandButton actionListener="#{administracionEncuestaServicios.seguimientoEncuestaServiciosTutor()}" value="Actualizar información" icon="fa fa-refresh"
+                                                         class="btn btn-primary" update="tabView:fr1:tblResEncIngTer tabView:fr2:tblResEncIngIncom" process="@form"/>
+                                    </c:if>
+                                </f:facet>
+                            </p:dataTable>
+                        </p:outputPanel>
+
+                    </h:form>
+                </p:tab>
+                <p:tab id="noCompletos" title="Estudiantes con encuesta no terminada">
+                    <h:form id="fr2">
+                        <p:outputPanel>
+                            <p:dataTable id="tblResEncIngIncom" value="#{administracionEncuestaServicios.dto.listaEvaIncompleta}"
+                                         paginator="true" rows="10" emptyMessage="No se encontraron registros" paginatorPosition="top"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                         rowsPerPageTemplate="10,20,30,40,50"
+                                         var="encuestaRes" filteredValue="#{administracionEncuestaServicios.dto.listaFiltrado}">
+
+                                <f:facet name="header">
+                                    <p:commandLink  ajax="false">
+                                        <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                        <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblResEncIngIncom"
+                                                        fileName="Reporte_encuesta_imcompletas"/>
+                                    </p:commandLink>
+
+                                </f:facet>
+
+                                <p:column headerText="Matricula"
+                                          filterBy="#{encuestaRes.clave}"
+                                          sortBy="#{encuestaRes.clave}"
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{encuestaRes.clave}" />
+                                </p:column>
+                                <p:column headerText="Nombre"
+                                          filterBy="#{encuestaRes.nombre} "
+                                          sortBy="#{encuestaRes.nombre} "
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{encuestaRes.nombre}" />
+                                </p:column>
+                                <p:column headerText="Grado"
+                                          filterBy="#{encuestaRes.grado}"
+                                          sortBy="#{encuestaRes.grado}"
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{encuestaRes.grado}" />
+                                </p:column>
+                                <p:column headerText="Carrera"
+                                          filterBy="#{encuestaRes.siglas}"
+                                          sortBy="#{encuestaRes.siglas}"
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{encuestaRes.siglas}" />
+                                </p:column>
+                                <p:column headerText="Grupo"
+                                          filterBy="#{encuestaRes.grupo}"
+                                          sortBy="#{encuestaRes.grupo}"
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{encuestaRes.grupo}" />
+                                </p:column>
+                                <p:column headerText="Tutor"
+                                          filterBy="#{encuestaRes.tutor}"
+                                          sortBy="#{encuestaRes.tutor}"
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{encuestaRes.tutor}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>
+                    </h:form>
+                </p:tab>
+            </c:if>
+
+            <c:if test="#{administracionEncuesta.dto.tutor}">
+                <p:tab title="Porcentaje de avance por grupo">
+                    <h:form id="fr45">
+                        <p:outputPanel>
+                            <p:dataTable id="avanceEncServicios" lazy="false" value="#{administracionAvanceEncuestas.dto.dtoAESPG}" var="datosEncSer" paginator="true" rows="10"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorPosition="top"
+                                         rowsPerPageTemplate="10,20,30,40,50" emptyMessage="No se encontraron registros" filteredValue="#{administracionAvanceEncuestas.dto.dtoAESPGFilter}">
+                                <f:facet name="footer">
+                                    <p:commandButton id="actualizar1" value="Actualizar tabla" icon="fa fa-refresh" class="btn btn-primary"
+                                                     actionListener="#{administracionAvanceEncuestas.mostrarAvanceEncuestaServiciosPorGrupoTutor()}" update="@form" process="@form"/>
+                                </f:facet>
+                                <p:column headerText="Carrera" sortBy="#{datosEncSer.siglas}" filterBy="#{datosEncSer.siglas}" filterMatchMode="contains">
+                                    <h:outputText value="#{datosEncSer.siglas}"/>
+                                </p:column>
+                                <p:column headerText="Grupo">
+                                    <h:outputText value="#{datosEncSer.cveGrupo}"/>
+                                </p:column>
+                                <p:column headerText="Grado">
+                                    <h:outputText value="#{datosEncSer.grado}"/>
+                                </p:column>
+                                <p:column headerText="Total matrícula">
+                                    <h:outputText value="#{datosEncSer.totalPorCarrera}"/>
+                                </p:column>
+                                <p:column headerText="Estudiantes con encuesta completa">
+                                    <h:outputText value="#{datosEncSer.totalAlumnoEncTer}"/>
+                                </p:column>
+                                <p:column headerText="Estudiantes con encuesta incompleta">
+                                    <h:outputText value="#{datosEncSer.faltantesPorCont}"/>
+                                </p:column>
+                                <p:column headerText="Porcentaje de avance: Meta 100%" exportable="false">
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                             aria-valuenow="#{datosEncSer.porcentaje}" aria-valuemin="0" aria-valuemax="100"
+                                             style="background-color: #00a65a; width:#{datosEncSer.porcentaje}%">
+                                            <span class="progress-completed">
+                                                <h:outputText value="#{datosEncSer.porcentaje}" style="color: #0E0000; font-weight: bold">
+                                                    <f:convertNumber type="number" pattern="0.00"/>
+                                                </h:outputText>
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </p:column>
+
+
+                            </p:dataTable>
+                        </p:outputPanel>
+
+                    </h:form>
+                </p:tab>
+            </c:if>
+
+            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or
+            administracionEncuesta.dto.director or administracionEncuesta.dto.esDeIyE}">
+                <p:tab title="Porcentaje de avance por Programa Educativo">
+                    <h:form id="fr4">
+                        <p:outputPanel>
+                            <p:dataTable id="avanceEncIng" lazy="false" value="#{administracionAvanceEncuestas.dto.dtoLDAES}" var="datosEncEgre" paginatorPosition="top" paginator="true" rows="30"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                         rowsPerPageTemplate="10,20,30,40,50"
+                                         emptyMessage="No se encontraron registros"  >
+                                <f:facet name="footer">
+                                    <p:commandButton id="actualizar" value="Actualizar tabla" icon="fa fa-refresh" class="btn btn-primary"
+                                                     actionListener="#{administracionAvanceEncuestas.mostrarAvanceEncServicios()}" update="@form" process="@form"/>
+                                </f:facet>
+                                <p:column headerText="Carrera">
+                                    <h:outputText value="#{datosEncEgre.siglas}"/>
+                                </p:column>
+                                <p:column headerText="Total matrícula">
+                                    <h:outputText value="#{datosEncEgre.totalPorCarrera}"/>
+                                </p:column>
+                                <p:column headerText="Estudiantes con encuesta completa">
+                                    <h:outputText value="#{datosEncEgre.totalAlumnoEncTer}"/>
+                                </p:column>
+                                <p:column headerText="Estudiantes con encuesta incompleta">
+                                    <h:outputText value="#{datosEncEgre.faltantesPorCont}"/>
+                                </p:column>
+                                <p:column headerText="Porcentaje de avance: Meta 100%" exportable="false">
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                             aria-valuenow="#{datosEncEgre.porcentaje}" aria-valuemin="0" aria-valuemax="100"
+                                             style="background-color: #00a65a; width:#{datosEncEgre.porcentaje}%">
+                                            <span class="progress-completed">
+                                                <h:outputText value="#{datosEncEgre.porcentaje}" style="color: #0E0000; font-weight: bold">
+                                                    <f:convertNumber type="number" pattern="0.00"/>
+                                                </h:outputText>
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </p:column>
+
+
+                            </p:dataTable>
+                        </p:outputPanel>
+
+                    </h:form>
+                </p:tab>
+            </c:if>
+
+            <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
+                <p:tab title="Información no disponible">
+                    <p:outputPanel>
+                        <div class="row">
+                            <center><span><i style="align-content: center" class="fa fa-exclamation-triangle fa-5x"></i></span></center>
+                        </div>
+                        <div class="row">
+                            <center><h2>Información no disponible</h2></center>
+                        </div>
+
+
+                    </p:outputPanel>
+                </p:tab>
+            </c:if>
+        </p:tabView>
+        </c:if>
+    </ui:define>
+</ui:composition>

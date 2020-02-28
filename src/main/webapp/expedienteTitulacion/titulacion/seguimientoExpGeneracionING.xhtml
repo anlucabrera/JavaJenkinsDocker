@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <section class="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <p:link  href="../../index.xhtml">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div> 
+                                <br />
+                                <br />
+                                <div class="col-lg-12 col-xs-12">
+                                    
+                                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                                        <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                                            <p:outputPanel >
+                                                <p:autoUpdate/>
+                                                <p:toolbar id="tb">
+                                                    <f:facet name="left">
+                                                        <p:spacer width="10" />
+                                                        <p:outputLabel value="Generación " for="generacion" />
+                                                        <p:spacer width="3" />
+                                                        <p:selectOneMenu id="generacion" converter="entityConverter"
+                                                                         value="#{controladorTitSegGen.generacionING}" valueChangeListener="#{controladorTitSegGen.actualizarProgramasING}"
+                                                                         class="form-control" style="padding-top: 0px;">
+                                                            <f:selectItems value="#{controladorTitSegGen.generacionesING}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" itemDescription="#{caster.generacionToString(generacion)}" />
+                                                            <p:ajax process="@this" update="@(form)" />
+                                                        </p:selectOneMenu>
+                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                        <p:outputLabel value="Programa Educativo: " for="programa" />
+                                                        <p:spacer width="3" />
+                                                        <p:selectOneMenu id="programa" value="#{controladorTitSegGen.programaSeleccionadoING}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
+                                                            <f:selectItems value="#{controladorTitSegGen.programasPorGeneracionING}" var="progGen" itemValue="#{progGen}" itemLabel="#{progGen.nombre}" itemDescription="#{progGen.nombre}"  />
+                                                            <p:ajax process="@this" listener="#{controladorTitSegGen.cargarListaPorGenProgING()}" update="@(form)" />
+                                                        </p:selectOneMenu>
+                                                    </f:facet>
+                                                    <f:facet name="right">
+                                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorTitSegGen.descargarReporteGeneracionING()}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                                    </f:facet>
+                                                </p:toolbar>
+                                                <p:sticky target="tb" />
+                                            </p:outputPanel>
+                                        </h:form>
+                                    </div>
+                                     <p:separator/>
+                                     <div class="box-body">
+                                         <div class="row">
+                                             <div class="col-lg-12 col-md-12">
+                                                 <center>
+                                                     <h:form id="formMuestraDatosActivos">
+                                                         <p:remoteCommand name="actualizar" update="@form:dtbExpTitGenPE" />
+                                                         <p:dataTable id="dtbExpTitGenPE" emptyMessage="Sin datos en la generación seleccionada." value="#{controladorTitSegGen.listaING}" var="ExpTit"
+                                                                      paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                      resizeMode="expand"
+                                                                      tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                             <c:set var="expTitExp" value="#{ExpTit.expedientesTitulacion.expediente}"/>
+                                                             <c:set var="expTitEgre" value="#{ExpTit.egresados.matricula}"/>
+
+                                                             <p:column headerText="Opciones" style="width: 200px; text-align: center;">
+                                                                 <p:commandButton actionListener="#{controladorTitSegGen.consultarExpediente(expTitExp)}" action="/expedienteTitulacion/titulacion/seguimientoExpGeneracionIndING?faces-redirect=true" 
+                                                                                  class="btn btn-sm btn-primary" 
+                                                                                  icon="fa fa-search"
+                                                                                  title="Consultar Expediente Titulación"/>  
+                                                                 <c:set var="status" value="#{controladorTitSegGen.consultarStatus(expTitExp)}" />
+                                                                 <p:commandButton actionListener="#{controladorTitSegGen.validarExpediente(expTitExp)}"
+                                                                                  class="btn btn-sm #{!empty status?'btn-info':'btn-danger'}" icon="#{!empty status?'fa fa-close':'fa fa-check'}"
+                                                                                  title="#{!empty status?'Invalidar expediente.':'Validar expediente.'}" />
+                                                                 <p:commandButton actionListener="#{controladorTitSegGen.consultarListaPagos(expTitEgre)}" 
+                                                                                  class="btn btn-sm btn-success" 
+                                                                                  icon="fa fa-usd"
+                                                                                  title="Consultar Lista de Pagos"/> 
+                                                             </p:column>
+                                                             <p:column headerText="No. Expediente" style="width: 150px; text-align: center;" sortBy="#{ExpTit.expedientesTitulacion.expediente}" filterBy="#{ExpTit.expedientesTitulacion.expediente}" filterMatchMode="contains">
+                                                                 <h:outputText value="#{ExpTit.expedientesTitulacion.expediente}"/>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Situación Expediente" style="width: 200px; text-align: center;" sortBy="#{!empty status?'Validado':'Sin validar'}">
+                                                                 <h:outputText value="#{!empty status?'Validado':'Sin validar'}" />
+                                                             </p:column>
+
+                                                             <p:column headerText="Fecha" style="width: 100px; text-align: center;" sortBy="#{ExpTit.expedientesTitulacion.fecha}">
+                                                                 <h:outputText value="#{ExpTit.expedientesTitulacion.fecha}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                             </p:column>
+
+                                                             <p:column headerText="Matricula" style="width: 150px; text-align: center;" sortBy="#{ExpTit.expedientesTitulacion.matricula.matricula}" filterBy="#{ExpTit.expedientesTitulacion.matricula.matricula}" filterMatchMode="contains">
+                                                                 <h:outputText value="#{ExpTit.expedientesTitulacion.matricula.matricula}"/>
+                                                             </p:column>
+
+                                                             <p:column headerText="Nombre" style="width: 250px; text-align: center;" sortBy="#{ExpTit.egresados.apellidoPaterno} #{ExpTit.egresados.apellidoMaterno} #{ExpTit.egresados.nombre}" filterBy="#{ExpTit.egresados.apellidoPaterno} #{ExpTit.egresados.apellidoMaterno} #{ExpTit.egresados.nombre}" filterMatchMode="contains">
+                                                                 <h:outputText value="#{ExpTit.egresados.apellidoPaterno} #{ExpTit.egresados.apellidoMaterno} #{ExpTit.egresados.nombre} "/>
+                                                             </p:column>
+
+                                                             <p:column headerText="Programa Educativo" style="width: 200px; text-align: center;">
+                                                                 <h:outputText value="#{ExpTit.expedientesTitulacion.programaEducativo}"/>
+                                                             </p:column>
+
+                                                             <p:column headerText="Generación" style="width: 200px; text-align: center;">
+                                                                 <h:outputText value="#{ExpTit.generacion}"/>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Situación Académica" style="width: 200px; text-align: center;" sortBy="#{ExpTit.situacionAcademica}">
+                                                                 <h:outputText value="#{ExpTit.situacionAcademica}"/>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Fecha Pago de Titulo" style="width: 200px; text-align: center;" sortBy="#{ExpTit.pagosFinanzas.fechaPago}">
+                                                                 <h:outputText value="#{ExpTit.pagosFinanzas.fechaPago}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Carta de No Adeudo" style="width: 200px; text-align: center;" sortBy="#{ExpTit.pagosFinanzas.valcartanoadedudoIng}">
+                                                                 <h:outputText value="#{ExpTit.pagosFinanzas.valcartanoadedudoIng ==1?'Si':'No'}"/>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Documentos" style="width: 200px; text-align: center;" sortBy="#{controladorTitSegGen.numDocs} de #{controladorTitSegGen.numTotalDocs}">
+                                                                 <h:outputText value="#{controladorTitSegGen.numDocs} de #{controladorTitSegGen.numTotalDocs}" />
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Validado/Invalidado por" style="width: 200px; text-align: center;" sortBy="#{ExpTit.personalValido}">
+                                                                 <h:outputText value="#{ExpTit.personalValido}"/>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Fecha Validado/Invalidado" style="width: 200px; text-align: center;" sortBy="#{ExpTit.expedientesTitulacion.fechaValidacion}">
+                                                                 <h:outputText value="#{ExpTit.expedientesTitulacion.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                             </p:column>
+                                                             
+                                                         </p:dataTable>
+                                                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                             <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
+                                                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                                         </p:confirmDialog>
+                                                     </h:form> 
+                                                 </center>
+                                             </div>
+                                         </div>
+                                     </div>
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Modal para consultar pagos del estudiante seleccionado -->
+                    <p:dialog id="modalPagos" 
+                              widgetVar="modalPagos" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{controladorTitSegGen.aperturaPagos}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              header="Listado de Pagos"
+                              modal="true" 
+                              draggable="true" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <h:form id="frmModalPagos" enctype="multipart/form-data"> 
+                                         <p:dataTable id="dtbListaPagos" emptyMessage="No cuenta con pagos el estudiante seleccionado." value="#{controladorTitSegGen.listaDtoPagosFinanzas}" var="ListPag"
+                                                      paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                      resizeMode="expand"
+                                                      tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                             <p:column headerText="Clave registro" style="width: 100px; text-align: center;" sortBy="#{ListPag.cveRegistro}">
+                                                 <h:outputText value="#{ListPag.cveRegistro}"/>
+                                             </p:column>
+                                             
+                                             <p:column headerText="Concepto" style="width: 150px; text-align: center;" sortBy="#{ListPag.concepto}">
+                                                 <h:outputText value="#{ListPag.concepto}" />
+                                             </p:column>
+                                             
+                                             <p:column headerText="Fecha" style="width: 100px; text-align: center;" sortBy="#{ListPag.fechaPago}">
+                                                 <h:outputText value="#{ListPag.fechaPago}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                             </p:column>
+                                             
+                                             <p:column headerText="Matricula" style="width: 150px; text-align: center;">
+                                                 <h:outputText value="#{ListPag.matricula}" />
+                                             </p:column>
+
+                                             <p:column headerText="Descripción" style="width: 150px; text-align: center;" sortBy="#{ListPag.descripcion}">
+                                                 <h:outputText value="#{ListPag.descripcion}"/>
+                                             </p:column>
+
+                                             <p:column headerText="Monto" style="width: 100px; text-align: center;" sortBy="#{ListPag.monto}">
+                                                 <h:outputText value="#{ListPag.monto}"><f:convertNumber minFractionDigits = "2" currencySymbol="$" type="currency"/></h:outputText>
+                                             </p:column>
+                                         </p:dataTable>
+                                    </h:form>
+                    </p:dialog>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>
