@@ -78,7 +78,7 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
     }
 
     public List<Iems> getIemsByEstadoMunicipioLocalidad(Integer estado, Integer municipio, Integer localidad){
-        return em.createQuery("SELECT i FROM Iems i WHERE i.localidad.localidadPK.claveEstado = :estado AND i.localidad.localidadPK.claveMunicipio = :municipio AND i.localidad.localidadPK.claveLocalidad = :localidad", Iems.class)
+        return em.createQuery("SELECT i FROM Iems i WHERE i.localidad.localidadPK.claveEstado = :estado AND i.localidad.localidadPK.claveMunicipio = :municipio AND i.localidad.localidadPK.claveLocalidad = :localidad ORDER BY i.nombre ASC", Iems.class)
                 .setParameter("estado", estado)
                 .setParameter("municipio", municipio)
                 .setParameter("localidad", localidad)
@@ -89,7 +89,7 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
     public List<SelectItem> itemIems(Integer estado, Integer municipio, Integer localidad) {
         List<SelectItem> lsi = new ArrayList<>();
         getIemsByEstadoMunicipioLocalidad(estado, municipio, localidad).stream()
-                .map(iem -> new SelectItem(iem.getIems(), iem.getTurno().concat("-").concat(iem.getNombre())))
+                .map(iem -> new SelectItem(iem.getIems(), iem.getNombre().concat("-").concat(iem.getTurno())))
                 .forEachOrdered(selectItem -> {
                     lsi.add(selectItem);
                 });

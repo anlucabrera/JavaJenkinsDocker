@@ -207,7 +207,7 @@ public class ServicioSelectItems implements EJBSelectItems {
     }
     
     public List<Estado> getEstados() {
-        TypedQuery<Estado> q = f.getEntityManager().createQuery("SELECT e from Estado e WHERE e.idpais.idpais = :pais", Estado.class);
+        TypedQuery<Estado> q = f.getEntityManager().createQuery("SELECT e from Estado e WHERE e.idpais.idpais = :pais ORDER BY e.nombre ASC", Estado.class);
         q.setParameter("pais", 42);
         List<Estado> le = q.getResultList();
         if (le.isEmpty() || le == null) {
@@ -228,7 +228,7 @@ public class ServicioSelectItems implements EJBSelectItems {
     }
 
     public List<Estado> getEstadoPorPais(Integer pais){
-        TypedQuery<Estado> q = f.getEntityManager().createQuery("SELECT e from Estado e WHERE e.idpais.idpais = :pais", Estado.class);
+        TypedQuery<Estado> q = f.getEntityManager().createQuery("SELECT e from Estado e WHERE e.idpais.idpais = :pais ORDER BY e.nombre ASC", Estado.class);
         q.setParameter("pais", pais);
         List<Estado> le = q.getResultList();
         if (le.isEmpty() || le == null) {
@@ -252,7 +252,7 @@ public class ServicioSelectItems implements EJBSelectItems {
     }
 
     public List<Municipio> getMunicipiosPorEstado(Integer estado) {
-        TypedQuery<Municipio> q = f.getEntityManager().createQuery("SELECT m FROM Municipio m  WHERE m.municipioPK.claveEstado = :estado", Municipio.class);
+        TypedQuery<Municipio> q = f.getEntityManager().createQuery("SELECT m FROM Municipio m  WHERE m.municipioPK.claveEstado = :estado ORDER BY m.nombre ASC", Municipio.class);
         q.setParameter("estado", estado);
         List<Municipio> lm = q.getResultList();
         if (lm.isEmpty() || lm == null) {
@@ -273,7 +273,7 @@ public class ServicioSelectItems implements EJBSelectItems {
     }
 
     public List<Localidad> getLocalidadPorMunicipio(Integer estado, Integer municipio){
-        TypedQuery<Localidad> q = f.getEntityManager().createQuery("SELECT l FROM Localidad l WHERE l.localidadPK.claveEstado = :estado AND l.localidadPK.claveMunicipio = :municipio",Localidad.class);
+        TypedQuery<Localidad> q = f.getEntityManager().createQuery("SELECT l FROM Localidad l WHERE l.localidadPK.claveEstado = :estado AND l.localidadPK.claveMunicipio = :municipio ORDER BY l.nombre ASC",Localidad.class);
         q.setParameter("estado",estado);
         q.setParameter("municipio",municipio);
         List<Localidad> ll = q.getResultList();
@@ -304,7 +304,7 @@ public class ServicioSelectItems implements EJBSelectItems {
     }
 
     public List<Asentamiento> getAsentamientoPorEstadoMunicipio(Integer Estado, Integer munipio){
-        return f.getEntityManager().createQuery("SELECT a FROM Asentamiento a WHERE a.asentamientoPK.estado = :cveEstado AND a.asentamientoPK.municipio = :cveMunicipio")
+        return f.getEntityManager().createQuery("SELECT a FROM Asentamiento a WHERE a.asentamientoPK.estado = :cveEstado AND a.asentamientoPK.municipio = :cveMunicipio ORDER BY a.nombreAsentamiento ASC")
                 .setParameter("cveEstado", Estado)
                 .setParameter("cveMunicipio", munipio)
                 .getResultList();
@@ -588,7 +588,7 @@ public class ServicioSelectItems implements EJBSelectItems {
     }
     
     public List<Iems> getIemsByEstadoMunicipioLocalidad(Integer estado, Integer municipio, Integer localidad){
-        return f.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.localidad.localidadPK.claveEstado = :estado AND i.localidad.localidadPK.claveMunicipio = :municipio AND i.localidad.localidadPK.claveLocalidad = :localidad", Iems.class)
+        return f.getEntityManager().createQuery("SELECT i FROM Iems i WHERE i.localidad.localidadPK.claveEstado = :estado AND i.localidad.localidadPK.claveMunicipio = :municipio AND i.localidad.localidadPK.claveLocalidad = :localidad ORDER BY i.nombre ASC", Iems.class)
                 .setParameter("estado", estado)
                 .setParameter("municipio", municipio)
                 .setParameter("localidad", localidad)

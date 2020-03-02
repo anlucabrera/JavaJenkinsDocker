@@ -463,28 +463,28 @@
                                                                             <br/><br/><br/><br/>
                                                                             <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                 <p:outputLabel for="estado" style="object-fit: contain; font-size: medium" value="Estado*"/>
-                                                                                <p:selectOneMenu id="estado" value="#{controladorEstReg.estadoIEMS}" required="true" requiredMessage="Es necesario que seleccione el estado" style="object-fit: contain; font-size: medium">
+                                                                                <p:selectOneMenu id="estado" value="#{controladorEstReg.estadoIEMS}" required="true" requiredMessage="Es necesario que seleccione el estado" style="object-fit: contain; font-size: medium" valueChangeListener="#{controladorEstReg.cambiarEstado}">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{controladorEstReg.listaEstadosIEMS}"/>
-                                                                                    <p:ajax listener="#{controladorEstReg.selectMunicipioIems()}" update="municipio"/>
+                                                                                    <p:ajax update="municipio, localidad, iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="estado"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                 <p:outputLabel for="municipio" style="object-fit: contain; font-size: medium" value="Municipio*"/>
-                                                                                <p:selectOneMenu id="municipio" value="#{controladorEstReg.municipioIEMS}" required="true" requiredMessage="Es necesario que seleccione el municipio" style="object-fit: contain; font-size: medium">
+                                                                                <p:selectOneMenu id="municipio" value="#{controladorEstReg.municipioIEMS}" required="true" requiredMessage="Es necesario que seleccione el municipio" style="object-fit: contain; font-size: medium" valueChangeListener="#{controladorEstReg.cambiarMunicipio}">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{controladorEstReg.listaMunicipiosIEMS}"/>
-                                                                                    <p:ajax listener="#{controladorEstReg.selectLocalidadIems()}" update="localidad"/>
+                                                                                    <p:ajax update="localidad, iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="municipio"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                 <p:outputLabel for="localidad" style="object-fit: contain; font-size: medium" value="Localidad*"/>
-                                                                                <p:selectOneMenu id="localidad" value="#{controladorEstReg.localidadIEMS}" required="true" requiredMessage="Es necesario que seleccione la localidad" style="object-fit: contain; font-size: medium">
+                                                                                <p:selectOneMenu id="localidad" value="#{controladorEstReg.localidadIEMS}" required="true" requiredMessage="Es necesario que seleccione la localidad" style="object-fit: contain; font-size: medium" valueChangeListener="#{controladorEstReg.cambiarLocalidad}">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{controladorEstReg.listaLocalidadesIEMS}"/>
-                                                                                    <p:ajax listener="#{controladorEstReg.selectIems()}" update="iems"/>
+                                                                                    <p:ajax update="iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="localidad"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -543,28 +543,28 @@
                                                                             <br/><br/><br/><br/>
                                                                             <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                 <p:outputLabel for="estado" style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Estado*"/>
-                                                                                <p:selectOneMenu id="estado" value="#{controladorEstReg.estadoIEMS}" required="true" requiredMessage="Es necesario que seleccione el estado" style="height:100%; width: 100%; object-fit: contain;">
+                                                                                <p:selectOneMenu id="estado" value="#{controladorEstReg.estadoIEMS}" required="true" requiredMessage="Es necesario que seleccione el estado" style="height:100%; width: 100%; object-fit: contain;" valueChangeListener="#{controladorEstReg.cambiarEstado}">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{controladorEstReg.listaEstadosIEMS}"/>
-                                                                                    <p:ajax listener="#{controladorEstReg.selectMunicipioIems()}" update="municipio"/>
+                                                                                    <p:ajax update="municipio, localidad, iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="estado"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                 <p:outputLabel for="municipio" style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Municipio*"/>
-                                                                                <p:selectOneMenu id="municipio" value="#{controladorEstReg.municipioIEMS}" required="true" requiredMessage="Es necesario que seleccione el municipio" style="height:100%; width: 100%; object-fit: contain;">
+                                                                                <p:selectOneMenu id="municipio" value="#{controladorEstReg.municipioIEMS}" required="true" requiredMessage="Es necesario que seleccione el municipio" style="height:100%; width: 100%; object-fit: contain;" valueChangeListener="#{controladorEstReg.cambiarMunicipio}">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{controladorEstReg.listaMunicipiosIEMS}"/>
-                                                                                    <p:ajax listener="#{controladorEstReg.selectLocalidadIems()}" update="localidad"/>
+                                                                                    <p:ajax update="localidad, iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="municipio"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                 <p:outputLabel for="localidad" style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Localidad*"/>
-                                                                                <p:selectOneMenu id="localidad" value="#{controladorEstReg.localidadIEMS}" required="true" requiredMessage="Es necesario que seleccione la localidad" style="height:100%; width: 100%; object-fit: contain;">
+                                                                                <p:selectOneMenu id="localidad" value="#{controladorEstReg.localidadIEMS}" required="true" requiredMessage="Es necesario que seleccione la localidad" style="height:100%; width: 100%; object-fit: contain;" valueChangeListener="#{controladorEstReg.cambiarLocalidad}">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{controladorEstReg.listaLocalidadesIEMS}"/>
-                                                                                    <p:ajax listener="#{controladorEstReg.selectIems()}" update="iems"/>
+                                                                                    <p:ajax update="iems"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="localidad"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -810,7 +810,7 @@
                                                                             </div>
                                                                         </div>
                                                                         <br/>-->
-                                                            <c:if test="#{controladorArchExp.expediente.nivel ne 1}">
+                                                            <c:if test="#{controladorArchExp.expediente.nivel eq 2}">
                                                                         <div class="row">
                                                                             <o:form id="frmFotoExp" enctype="multipart/form-data">
                                                                                 <c:set var="expediente" value="#{controladorArchExp.expediente.expediente}"/> <!--Se agregó pero una vez descomentando la parte superior se debe quitar para no repetirse -->
@@ -819,7 +819,41 @@
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
                                                                                     <p:outputPanel>            
                                                                                         <p:autoUpdate/>
-                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Fotografía Ing. o Lic." />
+                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Fotografía Ingeniería" />
+                                                                                        <h5 style="text-align: justify;">La fotografía debe ser de estudio, no descolorida y con las características correspondientes:</h5>
+                                                                                        <ul style="text-align: justify;">
+                                                                                            <li>La fotografía debe ser a COLOR con FONDO BLANCO y SIN SOMBRAS.</li>
+                                                                                            <li>Se recomienda un tamaño de 6x9 cm.</li>
+                                                                                            <li>La fotografía deberá ser una en la que el solicitante esté mirando directamente a la cámara</li>
+                                                                                            <li>El solicitante no puede estar mirando hacia abajo o a los lados</li>
+                                                                                            <li>La cabeza del solicitante, incluyendo tanto la cara como el cabello, deben ser mostrados en su totalidad con la frente y las orejas descubiertas</li>
+                                                                                            <li>El solicitante no deberá usar gorras ni ningún otro accesorio que cubra total o parcialmente su cara</li>
+                                                                                            <li>La imagen no debe ser tratada con "filtros" o "retoques"</li>
+                                                                                        </ul>
+                                                                                    </p:outputPanel>
+                                                                                    <br/>
+                                                                                    <center><o:inputFile id="fileFotoIL" value="#{controladorArchExp.fileFotoIL}" accept="image/png,image/jpg,image/jpeg" acceptMessage="Sólo se permiten imágenes JPG/PNG." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFileFotoIL" for="fileFotoIL" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchExp.subirDocumentoFotoIL}" />
+                                                                                    <br/>
+                                                                                    <br/>
+                                                                                </div>
+                                                                            </c:if>
+                                                                            </o:form>
+                                                                        </div>
+                                                            </c:if>
+                                                            <c:if test="#{controladorArchExp.expediente.nivel eq 4}">
+                                                                        <div class="row">
+                                                                            <o:form id="frmFotoExp" enctype="multipart/form-data">
+                                                                                <c:set var="expediente" value="#{controladorArchExp.expediente.expediente}"/> <!--Se agregó pero una vez descomentando la parte superior se debe quitar para no repetirse -->
+                                                                                <c:set var="existeFI" value="#{controladorArchExp.docExiste(12, expediente)}"/>
+                                                                                <c:if test="#{!existeFI}">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: medium" value="Fotografía Licenciatura" />
                                                                                         <h5 style="text-align: justify;">La fotografía debe ser de estudio, no descolorida y con las características correspondientes:</h5>
                                                                                         <ul style="text-align: justify;">
                                                                                             <li>La fotografía debe ser a COLOR con FONDO BLANCO y SIN SOMBRAS.</li>
