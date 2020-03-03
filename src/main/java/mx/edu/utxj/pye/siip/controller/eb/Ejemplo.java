@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.siip.controller.eb;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -22,6 +23,9 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -34,6 +38,7 @@ import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga;
 import mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado;
+import mx.edu.utxj.pye.sgi.enums.RolNotificacion;
 import mx.edu.utxj.pye.siip.dto.eb.DTOArchivoRepositorio;
 import mx.edu.utxj.pye.siip.dto.eb.DTORepositorio;
 
@@ -370,6 +375,17 @@ public class Ejemplo {
         System.err.println("Mes Ingresado 12: " + obtenerNombreMesFecha(new Date(2020, 11, 12)));
         
         System.err.println("Ejercicio Ingresado 0: " + obtenerEjercicioFecha(new Date()));
+        
+        System.err.println("--------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        
+        System.err.println("Rol Notificaciones: " + RolNotificacion.ListaValoresLabel());
+        List<String> listaRoles = RolNotificacion.ListaValoresLabel();
+        List<String> listaAlcanceElegidaUsuario = new ArrayList<>(Arrays.asList("Jefe de Departamento","Rector","Coordinador de Tutores"));
+        System.err.println("Rol Usuarios: " + listaAlcanceElegidaUsuario);
+        
+        listaRoles.retainAll(listaAlcanceElegidaUsuario);
+        System.out.println(listaRoles);
+
     }
     
     private static String getFechaMinima(int mes, int anio) {

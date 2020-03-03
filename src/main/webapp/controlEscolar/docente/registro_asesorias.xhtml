@@ -123,10 +123,12 @@
                                             <div class="col-lg-12 col-md-12 text-info">
 
                                                 <p:outputPanel id="contenedor">
-                                                    <div style="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo?'margin-bottom: 10px;display: none':'margin-bottom: 10px;'}">
+                                                    <!--<div style="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo?'margin-bottom: 10px;display: none':'margin-bottom: 10px;'}">-->
+                                                    <div style="margin-bottom: 10px;">
                                                         <p:outputLabel value="1.- Ingrese los datos de la asesoría (asegúrese de llenar todos los campos):"/>
                                                     </div>
-                                                    <div class="row margin-bottom" style="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo?'display: none':''}">
+                                                    <!--<div class="row margin-bottom" style="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo?'display: none':''}">-->
+                                                    <div class="row margin-bottom">
                                                         <div class="col-sm-12 col-md-3 col-lg-2">
                                                             <div class="ui-material">
                                                                 <p:calendar id="raFechaInicio"
@@ -138,11 +140,12 @@
                                                                             styleClass="campo4Partes"
                                                                             locale="es"
                                                                             readonlyInput="true"
-                                                                            disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                             mask="true"
                                                                             mindate="#{caster.fechaMinina(registroAsesoriaDocente.rol.eventoSeleccionado.ejercicioFiscal.anio, registroAsesoriaDocente.rol.eventoSeleccionado.mes)}"
                                                                             maxdate="#{caster.fechaMaxima(registroAsesoriaDocente.rol.eventoSeleccionado.ejercicioFiscal.anio, registroAsesoriaDocente.rol.eventoSeleccionado.mes)}"
                                                                             >
+                                                                    <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                                 </p:calendar>
                                                             </div>
                                                             <p:watermark for="raFechaInicio" value="2019-10-01 (aa-MM-dd)*" />
@@ -171,8 +174,9 @@
                                                                                required="true" 
                                                                                requiredMessage="La hora de la asesoría es requerida"
                                                                                mode="popup"
-                                                                               disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                                />
+                                                                <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                             </div>
                                                             <p:watermark for="raHora" value="08:30AM (hh:mm) *" />
                                                             <p:message for="raHora" />
@@ -189,8 +193,9 @@
                                                                            min="0" max="120"
                                                                            styleClass="campo4Partes"
                                                                            placeholder="2 *"
-                                                                           disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                            />
+                                                                <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                                 <p>Tiempo Invertido</p>
                                                             </div>
                                                             <p:message for="raTiempoInvertido" />
@@ -202,8 +207,9 @@
                                                                                value="#{registroAsesoriaDocente.rol.dtoAsesoriaCE.asesoria.tipoTiempo}"
                                                                                required="true"
                                                                                requiredMessage="Seleccione el tipo de tiempo"
-                                                                               disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                                >
+                                                                <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                                 <f:selectItem itemLabel="Horas" itemValue="Horas" />
                                                                 <f:selectItem itemLabel="Minutos" itemValue="Minutos" />
                                                             </p:selectOneButton>
@@ -217,8 +223,9 @@
                                                                                value="#{registroAsesoriaDocente.rol.dtoAsesoriaCE.asesoria.tipo}"
                                                                                required="true"
                                                                                requiredMessage="Seleccione el tipo de asesoría"
-                                                                               disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                                >
+                                                                <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                                 <f:selectItem itemLabel="Individual" itemValue="Individual" />
                                                                 <f:selectItem itemLabel="Grupal" itemValue="Grupal" />
                                                             </p:selectOneButton>
@@ -239,8 +246,9 @@
                                                                                  class="form-control"
                                                                                  requiredMessage="Es requerido el campo de Observaciones y Compromisos"
                                                                                  value="#{registroAsesoriaDocente.rol.dtoAsesoriaCE.asesoria.observacionesCompromisos}"
-                                                                                 disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                                  />
+                                                                <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                                 <h:outputText id="displayCompromisos" />
                                                                 <p:watermark for="raObservacionesCompromisos" value="Ejemplo de Observaciones y Compromisos *" />
                                                                 <p:message for="raObservacionesCompromisos" />
@@ -257,9 +265,10 @@
                                                                              icon="fa fa-pencil-square-o" 
                                                                              class="btn-primary" 
                                                                              style="width:15em;" 
-                                                                             disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                              title="Guardar Asesoría"
                                                                              />
+                                                            <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                         </div>
                                                         <div class="col-sm-12 col-md-12"><p:separator/></div>
                                                     </div>
@@ -310,8 +319,9 @@
                                                                                              process="dtAsesorias" 
                                                                                              oncomplete="actualizarRegistroAsesoria();" 
                                                                                              global="false"
-                                                                                             disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                                              >
+                                                                                <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                                                 <p:confirm header="Eliminar" message="¿Está seguro de eliminar la asesoría seleccionada?" icon="ui-icon-alert" />
                                                                             </p:commandButton>
                                                                         </div>
@@ -326,14 +336,15 @@
                                                                                 valueChangeListener="#{registroAsesoriaDocente.actualizarFecha}"
                                                                                 pattern="yyyy-MM-dd"
                                                                                 styleClass="campo4Partes"
-                                                                                disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                                 title="Si desea actualizar dar clic aqui y seleccionar y presionar TAB ó ENTER, ó bien colocar el cursor en el siguiente campo"
                                                                                 placeholder="2019-10-01 (aa-MM-dd)*"
                                                                                 readonlyInput="true"
                                                                                 mask="true"
-                                                                                mindate="#{registroAsesoriaDocente.rol.periodoSeleccionado.periodoEscolarFechas.inicio}"
-                                                                                maxdate="#{registroAsesoriaDocente.rol.periodoSeleccionado.periodoEscolarFechas.fin}"
+                                                                                mindate="#{caster.fechaMinina(registroAsesoriaDocente.rol.eventoSeleccionado.ejercicioFiscal.anio, registroAsesoriaDocente.rol.eventoSeleccionado.mes)}"
+                                                                                maxdate="#{caster.fechaMaxima(registroAsesoriaDocente.rol.eventoSeleccionado.ejercicioFiscal.anio, registroAsesoriaDocente.rol.eventoSeleccionado.mes)}"
                                                                                 >
+                                                                        <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                                         <p:ajax event="dateSelect"
                                                                                 process="@this"
                                                                                 update="dtAsesorias"
@@ -371,8 +382,9 @@
                                                                                    showPeriod="true"
                                                                                    mode="popup"
                                                                                    title="Si desea actualizar dar clic aqui y seleccionar y presionar TAB, ó bien colocar el cursor en el siguiente campo"
-                                                                                   disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                                    >
+                                                                        <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                                         <p:ajax process="@this"
                                                                                 update="dtAsesorias"
                                                                                 global="false"
@@ -394,8 +406,9 @@
                                                                                    placeholder="2 *"
                                                                                    class="campoTiempo"
                                                                                    step="any"
-                                                                                   disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                                    >
+                                                                        <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                                         <p:ajax process="@this"
                                                                                 update="dtAsesorias"
                                                                                 global="false"
@@ -411,8 +424,9 @@
                                                                                        requiredMessage="Seleccione el tipo de tiempo"
                                                                                        value="#{asesoria.tipoTiempo}"
                                                                                        valueChangeListener="#{registroAsesoriaDocente.actualizarTipoTiempo}"
-                                                                                       disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                                        >
+                                                                        <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                                         <f:selectItem itemLabel="Horas" itemValue="Horas" />
                                                                         <f:selectItem itemLabel="Minutos" itemValue="Minutos" />
                                                                         <p:ajax process="@this" 
@@ -436,8 +450,9 @@
                                                                                      title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
                                                                                      value="#{asesoria.observacionesCompromisos}"
                                                                                      valueChangeListener="#{registroAsesoriaDocente.actualizarObservacionesCompromiso}"
-                                                                                     disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                                      >
+                                                                        <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                                         <p:ajax process="@this" 
                                                                                 update="dtAsesorias" 
                                                                                 global="false"
@@ -453,8 +468,9 @@
                                                                                        requiredMessage="Seleccione el tipo de asesoría"
                                                                                        value="#{asesoria.tipo}"
                                                                                        valueChangeListener="#{registroAsesoriaDocente.actualizarTipo}"
-                                                                                       disabled="#{registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"
+
                                                                                        >
+                                                                        <!--disabled="# {registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo}"-->
                                                                         <f:selectItem itemLabel="Individual" itemValue="Individual" />
                                                                         <f:selectItem itemLabel="Grupal" itemValue="Grupal" />
                                                                         <p:ajax process="@this" 
@@ -557,8 +573,9 @@
                                                                                            offIcon="ui-icon-close"
                                                                                            style="text-align: left"
                                                                                            title="De clic aqui para modificar la asistencia, el registro se guarda de manera automática"
-                                                                                           disabled="#{registroAsesoriaDocente.rol.asesoriaSeleccionada.idAsesoria eq null or registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo?'true':'false'}"
+                                                                                           disabled="#{registroAsesoriaDocente.rol.asesoriaSeleccionada.idAsesoria eq null?'true':'false'}"
                                                                                            >
+                                                                        <!--disabled="# {registroAsesoriaDocente.rol.asesoriaSeleccionada.idAsesoria eq null or registroAsesoriaDocente.rol.eventoSeleccionado ne registroAsesoriaDocente.rol.eventoRegistroActivo?'true':'false'}"-->
                                                                         <p:ajax process="@this"
                                                                                 oncomplete="actualizarEstudiantes();"
                                                                                 />

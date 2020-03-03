@@ -107,6 +107,43 @@ public class EjbRegistroNotificaciones {
     }
     
     /**
+     * Método que es utilizado para consultar las últimas diez notificaciones registradas, método ocupado desde que el usuario ingresa al módulo de registro de notificaciones
+     * @return Lista de entidades de tipo NotificacionesCe
+     */
+    public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesUltimosDiez(){
+        try {
+            List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n ORDER BY n.fechaRegistro DESC", NotificacionesCe.class)
+                    .setMaxResults(10)
+                    .getResultList();
+            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "Listado de las últimas díez notificaciones registradas.");
+            else return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST,"Aún no se han registrado notificaciones.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las ultimas diez notificaciones registradas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesUltimosDiez): ", e, null);
+        }
+    }
+    
+    /**
+     * Método que permite realizar una búsqueda personalizada de las notificaciones registradas, la búsqueda es realizada con base a la fecha de registro de la notificación
+     * @param fechaInicio Fecha de inicio seleccionada por el usuario desde la interfaz
+     * @param fechaFin Fecha de fin seleccionada por el usuario desde la interfaz
+     * @return Lista de entidades de tipo NotificacionesCe
+     */
+    public ResultadoEJB<List<NotificacionesCe>> consultaNotificacionesPorFechaRegistro(@NonNull Date fechaInicio, @NonNull Date fechaFin){
+        try {
+            List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n WHERE n.fechaRegistro BETWEEN :fechaInicio AND :fechaFin ORDER BY n.fechaRegistro DESC", NotificacionesCe.class)
+                    .setParameter("fechaInicio", fechaInicio)
+                    .setParameter("fechaFin", fechaFin)
+                    .getResultList();
+            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "Listado de notificaciones registradas en la fecha seleccionada.");
+            else return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST,"No se ha registrado notificaciones en el periodo seleccionado.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las notificaciones por fecha personalizada, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultaNotificacionesPorFechaRegistro)", e, null);
+        }
+    }
+    
+//    Administración de enlaces para la notificación
+    
+    /**
      * Método que permite el registro de la asignación de un enlace a una notificación.
      * @param notificacionesEnlaces Entidad que contiene los datos del nuevo enlace y que será persistido
      * @return Devuelve la entidad ya persistida la cual ya contiene el id único del enlace asignado a la notificación
@@ -159,6 +196,23 @@ public class EjbRegistroNotificaciones {
         }
     }
     
+    /**
+     * Método que permite la consulta de enlaces asignadas a una notificación específica
+     * @param notificacion Entidad que contiene la información de la notificación seleccionada por el usuario
+     * @return Lista de entidades de tipo NotificacionesEnlaces
+     */
+    public ResultadoEJB<List<NotificacionesEnlaces>> consultarEnlacesPorNotificacion(@NonNull NotificacionesCe notificacion){
+        try {
+            List<NotificacionesEnlaces> listaEnlaces = em.createQuery("SELECT ne FROM NotificacionesEnlaces ne WHERE ne.notificacion.notificacion = :notificacion ORDER BY ne.notificacionEnlace", NotificacionesEnlaces.class)
+                    .setParameter("notificacion", notificacion.getNotificacion())
+                    .getResultList();
+            return ResultadoEJB.crearCorrecto(listaEnlaces, "Lista de enlaces de la notificación seleccionada");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se han podido consultar los enlaces de la notificacion seleccionada, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarEnlacesPorNotificacion): ", e, null);
+        }
+    }
+    
+//    Administración de áreas que serán asignadas a la notificación
     /**
      * Método que permite llenar en el DTO de NotificacionesAreas el listado de Áreas que serán utilizadas para la asignación con notificaciones. 
      * @return Devuelve el listado de áreas vigentes
@@ -245,13 +299,15 @@ public class EjbRegistroNotificaciones {
         }
     }
     
+    
+//    Administración de imagenes que serán asignadas a la notificación
     /**
      * Método que permite la asignación de una o mas imágenes en una notificación, incluye la copia del archivo en el servidor
      * @param notificacionImagen Contiene los datos necesarios para identificar quien es el usuario que sube la evidencia
      * @param archivos Contiene el listado de archivos que el usuario ha enviado desde la interfaz
      * @return Devuelve un mapa que contiene la cantidad de correctos y el numero de archivos que se han subido o guardado
      */
-    public ResultadoEJB<Map.Entry<Boolean, Integer>> guardarNotificacionImagen(NotificacionesCeImagenes notificacionImagen, List<Part> archivos) {
+    public ResultadoEJB<Map.Entry<Boolean, Integer>> guardarNotificacionImagen(@NonNull NotificacionesCeImagenes notificacionImagen, @NonNull List<Part> archivos) {
         try {
             Map<Boolean, Integer> map = new HashMap<>();
 
@@ -288,7 +344,7 @@ public class EjbRegistroNotificaciones {
      * @param notificacionImagenCe Contiene el identificador único de la imagen que se eliminará, ruta para eliminación del servidor y id para base de datos
      * @return Devuelve VERDADERO si se ha detectado que el archivo ha sido eliminado correctamente del servidor y en base de datos, devuelve FALSE si se detecta un problema con la eliminación de ambas partes
      */
-    public ResultadoEJB<Boolean> eliminarNotificacionImagen(NotificacionesCeImagenes notificacionImagenCe) {
+    public ResultadoEJB<Boolean> eliminarNotificacionImagen(@NonNull NotificacionesCeImagenes notificacionImagenCe) {
         try {
             if (notificacionImagenCe == null) {
                 return ResultadoEJB.crearErroneo(2, "No se puede eliminar una imagen de una notificación que es nula", Boolean.TYPE);
@@ -311,7 +367,7 @@ public class EjbRegistroNotificaciones {
      * @param notificacionCe Contiene el id único para solo eliminar las imágenes que sean pertenecientes a ella.
      * @return Devuelve VERDADERO si las evidencias fueron eliminadas correctamente, devuelve FALSE si las evidencias no fueron eliminadas correctamente
      */
-    public ResultadoEJB<Boolean> eliminarNotificacionImagenGeneral(NotificacionesCe notificacionCe){
+    public ResultadoEJB<Boolean> eliminarNotificacionImagenGeneral(@NonNull NotificacionesCe notificacionCe){
         try {
             if (notificacionCe == null) {
                 return ResultadoEJB.crearErroneo(2, "No se pueden eliminar imagenes de una notificación que es nula.", Boolean.TYPE);
@@ -330,6 +386,22 @@ public class EjbRegistroNotificaciones {
             }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se han podido eliminar las imagenes del servidor, favor de verificar la siguiente información. (EjbRegistroNotificaciones.eliminarNotificacionImagenGeneral): ", e, Boolean.TYPE);
+        }
+    }
+    
+    /**
+     * Método que permite la búsqueda de imágenes asignadas a una notificación.
+     * @param notificacion Entidad que contiene la información de la notificación seleccionada por el usuario
+     * @return Lista de entidades de tipo NotificacionesCeImagenes
+     */
+    public ResultadoEJB<List<NotificacionesCeImagenes>> obtenerImagenesPorNotificacion(@NonNull NotificacionesCe notificacion){
+        try {
+            List<NotificacionesCeImagenes> listaImagenes = em.createQuery("SELECT ni FROM NotificacionesCeImagenes ni WHERE ni.notificacion = :notificacion",NotificacionesCeImagenes.class)
+                    .setParameter("notificacion", notificacion.getNotificacion())
+                    .getResultList();
+            return ResultadoEJB.crearCorrecto(listaImagenes, "Lista de imagenes asignadas a la notificación");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las imagenes de la notificación seleccionada, favor de verificar la siguiente información. (EjbRegistroNotificaciones.obtenerImagenesPorNotificacion)", e, null);
         }
     }
     

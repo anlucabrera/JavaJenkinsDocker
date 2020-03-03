@@ -37,6 +37,7 @@
     <ui:define name="body">
         <c:if test="#{registroNotificacionesGeneral.cargado}">
             <adm:breadcrumb title="Registro de notificaciones"/>
+            <adm:sidebar collapsed="true"/>
             <div class="contenedor">
                 <c:if test="#{registroNotificacionesGeneral.tieneAcceso}">
                     <!-- zona de importación de enums -->
@@ -238,12 +239,269 @@
                                                                              title="Guardar Notificación"
                                                                              />
                                                         </div>
+                                                    </div>
 
+                                                    <div class="row margin-bottom">
+                                                        <p:toolbar>
+                                                            <f:facet name="left">
+                                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                <p:outputLabel value="Listado de notificaciones registradas en sistema." style="padding-top: 5px;" />
+                                                            </f:facet>
+                                                        </p:toolbar>
+                                                        <center>
+                                                            <p:dataTable id="dtNotificaciones"
+                                                                         value="#{registroNotificacionesGeneral.rol.listaNotificacionesCe}"
+                                                                         var="notificacionCe"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                         resizeMode="expand"
+                                                                         emptyMessage="Aún no se han registrado notificaciones"
+                                                                         >
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="sucess">
+                                                                        <p:column headerText="Opciones" width="570"/>
+                                                                        <p:column headerText="Notificación" width="100"/>
+                                                                        <p:column headerText="Fecha de inicio (Duración)" width="150"/>
+                                                                        <p:column headerText="Fecha de fin (Duración)" width="150"/>
+                                                                        <p:column headerText="Título Principal" width="200"/>
+                                                                        <p:column headerText="Subtítulo" width="400"/>
+                                                                        <p:column headerText="Tipo de notificación" width="100"/>
+                                                                        <p:column headerText="Contenido de la notificación" width="500"/>
+                                                                        <p:column headerText="Persona que registra" width="200"/>
+                                                                        <p:column headerText="Alcance de la notificación" width="400"/>
+                                                                        <p:column headerText="General" width="200"/>
+                                                                        <p:column headerText="Fecha de registro" width="150"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+
+                                                                <p:column>
+                                                                    <p:commandButton class="btn btn-danger btn-sm"
+                                                                                     icon="fa fa-trash"
+                                                                                     title="Eliminar notificación"
+                                                                                     >
+                                                                        <p:confirm header="Eliminar notificación" 
+                                                                                   message="¿Está seguro de eliminar la notificación: #{notificacionCe.tituloPrincipal}?" 
+                                                                                   icon="ui-icon-alert" />
+                                                                    </p:commandButton>
+                                                                    <p:commandButton id="btnConsultaEnlaces"
+                                                                                     value="#{!empty notificacionCe.notificacionesEnlacesList?'Consultar enlaces de consulta':'Asignar enlaces de consulta'}"
+                                                                                     actionListener="#{registroNotificacionesGeneral.abrirModalConsultaEnlaces(notificacionCe)}"
+                                                                                     class="btn btn-sm #{empty notificacionCe.notificacionesEnlacesList?'btn-warning':'btn-info'}" 
+                                                                                     icon="fa fa-list-ul"
+                                                                                     title="#{!empty notificacionCe.notificacionesEnlacesList?'Consultar enlaces de consulta':'Asignar enlaces de consulta'}"
+                                                                                     style="width: 18em"
+                                                                                     process="@this"
+                                                                                     global="false"
+                                                                                     />
+                                                                    <p:commandButton id="btnConsultaImagenes"
+                                                                                     value="#{!empty notificacionCe.notificacionesCeImagenesList?'Consultar imágenes':'Asignar imágenes'}"
+                                                                                     actionListener="#{registroNotificacionesGeneral.abrirModalConsultaImagenes(notificacionCe)}"
+                                                                                     class="btn btn-sm #{empty notificacionCe.notificacionesCeImagenesList?'btn-warning':'btn-info'}" 
+                                                                                     icon="fa fa-image"
+                                                                                     title="#{!empty notificacionCe.notificacionesCeImagenesList?'Consultar imágenes':'Asignar imágenes'}"
+                                                                                     style="width: 14em"
+                                                                                     process="@this"
+                                                                                     global="false"
+                                                                                     />
+                                                                    <p:commandButton id="btnAsignarAreas"
+                                                                                     value="#{!empty notificacionCe.notificacionesCeImagenesList?'Consultar áreas':'Asignar áreas'}"
+                                                                                     class="btn btn-sm #{empty notificacionCe.notificacionesCeImagenesList?'btn-warning':'btn-info'}" 
+                                                                                     icon="fa fa-check-circle"
+                                                                                     title="#{!empty notificacionCe.notificacionesCeImagenesList?'Consultar áreas asignadas':'Asignar áreas'}"
+                                                                                     style="width: 12em"
+                                                                                     process="@this"
+                                                                                     global="false"
+                                                                                     />
+                                                                </p:column>
+
+                                                                <p:column>
+                                                                    <h:outputText value="#{notificacionCe.notificacion}" />
+                                                                </p:column>
+
+                                                                <p:column>
+                                                                    <h:outputText value="#{notificacionCe.fechaInicioDuracion}">
+                                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column>
+                                                                    <h:outputText value="#{notificacionCe.fechaFinDuracion}">
+                                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <p:column>
+                                                                    <h:outputText value="#{notificacionCe.tituloPrincipal}" />
+                                                                </p:column>
+
+                                                                <p:column>
+                                                                    <h:outputText value="#{notificacionCe.subtitulo}" />
+                                                                </p:column>
+
+                                                                <p:column>
+                                                                    <h:outputText value="#{notificacionCe.tipo}" />
+                                                                </p:column>
+
+                                                                <p:column>
+                                                                    <h:outputText value="#{notificacionCe.contenido}" />
+                                                                </p:column>
+
+                                                                <p:column>
+                                                                    <h:outputText value="#{notificacionCe.personaRegistro}" />
+                                                                </p:column>
+
+                                                                <p:column>
+                                                                    <h:outputText value="#{notificacionCe.alcance}" />
+                                                                </p:column>
+
+                                                                <p:column>
+                                                                    <h:outputText value="#{notificacionCe.general?'Consulte Áreas Seleccionadas':'Área'}" />
+                                                                </p:column>
+
+                                                                <p:column>
+                                                                    <h:outputText value="#{notificacionCe.fechaRegistro}">
+                                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <f:facet name="footer">
+                                                                    Usted ha registrado un total de: #{fn:length(registroNotificacionesGeneral.rol.listaNotificacionesCe)} notificaciones.
+                                                                </f:facet>
+
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" 
+                                                                             showEffect="fade" 
+                                                                             hideEffect="fade" 
+                                                                             styleClass="panel panel-primary" 
+                                                                             width="500"
+                                                                             closeOnEscape="true">
+                                                                <p:commandButton value="Si" 
+                                                                                 type="button" 
+                                                                                 styleClass="ui-confirmdialog-yes btn btn-primary" 
+                                                                                 icon="ui-icon-check" />
+                                                                <p:commandButton value="No" 
+                                                                                 type="button" 
+                                                                                 styleClass="ui-confirmdialog-no btn btn-primary" 
+                                                                                 icon="ui-icon-close" />
+                                                            </p:confirmDialog>
+                                                        </center>
                                                     </div>
                                                 </p:outputPanel>
                                             </div>
                                         </div>
                                     </h:form>
+
+                                    <!-- Cuadro de díalogo de enlaces para la notificación -->
+                                    <h:form id="frmEnlacesNotificaciones" >
+                                        <p:remoteCommand name="actualizarEnlacesNotificacion" update="frmEnlacesNotificaciones" />
+                                        <p:dialog id="modalConsultaEnlacesNotificaciones"
+                                                  widgetVar="modalConsultaEnlacesNotificaciones"
+                                                  width="900"
+                                                  height="auto"
+                                                  closeOnEscape="true"
+                                                  visible="#{false}"
+                                                  showEffect="fade"
+                                                  hideEffect="fade"
+                                                  modal="true"
+                                                  draggable="true"
+                                                  header="Enlaces asignados en la notificación" 
+                                                  onHide="actualizarRegistroNotificaciones();"
+                                                  styleClass="panel panel-primary" 
+                                                  responsive="true" 
+                                                  resizable="false" 
+                                                  maximizable="false"
+                                                  >
+                                            <div class="row">
+                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                    <div style="margin-bottom: 5px;">
+                                                        <p:toolbar>
+                                                            <f:facet name="left">
+                                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                <p:outputLabel value="Asignación de enlace a la notificación: " style="padding-bottom: 10px;margin-bottom: 10px" />
+
+                                                                <div class="ui-material" style="padding-bottom: 15px;">
+                                                                    <p:inputText id="aenTituloEnlace"
+                                                                                 label="aenTituloEnlace"
+                                                                                 maxlength="1000"
+                                                                                 value="#{registroNotificacionesGeneral.rol.notificacionEnlace.tituloEnlace}"
+                                                                                 style="width: 45em"
+                                                                                 class="form-control"
+                                                                                 required="true"
+                                                                                 requiredMessage="Por favor ingrese el título del enlace"
+                                                                                 />
+                                                                    <p:watermark for="aenTituloEnlace" value="Ejemplo de título de enlace *" />
+                                                                    <p:outputLabel for="aenTituloEnlace" value="Título del enlace de la notificación: "/>
+                                                                </div>
+
+                                                                <div class="ui-material" style="padding-bottom: 15px;">
+                                                                    <p:inputText id="aenEnlace"
+                                                                                 label="aenEnlace"
+                                                                                 maxlength="2000"
+                                                                                 value="#{registroNotificacionesGeneral.rol.notificacionEnlace.enlace}"
+                                                                                 style="width: 45em"
+                                                                                 class="form-control"
+                                                                                 required="true"
+                                                                                 requiredMessage="Por favor ingrese el enlace"
+                                                                                 />
+                                                                    <p:watermark for="aenEnlace" value="Ejemplo de enlace *" />
+                                                                    <p:outputLabel for="aenEnlace" value="Enlace de la notificación: "/>
+                                                                </div>
+
+                                                                <div style="text-align: right;align-content: right">
+                                                                    <div class="ui-material" style="padding-bottom: 15px;">
+                                                                        <p:commandButton id="btnGuardarEnlaceNotificacion"
+                                                                                         value="Guardar enlace"
+                                                                                         class="btn btn-sm btn-info" 
+                                                                                         icon="fa fa-check-circle"
+                                                                                         title="Guardar enlace"
+                                                                                         style="width: 11em"
+                                                                                         actionListener="#{registroNotificacionesGeneral.guardarEnlaceNotificacion}"
+                                                                                         oncomplete="actualizarEnlacesNotificacion();"
+                                                                                         />
+                                                                    </div>
+                                                                </div>
+
+                                                            </f:facet>
+
+                                                        </p:toolbar>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 10px"></div>
+                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                    <div style="margin-bottom: 5px;">
+                                                        <center>
+                                                            <p:dataTable id="dtListaNotificaciones" 
+                                                                         value="#{registroNotificacionesGeneral.rol.listaNotificacionesEnlaces}"
+                                                                         var="notificacionEnlace"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                         resizeMode="expand"
+                                                                         emptyMessage="No se han detectado enlaces asignados a esta notificación"
+                                                                         >
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="sucess">
+                                                                        <p:column headerText="Enlace" width="60"/>
+                                                                        <p:column headerText="Título de enlace" width="400"/>
+                                                                        <p:column headerText="Enlace" width="400"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{notificacionEnlace.notificacionEnlace}" />
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{notificacionEnlace.tituloEnlace}" />
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{notificacionEnlace.enlace}" />
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                        </center>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </p:dialog>
+                                    </h:form>
+
                                 </div>
                             </div>
                         </div>
