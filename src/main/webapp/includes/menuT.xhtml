@@ -85,6 +85,7 @@
                     <!-- Servicios Escolares -->
                     <c:if test="#{generacionGruposServiciosEscolares.mostrarEnDesarrollo(request) and generacionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/generacionGrupos.xhtml"><i class="fa fa-users"></i><span>Generación de grupos</span></p:link></li></c:if>
                     <c:if test="#{procesoInscripcion.mostrarEnDesarrollo(request) and procesoInscripcion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-users"></i><span>Proceso de inscripción</span></p:link></li></c:if>
+                    <c:if test="#{reincorporacionServiciosEscolares1.mostrarEnDesarrollo(request) and reincorporacionServiciosEscolares1.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reincorporaciones1.xhtml"><i class="fa fa-user-plus"></i><span>Reincorporaciones</span></p:link></li></c:if>
                     <c:if test="#{reincorporacionServiciosEscolares.mostrarEnDesarrollo(request) and reincorporacionServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reincorporaciones.xhtml"><i class="fa fa-user-plus"></i><span>Reincorporaciones</span></p:link></li></c:if>
                     <c:if test="#{credencializacionSE.mostrarEnDesarrollo(request) and credencializacionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/credencializacion.xhtml"><i class="fa fa-address-card"></i><span>Credencialización</span></p:link></li></c:if>
                     <c:if test="#{registrarBajaServiciosEscolares.mostrarEnDesarrollo(request) and registrarBajaServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registrarBajas.xhtml"><i class="fa fa-user-times"></i><span>Registrar Bajas</span></p:link></li></c:if>
@@ -1326,14 +1327,14 @@
                         <span>Soporte técnico</span>
                     </p:link>
                 </li>
-                <c:if test="#{controladorEmpleado.tienePOA}">
+                <!--c:if test="# {controladorEmpleado.tienePOA}"-->
                     <li>                    
                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Calendario de Evaluacion SIIP 2020.pdf#toolbar=0"  target="_blank">
                             <i class="fa fa-calendar"></i>
                             <span>Calendario</span>
                         </p:link>
                     </li>
-                </c:if>   
+                <!--/c:if-->   
             </c:if>
         </c:if>
     </ul>
