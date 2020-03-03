@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -891,12 +892,21 @@ public class EjbRegistroAsesoriaTutoria {
         try {
             TutoriasGrupales t = em.find(TutoriasGrupales.class, idTutoriaGrupal);
             SesionesGrupalesTutorias sesionGrupal = t.getSesionGrupal();
-            if(t.getParticipantesTutoriaGrupalList().isEmpty()){
+            if (!t.getParticipantesTutoriaGrupalList().isEmpty()) {
+                Integer participantes = t.getParticipantesTutoriaGrupalList().size();
+                t.getParticipantesTutoriaGrupalList().removeIf(ptg -> ptg.getAsistencia() == true);
+                Integer numeroVerificado = t.getParticipantesTutoriaGrupalList().size();
+                if (Objects.equals(participantes, numeroVerificado)) {
+                    em.remove(t);
+                    actualizaValorSesionGrupalCumplimientoEliminacion(sesionGrupal);
+                    return ResultadoEJB.crearCorrecto(Boolean.TRUE, "La tutoría grupal así como los participantes se han eliminado del sistema");
+                } else {
+                    return ResultadoEJB.crearErroneo(2, "No se ha podido eliminar la tutoría grupal, se ha detectado el pase de lista en al menos un estudiante. (Para eliminar es necesario que a los estudiantes les asigne -No Asistió- en el pase de lista, considere que si el estudiante ya registró comentarios y firma electrónica en la tutoría grupal estos se eliminarán de igual forma)", Boolean.TYPE);
+                }
+            } else {
                 em.remove(t);
                 actualizaValorSesionGrupalCumplimientoEliminacion(sesionGrupal);
                 return ResultadoEJB.crearCorrecto(Boolean.TRUE, "La tutoría grupal se ha eliminado del sistema");
-            }else{
-                return ResultadoEJB.crearErroneo(2, "No se ha podido eliminar la tutoría grupal debido a que tiene participantes asignados ", Boolean.TYPE);
             }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar la tutoría grupal (EjbRegistroAsesoriaTutoria.eliminaTutoriaGrupal).", e, Boolean.TYPE);

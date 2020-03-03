@@ -62,4 +62,11 @@ public enum RolNotificacion {
                 .stream()
                 .collect(Collectors.toList());
     }
+    
+    public static List<String> ListaValoresLabel(){
+        return Arrays.asList(RolNotificacion.values())
+                .stream()
+                .map(label -> label.getLabel())
+                .collect(Collectors.toList());
+    }
 }

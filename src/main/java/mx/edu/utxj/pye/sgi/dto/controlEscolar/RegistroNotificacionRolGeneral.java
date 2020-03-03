@@ -28,6 +28,10 @@ public class RegistroNotificacionRolGeneral extends AbstractRol{
     
     @Getter             @Setter                 private                                     Date                                        fechaInicio;
     @Getter             @Setter                 private                                     Date                                        fechaFin;
+    
+    @Getter             @Setter                 private                                     Date                                        fechaInicioFiltro;
+    @Getter             @Setter                 private                                     Date                                        fechaFinFiltro;
+    
     @Getter             @Setter                 private                                     List<String>                                alcance;
     
     @Getter             private                 String                                      pistaTituloPrincipal; //Considerar en el resultado mostrar el tipo y subtítulo de la notificación
