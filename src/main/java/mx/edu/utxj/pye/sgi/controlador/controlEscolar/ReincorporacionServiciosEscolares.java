@@ -675,7 +675,8 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     }
   
     public void prepararCoreo(DtoReincorporacion.EstudianteR er) {
-        String titulo = "Movimientos Escolares";
+        String titulo = "Movimientos Escolares";        
+        String correoD="",correoO="";
         rol.setMensaje("Me permito por este medio enviarle un cordial saludo, al mismo tiempo, informarle que se ha realizado una reincorporación del tipo: "
                 + rol.getNombreR()
                 + " del estudiante \n"
@@ -707,12 +708,14 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
                 if (rol.getRein().getOpcionIncripcion()) {
                     rol.setMensaje(rol.getMensaje()
                             + rol.getRein().getPrimeraOp());
+                    correoD = rol.getDacademicos().getUniversidad1().getCorreoInstitucional();
                 } else {
                     rol.setMensaje(rol.getMensaje()
                             + rol.getRein().getSegundaOP());
+                    correoD = rol.getDacademicos().getUniversidad2().getCorreoInstitucional();
                 }
                 if (!rol.getCalificacionesR().isEmpty()) {
-                    if (!rol.getCalificacionesR().stream().filter(t -> t.getCalificacionesReincorporacions().isEmpty()==false).collect(Collectors.toList()).isEmpty()) {
+                    if (!rol.getCalificacionesR().stream().filter(t -> t.getCalificacionesReincorporacions().isEmpty() == false).collect(Collectors.toList()).isEmpty()) {
                         rol.setMensaje(rol.getMensaje() + " el cual ya contaba con las siguientes calificaciones registradas \n");
                     }
                     rol.getCalificacionesR().forEach((t) -> {
@@ -732,28 +735,32 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
                         }
                     });
                 }
-//                ejb.enviarConfirmacionCorreoElectronico("zabdiel.perez@utxicotepec.edu.mx", titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica correspondiente
+                ejb.enviarConfirmacionCorreoElectronico(correoD, titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica correspondiente
                 break;
-            case "Cambio de plan de estudio":
+            case "Cambio de carrera":
                 rol.setMensaje(rol.getMensaje() + " del programa educativo ");
-                if (rol.getRein().getOpcionIncripcion()) {
-                    rol.setMensaje(rol.getMensaje()
-                            + rol.getRein().getPrimeraOp());
-                } else {
-                    rol.setMensaje(rol.getMensaje()
-                            + rol.getRein().getSegundaOP());
-                }
-                rol.setMensaje(rol.getMensaje() + " al programa educativo ");
                 if (!rol.getRein().getOpcionIncripcion()) {
                     rol.setMensaje(rol.getMensaje()
                             + rol.getRein().getPrimeraOp());
+                    correoO = rol.getDacademicos().getUniversidad1().getCorreoInstitucional();
                 } else {
                     rol.setMensaje(rol.getMensaje()
                             + rol.getRein().getSegundaOP());
+                    correoO = rol.getDacademicos().getUniversidad2().getCorreoInstitucional();
+                }
+                rol.setMensaje(rol.getMensaje() + " al programa educativo ");
+                if (rol.getRein().getOpcionIncripcion()) {
+                    rol.setMensaje(rol.getMensaje()
+                            + rol.getRein().getPrimeraOp());
+                    correoD = rol.getDacademicos().getUniversidad1().getCorreoInstitucional();
+                } else {
+                    rol.setMensaje(rol.getMensaje()
+                            + rol.getRein().getSegundaOP());
+                    correoD = rol.getDacademicos().getUniversidad2().getCorreoInstitucional();
                 }
                 if (!Objects.equals(rol.getDacademicos().getUniversidad1().getArea(), rol.getDacademicos().getUniversidad2().getArea())) {
-                     rol.setNombreR("Cambio de programa educativo");
-////                    ejb.enviarConfirmacionCorreoElectronico("zabimg@gmail.com", titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica orijen 
+                    rol.setNombreR("Cambio de programa educativo");
+                    ejb.enviarConfirmacionCorreoElectronico(correoO, titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica orijen 
                 }else{
                     rol.setNombreR("Cambio de plan de estudio");
                 }
@@ -777,29 +784,46 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
                     });
                 }
                 rol.setMensaje(rol.getMensaje() + " por lo que se le solicita realizar el registro correspondiente de calificaciones, notificando al Departamento de Servicios Escolares la finalizacion del proceso.");
-//                ejb.enviarConfirmacionCorreoElectronico("zabdiel.perez@utxicotepec.edu.mx", titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica destino
+                ejb.enviarConfirmacionCorreoElectronico(correoD, titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica destino
 
                 break;
             case "Reincorporación otra UT":
+                if (rol.getRein().getOpcionIncripcion()) {
+                    correoD = rol.getDacademicos().getUniversidad1().getCorreoInstitucional();
+                } else {
+                    correoD = rol.getDacademicos().getUniversidad2().getCorreoInstitucional();
+                }
                 rol.setMensaje(rol.getMensaje()
                         + " por lo que se le pide estar atento al proceso hasta que se halla culminado la catura de calificaciones por parte del departamento de Servicios Escolares");
-//                ejb.enviarConfirmacionCorreoElectronico("zabdiel.perez@utxicotepec.edu.mx", titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica destino
+                ejb.enviarConfirmacionCorreoElectronico(correoD, titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica destino
 
                 break;
             case "Regularización de calificaciones por reincoporación":
+                if (rol.getRein().getOpcionIncripcion()) {
+                    correoD = rol.getDacademicos().getUniversidad1().getCorreoInstitucional();
+                } else {
+                    correoD = rol.getDacademicos().getUniversidad2().getCorreoInstitucional();
+                }
                 rol.setMensaje(rol.getMensaje()
                         + " por lo que se le pide registrar la calificacion correspondiente a cada matera ");
 
-//                ejb.enviarConfirmacionCorreoElectronico("zabdiel.perez@utxicotepec.edu.mx", titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica destino
+                ejb.enviarConfirmacionCorreoElectronico(correoD, titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica destino
                 break;
             case "Reincorporación otra generación":
+                if (rol.getRein().getOpcionIncripcion()) {
+                    correoD = rol.getDacademicos().getUniversidad1().getCorreoInstitucional();
+                } else {
+                    correoD = rol.getDacademicos().getUniversidad2().getCorreoInstitucional();
+                }
                 rol.setMensaje(rol.getMensaje()
                         + " por lo que se le pide estar atento al proceso hasta que se halla culminado la catura de calificaciones por parte del departamento de Servicios Escolares");
-                break;
+                ejb.enviarConfirmacionCorreoElectronico(correoD, titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica destino
+               break;
         }
-//        ejb.enviarConfirmacionCorreoElectronico("zabdi_end@hotmail.com", titulo, rol.getNombreR(), mEscolares);// correo para el departamento de servicios escolares
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares1.prepararCoreo()" + rol.getMensaje());
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares.prepararCoreo()"+mEscolares);
+        rol.getRein().setTipoRegistro(rol.getNombreR());
+        ejb.enviarConfirmacionCorreoElectronico("servicios.escolares@utxicotepec.edu.mx", titulo, rol.getNombreR(), mEscolares);// correo para el departamento de servicios escolares
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares1.prepararCoreo()" + rol.getMensaje());
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares.prepararCoreo()"+mEscolares);
     }
 
     public void imprimirValores() {

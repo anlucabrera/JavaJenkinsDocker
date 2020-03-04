@@ -836,7 +836,10 @@
                         </c:if>
                         <c:if test="#{
                               (controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71) 
-                                  or (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 5 or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9)
+                                  or (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 5 or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9 
+                                  or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 16
+                                  or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 21
+                                  or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 22)
                                   or (controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
                             <li class="treeview">
                                 <a href="#">
