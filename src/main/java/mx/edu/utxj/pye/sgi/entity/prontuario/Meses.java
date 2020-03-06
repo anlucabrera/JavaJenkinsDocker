@@ -51,14 +51,14 @@ public class Meses implements Serializable {
     @Size(min = 1, max = 3)
     @Column(name = "abreviacion")
     private String abreviacion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "meses")
-    private List<ServiciosEnfermeria> serviciosEnfermeriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "mesFin")
     private List<PeriodosEscolares> periodosEscolaresList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "mesInicio")
     private List<PeriodosEscolares> periodosEscolaresList1;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "meses")
     private List<ServiciosTecnologicos> serviciosTecnologicosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "meses")
+    private List<ServiciosEnfermeria> serviciosEnfermeriaList;
 
     public Meses() {
     }
@@ -98,15 +98,6 @@ public class Meses implements Serializable {
     }
 
     @XmlTransient
-    public List<ServiciosEnfermeria> getServiciosEnfermeriaList() {
-        return serviciosEnfermeriaList;
-    }
-
-    public void setServiciosEnfermeriaList(List<ServiciosEnfermeria> serviciosEnfermeriaList) {
-        this.serviciosEnfermeriaList = serviciosEnfermeriaList;
-    }
-
-    @XmlTransient
     public List<PeriodosEscolares> getPeriodosEscolaresList() {
         return periodosEscolaresList;
     }
@@ -131,6 +122,15 @@ public class Meses implements Serializable {
 
     public void setServiciosTecnologicosList(List<ServiciosTecnologicos> serviciosTecnologicosList) {
         this.serviciosTecnologicosList = serviciosTecnologicosList;
+    }
+
+    @XmlTransient
+    public List<ServiciosEnfermeria> getServiciosEnfermeriaList() {
+        return serviciosEnfermeriaList;
+    }
+
+    public void setServiciosEnfermeriaList(List<ServiciosEnfermeria> serviciosEnfermeriaList) {
+        this.serviciosEnfermeriaList = serviciosEnfermeriaList;
     }
 
     @Override

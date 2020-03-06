@@ -6,7 +6,9 @@
 package mx.edu.utxj.pye.sgi.entity.prontuario;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,14 +18,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Zabdiel Pèrez Morale
+ * @author UTXJ
  */
 @Entity
 @Table(name = "areas_universidad", catalog = "prontuario", schema = "")
@@ -72,6 +76,8 @@ public class AreasUniversidad implements Serializable {
     @Size(max = 255)
     @Column(name = "correoInstitucional")
     private String correoInstitucional;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "areasUniversidad")
+    private List<SatisfaccionHistorico> satisfaccionHistoricoList;
     @JoinColumn(name = "categoria", referencedColumnName = "categoria")
     @ManyToOne(optional = false)
     private Categorias categoria;
@@ -156,6 +162,15 @@ public class AreasUniversidad implements Serializable {
 
     public void setCorreoInstitucional(String correoInstitucional) {
         this.correoInstitucional = correoInstitucional;
+    }
+
+    @XmlTransient
+    public List<SatisfaccionHistorico> getSatisfaccionHistoricoList() {
+        return satisfaccionHistoricoList;
+    }
+
+    public void setSatisfaccionHistoricoList(List<SatisfaccionHistorico> satisfaccionHistoricoList) {
+        this.satisfaccionHistoricoList = satisfaccionHistoricoList;
     }
 
     public Categorias getCategoria() {

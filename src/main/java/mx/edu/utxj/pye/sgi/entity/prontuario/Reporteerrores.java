@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "reporteerrores", catalog = "prontuario", schema = "")

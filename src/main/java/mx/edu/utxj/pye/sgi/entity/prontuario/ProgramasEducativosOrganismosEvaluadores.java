@@ -41,14 +41,14 @@ public class ProgramasEducativosOrganismosEvaluadores implements Serializable {
     @Basic(optional = false)
     @Column(name = "relacionpeoe")
     private Integer relacionpeoe;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "relacionpeoe")
-    private List<ProgramasEducativosAcreditaciones> programasEducativosAcreditacionesList;
     @JoinColumn(name = "organismo", referencedColumnName = "siglas")
     @ManyToOne(optional = false)
     private OrganismosEvaluadores organismo;
     @JoinColumn(name = "programa", referencedColumnName = "siglas")
     @ManyToOne(optional = false)
     private ProgramasEducativos programa;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "relacionpeoe")
+    private List<ProgramasEducativosAcreditaciones> programasEducativosAcreditacionesList;
 
     public ProgramasEducativosOrganismosEvaluadores() {
     }
@@ -65,15 +65,6 @@ public class ProgramasEducativosOrganismosEvaluadores implements Serializable {
         this.relacionpeoe = relacionpeoe;
     }
 
-    @XmlTransient
-    public List<ProgramasEducativosAcreditaciones> getProgramasEducativosAcreditacionesList() {
-        return programasEducativosAcreditacionesList;
-    }
-
-    public void setProgramasEducativosAcreditacionesList(List<ProgramasEducativosAcreditaciones> programasEducativosAcreditacionesList) {
-        this.programasEducativosAcreditacionesList = programasEducativosAcreditacionesList;
-    }
-
     public OrganismosEvaluadores getOrganismo() {
         return organismo;
     }
@@ -88,6 +79,15 @@ public class ProgramasEducativosOrganismosEvaluadores implements Serializable {
 
     public void setPrograma(ProgramasEducativos programa) {
         this.programa = programa;
+    }
+
+    @XmlTransient
+    public List<ProgramasEducativosAcreditaciones> getProgramasEducativosAcreditacionesList() {
+        return programasEducativosAcreditacionesList;
+    }
+
+    public void setProgramasEducativosAcreditacionesList(List<ProgramasEducativosAcreditaciones> programasEducativosAcreditacionesList) {
+        this.programasEducativosAcreditacionesList = programasEducativosAcreditacionesList;
     }
 
     @Override

@@ -10,7 +10,7 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 import java.io.Serializable;
 
-@RequiredArgsConstructor @EqualsAndHashCode(of = "matriculaPeriodosEscolares")
+@RequiredArgsConstructor @EqualsAndHashCode(of = "matriculaPeriodosEscolares") @ToString
 public class DtoEstudiantePeriodo implements Serializable {
     @Getter @Setter @NonNull private MatriculaPeriodosEscolares matriculaPeriodosEscolares;
     @Getter @Setter @NonNull private AreasUniversidad programa;

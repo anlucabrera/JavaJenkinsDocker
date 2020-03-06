@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
+import mx.edu.utxj.pye.sgi.dto.Apartado;
+import mx.edu.utxj.pye.sgi.dto.DtoAreaAcademica;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.consulta.DtoSatisfaccionServiciosCuestionario;
@@ -16,20 +18,27 @@ import mx.edu.utxj.pye.sgi.ejb.consulta.EjbSatisfaccionServiciosConsulta;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
+import mx.edu.utxj.pye.sgi.enums.SatisfaccionServiciosApartado;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
+import mx.edu.utxj.pye.sgi.util.Serializador;
 import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Faces;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Named
 @ViewScoped
@@ -70,12 +79,13 @@ public class ServiciosConsulta extends ViewScopedRol implements Desarrollable {
             dto.setCuestionario(generarCuestionario.getValor());
 
             ResultadoEJB<List<Evaluaciones>> buscarEvaluaciones = ejbSatisfaccionServiciosConsulta.buscarEvaluaciones();
-            System.out.println("buscarEvaluaciones = " + buscarEvaluaciones);
+//            System.out.println("buscarEvaluaciones = " + buscarEvaluaciones);
             if(!buscarEvaluaciones.getCorrecto()) {mostrarMensajeResultadoEJB(buscarEvaluaciones); return;}
             else dto.setEvaluaciones(buscarEvaluaciones.getValor());
+            cambiarEvaluacion();
 
-            System.out.println("dto.hayEvaluacion() = " + dto.hayEvaluacion());
-            if(dto.hayEvaluacion()) getContenedor(dto.getEvaluacionSeleccionada());
+//            System.out.println("dto.hayEvaluacion() = " + dto.hayEvaluacion());
+//            if(dto.hayEvaluacion()) getContenedor(dto.getEvaluacionSeleccionada());
             /*ResultadoEJB<DtoSatisfaccionServiciosEncuesta> calcularConcentrado = ejbSatisfaccionServiciosConsulta.calcularConcentrado(dto.getEvaluacionSeleccionada());
             System.out.println("calcularConcentrado = " + calcularConcentrado);
             if(!calcularConcentrado.getCorrecto()){mostrarMensajeResultadoEJB(calcularConcentrado); return;}
@@ -86,28 +96,53 @@ public class ServiciosConsulta extends ViewScopedRol implements Desarrollable {
     }
 
     public synchronized DtoSatisfaccionServiciosEncuesta getContenedor(Evaluaciones evaluacion){
-        System.out.println("ServiciosConsulta.getContenedor");
-        System.out.println("dto.hayContenedor(evaluacion) = " + dto.hayContenedor(evaluacion));
-        if(dto.hayContenedor(evaluacion)) return dto.getContenedor();
+//        System.out.println();
+//        System.out.println("ServiciosConsulta.getContenedor");
+//        System.out.println("dto.hayContenedor(evaluacion) = " + dto.hayContenedor(evaluacion));
+        if(dto.hayContenedor(evaluacion)) return dto.getContenedores().get(evaluacion);
 
-        ResultadoEJB<DtoSatisfaccionServiciosEncuesta> calcularConcentrado = ejbSatisfaccionServiciosConsulta.calcularConcentrado(dto.getEvaluacionSeleccionada(), dto.getCuestionario());
+        String identificadorEnSesion = "contenedor_".concat(evaluacion.getEvaluacion().toString());
+        DtoSatisfaccionServiciosEncuesta contenedor = Faces.getSessionAttribute(identificadorEnSesion);
+        if(contenedor != null){
+            dto.getContenedores().put(evaluacion, contenedor);
+            return contenedor;
+        }
+
+        ResultadoEJB<DtoSatisfaccionServiciosEncuesta> calcularConcentrado = ejbSatisfaccionServiciosConsulta.calcularConcentrado(evaluacion, dto.getCuestionario(), dto);
+//        System.out.println("evaluacion en parámetro = " + evaluacion);
+//        System.out.println("evaluacion en concentrado calcularConcentrado = " + calcularConcentrado.getValor().getEvaluacion());
         if(!calcularConcentrado.getCorrecto()){mostrarMensajeResultadoEJB(calcularConcentrado); return null;}
         dto.getContenedores().put(evaluacion, calcularConcentrado.getValor());
-        dto.hayContenedor(evaluacion);//preguntar si hay contenedor y cambiar el contenedor seleccionado
-        return dto.getContenedor();
+        Faces.setSessionAttribute(identificadorEnSesion, calcularConcentrado.getValor());
+//        System.out.println("dto.getContenedores().size() = " + dto.getContenedores().size());
+//        System.out.println("Evaluaciones como claves");
+//        dto.getContenedores().keySet().forEach(System.out::println);
+//        System.out.println("Evaluaciones en valores");
+//        dto.getContenedores().values().stream().map(DtoSatisfaccionServiciosEncuesta::getEvaluacion).forEach(System.out::println);
+//        System.out.println("dto.getContenedores() = " + dto.getContenedores());
+//        dto.hayContenedor(evaluacion);//preguntar si hay contenedor y cambiar el contenedor seleccionado
+//        System.out.println("Devolviendo valor");
+        return dto.getContenedores().get(evaluacion);
     }
 
     public void cambiarEvaluacion(){
+//        System.out.println();
+//        System.out.println("ServiciosConsulta.cambiarEvaluacion");
+//        System.out.println("dto.getEvaluacionSeleccionada() = " + caster.clavePeriodoToString(dto.getEvaluacionSeleccionada().getPeriodo()));
         if(dto.hayEvaluacion()){
             getContenedor(dto.getEvaluacionSeleccionada());
+            ResultadoEJB<List<DtoAreaAcademica>> getProgramasEvaluacion = ejbSatisfaccionServiciosConsulta.getProgramasEvaluacion(dto.getEvaluacionSeleccionada());
+//            System.out.println("getProgramasEvaluacion = " + getProgramasEvaluacion);
+            if(getProgramasEvaluacion.getCorrecto()) dto.setAreasAcademicas(getProgramasEvaluacion.getValor());
+            else mostrarMensajeResultadoEJB(getProgramasEvaluacion);
         }
     }
 
     public List<BigDecimal> getRespuestas(){
-        return Arrays.asList(new BigDecimal(5), new BigDecimal(4), new BigDecimal(3), new BigDecimal(2), new BigDecimal(1), new BigDecimal(0));
+        return dto.getRespuestas();
     }
 
-    public Long calcularFrecuencia(Evaluaciones evaluacion, Pregunta pregunta, BigDecimal respuesta){
+    /*public Long calcularFrecuencia(Evaluaciones evaluacion, Pregunta pregunta, BigDecimal respuesta){
         if(!dto.hayContenedor(evaluacion)){
             mostrarMensaje("No se encontró contenedor para la evaluación seleccionada.");
             return 0L;
@@ -115,5 +150,30 @@ public class ServiciosConsulta extends ViewScopedRol implements Desarrollable {
         ResultadoEJB<DtoSatisfaccionServiciosEncuesta.ConteoInstitucional> calcularFrecuenciaInstitucional = ejbSatisfaccionServiciosConsulta.calcularFrecuenciaInstitucional(dto.getContenedor(), pregunta, respuesta);
         if(!calcularFrecuenciaInstitucional.getCorrecto()) mostrarMensajeResultadoEJB(calcularFrecuenciaInstitucional);
         return calcularFrecuenciaInstitucional.getValor().getFrecuencia();
+    }*/
+
+    public DtoSatisfaccionServiciosEncuesta.FilaProgramaPK getFilaProgramaPK(AreasUniversidad programa, Pregunta pregunta){
+        return new DtoSatisfaccionServiciosEncuesta.FilaProgramaPK(programa, pregunta);
+    }
+
+    public DtoSatisfaccionServiciosEncuesta.FilaProgramaApartadoPK getFilaProgramaApartadoPK(AreasUniversidad programa, Apartado apartado){
+        return new DtoSatisfaccionServiciosEncuesta.FilaProgramaApartadoPK(programa, apartado);
+    }
+
+    public DtoSatisfaccionServiciosEncuesta.GraficaSerieAreaHistoricoPK getGraficaSerieAreaHistoricoPK(AreasUniversidad area, SatisfaccionServiciosApartado satisfaccionServiciosApartado){
+//        System.out.println("area = " + area + ", satisfaccionServiciosApartado = " + satisfaccionServiciosApartado);
+        if(area == null) area = new AreasUniversidad((short)0);
+        return new DtoSatisfaccionServiciosEncuesta.GraficaSerieAreaHistoricoPK(area, satisfaccionServiciosApartado);
+    }
+
+    public AreasUniversidad getAreaPorPrograma(AreasUniversidad programa){
+        DtoAreaAcademica areaAcademica = dto.getAreasAcademicas().stream().filter(dtoAreaAcademica -> dtoAreaAcademica.getProgramas().contains(programa)).findFirst().orElse(null);
+        if(areaAcademica != null) return areaAcademica.getAreaAcademica();
+        else return new AreasUniversidad((short)0);
+    }
+
+    public List<DtoAreaAcademica> getAreasAcademicas(){
+//        dto.getAreasAcademicas().forEach(System.out::println);
+        return dto.getAreasAcademicas().stream().filter(dtoAreaAcademica -> dtoAreaAcademica.getAreaAcademica().getArea() != null).sorted(Comparator.comparing(dtoAreaAcademica -> dtoAreaAcademica.getAreaAcademica().getNombre())).collect(Collectors.toList());
     }
 }

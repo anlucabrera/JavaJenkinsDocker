@@ -212,7 +212,7 @@ public class Caster {
      public String cicloToString(CiclosEscolares ciclo){
         return (new StringBuilder())
                 .append(ciclo.getInicio())
-                .append(" - ")
+                .append("-")
                 .append(ciclo.getFin())
                 .toString();
 
