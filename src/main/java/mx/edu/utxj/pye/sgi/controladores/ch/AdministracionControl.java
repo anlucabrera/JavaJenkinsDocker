@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbPresupuestacion;
+import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
@@ -83,6 +84,7 @@ public class AdministracionControl implements Serializable {
     @Inject    UtilidadesPOA utilidadesPOA;
 
     @Inject LogonMB logonMB;
+    @Inject    UtilidadesCH uch;
     @Getter private Boolean cargado = false;
     
     @PostConstruct
@@ -127,6 +129,17 @@ public class AdministracionControl implements Serializable {
                     } catch (Throwable ex) {
                         Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
                         Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                if (t.getEvaluacion() == null) {
+                    try {
+                        Calendarioevaluacionpoa c = new Calendarioevaluacionpoa();
+                        c = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(LocalDate.now()));
+                        t.setEvaluacion(new Calendarioevaluacionpoa());
+                        t.setEvaluacion(c);
+                    } catch (Throwable ex) {
+                        Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+                        Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             });
