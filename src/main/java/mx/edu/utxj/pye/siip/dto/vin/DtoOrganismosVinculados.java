@@ -122,6 +122,7 @@ public final class DtoOrganismosVinculados {
     @Getter @Setter String rutaArchivo;
     
     @Getter @Setter private List<OrganismosVinculados> lstOrganismosVinculados;
+    @Getter @Setter private List<OrganismosVinculados> lstOrganismosVinculadosFiltros;
 
     public DtoOrganismosVinculados() {
         setRegistroTipo(new RegistrosTipo((short) 27));

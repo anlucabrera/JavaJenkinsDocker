@@ -45,6 +45,7 @@ import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoParticipantesAsesoriaCE;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -291,7 +292,7 @@ public class RegistroAsesoriaDocente extends ViewScopedRol implements Desarrolla
     }
     
     public void actualizarAsesoria(Asesoria asesoria) {
-        ResultadoEJB<Boolean> res = ejb.editaAsesoria(asesoria);
+        ResultadoEJB<Boolean> res = ejb.actualizaAsesoriaCE(asesoria);
         if (res.getCorrecto()) {
             mostrarMensajeResultadoEJB(res);
             actualizarListadoAsesorias();
@@ -325,9 +326,35 @@ public class RegistroAsesoriaDocente extends ViewScopedRol implements Desarrolla
 
     public void guardarAsistenciaAsesoria(ValueChangeEvent event){
         Estudiante estudiante = (Estudiante) event.getComponent().getAttributes().get("estudiante");
-        System.err.println("Estudiante: " + estudiante.getIdEstudiante());
         ResultadoEJB<Boolean> res = ejb.asignaParticipanteAsesoria(rol.getAsesoriaSeleccionada(), estudiante.getIdEstudiante());
         mostrarMensajeResultadoEJB(res);
+    }
+    
+    public void guardarAsistenciaGrupalAsesoriaEstudiante(List<DtoParticipantesAsesoriaCE> listaEstudiantes){
+        if(!listaEstudiantes.isEmpty()){
+            listaEstudiantes.stream().forEach((t) -> {
+                ResultadoEJB<Boolean> resCompruebaParticipacion = ejb.verificarParticipanteAsesoria(rol.getAsesoriaSeleccionada(), t.getEstudiante().getEstudiante().getIdEstudiante());
+                if(resCompruebaParticipacion.getCorrecto()){
+                    ejb.eliminarParticipanteAsesoria(rol.getAsesoriaSeleccionada(), t.getEstudiante().getEstudiante().getIdEstudiante());
+                    ejb.asignaParticipanteAsesoria(rol.getAsesoriaSeleccionada(), t.getEstudiante().getEstudiante().getIdEstudiante());
+                }else ejb.asignaParticipanteAsesoria(rol.getAsesoriaSeleccionada(), t.getEstudiante().getEstudiante().getIdEstudiante());
+            });
+            mostrarMensaje("Se ha realizado el pase de lista general correctamente");
+            verificarParticipantes();
+        }
+    }
+    
+    public void eliminarAsistenciaGrupalAsesoriaEstudiante(List<DtoParticipantesAsesoriaCE> listaEstudiantes){
+        if(!listaEstudiantes.isEmpty()){
+            listaEstudiantes.stream().forEach((t) -> {
+                ResultadoEJB<Boolean> resCompruebaParticipacion = ejb.verificarParticipanteAsesoria(rol.getAsesoriaSeleccionada(), t.getEstudiante().getEstudiante().getIdEstudiante());
+                if(resCompruebaParticipacion.getCorrecto()){
+                    ejb.eliminarParticipanteAsesoria(rol.getAsesoriaSeleccionada(), t.getEstudiante().getEstudiante().getIdEstudiante());
+                }
+            });
+            mostrarMensaje("Se eliminado el pase de lista general correctamente");
+            verificarParticipantes();
+        }
     }
     
     /*************************************************************************************************************************/

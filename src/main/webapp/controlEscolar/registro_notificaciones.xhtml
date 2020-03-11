@@ -391,25 +391,25 @@
                                     </h:form>
 
                                     <!-- Cuadro de díalogo de enlaces para la notificación -->
-                                    <h:form id="frmEnlacesNotificaciones" >
-                                        <p:remoteCommand name="actualizarEnlacesNotificacion" update="frmEnlacesNotificaciones" />
-                                        <p:dialog id="modalConsultaEnlacesNotificaciones"
-                                                  widgetVar="modalConsultaEnlacesNotificaciones"
-                                                  width="900"
-                                                  height="auto"
-                                                  closeOnEscape="true"
-                                                  visible="#{false}"
-                                                  showEffect="fade"
-                                                  hideEffect="fade"
-                                                  modal="true"
-                                                  draggable="true"
-                                                  header="Enlaces asignados en la notificación" 
-                                                  onHide="actualizarRegistroNotificaciones();"
-                                                  styleClass="panel panel-primary" 
-                                                  responsive="true" 
-                                                  resizable="false" 
-                                                  maximizable="false"
-                                                  >
+                                    <p:dialog id="modalConsultaEnlacesNotificaciones"
+                                              widgetVar="modalConsultaEnlacesNotificaciones"
+                                              width="900"
+                                              height="auto"
+                                              closeOnEscape="true"
+                                              visible="#{false}"
+                                              showEffect="fade"
+                                              hideEffect="fade"
+                                              modal="true"
+                                              draggable="true"
+                                              header="Enlaces asignados en la notificación" 
+                                              onHide="actualizarRegistroNotificaciones();"
+                                              styleClass="panel panel-primary" 
+                                              responsive="true" 
+                                              resizable="false" 
+                                              maximizable="false"
+                                              >
+                                        <h:form id="frmEnlacesNotificaciones" >
+                                            <p:remoteCommand name="actualizarEnlacesNotificacion" actionListener="#{registroNotificacionesGeneral.actualizar}" process="@this" update="frmEnlacesNotificaciones" />
                                             <div class="row">
                                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                                     <div style="margin-bottom: 5px;">
@@ -451,9 +451,9 @@
                                                                         <p:commandButton id="btnGuardarEnlaceNotificacion"
                                                                                          value="Guardar enlace"
                                                                                          class="btn btn-sm btn-info" 
-                                                                                         icon="fa fa-check-circle"
+                                                                                         icon="fa fa-save"
                                                                                          title="Guardar enlace"
-                                                                                         style="width: 11em"
+                                                                                         style="width: 15em"
                                                                                          actionListener="#{registroNotificacionesGeneral.guardarEnlaceNotificacion}"
                                                                                          oncomplete="actualizarEnlacesNotificacion();"
                                                                                          />
@@ -497,11 +497,9 @@
                                                         </center>
                                                     </div>
                                                 </div>
-
                                             </div>
-                                        </p:dialog>
-                                    </h:form>
-
+                                        </h:form>
+                                    </p:dialog>
                                 </div>
                             </div>
                         </div>

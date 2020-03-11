@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -119,10 +120,12 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     
     public void inicializarNotificacionCeEnlace(){
         rol.setNotificacionEnlace(new NotificacionesEnlaces());
+        if(rol.getNotificacionCe().getNotificacion() != null){rol.getNotificacionEnlace().setNotificacion(rol.getNotificacionCe());}
     }
     
     public void inicializarNotificacionCeImagen(){
         rol.setNotificacionCeImagen(new NotificacionesCeImagenes());
+        if(rol.getNotificacionCe().getNotificacion() != null){rol.getNotificacionCeImagen().setNotificacion(rol.getNotificacionCe());}
     }
     
     public void inicializarListaNotificacionesCe(){
@@ -204,10 +207,10 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     }
     
     /*********************************************** Filtros *********************************************************/
-    public void abrirModalConsultaEnlaces(NotificacionesCe notificacion){
-        System.err.println("Enlace abrir modal");
+    public void abrirModalConsultaEnlaces(NotificacionesCe notificacion) {
         rol.setNotificacionCe(notificacion);
-        mostrarEnlacesPorNotificacion();
+        inicializarNotificacionCeEnlace();
+        actualizarEnlacesNotificacion();
         Ajax.update("frmEnlacesNotificaciones");
         Ajax.oncomplete("skin();");
         Ajax.oncomplete("PF('modalConsultaEnlacesNotificaciones').show();");
@@ -215,7 +218,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     
     public void abrirModalConsultaImagenes(NotificacionesCe notificacion){
         rol.setNotificacionCe(notificacion);
-        mostrarImagenesPorNotificacion();
+//        Considerar la actualización de la base de datos
         Ajax.update("frmImagenesNotificaciones");
         Ajax.oncomplete("skin();");
         Ajax.oncomplete("PF('modalConsultaImagenesNotificaciones').show();");
@@ -293,11 +296,17 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         rol.setListaNotificacionesEnlaces(rol.getNotificacionCe().getNotificacionesEnlacesList());
     }
     
-    public void actualizarEnlacesNotificacion(){
+    public void actualizarEnlacesNotificacion() {
         ResultadoEJB<List<NotificacionesEnlaces>> resListaEnlaces = ejb.consultarEnlacesPorNotificacion(rol.getNotificacionCe());
-        if(resListaEnlaces.getCorrecto()){
+        if (resListaEnlaces.getCorrecto()) {
             rol.setListaNotificacionesEnlaces(resListaEnlaces.getValor());
-        }else{
+            if (!rol.getListaNotificacionesEnlaces().isEmpty()) {
+                rol.setNotificacionCe(rol.getListaNotificacionesEnlaces().get(0).getNotificacion());
+                rol.getListaNotificacionesCe().removeIf(nce -> nce.getNotificacion().equals(rol.getNotificacionCe().getNotificacion()));
+                rol.getListaNotificacionesCe().stream().sorted((s1,s2) -> s2.getNotificacion().compareTo(s1.getNotificacion())).collect(Collectors.toList());
+                rol.getListaNotificacionesCe().add(rol.getNotificacionCe());
+            }
+        } else {
             mostrarMensajeResultadoEJB(resListaEnlaces);
         }
     }
