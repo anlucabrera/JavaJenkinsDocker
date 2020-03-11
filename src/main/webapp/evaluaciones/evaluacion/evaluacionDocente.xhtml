@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Evaluación al desempeño docente por materia
+    </ui:define>
+
+    <ui:define name="description">
+        Avance de la evaluación
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{evaluacionDocenteEstudiante.cargada}">
+        <adm:breadcrumb title="Avance de la evaluación"/>
+        <div class="contenedor">
+            <c:if test="#{evaluacionDocenteEstudiante.cargada}">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h:form id="frm">
+                        <p:tabView id="tabw1">
+                            <p:tab title="Avance de la evaluación">
+                                <section class="content">
+                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                            <div class="col-md-12">
+                                                    <div class="container-fluid">
+                                                        <div class="row">
+                                                            <div class="col-md-2">
+                                                                <div class="card card-primary card-outline">
+                                                                    <div class="card-body box-profile">
+                                                                        <c:if test="#{evaluacionDocenteEstudiante.finalizado}">
+                                                                            <h4><span class="label label-success"><i class="fa fa-check" />Finalizado.</span></h4>
+                                                                        </c:if>
+                                                                        <c:if test="#{!evaluacionDocenteEstudiante.finalizado}">
+                                                                            <h4><span class="label label-warning"><i class="fa fa-close" />Pendiente</span></h4>
+                                                                        </c:if>
+                                                                        <br/>
+
+                                                                        <c:if test="#{evaluacionDocenteEstudiante.estudianteSauiit}">
+                                                                            <div class="text-center">
+                                                                                <img class="profile-user-img img-fluid img-circle"
+                                                                                     src="https://150.140.1.9:8181/saiiut2/imagenes/alumnos/#{evaluacionDocenteEstudiante.estudianteEvaluacion.matricula}.jpg"
+                                                                                     alt="User profile picture"></img>
+                                                                            </div>
+                                                                        </c:if>
+                                                                        <c:if test="#{evaluacionDocenteEstudiante.estudianteCE}">
+                                                                            <div class="text-center">
+                                                                                <img class="profile-user-img img-fluid img-circle"
+                                                                                     src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{evaluacionDocenteEstudiante.estudianteEvaluacion.matricula}.jpg"
+                                                                                     alt="User profile picture"></img>
+                                                                            </div>
+                                                                        </c:if>
+                                                                        <h3 class="profile-username text-center">#{evaluacionDocenteEstudiante.estudianteEvaluacion.nombreCEstudiante}</h3>
+                                                                        <p class="text-muted text-center">#{evaluacionDocenteEstudiante.estudianteEvaluacion.grado} - #{evaluacionDocenteEstudiante.estudianteEvaluacion.grupo}</p>
+                                                                        <p class="text-muted text-center">#{evaluacionDocenteEstudiante.estudianteEvaluacion.carrera.nombre}</p>
+                                                                        <ul class="list-group list-group-unbordered mb-3">
+                                                                            <li class="list-group-item">
+                                                                                <b>Total docentes:</b> <a class="right floated">#{evaluacionDocenteEstudiante.totalDocentes}</a>
+                                                                            </li>
+                                                                            <li class="list-group-item">
+                                                                                <b>Evaluados:</b> <a class="right floated">#{evaluacionDocenteEstudiante.evaluados2}</a>
+                                                                            </li>
+                                                                            <li class="list-group-item">
+                                                                                <b>Porcentaje de avance:</b>
+                                                                                <div class="progress">
+                                                                                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                                                                         aria-valuenow="#{evaluacionDocenteEstudiante.porcentaje}" aria-valuemin="0" aria-valuemax="100"
+                                                                                         style="background-color: #00a65a; width:#{evaluacionDocenteEstudiante.porcentaje}%">
+                                                                                        <span class="progress-completed">
+                                                                                             <h:outputText value="#{evaluacionDocenteEstudiante.porcentaje}" style="color: #0E0000; font-weight: bold">
+                                                                                                 <f:convertNumber type="percent" pattern="0.00"/>
+                                                                                             </h:outputText>
+                                                                                        </span>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </li>
+                                                                        </ul>
+
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <p:tabView id="tabw2">
+                                                                    <p:tab title="Docentes" >
+                                                                        <section class="content">
+                                                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                                                    <div class="col-md-12">
+                                                                                        <c:forEach items="#{evaluacionDocenteEstudiante.listaResultados}" var="evaluado">
+                                                                                            <div class="col-md-6 col-sm-6 col-12">
+                                                                                                <c:set var="c" value="#{evaluado.resultados2.completo}"/>
+                                                                                                <c:set var="v"/>
+                                                                                                <c:set var="b"/>
+                                                                                                <c:if test="#{c}">
+                                                                                                    <c:set var="v" value="bg-green"/>
+                                                                                                    <c:set var="b" value="btn-success"/>
+                                                                                                </c:if>
+                                                                                                <c:if test="#{!c}">
+                                                                                                    <c:set var="v" value=" bg-yellow"/>
+                                                                                                    <c:set var="b" value="btn-warning"/>
+                                                                                                </c:if>
+                                                                                                <div class="small-box #{v}">
+                                                                                                    <span class="info-box-icon"> <img class="profile-user-img img-fluid img-circle"
+                                                                                                                                          src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{evaluado.docenteImparte.clave}.jpg"
+                                                                                                                                          alt="User profile picture"></img></span>
+                                                                                                    <div class="info-box-content">
+                                                                                                            <c:if test="#{evaluado.resultados2.completo}"><span class="info-box-number">Finalizado</span></c:if>
+                                                                                                            <c:if test="#{!evaluado.resultados2.completo}"><span class="info-box-number">Pendiente</span></c:if>
+                                                                                                            <span class="info-box-more">#{evaluado.docenteImparte.nombre}</span>
+                                                                                                            <span class="info-box-number">#{evaluado.nombreMateria}</span>
+
+                                                                                                    </div>
+                                                                                                    <p:commandButton value="Ver evaluación" class="btn btn-block #{b} btn-sm"
+                                                                                                                         actionListener="#{evaluacionDocenteEstudiante.getdocenteEvaluando(evaluado)}"
+                                                                                                                         oncomplete="PF('modalEvaluacion').show();"
+
+                                                                                                    >
+                                                                                                        <p:ajax process="@this" oncomplete="updateEvaluacion" update=":frmEvaluacion,:frm"/>
+                                                                                                    </p:commandButton>
+
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </c:forEach>
+                                                                                    </div>
+                                                                            </div>
+                                                                        </section>
+                                                                    </p:tab>
+
+                                                                </p:tabView>
+                                                            </div>
+
+
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+
+
+                                </section>
+                            </p:tab>
+                        </p:tabView>
+                        </h:form>
+
+                    </div>
+                </div>
+                <p:dialog id="modalEvaluacion"
+                          widgetVar="modalEvaluacion" closeOnEscape="false" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          style="scroll-: 10px"
+                          modal="true" draggable="true" header="Evaluación al desempeño docente por materia" position="center" styleClass="panel panel-primary" responsive="true" resizable="true" closable="false" maximizable="true">
+                    <h:form id="frmEvaluacion">
+                        <p:scrollPanel style="width: 1100px;height: 800px" mode="false">
+                            <p:remoteCommand id="updateEvaluacion" name="updateEvaluacion" update="frmEvaluacion"></p:remoteCommand>
+                            <div class="box box-primary">
+                                <div class="box-header with-border">
+                                 
+                                    <p:separator/>
+                                    <div class="box-body">
+                                        <div class="row hidden-sm hidden-md hidden-sm hidden-xs" style="background-color: white;margin: auto">
+                                            <div class="col-lg-4 col-md-6 col-lg-offset-2 text-center text-info" style="height: 230px; vertical-align: middle;">
+                                                <p:outputPanel >
+                                                    <c:if test="#{evaluacionDocenteEstudiante.dtoDocenteEvaluando.resultados2.completo}">
+                                                        <div>
+                                                        </div>
+                                                    </c:if>
+                                                </p:outputPanel>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-4 text-center" style="padding-left: 2px; padding-right: 2px; background-color: aliceblue;">
+                                                    <c:set var="numeroNomina" value="#{evaluacionDocenteEstudiante.dtoDocenteEvaluando.docenteImparte.clave}" />
+                                                    <c:set var="docente" value="#{evaluacionDocenteEstudiante.dtoDocenteEvaluando}" />
+                                                    <p:outputPanel >
+                                                        <h4 class="#{docente.resultados2.completo?'text-info':'text-warn'} " style="margin: 0px;">#{docente.resultados2.completo?'Finalizado':'Pendiente'}</h4>
+                                                        <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{numeroNomina}.jpg" width="150"
+                                                             alt="#{numeroNomina}" title="Personal #{numeroNomina}"
+                                                             style="border-color: black; border-style: solid; border-width: 2px;" />
+                                                    </p:outputPanel>
+                                                    <p:outputLabel value="#{docente.docenteImparte.nombre}" />
+                                                    <br/>
+                                                    <p:outputLabel value="#{docente.nombreMateria}" />
+                                                </div>
+
+                                            </div>
+                                            <!--Apartado 1-->
+                                            <div class="row">
+                                                <c:set var="apartado" value="#{evaluacionDocenteEstudiante.preguntas[0]}" />
+                                                <c:set var="pregunta" value="#{apartado.preguntas}" />
+                                                <div class="panel panel-primary" style="max-width: 900px;margin: auto; font-size: large;">
+                                                    <div class="panel-heading aceptado">
+                                                        <h3 class="panel-title" style="text-align: justify;">
+                                                            #{apartado.contenido}
+                                                        </h3>
+                                                    </div>
+                                                    <table class="table table-striped table-responsive">
+                                                        <thead>
+                                                        <tr class="denegado">
+                                                            <th>#</th>
+                                                            <th>Pregunta</th>
+                                                            <th style="text-align: center; width: 280px;">Opción</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <!--1 -->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[0].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[0].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{1}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{1}" value="#{docente.resultados2.r1}"
+                                                                                            valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                            <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/></p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        <!--2 -->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[1].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[1].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                 <f:ajax id="r#{1}" execute="#{id}">
+                                                                        <p:selectOneButton  id="r#{2}" value="#{docente.resultados2.r2}"
+                                                                                            valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                            <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                            <p:ajax process="@this"/>
+                                                                        </p:selectOneButton>
+                                                                 </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        <!--3-->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[2].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[2].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{3}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{3}" value="#{docente.resultados2.r3}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/>
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                            <!--Apartado 2-->
+                                            <div class="row">
+                                                <c:set var="apartado" value="#{evaluacionDocenteEstudiante.preguntas[1]}" />
+                                                <c:set var="pregunta" value="#{apartado.preguntas}" />
+                                                <div class="panel panel-primary" style="max-width: 900px;margin: auto; font-size: large;">
+                                                    <div class="panel-heading aceptado">
+                                                        <h3 class="panel-title" style="text-align: justify;">
+                                                            #{apartado.contenido}
+                                                        </h3>
+                                                    </div>
+                                                    <table class="table table-striped table-responsive">
+                                                        <thead>
+                                                        <tr class="denegado">
+                                                            <th>#</th>
+                                                            <th>Pregunta</th>
+                                                            <th style="text-align: center; width: 280px;">Opción</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <!--4-->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[0].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[0].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{4}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{4}" value="#{docente.resultados2.r4}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/></p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                            <!--Apartado 3-->
+                                            <div class="row">
+                                                <c:set var="apartado" value="#{evaluacionDocenteEstudiante.preguntas[2]}" />
+                                                <c:set var="pregunta" value="#{apartado.preguntas}" />
+                                                <div class="panel panel-primary" style="max-width: 900px;margin: auto; font-size: large;">
+                                                    <div class="panel-heading aceptado">
+                                                        <h3 class="panel-title" style="text-align: justify;">
+                                                            #{apartado.contenido}
+                                                        </h3>
+                                                    </div>
+                                                    <table class="table table-striped table-responsive">
+                                                        <thead>
+                                                        <tr class="denegado">
+                                                            <th>#</th>
+                                                            <th>Pregunta</th>
+                                                            <th style="text-align: center; width: 280px;">Opción</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <!--5 -->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[0].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[0].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{5}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{5}" value="#{docente.resultados2.r5}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/></p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        <!--6 -->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[1].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[1].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{6}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{6}" value="#{docente.resultados2.r6}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/>
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        <!--7-->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[2].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[2].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{7}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{7}" value="#{docente.resultados2.r7}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/>
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        <!--8-->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[3].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[3].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{8}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{8}" value="#{docente.resultados2.r8}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/>
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        <!--9-->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[4].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[4].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{9}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{9}" value="#{docente.resultados2.r9}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/>
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        <!--10-->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[5].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[5].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{10}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{10}" value="#{docente.resultados2.r10}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/>
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                            <!--Apartado 4-->
+                                            <div class="row">
+                                                <c:set var="apartado" value="#{evaluacionDocenteEstudiante.preguntas[3]}" />
+                                                <c:set var="pregunta" value="#{apartado.preguntas}" />
+                                                <div class="panel panel-primary" style="max-width: 900px;margin: auto; font-size: large;">
+                                                    <div class="panel-heading aceptado">
+                                                        <h3 class="panel-title" style="text-align: justify;">
+                                                            #{apartado.contenido}
+                                                        </h3>
+                                                    </div>
+                                                    <table class="table table-striped table-responsive">
+                                                        <thead>
+                                                        <tr class="denegado">
+                                                            <th>#</th>
+                                                            <th>Pregunta</th>
+                                                            <th style="text-align: center; width: 280px;">Opción</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <!--11 -->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[0].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[0].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{11}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{11}" value="#{docente.resultados2.r11}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/></p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        <!--12 -->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[1].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[1].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{12}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{12}" value="#{docente.resultados2.r12}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/>
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        <!--13-->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[2].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[2].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{13}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{13}" value="#{docente.resultados2.r13}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/>
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                            <!--Apartado 5-->
+                                            <div class="row">
+                                                <c:set var="apartado" value="#{evaluacionDocenteEstudiante.preguntas[4]}" />
+                                                <c:set var="pregunta" value="#{apartado.preguntas}" />
+                                                <div class="panel panel-primary" style="max-width: 900px;margin: auto; font-size: large;">
+                                                    <div class="panel-heading aceptado">
+                                                        <h3 class="panel-title" style="text-align: justify;">
+                                                            #{apartado.contenido}
+                                                        </h3>
+                                                    </div>
+                                                    <table class="table table-striped table-responsive">
+                                                        <thead>
+                                                        <tr class="denegado">
+                                                            <th>#</th>
+                                                            <th>Pregunta</th>
+                                                            <th style="text-align: center; width: 280px;">Opción</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <!--14 -->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[0].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[0].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{14}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{14}" value="#{docente.resultados2.r14}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/></p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        <!--15-->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[1].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[1].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{15}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{15}" value="#{docente.resultados2.r15}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/>
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                            <!--Apartado 6-->
+                                            <div class="row">
+                                                <c:set var="apartado" value="#{evaluacionDocenteEstudiante.preguntas[5]}" />
+                                                <c:set var="pregunta" value="#{apartado.preguntas}" />
+                                                <div class="panel panel-primary" style="max-width: 900px;margin: auto; font-size: large;">
+                                                    <div class="panel-heading aceptado">
+                                                        <h3 class="panel-title" style="text-align: justify;">
+                                                            #{apartado.contenido}
+                                                        </h3>
+                                                    </div>
+                                                    <table class="table table-striped table-responsive">
+                                                        <thead>
+                                                        <tr class="denegado">
+                                                            <th>#</th>
+                                                            <th>Pregunta</th>
+                                                            <th style="text-align: center; width: 280px;">Opción</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <!--16 -->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[0].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[0].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{16}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{16}" value="#{docente.resultados2.r16}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/></p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        <!--17 -->
+                                                        <tr>
+                                                            <td><h:outputLabel value="#{pregunta[1].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                            <td style="text-align: justify;">#{pregunta[1].titulo}</td>
+                                                            <td class="text-center" style="min-width: 120px;">
+                                                                <f:ajax id="r#{17}" execute="#{id}">
+                                                                    <p:selectOneButton  id="r#{17}" value="#{docente.resultados2.r17}"
+                                                                                        valueChangeListener="#{evaluacionDocenteEstudiante.saveRespueta}">
+                                                                        <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
+                                                                        <p:ajax process="@this"/>
+                                                                    </p:selectOneButton>
+                                                                </f:ajax>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+
+                                            <p:spacer width="30px"/>
+                                            <div class="row">
+                                                <div class="col-lg-5"/>
+                                                <div class="col-lg-4">
+                                                    <p:commandButton value="Continuar evaluado" styleClass="btn-primary"
+                                                                     actionListener="#{evaluacionDocenteEstudiante.actualizaDocente}"
+                                                                     onclick="PF('modalEvaluacion').hide();"
+
+                                                    >
+                                                        <p:ajax  update=":frm,:frmEvaluacion"/>
+                                                    </p:commandButton>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </p:scrollPanel>
+
+                    </h:form>
+
+
+                </p:dialog>
+
+            </c:if>
+
+        </div>
+
+
+
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

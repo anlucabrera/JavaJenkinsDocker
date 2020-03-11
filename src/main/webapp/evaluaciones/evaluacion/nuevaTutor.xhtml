@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="head-end">
+        <!-- Inicio estilos par proceso electoral -->
+        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        <!-- Fin estilos par proceso electoral -->
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="title">
+        Evaluación de tutores
+    </ui:define>
+
+    <ui:define name="description">
+        Formulario de la evaluación
+    </ui:define>
+    <ui:define name="body">
+        <c:if test="#{evaluacionTutorEstudiante.cargada}">
+        <adm:breadcrumb title="Evaluación de tutores - Formulario"/>
+        <h:form id="frm" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    </div>
+                    <p:separator/>
+                    <div class="box box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">
+                                <c:if test="#{!evaluacionTutorEstudiante.cargada}">
+                                    Sin evaluaciones activas
+                                </c:if>
+                                <c:if test="#{evaluacionTutorEstudiante.cargada}">
+
+                                </c:if>
+                            </h3>
+
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <c:if test="#{!evaluacionTutorEstudiante.cargada}">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 text-info text-center">
+                                        <h5 style="margin-top: 0px; margin-bottom: 0px;">
+                                            Si considera que es un error notifique al administrador.
+                                        </h5>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <c:if test="#{evaluacionTutorEstudiante.cargada}">
+                                <div jsf:id="filaHeader" class="row hidden-sm hidden-md hidden-sm hidden-xs" style="background-color: white;margin: auto">
+                                    <div class="col-lg-4 col-md-6 col-lg-offset-2 text-center text-info" style="height: 230px; vertical-align: middle;">
+                                        <p:outputPanel >
+                                            <p:autoUpdate/>
+                                            <c:if test="#{evaluacionTutorEstudiante.finalizado}">
+                                                <div>
+                                                    <h2 style="background-color: aliceblue;">Evaluación terminada</h2>
+                                                    <p:graphicImage library="img" name="ok_azul.png" height="150" />
+                                                </div>
+                                            </c:if>
+                                        </p:outputPanel>
+                                    </div>
+                                    <div class="col-lg-4 text-center" style="padding-left: 2px; padding-right: 2px; background-color: aliceblue;">
+                                        <c:set var="numeroNomina" value="#{evaluacionTutorEstudiante.tutorEstudiante.clave}" />
+                                        <p:outputPanel >
+                                            <p:autoUpdate/>
+                                            <h4 class="#{evaluacionTutor2.finalizado?'text-info':'text-warn'} " style="margin: 0px;">#{evaluacionTutorEstudiante.finalizado?'Finalizado':'Pendiente'}</h4>
+                                            <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{numeroNomina}.jpg" width="150" alt="#{numeroNomina}" title="Personal #{numeroNomina}" style="border-color: black; border-style: solid; border-width: 2px;" />
+                                        </p:outputPanel>
+                                        <p:outputLabel value="#{evaluacionTutorEstudiante.tutorEstudiante.nombre}" />
+                                        <br/>
+                                    </div>
+                                </div>
+                                <p:sticky target="filaHeader" margin="5" />
+                                <c:set var="apartado" value="#{evaluacionTutorEstudiante.apartados[caster.toInt(0)]}" />
+                                <div class="row">
+                                    <p:separator />
+                                    <div class="col-lg-4 col-md-6 col-lg-offset-2 text-info text-center">
+                                        <h3 style="margin-top: 0px; margin-bottom: 0px;">
+                                            #{apartado.contenido}
+                                        </h3>
+                                    </div>
+                                </div>
+                                <!--1 -->
+                                <c:set var="id" value="#{caster.toInt(1)}" />
+                                <c:set var="pregunta" value="#{apartado.preguntas[caster.toInt(id -1)]}" />
+                                <div class="row">
+                                    <div class="col-lg-4 col-lg-offset-2 col-md-6 text-info text-justify" style="padding-top: 10px;">
+                                        <div class="row">
+                                            <div class="col-md-1"><h3 style="margin-top: 5px; margin-bottom: 25px;"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /> </h:outputText> </h3></div>
+                                            <div class="col-md-11"> #{pregunta.titulo} </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutorEstudiante.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                        <f:ajax execute="p#{id}">
+                                            <p:selectOneButton id="p#{id}" value="#{evaluacionTutorEstudiante.resultados.r1}" valueChangeListener="#{evaluacionTutorEstudiante.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
+                                                <f:selectItems value="#{evaluacionTutorEstudiante.respuestasPosibles}" />
+                                            </p:selectOneButton>
+                                            <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
+                                        </f:ajax>
+                                    </div>
+                                </div>
+                                <!--2 -->
+                                <c:set var="id" value="#{caster.toInt(id + 1)}" />
+                                <c:set var="pregunta" value="#{apartado.preguntas[caster.toInt(id - 1)]}" />
+                                <div class="row">
+                                    <div class="col-lg-4 col-lg-offset-2 col-md-6 text-info text-justify" style="padding-top: 10px;">
+                                        <div class="row">
+                                            <div class="col-md-1"><h3 style="margin-top: 5px; margin-bottom: 25px;"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /> </h:outputText> </h3></div>
+                                            <div class="col-md-11"> #{pregunta.titulo} </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutorEstudiante.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                        <f:ajax execute="p#{id}">
+                                            <p:selectOneButton id="p#{id}" value="#{evaluacionTutorEstudiante.resultados.r2}" valueChangeListener="#{evaluacionTutorEstudiante.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
+                                                <f:selectItems value="#{evaluacionTutorEstudiante.respuestasPosibles}" />
+                                            </p:selectOneButton>
+                                            <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
+                                        </f:ajax>
+                                    </div>
+                                </div>
+                                <!-- 3 -->
+
+                                <c:set var="id" value="#{caster.toInt(id + 1)}" />
+                                <c:set var="pregunta" value="#{apartado.preguntas[caster.toInt(id - 1)]}" />
+                                <div class="row">
+                                    <div class="col-lg-4 col-lg-offset-2 col-md-6 text-info text-justify" style="padding-top: 10px;">
+                                        <div class="row">
+                                            <div class="col-md-1"><h3 style="margin-top: 5px; margin-bottom: 25px;"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /> </h:outputText> </h3></div>
+                                            <div class="col-md-11"> #{pregunta.titulo} </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutorEstudiante.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                        <f:ajax execute="p#{id}">
+                                            <p:selectOneButton id="p#{id}" value="#{evaluacionTutorEstudiante.resultados.r3}" valueChangeListener="#{evaluacionTutorEstudiante.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
+                                                <f:selectItems value="#{evaluacionTutorEstudiante.respuestasPosibles}" />
+                                            </p:selectOneButton>
+                                            <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
+                                        </f:ajax>
+                                    </div>
+                                </div>
+                                <!--4 -->
+                                <c:set var="id" value="#{caster.toInt(id + 1)}" />
+                                <c:set var="pregunta" value="#{apartado.preguntas[caster.toInt(id - 1)]}" />
+                                <div class="row">
+                                    <div class="col-lg-4 col-lg-offset-2 col-md-6 text-info text-justify" style="padding-top: 10px;">
+                                        <div class="row">
+                                            <div class="col-md-1"><h3 style="margin-top: 5px; margin-bottom: 25px;"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /> </h:outputText> </h3></div>
+                                            <div class="col-md-11"> #{pregunta.titulo} </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutorEstudiante.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                        <f:ajax execute="p#{id}">
+                                            <p:selectOneButton id="p#{id}" value="#{evaluacionTutorEstudiante.resultados.r4}" valueChangeListener="#{evaluacionTutorEstudiante.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
+                                                <f:selectItems value="#{evaluacionTutorEstudiante.respuestasPosibles}" />
+                                            </p:selectOneButton>
+                                            <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
+                                        </f:ajax>
+                                    </div>
+                                </div>
+                                <!-- 5 -->
+
+                                <c:set var="id" value="#{caster.toInt(id + 1)}" />
+                                <c:set var="pregunta" value="#{apartado.preguntas[caster.toInt(id - 1)]}" />
+                                <div class="row">
+                                    <div class="col-lg-4 col-lg-offset-2 col-md-6 text-info text-justify" style="padding-top: 10px;">
+                                        <div class="row">
+                                            <div class="col-md-1"><h3 style="margin-top: 5px; margin-bottom: 25px;"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /> </h:outputText> </h3></div>
+                                            <div class="col-md-11"> #{pregunta.titulo} </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutorEstudiante.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                        <f:ajax execute="p#{id}">
+                                            <p:selectOneButton id="p#{id}" value="#{evaluacionTutorEstudiante.resultados.r5}" valueChangeListener="#{evaluacionTutorEstudiante.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
+                                                <f:selectItems value="#{evaluacionTutorEstudiante.respuestasPosibles}" />
+                                            </p:selectOneButton>
+                                            <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
+                                        </f:ajax>
+                                    </div>
+                                </div>
+                                <!-- 6 -->
+
+                                <c:set var="id" value="#{caster.toInt(id + 1)}" />
+                                <c:set var="pregunta" value="#{apartado.preguntas[caster.toInt(id - 1)]}" />
+                                <div class="row">
+                                    <div class="col-lg-4 col-lg-offset-2 col-md-6 text-info text-justify" style="padding-top: 10px;">
+                                        <div class="row">
+                                            <div class="col-md-1"><h3 style="margin-top: 5px; margin-bottom: 25px;"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /> </h:outputText> </h3></div>
+                                            <div class="col-md-11"> #{pregunta.titulo} </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutorEstudiante.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                        <f:ajax execute="p#{id}">
+                                            <p:selectOneButton id="p#{id}" value="#{evaluacionTutorEstudiante.resultados.r6}" valueChangeListener="#{evaluacionTutorEstudiante.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
+                                                <f:selectItem itemValue="1" itemLabel="No satisfecho"/>
+                                                <f:selectItem itemValue="2" itemLabel="Poco satisfecho"/>
+                                                <f:selectItem itemValue="3" itemLabel="Regularmente satisfecho"/>
+                                                <f:selectItem itemValue="4" itemLabel="Satisfecho"/>
+                                                <f:selectItem itemValue="5" itemLabel="Muy satisfecho"/>
+                                                <f:selectItem itemValue="0" itemLabel="No aplica"/>
+                                            </p:selectOneButton>
+                                            <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
+                                        </f:ajax>
+                                    </div>
+                                </div>
+                                <!-- 7 -->
+                                <c:set var="id" value="#{caster.toInt(id + 1)}" />
+                                <c:set var="pregunta" value="#{apartado.preguntas[caster.toInt(id - 1)]}" />
+                                <div class="row">
+                                    <div class="col-lg-4 col-lg-offset-2 col-md-6 text-info text-justify" style="padding-top: 10px;">
+                                        <div class="row">
+                                            <div class="col-md-1"><h3 style="margin-top: 5px; margin-bottom: 25px;"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /> </h:outputText> </h3></div>
+                                            <div class="col-md-11"> #{pregunta.titulo} </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutorEstudiante.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                        <f:ajax execute="p#{id}">
+                                            <p:selectOneButton id="p#{id}" value="#{evaluacionTutorEstudiante.resultados.r7}" valueChangeListener="#{evaluacionTutorEstudiante.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
+                                                <f:selectItems value="#{evaluacionTutorEstudiante.respuestasPosibles}" />
+                                            </p:selectOneButton>
+                                            <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
+                                        </f:ajax>
+                                    </div>
+                                </div>
+                                <!--8 -->
+
+                                <c:set var="id" value="#{caster.toInt(id + 1)}" />
+                                <c:set var="pregunta" value="#{apartado.preguntas[caster.toInt(id - 1)]}" />
+                                <div class="row">
+                                    <div class="col-lg-4 col-lg-offset-2 col-md-6 text-info text-justify" style="padding-top: 10px;">
+                                        <div class="row">
+                                            <div class="col-md-1"><h3 style="margin-top: 5px; margin-bottom: 25px;"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="##.#" /> </h:outputText> </h3></div>
+                                            <div class="col-md-11"> #{pregunta.titulo} </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
+                                        <p:outputLabel id="lbl#{id}" for="p#{id}" value="#{evaluacionTutorEstudiante.tutorEstudiante.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                        <f:ajax execute="p#{id}">
+                                            <p:selectOneButton id="p#{id}" value="#{evaluacionTutorEstudiante.resultados.r8}" valueChangeListener="#{evaluacionTutorEstudiante.guardar}" required="true" requiredMessage="Falta respuesta" style="font-size: small;" >
+                                                <p:ajax process="@this" update="@form" />
+                                                <f:selectItems value="#{evaluacionTutorEstudiante.respuestasPosibles}" />
+                                            </p:selectOneButton>
+                                            <p:message id="msj#{id}" for="p#{id}" display="tooltip" />
+                                        </f:ajax>
+                                    </div>
+                                </div>
+
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        </c:if>
+    </ui:define>
+</ui:composition>

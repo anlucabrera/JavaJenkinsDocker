@@ -41,6 +41,9 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Evaluaciones implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionDocentesMateriaResultados2> evaluacionDocentesMateriaResultados2List;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EvaluacionTutoresResultados2> evaluacionTutoresResultados2List;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
@@ -274,6 +277,14 @@ public class Evaluaciones implements Serializable {
 
     public void setEvaluacionTutoresResultados2List(List<EvaluacionTutoresResultados2> evaluacionTutoresResultados2List) {
         this.evaluacionTutoresResultados2List = evaluacionTutoresResultados2List;
+    }
+
+    public List<EvaluacionDocentesMateriaResultados2> getEvaluacionDocentesMateriaResultados2List() {
+        return evaluacionDocentesMateriaResultados2List;
+    }
+
+    public void setEvaluacionDocentesMateriaResultados2List(List<EvaluacionDocentesMateriaResultados2> evaluacionDocentesMateriaResultados2List) {
+        this.evaluacionDocentesMateriaResultados2List = evaluacionDocentesMateriaResultados2List;
     }
     
 }

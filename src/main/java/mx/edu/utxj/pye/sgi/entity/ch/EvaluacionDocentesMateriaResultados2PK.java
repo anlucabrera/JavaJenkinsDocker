@@ -10,13 +10,14 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Embeddable
-public class EvaluacionTutoresResultados2PK implements Serializable {
+public class EvaluacionDocentesMateriaResultados2PK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
@@ -28,15 +29,21 @@ public class EvaluacionTutoresResultados2PK implements Serializable {
     private int evaluador;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "cve_materia")
+    private String cveMateria;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "evaluado")
     private int evaluado;
 
-    public EvaluacionTutoresResultados2PK() {
+    public EvaluacionDocentesMateriaResultados2PK() {
     }
 
-    public EvaluacionTutoresResultados2PK(int evaluacion, int evaluador, int evaluado) {
+    public EvaluacionDocentesMateriaResultados2PK(int evaluacion, int evaluador, String cveMateria, int evaluado) {
         this.evaluacion = evaluacion;
         this.evaluador = evaluador;
+        this.cveMateria = cveMateria;
         this.evaluado = evaluado;
     }
 
@@ -56,6 +63,14 @@ public class EvaluacionTutoresResultados2PK implements Serializable {
         this.evaluador = evaluador;
     }
 
+    public String getCveMateria() {
+        return cveMateria;
+    }
+
+    public void setCveMateria(String cveMateria) {
+        this.cveMateria = cveMateria;
+    }
+
     public int getEvaluado() {
         return evaluado;
     }
@@ -69,6 +84,7 @@ public class EvaluacionTutoresResultados2PK implements Serializable {
         int hash = 0;
         hash += (int) evaluacion;
         hash += (int) evaluador;
+        hash += (cveMateria != null ? cveMateria.hashCode() : 0);
         hash += (int) evaluado;
         return hash;
     }
@@ -76,14 +92,17 @@ public class EvaluacionTutoresResultados2PK implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof EvaluacionTutoresResultados2PK)) {
+        if (!(object instanceof EvaluacionDocentesMateriaResultados2PK)) {
             return false;
         }
-        EvaluacionTutoresResultados2PK other = (EvaluacionTutoresResultados2PK) object;
+        EvaluacionDocentesMateriaResultados2PK other = (EvaluacionDocentesMateriaResultados2PK) object;
         if (this.evaluacion != other.evaluacion) {
             return false;
         }
         if (this.evaluador != other.evaluador) {
+            return false;
+        }
+        if ((this.cveMateria == null && other.cveMateria != null) || (this.cveMateria != null && !this.cveMateria.equals(other.cveMateria))) {
             return false;
         }
         if (this.evaluado != other.evaluado) {
@@ -94,7 +113,7 @@ public class EvaluacionTutoresResultados2PK implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados2PK[ evaluacion=" + evaluacion + ", evaluador=" + evaluador + ", evaluado=" + evaluado + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados2PK[ evaluacion=" + evaluacion + ", evaluador=" + evaluador + ", cveMateria=" + cveMateria + ", evaluado=" + evaluado + " ]";
     }
     
 }
