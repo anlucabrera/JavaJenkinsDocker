@@ -17,10 +17,7 @@ import mx.edu.utxj.pye.sgi.controlador.AdministracionEncuesta;
 import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
-import mx.edu.utxj.pye.sgi.entity.ch.EstudiantesClaves;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.ch.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
@@ -54,7 +51,7 @@ public class ServicioAdministracionEvTutor  implements EjbAdministracionEvTutor 
 
     @Override
     public ResultadoEJB<Evaluaciones> getUltimaEvTutorActiva() {
-        //TODO: Obtiene la ultima evaluacion a tutor activa
+        //Obtiene la ultima evaluacion a tutor activa
         try {
             Evaluaciones evaluacion = f.getEntityManager().createQuery("select e from Evaluaciones e where e.tipo=:tipo order by  e.evaluacion DESC ",Evaluaciones.class)
                     .setParameter("tipo","Tutor")
@@ -141,5 +138,26 @@ public class ServicioAdministracionEvTutor  implements EjbAdministracionEvTutor 
             return ResultadoEJB.crearErroneo(1, "Ocurrio un error en EJBAdministracionEvTutor(getResultadoEvByEstudiante)", e, null);
         }
 
+    }
+
+    @Override
+    public ResultadoEJB<EvaluacionTutoresResultados2> getResultadosEvByEstudiante(dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion) {
+      try{
+          if(estudiante ==null){return ResultadoEJB.crearErroneo(2,new EvaluacionTutoresResultados2(),"El estudiante no debe ser nulo");}
+          if( evaluacion ==null){return ResultadoEJB.crearErroneo(3,new EvaluacionTutoresResultados2(),"La evaluación no debe ser nula");}
+         // System.out.println("Matricula que recibe " + estudiante.getMatricula());
+          EvaluacionTutoresResultados2 resultados = new EvaluacionTutoresResultados2();
+          resultados = f.getEntityManager().createQuery("select e from EvaluacionTutoresResultados2  e where  e.evaluacionTutoresResultados2PK.evaluador=:evaluador and e.evaluacionTutoresResultados2PK.evaluacion=:evaluacion",EvaluacionTutoresResultados2.class)
+                  .setParameter("evaluador",Integer.parseInt(estudiante.getMatricula()))
+                  .setParameter("evaluacion",evaluacion.getEvaluacion())
+                  .getResultStream()
+                  .findFirst()
+                  .orElse(null);
+          //System.out.println("Resultados -> "  +resultados);
+          if(resultados!=null){return ResultadoEJB.crearCorrecto(resultados,"Se encontro un resultado del estudiante");}
+          else {return ResultadoEJB.crearErroneo(4,resultados,"No se econtraron resultados");}
+      }catch (Exception e){
+          return ResultadoEJB.crearErroneo(1, "Ocurrio un error en EJBAdministracionEvTutor(getResultadosEvByEstudiante)", e, null);
+      }
     }
 }

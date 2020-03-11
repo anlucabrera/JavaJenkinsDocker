@@ -878,7 +878,7 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
             List<EvaluacionDocentesMateriaResultados> listResultados = new ArrayList<>();
             if(evaluacion==null){return ResultadoEJB.crearErroneo(2,listResultados,"La evaluación no debe ser nula.");}
             if(matricula == 0){return ResultadoEJB.crearErroneo(3,listResultados,"La matricula no debe ser nula");}
-            //TODO: Busca si existen resultados de la evaluación por la matrcicula del estudiante
+            //Busca si existen resultados de la evaluación por la matrcicula del estudiante
             listResultados = f.getEntityManager().createQuery("select e from EvaluacionDocentesMateriaResultados e where e.evaluaciones.evaluacion=:evaluacion and e.evaluacionDocentesMateriaResultadosPK.evaluador=:evaluador", EvaluacionDocentesMateriaResultados.class)
                     .setParameter("evaluacion",evaluacion.getEvaluacion())
                     .setParameter("evaluador",matricula)
@@ -886,6 +886,25 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
                 ;
             if (listResultados.isEmpty() || listResultados ==null){return ResultadoEJB.crearErroneo(4,listResultados,"No se han econtrado registro del estudiante");}
             else {return ResultadoEJB.crearCorrecto(listResultados,"Se han encontrado registro");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de resultados por estudiante (EJBEvaluacionDocenteMteria, getListaReusltadosDocenteMateriabyMatricula)", e, null);
+        }
+    }
+
+    @Override
+    public ResultadoEJB<List<EvaluacionDocentesMateriaResultados2>> getListaResultadosMateria2byMatricula(Evaluaciones evaluacion, int matricula) {
+        try{
+            List<EvaluacionDocentesMateriaResultados2> resultados = new ArrayList<>();
+            if(evaluacion == null){return ResultadoEJB.crearErroneo(2,resultados,"La evaluación no debe ser nula");}
+            if(matricula==0){return ResultadoEJB.crearErroneo(3,resultados,"La matricula no debe ser nula");}
+            //Busca si existen resultados de la nueva evaluacion por matricula del estudiante
+            resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados2  e where e.evaluacionDocentesMateriaResultados2PK.evaluacion=:evaluacion and e.evaluacionDocentesMateriaResultados2PK.evaluador=:evaluador",EvaluacionDocentesMateriaResultados2.class)
+            .setParameter("evaluador",matricula)
+            .setParameter("evaluacion", evaluacion.getEvaluacion())
+            .getResultList()
+            ;
+            if(resultados.isEmpty() || resultados ==null){return ResultadoEJB.crearErroneo(4,resultados,"No se encontraron resultados");}
+            else {return ResultadoEJB.crearCorrecto(resultados,"Lista de resultados");}
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de resultados por estudiante (EJBEvaluacionDocenteMteria, getListaReusltadosDocenteMateriabyMatricula)", e, null);
         }

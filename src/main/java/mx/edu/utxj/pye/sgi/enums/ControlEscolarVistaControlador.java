@@ -5,8 +5,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import mx.edu.utxj.pye.sgi.controlador.*;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.controlador.evaluaciones.EvaluacionTutorEstudiante;
 import mx.edu.utxj.pye.sgi.controlador.reporteBecas;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.ValidacionTutoriaGrupalEstudiante;
+import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados2;
 
 @RequiredArgsConstructor
 public enum ControlEscolarVistaControlador {
@@ -79,6 +81,9 @@ public enum ControlEscolarVistaControlador {
     TUTORIAS_GRUPALES_ESTUDIANTE("/controlEscolar/estudiante/tutorias_grupales.xhtml",ValidacionTutoriaGrupalEstudiante.class),
     REINSCRIPCION_AUTONOMA("/controlEscolar/estudiante/reinscripcionAutonoma.xhtml",ReinscripcionAutonomaEstudiante.class),
     CONSULTA_CASOS_CRITICOS("/controlEscolar/estudiante/casosCriticos.xhtml",CasosCriticosEstudiante.class),
+    EVALAUCION_TUTOR_NUEVA("/evaluaciones/evaluacion/nuevaTutor.xhtml", EvaluacionTutorEstudiante.class),
+    EVALUACION_DOCENTE2("/evaluaciones/evaluacion/evaluacionDocente.xhtml", EvaluacionDocentesMateriaResultados2.class),
+
 
     SEGUIMIENTO_CASO_CRITICO_ESPECIALISTA("/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml", SeguimientoCasoCriticoEspecialista.class),
 

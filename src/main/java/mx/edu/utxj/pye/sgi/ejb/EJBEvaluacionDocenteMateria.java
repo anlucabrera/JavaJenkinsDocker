@@ -15,6 +15,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudianteMateria;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
+import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados2;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionDocenteMateriaPye;
@@ -172,6 +173,13 @@ public interface EJBEvaluacionDocenteMateria {
      */
 
     public ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> getListResultadosDocenteMateriabyMatricula(Evaluaciones evaluacion, int matricula);
+    /**
+     * Obtiene lista de resultados generales de la evaluacion activa  por matricula
+     * @param evaluacion Evaluacion activa (Nueva evaluación)
+     * @param matricula matricula del estudiante
+     * @return Resultado del proceso , lista de resultados por matricula
+     */
+    public ResultadoEJB<List<EvaluacionDocentesMateriaResultados2>> getListaResultadosMateria2byMatricula(Evaluaciones evaluacion, int matricula);
 
     /**
      * Obtiene la lista de resultados  completos de la evalacion por matricula del estudiante,
