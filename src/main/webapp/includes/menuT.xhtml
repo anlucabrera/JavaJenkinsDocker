@@ -72,7 +72,7 @@
                     <c:if test="#{administracionPlanEstudioDirector.mostrarEnDesarrollo(request) and administracionPlanEstudioDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/plan_estudio.xhtml"><i class="fa fa-users"></i><span>Admin Plan Estudio</span></p:link></li></c:if>
                     <c:if test="#{asignacionAcademicaDirector.mostrarEnDesarrollo(request) and asignacionAcademicaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/asignacion_academica.xhtml"><i class="fa fa-tags"></i><span>Asignación académica</span></p:link></li></c:if>
                     <c:if test="#{asignacionTutorAcademico.mostrarEnDesarrollo(request) and asignacionTutorAcademico.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/asignacion_tutores.xhtml"><i class="fa fa-users"></i><span>Asignación Tutor de Grupo</span></p:link></li></c:if>
-                    <c:if test="#{planeacionCuatrimestralValidacion.mostrarEnDesarrollo(request) and planeacionCuatrimestralValidacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/planeacionCuatrimestralValidacion.xhtml"><i class="fa fa-print"></i><span>Planeación Cuatrimestral<br/> Validacion</span> <span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{planeacionCuatrimestralValidacion.mostrarEnDesarrollo(request) and planeacionCuatrimestralValidacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/planeacionCuatrimestralValidacion.xhtml"><i class="fa fa-print"></i><span>Planeación Cuatrimestral<br/> Validacion</span> <span class="pull-right-container"></span></p:link></li></c:if>
                     <c:if test="#{listasAsistenciaDirector.mostrarEnDesarrollo(request) and listasAsistenciaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/ListasAsistencias.xhtml"><i class="fa fa-users"></i><span>Listas de Asistencia</span></p:link></li></c:if>
                     <c:if test="#{reporteAsistenciasDirector.mostrarEnDesarrollo(request) and reporteAsistenciasDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/reporteAsistenciasDirector.xhtml"><i class="fa fa-file-text-o"></i><span>Concentrado Asistencias</span></p:link></li></c:if>
                     <c:if test="#{validacionBajaDirector.mostrarEnDesarrollo(request) and validacionBajaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacionBaja.xhtml"><i class="fa fa-check-square-o"></i><span>Validación Baja</span></p:link></li></c:if>
@@ -107,7 +107,7 @@
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Docente</li>
                     </c:if>
                     <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/captura_calificaciones.xhtml"><i class="fa fa-users"></i><span>Captura de <br/>calificaciones</span></p:link></li></c:if>
-                    <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/captura_integradora.xhtml"><i class="fa fa-users"></i><span>Tarea integradora /<br/>Nivelación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/captura_integradora.xhtml"><i class="fa fa-users"></i><span>Tarea integradora /<br/>Nivelación</span><span class="pull-right-container"></span></p:link></li></c:if>
                     <c:if test="#{configuracionUnidadMateriaDocente.mostrarEnDesarrollo(request) and configuracionUnidadMateriaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/configuracionUnidadMateria.xhtml"><i class="fa fa-percent"></i><span>Configuración Unidad Materia</span></p:link></li></c:if>
                     <c:if test="#{asignacionIndicadoresCriteriosDocente.mostrarEnDesarrollo(request) and asignacionIndicadoresCriteriosDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/asignacionIndicadoresCriterios.xhtml"><i class="fa fa-plus-circle"></i><span>Asignación Indicadores Criterio</span></p:link></li></c:if>
                     <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-print"></i><span>Planeación Cuatrimestral</span></p:link></li></c:if>
@@ -1070,7 +1070,7 @@
                         </li>  
                     </ul>
                 </li>
-                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Manuales de Asignatura <small class="label pull-right bg-green">Nuevo</small></li>
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Manuales de Asignatura</li>
                 <li class="treeview">
                     <a href="#">
                         <i class="fa fa-file-text-o"></i> <span>Manuales de Asignatura</span>
@@ -1309,19 +1309,19 @@
                 <li>
                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/documentacion/Modelo_Nacional_Tutorias_CGUTyP.pdf#toolbar=0" target="_blank">
                         <i class="fa fa-book"></i>
-                        <span>Modelo Nacional de<br/>Tutorias de la CGUTyP <small class="label pull-right bg-green">Nuevo</small></span>
+                        <span>Modelo Nacional de<br/>Tutorias de la CGUTyP</span>
                     </p:link>
                 </li>
                 <li>
                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/documentacion/PROGRAMA_INSTITUCIONAL_TUTORIAS.pdf#toolbar=0" target="_blank">
                         <i class="fa fa-book"></i>
-                        <span>Programa Institucional de <br/>Tutorías <small class="label pull-right bg-green">Nuevo</small><small class="label pull-right bg-yellow">(En revisión para actualización)</small></span>
+                        <span>Programa Institucional de <br/>Tutorías</span>
                     </p:link>
                 </li>
                 <li>
                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/documentacion/RESUMEN_Modelo_Nacional_Tutorias.pdf#toolbar=0" target="_blank">
                         <i class="fa fa-book"></i>
-                        <span>Resumen del Modelo<br/>Nacional de Tutorías de la CGUTyP <small class="label pull-right bg-green">Nuevo</small></span>
+                        <span>Resumen del Modelo<br/>Nacional de Tutorías de la CGUTyP</span>
                     </p:link>
                 </li>
                 <li>

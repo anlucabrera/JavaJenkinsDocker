@@ -234,16 +234,17 @@
                                         <h:form id="frmProcesoPoa"> 
                                             <p:outputPanel id="procesoPoaReporte">
                                                 <p:remoteCommand name="actualizarTabla" actionListener="#{administracionControl.imprimirValores()}" update="tblEvenAre" />
-                                                <p:dataTable id="tblEvenAre"  value="#{administracionControl.procesopoas}"  var="procesoPoa" 
+                                                <p:dataTable id="tblEvenAre"  value="#{administracionControl.procesopoas}"  var="procesoPoa" editable="true"
                                                              style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
                                                     <p:columnGroup type="header" class="hederTablesTitle">
                                                         <p:row class="success">
                                                             <p:column rowspan="2" headerText="Área" style="width: 200px;" styleClass="hederTablesTitle"/>
                                                             <p:column rowspan="2" headerText="Responsable" style="width: 200px;" styleClass="hederTablesTitle"/>
-                                                            <p:column rowspan="2" headerText="Correo" style="width: 200px;" styleClass="hederTablesTitle"/>
-                                                            <p:column colspan="3" headerText="Registros" style="width: 300px;" styleClass="hederTablesTitle"/>
-                                                            <p:column colspan="3" headerText="Validaciones" style="width: 300px;" styleClass="hederTablesTitle"/>
-                                                            <p:column rowspan="2" headerText="Mes de evaluacion" style="width: 70px;" styleClass="hederTablesTitle"/>
+                                                            <p:column rowspan="2" headerText="Correo" style="width: 250px;" styleClass="hederTablesTitle"/>
+                                                            <p:column colspan="3" headerText="Registros" style="width: 280px;" styleClass="hederTablesTitle"/>
+                                                            <p:column colspan="3" headerText="Validaciones" style="width: 280px;" styleClass="hederTablesTitle"/>
+                                                            <p:column rowspan="2" headerText="Mes de evaluacion" style="width: 60px;" styleClass="hederTablesTitle"/>
+                                                            <p:column rowspan="2" style="width: 32px;" styleClass="hederTablesTitle"/>
                                                         </p:row>
                                                         <p:row class="success">
                                                             <p:column headerText="Actividades"  styleClass="hederTablesTitle"/>
@@ -254,6 +255,8 @@
                                                             <p:column headerText="Justificacion"   styleClass="hederTablesTitle"/>
                                                         </p:row>
                                                     </p:columnGroup>
+                                                    <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditMesEvaluacion}" update="tblEvenAre" process="@this"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{administracionControl.onRowCancel}" update="tblEvenAre" />
                                                     <p:column >
                                                         <h:outputText value="#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" />
                                                     </p:column>   
@@ -263,7 +266,7 @@
                                                     <p:column>
                                                         <h:outputText value="#{administracionControl.buscarCorreoArea(procesoPoa.area)}" style="word-wrap: break-word;" />
                                                     </p:column> 
-                                                    <p:column rendered="#{procesoPoa.responsable eq null}" colspan="7" >
+                                                    <p:column rendered="#{procesoPoa.responsable eq null}" colspan="8" >
                                                         <h:outputText value="Sin POA para el ejercicio Fiscal 20#{procesoPoa.ejercicioFiscalEtapa1+1}" />
                                                     </p:column> 
                                                     <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}"
@@ -290,9 +293,21 @@
                                                               class="#{procesoPoa.validacionJustificacion eq false ?'denegado':'aceptado'}">
                                                         <h:outputText value="#{procesoPoa.validacionJustificacion eq true ?'Aprobado':'Pendiente'}" />
                                                     </p:column>  
-                                                    <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}">
-                                                        <h:outputText value="#{procesoPoa.evaluacion.mesEvaluacion}"/>
-                                                    </p:column> 
+                                                    <p:column style="text-align: justify;" rendered="#{procesoPoa.responsable ne null}">                                                         
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputText value="#{procesoPoa.evaluacion.mesEvaluacion}"/></f:facet>
+                                                            <f:facet name="input">
+                                                                <f:facet name="input">
+                                                                    <p:selectOneMenu id="grupo" value="#{procesoPoa.evaluacion.evaluacionPOA}" style="width:100%">
+                                                                        <f:selectItems value="#{administracionControl.calendarioevaluacionpoas}" var="cal" itemValue="#{cal.evaluacionPOA}" itemLabel="#{cal.mesEvaluacion}"/>
+                                                                    </p:selectOneMenu>
+                                                                </f:facet>
+                                                            </f:facet>
+                                                        </p:cellEditor>                                                                                                                                                                       
+                                                    </p:column>  
+                                                    <p:column style="width:32px;" class="noprint" rendered="#{procesoPoa.responsable ne null}">
+                                                        <p:rowEditor />
+                                                    </p:column>
                                                 </p:dataTable>  
                                             </p:outputPanel> 
                                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -57,12 +58,14 @@ public class AdministracionControl implements Serializable {
     @Getter    @Setter    private List<EventosAreas> eventosesAreases = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> areasUniversidads = new ArrayList<>();
     @Getter    @Setter    private List<Procesopoa> procesopoas = new ArrayList<>();
+    @Getter    @Setter    private List<Calendarioevaluacionpoa> calendarioevaluacionpoas = new ArrayList<>();
     @Getter    @Setter    private List<ConfiguracionPropiedades> cps = new ArrayList<>();
     @Getter    @Setter    private List<EventosAreaPOA> areaPOAs = new ArrayList<>();
     @Getter    @Setter    private List<PresupuestoPOA> presupuestoPOAs = new ArrayList<>();
     @Getter    @Setter    private List<PretechoFinanciero> p=new ArrayList<>();
     @Getter    @Setter    private List<PretechoFinanciero> pfs = new ArrayList<>();
     
+    @Getter    @Setter    private Calendarioevaluacionpoa c = new Calendarioevaluacionpoa();
     @Getter    @Setter    private Eventos eventos = new Eventos();
     @Getter    @Setter    private PretechoFinanciero financiero= new PretechoFinanciero();
     @Getter    @Setter    private Integer eventoC = 0;
@@ -107,6 +110,10 @@ public class AdministracionControl implements Serializable {
 // -----------------------------------------------------------------------------Busqueda    
     public void mostrarProcesos() {
         try {
+            c = new Calendarioevaluacionpoa();
+            c = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(LocalDate.now()));
+
+            calendarioevaluacionpoas = new ArrayList<>();
             procesopoas = new ArrayList<>();
             eventoses = new ArrayList<>();
             eventosesAreases = new ArrayList<>();
@@ -121,6 +128,7 @@ public class AdministracionControl implements Serializable {
 
             eventoses = ejbUtilidadesCH.mostrarEventoses();
             eventosesAreases = ejbUtilidadesCH.mostrarEventosesAreases();
+            calendarioevaluacionpoas = ejbUtilidadesCH.mostrarCalendarioevaluacionpoas();
             procesopoas = ejbUtilidadesCH.mostrarProcesopoa();
             procesopoas.forEach((t) -> {
                 if (t.getResponsable() != null) {
@@ -132,9 +140,7 @@ public class AdministracionControl implements Serializable {
                     }
                 }
                 if (t.getEvaluacion() == null) {
-                    try {
-                        Calendarioevaluacionpoa c = new Calendarioevaluacionpoa();
-                        c = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(LocalDate.now()));
+                    try {                        
                         t.setEvaluacion(new Calendarioevaluacionpoa());
                         t.setEvaluacion(c);
                     } catch (Throwable ex) {
@@ -395,6 +401,25 @@ public class AdministracionControl implements Serializable {
             Messages.addGlobalInfo("¡Operación exitosa!");
             mostrarProcesos();
             Ajax.update("frmEventos");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void onRowEditMesEvaluacion(RowEditEvent event) {
+        try {
+            Procesopoa p = (Procesopoa) event.getObject();
+//            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl.onRowEditMesEvaluacion()" + p.getEvaluacion().getEvaluacionPOA());
+            if (Objects.equals(p.getEvaluacion().getEvaluacionPOA(), c.getEvaluacionPOA())) {
+                p.setEvaluacion(new Calendarioevaluacionpoa());
+                p.setEvaluacion(null);
+            }
+//            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl.onRowEditMesEvaluacion()");
+            ejbUtilidadesCH.actualizarEtapaPOA(p);
+            Messages.addGlobalInfo("¡Operación exitosa!");
+            mostrarProcesos();
+            Ajax.update("frmProcesoPoa");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);

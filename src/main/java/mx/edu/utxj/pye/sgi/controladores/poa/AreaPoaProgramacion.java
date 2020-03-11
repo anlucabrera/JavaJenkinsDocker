@@ -3,14 +3,12 @@ package mx.edu.utxj.pye.sgi.controladores.poa;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +28,7 @@ import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 @Named
@@ -127,11 +126,7 @@ public class AreaPoaProgramacion implements Serializable {
         }
         if (!consultaListaActividadesPoa.isEmpty()) {
             Collections.sort(consultaListaActividadesPoa, (x, y) -> (x.getNumeroP() + "." + x.getNumeroS()).compareTo(y.getNumeroP() + "." + y.getNumeroS()));
-            consultaListaActividadesPoa.forEach((t) -> {
-                if (t.getNumeroS() == 0) {
-                    listaActividadesPoasPadres.add(t);
-                }
-            });
+            listaActividadesPoasPadres=consultaListaActividadesPoa.stream().filter(t-> t.getNumeroS()==0).collect(Collectors.toList());
         }
 
         listaEstrategiaActividadesesEje = new ArrayList<>();
