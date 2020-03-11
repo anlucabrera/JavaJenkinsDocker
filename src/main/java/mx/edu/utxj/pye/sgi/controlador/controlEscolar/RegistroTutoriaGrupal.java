@@ -345,6 +345,30 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
         mostrarMensajeResultadoEJB(res);
     }
     
+    public void guardarParticipantesGeneralTutoriaGrupal(List<DtoParticipantesTutoriaGrupalCE> listaParticipantesTutoriaGrupal){
+        if(!listaParticipantesTutoriaGrupal.isEmpty()){
+            listaParticipantesTutoriaGrupal.stream().forEach((t) -> {
+                ResultadoEJB<List<ParticipantesTutoriaGrupal>> resCompruebaParticipacion = ejb.buscaParticipanteTutoriaGrupal(rol.getTutoriaGrupalSeleccionada().getTutoriaGrupal().getTutoriaGrupal(), t.getEstudiante().getEstudiante().getIdEstudiante());
+                if(resCompruebaParticipacion.getCorrecto()){
+                    ejb.guardarAsistenciaParticipanteTutoriaGrupalGeneral(t.getParticipanteTutoriaGrupal());
+                }
+            });
+            mostrarMensaje("Se ha realizado el pase de lista general correctamente");
+        }
+    }
+    
+    public void eliminarParticipantesGeneralTutoriaGrupal(List<DtoParticipantesTutoriaGrupalCE> listaParticipantesTutoriaGrupal){
+        if(!listaParticipantesTutoriaGrupal.isEmpty()){
+            listaParticipantesTutoriaGrupal.stream().forEach((t) -> {
+                ResultadoEJB<List<ParticipantesTutoriaGrupal>> resCompruebaParticipacion = ejb.buscaParticipanteTutoriaGrupal(rol.getTutoriaGrupalSeleccionada().getTutoriaGrupal().getTutoriaGrupal(), t.getEstudiante().getEstudiante().getIdEstudiante());
+                if(resCompruebaParticipacion.getCorrecto()){
+                    ejb.eliminarAsistenciaParticipanteTutoriaGrupalGeneral(t.getParticipanteTutoriaGrupal());
+                }
+            });
+            mostrarMensaje("Se ha eliminado el pase de lista general correctamente");
+        }
+    }
+    
     /*********************************************** Llenado de listas *********************************************************/
     public void actualizarListadoTutoriasGrupales(){
         ResultadoEJB<List<TutoriasGrupales>> listaTutorias = ejb.buscaTutoriasGrupalesPorSesionEventoRegistro(rol.getSesionGrupalSeleccionada(), rol.getEventoSeleccionado());

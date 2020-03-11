@@ -151,11 +151,7 @@ public class EjbRegistroNotificaciones {
     public ResultadoEJB<NotificacionesEnlaces> guardaNotificacionEnlace(@NonNull NotificacionesEnlaces notificacionesEnlaces) {
         try {
             em.persist(notificacionesEnlaces);
-            if(notificacionesEnlaces.getNotificacionEnlace() == null){
-                return ResultadoEJB.crearErroneo(2, "No se ha podido guardar el enlace de la notificación, favor de verificar que se hayan capturado correctamente los datos.", NotificacionesEnlaces.class);
-            }else{
-                return ResultadoEJB.crearCorrecto(notificacionesEnlaces, "El enlace de la notificación ha sido guardado correctamente.");
-            }
+            return ResultadoEJB.crearCorrecto(notificacionesEnlaces, "El enlace de la notificación ha sido guardado correctamente.");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se ha podido guardar el enlace que ha ingresado, favor de verificar la siguiente información. (EjbRegistroNotificaciones.guardaNotificacionEnlace): ", e, NotificacionesEnlaces.class);
         }

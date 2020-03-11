@@ -173,17 +173,18 @@
                                              lazy="true"
                                              id="dtbConsultaEliminacionOrgVin"
                                              var="organismoVinculado" value="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.lstOrganismosVinculados}"
+                                             filteredValue="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.lstOrganismosVinculadosFiltros}"
                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                     <p:columnGroup type="header">
                                         <p:row>
                                             <p:column headerText="Opciones" width="190"/>
-                                            <p:column headerText="Fecha" width="100"/>
-                                            <p:column headerText="Nombre" width="500"/>
-                                            <p:column headerText="Tipo de Organización" width="100"/>
-                                            <p:column headerText="Tipo de Empresa" width="130"/>
-                                            <p:column headerText="Giro" width="300"/>
-                                            <p:column headerText="Actividad Principal" width="500"/>
-                                            <p:column headerText="Sector" width="100"/>
+                                            <p:column headerText="Fecha" width="100"                    filterBy="#{organismoVinculado.fecha}" filterMatchMode="contains"/>
+                                            <p:column headerText="Nombre" width="500"                   filterBy="#{organismoVinculado.nombre}" filterMatchMode="contains"/>
+                                            <p:column headerText="Tipo de Organización" width="150"     filterBy="#{organismoVinculado.orgTip.descripcion}" filterMatchMode="contains"/>
+                                            <p:column headerText="Tipo de Empresa" width="130"          filterBy="#{organismoVinculado.empTip.descripcion}" filterMatchMode="contains"/>
+                                            <p:column headerText="Giro" width="300"                     filterBy="#{organismoVinculado.giro.descripcion}" filterMatchMode="contains"/>
+                                            <p:column headerText="Actividad Principal" width="500"      filterBy="#{organismoVinculado.giroEspecifico}" filterMatchMode="contains"/>
+                                            <p:column headerText="Sector" width="100"                   filterBy="#{organismoVinculado.sector.descripcion}" filterMatchMode="contains"/>
                                             <p:column headerText="Dirección" width="250"/>
                                             <p:column headerText="Localidad" width="80"/>
                                             <p:column headerText="Codigo Postal" width="100"/>

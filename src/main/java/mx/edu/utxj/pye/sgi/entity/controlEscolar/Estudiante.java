@@ -83,6 +83,8 @@ public class Estudiante implements Serializable {
     private String tipoRegistro;
     @ManyToMany(mappedBy = "estudianteList")
     private List<Asesoria> asesoriaList;
+    @ManyToMany(mappedBy = "estudianteList")
+    private List<AsesoriasEstudiantes> asesoriasEstudiantesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
     private List<Calificacion> calificacionList;
     @OneToMany(mappedBy = "estudiante")
@@ -214,6 +216,15 @@ public class Estudiante implements Serializable {
 
     public void setAsesoriaList(List<Asesoria> asesoriaList) {
         this.asesoriaList = asesoriaList;
+    }
+
+    @XmlTransient
+    public List<AsesoriasEstudiantes> getAsesoriasEstudiantesList() {
+        return asesoriasEstudiantesList;
+    }
+
+    public void setAsesoriasEstudiantesList(List<AsesoriasEstudiantes> asesoriasEstudiantesList) {
+        this.asesoriasEstudiantesList = asesoriasEstudiantesList;
     }
 
     @XmlTransient

@@ -56,7 +56,7 @@
                                     </div>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <div class="btn-group">
-                                        <p:selectOneMenu id="somMunicipio" value="#{controladorIems.municipio}" rendered="#{controladorIems.estado > 0}">
+                                        <p:selectOneMenu id="somMunicipio" value="#{controladorIems.municipio}" rendered="#{controladorIems.estado > 0}" filter="true" filterMatchMode="contains">
                                             <f:selectItems value="#{controladorIems.selectMunicipio}"/>
                                             <p:ajax process="@this" update="pnlMainButtons, formIEMSMesActual" onsuccess="Rc()"/>
                                         </p:selectOneMenu>
@@ -95,26 +95,26 @@
                                        
                                         <p:columnGroup type="header">
                                             <p:row>
-                                                <p:column rowspan="2" headerText="Opciones" style="width: 150px;"/>
-                                                <p:column rowspan="2" headerText="Clave" style="width: 80px;"/>
-                                                <p:column rowspan="2" headerText="Nombre de IEMS (Centro Educativo)" style="width: 250px;"/>
-                                                <p:column rowspan="2" headerText="Clave IEMS" style="width: 120px;"/>
-                                                <p:column rowspan="2" headerText="Turno" style="width: 120px;"/>
-                                                <p:column rowspan="2" headerText="Tipo de Control" style="width: 120px;"/>
-                                                <p:column rowspan="2" headerText="Ámbito Social" style="width: 120px;"/>
-                                                <p:column rowspan="2" headerText="Servicio Educativo" style="width: 150px;"/>
-                                                <p:column colspan="3" headerText="Ubicación" style="width: 450px;"/>
-                                                <p:column rowspan="2" headerText="Domicilio" style="width: 300px;"/>
-                                                <p:column rowspan="2" headerText="Lada" style="width: 80px;"/>
-                                                <p:column rowspan="2" headerText="Teléfono" style="width: 150px;"/>
-                                                <p:column rowspan="2" headerText="Responsable" style="width: 250px;"/>
-                                                <p:column rowspan="2" headerText="Correo Electrónico" style="width: 250px;"/>
-                                                <p:column rowspan="2" headerText="Status" style="width: 80px;"/>
+                                                <p:column rowspan="2" headerText="Opciones"                             style="width: 150px;"/>
+                                                <p:column rowspan="2" headerText="Clave"                                style="width: 80px;"/>
+                                                <p:column rowspan="2" headerText="Nombre de IEMS (Centro Educativo)"    style="width: 250px;"   filterBy="#{iemsMen.nombre}" filterMatchMode="contains"/>
+                                                <p:column rowspan="2" headerText="Clave IEMS"                           style="width: 120px;"   filterBy="#{iemsMen.clave}" filterMatchMode="contains"/>
+                                                <p:column rowspan="2" headerText="Turno"                                style="width: 120px;"   filterBy="#{iemsMen.turno}" filterMatchMode="contains"/>
+                                                <p:column rowspan="2" headerText="Tipo de Control"                      style="width: 120px;"   filterBy="#{iemsMen.tipo}" filterMatchMode="contains"/>
+                                                <p:column rowspan="2" headerText="Ámbito Social"                        style="width: 120px;"   filterBy="#{iemsMen.ambito}" filterMatchMode="contains"/>
+                                                <p:column rowspan="2" headerText="Servicio Educativo"                   style="width: 150px;"   filterBy="#{iemsMen.servedu.descripcion}" filterMatchMode="contains"/>
+                                                <p:column colspan="3" headerText="Ubicación"                            style="width: 450px;"   />
+                                                <p:column rowspan="2" headerText="Domicilio"                            style="width: 300px;"/>
+                                                <p:column rowspan="2" headerText="Lada"                                 style="width: 80px;"/>
+                                                <p:column rowspan="2" headerText="Teléfono"                             style="width: 150px;"/>
+                                                <p:column rowspan="2" headerText="Responsable"                          style="width: 250px;"/>
+                                                <p:column rowspan="2" headerText="Correo Electrónico"                   style="width: 250px;"/>
+                                                <p:column rowspan="2" headerText="Status"                               style="width: 80px;"/>
                                             </p:row>
                                             <p:row>
                                                 <p:column headerText="Entidad" style="width: 150px;"/>
                                                 <p:column headerText="Municipio" style="width: 150px;"/>
-                                                <p:column headerText="Localidad" style="width: 150px;"/>
+                                                <p:column headerText="Localidad" style="width: 150px;" filterBy="#{iemsMen.localidad.nombre}" filterMatchMode="contains"/>
                                             </p:row>
                                         </p:columnGroup>
                                         <c:set var="iemsID" value="#{iemsMen.iems}"/>

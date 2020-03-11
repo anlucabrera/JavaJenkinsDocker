@@ -12,6 +12,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
@@ -60,6 +61,7 @@ public class RegistroTutoriaGrupalRolTutor extends AbstractRol{
     @Getter     @Setter     private                                 Date                                        fecha;
     @Getter     @Setter     private                                 Date                                        horaInicio;
     @Getter     @Setter     private                                 Date                                        horaCierre;
+    @Getter     @Setter     private                                 String                                      formatoFechaAsesoria;
     
     public RegistroTutoriaGrupalRolTutor(@NonNull Filter<PersonalActivo> filtro) {
         super(filtro);
@@ -140,6 +142,11 @@ public class RegistroTutoriaGrupalRolTutor extends AbstractRol{
 
     public void setTutoriaGrupalSeleccionada(DtoTutoriaGrupalCE tutoriaGrupalSeleccionada) {
         this.tutoriaGrupalSeleccionada = tutoriaGrupalSeleccionada;
+        if(this.tutoriaGrupalSeleccionada != null){
+            this.setFormatoFechaAsesoria(Caster.convertirFormatoFecha(this.tutoriaGrupalSeleccionada.getTutoriaGrupal().getFecha()));
+        }else{
+            this.setFormatoFechaAsesoria("");
+        }
     }
     
     public void setListaDtoTuriasGrupales(List<DtoTutoriaGrupalCE> listaDtoTuriasGrupales) {

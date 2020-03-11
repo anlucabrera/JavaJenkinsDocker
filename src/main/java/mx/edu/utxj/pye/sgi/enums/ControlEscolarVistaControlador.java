@@ -97,6 +97,8 @@ public enum ControlEscolarVistaControlador {
 
     REGISTRO_NOTIFICACIONES("/controlEscolar/registro_notificaciones.xhtml", RegistroNotificacionesGeneral.class),
     
+    REGISTRO_ASESORIAS_GENERAL("/controlEscolar/registro_asesorias_general.xhtml", RegistroAsesoriaEstudianteGeneral.class),
+    
     ADMINISTRACION_DESEMPENIO_AMBIENTAL("/encuestas/seguimiento/administracionEvaluacionAmbiental.xhtml", AdministracionEvaluacionAmbiental.class);
     @Getter @NonNull private final String vista;
     @Getter @NonNull private final Class controlador;

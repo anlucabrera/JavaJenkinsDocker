@@ -189,14 +189,14 @@ public class EjbRegistroAsesoriaTutoria {
         }
     }
 
-    public ResultadoEJB<Boolean> editaAsesoria(Asesoria asesoria) {
-        try {
-            em.merge(asesoria);
-            return ResultadoEJB.crearCorrecto(Boolean.TRUE, "La asesoría se ha actualizado correctamente");
-        } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar la asesoria seleccionada (EjbRegistroAsesoriaTutoria.editaAsesoria)", e, Boolean.TYPE);
-        }
-    }
+//    public ResultadoEJB<Boolean> editaAsesoria(Asesoria asesoria) {
+//        try {
+//            em.merge(asesoria);
+//            return ResultadoEJB.crearCorrecto(Boolean.TRUE, "La asesoría se ha actualizado correctamente");
+//        } catch (Exception e) {
+//            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar la asesoria seleccionada (EjbRegistroAsesoriaTutoria.editaAsesoria)", e, Boolean.TYPE);
+//        }
+//    }
     
     public ResultadoEJB<Boolean> eliminaAsesoria(Integer idAsesoria) {
         try {
@@ -212,18 +212,16 @@ public class EjbRegistroAsesoriaTutoria {
         }
     }
     
-    public ResultadoEJB<DtoAsesoriaCE> actualizaAsesoriaCE(DtoAsesoriaCE dtoAsesoriaCE){
+    public ResultadoEJB<Boolean> actualizaAsesoriaCE(Asesoria asesoria){
         try {
-            if(buscaAsesoriaCEEdicion(dtoAsesoriaCE).getResultados().isEmpty()){
-                Asesoria asesoriaActualizada = dtoAsesoriaCE.getAsesoria();
-                em.merge(asesoriaActualizada);
-                dtoAsesoriaCE.setAsesoria(asesoriaActualizada);
-                return ResultadoEJB.crearCorrecto(dtoAsesoriaCE, "Edición de Asesoría guardada correctamente en el sistema");
+            if(buscaAsesoriaCEEdicion(asesoria).getResultados().isEmpty()){
+                em.merge(asesoria);
+                return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Edición de Asesoría guardada correctamente en el sistema");
             }else{
-                return ResultadoEJB.crearErroneo(2, "Los datos que ha registrado corresponden a una asesoría ya existente, favor de verificar su información", DtoAsesoriaCE.class);
+                return ResultadoEJB.crearErroneo(2, "Los datos que ha registrado corresponden a una asesoría ya existente, favor de verificar su información", Boolean.TYPE);
             }
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo editar la información de la asesoría (EjbRegistroAsesoriaTutoria.actualizaAsesoriaCE)." ,e, DtoAsesoriaCE.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo editar la información de la asesoría (EjbRegistroAsesoriaTutoria.actualizaAsesoriaCE)." ,e, Boolean.TYPE);
         }
     }
     
@@ -247,14 +245,14 @@ public class EjbRegistroAsesoriaTutoria {
         }
     }
     
-    public ResultadoEJB<List<Asesoria>> buscaAsesoriaCEEdicion(DtoAsesoriaCE dtoAsesoriaCE){
+    public ResultadoEJB<List<Asesoria>> buscaAsesoriaCEEdicion(Asesoria asesoria){
         try {
             List<Asesoria> asesorias = em.createQuery("SELECT a FROM Asesoria a WHERE a.configuracion.configuracion = :configuracion AND a.fechaHora = :fechaHora AND a.tipo = :tipo AND a.eventoRegistro = :eventoRegistro AND a.idAsesoria <> :idAsesoria", Asesoria.class)
-                    .setParameter("configuracion", dtoAsesoriaCE.getAsesoria().getConfiguracion().getConfiguracion())
-                    .setParameter("fechaHora", dtoAsesoriaCE.getAsesoria().getFechaHora())
-                    .setParameter("tipo", dtoAsesoriaCE.getAsesoria().getTipo())
-                    .setParameter("eventoRegistro", dtoAsesoriaCE.getEventosRegistros().getEventoRegistro())
-                    .setParameter("idAsesoria", dtoAsesoriaCE.getAsesoria().getIdAsesoria())
+                    .setParameter("configuracion", asesoria.getConfiguracion().getConfiguracion())
+                    .setParameter("fechaHora", asesoria.getFechaHora())
+                    .setParameter("tipo", asesoria.getTipo())
+                    .setParameter("eventoRegistro", asesoria.getEventoRegistro())
+                    .setParameter("idAsesoria", asesoria.getIdAsesoria())
                     .getResultList();
             return ResultadoEJB.crearCorrecto(asesorias, "Lista de una posible coincidencia de su registro de asesoría");
         } catch (NoResultException e) {
@@ -274,7 +272,7 @@ public class EjbRegistroAsesoriaTutoria {
         } catch (NoResultException e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de la asesorías (EjbRegistroAsesoriaTutoria.buscaAsesoriasPorUnidad.NoResultException).", e, null);
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de la asesorías, por ello no es permitido guardar su registro (EjbRegistroAsesoriaTutoria.buscaAsesoriasPorUnidad.Exception).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de la asesorías (EjbRegistroAsesoriaTutoria.buscaAsesoriasPorUnidad.Exception).", e, null);
         }
     }
     
@@ -282,37 +280,35 @@ public class EjbRegistroAsesoriaTutoria {
         try {
             Asesoria a = em.find(Asesoria.class, asesoria.getIdAsesoria());
             em.refresh(a);
-            
-            Estudiante est = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.asesoriaList a WHERE a.idAsesoria = :asesoria AND e.idEstudiante = :estudiante", Estudiante.class)
+            List<Estudiante> est = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.asesoriaList a WHERE a.idAsesoria = :asesoria AND e.idEstudiante = :estudiante", Estudiante.class)
                     .setParameter("asesoria", a.getIdAsesoria())
                     .setParameter("estudiante", estudiante)
-                    .getSingleResult();
-            
-            em.refresh(est);
-            
-            if (!est.getAsesoriaList().isEmpty()) {
+                    .getResultList();
+            if (est.isEmpty()) return ResultadoEJB.crearErroneo(4, Boolean.FALSE, "No se han encontrado resultados");
+            if (est.size()>1) return ResultadoEJB.crearErroneo(3, Boolean.FALSE, "Se han encontrado varios resultados de la consulta solicitada");
+            if (!est.get(0).getAsesoriaList().isEmpty()) {
                 return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Verificado");
             } else {
-                return ResultadoEJB.crearErroneo(1, Boolean.FALSE, "No se ha encontrado el resultado");
+                return ResultadoEJB.crearErroneo(2, Boolean.FALSE, "No se ha encontrado el resultado");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se ha podido realizar la consulta (EjbRegistroAsesoriaTutoria.verificarParticipanteAsesoria.Exception)",e, null);
         }
     }
     
     public ResultadoEJB<Boolean> verificarParticipanteAsesoriaParaTutoria(Integer estudiante, Integer configuracion){
         try {
-            Estudiante est = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.asesoriaList a WHERE a.configuracion.configuracion = :configuracion AND e.idEstudiante = :estudiante", Estudiante.class)
+            List<Estudiante> est = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.asesoriaList a WHERE a.configuracion.configuracion = :configuracion AND e.idEstudiante = :estudiante", Estudiante.class)
                     .setParameter("configuracion", configuracion)
                     .setParameter("estudiante", estudiante)
-                    .getSingleResult();
-            
-            em.refresh(est);
-            
-            if (!est.getAsesoriaList().isEmpty()) {
+                    .getResultList();
+            if (est.isEmpty()) return ResultadoEJB.crearErroneo(4, Boolean.FALSE, "No se han encontrado resultados");
+            if (est.size()>1) return ResultadoEJB.crearErroneo(3, Boolean.FALSE, "Se han encontrado varios resultados de la consulta solicitada");
+            if (!est.get(0).getAsesoriaList().isEmpty()) {
                 return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Verificado");
             } else {
-                return ResultadoEJB.crearErroneo(1, Boolean.FALSE, "No se ha encontrado el resultado");
+                return ResultadoEJB.crearErroneo(2, Boolean.FALSE, "No se ha encontrado el resultado");
             }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se ha podido realizar la consulta (EjbRegistroAsesoriaTutoria.verificarParticipanteAsesoria.Exception)",e, null);
@@ -332,6 +328,7 @@ public class EjbRegistroAsesoriaTutoria {
             }
             return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Se ha removido el estudiante de la asesoría");
         } catch (Exception e) {
+            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se ha podido realizar la eliminación del estudiante (EjbRegistroAsesoriaTutoria.eliminarParticipanteAsesoria.Exception)", e, null);
         }
     }
@@ -353,6 +350,7 @@ public class EjbRegistroAsesoriaTutoria {
             em.flush();
             return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Se ha asignado el estudiante a la asesoría");
         } catch (Exception e) {
+            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo asignar este estudiante a la asesoria seleccionada (EjbRegistroAsesoriaTutoria.asignaParticipanteAsesoria.Exception).", e, null);
         }
     }
@@ -1068,6 +1066,44 @@ public class EjbRegistroAsesoriaTutoria {
                     ptg.setAceptacionAcuerdos(ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel());
                 } else {
                     ptg.setAsistencia(Boolean.TRUE);
+                    ptg.setAceptacionAcuerdos(ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel());
+                }
+                em.merge(ptg);
+                return ResultadoEJB.crearCorrecto(ptg, "El participante ha sido actualizado correctamente");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido guardar la participación del estudiante en la tutoria grupal", e, ParticipantesTutoriaGrupal.class);
+        }
+    }
+    
+    public ResultadoEJB<ParticipantesTutoriaGrupal> guardarAsistenciaParticipanteTutoriaGrupalGeneral(ParticipantesTutoriaGrupal participante) {
+        try {
+            ParticipantesTutoriaGrupal ptg = new ParticipantesTutoriaGrupal();
+            ptg = participante;
+            if (!(buscaParticipanteTutoriaGrupal(ptg.getParticipantesTutoriaGrupalPK().getTutoriaGrupal(), ptg.getParticipantesTutoriaGrupalPK().getEstudiante()).getCorrecto())) {
+                return ResultadoEJB.crearErroneo(2, "El participante necesita ser guardado previamente", ParticipantesTutoriaGrupal.class);
+            } else {
+                if (!ptg.getAsistencia()) {
+                    ptg.setAsistencia(Boolean.TRUE);
+                    ptg.setAceptacionAcuerdos(ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel());
+                }
+                em.merge(ptg);
+                return ResultadoEJB.crearCorrecto(ptg, "El participante ha sido actualizado correctamente");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido guardar la participación del estudiante en la tutoria grupal", e, ParticipantesTutoriaGrupal.class);
+        }
+    }
+    
+    public ResultadoEJB<ParticipantesTutoriaGrupal> eliminarAsistenciaParticipanteTutoriaGrupalGeneral(ParticipantesTutoriaGrupal participante) {
+        try {
+            ParticipantesTutoriaGrupal ptg = new ParticipantesTutoriaGrupal();
+            ptg = participante;
+            if (!(buscaParticipanteTutoriaGrupal(ptg.getParticipantesTutoriaGrupalPK().getTutoriaGrupal(), ptg.getParticipantesTutoriaGrupalPK().getEstudiante()).getCorrecto())) {
+                return ResultadoEJB.crearErroneo(2, "El participante necesita ser guardado previamente", ParticipantesTutoriaGrupal.class);
+            } else {
+                if (ptg.getAsistencia()) {
+                    ptg.setAsistencia(Boolean.FALSE);
                     ptg.setAceptacionAcuerdos(ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel());
                 }
                 em.merge(ptg);

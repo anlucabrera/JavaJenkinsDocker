@@ -152,7 +152,9 @@
                                                            paginator="true" rows="10" rowsPerPageTemplate="5,10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                            resizeMode="expand"
                                                            tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
-                                                           rendered="true">
+                                                           rendered="true"
+                                                           filteredValue="#{personalCapPYE.dtopart.filtroLista}"
+                                                           >
                                                  <c:set var="PartPerCapEliminado" value="#{partPC.participantesPersonalCapacitado.registro}"/>
                                                  <p:column headerText="Opciones" style="text-align: center;" width="100">
                                                      <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{personalCap.eliminarRegistroParticipante(PartPerCapEliminado)}" onsuccess="actualizar1();" title="Eliminar registro." disabled="#{personalCapPYE.dto.eventoActual ne personalCapPYE.dto.eventoSeleccionado}">
@@ -168,11 +170,11 @@
                                                                  icon="fa fa-cog"
                                                                  title="Alineación a POA." />
                                                  </p:column>
-                                                 <p:column headerText="Clave" style="width: 80px; text-align: center;">
+                                                 <p:column headerText="Clave" style="width: 80px; text-align: center;" filterBy="#{partPC.participantesPersonalCapacitado.percap.curso}" filterMatchMode="contains">
                                                      <h:outputText value="#{partPC.participantesPersonalCapacitado.percap.curso}">
                                                      </h:outputText>
                                                  </p:column>
-                                                 <p:column headerText="Nombre del Curso" style="width: 150px; text-align: center;">
+                                                 <p:column headerText="Nombre del Curso" style="width: 150px; text-align: center;" filterBy="#{partPC.participantesPersonalCapacitado.percap.nombre}" filterMatchMode="contains">
                                                      <h:outputText value="#{partPC.participantesPersonalCapacitado.percap.nombre}">
                                                      </h:outputText>
                                                  </p:column>
@@ -182,11 +184,11 @@
                                                  <p:column headerText="Fecha Fin" style="width: 80px; text-align: center;">
                                                      <h:outputText value="#{partPC.participantesPersonalCapacitado.percap.fechaFinal}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                                  </p:column>
-                                                 <p:column headerText="Clave Personal" style="width: 80px; text-align: center;">
+                                                 <p:column headerText="Clave Personal" style="width: 80px; text-align: center;" filterBy="#{partPC.personal.clave}" filterMatchMode="contains">
                                                      <h:outputText value="#{partPC.personal.clave}">
                                                      </h:outputText>
                                                  </p:column>
-                                                 <p:column headerText="Nombre Personal" style="width: 200px;">
+                                                 <p:column headerText="Nombre Personal" style="width: 200px;" filterBy="#{partPC.personal.nombre}" filterMatchMode="contains">
                                                      <h:outputText value="#{partPC.personal.nombre}">
                                                      </h:outputText>
                                                  </p:column>

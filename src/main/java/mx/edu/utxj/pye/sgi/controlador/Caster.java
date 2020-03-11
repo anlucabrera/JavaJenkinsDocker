@@ -260,6 +260,14 @@ public class Caster {
                 +" de "+
                 anio.format(fechaFin);
     }
+    
+    public static String convertirFormatoFecha(Date date) {
+        if (date != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm a");
+            String horaCadena = formatter.format(date);
+            return horaCadena;
+        }else return "La fecha no es correcta";
+    }
 
     public static String convertirMes(Date date){
         String result="";
@@ -392,20 +400,24 @@ public class Caster {
         }
     }
     
-    public Date fechaMinina(Integer anio, String mes){
+//    TODO: Corregir método, no acecpta el primer dia del mes
+    public String fechaMinina(Integer anio, String mes){
         Calendar calendar = Calendar.getInstance();
         calendar.set(anio, ejbPeriodo.getNumeroMes(mes)-1,1);
-        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DATE));
         Date date = calendar.getTime();
-        return date;
+        DateFormat formatoFechaMinima = new SimpleDateFormat("yyyy-MM-dd");
+        String fechaMinimaCadena = formatoFechaMinima.format(date);
+        return fechaMinimaCadena;
     }
     
-    public Date fechaMaxima(Integer anio, String mes){
+    public String fechaMaxima(Integer anio, String mes){
         Calendar calendar = Calendar.getInstance();
         calendar.set(anio, ejbPeriodo.getNumeroMes(mes)-1,1);
-        calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         Date date = calendar.getTime();
-        return date;
+        DateFormat formatoFechaMaxima = new SimpleDateFormat("yyyy-MM-dd");
+        String fechaMaximaCadena = formatoFechaMaxima.format(date);
+        return fechaMaximaCadena;
     }
 
     public AreasUniversidad getNombreCarrera(Short carreraEstudiante){
