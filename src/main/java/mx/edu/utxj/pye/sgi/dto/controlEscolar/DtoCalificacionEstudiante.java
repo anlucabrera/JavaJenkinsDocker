@@ -7,6 +7,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 public class DtoCalificacionEstudiante {
 
@@ -21,15 +22,51 @@ public class DtoCalificacionEstudiante {
     }
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
-    public static class UnidadesPorMateria{
+    public static class UnidadesPorEstudiante{
+        @Getter @Setter @NonNull Estudiante estudiante;
+        @Getter @Setter @NonNull Grupo grupo;
         @Getter @Setter @NonNull CargaAcademica cargaAcademica;
-        @Getter @Setter @NonNull List<UnidadMateriaConfiguracion> unidadMateriaConfiguracion;
+        @Getter @Setter @NonNull PlanEstudioMateria planEstudioMateria;
+        @Getter @Setter @NonNull Materia materia;
+        @Getter @Setter @NonNull UnidadMateria unidadMateria;
     }
 
-    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode(of = "materia")
+    public static class UnidadesPorMateria{
+        @Getter @Setter @NonNull CargaAcademica materia;
+        @Getter @Setter @NonNull List<UnidadMateria> unidadMaterias;
+    }
+
     public static class MapUnidadesTematicas{
+        @Getter @Setter @NonNull Integer cveGrupo;
         @Getter @Setter @NonNull Integer noUnidad;
-        @Getter @Setter @NonNull Integer totalPorUnidad;
+
+        public MapUnidadesTematicas(@NonNull Integer cveGrupo, @NonNull Integer noUnidad) {
+            this.cveGrupo = cveGrupo;
+            this.noUnidad = noUnidad;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof MapUnidadesTematicas)) return false;
+            MapUnidadesTematicas that = (MapUnidadesTematicas) o;
+            return getCveGrupo().equals(that.getCveGrupo()) &&
+                    getNoUnidad().equals(that.getNoUnidad());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getCveGrupo(), getNoUnidad());
+        }
+
+        @Override
+        public String toString() {
+            return "MapUnidadesTematicas{" +
+                    "cveGrupo=" + cveGrupo +
+                    ", noUnidad=" + noUnidad +
+                    '}';
+        }
     }
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
@@ -170,6 +207,15 @@ public class DtoCalificacionEstudiante {
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class DtoPeriodosEscolares{
         @Getter @Setter @NonNull PeriodosEscolares periodosEscolares;
+    }
+
+
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode(of = "dtoInscripcion")
+    public static class DtoHistorialCalificaciones{
+        @Getter @Setter @NonNull DtoInscripcion dtoInscripcion;
+        @Getter @Setter @NonNull List<mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica> dtoCargaAcademicas;
+        @Getter @Setter @NonNull List<MapUnidadesTematicas> mapUnidadesTematicas;
+        @Getter @Setter @NonNull List<DtoUnidadesCalificacionEstudiante> dtoUnidadesCalificacionEstudiantes;
     }
 }
 

@@ -225,8 +225,8 @@ public class CedulaIdentificacionDirector extends ViewScopedRol implements Desar
         ResultadoEJB<List<DtoCalificacionEstudiante.UnidadesPorMateria>> resUnidadesPorMateria = ejbCalificaiones.packUnidadesmateria(rol.getEstudiantePeriodo());
         rol.setUnidadesPorMateria(resUnidadesPorMateria.getValor());
         rol.getUnidadesPorMateria().forEach(x -> {
-            x.getUnidadMateriaConfiguracion().forEach(y -> {
-                resMap.add(new DtoCalificacionEstudiante.MapUnidadesTematicas(y.getIdUnidadMateria().getNoUnidad(), y.getIdUnidadMateria().getNoUnidad()));
+            x.getUnidadMaterias().forEach(y -> {
+                resMap.add(new DtoCalificacionEstudiante.MapUnidadesTematicas(y.getNoUnidad(), y.getNoUnidad()));
             });
         });
         rol.setMapUnidadesTematicas(new ArrayList<>(new HashSet<>(resMap)));

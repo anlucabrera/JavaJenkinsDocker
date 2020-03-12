@@ -4,20 +4,17 @@ import com.github.adminfaces.starter.infra.model.Filter;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDesempenioAmbientalUtxj;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
-import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaServicios;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionAmbiental;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Personas;
 
 import javax.faces.model.SelectItem;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +23,7 @@ import java.util.Map;
 
 public class EvaluacionRolMultiple{
 
-    public static class EvaluacionRolPersonal extends AbstractRol{
+    public static class EvaluacionRolPersonal extends AbstractRol {
         @Getter @Setter private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
         @Getter @Setter private String fechaElaboracion;
@@ -112,7 +109,7 @@ public class EvaluacionRolMultiple{
 
         @Getter @NonNull private Evaluaciones evaluacion;
 
-        @Getter @NonNull private Estudiante estudiante;
+        @Getter @NonNull private DtoEstudiante estudiante;
 
         /**
          * Representa el periodo activo de la evaluación
@@ -125,7 +122,7 @@ public class EvaluacionRolMultiple{
         @Getter @NonNull private  String valor;
         @Getter @NonNull private EvaluacionDesempenioAmbientalUtxj resultados;
 
-        public Boolean tieneAcceso(Estudiante estudiante, UsuarioTipo usuarioTipo){
+        public Boolean tieneAcceso(DtoEstudiante estudiante, UsuarioTipo usuarioTipo){
             if(estudiante == null) return false;
             if(!usuarioTipo.equals(UsuarioTipo.ESTUDIANTE19)) return false;
             return true;
@@ -143,7 +140,7 @@ public class EvaluacionRolMultiple{
             this.apartados = apartados;
         }
 
-        public void setEstudiante(Estudiante estudiante) {
+        public void setEstudiante(DtoEstudiante estudiante) {
             this.estudiante = estudiante;
         }
 

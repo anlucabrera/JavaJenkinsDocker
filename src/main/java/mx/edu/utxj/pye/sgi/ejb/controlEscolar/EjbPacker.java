@@ -240,7 +240,7 @@ public class EjbPacker {
     public ResultadoEJB<DtoEstudiante> packEstudiante(Integer matricula){
         try{
             //empaquetar estudiante
-            List<DtoInscripcion> dtoInscripciones = em.createQuery("select e from Estudiante e where e.matricula=:matricula order by e.periodo", Estudiante.class)
+            List<DtoInscripcion> dtoInscripciones = em.createQuery("select e from Estudiante e where e.matricula=:matricula order by e.periodo desc", Estudiante.class)
                     .setParameter("matricula", matricula)
                     .getResultStream()
                     .map(estudiante -> packInscripcion(estudiante))

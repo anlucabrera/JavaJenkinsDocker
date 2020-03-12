@@ -307,8 +307,8 @@ public class ReinscripcionAutonomaEstudiante extends ViewScopedRol implements De
         ResultadoEJB<List<DtoCalificacionEstudiante.UnidadesPorMateria>> resUnidadesPorMateria = ejbConsultaCalificacion.packUnidadesmateria(rol.getEstudiante());
         rol.setUnidadesPorMateria(resUnidadesPorMateria.getValor());
         rol.getUnidadesPorMateria().forEach(x -> {
-            x.getUnidadMateriaConfiguracion().forEach(y -> {
-                resMap.add(new DtoCalificacionEstudiante.MapUnidadesTematicas(y.getIdUnidadMateria().getNoUnidad(), y.getIdUnidadMateria().getNoUnidad()));
+            x.getUnidadMaterias().forEach(y -> {
+                resMap.add(new DtoCalificacionEstudiante.MapUnidadesTematicas(y.getNoUnidad(), y.getNoUnidad()));
             });
         });
         rol.setMapUnidadesTematicas(new ArrayList<>(new HashSet<>(resMap)));
@@ -328,7 +328,7 @@ public class ReinscripcionAutonomaEstudiante extends ViewScopedRol implements De
     }
     public DtoUnidadesCalificacionEstudiante getContenedor(@NonNull DtoCargaAcademica dtoCargaAcademica){
         if(rol.getDtoUnidadesCalificacionMap().containsKey(dtoCargaAcademica)) return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
-        ResultadoEJB<DtoUnidadesCalificacionEstudiante> resDtoUnidadesCalificacion = ejbConsultaCalificacion.packDtoUnidadesCalificacion(rol.getEstudiante(), getUnidades(dtoCargaAcademica));
+        ResultadoEJB<DtoUnidadesCalificacionEstudiante> resDtoUnidadesCalificacion = ejbConsultaCalificacion.packDtoUnidadesCalificacion(rol.getEstudiante(), dtoCargaAcademica, getUnidades(dtoCargaAcademica));
         if(!resDtoUnidadesCalificacion.getCorrecto()){
             mostrarMensaje("No se detectaron registros de calificaciones de la carga seleccionada. " + resDtoUnidadesCalificacion.getMensaje());
             return null;

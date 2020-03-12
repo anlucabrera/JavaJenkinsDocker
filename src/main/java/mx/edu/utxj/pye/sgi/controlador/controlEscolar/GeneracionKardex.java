@@ -8,8 +8,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbConsultaCalificacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DefaultStreamedContent;
@@ -39,8 +39,10 @@ public class GeneracionKardex implements Serializable{
     @Getter @Setter SimpleDateFormat sdf = new SimpleDateFormat("d 'de' MMMM 'de' yyyy", new Locale("ES", "MX"));
     @Getter @Setter StreamedContent contenioArchivo;
     @Getter @Setter DefaultStreamedContent download;
-    @EJB EjbConsultaCalificacion ejb;
-    @Inject ConsultaCalificacionesEstudiante controlador;
+    @EJB
+    EjbConsultaCalificacion ejb;
+    @Inject
+    ConsultaCalificacionesEstudiante controlador;
 
     /*public static void main(String[] args) throws IOException, DocumentException {
         GeneracionKardex prueba = new GeneracionKardex();
@@ -48,7 +50,7 @@ public class GeneracionKardex implements Serializable{
         prueba.generarPdf(estudiante);
     }*/
 
-    public void generarPdf(Estudiante estudiante) throws IOException, DocumentException {
+    public void generarPdf(DtoEstudiante estudiante) throws IOException, DocumentException {
         //Se crean las variables a utilizar para la creación del pdf
         Document document;
 
@@ -101,8 +103,8 @@ public class GeneracionKardex implements Serializable{
         textoPrincipal.setLeading(30, 0);
         textoPrincipal.setSpacingAfter(13);
 
-        String carrera1 = ejb.obtenerProgramaEducativo(estudiante.getCarrera()).getValor().getNombre();
-        String carrera2 = ejb.obtenerProgramaEducativo(estudiante.getCarrera()).getValor().getNombre();
+        String carrera1 = ejb.obtenerProgramaEducativo(estudiante.getInscripcionActiva().getInscripcion().getCarrera()).getValor().getNombre();
+        String carrera2 = ejb.obtenerProgramaEducativo(estudiante.getInscripcionActiva().getInscripcion().getCarrera()).getValor().getNombre();
         texto1 = new Paragraph(9);
         texto1.setSpacingAfter(10);
         texto2 = new Paragraph(9);
@@ -117,11 +119,11 @@ public class GeneracionKardex implements Serializable{
                         .concat(estudiante.getAspirante().getIdPersona().getApellidoMaterno()).concat(" ")
                         .concat(estudiante.getAspirante().getIdPersona().getNombre()), fontBolder));
         texto1.add(new Paragraph("con matricula ", fontNormal));
-        texto1.add(new Paragraph(String.valueOf(estudiante.getMatricula()), fontBolder));
+        texto1.add(new Paragraph(String.valueOf(estudiante.getInscripcionActiva().getInscripcion().getMatricula()), fontBolder));
         texto1.add(new Paragraph(", cursó las siguientes asignaturas correspondientes a la carrera de: ", fontNormal));
         texto1.add(new Paragraph("Técnico Superior Universtiario en ".concat(carrera1), fontBolder));
         texto1.add(new Paragraph("y actualmente se encuentra cursando el ", fontNormal));
-        texto1.add(new Paragraph(String.valueOf(estudiante.getGrupo().getGrado()).concat(" "), fontBolder));
+        texto1.add(new Paragraph(String.valueOf(estudiante.getInscripcionActiva().getInscripcion().getGrupo().getGrado()).concat(" "), fontBolder));
         texto1.add(new Paragraph("cuatrimestre.", fontNormal));
         Phrase parrafo = new Phrase(texto1);
         texto2.add(new Paragraph("A petición del interesado y para los fines legales, que a él (ella) convengan, se expide la presente en Xicotepec de Juárez, Puebla, el "
@@ -143,24 +145,22 @@ public class GeneracionKardex implements Serializable{
         tablaPrincipal.setSpacingBefore(8);
         tablaPrincipal.setSpacingAfter(8);
 
-        ejb.obtenerEstudiantesPeriodoCursado(estudiante).getValor().forEach(estudiante1 -> {
-            //System.out.println(estudiante1.getMatricula()+"-"+estudiante1.getGrupo().getGrado());
+        estudiante.getInscripciones().forEach(estudiante1 -> {
+            //System.out.println(estudiante1.getInscripcion().getMatricula()+"-"+estudiante1.getGrupo().getGrado());
             PdfPCell celda = new PdfPCell();
             PdfPCell celda2 = new PdfPCell();
-            if(estudiante1.getGrupo().getGrado() == 1){
-
-            }
-            switch (estudiante1.getGrupo().getGrado()){
+            switch (estudiante1.getInscripcion().getGrupo().getGrado()){
                 case 1:
                     PdfPCell cuatrimestre = new PdfPCell(new Paragraph("PRIMER", fontBold));
                     cuatrimestre.setColspan(3);
                     cuatrimestre.setHorizontalAlignment(Element.ALIGN_CENTER);
                     table.addCell(cuatrimestre);
                     List<BigDecimal> listaPromedios1 = new ArrayList<>();
-                    ejb.obtenerCargasAcademicas(estudiante1).getValor().stream().filter(grado -> grado.getGrupo().getGrado() == 1).forEach(dtoCargaAcademica -> {
-                        BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1).getValor().getValor())
+                    ejb.obtenerCargasAcademicas(estudiante1.getInscripcion()).getValor().stream().filter(grado -> grado.getGrupo().getGrado() == 1).forEach(dtoCargaAcademica -> {
+                        BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor())
                                 .setScale(2, RoundingMode.HALF_UP);
-                        BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                        BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor())
+                                .setScale(2, RoundingMode.HALF_UP);
                         BigDecimal promedioFinal = BigDecimal.ZERO;
                         PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                         materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -173,11 +173,10 @@ public class GeneracionKardex implements Serializable{
                             promedios = new PdfPCell(new Paragraph(nivelacion.toString(), fontMateria2));
                         }
                         listaPromedios1.add(promedioFinal);
-
                         table.addCell(materias);
                         table.addCell(promedios);
                     });
-                    Integer materiastotal = (int) ejb.obtenerCargasAcademicas(estudiante1).getValor().stream().filter(grado -> grado.getGrupo().getGrado() == 1).count();
+                    Integer materiastotal = (int) ejb.obtenerCargasAcademicas(estudiante1.getInscripcion()).getValor().stream().filter(grado -> grado.getGrupo().getGrado() == 1).count();
                     BigDecimal promedioCuatrimestral = listaPromedios1.stream().reduce(BigDecimal.ZERO, BigDecimal::add).plus()
                             .divide(new BigDecimal(materiastotal), RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
                     PdfPCell texto = new PdfPCell(new Paragraph("Promedio", fontBold));

@@ -6,29 +6,27 @@
 package mx.edu.utxj.pye.sgi.ejb;
 
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.faces.model.SelectItem;
-import javax.persistence.TypedQuery;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstadiaResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstadiaResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.VariablesProntuario;
 import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Periodos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.ViewEstudianteAsesorAcademico;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.faces.model.SelectItem;
+import javax.persistence.TypedQuery;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -42,8 +40,11 @@ public class EjbEvaluacionEstadia {
     @EJB private Facade2 f2;
     
     public Evaluaciones evaluacionEstadiaPeridoActual(){
+        String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "periodoEncuestaEstadia")
+                .getResultStream().findFirst().orElse(null)).getValor();
         List<Evaluaciones> e = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones as e where e.periodo = :periodo and e.tipo = :tipo", Evaluaciones.class)
-                .setParameter("periodo", 51)
+                .setParameter("periodo", Integer.parseInt(periodoEscolar))
                 .setParameter("tipo", "Evaluación Estadía")
                 .getResultStream().collect(Collectors.toList());
         if(e.isEmpty()){
@@ -56,8 +57,7 @@ public class EjbEvaluacionEstadia {
     
     public Evaluaciones getEvaluacionActiva(){
         List<Evaluaciones> e = f.getEntityManager()
-                .createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc",
-                        Evaluaciones.class)
+                .createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
                 .setParameter("tipo", "Evaluación Estadía")
                 .setParameter("fecha", new Date())
                 .getResultStream().collect(Collectors.toList());
@@ -69,17 +69,10 @@ public class EjbEvaluacionEstadia {
     }
     
     public Alumnos obtenerAlumnos(String matricula) {
+        String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "periodoEncuestaEstadia")
+                .getResultStream().findFirst().orElse(null)).getValor();
         Short grado = 11;
-        TypedQuery<Periodos> periodoAct = f2.getEntityManager().createQuery("SELECT p FROM Periodos AS p",Periodos.class);
-        List<Periodos> periodos = periodoAct.getResultList();
-        periodos.stream().forEach(x -> {
-            Boolean activo = true;
-            Boolean acv = x.getActivo().equals(true);
-            if (activo.equals(acv)) {
-                periodo = x.getPeriodosPK().getCvePeriodo();
-            }
-        });
-//        TypedQuery<ViewAlumnos> q = f.getEntityManager().createQuery("SELECT a from Alumno a WHERE a.alumnoPK.periodo= 47 AND a.cuatrimestre=11 AND a.alumnoPK.matricula=:matricula", Alumno.class);
         TypedQuery<Alumnos> q = f2.getEntityManager()
                 .createQuery("SELECT a from Alumnos a " 
                         + "WHERE a.matricula=:matricula AND "
@@ -88,7 +81,7 @@ public class EjbEvaluacionEstadia {
                         + "a.gradoActual = :grado", Alumnos.class);
         q.setParameter("estatus", 1);
         q.setParameter("estatus2", 6);
-        q.setParameter("periodo", 50);
+        q.setParameter("periodo", Integer.parseInt(periodoEscolar));
         q.setParameter("grado", grado);
         q.setParameter("matricula", matricula);
         //System.out.println("mx.edu.utxj.pye.sgi.ejb.EjbEncuestaServicios.obtenerAlumnos() se ejecuto la consulta");
@@ -264,7 +257,7 @@ public class EjbEvaluacionEstadia {
     
     public ViewEstudianteAsesorAcademico viewEstudianteAsesorAcademico(String matricula){
         List<ViewEstudianteAsesorAcademico> veaa = f2.getEntityManager()
-                .createQuery("select v from ViewEstudianteAsesorAcademico  as v where v.matricula = :matricula",ViewEstudianteAsesorAcademico.class)
+                .createQuery("select v from ViewEstudianteAsesorAcademico  as v where v.matricula = :matricula", ViewEstudianteAsesorAcademico.class)
                 .setParameter("matricula", matricula).getResultList();
         if(!veaa.isEmpty()){
             return veaa.get(0);
@@ -279,7 +272,7 @@ public class EjbEvaluacionEstadia {
             f.edit(resultado);
         }
         
-        Comparador<EvaluacionEstadiaResultados> comparador = new ComparadorEvaluacionEstadia();        
+        Comparador<EvaluacionEstadiaResultados> comparador = new ComparadorEvaluacionEstadia();
         return comparador.isCompleto(resultado);
     }
     

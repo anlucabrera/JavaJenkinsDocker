@@ -8,13 +8,15 @@ package mx.edu.utxj.pye.sgi.controlador;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.dto.*;
+import mx.edu.utxj.pye.sgi.dto.Apartado;
+import mx.edu.utxj.pye.sgi.dto.EvaluacionRolMultiple;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.EjbEvaluacionDesempenioAmbiental;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbConsultaCalificacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDesempenioAmbientalUtxj;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
@@ -44,8 +46,10 @@ public class EvaluacionDesempenioAmbientalEstudiante19 extends ViewScopedRol imp
     @Getter @Setter private Boolean finalizado = false;
     @EJB private EjbEvaluacionDesempenioAmbiental ejb;
     @EJB private EjbConsultaCalificacion ejbC;
-    @EJB EjbPropiedades ep;
-    @Inject LogonMB logonMB;
+    @EJB
+    EjbPropiedades ep;
+    @Inject
+    LogonMB logonMB;
     @Getter private Boolean cargado = false;
     @Getter private Boolean tieneAcceso = false;
 
@@ -57,9 +61,9 @@ public class EvaluacionDesempenioAmbientalEstudiante19 extends ViewScopedRol imp
             if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19)) return;
             cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.EVALUACION_DESEMPENIO_AMBIENTAL);
-            ResultadoEJB<Estudiante> resAcceso = ejbC.validadEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
+            ResultadoEJB<DtoEstudiante> resAcceso = ejbC.validadEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
-            ResultadoEJB<Estudiante> resValidacion = ejbC.validadEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
+            ResultadoEJB<DtoEstudiante> resValidacion = ejbC.validadEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
             if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
             rol.setEstudiante(resValidacion.getValor());
 
@@ -73,7 +77,7 @@ public class EvaluacionDesempenioAmbientalEstudiante19 extends ViewScopedRol imp
             if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
             if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
             rol.setNivelRol(NivelRol.OPERATIVO);
-            rol.setClavePersona(rol.getEstudiante().getMatricula());
+            rol.setClavePersona(rol.getEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
             ResultadoEJB<EvaluacionDesempenioAmbientalUtxj> resultados = ejb.getResultado(resEvento.getValor(), rol.getClavePersona(), rol.getRespuestas());
             rol.setResultados(resultados.getValor());
             rol.setFechaElaboracion(rol.getSdf().format(rol.getResultados().getFechaElaboracion()));

@@ -218,7 +218,7 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
         });
     }
     public void obtenerUnidadesPorMateria() {
-        List<DtoCalificacionEstudiante.MapUnidadesTematicas> resMap = new ArrayList<>();
+        /*List<DtoCalificacionEstudiante.MapUnidadesTematicas> resMap = new ArrayList<>();
         ResultadoEJB<List<DtoCalificacionEstudiante.UnidadesPorMateria>> resUnidadesPorMateria = ejbCalificaiones.packUnidadesmateria(rol.getEstudiante());
         rol.setUnidadesPorMateria(resUnidadesPorMateria.getValor());
         rol.getUnidadesPorMateria().forEach(x -> {
@@ -227,7 +227,7 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
             });
         });
         rol.setMapUnidadesTematicas(new ArrayList<>(new HashSet<>(resMap)));
-        rol.getMapUnidadesTematicas().sort(Comparator.comparingInt(DtoCalificacionEstudiante.MapUnidadesTematicas::getNoUnidad));
+        rol.getMapUnidadesTematicas().sort(Comparator.comparingInt(DtoCalificacionEstudiante.MapUnidadesTematicas::getNoUnidad));*/
     }
     public void obtenerCalificaciones() {
         ResultadoEJB<List<DtoCalificacionEstudiante.CalificacionePorUnidad>> resCalificaciones = ejbCalificaiones.packCalificacionesPorUnidadyMateria1(rol.getEstudiante());

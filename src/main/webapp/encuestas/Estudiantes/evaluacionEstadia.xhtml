@@ -40,7 +40,6 @@
     </ui:define>
 
     <ui:define name="body">
-        <c:if test="#{evaluacionEstadia.cargada}"
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div class="box-header with-border">
@@ -48,7 +47,7 @@
                     </div>
                     <p:separator/>
                     <div class="box box-solid">
-                        <div class="box-header with-border">
+                        <div class="box-header with-border hidden-xs">
                             <h3 class="box-title">
                                 <c:if test="#{!evaluacionEstadia.cargada}">
                                     Sin evaluaciones activas
@@ -69,16 +68,11 @@
                                     </div>
                                 </c:if>
                             </h3>
-
-                            <div class="box-tools pull-right">
-                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                </button>
-                            </div>
                         </div>
                         <div class="box-body">
                             <c:if test="#{evaluacionEstadia.cargada}">
-                                <div jsf:id="filaHeader" class="row hidden-sm hidden-md hidden-sm hidden-xs" style="background-color: white;margin: auto">
-                                    <div class="col-lg-4 col-md-6 col-lg-offset-2 text-center text-info" style="height: 230px; vertical-align: middle;">
+                                <div jsf:id="filaHeader" class="row" style="background-color: white;margin: auto">
+                                    <div class="col-lg-4 col-md-6 col-lg-offset-2 text-center text-info hidden-sm hidden-xs" style="height: 230px; vertical-align: middle;">
                                         <p:outputPanel >
                                             <c:if test="#{evaluacionEstadia.finalizado}">
                                                 <div>
@@ -103,8 +97,6 @@
                                         <p:outputLabel value="#{evaluacionEstadia.asesor.nombrePE}" />
                                     </div>
                                 </div>
-
-
                                 <c:set var="index" value="#{1}" />
                                 <c:forEach items="#{evaluacionEstadia.apartados}" var="apartado">
                                     <div class="row">
