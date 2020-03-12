@@ -242,7 +242,7 @@
                         </div>
                     </div>
                     <div class="box-body">  
-                        <div class="row">                                
+                        <div class="row">
                             <div class="col-lg-3 col-md-6 col-xs-12">
                                 <div class="small-box bg-green">
                                     <div class="inner">
@@ -256,6 +256,20 @@
                                     <a href="capitalHumano/contactoE.xhtml" class="small-box-footer">Registrar</a>
                                 </div>
                             </div>
+                            <c:if test="#{serviciosConsulta.mostrarEnDesarrollo(request) and serviciosConsulta.tieneAcceso}">
+                                <div class="col-lg-3 col-md-6 col-xs-12">
+                                    <div class="small-box bg-green">
+                                        <div class="inner">
+                                            <h3>Satisfacción de <br/>servicios</h3>
+                                            <p>Consulta de resultados</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-search-plus"/>
+                                        </div>
+                                        <a href="#{request.contextPath}/encuestas/consulta/servicios.xhtml" class="small-box-footer">Consultar</a>
+                                    </div>
+                                </div>
+                            </c:if>
                             <c:if test="#{fichaAdmisionReporte.tieneAcceso}">
                                 <div class="col-lg-3 col-md-6 col-xs-12">
                                     <div class="small-box bg-blue">
@@ -271,8 +285,6 @@
                                     </div>
                                 </div>
                             </c:if>
-
-
                         </div>
                     </div>
                 </div>
