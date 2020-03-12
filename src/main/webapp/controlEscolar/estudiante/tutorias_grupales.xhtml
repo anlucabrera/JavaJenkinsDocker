@@ -32,25 +32,18 @@
     </ui:define>
 
     <ui:define name="body">
-        <!--        <style type="text/css">
-                    body .ui-datatable .ui-datatable-header{
-                        background: #D9F0FC !important;
-                        font-weight: bold;
-                        text-align: left;
-                        font-size: small;
-                        border-color: #000000;
-                        border-top-left-radius: 0;
-                        border-top-right-radius: 0;
-                    }
-                    .ui-panelgrid .ui-panelgrid-cell {
-                        border-width: 0px;
-                        padding: 0px 2px;
-                    }
-                </style>-->
+        <style type="text/css">
+            .ui-datatable .ui-row-toggler {
+                cursor: pointer;
+                text-decoration: #3C8DBC;
+                color: #3C8DBC;
+                font-weight: 600;
+            }
+        </style>
         <adm:breadcrumb title="Tutorías Grupales"/>
-
+        <adm:sidebar collapsed="true"/>
         <div class="contenedor">
-            <c:if test="#{consultaCalificacionesEstudiante.tieneAcceso}">
+            <c:if test="#{validacionTutoriaGrupalEstudiante.tieneAcceso}">
                 <!-- zona de importación de enums -->
                 <p:importEnum type="mx.edu.utxj.pye.sgi.enums.ParticipanteTutoriaGrupalAcuerdos" var="ptga" allSuffix="ALL" />
                 <div class="box box-primary">
@@ -60,9 +53,12 @@
                             <div id="main-buttons" class="hidden-sm hidden-xs">
                                 <p:toolbar id="tb">
                                     <f:facet name="left">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(validacionTutoriaGrupalEstudiante.rol.periodoActivo)} " />
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:outputLabel value="Evento de registro activo: #{validacionTutoriaGrupalEstudiante.rol.eventoRegistroActivo.mes}" />
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Antes de realizar la firma electrónica favor de verificar que los filtros seleccionados seán los correctos" />
                                     </f:facet>
                                     <f:facet name="right">
                                         <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
@@ -85,7 +81,7 @@
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="periodo" value="#{validacionTutoriaGrupalEstudiante.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                <p:selectOneMenu id="periodo" value="#{validacionTutoriaGrupalEstudiante.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" disabled="#{validacionTutoriaGrupalEstudiante.rol.comentarioPendiente eq true}">
                                                     <f:selectItems value="#{validacionTutoriaGrupalEstudiante.rol.periodosConTutoriasGrupales}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
                                                     <p:ajax process="@this" update="@this mes contenedor" listener="#{validacionTutoriaGrupalEstudiante.cambiarPeriodo}" />
                                                 </p:selectOneMenu>
@@ -95,7 +91,7 @@
                                         </div>
                                         <div class="#{casilla}">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="mes" value="#{validacionTutoriaGrupalEstudiante.rol.eventoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                <p:selectOneMenu id="mes" value="#{validacionTutoriaGrupalEstudiante.rol.eventoSeleccionado}" converter="entityConverter" styleClass="form-control" disabled="#{validacionTutoriaGrupalEstudiante.rol.comentarioPendiente eq true}">
                                                     <f:selectItems value="#{validacionTutoriaGrupalEstudiante.rol.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" />
                                                     <p:ajax process="@this" update="@this contenedor" listener="#{validacionTutoriaGrupalEstudiante.cambiarEventoRegistro}" />
                                                 </p:selectOneMenu>
@@ -106,7 +102,7 @@
                                     </div>
                                 </h:form>
                                 <h:form id="frmRegistro" prependId="false" class="form-inline">
-                                    <p:remoteCommand id="actualizarParticipantes" name="actualizarParticipantes" actionListener="#{validacionTutoriaGrupalEstudiante.actualizar()}" process="@this" update="contenedor" />
+                                    <p:remoteCommand id="actualizarParticipantes" name="actualizarParticipantes" actionListener="#{validacionTutoriaGrupalEstudiante.actualizar()}" process="@this" update="contenedor periodo mes" />
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 text-info">
                                             <p:outputPanel id="contenedor">
@@ -114,7 +110,14 @@
                                                     <p:toolbar>
                                                         <f:facet name="left">
                                                             <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                            <p:outputLabel value="Lista de tutorías grupales en las que el estudiante ha asistido" style="padding-top: 5px;" />
+                                                            <p:outputLabel value="Lista de tutorías grupales en las que el estudiante ha asistido." style="padding-top: 5px;" />
+                                                            <p></p>
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Para guardar su firma solo de clic en los botones según sea el caso y se guardará de manera automática." style="padding-top: 5px;" />
+                                                            <p></p>
+                                                            <p></p>
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Para guardar comentarios dirigidos al tutor solo registrelos en el campo de comentarios y se guardarán de manera automática" style="padding-top: 5px;" />
                                                             <p></p>
                                                         </f:facet>
                                                     </p:toolbar>
@@ -130,7 +133,7 @@
                                                                      >
                                                             <p:columnGroup type="header">
                                                                 <p:row class="sucess">
-                                                                    <p:column headerText="Detalles"                         width="52"/>
+                                                                    <p:column headerText="Contenido de la tutoría"           width="70"/>
                                                                     <!--<p:column headerText="Avisos"                           width="60"/>-->
                                                                     <p:column headerText="Aceptación de acuerdos"           width="410"/>
                                                                     <p:column headerText="Comentarios del estudiante"       width="500"/>
@@ -153,12 +156,13 @@
                                                                                                                         </p:column>-->
 
                                                             <p:column style="width:16px;align-content: center;text-align: center">
-                                                                <p:rowToggler />
+                                                                <p:rowToggler expandLabel="Mostrar contenido" collapseLabel="Ocultar contenido"/>
                                                             </p:column>
 
                                                             <p:column>
                                                                 <p:selectOneButton value="#{participanteTutoriaGrupal.aceptacionAcuerdos}"
                                                                                    valueChangeListener="#{validacionTutoriaGrupalEstudiante.actualizarAceptacionAcuerdos}"
+                                                                                   disabled="#{validacionTutoriaGrupalEstudiante.rol.comentarioPendiente eq true}"
                                                                                    >
                                                                     <f:selectItem itemLabel="#{participanteTutoriaGrupal.asistencia?ptga.ASISTI_ESTOY_DE_ACUERDO.label:ptga.NO_ASISTI_ESTOY_DE_ACUERDO.label}" itemValue="#{participanteTutoriaGrupal.asistencia?ptga.ASISTI_ESTOY_DE_ACUERDO.label:ptga.NO_ASISTI_ESTOY_DE_ACUERDO.label}" />
                                                                     <f:selectItem itemLabel="#{participanteTutoriaGrupal.asistencia?ptga.ASISTI_NO_ESTOY_DE_ACUERDO.label:ptga.NO_ASISTI_NO_ESTOY_DE_ACUERDO.label}" itemValue="#{participanteTutoriaGrupal.asistencia?ptga.ASISTI_NO_ESTOY_DE_ACUERDO.label:ptga.NO_ASISTI_NO_ESTOY_DE_ACUERDO.label}" />
@@ -185,7 +189,7 @@
                                                                                  valueChangeListener="#{validacionTutoriaGrupalEstudiante.actualizarComentarios}"
                                                                                  >
                                                                     <p:ajax process="@this" 
-                                                                            update="dtTutoriasGrupales" 
+                                                                            oncomplete="actualizarParticipantes();"
                                                                             global="false"
                                                                             /> 
                                                                     <f:attribute name="participanteTutoriaGrupal" 
@@ -307,7 +311,7 @@
                 </div>
                 <!-- Zona de cuadros de diálogo -->
             </c:if>
-            <c:if test="#{!consultaCalificacionesEstudiante.tieneAcceso}">
+            <c:if test="#{!validacionTutoriaGrupalEstudiante.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
                         <h:outputText value="El acceso solo está autorizado para estudiantes."/>

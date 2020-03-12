@@ -75,6 +75,8 @@ public class ExpedientesTitulacion implements Serializable {
     @NotNull
     @Column(name = "validado")
     private boolean validado;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "expediente")
+    private List<TituloExpediente> tituloExpedienteList;
     @Column(name = "personal_valido")
     private Integer personalValido;
     @Column(name = "fecha_validacion")
@@ -250,6 +252,15 @@ public class ExpedientesTitulacion implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion[ expediente=" + expediente + " ]";
+    }
+
+    @XmlTransient
+    public List<TituloExpediente> getTituloExpedienteList() {
+        return tituloExpedienteList;
+    }
+
+    public void setTituloExpedienteList(List<TituloExpediente> tituloExpedienteList) {
+        this.tituloExpedienteList = tituloExpedienteList;
     }
     
 }

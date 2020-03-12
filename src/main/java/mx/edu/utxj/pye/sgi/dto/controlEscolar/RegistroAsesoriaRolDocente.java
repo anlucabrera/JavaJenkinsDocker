@@ -14,6 +14,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asesoria;
@@ -52,6 +53,7 @@ public class RegistroAsesoriaRolDocente extends AbstractRol{
     
     @Getter     @Setter     private                             Date                              fecha;
     @Getter     @Setter     private                             Date                              hora;
+    @Getter     @Setter     private                             String                            formatoFechaAsesoria;
     
     public RegistroAsesoriaRolDocente(@NonNull Filter<PersonalActivo> filtro) {
         super(filtro);
@@ -141,6 +143,11 @@ public class RegistroAsesoriaRolDocente extends AbstractRol{
 
     public void setAsesoriaSeleccionada(Asesoria asesoriaSeleccionada) {
         this.asesoriaSeleccionada = asesoriaSeleccionada;
+        if(this.asesoriaSeleccionada.getFechaHora() != null){
+            this.setFormatoFechaAsesoria(Caster.convertirFormatoFecha(this.asesoriaSeleccionada.getFechaHora()));
+        }else{
+            this.setFormatoFechaAsesoria("");
+        }
     }
         
 }

@@ -29,6 +29,7 @@ import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Viewregalumnosnoadeudo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.StatusAlumno;
 import mx.edu.utxj.pye.sgi.entity.titulacion.Egresados;
@@ -39,20 +40,22 @@ import mx.edu.utxj.pye.sgi.entity.titulacion.DomiciliosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.FechasDocumentos;
 import mx.edu.utxj.pye.sgi.entity.titulacion.AntecedentesAcademicos;
-import mx.edu.utxj.pye.titulacion.dto.dtoExpedientesActuales;
+import mx.edu.utxj.pye.titulacion.dto.DtoExpedientesActuales;
 //import mx.edu.utxj.pye.sgi.entity.titulacion.ListaExpedientes;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosIntexp;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosGeneraciones;
-import mx.edu.utxj.pye.titulacion.dto.dtoExpedienteMatricula;
+import mx.edu.utxj.pye.titulacion.dto.DtoExpedienteMatricula;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbTitulacionSeguimiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
+import mx.edu.utxj.pye.sgi.entity.titulacion.TituloExpediente;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
-import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
-import mx.edu.utxj.pye.titulacion.dto.dtoProcesosIntegracion;
+import mx.edu.utxj.pye.titulacion.dto.DtoPagosFinanzas;
+import mx.edu.utxj.pye.titulacion.dto.DtoProcesosIntegracion;
+import mx.edu.utxj.pye.titulacion.dto.DtoTitulosRegistrados;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbEstudianteRegistro;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.omnifaces.util.Messages;
@@ -86,13 +89,13 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
    
 
     @Override
-    public dtoExpedienteMatricula mostrarExpediente(Integer expediente) throws Throwable {
+    public DtoExpedienteMatricula mostrarExpediente(Integer expediente) throws Throwable {
         //verificar que el parametro no sea nulo
         if (expediente == null) {
             return null;
         }
         
-        dtoExpedienteMatricula dto = new dtoExpedienteMatricula();
+        DtoExpedienteMatricula dto = new DtoExpedienteMatricula();
         String gradoAcademico;
         
         ExpedientesTitulacion exp = facade.getEntityManager().createNamedQuery("ExpedientesTitulacion.findByExpediente", ExpedientesTitulacion.class)
@@ -172,8 +175,8 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         FechasDocumentos fecDoc = buscarFechasDocumentos(exp, prog);
         
         //Dependiendo del nivel del egresado se asignada el grado académico y se obtienen los pagos para determinar si ha realizado pago de titulo
-        List<dtoPagosFinanzas> listaPagos = getListaDtoPagosFinanzas(exp.getMatricula().getMatricula());
-        dtoPagosFinanzas pagoFinanzas = new dtoPagosFinanzas();
+        List<DtoPagosFinanzas> listaPagos = getListaDtoPagosFinanzas(exp.getMatricula().getMatricula());
+        DtoPagosFinanzas pagoFinanzas = new DtoPagosFinanzas();
         
         if (exp.getNivel()== 2 || exp.getNivel()== 4) {
             gradoAcademico = "INGENIERIA/LICENCIATURA";
@@ -377,14 +380,14 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     }
 
     @Override
-    public List<dtoExpedienteMatricula> getListaExpedientesPorProgramaGeneracion(AreasUniversidad programaSeleccionado, Generaciones generacion) {
+    public List<DtoExpedienteMatricula> getListaExpedientesPorProgramaGeneracion(AreasUniversidad programaSeleccionado, Generaciones generacion) {
         //verificar que los parametros no sean nulos
         if(programaSeleccionado == null || generacion == null){
             return null;
         }
         
         //obtener la lista de expedientes de titulación filtrando por generación y programa educativo
-        List<dtoExpedienteMatricula> l = new ArrayList<>();
+        List<DtoExpedienteMatricula> l = new ArrayList<>();
         List<ExpedientesTitulacion> entities = new ArrayList<>();
       
         entities = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.generacion =:generacion AND e.programaEducativo =:programaEducativo", ExpedientesTitulacion.class)
@@ -394,10 +397,10 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
-            dtoExpedienteMatricula dto = new dtoExpedienteMatricula();
+            DtoExpedienteMatricula dto = new DtoExpedienteMatricula();
             try {
                 dto = mostrarExpediente(e.getExpediente());
-                l.add(new dtoExpedienteMatricula(
+                l.add(new DtoExpedienteMatricula(
                         dto.getEgresados(),
                         dto.getExpedientesTitulacion(),
                         dto.getDatosContacto(),
@@ -452,7 +455,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     }
 
     @Override
-    public dtoExpedienteMatricula guardarDatosTitulacion(DatosTitulacion datosTitulacion, Integer expediente) throws Throwable {
+    public DtoExpedienteMatricula guardarDatosTitulacion(DatosTitulacion datosTitulacion, Integer expediente) throws Throwable {
         facade.setEntityClass(DatosTitulacion.class);
         DatosTitulacion dt = buscarDatosTitulacion(datosTitulacion.getExpediente().getExpediente());
         Boolean registroAlmacenado = false;
@@ -470,19 +473,19 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         }
         facade.flush();
 
-        dtoExpedienteMatricula dto = mostrarExpediente(datosTitulacion.getExpediente().getExpediente());
+        DtoExpedienteMatricula dto = mostrarExpediente(datosTitulacion.getExpediente().getExpediente());
 
         return dto;
     }
     
     @Override
-    public dtoExpedienteMatricula guardarAntecedentesAcad(AntecedentesAcademicos antecedentesAcademicos, Integer expediente) throws Throwable {
+    public DtoExpedienteMatricula guardarAntecedentesAcad(AntecedentesAcademicos antecedentesAcademicos, Integer expediente) throws Throwable {
         facade.setEntityClass(AntecedentesAcademicos.class);
         facade.edit(antecedentesAcademicos);
         Messages.addGlobalInfo("<b>Se actualizaron los antecedentes académicos del expediente: </b> " + expediente);
         facade.flush();
 
-        dtoExpedienteMatricula dto = mostrarExpediente(expediente);
+        DtoExpedienteMatricula dto = mostrarExpediente(expediente);
 
         return dto;
     }
@@ -597,14 +600,14 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     }
 
     @Override
-    public List<dtoExpedienteMatricula> getListaExpedientesPorGeneracion(Generaciones generacion, Integer nivel) {
+    public List<DtoExpedienteMatricula> getListaExpedientesPorGeneracion(Generaciones generacion, Integer nivel) {
         //verificar que los parametros no sean nulos
         if(generacion == null){
             return null;
         }
         
         //obtener la lista de expedientes de titulación filtrando por generación y programa educativo
-        List<dtoExpedienteMatricula> l = new ArrayList<>();
+        List<DtoExpedienteMatricula> l = new ArrayList<>();
         List<ExpedientesTitulacion> entities = new ArrayList<>();
         
         if(nivel==1){
@@ -626,10 +629,10 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
-            dtoExpedienteMatricula dto = new dtoExpedienteMatricula();
+            DtoExpedienteMatricula dto = new DtoExpedienteMatricula();
             try {
                 dto = mostrarExpediente(e.getExpediente());
-                l.add(new dtoExpedienteMatricula(
+                l.add(new DtoExpedienteMatricula(
                         dto.getEgresados(),
                         dto.getExpedientesTitulacion(),
                         dto.getDatosContacto(),
@@ -690,22 +693,22 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
 //    }
 
     @Override
-    public List<dtoPagosFinanzas> getListaDtoPagosFinanzas(String matricula) {
+    public List<DtoPagosFinanzas> getListaDtoPagosFinanzas(String matricula) {
         List<Viewregalumnosnoadeudo> listaPagosNoAdeudo = facade.getEntityManager().createQuery("select v from Viewregalumnosnoadeudo v where v.matricula = :matricula", Viewregalumnosnoadeudo.class)
                 .setParameter("matricula", matricula)
                 .getResultList();
 
-        List<dtoPagosFinanzas> listaDtoEstudiantes = new ArrayList<>();
+        List<DtoPagosFinanzas> listaDtoEstudiantes = new ArrayList<>();
 
         listaPagosNoAdeudo.forEach(pago -> {
-            dtoPagosFinanzas dto = new dtoPagosFinanzas(pago.getConcepto(), pago.getCveRegistro(), pago.getDescripcion(), pago.getFechaPago(), pago.getIdCatalogoConceptoPago(), pago.getMatricula(), pago.getMonto(), pago.getSiglas(), pago.getValcartanoadueudoTSU(), pago.getValcartanoadedudoIng());
+            DtoPagosFinanzas dto = new DtoPagosFinanzas(pago.getConcepto(), pago.getCveRegistro(), pago.getDescripcion(), pago.getFechaPago(), pago.getIdCatalogoConceptoPago(), pago.getMatricula(), pago.getMonto(), pago.getSiglas(), pago.getValcartanoadueudoTSU(), pago.getValcartanoadedudoIng());
             listaDtoEstudiantes.add(dto);
         });
         return listaDtoEstudiantes;
     }
     
     @Override
-    public dtoPagosFinanzas getDtoPagosFinanzasTSU(List<dtoPagosFinanzas> listaDtoPagosFinanzas) {
+    public DtoPagosFinanzas getDtoPagosFinanzasTSU(List<DtoPagosFinanzas> listaDtoPagosFinanzas) {
         Short validacion;
         Long existeValidacion  = listaDtoPagosFinanzas.stream().filter(p -> p.getValcartanoadueudoTSU()== 1).count();
         if(existeValidacion == 0){
@@ -713,7 +716,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         }else{
             validacion = 1;
         }
-        dtoPagosFinanzas dto = new dtoPagosFinanzas();
+        DtoPagosFinanzas dto = new DtoPagosFinanzas();
         listaDtoPagosFinanzas.forEach((pagoFinanzas) -> {
             
          if(pagoFinanzas.getConcepto()==50 || pagoFinanzas.getConcepto()==128){
@@ -736,7 +739,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     }
     
     @Override
-    public dtoPagosFinanzas getDtoPagosFinanzasING(List<dtoPagosFinanzas> listaDtoPagosFinanzas) {
+    public DtoPagosFinanzas getDtoPagosFinanzasING(List<DtoPagosFinanzas> listaDtoPagosFinanzas) {
         Short validacion;
         Long existeValidacion  = listaDtoPagosFinanzas.stream().filter(p -> p.getValcartanoadedudoIng()== 1).count();
         if(existeValidacion == 0){
@@ -744,7 +747,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         }else{
             validacion = 1;
         }
-        dtoPagosFinanzas dto = new dtoPagosFinanzas();
+        DtoPagosFinanzas dto = new DtoPagosFinanzas();
         listaDtoPagosFinanzas.forEach((pagoFinanzas) -> {
             
          if(pagoFinanzas.getConcepto()==40 || pagoFinanzas.getConcepto()==127){
@@ -898,19 +901,19 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     }
 
     @Override
-    public List<dtoExpedientesActuales> consultaListaExpedientes() {
+    public List<DtoExpedientesActuales> consultaListaExpedientes() {
          //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
         List<ExpedientesTitulacion> expedientes = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e ORDER BY e.matricula.matricula ASC", ExpedientesTitulacion.class)
                 .getResultList();
 
-        List<dtoExpedientesActuales> listaDtoExpedientes = new ArrayList<>();
+        List<DtoExpedientesActuales> listaDtoExpedientes = new ArrayList<>();
 
         expedientes.forEach(expediente -> {
             String nombre = expediente.getMatricula().getApellidoPaterno() + " " + expediente.getMatricula().getApellidoMaterno()+ " " + expediente.getMatricula().getNombre();
             AreasUniversidad programa = facade.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.siglas =:siglas", AreasUniversidad.class)
                 .setParameter("siglas", expediente.getProgramaEducativo())
                 .getResultStream().findFirst().orElse(null);
-            dtoExpedientesActuales dtoExpedientesAct = new dtoExpedientesActuales(expediente.getMatricula().getMatricula(), nombre, programa.getNombre(), expediente.getExpediente());
+            DtoExpedientesActuales dtoExpedientesAct = new DtoExpedientesActuales(expediente.getMatricula().getMatricula(), nombre, programa.getNombre(), expediente.getExpediente());
             listaDtoExpedientes.add(dtoExpedientesAct);
         });
         
@@ -937,7 +940,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     }
     
     @Override
-    public ExpedientesTitulacion guardarExpedienteTitulacion(ExpedientesTitulacion expedienteTitulacion, dtoProcesosIntegracion procesoIntegracion, Egresados egresado, AreasUniversidad progEdu, Generaciones generacion) throws Throwable {
+    public ExpedientesTitulacion guardarExpedienteTitulacion(ExpedientesTitulacion expedienteTitulacion, DtoProcesosIntegracion procesoIntegracion, Egresados egresado, AreasUniversidad progEdu, Generaciones generacion) throws Throwable {
         facade.setEntityClass(ExpedientesTitulacion.class);
         ProcesosIntexp proceso = facade.getEntityManager().find(ProcesosIntexp.class, procesoIntegracion.getProcesosGeneraciones().getProcesosGeneracionesPK().getProceso());
         expedienteTitulacion.setProceso(proceso);
@@ -997,11 +1000,11 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
     }
 
     @Override
-    public List<dtoProcesosIntegracion> obtenerListaProcesos() throws Throwable {
+    public List<DtoProcesosIntegracion> obtenerListaProcesos() throws Throwable {
         List<ProcesosGeneraciones> procesosGeneraciones = facade.getEntityManager().createQuery("SELECT pg FROM ProcesosGeneraciones pg ORDER BY pg.procesosGeneracionesPK.proceso DESC", ProcesosGeneraciones.class)
                 .getResultList();
 
-        List<dtoProcesosIntegracion> listaDtoProcesosIntegracion = new ArrayList<>();
+        List<DtoProcesosIntegracion> listaDtoProcesosIntegracion = new ArrayList<>();
 
         procesosGeneraciones.forEach(proceso -> {
             Generaciones generaciones = facade.getEntityManager().find(Generaciones.class, proceso.getProcesosGeneracionesPK().getGeneracion());
@@ -1012,7 +1015,7 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
             }else{
                 nivel ="Ing/Lic";
             }
-            dtoProcesosIntegracion dtoProcInt = new dtoProcesosIntegracion(proceso, generaciones, periodosEscolares, nivel);
+            DtoProcesosIntegracion dtoProcInt = new DtoProcesosIntegracion(proceso, generaciones, periodosEscolares, nivel);
             listaDtoProcesosIntegracion.add(dtoProcInt);
         });
         
@@ -1102,4 +1105,181 @@ public class ServiceTitulacionSeguimiento implements EjbTitulacionSeguimiento{
         return nivel;
     }
 
+    @Override
+    public List<DtoExpedientesActuales> consultaListaExpedientesValidados() {
+          //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
+        List<ExpedientesTitulacion> expedientes = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.validado =:validado ORDER BY e.matricula.matricula ASC", ExpedientesTitulacion.class)
+                .setParameter("validado", true)
+                .getResultList();
+
+        List<DtoExpedientesActuales> listaDtoExpedientes = new ArrayList<>();
+
+        expedientes.forEach(expediente -> {
+            String nombre = expediente.getMatricula().getApellidoPaterno() + " " + expediente.getMatricula().getApellidoMaterno()+ " " + expediente.getMatricula().getNombre();
+            AreasUniversidad programa = facade.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.siglas =:siglas", AreasUniversidad.class)
+                .setParameter("siglas", expediente.getProgramaEducativo())
+                .getResultStream().findFirst().orElse(null);
+            DtoExpedientesActuales dtoExpedientesAct = new DtoExpedientesActuales(expediente.getMatricula().getMatricula(), nombre, programa.getNombre(), expediente.getExpediente());
+            listaDtoExpedientes.add(dtoExpedientesAct);
+        });
+        
+        return listaDtoExpedientes;
+    }
+
+    @Override
+    public Generaciones obtenerGeneracionEgresado(Integer expediente) throws Throwable {
+        ExpedientesTitulacion expedienteTitulacion = buscarExpedienteTitulacion(expediente);
+        Generaciones generacion = facade.getEntityManager().find(Generaciones.class, expedienteTitulacion.getGeneracion());
+        return generacion;
+    }
+    
+    @Override
+    public List<TituloExpediente> getListaTituloExpediente(ExpedientesTitulacion expedienteTitulacion) {
+         if (expedienteTitulacion == null) {
+            return Collections.EMPTY_LIST;
+        }
+         
+        List<TituloExpediente> l = new ArrayList<>();
+         
+        if (expedienteTitulacion.getNivel() == 1) {
+            l = facade.getEntityManager().createQuery("SELECT t FROM TituloExpediente t WHERE t.expediente.expediente =:expediente AND t.documento.documento =:documento", TituloExpediente.class)
+                    .setParameter("expediente", expedienteTitulacion.getExpediente())
+                    .setParameter("documento", (int) 10)
+                    .getResultList();
+        } else {
+            l = facade.getEntityManager().createQuery("SELECT t FROM TituloExpediente t WHERE t.expediente.expediente =:expediente AND t.documento.documento =:documento", TituloExpediente.class)
+                    .setParameter("expediente", expedienteTitulacion.getExpediente())
+                    .setParameter("documento", (int) 17)
+                    .getResultList();
+        }
+        return l;
+    }
+
+    @Override
+    public void actualizarFechaEmision(TituloExpediente tituloExpediente) {
+        facade.setEntityClass(TituloExpediente.class);
+        facade.edit(tituloExpediente);
+        facade.flush();
+    }
+
+    @Override
+    public List<Generaciones> getGeneracionesExpValidados() {
+        List<Short> claves = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.validado =:valor", ExpedientesTitulacion.class)
+                    .setParameter("valor", true)
+                    .getResultStream()
+                    .map(e -> e.getGeneracion())
+                    .collect(Collectors.toList());
+
+            return facade.getEntityManager().createQuery("SELECT g FROM Generaciones g WHERE g.generacion IN :claves ORDER BY g.generacion desc", Generaciones.class)
+                    .setParameter("claves", claves)
+                    .getResultList();
+    }
+
+    @Override
+    public List<String> getNivelesPorGeneracionesExpValidados(Generaciones generacion) {
+        List<Integer> niveles = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.generacion =:generacion AND e.validado =:valor", ExpedientesTitulacion.class)
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .setParameter("valor", true)
+                    .getResultStream()
+                    .map(e -> e.getNivel())
+                    .distinct()
+                    .collect(Collectors.toList());
+        
+        List<String> listaNiveles = new ArrayList<>();
+        
+        niveles.forEach(nivel -> {
+            switch (nivel) {
+                case 1:
+                    listaNiveles.add("Técnico Superior Universitario");
+                    break;
+                case 2:
+                    listaNiveles.add("Ingeniería");
+                    break;
+                case 4:
+                    listaNiveles.add("Licenciatura");
+                    break;
+                default:
+                    listaNiveles.add(null);
+                    break;
+            }
+        });
+       
+        return listaNiveles;
+    }
+
+    @Override
+    public List<AreasUniversidad> getProgramasPorNivGenExpValidados(Generaciones generacion, String nivel) {
+        Integer claveNivel = 0;
+       
+        switch (nivel) {
+            case "Técnico Superior Universitario":
+                claveNivel =1;
+                break;
+            case "Ingeniería":
+                claveNivel =2;
+                break;
+            case "Licenciatura":
+                claveNivel =4;
+                break;
+            default:
+                break;
+        }
+        
+        List<String> claves = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.generacion =:generacion AND e.nivel =:nivel AND e.validado =:valor", ExpedientesTitulacion.class)
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .setParameter("nivel", claveNivel)
+                    .setParameter("valor", true)
+                    .getResultStream()
+                    .map(e -> e.getProgramaEducativo())
+                    .collect(Collectors.toList());
+       
+            return facade.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.siglas IN :claves ORDER BY a.nombre ASC", AreasUniversidad.class)
+                    .setParameter("claves", claves)
+                    .getResultList();
+    }
+
+    @Override
+    public List<DtoTitulosRegistrados> getListaExpedientesValidados(Generaciones generacion, AreasUniversidad programa) {
+        //verificar que los parametros no sean nulos
+        if(generacion == null){
+            return null;
+        }
+        
+        //obtener la lista de expedientes de titulación filtrando por generación y programa educativo
+        List<DtoTitulosRegistrados> l = new ArrayList<>();
+        List<ExpedientesTitulacion> entities = new ArrayList<>();
+       
+        entities = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.generacion =:generacion AND e.programaEducativo =:programa AND e.validado =:valor", ExpedientesTitulacion.class)
+                .setParameter("generacion", generacion.getGeneracion())
+                .setParameter("programa", programa.getSiglas())
+                .setParameter("valor", true)
+                .getResultList();
+        
+        //construir la lista de dto's para mostrar en tabla
+        entities.forEach(e -> {
+            DtoExpedienteMatricula dto = new DtoExpedienteMatricula();
+            try {
+                dto = mostrarExpediente(e.getExpediente());
+                
+                Integer doc = 0;
+                if (e.getNivel() == 1) {
+                    doc = 10;
+                } else {
+                    doc = 17;
+                }
+
+                TituloExpediente titExp = facade.getEntityManager().createQuery("SELECT te FROM TituloExpediente te WHERE te.expediente.expediente =:expediente AND te.documento.documento =:documento", TituloExpediente.class)
+                        .setParameter("expediente", e.getExpediente())
+                        .setParameter("documento", doc)
+                        .getResultStream().findFirst().orElse(null);
+                
+                DtoTitulosRegistrados dtoTR = new DtoTitulosRegistrados(dto, titExp);
+                l.add(dtoTR);
+            } catch (Throwable ex) {
+                Logger.getLogger(ServiceTitulacionSeguimiento.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           
+        });
+        return l;
+    }
 }

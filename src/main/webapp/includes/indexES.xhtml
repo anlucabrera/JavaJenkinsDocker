@@ -73,6 +73,28 @@
                     </div>
                     <div class="box-body">  
                         <div class="row">
+                            <c:if test="#{evaluacionDesempenioAmbientalEstudiante.tieneAcceso}">
+                                <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-xs-12'}" />
+                                <div class="#{claseResumen}" style="height: 100px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="evaluacionDesempenioAmbiental();">
+                                            <h3>
+                                                <h:outputLabel value="Evaluación"></h:outputLabel>
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p:spacer height="25"/>
+                                            <p>Evaluación del Desempeño Ambiental</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-check-square"></i>
+                                        </div>
+                                        <p:link outcome="encuestas/evaluacionDesempenioAmbiental"  class="small-box-footer">
+                                            Ingresar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="evaluacionDesempenioAmbiental" action="encuestas/evaluacionDesempenioAmbiental" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
                             <c:if test="#{estudioEgresados.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
@@ -92,6 +114,27 @@
                                     </div>
                                 </div>                                
                             </c:if>
+                            <c:if test="#{evaluacionTutorEstudiante.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="tutores();">
+                                            <h3>
+                                                <h:outputLabel value="#{evaluacionTutorEstudiante.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="tutores();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Evaluación al tutor<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-legal"></i>
+                                        </div>
+                                        <p:link outcome="evaluaciones/evaluacion/nuevaTutor"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="tutores" action="evaluaciones/evaluacion/nuevaTutor" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <!--
                             <c:if test="#{evaluacionTutor2.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
@@ -112,6 +155,7 @@
                                     </div>
                                 </div>                                
                             </c:if>
+                            -->
                             <c:if test="#{encuestaSatisfaccionEgresadosIng.dto.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
@@ -153,6 +197,28 @@
                                     </div>
                                 </div>                                
                             </c:if>
+                            <!-- Evaluacion Docente-->
+                            <c:if test="#{evaluacionDocenteEstudiante.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="docentes();">
+                                            <h3>
+                                                <h:outputLabel value="#{evaluacionDocenteEstudiante.porcentaje}">
+                                                    <f:convertNumber pattern="###,###.##" />
+                                                </h:outputLabel>
+                                                <sup style="font-size: 20px">%</sup>
+                                            </h3>
+                                            <p>Evaluación al desempeño docente<br/></p>
+                                        </div>
+                                        <div class="icon"><i class="fa fa-cubes"></i></div>
+                                        <p:link outcome="evaluaciones/evaluacion/evaluacionDocente"  class="small-box-footer">
+                                            Mas información <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="docentes" action="evaluaciones/evaluacion/evaluacionDocente" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <!--
                             <c:if test="#{evaluacionDoncenteMateriaControler.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
@@ -173,6 +239,7 @@
                                     </div>
                                 </div>
                             </c:if>
+                            -->
                             <c:if test="#{encuestaServicios.dto.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">

@@ -23,6 +23,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Convenios;
@@ -80,6 +81,9 @@ public class ControladorConvenios implements Serializable {
         try {
         dtoConvenios = new DtoConvenios();
         consultaAreaRegistro(); 
+        if(dtoConvenios.getArea() == null){
+            return;
+        }
         filtros();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
@@ -92,12 +96,17 @@ public class ControladorConvenios implements Serializable {
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 24);
             if (areaRegistro == null) {
-                dtoConvenios.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                if(area.getCorrecto()){
+                    dtoConvenios.setArea(area.getValor());
+                }else{
+                    dtoConvenios.setArea(null);
+                }
             } else {
                 dtoConvenios.setArea(areaRegistro);
             }
-        } catch (Exception e) {
-            System.out.println("mx.edu.utxj.pye.siip.controller.vin.ControladorConvenios.consultaAreaRegistro(): " + e.getMessage());
+        } catch (Exception ex) {
+            dtoConvenios.setArea(null);
         }
     }
     

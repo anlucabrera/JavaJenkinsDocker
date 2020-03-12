@@ -10,7 +10,7 @@ import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
 import mx.edu.utxj.pye.sgi.entity.titulacion.FechasDocumentos;
-import mx.edu.utxj.pye.titulacion.dto.dtoFechasDocumentos;
+import mx.edu.utxj.pye.titulacion.dto.DtoFechasDocumentos;
 
 /**
  *
@@ -22,23 +22,23 @@ public interface EjbFechasDocumentos {
      /**
      * Obtiene la lista de fechas de documentos que se encuentran registrados
      * @param generacionSeleccionada
-     * @return Lista de dtoFechasDocumentos
+     * @return Lista de DtoFechasDocumentos
      */
-    public List<dtoFechasDocumentos> getListaFechasDocumentosGeneracion(Generaciones generacionSeleccionada);
+    public List<DtoFechasDocumentos> getListaFechasDocumentosGeneracion(Generaciones generacionSeleccionada);
     
      /**
      * Elimina de la base el registro seleccionado
      * @param fecDocs
      * @return valor falso o verdadero según sea el caso
      */
-    public Boolean eliminarFecDocsGeneracion(dtoFechasDocumentos fecDocs);
+    public Boolean eliminarFecDocsGeneracion(DtoFechasDocumentos fecDocs);
     
      /**
      * Busca si hay expedientes que tienen asignado fechas de documentos
      * @param fecDocs
      * @return expedientes de titulación
      */
-    public List<ExpedientesTitulacion> buscarExpConFecDocs(dtoFechasDocumentos fecDocs);
+    public List<ExpedientesTitulacion> buscarExpConFecDocs(DtoFechasDocumentos fecDocs);
     
     /**
      * Actualiza el registro seleccionado
@@ -46,7 +46,7 @@ public interface EjbFechasDocumentos {
      * @return entity.
      * @throws java.lang.Throwable
      */
-    public dtoFechasDocumentos actualizarFecDocumentos(dtoFechasDocumentos dtoFecDocs) throws Throwable;
+    public DtoFechasDocumentos actualizarFecDocumentos(DtoFechasDocumentos dtoFecDocs) throws Throwable;
     
     /**
      * Guarda un registro nuevo en Fechas Documentos

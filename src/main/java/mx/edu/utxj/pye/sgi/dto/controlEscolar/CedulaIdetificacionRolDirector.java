@@ -48,6 +48,8 @@ public class CedulaIdetificacionRolDirector extends AbstractRol {
     //TODO: Estudiante seleccionado
     @Getter @Setter Estudiante estudiante;
     @Getter @Setter String matricula;
+    @Getter @NonNull private  Estudiante estudiantePeriodo;
+    @Getter @NonNull private  List<PeriodosEscolares> periodosEstudiante;
     //Calificaciones del estudiante
     @Getter @NonNull private List<DtoCalificacionEstudiante.MateriasPorEstudiante> materiasPorEstudiante;
     @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad;
@@ -100,6 +102,23 @@ public class CedulaIdetificacionRolDirector extends AbstractRol {
     public void setPrograma(AreasUniversidad programa) { this.programa = programa; }
     public void setPlanEstudio(PlanEstudio planEstudio) { this.planEstudio = planEstudio; }
 
+    public void setAreaPlanEstudioMap(Map<AreasUniversidad, List<PlanEstudio>> areaPlanEstudioMap) {
+        this.areaPlanEstudioMap = areaPlanEstudioMap;
+        this.planesEstudios = new ArrayList<>();
+        if (areaPlanEstudioMap != null) {
+            this.programas = areaPlanEstudioMap.keySet().stream().sorted(Comparator.comparing(AreasUniversidad::getNombre)).collect(Collectors.toList());
+            areaPlanEstudioMap.forEach((t, u) -> {
+                this.planesEstudios.addAll(u);
+            });
+        }
+        if (areaPlanEstudioMap != null && programa != null && areaPlanEstudioMap.containsKey(programa)) {
+            this.planesEstudios = areaPlanEstudioMap.get(programa);
+            if (planesEstudios != null) {
+                planesEstudios.get(0);
+            }
+        }
+    }
+
     public void setMateriasPorEstudiante(List<DtoCalificacionEstudiante.MateriasPorEstudiante> materiasPorEstudiante) {
         this.materiasPorEstudiante = materiasPorEstudiante;
     }
@@ -148,24 +167,15 @@ public class CedulaIdetificacionRolDirector extends AbstractRol {
         this.periodoE = periodoE;
     }
 
-    public void setPeriodoX(Integer periodoX){
+    public void setPeriodoX(Integer periodoX) {
         this.periodoX = periodoX;
     }
 
-    public void setAreaPlanEstudioMap(Map<AreasUniversidad, List<PlanEstudio>> areaPlanEstudioMap) {
-        this.areaPlanEstudioMap = areaPlanEstudioMap;
-        this.planesEstudios = new ArrayList<>();
-        if (areaPlanEstudioMap != null) {
-            this.programas = areaPlanEstudioMap.keySet().stream().sorted(Comparator.comparing(AreasUniversidad::getNombre)).collect(Collectors.toList());
-            areaPlanEstudioMap.forEach((t, u) -> {
-                this.planesEstudios.addAll(u);
-            });
-        }
-        if (areaPlanEstudioMap != null && programa != null && areaPlanEstudioMap.containsKey(programa)) {
-            this.planesEstudios = areaPlanEstudioMap.get(programa);
-            if (planesEstudios != null) {
-                planesEstudios.get(0);
-            }
-        }
+    public void setEstudiantePeriodo(Estudiante estudiantePeriodo) {
+        this.estudiantePeriodo = estudiantePeriodo;
+    }
+
+    public void setPeriodosEstudiante(List<PeriodosEscolares> periodosEstudiante) {
+        this.periodosEstudiante = periodosEstudiante;
     }
 }

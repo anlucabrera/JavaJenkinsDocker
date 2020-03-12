@@ -21,14 +21,19 @@
                         <i class=""></i>
                     </span>
                 </a>
-                <c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/docentesMateriaIndex.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
-                <c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
+                <c:if test="#{evaluacionDocenteEstudiante.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/evaluacionDocente.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
+                <!--<c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/docentesMateriaIndex.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>-->
+                <!--<c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>-->
+                <c:if test="#{evaluacionTutorEstudiante.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/nuevaTutor.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
                 <c:if test="#{estudioEgresados.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/estudioEgresados.xhtml"><i class="fa fa-graduation-cap"></i><span>Estudio egresado</span></p:link></li></c:if>
                 <c:if test="#{encuestaSatisfaccionEgresadosIng.dto.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/satisfaccionEgresadosIng.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción ING.</span></p:link></li></c:if>
                 <c:if test="#{encuestaSatisfaccionEgresadosTsu.dto.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/satisfaccionEgresadosTsu.xhtml"><i class="fa fa-graduation-cap"></i><span>Satisfacción T.S.U.</span></p:link></li></c:if>
                 <c:if test="#{encuestaServicios.dto.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-tty"></i><span>Servicios</span></p:link></li></c:if>
                 <c:if test="#{estudioSocioeconomicoOperativo.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/estudioSocioeconomico.xhtml"><i class="fa fa-ticket"></i><span>Estudio socioeconómico</span></p:link></li></c:if>
                 <c:if test="#{evaluacionEstadia.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/evaluacionEstadia.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación Estadia</span></p:link></li></c:if>
+                <c:if test="#{evaluacionDesempenioAmbientalEstudiante.mostrarEnDesarrollo(request) and evaluacionDesempenioAmbientalEstudiante.tieneAcceso}">
+                    <li><p:link href="#{request.contextPath}/encuestas/evaluacionDesempenioAmbiental.xhtml">
+                        <i class="fa fa-check-square"></i><span>Evaluación de Desempeño Ambiental</span></p:link></li></c:if>
             </li>
             <c:if test="#{controladorEstReg.cargada}">
                 <li class="header" style="color: #040404;background: #ffffff">Expediente Titulación</li>
@@ -36,6 +41,18 @@
                     <li><p:link href="#{request.contextPath}/expedienteTitulacion/estudiante/registroExpediente.xhtml"><i class="fa fa-pencil-square-o"></i><span>Registro e Integración</span></p:link></li>
                 </li>
             </c:if>
+<!--            <c:if test="# {controladorTitEgresado.expedienteValidado and !controladorTitEgresado.existeTitulo}">
+                <li class="header" style="color: #040404;background: #ffffff">Título Electrónico</li>
+                <li class="treeview ">
+                <li><p:link href="# {request.contextPath}/expedienteTitulacion/egresadoTitulado/cargarTitulo.xhtml"><i class="fa fa-upload"></i><span>Cargar Archivo</span></p:link></li>
+                </li>
+            </c:if>
+            <c:if test="# {controladorTitEgresado.existeTitulo}">
+                <li class="header" style="color: #040404;background: #ffffff">Título Electrónico</li>
+                <li class="treeview ">
+                <li><p:link href="# {request.contextPath}/expedienteTitulacion/egresadoTitulado/descargarTitulo.xhtml"><i class="fa fa-id-badge"></i><span>Descargar Archivo</span></p:link></li>
+                </li>
+            </c:if>-->
         </c:if>
         <li>
             <p:link href="#{request.contextPath}/soporteTecnico.xhtml">

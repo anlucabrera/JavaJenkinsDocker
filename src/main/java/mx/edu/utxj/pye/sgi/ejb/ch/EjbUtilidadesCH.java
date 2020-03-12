@@ -36,6 +36,8 @@ public interface EjbUtilidadesCH {
 
     public Procesopoa actualizarEtapaPOA(Procesopoa procesopoa) throws Throwable;
 
+    public List<Calendarioevaluacionpoa> mostrarCalendarioevaluacionpoas() throws Throwable;
+    
     public Calendarioevaluacionpoa mostrarCalendarioEvaluacion(Date fecha) throws Throwable;
 ////////////////////////////////////////////////////////////////////////////////Eventos Áreas
 

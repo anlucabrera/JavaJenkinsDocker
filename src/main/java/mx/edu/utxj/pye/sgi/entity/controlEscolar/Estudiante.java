@@ -78,11 +78,13 @@ public class Estudiante implements Serializable {
     private Integer trabajadorInscribe;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 22)
+    @Size(min = 1, max = 100)
     @Column(name = "tipo_registro")
     private String tipoRegistro;
     @ManyToMany(mappedBy = "estudianteList")
     private List<Asesoria> asesoriaList;
+    @ManyToMany(mappedBy = "estudianteList")
+    private List<AsesoriasEstudiantes> asesoriasEstudiantesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
     private List<Calificacion> calificacionList;
     @OneToMany(mappedBy = "estudiante")
@@ -214,6 +216,15 @@ public class Estudiante implements Serializable {
 
     public void setAsesoriaList(List<Asesoria> asesoriaList) {
         this.asesoriaList = asesoriaList;
+    }
+
+    @XmlTransient
+    public List<AsesoriasEstudiantes> getAsesoriasEstudiantesList() {
+        return asesoriasEstudiantesList;
+    }
+
+    public void setAsesoriasEstudiantesList(List<AsesoriasEstudiantes> asesoriasEstudiantesList) {
+        this.asesoriasEstudiantesList = asesoriasEstudiantesList;
     }
 
     @XmlTransient

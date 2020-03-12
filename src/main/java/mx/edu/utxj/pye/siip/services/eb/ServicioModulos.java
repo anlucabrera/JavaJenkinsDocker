@@ -24,6 +24,7 @@ import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import javax.servlet.http.Part;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
@@ -189,19 +190,25 @@ public class ServicioModulos implements EjbModulos {
     
 
     @Override
-    public AreasUniversidad getAreaUniversidadPrincipalRegistro(Short areaUsuario) {
+    public ResultadoEJB<AreasUniversidad> getAreaUniversidadPrincipalRegistro(Short areaUsuario) {
+        try {
             AreasUniversidad areasUniversidadValidar = new AreasUniversidad();
             AreasUniversidad areasUniversidad = new AreasUniversidad();
-        areasUniversidadValidar = f.getEntityManager().find(AreasUniversidad.class, areaUsuario);
+            areasUniversidadValidar = f.getEntityManager().find(AreasUniversidad.class, areaUsuario);
             if (areasUniversidadValidar.getTienePoa()) {
-            return areasUniversidad = f.getEntityManager().find(AreasUniversidad.class, areaUsuario);
+                areasUniversidad = f.getEntityManager().find(AreasUniversidad.class, areaUsuario);
+                return ResultadoEJB.crearCorrecto(areasUniversidad, "Área obtenida de manera automatica por tener asignado Programa de Trabajo");
             } else {
-            return areasUniversidad = f.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.area =:areaUsuario AND a.tienePoa = :tienePoa", AreasUniversidad.class)
+                areasUniversidad = f.getEntityManager().createQuery("SELECT a FROM AreasUniversidad a WHERE a.area =:areaUsuario AND a.tienePoa = :tienePoa", AreasUniversidad.class)
                         .setParameter("areaUsuario", areasUniversidadValidar.getAreaSuperior())
                         .setParameter("tienePoa", true)
                         .getSingleResult();
+                return ResultadoEJB.crearCorrecto(areasUniversidad, "Se ha realizado la búsqueda del área que tiene asignado Programa de Trabajo");
             }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar el área principal de registro, contacte al administrador (ServicioModulos.getAreaUniversidadPrincipalRegistro)", e, AreasUniversidad.class);
         }
+    }
 
     @Override
     public Boolean eliminarRegistroParticipantes(List<Integer> registrosParticipantes) {
@@ -271,7 +278,7 @@ public class ServicioModulos implements EjbModulos {
         f.create(evidencias);
         f.flush();
         f.refresh(evidencias);
-            AreasUniversidad areaPOA = getAreaUniversidadPrincipalRegistro(registro.getArea());
+            AreasUniversidad areaPOA = getAreaUniversidadPrincipalRegistro(registro.getArea()).getValor();
             archivos.forEach(archivo -> {
                 try {
                     String rutaAbsoluta = ServicioArchivos.almacenarEvidenciaRegistroGeneral(areaPOA, registro, archivo);
@@ -448,18 +455,22 @@ public class ServicioModulos implements EjbModulos {
         }
     
     @Override
-    public List<ModulosRegistrosUsuarios> getListaPermisoPorRegistro(Integer clavePersonal,Short claveRegistro) {
-        TypedQuery<ModulosRegistrosUsuarios> q = f.getEntityManager()
-                .createQuery("SELECT m FROM ModulosRegistrosUsuarios m WHERE m.clavePersonal = :clavePersonal AND m.clave = :claveRegistro", ModulosRegistrosUsuarios.class);
+    public ResultadoEJB<List<ModulosRegistrosUsuarios>> getListaPermisoPorRegistro(Integer clavePersonal, Short claveRegistro) {
+        try {
+            TypedQuery<ModulosRegistrosUsuarios> q = f.getEntityManager()
+                    .createQuery("SELECT m FROM ModulosRegistrosUsuarios m WHERE m.clavePersonal = :clavePersonal AND m.clave = :claveRegistro", ModulosRegistrosUsuarios.class);
             q.setParameter("clavePersonal", clavePersonal);
             q.setParameter("claveRegistro", claveRegistro);
             List<ModulosRegistrosUsuarios> li = q.getResultList();
-            if(li.isEmpty() || li == null){
-            return null;
-            }else{
-                return li;
+            if (li.isEmpty() || li == null) {
+                return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST, "La lista de permisos por registro está vacía (mx.edu.utxj.pye.siip.services.eb.ServicioModulos.getListaPermisoPorRegistro())");
+            } else {
+                return ResultadoEJB.crearCorrecto(li, "Lista de permisos por registro encontrada");
             }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar la lista de permisos por registro (mx.edu.utxj.pye.siip.services.eb.ServicioModulos.getListaPermisoPorRegistro())", e, null);
         }
+    }
 
     @Override
     public List<ModulosRegistrosUsuarios> getListaPermisoPorRegistroEjesDistintos(Integer clavePersonal, Short claveRegistro1, Short claveRegistro2) {

@@ -102,7 +102,7 @@ public class ServicioReportesCAExcel implements EjbReportesCAExcel{
     }
     
     @Override
-    public String getReporteActividadesVarias() throws Throwable {
+    public String getReporteActividadesVarias(Short ejercicioFiscal) throws Throwable {
         String plantilla = crearDirectorioReporte(ejes[1]).concat(REPORTE_ACTIVIDADES_VARIAS_PLANTILLA);
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_ACTIVIDADES_VARIAS_COPIA);
         String plantillaCompleto = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_ACTIVIDADES_VARIAS_ACTUALIZADO);
@@ -116,7 +116,7 @@ public class ServicioReportesCAExcel implements EjbReportesCAExcel{
             XSSFCell celda;
             
 //            Vaciado de información proveniente de la consulta
-            List<ActividadesVariasRegistro> actividadesVariasReporte = ejbActividadesVarias.reporteActividadesVariasPorEjercicio();
+            List<ActividadesVariasRegistro> actividadesVariasReporte = ejbActividadesVarias.reporteActividadesVariasPorEjercicio(ejercicioFiscal);
             
             for(Integer listaActVar = 0; listaActVar < actividadesVariasReporte.size(); listaActVar++){
                 Integer ubicacion = listaActVar + 2;
@@ -256,7 +256,7 @@ public class ServicioReportesCAExcel implements EjbReportesCAExcel{
     }
     
     @Override
-    public String getReporteAsesoriasTutorias() throws Throwable { 
+    public String getReporteAsesoriasTutorias(Short ejercicio_fiscal) throws Throwable { 
         String plantilla = crearDirectorioReporte(ejes[1]).concat(REPORTE_ASESORIAS_TUTORIAS_PLANTILLA);
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_ASESORIAS_TUTORIAS_COPIA);
         String plantillaCompleto = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_ASESORIAS_TUTORIAS_ACTUALIZADO);
@@ -271,9 +271,9 @@ public class ServicioReportesCAExcel implements EjbReportesCAExcel{
             XSSFCell celda;
             
 //            Vaciado de información proveniente de la consulta
-            List<AsesoriasTutoriasMensualPeriodosEscolares> asesoriasTutorias = ejbAsesoriasTutoriasCiclosPeriodos.getListaReporteGeneralAsesoriasTutorias();
+            List<AsesoriasTutoriasMensualPeriodosEscolares> asesoriasTutorias = ejbAsesoriasTutoriasCiclosPeriodos.getListaReporteGeneralAsesoriasTutorias(ejercicio_fiscal);
             
-            System.err.println("asesoriasTutorias.size(): " + asesoriasTutorias.size());
+//            System.err.println("asesoriasTutorias.size(): " + asesoriasTutorias.size());
             
             for(Integer listaAsesTut = 0; listaAsesTut < asesoriasTutorias.size(); listaAsesTut++){
                 Integer ubicacion = listaAsesTut + 2;

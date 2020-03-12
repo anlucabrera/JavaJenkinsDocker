@@ -462,9 +462,9 @@ public class EjbRegistroBajas {
                      .map(l -> l.getIdEstudiante())
                      .collect(Collectors.toList());
             
-            Documentosentregadosestudiante documentosEstudiante = em.createQuery("SELECT de FROM Documentosentregadosestudiante de WHERE de.estudiante IN :estudiante", Documentosentregadosestudiante.class)
+            Documentosentregadosestudiante documentosEstudiante = em.createQuery("SELECT de FROM Documentosentregadosestudiante de WHERE de.estudiante IN :estudiante ORDER BY de.estudiante1.idEstudiante DESC", Documentosentregadosestudiante.class)
                     .setParameter("estudiante", listaEstudiantes)
-                    .getSingleResult();
+                    .getResultStream().findFirst().orElse(null);
            
             if (documentosEstudiante.getActaNacimiento()) {
                 DtoDocumentosEstudiante actaNacimiento = new DtoDocumentosEstudiante(estudiante, "Acta de Nacimiento");

@@ -72,7 +72,13 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
     public List<Procesopoa> mostrarProcesopoa() throws Throwable {
         TypedQuery<Procesopoa> q = em.createQuery("SELECT p FROM Procesopoa p", Procesopoa.class);
         List<Procesopoa> pr = q.getResultList();
-        return pr;
+        List<Procesopoa> pr2=new ArrayList<>();
+        pr.forEach((t) -> {
+            if(t.getResponsable()!=null){
+                pr2.add(t);
+            }
+        });        
+        return pr2;
     }
 
     @Override
@@ -107,6 +113,17 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
     }
 
     @Override
+    public List<Calendarioevaluacionpoa> mostrarCalendarioevaluacionpoas() throws Throwable {
+        facade.setEntityClass(Calendarioevaluacionpoa.class);
+        List<Calendarioevaluacionpoa> es = facade.findAll();
+        if (es.isEmpty()) {
+            return null;
+        } else {
+            return es;
+        }
+    }
+
+    @Override
     public Calendarioevaluacionpoa mostrarCalendarioEvaluacion(Date fecha) throws Throwable {
         TypedQuery<Calendarioevaluacionpoa> q = em.createQuery("SELECT cp FROM Calendarioevaluacionpoa cp WHERE :fecha BETWEEN cp.fechaInicio AND cp.fechaFin", Calendarioevaluacionpoa.class);
         q.setParameter("fecha", fecha);
@@ -116,8 +133,8 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         } else {
             return pr.get(0);
         }
-    }
-
+    }    
+    
     ////////////////////////////////////////////////////////////////////////////////Eventos Áreas
     @Override
     public List<EventosAreas> mostrarEventosesAreases() throws Throwable {

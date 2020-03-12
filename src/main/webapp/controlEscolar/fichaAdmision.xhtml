@@ -418,7 +418,7 @@
                                                                         <div class="form-group">
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="telFijo" style="font-size: large" value="Teléfono fijo"/>
-                                                                                <p:inputMask mask="(99)(999)999-9999" id="telFijo" class="form-control" placeholder="(99)(999)-999-9999" value="#{FichaAdmision.medioComunicacion.telefonoFijo}"/>
+                                                                                <p:inputMask mask="(999)999-9999" id="telFijo" class="form-control" placeholder="(99)(999)-999-9999" value="#{FichaAdmision.medioComunicacion.telefonoFijo}"/>
                                                                                 <p:message for="telFijo"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
@@ -1208,16 +1208,17 @@
                                                             <p>Estimado(a) #{FichaAdmision.persona.nombre}</p>
 
                                                             <p style="text-align:  justify">Gracias por elegir a la Universidad Tecnológica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior.</p>
-                                                            <p style="text-align:  justify">Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entrega la documentación necesaria</p>
+                                                            <p style="text-align: justify; font-size: x-large"><strong>Para continuar, descarga la ficha de admisión, asiste a las instalaciones de la UTXJ y entrega la siguiente documentación:</strong></p>
                                                             <br />
                                                             <ul>
-                                                                <li>Formato de Ficha de Admisión.</li>
-                                                                <li>Copia de CURP (nuevo formato).</li>
-                                                                <li>Copia de Acta de Nacimiento.</li>
-                                                                <li>Copia de Certificado de Nivel Medio Superior o Constancia de Estudios Original reciente con tira de materias y calificaciones (aprobatorias) del 1o. al 5o. semestre; indicando el promedio general y firmado por el titular de la Institución</li>
-                                                                <li>Referencia bancaria del pago de ficha y examen de admisión.</li>
+                                                                <li style="font-size: medium"><strong>Formato de Ficha de Admisión.</strong></li>
+                                                                <li style="font-size: medium"><strong>Copia de CURP (nuevo formato).</strong></li>
+                                                                <li style="font-size: medium"><strong>Copia de Acta de Nacimiento.</strong></li>
+                                                                <li style="font-size: medium"><strong>Copia de Certificado de Nivel Medio Superior o Constancia de Estudios Original reciente con tira de materias y calificaciones (aprobatorias) del 1o. al 5o. semestre; indicando el promedio general y firmado por el titular de la Institución</strong></li>
+                                                                <li style="font-size: medium"><strong>Referencia bancaria del pago de ficha y examen de admisión.</strong></li>
                                                             </ul>
                                                             <br/>
+
                                                             <p style="text-align:  justify">Se enviará su ficha de admisión al correo <strong>#{FichaAdmision.medioComunicacion.email}</strong> al dar clic en el botón Descargar Formato de Ficha</p>
                                                             <p:commandButton id="btnDatosAca" value="Descargar Formato de Ficha" icon="fa fa-download"
                                                                              class="btn-primary btn-block col-md-3" update=":tabw1" action="#{FichaAdmision.downloadFichaAdmin()}" ajax="false"/>

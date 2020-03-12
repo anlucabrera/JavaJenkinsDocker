@@ -38,6 +38,7 @@ import org.primefaces.event.TabCloseEvent;
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Ajax;
 
 
 
@@ -195,7 +196,7 @@ public class RegistroPlanTutoriaTutor extends ViewScopedRol implements Desarroll
             mostrarMensaje("No hay un grupo tutorado seleccionado");
             return;
         }
-        ResultadoEJB<List<PlanAccionTutorial>> planAccionTutorial = ejb.buscaPlanAccionTutorialExistente(rol.getGrupoTutorSeleccionado().getGrupo());
+        ResultadoEJB<List<PlanAccionTutorial>> planAccionTutorial = ejb.aplicarPlantillaPlanAccionTutorial(rol.getGrupoTutorSeleccionado().getGrupo());
         if(!planAccionTutorial.getCorrecto()){
             mostrarMensajeResultadoEJB(planAccionTutorial);
             inicializarPlanAccionTutorial();
@@ -269,7 +270,6 @@ public class RegistroPlanTutoriaTutor extends ViewScopedRol implements Desarroll
         ResultadoEJB<Boolean> res = ejb.editaFuncionTutor(funcionTutor);
         if(res.getCorrecto()){
             mostrarMensajeResultadoEJB(res);
-            actualizarListaFuncionesTutor();
         }else{
             mostrarMensajeResultadoEJB(res);
         }
@@ -314,7 +314,6 @@ public class RegistroPlanTutoriaTutor extends ViewScopedRol implements Desarroll
         ResultadoEJB<Boolean> res = ejb.editaSesionGrupal(sesionGrupal);
         if(res.getCorrecto()){
             mostrarMensajeResultadoEJB(res);
-            actualizarListaSesionesGrupalesTutorias();
         }else{
             mostrarMensajeResultadoEJB(res);
         }
@@ -335,10 +334,12 @@ public class RegistroPlanTutoriaTutor extends ViewScopedRol implements Desarroll
     /*********************************************** Llenado de listas *********************************************************/
     public void actualizarListaFuncionesTutor(){
         rol.setListaFuncionesTutor(ejb.buscaFuncionesTutor(rol.getPlanAccionTutorial()).getValor());
+        actualizar();
     }
     
     public void actualizarListaSesionesGrupalesTutorias(){
         rol.setListaSesionesGrupalesTutorias(ejb.buscaSesionesGrupalesXPlanAT(rol.getPlanAccionTutorial().getGrupo()).getValor());
+        actualizar();
     }
     
     /*************************************************************************************************************************/

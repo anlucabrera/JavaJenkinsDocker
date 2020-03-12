@@ -403,12 +403,30 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     }
 
     @Override
-    public ResultadoEJB<EventoEscolar> verificarEvento() {
+    public ResultadoEJB<EventoEscolar> verificarEventoIncipcion() {
         try{
-            return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.INSCRIPCIONES);
+            //Ultimo proceso de inscripcion
+            /*EventoEscolar eventoEscolar = em.createQuery("select e from EventoEscolar  e where  e.evento=7",EventoEscolar.class)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+                    ;
+            return ResultadoEJB.crearCorrecto(eventoEscolar,"Evento");
+
+            */
+           return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.INSCRIPCIONES);
         }catch (Exception e){
             return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar de inscripciones (EJBProcesoInscripcion.).", e, EventoEscolar.class);
         }
 
+    }
+
+    @Override
+    public ResultadoEJB<EventoEscolar> verificarEventoRegistroFichas() {
+        try{
+            return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.REGISTRO_FICHAS_ADMISION);
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar de inscripciones (EJBProcesoInscripcion.).", e, EventoEscolar.class);
+        }
     }
 }

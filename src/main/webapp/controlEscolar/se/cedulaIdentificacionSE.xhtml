@@ -46,7 +46,7 @@
                                         <p:commandButton id="dynaButton" value="Utilerias" type="button" icon="fa fa-cogs" class="btn btn-primary"/>
                                         <p:menu overlay="true" trigger="dynaButton" my="left top" at="left bottom" >
                                                 <p:menuitem value="Resetear contraseña"
-                                                            update=":frm1,:tabw1:frm,:tabw2:frm2,:tabw2:frm3,:tabw2:frm4,:tabw2:tabw3:frm5,:tabw2:frm6,:frmPwd"
+                                                            update=":frm1,:tabw1:frm,:tabw2:frm2,:tabw2:frm3,:tabw2:frm4,:tabw2:tabw3:frm5,:tabw2:frm6,:frmPwd,:frmConfirm"
                                                             icon="fa fa-key"
                                                             oncomplete="PF('modalConfirm').show();"
 
@@ -387,17 +387,30 @@
                                                         <div class="#{panel}">
                                                             <p:separator styleClass="ui-noborder"/>
                                                             <p:outputPanel id="contenedor">
-                                                                <p:dataTable var="calificaciones"
+                                                                <div class="row">
+                                                                    <div class="#{casilla}">
+                                                                        <div class="ui-material">
+                                                                            <p:selectOneMenu id="periodo" value="#{cedulaIdentificacionSE.rol.periodoEstudiante}" converter="entityConverter" styleClass="form-control" >
+                                                                                <f:selectItems value="#{cedulaIdentificacionSE.rol.periodosEstudiante}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                                                <p:ajax update=":tabw2:tabw3:frmCalificaciones:calificaciones" process="@this" listener="#{cedulaIdentificacionSE.changePeriodo()}"/>
+                                                                                <p:autoUpdate />
+                                                                            </p:selectOneMenu>
+                                                                            <p:outputLabel value="Periodo" for="periodo"/>
+                                                                            <p:message for="periodo" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <p:dataTable var="calificaciones" id="calificaciones"
                                                                              value="#{cedulaIdentificacionSE.rol.materiasPorEstudiante}"
-                                                                             rendered="#{cedulaIdentificacionSE.rol.periodoE eq cedulaIdentificacionSE.rol.periodo}"
+                                                                             rendered="#{cedulaIdentificacionSE.rol.periodoE eq cedulaIdentificacionSE.rol.periodoEstudiante.periodo}"
                                                                              emptyMessage="Sin registros."
                                                                              style="font-size: small; text-align: center; font-weight: bold; margin-bottom: 20px"
                                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
                                                                              tableStyle="vertical-align: middle;" >
                                                                     <f:facet name="header">
-                                                                        <h:outputText value="Cuatrimestre: #{cedulaIdentificacionSE.rol.estudiante.grupo.grado}  '#{cedulaIdentificacionSE.rol.estudiante.grupo.literal}'"/>
+                                                                        <h:outputText value="Cuatrimestre: #{cedulaIdentificacionSE.rol.estudiantePeriodo.grupo.grado}  '#{cedulaIdentificacionSE.rol.estudiantePeriodo.grupo.literal}'"/>
                                                                         <p:spacer width="10"/>
-                                                                        <h:outputText value="(#{caster.clavePeriodoToString(cedulaIdentificacionSE.rol.estudiante.grupo.periodo)})"/>
+                                                                        <h:outputText value="(#{caster.clavePeriodoToString(cedulaIdentificacionSE.rol.estudiantePeriodo.grupo.periodo)})"/>
                                                                     </f:facet>
 
                                                                     <p:columnGroup type="header">
@@ -644,7 +657,13 @@
                           style="scroll-: 300px"
                           modal="true" draggable="true" header="Reseteo de contraseña" styleClass="panel panel-primary" responsive="true" resizable="true" closable="false" maximizable="true">
                     <div class="box box-primary">
-                        <h:form>
+                        <h:form id="frmConfirm">
+                            <c:if test="#{cedulaIdentificacionSE.rol.estudiante.aspirante.idPersona.login.modificado==true}">
+                                <span class="label label-success" style="text-align: justify;"><i class="fa fa-exclamation-triangle"></i> El estudiante ha relizado el cambio de contraseña.</span>
+                            </c:if>
+                            <c:if test="#{cedulaIdentificacionSE.rol.estudiante.aspirante.idPersona.login.modificado==false}">
+                                <span class="label label-warning" style="text-align: justify;"><i class="fa fa-exclamation-triangle"></i> El estudiante no ha relizado el cambio de contraseña.</span>
+                            </c:if>
                             <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">¿Esta seguro de que desea resetear la contraseña del estudiante?</h3></div>
                             <div class="box-body">
                                 <p:spacer width="50px"/>
@@ -694,6 +713,36 @@
 
                     </div>
                 </p:dialog>
+                <p:dialog id="modalAviso"
+                          widgetVar="modalAviso" width="300" max-height="200" closeOnEscape="false" visible="#{true}" showEffect="fade" hideEffect="fade"
+                          style="scroll-: 300px"
+                          modal="true" draggable="true" header="Aviso de privacidad" position="center" styleClass="panel panel-primary" responsive="true" resizable="true" closable="false" maximizable="false">
+                    <div class="box box-primary">
+                        <h:form id="frmAviso">
+                            <div class="box-body">
+                                <p:panelGrid columns="1" style="align-items: center">
+                                    <p:outputLabel value="El siguiente modulo contiene información personal de las y los estudiantes adcritos a esta casa de estudios. Por lo cual es importante que conozca y acepte nuestro aviso de privacidad de datos personales." />
+                                </p:panelGrid>
+                                <br/>
+                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/plantillas/avisoPrivacidad.pdf" target="_blank">
+                                    <span><strong>Consultar aviso de privacidad</strong></span>
+                                </p:link>
+
+                            </div>
+                            <div class="box-footer clearfix no-border">
+                                <p:commandButton
+                                        class="btn btn-primary"
+                                        value="Aceptar aviso de privacidad"
+                                        onclick="PF('modalAviso').hide();"
+                                        update="@this ,:frm1,:tabw1:frm,:tabw2:frm2,:tabw2:frm3,:tabw2:frm4,:tabw2:tabw3:frm5,:tabw2:frm6,:frmPwd">
+
+                                </p:commandButton>
+                            </div>
+                        </h:form>
+
+                    </div>
+                </p:dialog>
+
         </c:if>
             <c:if test="#{!cedulaIdentificacionSE.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
@@ -705,8 +754,6 @@
             </c:if>
 
         </div>
-
-
 
         <script>
             //collapseSidebar(); activar para colapsar barra lateral

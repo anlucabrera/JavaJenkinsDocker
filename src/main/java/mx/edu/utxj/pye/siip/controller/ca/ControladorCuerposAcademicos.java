@@ -26,6 +26,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
@@ -88,6 +89,11 @@ public class ControladorCuerposAcademicos implements Serializable{
         try {
         dtoCuerposAcademicos = new DtoCuerposAcademicos();
         consultaAreaRegistro();
+        
+        if(dtoCuerposAcademicos.getArea() == null){
+            return;
+        }
+        
         filtros();
         try {
             dtoCuerposAcademicos.setListaCuerpoAreasAcademicas(ejbCuerposAcademicos.getCuerpoAreasAcademicas());
@@ -110,12 +116,17 @@ public class ControladorCuerposAcademicos implements Serializable{
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 12);
             if (areaRegistro == null) {
-                dtoCuerposAcademicos.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                if(area.getCorrecto()){
+                    dtoCuerposAcademicos.setArea(area.getValor());
+                }else{
+                    dtoCuerposAcademicos.setArea(null);
+                }
             } else {
                 dtoCuerposAcademicos.setArea(areaRegistro);
             }
         } catch (Exception ex) {
-            System.out.println("ControladorCuerposAcademicos.consultaAreaRegistro: " + ex.getMessage());
+            dtoCuerposAcademicos.setArea(null);
         }
     }
     

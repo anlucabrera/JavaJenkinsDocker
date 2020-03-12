@@ -63,19 +63,11 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
                 if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
                 if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
 
-                rol.setNivelRol(NivelRol.OPERATIVO);
+                rol.setNivelRol(NivelRol.CONSULTA);
 
-                PeriodosEscolares resPeriodoAcitvo = ejb.getPeriodoActual();
-                rol.setPeriodoActivo(resPeriodoAcitvo);
-                rol.setPeriodoSeleccionado(rol.getPeriodoActivo().getPeriodo());
+                ResultadoEJB<List<Estudiante>> resEstudiantes = ejb.obtenerRegistrosEstudiante(rol.getEstudiante());
+                rol.setEstudiantes(resEstudiantes.getValor());
 
-                ResultadoEJB<List<PeriodosEscolares>> resPeriodosEscolares = ejb.obtenerListaPeriodosEscolares();
-                rol.setPeriodosEscolares(resPeriodosEscolares.getValor());
-
-                ResultadoEJB<List<DtoCargaAcademica>> resCargas = ejb.obtenerCargasAcademicas(rol.getEstudiante());
-                if(!resCargas.getCorrecto()) mostrarMensajeResultadoEJB(resCargas);
-                else rol.setCargasEstudiante(resCargas.getValor().stream().filter(x -> x.getPeriodo().getPeriodo().equals(rol.getPeriodoSeleccionado())).collect(Collectors.toList()));
-                obtenerUnidadesPorMateria();
 
             }else{
                 return;
@@ -85,9 +77,9 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         }
     }
 
-    public void obtenerUnidadesPorMateria() {
+    public List<DtoCalificacionEstudiante.MapUnidadesTematicas> obtenerUnidadesPorMateria(@NonNull Estudiante estudiante) {
         List<DtoCalificacionEstudiante.MapUnidadesTematicas> resMap = new ArrayList<>();
-        ResultadoEJB<List<DtoCalificacionEstudiante.UnidadesPorMateria>> resUnidadesPorMateria = ejb.packUnidadesmateria(rol.getEstudiante());
+        ResultadoEJB<List<DtoCalificacionEstudiante.UnidadesPorMateria>> resUnidadesPorMateria = ejb.packUnidadesmateria(estudiante);
         rol.setUnidadesPorMateria(resUnidadesPorMateria.getValor());
         rol.getUnidadesPorMateria().forEach(x -> {
             x.getUnidadMateriaConfiguracion().forEach(y -> {
@@ -96,8 +88,15 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         });
         rol.setMapUnidadesTematicas(new ArrayList<>(new HashSet<>(resMap)));
         rol.getMapUnidadesTematicas().sort(Comparator.comparingInt(DtoCalificacionEstudiante.MapUnidadesTematicas::getNoUnidad));
+        return rol.getMapUnidadesTematicas();
     }
 
+    public List<DtoCargaAcademica> getCargasAcademicas(@NonNull Estudiante estudiante){
+        ResultadoEJB<List<DtoCargaAcademica>> resCargas = ejb.obtenerCargasAcademicas(estudiante);
+        if(!resCargas.getCorrecto()) mostrarMensajeResultadoEJB(resCargas);
+        else rol.setCargasEstudiante(resCargas.getValor());
+        return rol.getCargasEstudiante();
+    }
 
     public List<DtoUnidadConfiguracion> getUnidades(@NonNull DtoCargaAcademica dtoCargaAcademica){
         if(rol.getDtoUnidadConfiguracionesMap().containsKey(dtoCargaAcademica)) return  rol.getDtoUnidadConfiguracionesMap().get(dtoCargaAcademica);
@@ -112,9 +111,9 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         return  rol.getDtoUnidadConfiguracionesMap().get(dtoCargaAcademica);
     }
 
-    public DtoUnidadesCalificacionEstudiante getContenedor(@NonNull DtoCargaAcademica dtoCargaAcademica){
+    public DtoUnidadesCalificacionEstudiante getContenedor(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull Estudiante estudiante){
         if(rol.getDtoUnidadesCalificacionMap().containsKey(dtoCargaAcademica)) return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
-        ResultadoEJB<DtoUnidadesCalificacionEstudiante> resDtoUnidadesCalificacion = ejb.packDtoUnidadesCalificacion(rol.getEstudiante(), getUnidades(dtoCargaAcademica));
+        ResultadoEJB<DtoUnidadesCalificacionEstudiante> resDtoUnidadesCalificacion = ejb.packDtoUnidadesCalificacion(estudiante, getUnidades(dtoCargaAcademica));
         if(!resDtoUnidadesCalificacion.getCorrecto()){
             mostrarMensaje("No se detectaron registros de calificaciones de la carga seleccionada. " + resDtoUnidadesCalificacion.getMensaje());
             return null;
@@ -124,7 +123,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
     }
 
-    public  Boolean tieneIntegradora(@NonNull DtoCargaAcademica dtoCargaAcademica){
+    public  Boolean tieneIntegradora(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull Estudiante estudiante){
         if(rol.getTieneIntegradoraMap().containsKey(dtoCargaAcademica)) return rol.getTieneIntegradoraMap().get(dtoCargaAcademica);
 
         ResultadoEJB<TareaIntegradora> tareaIntegradoraResultadoEJB = ejbCapturaTareaIntegradora.verificarTareaIntegradora(dtoCargaAcademica);
@@ -133,7 +132,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
             rol.getTareaIntegradoraMap().put(dtoCargaAcademica, tareaIntegradoraResultadoEJB.getValor());
             rol.setTieneIntegradora(Boolean.TRUE);
 
-            ResultadoEJB<Map<DtoCargaAcademica, TareaIntegradoraPromedio>> generarContenedorCalificaciones = ejb.generarContenedorCalificaciones(getContenedor(dtoCargaAcademica).getDtoCargaAcademicas(), rol.getEstudiante(), tareaIntegradoraResultadoEJB.getValor());
+            ResultadoEJB<Map<DtoCargaAcademica, TareaIntegradoraPromedio>> generarContenedorCalificaciones = ejb.generarContenedorCalificaciones(getContenedor(dtoCargaAcademica, estudiante).getDtoCargaAcademicas(), estudiante, tareaIntegradoraResultadoEJB.getValor());
             if(!generarContenedorCalificaciones.getCorrecto()){
                 mostrarMensajeResultadoEJB(generarContenedorCalificaciones);
             }
@@ -146,24 +145,24 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         return rol.getTieneIntegradoraMap().get(dtoCargaAcademica);
     }
 
-    public DtoCalificacionNivelacion getNivelacion(@NonNull DtoCargaAcademica dtoCargaAcademica){
-        DtoUnidadesCalificacionEstudiante.DtoNivelacionPK pk = new DtoUnidadesCalificacionEstudiante.DtoNivelacionPK(dtoCargaAcademica, rol.getEstudiante());
-        if(getContenedor(dtoCargaAcademica).getNivelacionMap().containsKey(pk)) return getContenedor(dtoCargaAcademica).getNivelacionMap().get(pk);
-        ResultadoEJB<DtoCalificacionNivelacion> packDtoCalificacionNivelacion = ejb.packDtoCalificacionNivelacion(dtoCargaAcademica, rol.getEstudiante());
+    public DtoCalificacionNivelacion getNivelacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull Estudiante estudiante){
+        DtoUnidadesCalificacionEstudiante.DtoNivelacionPK pk = new DtoUnidadesCalificacionEstudiante.DtoNivelacionPK(dtoCargaAcademica, estudiante);
+        if(getContenedor(dtoCargaAcademica, estudiante).getNivelacionMap().containsKey(pk)) return getContenedor(dtoCargaAcademica, estudiante).getNivelacionMap().get(pk);
+        ResultadoEJB<DtoCalificacionNivelacion> packDtoCalificacionNivelacion = ejb.packDtoCalificacionNivelacion(dtoCargaAcademica, estudiante);
         if(packDtoCalificacionNivelacion.getCorrecto()){
             @NonNull DtoCalificacionNivelacion dtoCalificacionNivelacion = packDtoCalificacionNivelacion.getValor();
-            getContenedor(dtoCargaAcademica).getNivelacionMap().put(pk, dtoCalificacionNivelacion);
-            return getContenedor(dtoCargaAcademica).getNivelacionMap().get(pk);
+            getContenedor(dtoCargaAcademica, estudiante).getNivelacionMap().put(pk, dtoCalificacionNivelacion);
+            return getContenedor(dtoCargaAcademica, estudiante).getNivelacionMap().get(pk);
         }else {
             mostrarMensajeResultadoEJB(packDtoCalificacionNivelacion);
             return null;
         }
     }
 
-    public BigDecimal getPromedioAsignaturaEstudiante(@NonNull DtoCargaAcademica dtoCargaAcademica){
-        ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica), dtoCargaAcademica, rol.getEstudiante());
+    public BigDecimal getPromedioAsignaturaEstudiante(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull Estudiante estudiante){
+        ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica, estudiante), dtoCargaAcademica, estudiante);
         if(res.getCorrecto()){
-            return res.getValor();
+            return res.getValor().setScale(2, RoundingMode.HALF_UP);
         }else{
             mostrarMensaje(
                     String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno(),
@@ -173,9 +172,9 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         }
     }
 
-    public BigDecimal getPromedioFinal(@NonNull DtoCargaAcademica dtoCargaAcademica){
-        BigDecimal promedioOrdinario = getPromedioAsignaturaEstudiante(dtoCargaAcademica);
-        BigDecimal nivelacion = new BigDecimal(getNivelacion(dtoCargaAcademica).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+    public BigDecimal getPromedioFinal(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull Estudiante estudiante){
+        BigDecimal promedioOrdinario = getPromedioAsignaturaEstudiante(dtoCargaAcademica, estudiante).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal nivelacion = new BigDecimal(getNivelacion(dtoCargaAcademica, estudiante).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal promedioFinal = BigDecimal.ZERO;
         if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
             promedioFinal = promedioFinal.add(promedioOrdinario);
@@ -185,26 +184,32 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         return promedioFinal;
     }
 
-    public BigDecimal getPromedioCuatrimestral(){
+    public BigDecimal getPromedioCuatrimestral(@NonNull Estudiante estudiante){
         BigDecimal promedioCuatrimestral = BigDecimal.ZERO;
-        ResultadoEJB<List<DtoCargaAcademica>> resCargas = ejb.obtenerCargasAcademicas(rol.getEstudiante());
+        ResultadoEJB<List<DtoCargaAcademica>> resCargas = ejb.obtenerCargasAcademicas(estudiante);
         List<BigDecimal> lista = new ArrayList<>();
         if(!resCargas.getCorrecto()) mostrarMensajeResultadoEJB(resCargas);
-        else rol.setCargasEstudiante(resCargas.getValor().stream().filter(x -> x.getPeriodo().getPeriodo().equals(rol.getPeriodoSeleccionado())).collect(Collectors.toList()));
+        else rol.setCargasEstudiante(resCargas.getValor());
         rol.getCargasEstudiante().forEach(dtoCargaAcademica -> {
-            lista.add(getPromedioFinal(dtoCargaAcademica));
+            lista.add(getPromedioFinal(dtoCargaAcademica, estudiante));
         });
         BigDecimal totalMaterias = new BigDecimal(rol.getCargasEstudiante().size());
         BigDecimal suma = lista.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
         promedioCuatrimestral = suma.divide(totalMaterias, RoundingMode.HALF_UP);
-        return promedioCuatrimestral.setScale(1, RoundingMode.HALF_UP);
+        return promedioCuatrimestral.setScale(2, RoundingMode.HALF_UP);
     }
 
-    public void obtenerCalificacionesAnteriores(){
-        ResultadoEJB<List<DtoCargaAcademica>> resCargas = ejb.obtenerCargasAcademicas(rol.getEstudiante());
-        if(!resCargas.getCorrecto()) mostrarMensajeResultadoEJB(resCargas);
-        else rol.setCargasEstudiante(resCargas.getValor().stream().filter(x -> x.getPeriodo().getPeriodo().equals(rol.getPeriodoSeleccionado())).collect(Collectors.toList()));
-        obtenerUnidadesPorMateria();
+    public BigDecimal obtenerPromedioAcumulado(){
+        BigDecimal promedio;
+        BigDecimal totalRegistro = new BigDecimal(rol.getEstudiantes().size());
+        BigDecimal suma;
+        List<BigDecimal> promedios = new ArrayList<>();
+        rol.getEstudiantes().forEach(estudiante -> {
+            promedios.add(getPromedioCuatrimestral(estudiante));
+        });
+        suma = promedios.stream().map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add);
+        promedio = suma.divide(totalRegistro).setScale(2, RoundingMode.HALF_UP);
+        return promedio;
     }
 
     @Override

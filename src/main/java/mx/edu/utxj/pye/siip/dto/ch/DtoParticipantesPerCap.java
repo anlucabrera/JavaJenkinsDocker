@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.Part;
 import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -46,6 +47,7 @@ public class DtoParticipantesPerCap {
     @Getter private List<EventosRegistros> eventosPorPeriodo;
     @Getter private List<EvidenciasDetalle> listaEvidencias;
     @Getter private List<DTOPerCapParticipantes> lista;
+    @Getter @Setter private List<DTOPerCapParticipantes> filtroLista;
     @Getter private List<PeriodosEscolares> periodos;
     @Getter private List<Part> archivos;
     

@@ -4,10 +4,7 @@ import java.util.List;
 import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
-import mx.edu.utxj.pye.sgi.entity.ch.EstudiantesClaves;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.ch.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
@@ -59,4 +56,10 @@ public interface EjbAdministracionEvTutor {
      * @return Resultado del proceso( Resultado de la evaluacion o  null)
      */
     public ResultadoEJB<EvaluacionTutoresResultados> getResultadoEvaluacionByEstudiante(dtoEstudiantesEvalauciones estudiante);
+
+    /**
+     * Busca un resultado de le evaluacion por matricula y evaluacion
+     *
+     */
+    public ResultadoEJB<EvaluacionTutoresResultados2> getResultadosEvByEstudiante (dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion);
 }

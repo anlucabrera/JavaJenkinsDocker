@@ -75,8 +75,6 @@ public class SesionesGrupalesTutorias implements Serializable {
     @ManyToOne(optional = false)
     private PlanAccionTutorial planAccionTutoria;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sesionGrupal")
-    private List<TutoriasIndividuales> tutoriasIndividualesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sesionGrupal")
     private List<TutoriasGrupales> tutoriasGrupalesList;
 
     public SesionesGrupalesTutorias() {
@@ -149,15 +147,6 @@ public class SesionesGrupalesTutorias implements Serializable {
 
     public void setPlanAccionTutoria(PlanAccionTutorial planAccionTutoria) {
         this.planAccionTutoria = planAccionTutoria;
-    }
-
-    @XmlTransient
-    public List<TutoriasIndividuales> getTutoriasIndividualesList() {
-        return tutoriasIndividualesList;
-    }
-
-    public void setTutoriasIndividualesList(List<TutoriasIndividuales> tutoriasIndividualesList) {
-        this.tutoriasIndividualesList = tutoriasIndividualesList;
     }
 
     @XmlTransient

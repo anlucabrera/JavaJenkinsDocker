@@ -3,24 +3,31 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 import com.github.adminfaces.starter.infra.model.Filter;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteGeneralFichas;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteProyeccionFichas;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.enums.TramiteTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
+import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 /**
  * Consulta de registro de fichas de admisión  por carrera
@@ -383,5 +390,303 @@ public class EjbFichaAdmisionReporte {
 
     }
 
+    /**
+     * Obtiene la proyecccion de fichas
+     * Este dato se obtiene de Configuración propiedades en Prontuario el cual debe ser proporcionado por Vinculacion
+     * fichasProyectadasSemanal --> Fichas proyectadas Semanal
+     * fichasProyectadasSabatino --> Fichas proyectadas Sabatino
+     * total --> Suma de las dos anteriores
+     * @return Resultado del proceso (dtoReporteGeneralFichas)
+     */
+    public ResultadoEJB<DtoReporteGeneralFichas> getProyeccionFichas (){
+        try{
+            DtoReporteGeneralFichas dto = new DtoReporteGeneralFichas();
+            dto.setTipo("Fichas Proyectadas");
+            //Obtiene el numero fichas proyectadas semanal
+            dto.setTotalSemanal(ep.leerPropiedadEntera("fichasProyectadasSemanal").orElse(0));
+            dto.setTotalSabatino(ep.leerPropiedadEntera("fichasProyectadasSabatino").orElse(0));
+            dto.setTotal(dto.getTotalSemanal()+dto.getTotalSabatino());
+            return ResultadoEJB.crearCorrecto(dto,"Fichas proyectadas");
 
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener la proyeccion de fichas. (EjbFichaAdmisionReporte.getProyeccionFichas)", e, null);
+        }
+    }
+
+    /**
+     * Obtiene la matricula proyectada
+     * Este dato se obtiene de Configuración propiedades en Prontuario el cual debe ser proporcionado por Planeación (Los valores se deben cambiar anualmente)
+     * matriculaProyectadaSemanal --> Proyecccion de estudiantes inscritos en ultimo periodo de proceso de inscripcion
+     * matriculaProyectadaSabatino -> Proyeccion de estudiantes inscritos en el ultimo periodo de proceso de inscripcion
+     * total -> suma de los dos anteriores
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DtoReporteGeneralFichas> getProyeccionMatricula (){
+        try{
+            DtoReporteGeneralFichas dto = new DtoReporteGeneralFichas();
+            dto.setTipo("Matricula Proyectada");
+            dto.setTotalSemanal(ep.leerPropiedadEntera("matriculaProyectadaSemanal").orElse(0));
+            dto.setTotalSabatino(ep.leerPropiedadEntera("matriculaProyectadaSabatino").orElse(0));
+            dto.setTotal(dto.getTotalSemanal()+dto.getTotalSabatino());
+            return ResultadoEJB.crearCorrecto(dto,"Matricula Proyectada");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener la proyeccion de matricula. (EjbFichaAdmisionReporte.getProyeccionMatricula)", e, null);
+        }
+    }
+
+
+    /**
+     * Obtiene la matricula registrada
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DtoReporteGeneralFichas> getMatriculaInscrita(){
+        try{
+            DtoReporteGeneralFichas dto = new DtoReporteGeneralFichas();
+            dto.setTipo("Matricula Inscrita");
+            //Se obtiene el total de la matricula inscrita
+            ResultadoEJB<List<Estudiante>> resInscritos =getEstudiantesInscritos();
+           // System.out.println("Lista estudiantes inscritos" + resInscritos.getValor().size());
+            if(resInscritos.getCorrecto()==true){
+               // System.out.println("Correcto" + resInscritos.getValor().size());
+                dto.setTotal(resInscritos.getValor().size());
+                dto.setTotalSemanal((int) resInscritos.getValor().stream()
+                        .filter(x -> x.getGrupo().getIdSistema().getNombre().equals("Semanal"))
+                        .count());
+                dto.setTotalSemanal((int) resInscritos.getValor().stream()
+                        .filter(x -> x.getGrupo().getIdSistema().getNombre().equals("Sabatino"))
+                        .count());
+                return ResultadoEJB.crearCorrecto(dto,"Matricula Registrada");
+            }
+            else {
+                //La lista viene vacia o nula
+                dto.setTotal(0);
+                dto.setTotalSemanal(0);
+                dto.setTotalSabatino(0);
+               // System.out.println("Error-> getListaEstudiantesInscritos");
+                return ResultadoEJB.crearCorrecto(dto,"Lista vacia");}
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener la matricula registrada. (EjbFichaAdmisionReporte.getMatriculaInscrita)", e, null);
+        }
+    }
+
+    /**
+     * Obtiene el total de Fichas registradas segun el ultimo proceso de inscripcion (Registro de Fichas)
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DtoReporteGeneralFichas> getFichasRegistradas (List<Aspirante> aspirantes){
+        try{
+            if(aspirantes ==null){return ResultadoEJB.crearErroneo(2,new DtoReporteGeneralFichas(),"La lista de estudiantes no debe ser nula");}
+            DtoReporteGeneralFichas dto = new DtoReporteGeneralFichas();
+            dto.setTipo("Registro de Fichas");
+                dto.setTotal(aspirantes.size());
+                dto.setTotalSemanal((int)aspirantes.stream()
+                        .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Semanal"))
+                        .count());
+                dto.setTotalSabatino((int)aspirantes.stream()
+                        .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Sabatino"))
+                        .count());
+                return ResultadoEJB.crearCorrecto(dto,"Registro de Fichas");
+
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener las fichas registradas. (EjbFichaAdmisionReporte.getProyeccionMatricula)", e, null);
+        }
+    }
+
+    /**
+     * Obtiene las fichas que han sido validadas
+     * @param aspirantes  Lista de aspirantes
+     * @return RE
+     */
+    public ResultadoEJB<DtoReporteGeneralFichas> getFichasValidadas(List<Aspirante> aspirantes){
+        try{
+            if(aspirantes ==null){return ResultadoEJB.crearErroneo(2,new DtoReporteGeneralFichas(),"La la lista de aspirantes no debe ser nula");}
+            if(aspirantes ==null){return ResultadoEJB.crearErroneo(2,new DtoReporteGeneralFichas(),"La lista de estudiantes no debe ser nula");}
+            DtoReporteGeneralFichas dto = new DtoReporteGeneralFichas();
+            dto.setTipo("Fichas validadas");
+            dto.setTotalSemanal((int)aspirantes.stream()
+                    .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Semanal")&& x.getEstatus() == true)
+                    .count());
+            dto.setTotalSabatino((int)aspirantes.stream()
+                    .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Sabatino")&& x.getEstatus() == true)
+                    .count());
+            dto.setTotal(dto.getTotalSabatino() +dto.getTotalSemanal());
+            return ResultadoEJB.crearCorrecto(dto,"Registro de Fichas");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener las fichas validadas. (EjbFichaAdmisionReporte.getFichasValidadas)", e, null);
+        }
+    }
+
+    /**
+     * Obtiene la lista de estudiantes que se han inscrito en el ultimo periodo de inscripcion
+     * periodoProcesoInscripcion --> Se obtiene de confriguracion propiedades (Cambiar anualmente)
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Estudiante>> getEstudiantesInscritos (){
+        try {
+            //Periodo del proceso de inscripcion programado
+            Integer periodoInscripcion = ep.leerPropiedadEntera("periodoProcesoInscripcion").orElse(0);
+            //System.out.println("Periodo Inscripcion ->" +periodoInscripcion);
+            //Se obtienen los estudiantes que se han inscrito en ese periodo
+            List<Estudiante> estudiantesInscritos = em.createQuery("select e from Estudiante e where e.periodo=:periodo and e.tipoRegistro=:tipo",Estudiante.class)
+                    .setParameter("periodo",periodoInscripcion)
+                    .setParameter("tipo","Inscripción")
+                    .getResultList()
+                    ;
+            //System.out.println("Lista --->" +estudiantesInscritos);
+            if(estudiantesInscritos ==null || estudiantesInscritos.isEmpty()){
+                //System.out.println("Entro  error en lista estudiantes");
+                return ResultadoEJB.crearErroneo(2,estudiantesInscritos,"No existen estudiantes inscritos");}
+            else {
+                //System.out.println("Correcto lista de estudiantes");
+
+                return ResultadoEJB.crearCorrecto(estudiantesInscritos,"Estudiantes inscritos");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener los estudiantes inscritos. (EjbFichaAdmisionReporte.getEstudiantesInscritos)", e, null);
+        }
+    }
+
+    /**
+     * Obtiene la lista de aspirantes de nuevo ingreso del ultimo periodo de proceso de registro de fichas
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Aspirante>> getAspirantes(){
+        try{
+            List<Aspirante> aspirantes = new ArrayList<>() ;
+            //Obtiene el ultimo periodo de inscripcion (Registro de fichas)
+            ResultadoEJB<ProcesosInscripcion> resInscripcion= getUltimoProcesoInscripcion();
+            if(resInscripcion.getCorrecto()==true){
+                aspirantes = em.createQuery("select a from Aspirante a where a.idProcesoInscripcion.idProcesosInscripcion=:procesoInscripcion and a.tipoAspirante.idTipoAspirante=:tipo and a.datosAcademicos<> null and a.folioAspirante <> null order by a.folioAspirante",Aspirante.class)
+                .setParameter("procesoInscripcion",resInscripcion.getValor().getIdProcesosInscripcion())
+                .setParameter("tipo",1)
+                .getResultList()
+                ;
+                if(aspirantes ==null || aspirantes.isEmpty()){return ResultadoEJB.crearErroneo(3,aspirantes,"No se encontraron aspirantes");}
+                else {return ResultadoEJB.crearCorrecto(aspirantes,"Lista de aspirantes");}
+            }else {
+                return ResultadoEJB.crearErroneo(2,aspirantes,"Error al obtener el ultimo periodo de registro de fichas");
+            }
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener los aspirantes. (EjbFichaAdmisionReporte.getAspirantes)", e, null);
+        }
+    }
+
+    /**
+     * Obtiene las fichas registradas y las fichas proyectadas
+     * @param aspirantes Lista de aspirantes registrados
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DtoReporteProyeccionFichas> getFichasR(List<Aspirante> aspirantes){
+        try{
+            if(aspirantes==null){return ResultadoEJB.crearErroneo(2,new DtoReporteProyeccionFichas(),"La lista de aspirantes no debe ser nula");}
+            DtoReporteProyeccionFichas  dto = new DtoReporteProyeccionFichas();
+            dto.setNombre("Fichas registradas");
+            //Se obtienen las fichas registradas (TE)
+            ResultadoEJB<DtoReporteGeneralFichas> resFichas = getFichasRegistradas(aspirantes);
+            if(resFichas.getCorrecto()==true){
+                dto.setRegistradas(resFichas.getValor());
+                //Se obtienen las fichas proyectadas
+                ResultadoEJB<DtoReporteGeneralFichas> resFichasProyectadas = getProyeccionFichas();
+                if(resFichasProyectadas.getCorrecto()==true){
+                    dto.setProyectadas(resFichasProyectadas.getValor());
+                    return ResultadoEJB.crearCorrecto(dto,"Fichas Registradas");
+                }else {
+                    return ResultadoEJB.crearErroneo(4,dto,"Error aal obeneter la proyeccion de fichas");
+                }
+            }
+            else {
+                return ResultadoEJB.crearErroneo(3,dto,"Ocurrio un error al obtener las fichas registradas");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener las fichas registradas. (EjbFichaAdmisionReporte.getFichasR)", e, null);
+        }
+    }
+
+    /**
+     * Obtiene las fichas validadas y las proyectadas
+     * @param aspirantes Lista de aspirantes registradas
+     * @return Resultado del proceso
+     *
+     */
+    public ResultadoEJB<DtoReporteProyeccionFichas> getFichasValidadasR(List<Aspirante> aspirantes){
+        try{
+            if(aspirantes ==null){return ResultadoEJB.crearErroneo(2,new DtoReporteProyeccionFichas(),"La lista de aspirantes no debe ser nula");}
+            DtoReporteProyeccionFichas dto = new DtoReporteProyeccionFichas();
+            dto.setNombre("Fichas validadas");
+            //Se obtienen las fichas validadas
+            ResultadoEJB<DtoReporteGeneralFichas> resFichasVal = getFichasValidadas(aspirantes);
+            if(resFichasVal.getCorrecto()==true){
+                dto.setRegistradas(resFichasVal.getValor());
+                //Se obtienen las fichas proyectadas
+                ResultadoEJB<DtoReporteGeneralFichas> resProyectadas = getProyeccionFichas();
+                if(resProyectadas.getCorrecto()==true){
+                    dto.setProyectadas(resProyectadas.getValor());
+                    return ResultadoEJB.crearCorrecto(dto,"Fichas validadas");
+                }else {return ResultadoEJB.crearErroneo(5,dto,"Error al obtener las fichas proyectadas");}
+            }else {return ResultadoEJB.crearErroneo(3,dto,"Error al obtener las fichas validadas");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener las fichas validadas. (EjbFichaAdmisionReporte.getFichasValidadasR)", e, null);
+
+        }
+    }
+
+    /**
+     * Obtiene la matricula inscritaa y la proyectada
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DtoReporteProyeccionFichas> getMatricula (){
+        try{
+            DtoReporteProyeccionFichas dto = new DtoReporteProyeccionFichas();
+            dto.setNombre("Matricula");
+            //Obtiene la lista estudiantes inscritos en el ultimo periodo de inscripcion
+            ResultadoEJB<DtoReporteGeneralFichas> resMatricula =getMatriculaInscrita();
+            //System.out.println("Matricula Inscrita -> " + resMatricula.getValor());
+            if(resMatricula.getCorrecto()==true){
+                dto.setRegistradas(resMatricula.getValor());
+                //Se obtiene la matricula proyectada
+                ResultadoEJB<DtoReporteGeneralFichas>resMatriculaProyectada =getProyeccionMatricula();
+                if(resMatriculaProyectada.getCorrecto()==true){
+                    dto.setProyectadas(resMatriculaProyectada.getValor());
+                   // System.out.println("------->"+dto);
+                    return ResultadoEJB.crearCorrecto(dto,"Matricula");
+                }
+                else {return ResultadoEJB.crearErroneo(3,dto,"Error al obtener la matricula proyectada");}
+            }else {return ResultadoEJB.crearErroneo(2,dto,"Error al obtener la matricula inscrita");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener la matricula. (EjbFichaAdmisionReporte.getMatricula)", e, null);
+        }
+    }
+
+    /**
+     * Obtiene el reporte general
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoReporteProyeccionFichas>> getReporte() {
+        try {
+            List<DtoReporteProyeccionFichas> reporte = new ArrayList<>();
+            //Obtiene la lista de aspirantes registrados
+            ResultadoEJB<List<Aspirante>> resAspirantes = getAspirantes();
+            if(resAspirantes.getCorrecto()==true){
+                //Obtiene el registro de fichas
+                ResultadoEJB<DtoReporteProyeccionFichas> resFichasR = getFichasR(resAspirantes.getValor());
+                if(resFichasR.getCorrecto()==true){
+                    reporte.add(resFichasR.getValor());
+                    //Obtiene las fichas validadas
+                    ResultadoEJB<DtoReporteProyeccionFichas> resFichasVal = getFichasValidadasR(resAspirantes.getValor());
+                    if (resFichasVal.getCorrecto()==true){
+                        reporte.add(resFichasVal.getValor());
+                        //Obtiene la matricula
+                        ResultadoEJB<DtoReporteProyeccionFichas> resMatricula = getMatricula();
+                        if(resMatricula.getCorrecto()==true){
+                            reporte.add(resMatricula.getValor());
+                            return ResultadoEJB.crearCorrecto(reporte,"Reporte");
+                        }else { return ResultadoEJB.crearErroneo(5,reporte,"Error al obtener la matricula"); }
+                    }else { return ResultadoEJB.crearErroneo(4,reporte,"Error al obtener las fichas validadas");}
+                }else {return ResultadoEJB.crearErroneo(3,reporte,"Error al obtener las fichas registradas");}
+            }else {return ResultadoEJB.crearErroneo(2,reporte,"Error al obtener la lista de aspirantes");}
+        }catch (Exception e){ return ResultadoEJB.crearErroneo(1, "Error al obtener el reporte (EjbFichaAdmisionReporte.getReporte)", e, null); }
+    }
 }

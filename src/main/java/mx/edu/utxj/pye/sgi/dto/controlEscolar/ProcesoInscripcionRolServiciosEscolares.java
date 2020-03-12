@@ -18,7 +18,8 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
     /**
      * TODO:Representa la referencia del evento de inscripciones
      */
-    @Getter @NonNull private EventoEscolar eventoActivo;
+    @Getter @NonNull private EventoEscolar eventoIncripcion;
+    @Getter @NonNull private EventoEscolar eventoRegistroFichas;
     @Getter @NonNull private PeriodosEscolares periodo;
     @Getter @NonNull private Integer periodoActivo, periodoAct;
     @Getter @NonNull private AreasUniversidad programa;
@@ -32,8 +33,16 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
         this.serviciosEscolares = serviciosEscolares;
     }
 
-    public void setEventoActivo(EventoEscolar eventoActivo) {
-        this.eventoActivo = eventoActivo;
+    public void setEventoIncripcion(EventoEscolar eventoIncripcion) {
+        this.eventoIncripcion = eventoIncripcion;
+    }
+
+    public void setEventoRegistroFichas(EventoEscolar eventoRegistroFichas) {
+        this.eventoRegistroFichas = eventoRegistroFichas;
+    }
+
+    public void setPrograma(AreasUniversidad programa) {
+        this.programa = programa;
     }
 
     public void setPeriodo(PeriodosEscolares periodo) {

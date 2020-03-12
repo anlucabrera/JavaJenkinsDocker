@@ -15,6 +15,7 @@ import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa;
@@ -59,6 +60,9 @@ public class ControladorArchivoPresupuestos implements Serializable{
         eje = ejes[3];
         ejercicio = ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio();
         consultaAreaRegistro(); 
+        if(area == null){
+            return;
+        }
         setEtapa(RegistroSiipEtapa.MOSTRAR); 
     }
     
@@ -67,17 +71,22 @@ public class ControladorArchivoPresupuestos implements Serializable{
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 5);
             if (areaRegistro == null) {
-                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 54);
+                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 32);
                 if (areaRegistro == null) {
-                    area = (ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+                    ResultadoEJB<AreasUniversidad> resultadoEJB = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                    if(resultadoEJB.getCorrecto()){
+                        area = resultadoEJB.getValor();
+                    }else{
+                        area = null;
+                    }
                 } else {
                     area = areaRegistro;
                 }
             } else {
                 area = areaRegistro;
             }
-        } catch (Exception e) {
-            System.out.println("mx.edu.utxj.pye.siip.controller.pa.ControladorArchivoPresupuestos.consultaAreaRegistro(): " + e.getMessage());
+        } catch (Exception ex) {
+            area = null;
         }
     }
     

@@ -52,7 +52,7 @@ public class EjbAsistenciaTutoriaGrupalEstudiante {
      * @param matricula
      * @return 
      */
-    public ResultadoEJB<Estudiante> validarEstudiante(Integer matricula){
+    public ResultadoEJB<Estudiante> validarEstudiante(String matricula){
         try {
             
             return ejbValidacionRol.validarEstudiante(matricula);

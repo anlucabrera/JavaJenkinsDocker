@@ -36,6 +36,8 @@ public class ValidacionTutoriaGrupalRolEstudiante {
     @Getter     private     List<ParticipantesTutoriaGrupal>    listaParticipantesTutoriaGrupal;
     @Getter     @Setter     private                             List<ParticipantesTutoriaGrupal>                filtroListaParticipantesTutoriaGrupal;
 
+    @Getter     @Setter     private                             Boolean                                         comentarioPendiente;
+    
     public ValidacionTutoriaGrupalRolEstudiante(@NonNull DtoEstudiante dtoEstudiante) {
         this.dtoEstudiante = dtoEstudiante;
     }

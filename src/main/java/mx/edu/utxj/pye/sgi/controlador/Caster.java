@@ -40,6 +40,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Objects;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPeriodoEventoRegistro;
@@ -260,6 +261,14 @@ public class Caster {
                 anio.format(fechaFin);
     }
 
+    public static String convertirFormatoFecha(Date date) {
+        if (date != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm a");
+            String horaCadena = formatter.format(date);
+            return horaCadena;
+        }else return "La fecha no es correcta";
+    }
+
     public static String convertirMes(Date date){
         String result="";
         Calendar calendar=Calendar.getInstance();
@@ -357,6 +366,14 @@ public class Caster {
         }
     }
     
+    public Integer obtenerAreaOperativa(Integer clave){
+        try {
+            return (ejbTutor.obtenerAreaOperativa(clave)).getValor();
+        }catch (Exception e){
+            return 0;
+        }
+    }
+
     public String parseHoraMinutos(Date hora){
         DateFormat formatoHora = new SimpleDateFormat("HH:mm a");    
         return formatoHora.format(hora);
@@ -383,25 +400,58 @@ public class Caster {
         }
     }
     
-    public Date fechaMinina(Integer anio, String mes){
+//    TODO: Corregir método, no acecpta el primer dia del mes
+    public String fechaMinina(Integer anio, String mes){
         Calendar calendar = Calendar.getInstance();
         calendar.set(anio, ejbPeriodo.getNumeroMes(mes)-1,1);
-        calendar.set(Calendar.DATE, calendar.getActualMinimum(Calendar.DATE));
         Date date = calendar.getTime();
-        return date;
+        DateFormat formatoFechaMinima = new SimpleDateFormat("yyyy-MM-dd");
+        String fechaMinimaCadena = formatoFechaMinima.format(date);
+        return fechaMinimaCadena;
     }
     
-    public Date fechaMaxima(Integer anio, String mes){
+    public String fechaMaxima(Integer anio, String mes){
         Calendar calendar = Calendar.getInstance();
         calendar.set(anio, ejbPeriodo.getNumeroMes(mes)-1,1);
-        calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         Date date = calendar.getTime();
-        return date;
+        DateFormat formatoFechaMaxima = new SimpleDateFormat("yyyy-MM-dd");
+        String fechaMaximaCadena = formatoFechaMaxima.format(date);
+        return fechaMaximaCadena;
     }
 
     public AreasUniversidad getNombreCarrera(Short carreraEstudiante){
         ResultadoEJB<AreasUniversidad> res = ejbTutor.getCarreraEstudiante(carreraEstudiante);
         if(res.getCorrecto())return res.getValor();
         else return (new AreasUniversidad());
+    }
+
+    public static String obtenerNombreMes(Date mes) {
+        if (mes == null) {
+            return "nulo";
+        }
+        DateFormat formatoMes = new SimpleDateFormat("MM");
+        String horaCadena = formatoMes.format(mes);
+        Integer convertido = Integer.valueOf(horaCadena);
+
+        String mesNombre = "nulo";
+        Integer[] meses = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        String[] mesesNombre = {"nulo", "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"};
+        for (int i = 0; i < meses.length; i++) {
+//            System.err.println("Comparativo:  " + meses[i] + " HoraCadena: " + convertido);
+            if (Objects.equals(meses[i], convertido)) {
+                mesNombre = mesesNombre[i];
+            }
+        }
+        return mesNombre;
+    }
+
+    public static String obtenerEjercicio(Date ejercicio) {
+        if (ejercicio == null) {
+            return "nulo";
+        }
+        DateFormat formatoEjercicio = new SimpleDateFormat("yyyy");
+        String ejercicioCadena = formatoEjercicio.format(ejercicio);
+        return ejercicioCadena;
     }
 }

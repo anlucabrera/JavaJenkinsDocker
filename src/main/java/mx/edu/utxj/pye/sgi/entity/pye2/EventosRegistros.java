@@ -66,6 +66,8 @@ public class EventosRegistros implements Serializable {
     private String mes;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventoRegistro")
     private List<Registros> registrosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventoRegistro")
+    private List<EventosRegistrosDetalles> eventosRegistrosDetallesList;
     @JoinColumn(name = "ejercicio_fiscal", referencedColumnName = "ejercicio_fiscal")
     @ManyToOne(optional = false)
     private EjerciciosFiscales ejercicioFiscal;
@@ -123,6 +125,15 @@ public class EventosRegistros implements Serializable {
 
     public void setRegistrosList(List<Registros> registrosList) {
         this.registrosList = registrosList;
+    }
+
+    @XmlTransient
+    public List<EventosRegistrosDetalles> getEventosRegistrosDetallesList() {
+        return eventosRegistrosDetallesList;
+    }
+
+    public void setEventosRegistrosDetallesList(List<EventosRegistrosDetalles> eventosRegistrosDetallesList) {
+        this.eventosRegistrosDetallesList = eventosRegistrosDetallesList;
     }
 
     public EjerciciosFiscales getEjercicioFiscal() {

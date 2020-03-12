@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <!-- Fin estilos par proceso electoral -->
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="../../index.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div> 
+                                    <br />
+                                    <br />
+                                </div>
+                                    <br />
+                                    <br />
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <c:if test="#{controladorTitEgresado.expedienteTitulacion.nivel ne 1}">
+                                                                    <div class="row">
+                                                                        <o:form id="frmTitExpIL" enctype="multipart/form-data">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                            </div>
+                                                                            <center>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel style="text-align:center; height:100%; width: 100%; object-fit: contain; font-size: large" value="Título de Ing. o Lic." />
+                                                                                        <h5 style="text-align: justify;">Subir el documento .pdf que te enviaron a tu correo electrónico, en el siguiente campo ingresa la fecha de expedición del título que viene en el documento.</h5>
+                                                                                        <p:calendar id="fechaEmision" locale="es" value="#{controladorTitEgresado.fechaEmisionTit}" pattern="dd-MM-yyyy" mask="true" valueChangeListener="#{controladorTitEgresado.cambiarFechaEmision}"/>
+                                                                                    </p:outputPanel>
+                                                                                    <br/>
+                                                                                    <center><o:inputFile id="fileTitIL" value="#{controladorTitEgresado.fileTitIL}" accept="application/pdf" acceptMessage="Sólo se permite documento PDF." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFileTitIL" for="fileTitIL" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorTitEgresado.subirDocumentoTitIL}" />
+                                                                                    <br/>
+                                                                                    <br/>
+                                                                                </div>
+                                                                            </center>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                            </div>
+                                                                        </o:form>
+                                                                    </div>
+                                                            </c:if>
+                                                            <c:if test="#{controladorTitEgresado.expedienteTitulacion.nivel eq 1}">
+                                                                <div class="row">
+                                                                    <o:form id="frmTitExpTSU" enctype="multipart/form-data">
+                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        </div>
+                                                                        <center>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                <p:outputPanel>            
+                                                                                    <p:autoUpdate/>
+                                                                                    <p:outputLabel style="text-align:center; height:100%; width: 100%; object-fit: contain; font-size: large" value="Título de T.S.U." />
+                                                                                    <h5 style="text-align: justify;">Subir el documento .pdf que te enviaron a tu correo electrónico, en el siguiente campo ingresa la fecha de expedición del título que viene en el documento.</h5>
+                                                                                    <p:calendar id="fechaEmision" locale="es" value="#{controladorTitEgresado.fechaEmisionTit}" pattern="dd-MM-yyyy" mask="true" valueChangeListener="#{controladorTitEgresado.cambiarFechaEmision}"/>
+                                                                                </p:outputPanel>
+                                                                                <br/>
+                                                                                <center><o:inputFile id="fileTitTSU" value="#{controladorTitEgresado.fileTitTSU}" accept="application/pdf" acceptMessage="Sólo se permite documento PDF." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                <br/>
+                                                                                <h:message id="messageForFileTitTSU" for="fileTitTSU" />
+                                                                                <br/>
+                                                                                <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorTitEgresado.subirDocumentoTitTSU}" />
+                                                                                <br/>
+                                                                                <br/>
+                                                                            </div>
+                                                                        </center>
+                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        </div>
+                                                                    </o:form>
+                                                                </div>
+                                                            </c:if>
+                                                            </div>
+                                                        </div>
+                                </div>
+                        </div>
+                    </div>
+                </section>
+        </p:panel>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

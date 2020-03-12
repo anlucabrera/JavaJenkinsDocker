@@ -55,6 +55,7 @@ import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.ParticipanteTutoriaGrupalAcuerdos;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -113,7 +114,6 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
             rol.setEventoRegistroActivo(resEventoRegistro.getValor());
             rol.setPeriodoActivo(ejb.getPeriodoEscolarActivo().getValor().getPeriodo());
             rol.setPeriodosConCargaGrupo(resPeriodos.getValor());
-            cambiarPeriodo();
             initFiltros();
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -140,7 +140,7 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(RegistroAsesoriaDocente.class.getName()).log(Level.SEVERE, null, ex);
         }
-        cambiarSesiones();
+        cambiarPeriodo();
     }
     
     public void inicializarTutoriaGrupal(){
@@ -151,6 +151,7 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
         TutoriasGrupales tutoriasGrupales = new TutoriasGrupales();
         tutoriasGrupales.setSesionGrupal(rol.getSesionGrupalSeleccionada());
         tutoriasGrupales.setEventoRegistro(rol.getEventoSeleccionado().getEventoRegistro());
+        tutoriasGrupales.setOrdenDia(rol.getSesionGrupalSeleccionada().getActividadProgramada());
         rol.setTutoriaGrupal(tutoriasGrupales);
         
         Estudiante estudiantePye = new Estudiante();
@@ -179,11 +180,14 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
             return;
         }
         ResultadoEJB<List<DtoListadoTutores>> resListadoGruposTutores = ejb.listarGruposTutor(rol.getPeriodoSeleccionado(), rol.getDocenteLogueado());
-        if(!resListadoGruposTutores.getCorrecto()) mostrarMensajeResultadoEJB(resListadoGruposTutores);
-        else rol.setListadoGruposTutor(resListadoGruposTutores.getValor());
-        
+        if (!resListadoGruposTutores.getCorrecto()) {
+            mostrarMensajeResultadoEJB(resListadoGruposTutores);
+        } else {
+            rol.setListadoGruposTutor(resListadoGruposTutores.getValor());
+        }
+
         rol.setEventosPorPeriodo(ejb.getEventosRegistroPorPeriodo(rol.getPeriodoSeleccionado()).getValor());
-        
+
         cambiarGrupo();
     }
     
@@ -341,6 +345,30 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
         mostrarMensajeResultadoEJB(res);
     }
     
+    public void guardarParticipantesGeneralTutoriaGrupal(List<DtoParticipantesTutoriaGrupalCE> listaParticipantesTutoriaGrupal){
+        if(!listaParticipantesTutoriaGrupal.isEmpty()){
+            listaParticipantesTutoriaGrupal.stream().forEach((t) -> {
+                ResultadoEJB<List<ParticipantesTutoriaGrupal>> resCompruebaParticipacion = ejb.buscaParticipanteTutoriaGrupal(rol.getTutoriaGrupalSeleccionada().getTutoriaGrupal().getTutoriaGrupal(), t.getEstudiante().getEstudiante().getIdEstudiante());
+                if(resCompruebaParticipacion.getCorrecto()){
+                    ejb.guardarAsistenciaParticipanteTutoriaGrupalGeneral(t.getParticipanteTutoriaGrupal());
+                }
+            });
+            mostrarMensaje("Se ha realizado el pase de lista general correctamente");
+        }
+    }
+    
+    public void eliminarParticipantesGeneralTutoriaGrupal(List<DtoParticipantesTutoriaGrupalCE> listaParticipantesTutoriaGrupal){
+        if(!listaParticipantesTutoriaGrupal.isEmpty()){
+            listaParticipantesTutoriaGrupal.stream().forEach((t) -> {
+                ResultadoEJB<List<ParticipantesTutoriaGrupal>> resCompruebaParticipacion = ejb.buscaParticipanteTutoriaGrupal(rol.getTutoriaGrupalSeleccionada().getTutoriaGrupal().getTutoriaGrupal(), t.getEstudiante().getEstudiante().getIdEstudiante());
+                if(resCompruebaParticipacion.getCorrecto()){
+                    ejb.eliminarAsistenciaParticipanteTutoriaGrupalGeneral(t.getParticipanteTutoriaGrupal());
+                }
+            });
+            mostrarMensaje("Se ha eliminado el pase de lista general correctamente");
+        }
+    }
+    
     /*********************************************** Llenado de listas *********************************************************/
     public void actualizarListadoTutoriasGrupales(){
         ResultadoEJB<List<TutoriasGrupales>> listaTutorias = ejb.buscaTutoriasGrupalesPorSesionEventoRegistro(rol.getSesionGrupalSeleccionada(), rol.getEventoSeleccionado());
@@ -374,6 +402,30 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
             }else{
                 rol.setListaEstudiantes(Collections.EMPTY_LIST);
             }
+        }
+    }
+    
+    public Double comprobarPorcentaje(SesionesGrupalesTutorias sesionGrupal) {
+        if (!sesionGrupal.getTutoriasGrupalesList().isEmpty()) {
+            TutoriasGrupales tutoriaGrupal = sesionGrupal.getTutoriasGrupalesList().get(0);
+            if (!tutoriaGrupal.getParticipantesTutoriaGrupalList().isEmpty()) {
+                List<ParticipantesTutoriaGrupal> part = tutoriaGrupal.getParticipantesTutoriaGrupalList();
+                List<ParticipantesTutoriaGrupal> partFaltantes = new ArrayList<>();
+                part.stream().forEach((t) -> {
+                    if (!t.getAceptacionAcuerdos().equals(ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel())) {
+                        partFaltantes.add(t);
+                    }
+                });
+                double participantesDouble = part.size();
+                double partFDouble = partFaltantes.size();
+                Double suma = partFDouble / participantesDouble;
+                Double porcentaje = suma * 100D;
+                return (double)Math.round(porcentaje * 100d) / 100d;
+            }else{
+                return 0.0D;
+            }
+        } else {
+            return 0.0D;
         }
     }
     

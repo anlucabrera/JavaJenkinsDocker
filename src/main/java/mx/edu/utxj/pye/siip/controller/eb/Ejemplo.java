@@ -5,8 +5,10 @@
  */
 package mx.edu.utxj.pye.siip.controller.eb;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -21,19 +23,22 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import javax.imageio.ImageIO;
 import mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga;
 import mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado;
-import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
+import mx.edu.utxj.pye.sgi.enums.RolNotificacion;
 import mx.edu.utxj.pye.siip.dto.eb.DTOArchivoRepositorio;
 import mx.edu.utxj.pye.siip.dto.eb.DTORepositorio;
 
@@ -80,6 +85,54 @@ public class Ejemplo {
                 System.out.println("mx.edu.utxj.pye.siip.services.ca.Ejemplo.main() Aún no existen archivos en el directorio o bien el directorio no existe");
             }
 
+            System.out.println("----------------------------------------------------------------------------------------------------------------");
+            List<String> listarArchivosImagenesDocumentos = new ArrayList<>();
+            if (Files.exists(Paths.get("C:\\archivos\\e.castillo\\documentos\\"), LinkOption.NOFOLLOW_LINKS)) {
+                Files.list(Paths.get("C:\\archivos\\e.castillo\\documentos\\")).forEach((t) -> {
+//                    Condición para que sólo acepte archivos con la extensión especificada
+                    listarArchivosImagenesDocumentos.add(t.getParent().toString() + File.separator + t.getFileName());
+                });
+                listarArchivosImagenesDocumentos.forEach((t) -> {
+                    try {
+                        Path path = Paths.get(t);
+                        URI uri = path.toUri();
+//                        System.err.println("Nombre: " + path.getFileName());
+//                        System.err.println("Path: " + path.toString());
+//                        System.err.println("Uri: " + uri.toString());
+                        
+                        File imagen = new File(uri);
+                        BufferedImage img = ImageIO.read(imagen);
+                        
+                        int width = img.getWidth();
+                        boolean widthF = false;
+                        
+                        int height = img.getHeight();
+                        boolean heightF = false;
+                        
+                        if (width >= 400 && width <= 450){widthF = true;}
+                        if (height >= 400 && height <= 450){heightF = true;}
+                        
+//                        System.err.println("widthF: " + img.getWidth());
+//                        System.err.println("heightF: " + img.getHeight());
+                        
+                        if (!widthF && !heightF) {
+                            System.err.println("El Ancho de la imagen y el alto tienen que ser de 400 x 450 px.");
+                            System.err.println("Path: " + path.toString() + " Medidas- Ancho:" + width + " Alto: " + height);
+//                            FacesMessage message = new FacesMessage("Problemas", " El Ancho de la imagen y el alto tienen que ser de 400 x 450 px.");
+//                            FacesContext.getCurrentInstance().addMessage(null, message);
+//                            return;
+                        }else{
+                            System.err.println("El archivo es correcto");
+                            System.err.println("Path: " + path.toString() + " Medidas- Ancho:" + width + " Alto: " + height);
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(Ejemplo.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
+            } else {
+                System.out.println("mx.edu.utxj.pye.siip.services.ca.Ejemplo.main() Aún no existen archivos en el directorio o bien el directorio no existe");
+            }
+            System.out.println("----------------------------------------------------------------------------------------------------------------");
         } catch (IOException ex) {
             Logger.getLogger(Ejemplo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -301,6 +354,38 @@ public class Ejemplo {
             });
         });
 
+        System.out.println("-------------------------------------------------------");
+        System.out.println("-------------------------------------------------------");
+        System.out.println("-------------------------------------------------------");
+        
+//        System.err.println("Mes Ingresado 0: " + obtenerNombreMesFecha(new Date(2020, 1, 1)));
+        Date fechaVacia = null;
+        System.err.println("Mes Ingresado 0: " + obtenerNombreMesFecha(fechaVacia));
+        System.err.println("Mes Ingresado 1: " + obtenerNombreMesFecha(new Date(2020, 0, 1)));
+        System.err.println("Mes Ingresado 2: " + obtenerNombreMesFecha(new Date(2020, 1, 2)));
+        System.err.println("Mes Ingresado 3: " + obtenerNombreMesFecha(new Date(2020, 2, 3)));
+        System.err.println("Mes Ingresado 4: " + obtenerNombreMesFecha(new Date(2020, 3, 4)));
+        System.err.println("Mes Ingresado 5: " + obtenerNombreMesFecha(new Date(2020, 4, 5)));
+        System.err.println("Mes Ingresado 6: " + obtenerNombreMesFecha(new Date(2020, 5, 6)));
+        System.err.println("Mes Ingresado 7: " + obtenerNombreMesFecha(new Date(2020, 6, 7)));
+        System.err.println("Mes Ingresado 8: " + obtenerNombreMesFecha(new Date(2020, 7, 8)));
+        System.err.println("Mes Ingresado 9: " + obtenerNombreMesFecha(new Date(2020, 8, 9)));
+        System.err.println("Mes Ingresado 10: " + obtenerNombreMesFecha(new Date(2020, 9, 10)));
+        System.err.println("Mes Ingresado 11: " + obtenerNombreMesFecha(new Date(2020, 10, 11)));
+        System.err.println("Mes Ingresado 12: " + obtenerNombreMesFecha(new Date(2020, 11, 12)));
+        
+        System.err.println("Ejercicio Ingresado 0: " + obtenerEjercicioFecha(new Date()));
+        
+        System.err.println("--------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        
+        System.err.println("Rol Notificaciones: " + RolNotificacion.ListaValoresLabel());
+        List<String> listaRoles = RolNotificacion.ListaValoresLabel();
+        List<String> listaAlcanceElegidaUsuario = new ArrayList<>(Arrays.asList("Jefe de Departamento","Rector","Coordinador de Tutores"));
+        System.err.println("Rol Usuarios: " + listaAlcanceElegidaUsuario);
+        
+        listaRoles.retainAll(listaAlcanceElegidaUsuario);
+        System.out.println(listaRoles);
+
     }
     
     private static String getFechaMinima(int mes, int anio) {
@@ -518,4 +603,34 @@ public class Ejemplo {
                 .replaceAll("[\\D]+", "")
                 .replaceAll(" ", "");
     }
+    
+    private static String obtenerNombreMesFecha(Date mes) {
+        if (mes == null) {
+            return "nulo";
+        }
+        DateFormat formatoMes = new SimpleDateFormat("MM");
+        String horaCadena = formatoMes.format(mes);
+        Integer convertido = Integer.valueOf(horaCadena);
+
+        String mesNombre = "nulo";
+        Integer[] meses = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        String[] mesesNombre = {"nulo", "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"};
+        for (int i = 0; i < meses.length; i++) {
+//            System.err.println("Comparativo:  " + meses[i] + " HoraCadena: " + convertido);
+            if (Objects.equals(meses[i], convertido)) {
+                mesNombre = mesesNombre[i];
+            }
+        }
+        return mesNombre;
+    }
+
+    private static String obtenerEjercicioFecha(Date ejercicio) {
+        if (ejercicio == null) {
+            return "nulo";
+        }
+        DateFormat formatoEjercicio = new SimpleDateFormat("yyyy");
+        String ejercicioCadena = formatoEjercicio.format(ejercicio);
+        return ejercicioCadena;
+    }
+
 }

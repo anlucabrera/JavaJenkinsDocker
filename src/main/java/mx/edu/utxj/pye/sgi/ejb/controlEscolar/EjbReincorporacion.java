@@ -1,60 +1,86 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
-import com.google.zxing.NotFoundException;
-import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
-import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
-import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-import javax.faces.model.SelectItem;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.servlet.http.Part;
-import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
-import mx.edu.utxj.pye.sgi.dto.TipoCuestionario;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.CalificacionesSaiiutDto;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.QrNssDto;
-import static mx.edu.utxj.pye.sgi.ejb.controlEscolar.ServicioFichaAdmision.ucFirst;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReincorporacion;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistencias;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedioPK;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosAcademicos;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosFamiliares;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosMedicos;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Domicilio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaAspirante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.LenguaIndigena;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioComunicacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioDifusion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoAspirante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TutorFamiliar;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
+import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
+import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
+import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
-import mx.edu.utxj.pye.sgi.saiiut.entity.CalificacionesAlumno;
-import mx.edu.utxj.pye.sgi.saiiut.entity.PlanesEstudio;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Materias1;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
-import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
-import nl.lcs.qrscan.core.QrPdf;
+import org.omnifaces.util.Messages;
 
 @Stateless(name = "EjbReincorporacion")
 public class EjbReincorporacion {
-    @EJB EjbPersonalBean ejbPersonalBean;
+   @EJB EjbPersonalBean ejbPersonalBean;
+    @EJB EjbPersonal ejbPersonal;
     @EJB EjbEstudianteBean ejbEstudianteBean;
     @EJB EjbFichaAdmision ejbFA;
+    @EJB EjbAreasLogeo ejbAreasLogeo;
     @EJB EjbPropiedades ep;
     @EJB Facade f;
     @EJB Facade2 f2;
@@ -63,852 +89,1160 @@ public class EjbReincorporacion {
     private EntityManager em;
 
     @PostConstruct
-    public  void init(){
+    public void init() {
         em = f.getEntityManager();
     }
-     /**
-     * Permite validar si el usuario autenticado es personal adscrito al departamento de servicios escolares
-     * @param clave Número de nómina del usuario autenticado
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<Filter<PersonalActivo>> validarServiciosEscolares(Integer clave){
-        try{
+//---------------------------------------------------------------------------Acceso--------------------------------------------------------------------------//
+
+    public ResultadoEJB<Filter<PersonalActivo>> validarServiciosEscolares(Integer clave) {
+        try {
             PersonalActivo p = ejbPersonalBean.pack(clave);
             Filter<PersonalActivo> filtro = new Filter<>();
             filtro.setEntity(p);
             filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalAreaOperativa").orElse(10)));
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal de servicios escolares.");
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbReincorporacion.validarServiciosEscolares)", e, null);
         }
     }
-   
-    /**
-     * Permite verificar si hay un periodo abierto para reincoporaciones
-     * @return Evento escolar detectado o null de lo contrario
-     */
-    public ResultadoEJB<EventoEscolar> verificarEvento(){
-        try{
+
+    public ResultadoEJB<EventoEscolar> verificarEvento() {
+        try {
             return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.REINCORPORACIONES);
-        }catch (Exception e){
-            return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para reinscripción autónoma (EjbReinscripcionAutonoma.).", e, EventoEscolar.class);
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para reinscripción autónoma (EjbReinscripcionAutonoma.).", e, EventoEscolar.class);
+        }
+    }
+//------------------------------------------------------------------------Catalogos CE------------------------------------------------------------------------//
+
+    public ResultadoEJB<List<Estudiante>> getEstudiantes(AreasUniversidad au,EventoEscolar ee) {
+        try {
+            List<AreasUniversidad> aus = em.createQuery("select a from AreasUniversidad a WHERE a.areaSuperior=:areaSuperior AND a.vigente=:vigente", AreasUniversidad.class).setParameter("areaSuperior", au.getArea()).setParameter("vigente", au.getVigente()).getResultList();
+            List<Estudiante> estudiantes = new ArrayList<>();
+            if (!aus.isEmpty()) {
+                List<Short> clvesA= new ArrayList<>();
+                aus.forEach((t) -> {clvesA.add(t.getArea());});
+                estudiantes = em.createQuery("select t from Estudiante t WHERE t.tipoEstudiante.idTipoEstudiante=:idTipoEstudiante AND t.carrera in :carrera", Estudiante.class)
+                        .setParameter("idTipoEstudiante", Short.parseShort("1"))
+                        .setParameter("carrera", clvesA)
+                        .getResultList()
+                        .stream().filter(t -> t.getPeriodo() == ee.getPeriodo())
+                        .collect(Collectors.toList());
+            }
+            return ResultadoEJB.crearCorrecto(estudiantes, "estudiantes Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los estudiantes(EjbReincorporacion.getEstudiantes).", e, null);
         }
     }
     
-     /**
-     * Permite identificar si existen datos personales del estudiante que se reincorporará
-     * @param curp CURP del estudiante que se va a reincorporar
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<Persona> buscarDatosPersonalesEstudiante(String curp){
-        try{
-            //buscar registro de persona por medio de la curp
-            Persona persona = em.createQuery("select p from Persona p where p.curp =:curp", Persona.class)
-                    .setParameter("curp", curp)
-                    .getSingleResult();
-            return ResultadoEJB.crearCorrecto(persona, "Datos personales del estudiante");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se encontraron datos personales del estudiante. (EjbReincorporacion.buscarDatosPersonalesEstudiante)", e, null);
+    public ResultadoEJB<List<TipoSangre>> getTiposSangre() {
+        try {
+            List<TipoSangre> sangres = em.createQuery("select t from TipoSangre t", TipoSangre.class).getResultList();
+            return ResultadoEJB.crearCorrecto(sangres, "Tipos de sangre Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Sangre(EjbReincorporacion.getTiposSangre).", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<TipoDiscapacidad>> getTipoDiscapacidad() {
+        try {
+            List<TipoDiscapacidad> discapacidads = em.createQuery("select t from TipoDiscapacidad t", TipoDiscapacidad.class).getResultList();
+            return ResultadoEJB.crearCorrecto(discapacidads, "Tipos de Discapacidad Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Discapacidad(EjbReincorporacion.getTipoDiscapacidad).", e, null);
         }
     }
     
-     /**
-     * Permite leer el código Qr de la CURP para la obtención de datos personales del estudiantes como: nombre completo, curp, genero, fecha y estado de nacimiento 
-     * @param file Documento que se va a leer
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<Persona> leerCurp(Part file) {
-        Persona p = new Persona();
-        SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
-        String rutaRelativa = "";
-        try{
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.ServicioFichaAdmision");
-            //Almacenamiento del archivo de la curp de la persona
-            String ruta = ServicioArchivos.genRutaRelativa("curps");
-            String rutaR = ServicioArchivos.carpetaRaiz.concat(ruta);
-            String rutaArchivo = ruta.concat(file.getSubmittedFileName());
-            ServicioArchivos.addCarpetaRelativa(rutaR);
-            ServicioArchivos.eliminarArchivo(rutaArchivo);
-            rutaRelativa = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-            file.write(rutaArchivo);
+    public ResultadoEJB<List<TipoAspirante>> getTipoAspirante() {
+        try {
+            List<TipoAspirante> aspirantes = em.createQuery("select t from TipoAspirante t", TipoAspirante.class).getResultList();
+            return ResultadoEJB.crearCorrecto(aspirantes, "Tipos de Aspirante Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Aspirante(EjbReincorporacion.getTipoAspirante).", e, null);
+        }
+    }
 
-            //Leer codigo QR de archivo de la Curp
+    public ResultadoEJB<List<Ocupacion>> getOcupaciones() {
+        try {
+            List<Ocupacion> ocupacions = em.createQuery("select t from Ocupacion t", Ocupacion.class).getResultList();
+            return ResultadoEJB.crearCorrecto(ocupacions, "Tipos de Ocupacion Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Ocupacion(EjbReincorporacion.getOcupaciones).", e, null);
+        }
+    }
 
-            QrPdf pdf = new QrPdf(Paths.get(rutaR.concat(file.getSubmittedFileName())));
-            String qrCode = pdf.getQRCode(1, true, true);
-            String fecha_nacimiento = "";
-            String[] parts = qrCode.split("\\|");
-            if(ejbFA.buscaPersonaByCurp(parts[0]) != null){
-                p = ejbFA.buscaPersonaByCurp(parts[0]);
+    public ResultadoEJB<List<Escolaridad>> getEscolaridades() {
+        try {
+            List<Escolaridad> escolaridads = em.createQuery("select t from Escolaridad t", Escolaridad.class).getResultList();
+            return ResultadoEJB.crearCorrecto(escolaridads, "Tipos de Escolaridad Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Escolaridad(EjbReincorporacion.getEscolaridades).", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<LenguaIndigena>> getLenguaIndigena() {
+        try {
+            List<LenguaIndigena> lenguaIndigenas = em.createQuery("select t from LenguaIndigena t", LenguaIndigena.class).getResultList();
+            return ResultadoEJB.crearCorrecto(lenguaIndigenas, "Tipos de Lengua Indigena Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Lengua Indigena(EjbReincorporacion.getLenguaIndigena).", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<MedioDifusion>> getMedioDifusion() {
+        try {
+            List<MedioDifusion> difusions = em.createQuery("select t from MedioDifusion t", MedioDifusion.class).getResultList();
+            return ResultadoEJB.crearCorrecto(difusions, "Tipos de Medio Difusion Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Medio Difusion(EjbReincorporacion.getMedioDifusion).", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<EspecialidadCentro>> getEspecialidadCentro() {
+        try {
+            List<EspecialidadCentro> centros = em.createQuery("select t from EspecialidadCentro t", EspecialidadCentro.class).getResultList();
+            return ResultadoEJB.crearCorrecto(centros, "Tipos de Especialidad Centro Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Especialidad Centro(EjbReincorporacion.getEspecialidadCentro).", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<Sistema>> getSistema() {
+        try {
+            List<Sistema> sistemas = em.createQuery("select t from Sistema t", Sistema.class).getResultList();
+            return ResultadoEJB.crearCorrecto(sistemas, "Tipos de Sistema Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Sistema(EjbReincorporacion.getSistema).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<TipoEstudiante>> getTiposEstudiante() {
+        try {
+            List<TipoEstudiante> estudiantes = em.createQuery("select t from TipoEstudiante t", TipoEstudiante.class).getResultList();
+            return ResultadoEJB.crearCorrecto(estudiantes, "Tipo Estudiante Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipo Estudiante(EjbReincorporacion.getTiposEstudiante).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<Grupo>> getGrupos(Short pe) {
+        try {
+            List<Grupo> grupos = em.createQuery("select t from Grupo t WHERE t.idPe=:idPe", Grupo.class).setParameter("idPe", pe).getResultList();
+            return ResultadoEJB.crearCorrecto(grupos, "Grupo Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Grupo(EjbReincorporacion.getGrupos).", e, null);
+        }
+    }
+
+//-----------------------------------------------------------------------Catalogos PYE-----------------------------------------------------------------------//
+    public ResultadoEJB<List<Pais>> getPais() {
+        try {
+            List<Pais> paises = em.createQuery("select t from Pais t", Pais.class).getResultList();
+            return ResultadoEJB.crearCorrecto(paises, "paises Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los paises (EjbReincorporacion.getPais).", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<Estado>> getEstado(Pais p) {
+        try {
+            List<Estado> estados = em.createQuery("select t from Estado t INNER JOIN t.idpais p WHERE p.idpais=:idpais", Estado.class).setParameter("idpais", p.getIdpais()).getResultList();
+            return ResultadoEJB.crearCorrecto(estados, "estados Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los estados (EjbReincorporacion.getEstado).", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<Municipio>> getMunicipio(Integer es) {
+        try {
+            List<Municipio> municipios = em.createQuery("select t from Municipio t INNER JOIN t.estado e WHERE e.idestado=:idestado", Municipio.class).setParameter("idestado", es).getResultList();
+            return ResultadoEJB.crearCorrecto(municipios, "municipios Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los municipios (EjbReincorporacion.getMunicipio).", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<Localidad>> getLocalidad(Integer es,Integer m) {
+        try {
+            List<Localidad> localidads = em.createQuery("select t from Localidad t INNER JOIN t.municipio m WHERE m.municipioPK.claveMunicipio=:claveMunicipio AND m.municipioPK.claveEstado=:claveEstado", Localidad.class).setParameter("claveEstado", es).setParameter("claveMunicipio", m).getResultList();
+            return ResultadoEJB.crearCorrecto(localidads, "Localidad Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Localidad (EjbReincorporacion.getLocalidad).", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<Asentamiento>> getAsentamiento(Integer es,Integer m) {
+        try {
+            List<Asentamiento> asentamientos = em.createQuery("select t from Asentamiento t INNER JOIN t.municipio1 m WHERE m.municipioPK.claveMunicipio=:claveMunicipio AND m.municipioPK.claveEstado=:claveEstado", Asentamiento.class).setParameter("claveEstado", es).setParameter("claveMunicipio", m).getResultList();
+            return ResultadoEJB.crearCorrecto(asentamientos, "Asentamientos Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Asentamientos (EjbReincorporacion.getAsentamiento).", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<Iems>> getIems(Integer es,Integer m,Integer l) {
+        try {
+            List<Iems> iemses = em.createQuery("select t from Iems t INNER JOIN t.localidad l WHERE l.localidadPK.claveEstado=:claveEstado AND l.localidadPK.claveMunicipio=:claveMunicipio AND l.localidadPK.claveLocalidad=:claveLocalidad", Iems.class).setParameter("claveEstado", es).setParameter("claveMunicipio", m).setParameter("claveLocalidad", l).getResultList();
+            return ResultadoEJB.crearCorrecto(iemses, "Iems Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Iems (EjbReincorporacion.getIems).", e, null);
+        }
+    }
+
+//------------------------------------------------------------------------Catalogos Pr------------------------------------------------------------------------//
+    public ResultadoEJB<List<AreasUniversidad>> getAreasUniversidad() {
+        try {
+            List<AreasUniversidad> areasUniversidads = em.createQuery("select t from AreasUniversidad t INNER JOIN t.categoria c WHERE c.categoria=:categoria", AreasUniversidad.class).setParameter("categoria", Short.parseShort("8")).getResultList();
+            return ResultadoEJB.crearCorrecto(areasUniversidads, "Areas Universidads Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar las areas Universidads (EjbReincorporacion.getAreasUniversidad).", e, null);
+        }
+    }
+
+    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativos() {
+        try {
+            List<AreasUniversidad> areasUniversidads = em.createQuery("select t from AreasUniversidad t INNER JOIN t.categoria c WHERE c.categoria=:categoria AND t.vigente=:vigente", AreasUniversidad.class).setParameter("categoria", Short.parseShort("9")).setParameter("vigente", "1").getResultList();
+            return ResultadoEJB.crearCorrecto(areasUniversidads, "Areas Universidads Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar las areas Universidads (EjbReincorporacion.getProgramasEducativos).", e, null);
+        }
+    }
+    
+    public String getAreaSeleccionada(Short area) {
+        
+            List<AreasUniversidad> areasUniversidads = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.area = :area", AreasUniversidad.class).setParameter("area", area).getResultList();
+            if(areasUniversidads.isEmpty()){
+                return "";
             }else{
-                if((parts != null && (parts.length == 8 || parts.length == 9))) {
-                    if(parts.length == 9){
-                        p.setCurp(parts[0]);
-                        p.setApellidoPaterno(ucFirst(parts[2]).trim());
-                        p.setApellidoMaterno(ucFirst(parts[3]).trim());
-                        p.setNombre(ucFirst(parts[4]));
-                        if(parts[5].equals("HOMBRE"))
-                            p.setGenero((short) 2);
-                        if(parts[5].equals("MUJER"))
-                            p.setGenero((short) 1);
-                        fecha_nacimiento = parts[6].replace("/","-");
-                        p.setFechaNacimiento(sm.parse(fecha_nacimiento));
-                        String claveEstado = parts[0].substring(11, 13);
-
-                        Estado estado = em.createNamedQuery("Estado.findByClave", Estado.class)
-                                .setParameter("clave",claveEstado)
-                                .getResultList()
-                                .stream().findFirst().orElse(null);
-
-                        p.setEstado(estado.getIdestado());
-                        p.setUrlCurp(rutaRelativa);
-                    }else if(parts.length == 8){
-                        p.setCurp(parts[0]);
-                        p.setApellidoPaterno(ucFirst(parts[2]));
-                        p.setApellidoMaterno(ucFirst(parts[3]));
-                        p.setNombre(ucFirst(parts[4]));
-                        p.setGenero((short) 1);
-                        if(parts[5].equals("HOMBRE"))
-                            p.setGenero((short) 2);
-                        if(parts[5].equals("MUJER"))
-                            p.setGenero((short) 1);
-                        fecha_nacimiento = parts[6].replace("/","-");
-                        p.setFechaNacimiento(sm.parse(fecha_nacimiento));
-                        p.setUrlCurp(rutaRelativa);
-                    }else{
-                        ServicioArchivos.eliminarArchivo(rutaRelativa);
-                        p = new Persona();
-                    }
-                }
+                return areasUniversidads.get(0).getNombre();
             }
-        }catch (IOException ex){
-            Logger.getLogger(ServicioFichaAdmision.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(ServicioFichaAdmision.class.getName()).log(Level.SEVERE, null, ex);
-        }catch (NotFoundException ex){
-            ServicioArchivos.eliminarArchivo(rutaRelativa);
-            Logger.getLogger(ServicioFichaAdmision.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo leer el código qr de la curp. (EjbReinscripcionAutonoma.leerQrCURP)", e, null);
-        }
-
-        return ResultadoEJB.crearCorrecto(p, "Datos personales del estudiante");
-    }
-   
-     /**
-     * Permite el registro de los datos personales del estudiante
-     * @param persona Datos personales que se registrarán
-     * @param operacion Operación a realizar, se permite persistir y actualizar
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<Persona> guardarDatosPersonales(Persona persona, Operacion operacion){
-        try{
-            if(persona == null) return ResultadoEJB.crearErroneo(2, "La persona no debe ser nula.", Persona.class);
-            if(operacion == null) return ResultadoEJB.crearErroneo(3, "La operación no debe ser nula.", Persona.class);
-            Persona datosPer = em.createQuery("select p from Persona p where p.curp =:curp", Persona.class)
-                    .setParameter("curp", persona.getCurp()).getResultStream().findFirst().orElse(null);
-            switch (operacion){
-                case PERSISTIR:
-                    //registrar datos personales
-                    if(datosPer == null){//comprobar si la asignación existe para impedir  duplicar
-                        datosPer = persona;
-                        em.persist(datosPer);
-                        return ResultadoEJB.crearCorrecto(persona, "Los datos personales se han registrado correctamente.");
-                    }else {//si ya existe se informa
-                        return ResultadoEJB.crearErroneo(4, "Los datos personales ya existen", Persona.class);
-                    }
-                case ACTUALIZAR:
-                    //actualizar datos personales
-                        datosPer = persona;
-                        em.merge(datosPer);
-                        return ResultadoEJB.crearCorrecto(null, "Los datos personales se han actualizado correctamente.");
-
-                    default:
-                        return ResultadoEJB.crearErroneo(5, "Operación no autorizada.", Persona.class);
-
-            }
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar los datos personales. (EjbReincorporacion.guardarDatosPersonales)", e, null);
-        }
-    }
-
-    /**
-     * Permite el registro de los datos medicos de la persona agregada recientemente
-     * @param datosMedicos Datos medicos a registrar
-     * @param operacion Operacion a realizar, solo se permite persistir y actualizar
-     * @return
-     */
-    public ResultadoEJB<DatosMedicos> guardarDatosMedicos(DatosMedicos datosMedicos, Persona persona, Operacion operacion){
-        try {
-            if(datosMedicos == null) return ResultadoEJB.crearErroneo(2, "Los datos no debe ser nula.", DatosMedicos.class);
-            if(operacion == null) return ResultadoEJB.crearErroneo(3, "La operacion no debe ser nula.", DatosMedicos.class);
-            DatosMedicos datosMedicos1 = em.createQuery("select d from DatosMedicos as d where d.cvePersona = :dm", DatosMedicos.class)
-                    .setParameter("dm", persona.getIdpersona()).getResultStream().findFirst().orElse(null);
-            switch (operacion){
-                case PERSISTIR:
-                    //registrar datos personales
-                    if(datosMedicos1 == null){//comprobar si la asignación existe para impedir  duplicar
-                        datosMedicos1 = datosMedicos;
-                        datosMedicos1.setPersona(persona);
-                        em.persist(datosMedicos1);
-                        return ResultadoEJB.crearCorrecto(datosMedicos1, "Los datos personales se han registrado correctamente.");
-                    }else {//si ya existe se informa
-                        return ResultadoEJB.crearErroneo(4, "Los datos personales ya existen", DatosMedicos.class);
-                    }
-                case ACTUALIZAR:
-                    //actualizar datos personales
-                    datosMedicos1 = datosMedicos;
-                    em.merge(datosMedicos1);
-                    return ResultadoEJB.crearCorrecto(null, "Los datos personales se han actualizado correctamente.");
-
-                default:
-                    return ResultadoEJB.crearErroneo(5, "Operación no autorizada.", DatosMedicos.class);
-            }
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar los datos médicos. (EjbReincorporacion.guardarDatosMedicos)", e, null);
-        }
-    }
-
-
-    /**
-     * Permite el registro de la informacion de medios de comunicacion de la persona agregada
-     * @param mc Medios de comunicacion a agregar
-     * @param persona Persona a la que pertenece la informacion de medios de comunicacion
-     * @param operacion Operación a realizar, solo se permite Persistir o Actualizar
-     * @return
-     */
-    public ResultadoEJB<MedioComunicacion> guardarMedioComunicacion(MedioComunicacion mc, Persona persona, Operacion operacion){
-        try {
-            if(mc == null) return ResultadoEJB.crearErroneo(2, "Los datos no debe ser nula.", MedioComunicacion.class);
-            if(operacion == null) return ResultadoEJB.crearErroneo(3, "La operacion no debe ser nula.", MedioComunicacion.class);
-            MedioComunicacion medioComunicacion = em.createQuery("select m from MedioComunicacion as m where m.persona = :mc1", MedioComunicacion.class)
-                    .setParameter("mc1", persona.getIdpersona()).getResultStream().findFirst().orElse(null);
-            switch (operacion){
-                case PERSISTIR:
-                    //registrar datos personales
-                    if(medioComunicacion == null){//comprobar si la asignación existe para impedir  duplicar
-                        medioComunicacion = mc;
-                        medioComunicacion.setPersona1(persona);
-                        em.persist(medioComunicacion);
-                        return ResultadoEJB.crearCorrecto(medioComunicacion, "Los datos personales se han registrado correctamente.");
-                    }else {//si ya existe se informa
-                        return ResultadoEJB.crearErroneo(4, "Los datos personales ya existen", MedioComunicacion.class);
-                    }
-                case ACTUALIZAR:
-                    //actualizar datos personales
-                    medioComunicacion = mc;
-                    em.merge(medioComunicacion);
-                    return ResultadoEJB.crearCorrecto(null, "Los datos personales se han actualizado correctamente.");
-
-                default:
-                    return ResultadoEJB.crearErroneo(5, "Operación no autorizada.", MedioComunicacion.class);
-            }
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar los medios de comunicacion. (EjbReincorporacion.guardarMedioComunicacion)", e, null);
-        }
-    }
-
-    public ResultadoEJB<Aspirante> guardarAspirantePorReincorporacion(Aspirante a, Persona p, Operacion o){
-        try {
-            if(a == null) return ResultadoEJB.crearErroneo(2, "Los datos no pueden ser nulo", Aspirante.class);
-            if(p == null) return ResultadoEJB.crearErroneo(3, "Los datos no pueden ser nulo", Aspirante.class);
-            if(o == null) return ResultadoEJB.crearErroneo(4, "La operacion no puede ser nula", Aspirante.class);
-            System.out.println("Aspirante"+ a.getFolioAspirante());
-            Aspirante a1 = em.createQuery("select a from Aspirante as a where a.idPersona.idpersona = :aspirante", Aspirante.class)
-                    .setParameter("aspirante", a.getIdPersona().getIdpersona()).getResultStream().findFirst().orElse(null);
-            switch (o){
-                case PERSISTIR:
-                    if(a1 == null){
-                        System.out.println("Llego hasta acá");
-                        a1 = new Aspirante();
-                        a1 = a;
-                        a1.setIdProcesoInscripcion(new ProcesosInscripcion());
-                        a1.setTipoAspirante(new TipoAspirante());
-                        
-                        
-                        a1.getIdProcesoInscripcion().setIdProcesosInscripcion(2);
-                        a1.getTipoAspirante().setIdTipoAspirante(Short.parseShort("2"));
-                        a1.setEstatus(true);
-                        a1.setFechaRegistro(new Date());
-                        em.persist(a1);
-                        return ResultadoEJB.crearCorrecto(a1, "Los datos del aspirante han sido agregados correctamente");
-                    }else{
-                        ResultadoEJB.crearErroneo(5, "Los datos del aspirante ya existen", Aspirante.class);
-                    }
-                default:
-                    return ResultadoEJB.crearErroneo(6, "Operación no autorizada.", Aspirante.class);
-            }
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar al aspirante. (EjbReincorporacion.guardarAspirantePorReincorporacion)", e, null);
-        }
-    }
-
-    public ResultadoEJB<Domicilio> guardarDomicilio(Domicilio dm, Aspirante a, Operacion o){
-        try {
-            if(dm == null) return ResultadoEJB.crearErroneo(2, "Los datos de Domicilio no puede ser nula.", Domicilio.class);
-            if(a == null) return ResultadoEJB.crearErroneo(3, "Los datos del Aspirante no puede ser nula", Domicilio.class);
-            if(o == null) return ResultadoEJB.crearErroneo(4, "La operación no puede ser nula", Domicilio.class);
-            Domicilio dm1 = em.createQuery("select d from Domicilio as d where d.aspirante = :aspirante", Domicilio.class)
-                    .setParameter("aspirante", a.getIdAspirante()).getResultStream().findFirst().orElse(null);
-            switch (o){
-                case PERSISTIR:
-                    if(dm1 == null){
-                        dm1 = dm;
-                        dm1.setAspirante1(a);
-                        em.persist(dm1);
-                        return ResultadoEJB.crearCorrecto(dm1, "Los datos de domicilio han sido agregados correctamente");
-                    }else {
-                        ResultadoEJB.crearErroneo(5,"La información ya existen.", Domicilio.class);
-                    }
-                case ACTUALIZAR:
-                    dm1 = dm;
-                    em.merge(dm1);
-                    return ResultadoEJB.crearCorrecto(null, "La informacion ha sido actualizada con éxito");
-                    default:
-                        return ResultadoEJB.crearErroneo(6, "Operación no autorizada", Domicilio.class);
-
-            }
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la informacion. (EjbReincorporacion.guardarDomicilio)", e, null);
-        }
-    }
-
-    public TutorFamiliar guardaTutorFamiliar(TutorFamiliar tutorFamiliar) {
-        tutorFamiliar.setNombre(ucFirst(tutorFamiliar.getNombre().trim()));
-        tutorFamiliar.setApellidoPaterno(ucFirst(tutorFamiliar.getApellidoPaterno().trim()));
-        tutorFamiliar.setApellidoMaterno(ucFirst(tutorFamiliar.getApellidoMaterno().trim()));
-        tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle().trim()));
-        em.persist(tutorFamiliar);
-        return tutorFamiliar;
-    }
-    
-    public void actualizaTutorFamiliar(TutorFamiliar tutorFamiliar) {
-        tutorFamiliar.setNombre(ucFirst(tutorFamiliar.getNombre().trim()));
-        tutorFamiliar.setApellidoPaterno(ucFirst(tutorFamiliar.getApellidoPaterno().trim()));
-        tutorFamiliar.setApellidoMaterno(ucFirst(tutorFamiliar.getApellidoMaterno().trim()));
-        tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle().trim()));
-        tutorFamiliar.setParentesco(ucFirst(tutorFamiliar.getParentesco().trim()));
-        em.merge(tutorFamiliar);
-    }
-    
-    public void guardaDatosFamiliares(DatosFamiliares datosFamiliares) {
-        datosFamiliares.setNombrePadre(ucFirst(datosFamiliares.getNombrePadre().trim()));
-        datosFamiliares.setNombreMadre(ucFirst(datosFamiliares.getNombreMadre().trim()));
-        em.persist(datosFamiliares);
-    }
-
-    public void actualizaDatosFamiliares(DatosFamiliares datosFamiliares) {
-        datosFamiliares.setNombrePadre(ucFirst(datosFamiliares.getNombrePadre().trim()));
-        datosFamiliares.setNombreMadre(ucFirst(datosFamiliares.getNombreMadre().trim()));
-        em.merge(datosFamiliares);
-    }
-
-    
-    public ResultadoEJB<DatosAcademicos> guardarDatosAcademicos(DatosAcademicos da, Aspirante a, Operacion o){
-        try {
-            if(da == null) return ResultadoEJB.crearErroneo(2, "Los datos no puede ser nulo", DatosAcademicos.class);
-            if(a == null) return ResultadoEJB.crearErroneo(3, "Los datos no puede ser nulo", DatosAcademicos.class);
-            if(o == null) return ResultadoEJB.crearErroneo(4, "La operación no puede ser nula", DatosAcademicos.class);
-            DatosAcademicos da1 = em.createQuery("select d from DatosAcademicos as d where d.aspirante = :aspirante", DatosAcademicos.class)
-                    .setParameter("aspirante", a.getIdAspirante()).getResultStream().findFirst().orElse(null);
-            switch (o){
-                case PERSISTIR:
-                    if(da1 == null){
-                        da1 = da;
-                        da1.setAspirante1(a);
-                        em.persist(da1);
-                        return ResultadoEJB.crearCorrecto(da1, "Los datos académicos, han sido agregados correctamente");
-                    }else{
-                        return ResultadoEJB.crearErroneo(5, "La información ya existe", DatosAcademicos.class);
-                    }
-                case ACTUALIZAR:
-                    da1 = da;
-                    em.merge(da1);
-                    return ResultadoEJB.crearCorrecto(null, "La información ha sido actualizada con éxito");
-                    default:
-                        return ResultadoEJB.crearErroneo(6,"Operación no autorizada", DatosAcademicos.class);
-            }
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la informacion. (EjbReincorporacion.guardarDatosAcademicos)", e, null);
-        }
-    }
-
-    /**
-     * Permite obtener el periodo escolar disponible para realizar el proceso de reincorporación
-     * @param eventoEscolar Evento Escolar que se encuentra activo
-     * @return Resultado del proceso
-     */
-        public ResultadoEJB<PeriodosEscolares> getPeriodoReincorporacion(EventoEscolar eventoEscolar){
-        try{
-            Integer periodoEvento = eventoEscolar.getPeriodo();
-            //buscar periodo escolar para realizar reincorporación
-            final PeriodosEscolares periodo = em.createQuery("select p from PeriodosEscolares p where p.periodo =:periodo", PeriodosEscolares.class)
-                    .setParameter("periodo", periodoEvento)
-                    .getSingleResult();
-            return ResultadoEJB.crearCorrecto(periodo, "Periodo para reinscripción");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el periodo para reinscripción. (EjbReinscripcionAutonoma.getPeriodoActivo)", e, null);
-        }
-    }
-
-     /**
-     * Permite obtener la lista de programas educativos que tienen planes de estudio vigentes, los programas deben ordenarse por
-     * área, nivel y nombre y los grupos por grado y letra
-     * @param periodo Periodo activo
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<Map<AreasUniversidad, List<Grupo>>> getProgramasActivos(PeriodosEscolares periodo){
-        try{
-            // buscar lista de programas educativos con plan de estudios vigentes y despues mapear cada programa con su lista de grupos
-            Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
-            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
-                    .setParameter("categoria", programaEducativoCategoria)
-                    .getResultList();
-            Map<AreasUniversidad, List<Grupo>> programasMap = programas.stream()
-                    .collect(Collectors.toMap(programa -> programa, programa -> buscarGrupos(programa, periodo)));
-//            System.out.println("programasMap = " + programasMap);
-            return ResultadoEJB.crearCorrecto(programasMap, "Mapa de programas y grupos");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo mapear los programas y sus grupos. (EjbReinscripcionAutonoma.getProgramasActivos)", e, null);
-        }
-    }
-     private List<Grupo> buscarGrupos(AreasUniversidad programa, PeriodosEscolares periodo) {
-        return em.createQuery("select g from Grupo g where g.idPe=:programa and g.periodo=:periodo", Grupo.class)
-                .setParameter("programa", programa.getArea())
-                .setParameter("periodo", periodo.getPeriodo())
-                .getResultList();
-    }
-    
-    /**
-     * Permite la asignación de grupo al estudiante
-     * @param grupo Grupo que se asignará al estudiante
-     * @param estudiante Estudiante al que se le asignará el grupo correspondiente
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<Estudiante> asignarGrupo(Grupo grupo, Estudiante estudiante){
-        try{
-            if(grupo == null) return ResultadoEJB.crearErroneo(2, "El grupo no debe ser nulo.", Estudiante.class);
-            if(estudiante == null) return ResultadoEJB.crearErroneo(3, "El estudiante no debe ser nulo.", Estudiante.class);
-
-            TypedQuery<Estudiante> q1 = em.createQuery("update Estudiante e SET e.grupo =:grupo AND e.periodo =:periodo WHERE e.idEstudiante =:estudiante", Estudiante.class);
-            q1.setParameter("grupo", grupo.getIdGrupo());
-            q1.setParameter("periodo", grupo.getPeriodo());
-            q1.setParameter("estudiante", estudiante.getIdEstudiante());
-            q1.executeUpdate();
-            
-            Estudiante asignaGrupo = em.find(Estudiante.class, estudiante.getIdEstudiante());
-            return ResultadoEJB.crearCorrecto(asignaGrupo, "Grupo asignado"); 
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo asignar el grupo al estudiante. (EjbReinscripcionAutonoma.asignarGrupo)", e, null);
-        }
-    }
-
-    /**
-     * Permite obtener la lista de materias por asignar al estudiante recien inscrito
-     * @param programa Programa al que deben pertenecer las materias
-     * @param grupo Grupo al que deben pertenecer las materias
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<List<Materia>> getMateriasPorAsignar(AreasUniversidad programa, Grupo grupo){
-        try{
-            //TODO: buscar lista de materias por asignar que pertenecen al grupo seleccionado
-            List<Materia> materiasPorAsignar = em.createQuery("select m from Materia m inner join m.idPlan p where p.idPe=:programaEducativo and m.grado =:grado and m.estatus =:estatus", Materia.class)
-                    .setParameter("programaEducativo", programa.getArea())
-                    .setParameter("grado", grupo.getGrado())
-                    .setParameter("estatus", true)
-                    .getResultList();
-            return ResultadoEJB.crearCorrecto(materiasPorAsignar, "Lista de materias para asignar al estudiante");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias por asignar. (EjbReinscripcionAutonoma.getMateriasPorAsignar)", e, null);
-        }
-    }
-   
-     public List<Apartado> getApartados() {
-        List<Apartado> l = new SerializableArrayList<>();
-        Apartado a1 = new Apartado(1F, "", new ArrayList<>());
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,1.0f, "¿Hablas alguna lengua indígena?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,2.0f, "¿Qué lengua indígena practicas?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,3.0f, "¿Provienes de alguna comunidad indigena?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,4.0f, "¿Cuentas con beca del Programa Bienestar (Prospera)?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,5.0f, "¿Cuál es tu ingreso mensual aproximado?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,6.0f, "¿De quien dependes Económicamente?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,7.0f, "¿Cuál es el ingreso mensual famliar aproximado?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,8.0f, "¿Eres el primer miembro de tu familia en estudiar una carrera universitaria?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,9.0f, "¿Cuál es el nivel máximo de estudios que aspiras tener?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,10.0f, "Número de hermanos (dependientes económicamente del gasto familiar)", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,11.0f, "De acuerdo con el ingreso mensual total de tu hogar ¿cuál es tu situación socioeconómica?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,12.0f, "¿Eres hijo o trabajador de PEMEX y pertenence a la Sección 39?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,13.0f, "¿Consideraste a la UTXJ como primera opción para realizar tus estudios profesionales?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,14.0f, "¿Realizaste exámenes de admisión en otras universidades?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,15.0f, "De la siguiente lista, elige la opción que más influyó para que te decidieras a inscribirte en la UTXJ", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,16.0f, "¿Estudias una segunda carrera a través de la modalidad 2x3?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,17.0f, "¿Eres alérgica(o) a algún medicamento o alimento?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,18.0f, "¿Padeces alguna enfermedad?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.NUEVO_INGRESO,     1.0f,19.0f, "¿Estás en tratamiento médico?", ""));
-        l.add(a1);
         
-        return l;
     }
-     public ResultadoEJB<EncuestaAspirante> actualizar(String id, Object valor, EncuestaAspirante resultado){
+
+//------------------------------------------------------------------------Busquedas A------------------------------------------------------------------------//
+    public ResultadoEJB<DtoReincorporacion.General> getDtoReincorporacion(String curp,Boolean esEscolares) {
         try {
-            switch (id){
-                case "p0": resultado.setR1Lenguaindigena(valor.toString()); break;
-                case "p1": resultado.setR2tipoLenguaIndigena((LenguaIndigena) valor); break;
-                case "p2": resultado.setR3comunidadIndigena(valor.toString()); break;
-                case "p3": resultado.setR4programaBienestar(valor.toString()); break;
-                case "p4": resultado.setR5ingresoMensual(Double.parseDouble(valor.toString())); break;
-                case "p5": resultado.setR6dependesEconomicamnete(valor.toString()); break;
-                case "p6": resultado.setR7ingresoFamiliar(Double.parseDouble(valor.toString())); break;
-                case "p7": resultado.setR8primerEstudiar(valor.toString()); break;
-                case "p8": resultado.setR9nivelMaximoEstudios(valor.toString()); break;
-                case "p9": resultado.setR10numeroDependientes(Short.valueOf(valor.toString())); break;
-                case "p10": resultado.setR11situacionEconomica(valor.toString()); break;
-                case "p11": resultado.setR12hijoPemex(valor.toString()); break;
-                case "p12": resultado.setR13utxjPrimeraOpcion(valor.toString()); break;
-                case "p13": resultado.setR14examenAdmisionOU(valor.toString()); break;
-                case "p14": resultado.setR15medioImpacto((MedioDifusion) valor); break;
-                case "p15": resultado.setR16segundaCarrera(valor.toString()); break;
-                case "p16": resultado.setR17Alergia(valor.toString()); break;
-                case "p17": resultado.setR18padecesEnfermedad(valor.toString()); break;
-                case "p18": resultado.setR19tratamientoMedico(valor.toString()); break;
-            }
-            return ResultadoEJB.crearCorrecto(resultado, "Valor guardado en memoria");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "Ocurrió un error: ", e, EncuestaAspirante.class);
-        }
-    }
-    
-     public ResultadoEJB<EncuestaAspirante> guardar(EncuestaAspirante resultado){
-        try{
-            em.merge(resultado);
-            return ResultadoEJB.crearCorrecto(resultado, "Valor guardado en base de datos");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "Ocurrió un error: ", e, EncuestaAspirante.class);
-        }
-    }
-     
-     
-    public List<SelectItem> getDependientesEconomico() {
-        List<SelectItem> l = new ArrayList<>();
-        l.add(new SelectItem("Padres", "Padres", "Padres"));  
-        l.add(new SelectItem("hermanas o hermanos", "hermanas o hermanos", "hermanas o hermanos"));
-        l.add(new SelectItem("otro familiar", "otro familiar", "otro familiar"));
-        l.add(new SelectItem("Ninguno", "Ninguno", "Ninguno"));
-        return l;
-    }
-    
-    public EncuestaAspirante getResultado(Integer cve_aspirante){
-        return em.createQuery("SELECT ea FROM EncuestaAspirante ea WHERE ea.cveAspirante = :aspirante", EncuestaAspirante.class)
-                .setParameter("aspirante", cve_aspirante)
-                .getResultList().stream().findFirst().orElse(null);
-    }    
-    
-    public List<SelectItem> getNivelEducacion() {
-        List<SelectItem> l = new ArrayList<>();
-        l.add(new SelectItem("TSU", "TSU", "TSU"));  
-        l.add(new SelectItem("Licenciatura", "Licenciatura", "Licenciatura"));
-        l.add(new SelectItem("Especialidad", "Especialidad", "Especialidad"));
-        l.add(new SelectItem("Maestría", "Maestría", "Maestría"));
-        l.add(new SelectItem("Doctorado", "Doctorado", "Doctorado"));
-        return l;
-    }
-    
-    /**
-     * Permite la asignación de materias que cursará el estudiante
-     * @param estudiante Estudiante al que se le asignarán las materias
-     * @param materias Lista de materias que se asignarán
-     * @return Resultado del proceso
-     */
-    /*public ResultadoEJB<Calificaciones> asignarMateriasEstudiante(Estudiante estudiante, List<Materia> materias){
-        try{
-            if(estudiante == null) return ResultadoEJB.crearErroneo(2, "El estudiante no puede ser nulo.", Calificaciones.class);
-            if(materias.isEmpty()) return ResultadoEJB.crearErroneo(3, "La lista de materias no puede ser vacia.", Calificaciones.class);
+            Boolean encontrado=Boolean.FALSE;
+            DtoReincorporacion.PersonaR pr = new DtoReincorporacion.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE);
+            DtoReincorporacion.AspiranteR ar = new DtoReincorporacion.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoReincorporacion.MedicosR mr = new DtoReincorporacion.MedicosR(new DatosMedicos(), new TipoSangre(), new TipoDiscapacidad(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoReincorporacion.TutorR tr = new DtoReincorporacion.TutorR(new TutorFamiliar(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoReincorporacion.FamiliaresR fr = new DtoReincorporacion.FamiliaresR(new DatosFamiliares(), tr, new Ocupacion(), new Ocupacion(), new Escolaridad(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoReincorporacion.DomicilioR dr = new DtoReincorporacion.DomicilioR(new Domicilio(), Boolean.FALSE, Operacion.PERSISTIR, Boolean.FALSE);
+            DtoReincorporacion.AcademicosR ac = new DtoReincorporacion.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoReincorporacion.EncuestaR er = new DtoReincorporacion.EncuestaR(new EncuestaAspirante(), new LenguaIndigena(), new MedioDifusion(), Operacion.PERSISTIR, Boolean.FALSE);
+            List<DtoReincorporacion.EstudianteR> es = new ArrayList<>();
+            List<DtoReincorporacion.AlineacionCalificaciones> al = new ArrayList<>();
             
-            //Obtener la clave de la materia
-            materias.forEach(mat -> {claveMateria = mat.getIdMateria();});
-            Materia materia = em.find(Materia.class, claveMateria);
-            
-            CalificacionesPK pk = new CalificacionesPK(estudiante.getIdEstudiante(), estudiante.getGrupo().getIdGrupo(), claveMateria);
-            Calificaciones calificaciones = em.createQuery("select c from Calificaciones c where c.estudiante1.idEstudiante =:estudiante and c.estudiante1.grupo =:grupo and c.materia1.idMateria =:materia", Calificaciones.class)
-                    .setParameter("estudiante", estudiante.getIdEstudiante())
-                    .setParameter("grupo", estudiante.getGrupo().getIdGrupo())
-                    .setParameter("materia", claveMateria)
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-
-            if (calificaciones == null) {//comprobar si la asignación existe para impedir  duplicar
-                calificaciones = new Calificaciones();
-                calificaciones.setCalificacionesPK(pk);
-                calificaciones.setEstudiante1(estudiante);
-                calificaciones.setMateria1(materia);
-                em.persist(calificaciones);
-                return ResultadoEJB.crearCorrecto(calificaciones, "La asignación fue registrada correctamente.");
-            }
-            return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", Calificaciones.class);
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo asignar las materias. (EjbReinscripcionAutonoma.asignarMateriasEstudiante)", e, null);
-        }
-    }*/
-    
-     /**
-     * Permite la lectura del folio de IMSS mediante el código QR
-     * @param file Documento que se va a leer
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<QrNssDto> leerQrNSS(Part file) {
-        try{
-            QrPdf pdf = new QrPdf(Paths.get(file.getSubmittedFileName()));
-            String qrCode = pdf.getQRCode(1, true, true);
-            String[] parts = qrCode.split(":|");
-            
-            String nss = parts[3].replace(" ", "");
-            String curp = parts[7].replace(" ", "");
-            
-            Persona persona = em.createQuery("select p from Persona p where p.curp =:curp", Persona.class)
-                    .setParameter("curp", curp)
-                    .getSingleResult();
-            
-            //comprobar si la curp esta relacionada con un estudiante
-            if(persona != null){ 
-                QrNssDto qrNssDto = new QrNssDto(persona, nss);
-                return ResultadoEJB.crearCorrecto(qrNssDto, "La asignación fue registrada correctamente.");
-            }
-            
-            return ResultadoEJB.crearErroneo(2, "El nss no puede ser nulo.", QrNssDto.class);
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo leer el código qr del nss. (EjbReinscripcionAutonoma.leerQrNSS)", e, null);
-        }
-    }
-    
-     /**
-     * Permite la asignación del número de seguridad social al estudiante
-     * @param datosQr Datos leídos del qr (persona y nss)
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<DatosMedicos> asignarNSS(QrNssDto datosQr){
-        try{
-            if(datosQr == null) return ResultadoEJB.crearErroneo(3, "El nss no puede ser nulo.", DatosMedicos.class);
-            
-            DatosMedicos datosMedicos = em.createQuery("select d from DatosMedicos d WHERE d.persona.idpersona =:persona and d.nss =:nss", DatosMedicos.class)
-                    .setParameter("persona",  datosQr.getPersona().getIdpersona())
-                    .setParameter("nss", datosQr.getNss())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-
-            if (datosMedicos == null) {//comprobar si la asignación existe para impedir  duplicar
-                datosMedicos = new DatosMedicos();
-                datosMedicos.setCvePersona(datosQr.getPersona().getIdpersona());
-                datosMedicos.setNss(datosQr.getNss());
-                em.persist(datosMedicos);
-                return ResultadoEJB.crearCorrecto(datosMedicos, "La asignación fue registrada correctamente.");
-            }
-            return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarNSS)", DatosMedicos.class);
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo asignar el nss. (EjbReinscripcionAutonoma.asignarNSS)", e, null);
-        }
-    }
-    
-    /** PARA REINCORPORACIONES DE GENERACIONES ANTERIORES QUE SE ENCUENTRAN EN SAIIUT **/
-    
-     /**
-     * Permite verificar si el estudiante tiene calificaciones de anteriores cuatrimestres registradas en SAIIUT
-     * @param matricula Matricula del estudiante
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<List<CalificacionesSaiiutDto>> verificarCalificacionesSAIIUT(String matricula){
-        try{
-            List<CalificacionesSaiiutDto> listaCalificacionesSaiiutDto = new ArrayList<>();
-            List<CalificacionesAlumno> listaCalificacionesAlumno = new ArrayList<>();
-            
-            //Identificar claves del alumno para posteriormente buscar las calificaciones
-            List<Alumnos> clavesAlumno = f2.getEntityManager().createQuery("SELECT a FROM Alumnos a WHERE a.matricula =:matricula", Alumnos.class)
-                    .setParameter("matricula", matricula)
-                    .getResultList();
-
-            //Buscar lista de calificaciones en saiiut del estudiante
-            listaCalificacionesAlumno = f2.getEntityManager().createQuery("SELECT ca FROM CalificacionesAlumno ca WHERE ca.calificacionesAlumnoPK.cveAlumno IN :claves and ca.valida = :valida", CalificacionesAlumno.class)
-                    .setParameter("claves", clavesAlumno)
-                    .setParameter("valida", true)
-                    .getResultList();
-
-            //Construir la lista de dto's para mostrar las calificaciones
-            listaCalificacionesAlumno.forEach(calificacionesAlumno -> {
-                
-                Alumnos alumno = f2.getEntityManager().createQuery("SELECT a FROM Alumnos a WHERE a.alumnosPK.cveAlumno =:cveAlumno", Alumnos.class)
-                        .setParameter("cveAlumno", calificacionesAlumno.getCalificacionesAlumnoPK().getCveAlumno())
-                        .getSingleResult();
-                        
-                PlanesEstudio planEstudio = f2.getEntityManager().createQuery("SELECT p FROM PlanesEstudio p WHERE p.planesEstudioPK.cvePlan =:cvePlan", PlanesEstudio.class)
-                        .setParameter("cvePlan", calificacionesAlumno.getCalificacionesAlumnoPK().getCvePlan())
-                        .getSingleResult();
-                
-                Materias1 materia = f2.getEntityManager().createQuery("SELECT m FROM Materias1 m WHERE m.cveMateria =:cveMateria", Materias1.class)
-                        .setParameter("cveMateria", calificacionesAlumno.getCalificacionesAlumnoPK().getCveMateria())
-                        .getSingleResult();
-                
-                listaCalificacionesSaiiutDto.add(new CalificacionesSaiiutDto(
-                        calificacionesAlumno,
-                        alumno,
-                        planEstudio,
-                        materia));
-            });
-        
-            return ResultadoEJB.crearCorrecto(listaCalificacionesSaiiutDto, "Existen registros de calificaciones de cuatrimestres anteriores.");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No existen calificaciones de cuatrimestres anteriores registradas. (EjbReincorporacion.verificarCalificacionesSAIIUT)", e, null);
-        }
-    }
-    
-     /**
-     * Permite la asignación de calificaciones de SAIIUT al sistema de Control Escolar
-     * @param listaCalificacionesSaiiutDto calificaciones de saiiut
-     * @param estudiante Estudiante al que se le asignarán las calificaciones
-     * @return Resultado del proceso
-     */
-    /*public ResultadoEJB<Calificaciones> asignarCalificacionesSAIIUT(List<CalificacionesSaiiutDto> listaCalificacionesSaiiutDto, Estudiante estudiante){
-        try{
-            if(listaCalificacionesSaiiutDto.isEmpty()) return ResultadoEJB.crearErroneo(3, "La calificación no puede ser nulo.", Calificaciones.class);
-            if(estudiante == null) return ResultadoEJB.crearErroneo(4, "El estudiante no puede ser nulo.", Calificaciones.class);
-
-            Calificaciones calificacionesAsignar = new Calificaciones();
-            
-            listaCalificacionesSaiiutDto.forEach((calificacionesAlumno) -> {
-
-            Calificaciones calificaciones = em.createQuery("select c from Calificaciones c INNER JOIN c.estudiante1 e INNER JOIN c.materia1 m WHERE e.matricula =:matricula AND m.claveMateria =:materia", Calificaciones.class)
-                    .setParameter("matricula", calificacionesAlumno.getAlumno().getMatricula())
-                    .setParameter("materia", calificacionesAlumno.getCalificacionesAlumno().getCalificacionesAlumnoPK().getCveMateria())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-
-            if (calificaciones == null) {//comprobar si la asignación existe para impedir  duplicar
-
-                Materia mat = em.createQuery("SELECT m FROM Materia m WHERE m.claveMateria =:claveMateria", Materia.class)
-                .setParameter("claveMateria", calificacionesAlumno.getMateria1().getCveMateria())
-                .getSingleResult();
-
-                CalificacionesPK pk = new CalificacionesPK(estudiante.getIdEstudiante(), estudiante.getGrupo().getIdGrupo(), mat.getIdMateria());
-
-                calificacionesAsignar.setCalificacionesPK(pk);
-                calificacionesAsignar.setEstudiante1(estudiante);
-                calificacionesAsignar.setMateria1(mat);
-                calificacionesAsignar.setCf(calificacionesAlumno.getCalificacionesAlumno().getCf().doubleValue());
-                em.persist(calificacionesAsignar);
+            ResultadoEJB<DtoReincorporacion.PersonaR> resPR = getPersonaR(curp);
+            if (resPR.getCorrecto()) {
+                pr = resPR.getValor();
+                if (pr.getEcontrado()) {
+                    ResultadoEJB<DtoReincorporacion.AspiranteR> resAR = getAspiranteR(pr.getPersona());
+                    if (resAR.getCorrecto()) {
+                        ar = resAR.getValor();
+                        if (ar.getEcontrado()) {
+                            ResultadoEJB<DtoReincorporacion.FamiliaresR> resFR = getFamiliaresR(ar.getAspirante());
+                            ResultadoEJB<DtoReincorporacion.AcademicosR> resAC = getAcademicosR(ar.getAspirante());
+                            ResultadoEJB<DtoReincorporacion.DomicilioR> resDR = getDomicilioR(ar.getAspirante());
+                            ResultadoEJB<DtoReincorporacion.EncuestaR> resER = getEncuestaR(ar.getAspirante());
+                            ResultadoEJB< List<DtoReincorporacion.EstudianteR>> resES = getEstudianteR(ar.getAspirante());
+                            if (resFR.getCorrecto()) {fr = resFR.getValor();if(fr.getEcontrado()){tr=fr.getTutorR();}}
+                            if (resAC.getCorrecto()) {ac = resAC.getValor();}
+                            if (resDR.getCorrecto()) {dr = resDR.getValor();}
+                            if (resER.getCorrecto()) {er = resER.getValor();}  
+                            if (resES.getCorrecto()) {
+                                es = resES.getValor();
+                                if(!es.isEmpty()){
+                                    ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> resAl = getAlineacionCalificaciones(ar.getAspirante(),esEscolares);
+                                    if (resAl.getCorrecto()) {al = resAl.getValor();}
+                                }
+                            }      
+                        }
+                    }
+                    ResultadoEJB<DtoReincorporacion.MedicosR> resMR = getMedicosR(pr.getPersona());
+                       
+                    if (resMR.getCorrecto()) {mr = resMR.getValor();}
+                    encontrado=Boolean.TRUE;
                 }
-            });
-            return ResultadoEJB.crearCorrecto(calificacionesAsignar, "La calificación ya fue asignada. (EjbReincorporacion.asignarCalificacionesSAIIUT)");
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo asignar la calificación. (EjbReincorporacion.asignarCalificacionesSAIIUT)", e, null);
-        }
-    }*/
-    
-    /** PARA REINCORPORACIONES DE OTRA UT **/
-    
-     /**
-     * Permite buscar lista de materias previas que se asignarán al estudiante que no tiene historial académico en sistema
-     * @param planEstudio Materias del plan de estudio que se asignarán
-     * @param estudiante Estudiante al que se le asignarán las materias
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<List<Materia>> getMateriasPorAsignar(PlanEstudio planEstudio, Estudiante estudiante){
-        try{
-            //TODO: buscar lista de materias activas previas al grado actual para asignar que pertenecen al plan de estudios seleccionado del estudiante
-            List<Materia> materiasPorAsignar = em.createQuery("SELECT m FROM Materia m WHERE m.idPlan.idPlanEstudio =:planEstudio AND m.grado < :grado AND m.estatus =:estatus", Materia.class)
-                    .setParameter("planEstudio", planEstudio.getIdPlanEstudio())
-                    .setParameter("grado", estudiante.getGrupo().getGrado())
-                    .setParameter("estatus", true)
-                    .getResultList();
-            return ResultadoEJB.crearCorrecto(materiasPorAsignar, "Lista de materias sin asignar por grupo y programa");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias sin asignar por grupo y programa. (EjbAsignacionAcademica.getMateriasPorAsignar)", e, null);
+            }                                                                        
+            DtoReincorporacion.General rr=new DtoReincorporacion.General(pr, ar, mr, fr, tr, dr, ac, er, es,al, encontrado);
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
         }
     }
     
-    
-    public Iems buscaIemsByClave(Integer id) {
-        return em.find(Iems.class,id);
-    }
-    
-    public AreasUniversidad buscaPEByClave(Short clave) {
-        return em.createNamedQuery("AreasUniversidad.findByArea",AreasUniversidad.class)
-                .setParameter("area",clave)
-                .getSingleResult();
-    }
-     /**
-     * Permite la asignación de calificaciones directas de cuatrimestres previos al estudiante que no tiene historial académico en sistema
-     * @param materia Clave de la materia a la que se le asignará calificación
-     * @param calificacion Calificación
-     * @param estudiante Estudiante al que se le asignarán las calificaciones
-     * @return Resultado del proceso
-     */
-    /*public ResultadoEJB<Calificaciones> asignarCalificacionesDirectas(Materia materia, Double calificacion, Estudiante estudiante){
-        try{
-            if(materia == null) return ResultadoEJB.crearErroneo(3, "La materia no puede ser nula.", Calificaciones.class);
-            if(calificacion == null) return ResultadoEJB.crearErroneo(4, "La calificación no puede ser nula.", Calificaciones.class);
-            if(estudiante == null) return ResultadoEJB.crearErroneo(5, "El estudiante no puede ser nulo.", Calificaciones.class);
-
-            Calificaciones calificaciones = em.createQuery("SELECT c FROM Calificaciones c WHERE c.calificacionesPK.estudiante =:estudiante AND c.calificacionesPK.materia =:materia AND c.cf !=:null", Calificaciones.class)
-                    .setParameter("estudiante",  estudiante.getIdEstudiante())
-                    .setParameter("materia", materia.getIdMateria())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-
-            if (calificaciones == null) {//comprobar si la asignación existe para impedir  duplicar
-                
-                calificaciones = new Calificaciones();
-                CalificacionesPK pk = new CalificacionesPK(estudiante.getIdEstudiante(), estudiante.getGrupo().getIdGrupo(), materia.getIdMateria());
-               
-                calificaciones.setCalificacionesPK(pk);
-                calificaciones.setEstudiante1(estudiante);
-                calificaciones.setMateria1(materia);
-                calificaciones.setCf(calificacion);
-                em.persist(calificaciones);
-                return ResultadoEJB.crearCorrecto(calificaciones, "La asignación fue registrada correctamente.");
-            }
-            return ResultadoEJB.crearErroneo(2, "La asignación ya fue realizada. (EjbReinscripcionAutonoma.asignarCalificacionesDirectas)", Calificaciones.class);
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo asignar la calificación. (EjbReincorporacion.asignarCalificacionesDirectas)", e, null);
-        }
-    }*/
-    
-     /** PARA REINCORPORACIONES EN LAS CUALES EXISTE HISTORIAL ACADEMICO PREVIO **/
-
-     /*
-     /**
-     * Permite buscar calificaciones previas del estudiante en el sistema
-     * @param estudiante Estudiante del que se buscarán calificaciones
-     * @return Resultado del proceso
-     */
-    /*public ResultadoEJB<List<Calificaciones>> getCalificacionesPrevias(Estudiante estudiante){
-        try{
-            //Identificar claves del alumno para posteriormente buscar las calificaciones
-            List<Estudiante> clavesAlumno = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.matricula !=:claveActual", Estudiante.class)
-                    .setParameter("matricula", estudiante.getMatricula())
-                    .setParameter("claveActual", estudiante.getIdEstudiante())
-                    .getResultList();
-            
-            //TODO: buscar calificaciones previas al grado actual para asignar que pertenecen al estudiante
-            List<Calificaciones> calificaciones = em.createQuery("SELECT c FROM Calificaciones c WHERE c.calificacionesPK.estudiante IN :clavesAlumno ORDER BY c.materia1.claveMateria ASC", Calificaciones.class)
-                    .setParameter("clavesAlumno", clavesAlumno)
-                    .getResultList();
-             
-            return ResultadoEJB.crearCorrecto(calificaciones, "Lista de materias sin asignar por grupo y programa");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias sin asignar por grupo y programa. (EjbAsignacionAcademica.getMateriasPorAsignar)", e, null);
-        }
-    }*/
-
-    public ResultadoEJB<Aspirante> buscarAspirantePorPersona(Integer idPersona){
+    public ResultadoEJB<DtoReincorporacion.PersonaR> getPersonaR(String curp) {
         try {
-            Aspirante aspirante = em.createQuery("select a from Aspirante as a where a.idPersona.idpersona = :idP",Aspirante.class)
-                    .setParameter("idP", idPersona).getResultStream().findFirst().orElse(null);
-            return ResultadoEJB.crearCorrecto(aspirante,"Aspirante encontrado con éxito");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No hay aspirante registrado", e, null);
+            List<Persona> personas = em.createQuery("select p from Persona p WHERE p.curp=:curp", Persona.class).setParameter("curp", curp).getResultList();
+            DtoReincorporacion.PersonaR rr = new DtoReincorporacion.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE);
+            if (!personas.isEmpty()) {
+                Persona per = personas.get(0);
+                List<MedioComunicacion> mcs = em.createQuery("select c from MedioComunicacion c INNER JOIN c.persona1 p WHERE p.idpersona=:idpersona", MedioComunicacion.class).setParameter("idpersona", per.getIdpersona()).getResultList();
+                if (!mcs.isEmpty()) {
+                    rr.setMedioComunicacion(mcs.get(0));
+                    rr.setOperacionMC(Operacion.ACTUALIZAR);
+                }
+                rr.setPersona(per);
+                ResultadoEJB<Pais> pais = getPaisSeleccionado(per.getEstado());
+                if (pais.getCorrecto()) {
+                    rr.setPaisOr(pais.getValor());
+                }
+                rr.setOperacionGeneral(Operacion.ACTUALIZAR);
+                rr.setEcontrado(Boolean.TRUE);
+            }
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.AspiranteR> getAspiranteR(Persona p) {
+        try {
+            List<Aspirante> aspirantes = em.createQuery("select a from Aspirante a INNER JOIN a.idPersona p WHERE p.idpersona=:idpersona", Aspirante.class).setParameter("idpersona", p.getIdpersona()).getResultList();
+            DtoReincorporacion.AspiranteR rr = new DtoReincorporacion.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE);
+            if (!aspirantes.isEmpty()) {
+                Aspirante aspirante = aspirantes.get(0);
+                rr.setAspirante(aspirante);
+                rr.setTipo(aspirante.getTipoAspirante());
+                rr.setProcesosInscripcion(aspirante.getIdProcesoInscripcion());
+                rr.setOperacion(Operacion.ACTUALIZAR);
+                rr.setEcontrado(Boolean.TRUE);
+            }
+            return ResultadoEJB.crearCorrecto(rr, "AspiranteR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar AspiranteR (EjbReincorporacion.getAspiranteR).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.MedicosR> getMedicosR(Persona p) {
+        try {
+            List<DatosMedicos> datosMedicoses = em.createQuery("select a from DatosMedicos a INNER JOIN a.persona p WHERE p.idpersona=:idpersona", DatosMedicos.class).setParameter("idpersona", p.getIdpersona()).getResultList();
+            DtoReincorporacion.MedicosR rr = new DtoReincorporacion.MedicosR(new DatosMedicos(), new TipoSangre(), new TipoDiscapacidad(), Operacion.PERSISTIR, Boolean.FALSE);
+            if (!datosMedicoses.isEmpty()) {
+                DatosMedicos dm = datosMedicoses.get(0);
+                rr.setDatosMedicos(dm);
+                rr.setDiscapacidad(dm.getCveDiscapacidad());
+                rr.setSangre(dm.getCveTipoSangre());
+                rr.setOperacion(Operacion.ACTUALIZAR);
+                rr.setEcontrado(Boolean.TRUE);
+            }
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.FamiliaresR> getFamiliaresR(Aspirante a) {
+        try {
+            List<DatosFamiliares> datosFamiliareses = em.createQuery("select a from DatosFamiliares a INNER JOIN a.aspirante1 p WHERE p.idAspirante=:idAspirante", DatosFamiliares.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            DtoReincorporacion.TutorR tr = new DtoReincorporacion.TutorR(new TutorFamiliar(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoReincorporacion.FamiliaresR rr = new DtoReincorporacion.FamiliaresR(new DatosFamiliares(), tr, new Ocupacion(), new Ocupacion(), new Escolaridad(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE);
+            if (!datosFamiliareses.isEmpty()) {
+                DatosFamiliares df = datosFamiliareses.get(0);
+                rr.setDatosFamiliares(df);
+                rr.setEscolaridadM(df.getEscolaridadMadre());
+                rr.setEscolaridadP(df.getEscolaridadPadre());
+                rr.setOcupacionM(df.getOcupacionMadre());
+                rr.setOcupacionP(df.getOcupacionPadre());
+                ResultadoEJB<DtoReincorporacion.TutorR> rejb = getTutorR(df);
+                if (rejb.getCorrecto()) {
+                    rr.setTutorR(rejb.getValor());
+                }
+                rr.setOperacion(Operacion.ACTUALIZAR);
+                rr.setEcontrado(Boolean.TRUE);
+            }
+
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.TutorR> getTutorR(DatosFamiliares tutor) {
+        try {
+            List<TutorFamiliar> familiars = em.createQuery("select t from DatosFamiliares d INNER JOIN d.tutor t WHERE d.aspirante=:aspirante", TutorFamiliar.class).setParameter("aspirante", tutor.getAspirante()).getResultList();
+            DtoReincorporacion.TutorR rr = new DtoReincorporacion.TutorR(new TutorFamiliar(), Operacion.PERSISTIR, Boolean.FALSE);
+            if (!familiars.isEmpty()) {
+                TutorFamiliar tf = familiars.get(0);
+                rr.setTutorFamiliar(tf);
+                rr.setOperacion(Operacion.ACTUALIZAR);
+                rr.setEcontrado(Boolean.TRUE);
+            }
+            return ResultadoEJB.crearCorrecto(rr, "TutorR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar TutorR (EjbReincorporacion.getTutorR).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.DomicilioR> getDomicilioR(Aspirante a) {
+        List<Domicilio> domicilios = em.createQuery("select d from Domicilio d INNER JOIN d.aspirante1 a WHERE a.idAspirante=:idAspirante", Domicilio.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+        DtoReincorporacion.DomicilioR rr = new DtoReincorporacion.DomicilioR(new Domicilio(), Boolean.FALSE, Operacion.PERSISTIR, Boolean.FALSE);
+        if (!domicilios.isEmpty()) {
+            Domicilio dom = domicilios.get(0);
+            rr.setDomicilio(dom);
+            if (dom.getAsentamientoProcedencia() == dom.getIdAsentamiento()) {
+                rr.setIgualD(Boolean.TRUE);
+            }
+            rr.setOperacion(Operacion.ACTUALIZAR);
+                rr.setEcontrado(Boolean.TRUE);
+        }
+        try {
+            return ResultadoEJB.crearCorrecto(rr, "DomicilioR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DomicilioR (EjbReincorporacion.getDomicilioR).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.AcademicosR> getAcademicosR(Aspirante a) {
+        try {
+            List<DatosAcademicos> das = em.createQuery("select d from DatosAcademicos d INNER JOIN d.aspirante1 a WHERE a.idAspirante=:idAspirante", DatosAcademicos.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            DtoReincorporacion.AcademicosR rr = new DtoReincorporacion.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE);
+            if (!das.isEmpty()) {
+                DatosAcademicos da = das.get(0);
+                rr.setAcademicos(da);
+                rr.setEspecialidad(da.getEspecialidadIems());
+                rr.setSistemaPo(da.getSistemaPrimeraOpcion());
+                rr.setSistemaSo(da.getSistemaSegundaOpcion());
+                rr.setUniversidad1(getOpcionArea(da.getPrimeraOpcion()).getValor());
+                rr.setUniversidad2(getOpcionArea(da.getSegundaOpcion()).getValor());
+                ResultadoEJB<Iems> rejb = getIemsSeleccionada(da.getInstitucionAcademica());
+                if (rejb.getCorrecto()) {
+                    Iems i = rejb.getValor();
+                    rr.setIems(i);
+                    rr.setEstado(i.getLocalidad().getMunicipio().getEstado());
+                    rr.setMunicipio(i.getLocalidad().getMunicipio());
+                    rr.setLocalidad(i.getLocalidad());
+                }
+                rr.setOperacion(Operacion.ACTUALIZAR);
+                rr.setEcontrado(Boolean.TRUE);
+            }
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.EncuestaR> getEncuestaR(Aspirante a) {
+        try {
+            DtoReincorporacion.EncuestaR rr = new DtoReincorporacion.EncuestaR(new EncuestaAspirante(), new LenguaIndigena(), new MedioDifusion(), Operacion.PERSISTIR, Boolean.FALSE);
+            List<EncuestaAspirante> encuestaAspirantes = em.createQuery("select e from EncuestaAspirante e INNER JOIN e.aspirante a WHERE a.idAspirante=:idAspirante", EncuestaAspirante.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            if(!encuestaAspirantes.isEmpty()) {
+                EncuestaAspirante ea = encuestaAspirantes.get(0);
+                rr.setEncuestaAspirante(ea);
+                rr.setOperacion(Operacion.ACTUALIZAR);
+                rr.setEcontrado(Boolean.TRUE);
+            }                        
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<DtoReincorporacion.EstudianteR>> getEstudianteR(Aspirante a){
+        try {
+            List<Estudiante> das = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a WHERE a.idAspirante=:idAspirante ORDER BY e.periodo", Estudiante.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            List<DtoReincorporacion.EstudianteR> ers = new ArrayList<>();
+            if (!das.isEmpty()) {
+                Estudiante estudiante=das.get(das.size()-1);
+                das.forEach((e) -> {
+                    List<Documentosentregadosestudiante> ds = em.createQuery("select d from Documentosentregadosestudiante d INNER JOIN d.estudiante1 a WHERE a.idEstudiante=:idEstudiante ORDER BY a.periodo", Documentosentregadosestudiante.class).setParameter("idEstudiante", e.getIdEstudiante()).getResultList();
+                    Documentosentregadosestudiante d=new Documentosentregadosestudiante();
+                    if (!ds.isEmpty()) {
+                        d=ds.get(0);
+                    }
+                    Boolean editable;
+                    if(e.getPeriodo()==estudiante.getPeriodo()){
+                        editable=Boolean.TRUE;
+                    }else{                        
+                        editable=Boolean.FALSE;
+                    }
+                    ers.add(new DtoReincorporacion.EstudianteR(e, d, getAreaSeleccionada(e.getCarrera()), e.getTipoEstudiante(), e.getGrupo(), e.getOpcionIncripcion(), editable, Operacion.ACTUALIZAR));
+                });
+            }
+            return ResultadoEJB.crearCorrecto(ers, "EstudianteR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar EstudianteR (EjbReincorporacion.getEstudianteR).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> getAlineacionCalificaciones(Aspirante a, Boolean esEscolares) {
+        try {
+            List<Estudiante> das = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a WHERE a.idAspirante=:idAspirante", Estudiante.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            List<DtoReincorporacion.AlineacionCalificaciones> rr = new ArrayList<>();
+            if (!das.isEmpty()) {
+                das.forEach((t) -> {
+                    List<DtoReincorporacion.CalificacionesR> crs = new ArrayList<>();
+                    List<CargaAcademica> cas = new ArrayList<>();
+                    Boolean validar = Boolean.FALSE;
+                    if (!t.getGrupo().getCargaAcademicaList().isEmpty()) {
+                        cas = t.getGrupo().getCargaAcademicaList();
+                        cas.forEach((cg) -> {
+                            List<CalificacionPromedio> cps = em.createQuery("select d from CalificacionPromedio d INNER JOIN d.estudiante a INNER JOIN d.cargaAcademica c WHERE a.idEstudiante=:idEstudiante AND c.carga=:carga", CalificacionPromedio.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("carga", cg.getCarga()).getResultList();
+                            List<CalificacionNivelacion> cns = em.createQuery("select d from CalificacionNivelacion d INNER JOIN d.estudiante a INNER JOIN d.cargaAcademica c WHERE a.idEstudiante=:idEstudiante AND c.carga=:carga", CalificacionNivelacion.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("carga", cg.getCarga()).getResultList();
+                            Personal p = new Personal();
+                            CalificacionPromedio cp = new CalificacionPromedio();
+                            CalificacionNivelacion cn = new CalificacionNivelacion();
+
+                            try {
+                                p = ejbPersonal.mostrarPersonalLogeado(cg.getDocente());
+                            } catch (Throwable ex) {
+                                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+                            }
+                            Boolean editable = Boolean.TRUE;
+                            Boolean ordinaria = Boolean.TRUE;
+                            if (!cps.isEmpty()) {
+                                cp = cps.get(0);
+                                if (!cns.isEmpty()) {
+                                    cn = cns.get(0);
+                                    if (cp.getValor() > cn.getValor()) {
+                                        ordinaria = Boolean.TRUE;
+                                    } else {
+                                        cp.setValor(cn.getValor());
+                                        ordinaria = Boolean.FALSE;
+                                    }
+                                } else {
+                                    ordinaria = Boolean.TRUE;
+                                }
+                                if (cp.getTipo().equals("Oficial")) {
+                                    editable = Boolean.FALSE;
+                                } else if (esEscolares && (t.getTipoRegistro().equals("Regularización de calificaciones por reincoporación") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
+                                    editable = Boolean.FALSE;
+                                } else if (!esEscolares && (t.getTipoRegistro().equals("Regularización de calificaciones por reincoporación") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
+                                    editable = Boolean.TRUE;
+                                } else {
+                                    editable = esEscolares;
+                                }
+                                crs.add(new DtoReincorporacion.CalificacionesR(cg, cg.getIdPlanMateria(), cg.getIdPlanMateria().getIdMateria(), p, cp, editable, ordinaria, Operacion.PERSISTIR, Boolean.FALSE));
+                            } else {
+                                
+                                if (!esEscolares && (t.getTipoRegistro().equals("Regularización de calificaciones por reincoporación") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
+                                    editable = Boolean.TRUE;
+                                } else if (t.getTipoRegistro().equals("Regularización de calificaciones por reincoporación") && esEscolares) {
+                                    editable = Boolean.FALSE;
+                                } else {
+                                    editable = esEscolares;
+                                }
+                                crs.add(new DtoReincorporacion.CalificacionesR(cg, cg.getIdPlanMateria(), cg.getIdPlanMateria().getIdMateria(), p, new CalificacionPromedio(), editable, ordinaria, Operacion.ACTUALIZAR, Boolean.TRUE));
+                            }
+                        });
+                    }
+                    if (crs.stream().filter(cal -> cal.getCalificacionPromedio().getValor() < 8D).collect(Collectors.toList()).isEmpty()) {
+                        validar = Boolean.TRUE;
+                    } else {
+                        validar = Boolean.FALSE;
+                    }
+                    rr.add(new DtoReincorporacion.AlineacionCalificaciones(t, t.getGrupo(), crs, validar, Operacion.ACTUALIZAR, Boolean.TRUE));
+                });
+            }
+            return ResultadoEJB.crearCorrecto(rr, "EstudianteR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar EstudianteR (EjbReincorporacion.getAlineacionCalificaciones).", e, null);
+        }
+    }
+    
+// busquedas especiales
+
+    public ResultadoEJB<Pais> getPaisSeleccionado(Integer clave) {
+        try {
+            List<Pais> paises = em.createQuery("select p from Estado e INNER JOIN e.idpais p WHERE e.idestado=:idestado", Pais.class).setParameter("idestado", clave).getResultList();
+            Pais paise = new Pais();
+            if (!paises.isEmpty()) {
+                paise = paises.get(0);
+            }
+            return ResultadoEJB.crearCorrecto(paise, "paises Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los paises (EjbReincorporacion.getPais).", e, null);
+        }
+    }
+
+    public ResultadoEJB<AreasUniversidad> getOpcionArea(Short clave) {
+        try {
+            AreasUniversidad areasS = ejbAreasLogeo.mostrarAreasUniversidad(clave);
+            AreasUniversidad areasO = ejbAreasLogeo.mostrarAreasUniversidad(areasS.getAreaSuperior());
+
+            return ResultadoEJB.crearCorrecto(areasO, "Area Encontrados");
+
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar el Area (EjbReincorporacion.getOpcionArea).", e, null);
+        } catch (Throwable ex) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar el Area (EjbReincorporacion.getOpcionArea).", ex, null);
+        }
+    }
+
+    public ResultadoEJB<Iems> getIemsSeleccionada(Integer iems) {
+        try {
+            List<Iems> iemses = em.createQuery("select t from Iems t WHERE t.iems=:iems", Iems.class).setParameter("iems", iems).getResultList();
+            Iems iem=new Iems();
+            if(!iemses.isEmpty()){
+                iem=iemses.get(0);                
+            }
+            return ResultadoEJB.crearCorrecto(iem, "Iems Encontrada");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar la Iems (EjbReincorporacion.getIemsSeleccionada).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<ProcesosInscripcion> getProcesosInscripcionActivo() {
+        try {
+            List<ProcesosInscripcion> pis = em.createQuery("select p from ProcesosInscripcion p WHERE (:fecha BETWEEN p.fechaInicio AND p.fechaFin)", ProcesosInscripcion.class).setParameter("fecha", new Date()).getResultList().stream().filter(t-> t.getActivoRe()==Boolean.TRUE).collect(Collectors.toList());;
+            ProcesosInscripcion pi=new ProcesosInscripcion();
+                        if(!pis.isEmpty()){
+                pi=pis.get(0);                
+            }
+            return ResultadoEJB.crearCorrecto(pi, "Iems Encontrada");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar la Iems (EjbReincorporacion.getIemsSeleccionada).", e, null);
+        }
+    }
+
+//  Registro de informacion
+    public ResultadoEJB<DtoReincorporacion.PersonaR> operacionesPersonaR(DtoReincorporacion.PersonaR rr) {
+        try {
+            switch (rr.getOperacionGeneral()) {
+                case PERSISTIR: em.persist(rr.getPersona());    f.setEntityClass(Persona.class); f.flush(); rr.setOperacionGeneral(Operacion.ACTUALIZAR);break;
+                case ACTUALIZAR: em.merge(rr.getPersona());  f.setEntityClass(Persona.class); f.flush();  break;
+            }
+            switch (rr.getOperacionMC()) {
+                case PERSISTIR:
+                    rr.getMedioComunicacion().setPersona1(new Persona());
+                    rr.getMedioComunicacion().setPersona1(rr.getPersona());
+                    rr.getMedioComunicacion().setPersona(rr.getPersona().getIdpersona());
+                    em.persist(rr.getMedioComunicacion()); f.setEntityClass(MedioComunicacion.class); f.flush(); rr.setOperacionMC(Operacion.ACTUALIZAR);break;
+                case ACTUALIZAR: em.merge(rr.getMedioComunicacion());  f.setEntityClass(MedioComunicacion.class); f.flush(); break;
+            }
+
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.AspiranteR> operacionesAspiranteR(DtoReincorporacion.AspiranteR rr,Persona pr) {
+        try {
+            ResultadoEJB<ProcesosInscripcion> rejb = getProcesosInscripcionActivo();
+            rr.setProcesosInscripcion(rejb.getValor());
+            rr.getAspirante().setTipoAspirante(new TipoAspirante());
+            rr.getAspirante().setTipoAspirante(rr.getTipo());
+            rr.getAspirante().setEstatus(Boolean.TRUE);
+            switch (rr.getOperacion()) {
+                case PERSISTIR:
+                    rr.getAspirante().setIdPersona(new Persona());
+                    rr.getAspirante().setIdProcesoInscripcion(new ProcesosInscripcion());
+                    rr.getAspirante().setIdPersona(pr);
+                    rr.getAspirante().setIdProcesoInscripcion(rr.getProcesosInscripcion());
+                    rr.getAspirante().setFechaRegistro(new Date());
+                    em.persist(rr.getAspirante()); f.setEntityClass(Aspirante.class); f.flush(); rr.setOperacion(Operacion.ACTUALIZAR); break;
+                case ACTUALIZAR: em.merge(rr.getAspirante());  f.setEntityClass(Aspirante.class); f.flush(); break;
+            }
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.MedicosR> operacionesMedicosR(DtoReincorporacion.MedicosR rr,Persona p) {
+        try {
+            rr.getDatosMedicos().setCveTipoSangre(new TipoSangre());
+            rr.getDatosMedicos().setCveDiscapacidad(new TipoDiscapacidad());
+            rr.getDatosMedicos().setCveTipoSangre(rr.getSangre());
+            rr.getDatosMedicos().setCveDiscapacidad(rr.getDiscapacidad());
+            switch (rr.getOperacion()) {
+                case PERSISTIR:
+                    rr.getDatosMedicos().setPersona(new Persona());                    
+                    rr.getDatosMedicos().setPersona(p);
+                    rr.getDatosMedicos().setCvePersona(p.getIdpersona());                    
+                    em.persist(rr.getDatosMedicos()); f.setEntityClass(DatosMedicos.class); f.flush(); rr.setOperacion(Operacion.ACTUALIZAR); break;
+                case ACTUALIZAR: em.merge(rr.getDatosMedicos());  f.setEntityClass(DatosMedicos.class); f.flush(); break;
+            }
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.TutorR> operacionesTutorR(DtoReincorporacion.TutorR rr) {
+        try {
+            switch (rr.getOperacion()) {
+                case PERSISTIR:  em.persist(rr.getTutorFamiliar());    f.setEntityClass(TutorFamiliar.class); f.flush(); rr.setOperacion(Operacion.ACTUALIZAR);break;
+                case ACTUALIZAR: em.merge(rr.getTutorFamiliar());  f.setEntityClass(TutorFamiliar.class); f.flush();  break;
+            }
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<DtoReincorporacion.FamiliaresR> operacionesFamiliaresR(DtoReincorporacion.FamiliaresR rr,Aspirante a) {
+        try {
+                    rr.getDatosFamiliares().setEscolaridadMadre(new Escolaridad());
+                    rr.getDatosFamiliares().setOcupacionMadre(new Ocupacion());
+                    rr.getDatosFamiliares().setEscolaridadPadre(new Escolaridad());
+                    rr.getDatosFamiliares().setOcupacionPadre(new Ocupacion());
+                    rr.getDatosFamiliares().setEscolaridadMadre(rr.getEscolaridadM());
+                    rr.getDatosFamiliares().setOcupacionMadre(rr.getOcupacionM());
+                    rr.getDatosFamiliares().setEscolaridadPadre(rr.getEscolaridadP());
+                    rr.getDatosFamiliares().setOcupacionPadre(rr.getOcupacionP());
+            switch (rr.getOperacion()) {
+                case PERSISTIR:
+                    rr.getDatosFamiliares().setAspirante1(new Aspirante());
+                    rr.getDatosFamiliares().setTutor(new TutorFamiliar());                    
+                    rr.getDatosFamiliares().setAspirante1(a);
+                    rr.getDatosFamiliares().setAspirante(a.getIdAspirante());
+                    rr.getDatosFamiliares().setTutor(rr.getTutorR().getTutorFamiliar());                    
+                    em.persist(rr.getDatosFamiliares()); f.setEntityClass(DatosFamiliares.class); f.flush(); rr.setOperacion(Operacion.ACTUALIZAR); break;
+                case ACTUALIZAR: em.merge(rr.getDatosFamiliares());  f.setEntityClass(DatosFamiliares.class); f.flush(); break;
+            }
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.DomicilioR> operacionesDomicilioR(DtoReincorporacion.DomicilioR rr,Aspirante a) {
+        try {
+            switch (rr.getOperacion()) {
+                case PERSISTIR:
+                    rr.getDomicilio().setAspirante1(new Aspirante());                    
+                    rr.getDomicilio().setAspirante1(a);                               
+                    rr.getDomicilio().setAspirante(a.getIdAspirante());                    
+                    em.persist(rr.getDomicilio()); f.setEntityClass(Domicilio.class); f.flush(); rr.setOperacion(Operacion.ACTUALIZAR); break;
+                case ACTUALIZAR: em.merge(rr.getDomicilio());  f.setEntityClass(Domicilio.class); f.flush(); break;
+            }
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.AcademicosR> operacionesAcademicosR(DtoReincorporacion.AcademicosR rr,Aspirante a) {
+        try {
+                    rr.getAcademicos().setSistemaPrimeraOpcion(new Sistema());   
+                    rr.getAcademicos().setSistemaSegundaOpcion(new Sistema());  
+                    rr.getAcademicos().setEspecialidadIems(new EspecialidadCentro());  
+                    rr.getAcademicos().setSistemaPrimeraOpcion(rr.getSistemaPo());   
+                    rr.getAcademicos().setSistemaSegundaOpcion(rr.getSistemaSo());  
+                    rr.getAcademicos().setEspecialidadIems(rr.getEspecialidad());  
+                    rr.getAcademicos().setInstitucionAcademica(rr.getIems().getIems()); 
+            switch (rr.getOperacion()) {
+                case PERSISTIR:
+                    rr.getAcademicos().setAspirante1(new Aspirante());      
+                    
+                    rr.getAcademicos().setAspirante(a.getIdAspirante());    
+                    rr.getAcademicos().setAspirante1(a);    
+                    
+                    em.persist(rr.getAcademicos()); f.setEntityClass(DatosAcademicos.class); f.flush(); rr.setOperacion(Operacion.ACTUALIZAR); break;
+                case ACTUALIZAR: em.merge(rr.getAcademicos());  f.setEntityClass(DatosAcademicos.class); f.flush(); break;
+            }
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.EncuestaR> operacionesEncuestaR(Aspirante a,String valor, Integer numP) {
+        try {
+            Operacion operacion;
+            List<EncuestaAspirante> es = em.createQuery("select e from EncuestaAspirante e INNER JOIN e.aspirante a WHERE a.idAspirante=:idAspirante", EncuestaAspirante.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            EncuestaAspirante e = new EncuestaAspirante();
+            if (!es.isEmpty()) {
+                e = es.get(0);
+                operacion=Operacion.ACTUALIZAR;
+            } else {
+                e.setAspirante(new Aspirante());                
+                e.setAspirante(a);
+                e.setCveAspirante(a.getIdAspirante());
+                operacion=Operacion.PERSISTIR;
+            }
+            switch (numP) {
+                case 1:
+                    e.setR1Lenguaindigena(valor);
+                    e.setR2tipoLenguaIndigena(new LenguaIndigena());
+                    e.setR2tipoLenguaIndigena(null);
+                    break;
+                case 2:
+                    e.setR2tipoLenguaIndigena(new LenguaIndigena());
+                    e.setR2tipoLenguaIndigena(null);
+                    if (e.getR1Lenguaindigena().equals("SI")) {
+                        LenguaIndigena li = em.find(LenguaIndigena.class, Short.parseShort(valor));
+                        e.setR2tipoLenguaIndigena(li);
+                    }
+                    break;
+                case 3:                    e.setR3comunidadIndigena(valor);                    break;
+                case 4:                    e.setR4programaBienestar(valor);                    break;
+                case 5:                    e.setR5ingresoMensual(Double.parseDouble(valor));                    break;
+                case 6:                    e.setR6dependesEconomicamnete(valor);                    break;
+                case 7:                    e.setR7ingresoFamiliar(Double.parseDouble(valor));                    break;
+                case 8:                    e.setR8primerEstudiar(valor);                    break;
+                case 9:                    e.setR9nivelMaximoEstudios(valor);                    break;
+                case 10:                    e.setR10numeroDependientes(Short.parseShort(valor));                    break;
+                case 11:                    e.setR11situacionEconomica(valor);                    break;
+                case 12:                    e.setR12hijoPemex(valor);                    break;
+                case 13:                    e.setR13utxjPrimeraOpcion(valor);                    break;
+                case 14:                    e.setR14examenAdmisionOU(valor);                    break;
+                case 15:
+                    e.setR15medioImpacto(new MedioDifusion());
+                    MedioDifusion li = em.find(MedioDifusion.class, Short.parseShort(valor));
+                    e.setR15medioImpacto(li);
+                    break;
+                case 16:                    e.setR16segundaCarrera(valor);                    break;
+                case 17:                    e.setR17Alergia(valor);                    break;
+                case 18:                    e.setR18padecesEnfermedad(valor);                    break;
+                case 19:                    e.setR19tratamientoMedico(valor);                    break;
+            }
+            
+            switch (operacion) {
+                case PERSISTIR:
+                    em.persist(e);
+                    em.flush();
+                    break;
+                case ACTUALIZAR:
+                    em.merge(e);
+                    em.flush();
+                    break;
+            }
+            ResultadoEJB<DtoReincorporacion.EncuestaR> b= getEncuestaR(a);
+            return ResultadoEJB.crearCorrecto(b.getValor(), "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<DtoReincorporacion.EstudianteR> operacionesEstudianteRegistrados(DtoReincorporacion.EstudianteR rr) {
+        try {
+            Grupo gactual=rr.getEstudiante().getGrupo();                    
+            if (!Objects.equals(gactual.getIdGrupo(), rr.getGrupo().getIdGrupo())) {              
+                asistenciasRegistradas(rr.getEstudiante(), Operacion.ELIMINAR);   
+                calificacionesRegistradas(rr.getEstudiante());
+//                metodo para eliminar Asistencias a tutorias y asesorias
+                rr.getEstudiante().setGrupo(new Grupo());
+                rr.getEstudiante().setGrupo(rr.getGrupo());              
+                asistenciasRegistradas(rr.getEstudiante(), Operacion.PERSISTIR);              
+            }                          
+            switch (rr.getOperacion()) {
+                case PERSISTIR:
+                    em.persist(rr.getEstudiante());
+                    f.setEntityClass(Estudiante.class);
+                    f.flush();
+                    break;
+                case ACTUALIZAR:
+                    em.merge(rr.getEstudiante());
+                    f.setEntityClass(Estudiante.class);
+                    f.flush();
+                    break;
+            }
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+    
+    public Boolean asistenciasRegistradas(Estudiante e, Operacion o) {      
+        List<Asistenciasacademicas> listAs = em.createQuery("select asic from Asistenciasacademicas asic INNER JOIN asic.cargaAcademica c INNER JOIN c.cveGrupo g WHERE g.idGrupo=:idGrupo", Asistenciasacademicas.class).setParameter("idGrupo", e.getGrupo().getIdGrupo()).getResultList();      
+        Boolean res = false;      
+        if (!listAs.isEmpty()) {
+            switch (o) {
+                case PERSISTIR:
+                    List<Asistenciasacademicas> listAsEsNR=em.createQuery("select a from Asistenciasacademicas a INNER JOIN a.cargaAcademica c INNER JOIN c.cveGrupo g WHERE g.idGrupo=:idGrupo GROUP BY a.asistencia.asistencia, c.carga", Asistenciasacademicas.class).setParameter("idGrupo", e.getGrupo().getIdGrupo()).getResultList();                  
+                    if (!listAsEsNR.isEmpty()) {
+                        listAsEsNR.forEach((t) -> {
+                            Asistenciasacademicas a = new Asistenciasacademicas();
+                            a.setAsistencia(new Asistencias());
+                            a.setEstudiante(new Estudiante());
+                            a.setCargaAcademica(new CargaAcademica());
+                            
+                            a.setAsistencia(t.getAsistencia());
+                            a.setEstudiante(e);
+                            a.setCargaAcademica(t.getCargaAcademica());
+                            
+                            a.setTipoAsistenciaA("Falta");
+                            
+                            em.persist(a);
+                            em.flush();                            
+                        });
+                    }                    
+                    f.setEntityClass(Asistenciasacademicas.class);
+                    f.flush();
+                    break;
+                case ELIMINAR:
+                    List<Asistenciasacademicas> listAsEs=listAs.stream().filter(t-> Objects.equals(t.getEstudiante().getIdEstudiante(), e.getIdEstudiante())).collect(Collectors.toList());                  
+                    if (!listAsEs.isEmpty()) {
+                        listAsEs.forEach((t) -> {
+                            Asistenciasacademicas a = em.find(Asistenciasacademicas.class, t.getAcademica());
+                            em.remove(a);
+                            em.flush();
+                        });
+                    }
+                    f.setEntityClass(Asistenciasacademicas.class);
+                    f.flush();
+                    break;
+            }
+            res = Boolean.TRUE;
+        }else{
+            res = Boolean.TRUE;
+        }
+        return res;
+    }
+    
+    public Boolean calificacionesRegistradas(Estudiante e) {
+        List<CalificacionPromedio> cps = em.createQuery("select calP from CalificacionPromedio calP INNER JOIN calP.cargaAcademica c INNER JOIN c.cveGrupo g INNER JOIN calP.estudiante est WHERE g.idGrupo=:idGrupo AND est.idEstudiante=:idEstudiante", CalificacionPromedio.class).setParameter("idGrupo", e.getGrupo().getIdGrupo()).setParameter("idEstudiante", e.getIdEstudiante()).getResultList();
+        List<Calificacion> cs = em.createQuery("select cs from Calificacion cs INNER JOIN cs.configuracionDetalle cd INNER JOIN cd.configuracion con INNER JOIN con.carga c INNER JOIN c.cveGrupo g INNER JOIN cs.idEstudiante est WHERE g.idGrupo=:idGrupo AND est.idEstudiante=:idEstudiante", Calificacion.class).setParameter("idGrupo", e.getGrupo().getIdGrupo()).setParameter("idEstudiante", e.getIdEstudiante()).getResultList();
+        List<TareaIntegradoraPromedio> tips = em.createQuery("select cs from TareaIntegradoraPromedio cs INNER JOIN cs.tareaIntegradora tin INNER JOIN tin.carga c INNER JOIN c.cveGrupo g INNER JOIN cs.estudiante est WHERE g.idGrupo=:idGrupo AND est.idEstudiante=:idEstudiante", TareaIntegradoraPromedio.class).setParameter("idGrupo", e.getGrupo().getIdGrupo()).setParameter("idEstudiante", e.getIdEstudiante()).getResultList();
+        List<CalificacionNivelacion> cns = em.createQuery("select cs from CalificacionNivelacion cs INNER JOIN cs.cargaAcademica c INNER JOIN c.cveGrupo g INNER JOIN cs.estudiante est WHERE g.idGrupo=:idGrupo AND est.idEstudiante=:idEstudiante", CalificacionNivelacion.class).setParameter("idGrupo", e.getGrupo().getIdGrupo()).setParameter("idEstudiante", e.getIdEstudiante()).getResultList();
+        
+        Boolean res = false;
+
+        if (!cps.isEmpty()) {
+            cps.forEach((t) -> {
+                CalificacionPromedio a = em.find(CalificacionPromedio.class, t.getCalificacionPromedioPK());
+                em.remove(a);
+                em.flush();
+            });
+            f.setEntityClass(CalificacionPromedio.class);
+            f.flush();
+            res = Boolean.TRUE;
+        }
+        if (!cs.isEmpty()) {
+            cs.forEach((t) -> {
+                Calificacion a = em.find(Calificacion.class, t.getCalificacion());
+                em.remove(a);
+                em.flush();
+            });
+            f.setEntityClass(Calificacion.class);
+            f.flush();
+            res = Boolean.TRUE;
+        }
+        if (!tips.isEmpty()) {
+            tips.forEach((t) -> {
+                TareaIntegradoraPromedio a = em.find(TareaIntegradoraPromedio.class, t.getTareaIntegradoraPromedioPK());
+                em.remove(a);
+                em.flush();
+            });
+            f.setEntityClass(TareaIntegradoraPromedio.class);
+            f.flush();
+            res = Boolean.TRUE;
+        }
+        if (!cns.isEmpty()) {
+            cns.forEach((t) -> {
+                CalificacionNivelacion a = em.find(CalificacionNivelacion.class, t.getCalificacionNivelacionPK());
+                em.remove(a);
+                em.flush();
+            });
+            f.setEntityClass(CalificacionNivelacion.class);
+            f.flush();
+            res = Boolean.TRUE;
+        }
+        return res;
+    }
+
+    public ResultadoEJB<DtoReincorporacion.ProcesoInscripcionRein> operacionesEstudianteR(DtoReincorporacion.ProcesoInscripcionRein rr,Aspirante a) {
+        try {
+            if (!rr.getGrupos().isEmpty()) {              
+                rr.getGrupos().forEach((t) -> {
+                    Operacion operacion;
+                    List<Estudiante> es = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN e.grupo g WHERE a.idAspirante=:idAspirante AND e.periodo=:periodo", Estudiante.class).setParameter("idAspirante", a.getIdAspirante()).setParameter("periodo", t.getPeriodo()).getResultList();
+                    Estudiante e = new Estudiante();
+                    if (!es.isEmpty()) {
+                        e=es.get(0);
+                        e.setGrupo(new Grupo());
+                        e.setGrupo(t);
+                        operacion=Operacion.ACTUALIZAR;
+                    } else {
+                        e.setAspirante(new Aspirante());
+                        e.setTipoEstudiante(new TipoEstudiante());
+                        e.setGrupo(new Grupo());
+                        e.setAspirante(a);
+                        e.setTipoEstudiante(new TipoEstudiante(Short.parseShort("1")));
+                        e.setGrupo(t);
+                        e.setFechaAlta(new Date());
+                        operacion = Operacion.PERSISTIR;
+                    }
+                    e.setPeriodo(t.getPeriodo());
+                    e.setCarrera(t.getIdPe());
+                    e.setTrabajadorInscribe(rr.getTrabajadorInscribe());
+                    e.setMatricula(rr.getMatricula());                    
+                    e.setOpcionIncripcion(rr.getOpcionIncripcion());
+                    e.setTipoRegistro(rr.getTipoRegistro());
+                    
+                    switch (operacion) {
+                        case PERSISTIR:
+                            em.persist(e);
+                            f.setEntityClass(Estudiante.class);
+                            f.flush();
+                            break;
+                        case ACTUALIZAR:
+                            em.merge(e);
+                            f.setEntityClass(Estudiante.class);
+                            f.flush();
+                            break;
+                    } 
+                });
+                List<Estudiante> es = em.createQuery("select e from Estudiante e WHERE e.matricula=:matricula ORDER BY e.periodo", Estudiante.class).setParameter("matricula", rr.getMatricula()).getResultList();
+                Estudiante e = new Estudiante();
+                if (!es.isEmpty()) {
+                    e = es.get(es.size() - 1);
+//                    asistenciasRegistradas(e, Operacion.PERSISTIR);
+                }
+                operacionesDocumentosentregadosestudiante(rr);
+            }
+            return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Documentosentregadosestudiante> operacionesDocumentosentregadosestudiante(DtoReincorporacion.ProcesoInscripcionRein rr) {
+        try {
+            List<Estudiante> es = em.createQuery("select e from Estudiante e WHERE e.matricula=:matricula ORDER BY e.periodo", Estudiante.class).setParameter("matricula", rr.getMatricula()).getResultList();
+            Estudiante e = new Estudiante();
+            if (!es.isEmpty()) {
+                e = es.get(es.size() - 1);
+            }
+            List<Documentosentregadosestudiante> docs = em.createQuery("select d from Documentosentregadosestudiante d INNER JOIN d.estudiante1 e WHERE e.idEstudiante=:idEstudiante ORDER BY e.periodo", Documentosentregadosestudiante.class).setParameter("idEstudiante", e.getIdEstudiante()).getResultList();
+            Operacion operacion;
+            if (!docs.isEmpty()) {
+                operacion = Operacion.ACTUALIZAR;
+            } else {
+                operacion = Operacion.PERSISTIR;
+            }
+            switch (operacion) {
+                case PERSISTIR:
+                    rr.getDocumentosentregadosestudiante().setEstudiante1(new Estudiante());
+                    rr.getDocumentosentregadosestudiante().setEstudiante1(e);
+                    rr.getDocumentosentregadosestudiante().setEstudiante(e.getIdEstudiante());
+                    em.persist(rr.getDocumentosentregadosestudiante());
+                    f.setEntityClass(Documentosentregadosestudiante.class);
+                    f.flush();
+                    break;
+                case ACTUALIZAR:
+                    em.merge(rr.getDocumentosentregadosestudiante());
+                    f.setEntityClass(Documentosentregadosestudiante.class);
+                    f.flush();
+                    break;
+            }
+            return ResultadoEJB.crearCorrecto(rr.getDocumentosentregadosestudiante(), "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<CalificacionPromedio> registrarCalificacionesPorPromedio(Integer idEstudiante, Integer idCarga, Double calificacion, String tipo) {
+        try {
+            Operacion opera;
+            Estudiante estudiante = em.find(Estudiante.class, idEstudiante);
+            CargaAcademica cargaAcademica = em.find(CargaAcademica.class, idCarga);
+            List<CalificacionPromedio> cps = em.createQuery("select calP from CalificacionPromedio calP INNER JOIN calP.cargaAcademica c INNER JOIN calP.estudiante est WHERE c.carga=:carga AND est.idEstudiante=:idEstudiante", CalificacionPromedio.class).setParameter("carga", cargaAcademica.getCarga()).setParameter("idEstudiante", estudiante.getIdEstudiante()).getResultList();
+            List<UnidadMateriaConfiguracionDetalle> cs = em.createQuery("select cs from UnidadMateriaConfiguracionDetalle cs INNER JOIN cs.configuracion con INNER JOIN con.carga c WHERE c.carga=:carga", UnidadMateriaConfiguracionDetalle.class).setParameter("carga", cargaAcademica.getCarga()).getResultList();
+        
+            CalificacionPromedio promedio = new CalificacionPromedio();
+            if (!cps.isEmpty()) {
+                promedio = cps.get(0);
+                opera=Operacion.ACTUALIZAR;
+            } else {
+                promedio = new CalificacionPromedio();
+                CalificacionPromedioPK pK = new CalificacionPromedioPK();                
+                pK.setCarga(idCarga);
+                pK.setIdEstudiante(idEstudiante);
+                
+                promedio.setCalificacionPromedioPK(new CalificacionPromedioPK());
+                promedio.setCargaAcademica(new CargaAcademica());
+                promedio.setEstudiante(new Estudiante());
+                
+                promedio.setCalificacionPromedioPK(pK);
+                promedio.setCargaAcademica(cargaAcademica);
+                promedio.setEstudiante(estudiante);
+                opera=Operacion.PERSISTIR;
+            }
+            promedio.setFechaActualizacion(new Date());
+            promedio.setTipo(tipo);
+            promedio.setValor(calificacion);
+            switch (opera) {
+                case PERSISTIR:
+                    em.persist(promedio);
+                    em.flush();
+                    break;
+                case ACTUALIZAR:
+                    em.merge(promedio);
+                    em.flush();
+                    break;
+            }
+            if (!cs.isEmpty()) {
+                cs.forEach((t) -> {
+                    Operacion op;
+                    List<Calificacion> cal = em.createQuery("select calP from Calificacion calP INNER JOIN calP.configuracionDetalle c INNER JOIN calP.idEstudiante est WHERE c.configuracionDetalle=:configuracionDetalle AND est.idEstudiante=:idEstudiante", Calificacion.class).setParameter("configuracionDetalle", t.getConfiguracionDetalle()).setParameter("idEstudiante", estudiante.getIdEstudiante()).getResultList();
+                    Calificacion c=new Calificacion();
+                    if (!cal.isEmpty()) {
+                        op = Operacion.PERSISTIR;
+                        c=cal.get(0);
+                    } else {
+                        op = Operacion.PERSISTIR;
+                        c=new Calificacion();
+                        c.setConfiguracionDetalle(new UnidadMateriaConfiguracionDetalle());
+                        c.setIdEstudiante(new Estudiante());
+                        
+                        c.setConfiguracionDetalle(t);
+                        c.setIdEstudiante(estudiante);
+                    }
+                    c.setValor(calificacion);
+                    switch (op) {
+                        case PERSISTIR:
+                            em.persist(c);
+                            em.flush();
+                            break;
+                        case ACTUALIZAR:
+                            em.merge(c);
+                            em.flush();
+                            break;
+                    }
+                });
+            }
+            
+        return ResultadoEJB.crearCorrecto(promedio, "DTOPersona Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }   
+    
+    public void enviarConfirmacionCorreoElectronico(String correoDestino, String titulo, String asunto, String mensaje) {
+        // El correo gmail de envío
+        String correoEnvia = "sistemas@utxicotepec.edu.mx";//correo del arrea de desarrollo
+        String claveCorreo = "piccoto2018";//contraseña del correo del arrea de desarrollo
+        Properties properties = new Properties();
+
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.user", correoEnvia);
+        properties.put("mail.password", claveCorreo);
+
+        if (correoDestino != null) {
+            Session session = Session.getInstance(properties, null);
+            try {
+                MimeMessage mimeMessage = new MimeMessage(session);
+                mimeMessage.setFrom(new InternetAddress(correoEnvia, titulo));
+
+                InternetAddress internetAddress = new InternetAddress(correoDestino);
+                mimeMessage.setRecipient(Message.RecipientType.TO, internetAddress);
+
+                mimeMessage.setSubject(asunto);
+
+                MimeBodyPart mimeBodyPart = new MimeBodyPart();
+                mimeBodyPart.setText(mensaje);
+
+                Multipart multipart = new MimeMultipart();
+                multipart.addBodyPart(mimeBodyPart);
+
+                mimeMessage.setContent(multipart);
+
+                Transport transport = session.getTransport("smtp");
+                transport.connect(correoEnvia, claveCorreo);
+                transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+                transport.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -36,7 +36,8 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
  */
 @Stateless(name = "EjbPeriodoEventoRegistro")
 public class EjbPeriodoEventoRegistro {
-    @EJB    EjbValidadorDocente     ejbValidadorDocente;
+    @EJB    EjbValidadorDocente             ejbValidadorDocente;
+    @EJB    EjbRegistroAsesoriaEstudiante   ejbRegistroAsesoriaEstudiante;
 
     @EJB Facade f;
     private EntityManager em;
@@ -61,6 +62,15 @@ public class EjbPeriodoEventoRegistro {
     public ResultadoEJB<Map.Entry<List<PeriodosEscolares>, List<EventosRegistros>>> comprobarEventoActualTutor(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoRegistroActivo, PersonalActivo docente) throws PeriodoEscolarNecesarioNoRegistradoException {
         try {
             if(periodos == null || periodos.isEmpty()) periodos = ejbValidadorDocente.getPeriodosConCapturaCargaAcademicaTutor(docente).getValor();
+            return comprobarEventoActualResultado(periodos, eventos, eventoRegistroActivo);
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el mapa de periodos escolares y eventos registros (EjbPeriodoEventoRegistro.comprobarEventoActualTutor).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Map.Entry<List<PeriodosEscolares>, List<EventosRegistros>>> comprobarEventoActualDocenteGeneral(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoRegistroActivo, PersonalActivo docente) throws PeriodoEscolarNecesarioNoRegistradoException {
+        try {
+            if(periodos == null || periodos.isEmpty()) periodos = ejbRegistroAsesoriaEstudiante.consultarPeriodosEscolaresPorGrupo().getValor();
             return comprobarEventoActualResultado(periodos, eventos, eventoRegistroActivo);
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener el mapa de periodos escolares y eventos registros (EjbPeriodoEventoRegistro.comprobarEventoActualTutor).", e, null);

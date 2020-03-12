@@ -43,6 +43,7 @@ import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAperturaExtPorEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PermisosCapturaExtemporaneaEstudiante;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -180,10 +181,10 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         if(res.getCorrecto()){
             rol.setCargasPeriodo(res.getValor());
             rol.setCarga(rol.getCargasPeriodo().get(0));
-            actualizarListaEstudiantes();
             tiposEvaluaciones();
             actualizarUnidadesMateria();
             justificacionesPermiso();
+            actualizarListaEstudiantes();
         }else mostrarMensajeResultadoEJB(res);
     
     }
@@ -217,7 +218,7 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
      * Permite actualizar las unidades materia dependiendo de la carga académica seleccionada
      */
     public void actualizarListaEstudiantes(){
-        ResultadoEJB<List<Estudiante>> res = ejb.getListaEstudiantes(rol.getCarga());
+        ResultadoEJB<List<DtoAperturaExtPorEstudiante>> res = ejb.getListaEstudiantes(rol.getCarga(),rol.getUnidadMateria(), rol.getTipoEvaluacion());
         if(res.getCorrecto()){
             rol.setListaEstudiantes(res.getValor());
         }else mostrarMensajeResultadoEJB(res);
@@ -251,6 +252,7 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
     public void cambiarTipoEvaluacion(ValueChangeEvent e){
        rol.setTipoEvaluacion((String)e.getNewValue());
        rangoFechasPermiso();
+       actualizarListaEstudiantes();
        Ajax.update("frm");
     }
     
@@ -261,6 +263,8 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
     public void cambiarUnidad(ValueChangeEvent e){
        rol.setUnidadMateria((UnidadMateria)e.getNewValue());
        rangoFechasPermiso();
+       actualizarListaEstudiantes();
+       Ajax.update("frm");
     }
     
      /**
@@ -370,22 +374,24 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         ejb.actualizarPermisoCaptura(permisoNew);
     }
     
-     public void aperturaExtEst(Estudiante estudiante) {
-          rol.setEstudiante(estudiante);
-         ResultadoEJB<PermisosCapturaExtemporaneaEstudiante> resGuardar = ejb.guardarPermisoCapturaOrdinariaEstudiante(rol.getCarga(), rol.getEstudiante(), rol.getUnidadMateria(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
-         if (resGuardar.getCorrecto()) {
-             consultarPermisoActivo(estudiante);
-             Ajax.update("frm");
-         } mostrarMensajeResultadoEJB(resGuardar);
+    public void aperturaExtEst(DtoAperturaExtPorEstudiante estudiante) {
+        if (estudiante.getPermisosCapturaExtemporaneaEstudiante() == null) {
+            rol.setEstudiante(estudiante);
+            ResultadoEJB<PermisosCapturaExtemporaneaEstudiante> resGuardar = ejb.guardarPermisoCapturaOrdinariaEstudiante(rol.getCarga(), rol.getEstudiante().getEstudiante(), rol.getUnidadMateria(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
+            if (resGuardar.getCorrecto()) {
+                actualizarListaEstudiantes();
+                rol.setFechaInicio(null);
+                rol.setFechaFin(null);
+                Ajax.update("frm");
+            }
+            mostrarMensajeResultadoEJB(resGuardar);
+        } else {
+            ResultadoEJB<Integer> resEliminar = ejb.eliminarPermisoCapturaEstudiante(estudiante.getPermisosCapturaExtemporaneaEstudiante().getPermisoEstudiante());
+            mostrarMensajeResultadoEJB(resEliminar);
+            actualizarListaEstudiantes();
+            Ajax.update("frm");
+
+        }
     }
-     
-       /**
-     * Permite verificar si existe permiso activo para el estudiante
-     * @param estudiante Estudiante
-     * @return valor boolean según sea el caso
-     */
-    public String consultarPermisoActivo(Estudiante estudiante){
-        rol.setPermisoActivo(ejb.buscarPermisoActivo(estudiante, rol.getCarga(), rol.getUnidadMateria(), rol.getTipoEvaluacion()).getValor());
-        return rol.getPermisoActivo();
-    }
+    
 }

@@ -434,7 +434,7 @@ public class AreaPoaEvaluacion implements Serializable {
                 case 10: mn="noviembre"; break;
                 case 11: mn="diciembre"; break;
             }
-            return "".concat(file.toURI().toString().split("2019")[1]);
+            return "".concat(file.toURI().toString().split(String.valueOf(pOAUtilidades.obtenerAnioRegistro(ejercicioFiscal).getAnio()))[1]);
         }
     }
 

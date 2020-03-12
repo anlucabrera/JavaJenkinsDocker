@@ -29,8 +29,8 @@ import mx.edu.utxj.pye.sgi.entity.titulacion.DatosTitulacion;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbTitulacionSeguimiento;
-import mx.edu.utxj.pye.titulacion.dto.dtoExpedienteMatricula;
-import mx.edu.utxj.pye.titulacion.dto.dtoPagosFinanzas;
+import mx.edu.utxj.pye.titulacion.dto.DtoExpedienteMatricula;
+import mx.edu.utxj.pye.titulacion.dto.DtoPagosFinanzas;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
@@ -41,12 +41,16 @@ import javax.faces.model.SelectItem;
 import mx.edu.utxj.pye.sgi.ejb.EJBSelectItems;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmision;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSelectItemCE;
-import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Viewregalumnosnoadeudo;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DatosContacto;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DomiciliosExpediente;
 import mx.edu.utxj.pye.sgi.entity.titulacion.Egresados;
+import mx.edu.utxj.pye.sgi.entity.titulacion.TituloExpediente;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-import mx.edu.utxj.pye.titulacion.dto.dtoProcesosIntegracion;
+import mx.edu.utxj.pye.titulacion.dto.DtoTitulosRegistrados;
+import mx.edu.utxj.pye.titulacion.dto.DtoProcesosIntegracion;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 
 /**
  *
@@ -60,15 +64,15 @@ public class ControladorTitSegGeneracion implements Serializable{
     private static final long serialVersionUID = 5303936724764561828L;
 
     @Getter @Setter private Integer expediente;
-    @Getter @Setter private dtoExpedienteMatricula nuevoDtoExpMat;
+    @Getter @Setter private DtoExpedienteMatricula nuevoDtoExpMat;
     @Getter @Setter private List<DocumentosExpediente> listaDocsExp;
     @Getter @Setter private DocumentosExpediente documentoExp;
     @Getter @Setter private AntecedentesAcademicos antecedentesAcademicos;
     @Getter @Setter private DatosTitulacion datosTitulacion;
     @Getter @Setter private Boolean aperturaDialogo, aperturaPagos;
     @Getter @Setter private Boolean valorValidacion;
-    @Getter @Setter private List<dtoPagosFinanzas> listaDtoPagosFinanzas;
-    @Getter @Setter private dtoPagosFinanzas nuevoDtoPagosFinanzas;
+    @Getter @Setter private List<DtoPagosFinanzas> listaDtoPagosFinanzas;
+    @Getter @Setter private DtoPagosFinanzas nuevoDtoPagosFinanzas;
     @Getter @Setter private ExpedientesTitulacion expedientesTitulacion;
     
     
@@ -77,8 +81,8 @@ public class ControladorTitSegGeneracion implements Serializable{
     @Getter @Setter private ExpedientesTitulacion expTitulacion;
     @Getter @Setter private AntecedentesAcademicos antAcademicos;
     @Getter @Setter private Integer numExpediente;
-    @Getter @Setter private List<dtoProcesosIntegracion> listaProcesos;
-    @Getter @Setter private dtoProcesosIntegracion procesoIntegracion;
+    @Getter @Setter private List<DtoProcesosIntegracion> listaProcesos;
+    @Getter @Setter private DtoProcesosIntegracion procesoIntegracion;
     @Getter @Setter private List<AreasUniversidad> listaProgramasEducativos;
     @Getter @Setter private AreasUniversidad progEdu;
     @Getter @Setter private List<Generaciones> listaGeneraciones;
@@ -103,7 +107,7 @@ public class ControladorTitSegGeneracion implements Serializable{
     @Getter @Setter private AreasUniversidad programaSeleccionadoTSU, programaSeleccionadoING;
     @Getter @Setter private List<Generaciones> generacionesING, generacionesTSU;
     @Getter @Setter private List<AreasUniversidad> programasPorGeneracionING, programasPorGeneracionTSU;
-    @Getter @Setter private List<dtoExpedienteMatricula> listaING, listaTSU;
+    @Getter @Setter private List<DtoExpedienteMatricula> listaING, listaTSU;
     @Getter @Setter private String matricula;
     
     // Para registrar clave del Personal que validó el expediente y/o los documentos
@@ -113,6 +117,15 @@ public class ControladorTitSegGeneracion implements Serializable{
     // Número de documentos que debe contener el expediente
     @Getter @Setter private Integer numTotalDocs;
     @Getter @Setter private Integer numDocs, numDocsEsc;
+    
+    // Para consulta de listado de Titulos registrados
+    @Getter @Setter private Generaciones generacionTit;
+    @Getter @Setter private List<Generaciones> generacionesTit;
+    @Getter @Setter private String nivelEducativoTit;
+    @Getter @Setter private List<String> nivelesPorGeneracion;
+    @Getter @Setter private AreasUniversidad programaEducativoTit;
+    @Getter @Setter private List<AreasUniversidad> programasPorGenNivel;
+    @Getter @Setter private List<DtoTitulosRegistrados> listaTitulos;
     
     @Inject ControladorFotoExpediente controladorFotoExpediente;
     
@@ -137,6 +150,7 @@ public class ControladorTitSegGeneracion implements Serializable{
         aperturaPagos = Boolean.FALSE;
         initFiltrosING();
         initFiltrosTSU();
+        initFiltros();
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
         selectNumExp();
         selectProcesos();
@@ -262,7 +276,7 @@ public class ControladorTitSegGeneracion implements Serializable{
     
     public void consultarExpediente(Integer expediente) {
        try {
-            nuevoDtoExpMat = new dtoExpedienteMatricula();
+            nuevoDtoExpMat = new DtoExpedienteMatricula();
             nuevoDtoExpMat = ejbTitulacionSeguimiento.mostrarExpediente(expediente);
             listaDocsExp = ejbTitulacionSeguimiento.mostrarExpediente(expediente).getDocumentosExpediente();
             consultaTotalDocsExp(expediente);
@@ -390,7 +404,7 @@ public class ControladorTitSegGeneracion implements Serializable{
         }
     }
     
-     /* Combos para lista de Géneros */
+     /* Obtiene número de expediente  */
     public void selectNumExp(){
         try {
             numExpediente = ejbTitulacionSeguimiento.obtenerNumeroExpediente();
@@ -400,7 +414,7 @@ public class ControladorTitSegGeneracion implements Serializable{
         }
     }
     
-      /* Combos para lista de Géneros */
+      /* Combos para lista de Procesos de Integración de expedientes */
     public void selectProcesos(){
         try {
             listaProcesos = ejbTitulacionSeguimiento.obtenerListaProcesos();
@@ -414,7 +428,7 @@ public class ControladorTitSegGeneracion implements Serializable{
         }
     }
     
-    /* Combos para lista de Géneros */
+    /* Combos para lista de Programas Educativos dependiendo del nivel */
     public void selectProgramasEducativos(String nivel){
         try {
             listaProgramasEducativos = ejbTitulacionSeguimiento.obtenerProgramasEducativos(nivel);
@@ -424,7 +438,7 @@ public class ControladorTitSegGeneracion implements Serializable{
         }
     }
     
-    /* Combos para lista de Géneros */
+    /* Combos para lista de Generaciones dependiendo del nivel */
     public void selectGeneraciones(String nivel){
         try {
             listaGeneraciones = ejbTitulacionSeguimiento.obtenerGeneraciones(nivel);
@@ -435,12 +449,12 @@ public class ControladorTitSegGeneracion implements Serializable{
     }
     
     /**
-     * Permite que al cambiar o seleccionar un proceso de integración se actualice el valor de la variable
+     * Permite que al cambiar o seleccionar proceso de integración se actualice el valor de la variable
      * @param e Evento del cambio de valor
      */
     public void cambiarProcesoIntegracion(ValueChangeEvent e){
-        if(e.getNewValue() instanceof dtoProcesosIntegracion){
-            dtoProcesosIntegracion procesoInt = (dtoProcesosIntegracion)e.getNewValue();
+        if(e.getNewValue() instanceof DtoProcesosIntegracion){
+            DtoProcesosIntegracion procesoInt = (DtoProcesosIntegracion)e.getNewValue();
             setProcesoIntegracion(procesoInt);
             selectProgramasEducativos(getProcesoIntegracion().getNivel());
             selectGeneraciones(getProcesoIntegracion().getNivel());
@@ -450,7 +464,7 @@ public class ControladorTitSegGeneracion implements Serializable{
     }
     
     /**
-     * Permite que al cambiar o seleccionar un proceso de integración se actualice el valor de la variable
+     * Permite que al cambiar o seleccionar programa educativo se actualice el valor de la variable
      * @param e Evento del cambio de valor
      */
     public void cambiarProgramaEducativo(ValueChangeEvent e){
@@ -462,7 +476,7 @@ public class ControladorTitSegGeneracion implements Serializable{
     }
     
     /**
-     * Permite que al cambiar o seleccionar un proceso de integración se actualice el valor de la variable
+     * Permite que al cambiar o seleccionar generación se actualice el valor de la variable
      * @param e Evento del cambio de valor
      */
     public void cambiarGeneracion(ValueChangeEvent e){
@@ -495,4 +509,85 @@ public class ControladorTitSegGeneracion implements Serializable{
     public void selectIems(){
         listaIEMS = ejbItemCE.itemIems(this.estadoIEMS, this.municipioIEMS, this.localidadIEMS);
     }
+    
+    /* Inicializar filtros de listado de titulos */
+    
+     public void initFiltros(){
+        generacionesTit = ejbTitulacionSeguimiento.getGeneracionesExpValidados();
+        setGeneracionTit(generacionesTit.get(0));
+        nivelesPorGeneracion = ejbTitulacionSeguimiento.getNivelesPorGeneracionesExpValidados(generacionTit);
+        setNivelEducativoTit(nivelesPorGeneracion.get(0));
+        programasPorGenNivel = ejbTitulacionSeguimiento.getProgramasPorNivGenExpValidados(generacionTit, nivelEducativoTit);
+        setProgramaEducativoTit(programasPorGenNivel.get(0));
+        cargarListaPorGenNivProg();
+    }
+     
+    /* Obtiene lista dependiendo de la generación, nivel y programa educativo seleccionado */
+     
+    public void cargarListaPorGenNivProg(){
+      listaTitulos = ejbTitulacionSeguimiento.getListaExpedientesValidados(generacionTit, programaEducativoTit); 
+    }
+    
+     /**
+     * Permite que al cambiar o seleccionar generación de listado de titulos se actualice el valor de la variable
+     * @param event Evento del cambio de valor
+     */
+    
+    public void cambiarGeneracionTit(ValueChangeEvent event){
+        setGeneracionTit((Generaciones)event.getNewValue());
+        actualizarNiveles();
+    }
+    
+     /* Actualiza lista de niveles educativos dependiendo de la generación seleccionada  */
+     
+    public void actualizarNiveles(){
+        nivelesPorGeneracion = ejbTitulacionSeguimiento.getNivelesPorGeneracionesExpValidados(generacionTit);
+        setNivelEducativoTit(nivelesPorGeneracion.get(0));
+        actualizarProgramasEducativos();
+    }
+    
+    /* Actualiza lista de programas educativos dependiendo del nivel educativo seleccionado  */
+    
+     public void actualizarProgramasEducativos(){
+        programasPorGenNivel = ejbTitulacionSeguimiento.getProgramasPorNivGenExpValidados(generacionTit, nivelEducativoTit);
+        setProgramaEducativoTit(programasPorGenNivel.get(0));
+        cargarListaPorGenNivProg();
+        Ajax.update("formMuestraDatosActivos");
+    }
+     
+     /**
+     * Permite que al cambiar o seleccionar nivel educativo de listado de titulos se actualice el valor de la variable
+     * @param event Evento del cambio de valor
+     */
+     
+    public void cambiarNivelTit(ValueChangeEvent event){
+        setNivelEducativoTit((String)event.getNewValue());
+        actualizarProgramasEducativos();
+    }
+    
+     /**
+     * Permite que al cambiar o seleccionar programa educativo de listado de titulos se actualice el valor de la variable
+     * @param e Evento del cambio de valor
+     */
+    
+    public void cambiarProgramaEducativoTit(ValueChangeEvent event){
+        setProgramaEducativoTit((AreasUniversidad)event.getNewValue());
+        cargarListaPorGenNivProg();
+    }
+    
+    /* Permite la descarga del titulo cargado  */
+    
+    public void descargarTitulo(TituloExpediente titExp) throws IOException{
+        File f = new File(titExp.getRuta());
+        Faces.sendFile(f, false);
+    }
+    
+    /* Actualiza fecha de emisión del titulo  */
+    
+     public void onCellEdit(CellEditEvent event) {
+        DataTable dataTable = (DataTable) event.getSource();
+        DtoTitulosRegistrados actFechaEmision = (DtoTitulosRegistrados) dataTable.getRowData();
+        ejbTitulacionSeguimiento.actualizarFechaEmision(actFechaEmision.getTituloExpediente());
+    }
+    
 }

@@ -38,6 +38,7 @@ public class ConsultaCalificacionesRolEstudiante{
     @Getter @Setter private Boolean tieneIntegradora = false;
     @Getter @Setter private Map<DtoCargaAcademica, Boolean> tieneIntegradoraMap = new HashMap<>();
     @Getter @Setter private Map<DtoCargaAcademica, TareaIntegradora> tareaIntegradoraMap = new HashMap<>();
+    @Getter @Setter private List<Estudiante> estudiantes;
 
 
     public Boolean tieneAcceso(Estudiante estudiante, UsuarioTipo usuarioTipo){

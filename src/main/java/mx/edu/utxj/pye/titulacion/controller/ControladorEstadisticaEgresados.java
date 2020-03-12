@@ -21,7 +21,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
-import mx.edu.utxj.pye.titulacion.dto.dtoEstadisticaEgresados;
+import mx.edu.utxj.pye.titulacion.dto.DtoEstadisticaEgresados;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbEstadisticaEgresados;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -47,7 +47,7 @@ public class ControladorEstadisticaEgresados implements Serializable{
     @Getter @Setter private String nivel;
     @Getter @Setter private List<Generaciones> generaciones;
     @Getter @Setter private List<String> niveles;
-    @Getter @Setter private List<dtoEstadisticaEgresados> listaDatos;
+    @Getter @Setter private List<DtoEstadisticaEgresados> listaDatos;
     
     // Para totales
     @Getter @Setter private Integer totalInscritos, totalEgresados, totalAcredEstadia, totalExpInt, totalExpVal;
@@ -107,14 +107,14 @@ public class ControladorEstadisticaEgresados implements Serializable{
      * Permite obtener la lista de expedientes registrados en la generación y nivel educativo seleccionado previamente
      */
     public void listaExpedientesNivel(){
-        List<dtoEstadisticaEgresados> res = ejbEstadisticaEgresados.obtenerReporteIntegracionExp(getGeneracion(), getNivel());
+        List<DtoEstadisticaEgresados> res = ejbEstadisticaEgresados.obtenerReporteIntegracionExp(getGeneracion(), getNivel());
             setListaDatos(res);
             Ajax.update("dtbReporte");
-            setTotalInscritos(listaDatos.stream().mapToInt(dtoEstadisticaEgresados::getInscritos).sum());
-            setTotalEgresados(listaDatos.stream().mapToInt(dtoEstadisticaEgresados::getEgresados).sum());
-            setTotalAcredEstadia(listaDatos.stream().mapToInt(dtoEstadisticaEgresados::getAcredEstadia).sum());
-            setTotalExpInt(listaDatos.stream().mapToInt(dtoEstadisticaEgresados::getIntExp).sum());
-            setTotalExpVal(listaDatos.stream().mapToInt(dtoEstadisticaEgresados::getExpVal).sum());
+            setTotalInscritos(listaDatos.stream().mapToInt(DtoEstadisticaEgresados::getInscritos).sum());
+            setTotalEgresados(listaDatos.stream().mapToInt(DtoEstadisticaEgresados::getEgresados).sum());
+            setTotalAcredEstadia(listaDatos.stream().mapToInt(DtoEstadisticaEgresados::getAcredEstadia).sum());
+            setTotalExpInt(listaDatos.stream().mapToInt(DtoEstadisticaEgresados::getIntExp).sum());
+            setTotalExpVal(listaDatos.stream().mapToInt(DtoEstadisticaEgresados::getExpVal).sum());
     
     }
    

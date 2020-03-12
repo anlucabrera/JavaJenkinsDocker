@@ -29,8 +29,8 @@ import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Personas;
 import mx.edu.utxj.pye.sgi.saiiut.entity.PersonasPK;
-import mx.edu.utxj.pye.titulacion.dto.dtoEstadisticaEgresados;
-import mx.edu.utxj.pye.titulacion.dto.dtoEstudianteParaReporte;
+import mx.edu.utxj.pye.titulacion.dto.DtoEstadisticaEgresados;
+import mx.edu.utxj.pye.titulacion.dto.DtoEstudianteParaReporte;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbEstadisticaEgresados;
 import net.sf.jxls.transformer.XLSTransformer;
 
@@ -97,7 +97,7 @@ public class ServiceEstadisticaEgresados implements EjbEstadisticaEgresados{
     }
 
     @Override
-    public List<dtoEstadisticaEgresados> obtenerReporteIntegracionExp(Generaciones generacion, String nivel) {
+    public List<DtoEstadisticaEgresados> obtenerReporteIntegracionExp(Generaciones generacion, String nivel) {
         try{
            
             List<Integer> grados = new ArrayList<>();
@@ -138,10 +138,10 @@ public class ServiceEstadisticaEgresados implements EjbEstadisticaEgresados{
                         .sorted()
                         .collect(Collectors.toList());
            
-            List<dtoEstadisticaEgresados> listaDtoEstEgresados = new ArrayList<>();
+            List<DtoEstadisticaEgresados> listaDtoEstEgresados = new ArrayList<>();
             
             listaProgramas.forEach(programa -> {
-                dtoEstadisticaEgresados dto = new dtoEstadisticaEgresados();
+                DtoEstadisticaEgresados dto = new DtoEstadisticaEgresados();
                 
                 AreasUniversidad progEdu = facade.getEntityManager().find(AreasUniversidad.class, programa);
                 
@@ -255,12 +255,12 @@ public class ServiceEstadisticaEgresados implements EjbEstadisticaEgresados{
     }
     
     @Override
-    public List<dtoEstudianteParaReporte> obtenerListadoGeneral(Generaciones generacion) {
+    public List<DtoEstudianteParaReporte> obtenerListadoGeneral(Generaciones generacion) {
         
         String genInicio = String.valueOf(generacion.getInicio());
         String genFin = String.valueOf(generacion.getFin());
                 
-        List<dtoEstudianteParaReporte> listaDtoEstReporte = new ArrayList<>();
+        List<DtoEstudianteParaReporte> listaDtoEstReporte = new ArrayList<>();
         
         //construir la lista de dto's para mostrar en tabla
         listadoInscritosGeneral.forEach(i -> {
@@ -280,7 +280,7 @@ public class ServiceEstadisticaEgresados implements EjbEstadisticaEgresados{
             AreasUniversidad programa = facade.getEntityManager().find(AreasUniversidad.class, i.getProgramaEducativo());
             String expTit = expedienteTitulacion(i.getMatricula(), programa.getSiglas());
             
-            dtoEstudianteParaReporte dto = new dtoEstudianteParaReporte();
+            DtoEstudianteParaReporte dto = new DtoEstudianteParaReporte();
             dto.setGeneracion(genInicio.concat(" - ").concat(genFin));
             dto.setProgEducativo(programa.getSiglas());
             dto.setMatricula(i.getMatricula());

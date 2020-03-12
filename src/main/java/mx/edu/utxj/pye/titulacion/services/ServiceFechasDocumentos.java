@@ -17,7 +17,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-import mx.edu.utxj.pye.titulacion.dto.dtoFechasDocumentos;
+import mx.edu.utxj.pye.titulacion.dto.DtoFechasDocumentos;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbFechasDocumentos;
 import org.omnifaces.util.Messages;
 
@@ -31,12 +31,12 @@ public class ServiceFechasDocumentos implements EjbFechasDocumentos{
     @EJB Facade facade;
 
     @Override
-    public List<dtoFechasDocumentos> getListaFechasDocumentosGeneracion(Generaciones generacionSeleccionada) {
+    public List<DtoFechasDocumentos> getListaFechasDocumentosGeneracion(Generaciones generacionSeleccionada) {
         if (generacionSeleccionada == null) {
             return null;
         }
         //obtener la lista de expedientes de titulación filtrando por generación y programa educativo
-        List<dtoFechasDocumentos> l = new ArrayList<>();
+        List<DtoFechasDocumentos> l = new ArrayList<>();
         List<FechasDocumentos> entities = new ArrayList<>();
       
         entities = facade.getEntityManager().createQuery("SELECT f FROM FechasDocumentos f WHERE f.generacion =:generacion", FechasDocumentos.class)
@@ -45,13 +45,13 @@ public class ServiceFechasDocumentos implements EjbFechasDocumentos{
         
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
-            dtoFechasDocumentos dto = new dtoFechasDocumentos();
+            DtoFechasDocumentos dto = new DtoFechasDocumentos();
             try {
                
 //                Generaciones gen = facadePYE2.getEntityManager().find(Generaciones.class, e.getGeneracion());
                 AreasUniversidad prog = facade.getEntityManager().find(AreasUniversidad.class, e.getProgramaEducativo());
                 
-                l.add(new dtoFechasDocumentos(
+                l.add(new DtoFechasDocumentos(
                         e,
                         generacionSeleccionada,
                         prog
@@ -65,7 +65,7 @@ public class ServiceFechasDocumentos implements EjbFechasDocumentos{
     }
 
     @Override
-    public Boolean eliminarFecDocsGeneracion(dtoFechasDocumentos fecDocs) {
+    public Boolean eliminarFecDocsGeneracion(DtoFechasDocumentos fecDocs) {
          if (fecDocs == null) {
             return false;
         }
@@ -91,7 +91,7 @@ public class ServiceFechasDocumentos implements EjbFechasDocumentos{
     }
 
     @Override
-    public List<ExpedientesTitulacion> buscarExpConFecDocs(dtoFechasDocumentos fecDocs) {
+    public List<ExpedientesTitulacion> buscarExpConFecDocs(DtoFechasDocumentos fecDocs) {
        
         List<ExpedientesTitulacion> l = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.generacion =:generacion AND e.programaEducativo =:programaEducativo", ExpedientesTitulacion.class)
             .setParameter("generacion", fecDocs.getFechasDocumentos().getGeneracion())
@@ -102,7 +102,7 @@ public class ServiceFechasDocumentos implements EjbFechasDocumentos{
     }
 
     @Override
-    public dtoFechasDocumentos actualizarFecDocumentos(dtoFechasDocumentos dtoFecDocs) throws Throwable {
+    public DtoFechasDocumentos actualizarFecDocumentos(DtoFechasDocumentos dtoFecDocs) throws Throwable {
         FechasDocumentos fecDoc = dtoFecDocs.getFechasDocumentos();
         facade.setEntityClass(FechasDocumentos.class);
         facade.edit(fecDoc);

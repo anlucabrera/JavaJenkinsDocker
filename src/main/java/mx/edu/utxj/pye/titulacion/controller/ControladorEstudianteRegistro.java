@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,7 +41,7 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.Domicilios;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Personas;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbEstudianteRegistro;
-import mx.edu.utxj.pye.titulacion.dto.dtoDatosTitulacion;
+import mx.edu.utxj.pye.titulacion.dto.DtoDatosTitulacion;
 import mx.edu.utxj.pye.titulacion.interfaces.EjbTitulacionSeguimiento;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
@@ -70,7 +71,7 @@ public class ControladorEstudianteRegistro implements Serializable{
     @Getter @Setter private Personas nuevoOBJpersona;
     @Getter @Setter private Egresados nuevoOBJegresado;
     @Getter @Setter private ExpedientesTitulacion nuevoOBJexpediente;
-    @Getter @Setter private dtoDatosTitulacion nuevoDTOdatTit;
+    @Getter @Setter private DtoDatosTitulacion nuevoDTOdatTit;
     @Getter @Setter private List<String> listaGeneros;
     
     /* Objetos para Datos de Contacto y Domicilio */
@@ -134,7 +135,7 @@ public class ControladorEstudianteRegistro implements Serializable{
 //            }
             
             
-            if (estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11 || estudiante.getGradoActual() == 10) {
+            if (estudiante.getGradoActual() == 5 || estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11 || estudiante.getGradoActual() == 10) {
                 procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
 
                 if (procesosIntexp == null) {
@@ -254,15 +255,36 @@ public class ControladorEstudianteRegistro implements Serializable{
     /* Combos para IEMS */
     public void selectMunicipioIems(){
         listaMunicipiosIEMS = eJBSelectItems.itemMunicipiosByClave(this.estadoIEMS);
+        selectLocalidadIems();
+    }
+    
+  
+    public void cambiarEstado(ValueChangeEvent e){
+       setEstadoIEMS((Integer)e.getNewValue());
+       municipioIEMS = 1;
+       localidadIEMS = 1;
+       nuevoOBJantAcad.setIems(0);
+       selectMunicipioIems();
+    }
+    
+    public void cambiarMunicipio(ValueChangeEvent e){
+       setMunicipioIEMS((Integer)e.getNewValue());
+       selectLocalidadIems();
+    }
+    
+    public void cambiarLocalidad(ValueChangeEvent e){
+       setLocalidadIEMS((Integer)e.getNewValue());
+       selectIems();
     }
     
 
     public void selectLocalidadIems(){
         listaLocalidadesIEMS = eJBSelectItems.itemLocalidadesByClave(this.estadoIEMS,this.municipioIEMS);
+        selectIems();
     }
     
     public void selectIems(){
-        listaIEMS = ejbItemCE.itemIems(this.estadoIEMS, this.municipioIEMS, this.localidadIEMS);
+            listaIEMS = ejbItemCE.itemIems(this.estadoIEMS, this.municipioIEMS, this.localidadIEMS);  
     }
    
     /* Métodos de la pestaña Datos Personales */

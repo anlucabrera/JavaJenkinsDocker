@@ -24,6 +24,11 @@ public class StringUtils {
         if(cadena == null) return "";
         return cadena.replace(' ', '_').trim();
     }
+    
+    public static String quitarEspaciosVacios(String cadena){
+        if(cadena == null) return "";
+        return cadena.replaceAll("\\s", "").trim();
+    }
 
     /**
      * Hace un trim a la cadena y previene si es nula

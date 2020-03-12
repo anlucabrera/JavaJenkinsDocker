@@ -17,16 +17,14 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.EJBAdimEstudianteBase;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEvTutor;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
-import mx.edu.utxj.pye.sgi.entity.ch.EstudiantesClaves;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
+import mx.edu.utxj.pye.sgi.entity.ch.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionTutor;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.dto.dtoAvanceEvaluaciones;
+import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionTutor2;
 import org.omnifaces.util.Messages;
 
 
@@ -35,6 +33,10 @@ import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
+/**
+ * @author Taatisz :)
+ * Modificacion por nueva evaluacion 10/03/2020
+ */
 @Named
 @SessionScoped
 public class AdministracionEvaluacionTutor extends ViewScopedRol implements Serializable {
@@ -79,16 +81,16 @@ public class AdministracionEvaluacionTutor extends ViewScopedRol implements Seri
 
     public void getPersona(){
         try {
-            //TODO: Obtiene el obejeto de la paersona logueada
+            //Obtiene la paersona logueada
             Integer claveNomina = logonMB.getPersonal().getClave();
             persona = ejbPersonal.mostrarPersonalLogeado(claveNomina);
         }catch (Throwable e){
         }
     }
-    //TODO: Obtiene la ultima evaluacion  a tutor activa
+    //Obtiene la ultima evaluacion  a tutor activa
     public void  getEvaluacionTutorActiva(){
         try{
-            //TODO: Obtiene la ultima evaluacion a  tutor activa
+            // Obtiene la ultima evaluacion a  tutor activa
             ResultadoEJB<Evaluaciones> resEvaluacion = ejbAdmminEvTutor.getUltimaEvTutorActiva();
 
             if (resEvaluacion.getCorrecto()==true){
@@ -99,14 +101,14 @@ public class AdministracionEvaluacionTutor extends ViewScopedRol implements Seri
 
         }
     }
-    //TODO:Obtiene el periodo de la evaluacion
+    //Obtiene el periodo de la evaluacion
     public void getPeriodoEvaluacion() {
         ResultadoEJB<PeriodosEscolares> resperiodoEvaluacion = ejbAdmminEvTutor.getPeriodoEvaluacion(evaluacion);
         if(resperiodoEvaluacion.getCorrecto()==true){periodoEvaluacion = resperiodoEvaluacion.getValor();}
         else{mostrarMensajeResultadoEJB(resperiodoEvaluacion);}
 
     }
-    //TODO:Obtiene la lista de los estudiantes activos tanto de Sauiit como en Control Escolar por el periodo de la evalacion
+    //Obtiene la lista de los estudiantes activos tanto de Sauiit como en Control Escolar por el periodo de la evalacion
     public void getEstudiantesActivosbyPeriodo(){
         listGeneral = new ArrayList<>();
         ResultadoEJB<List<dtoEstudiantesEvalauciones>> resListaGeneral = ejbAdimEstudianteBase.getEstudiantesSauiityCE(periodoEvaluacion);
@@ -114,21 +116,24 @@ public class AdministracionEvaluacionTutor extends ViewScopedRol implements Seri
             listGeneral = resListaGeneral.getValor();
         }else{mostrarMensajeResultadoEJB(resListaGeneral);}
     }
-    //TODO: Genera las listas de estudiantes con la evaluacion Completa, Incompleta y los que no han ingresado y da el avance de la evalaucion
+    // Genera las listas de estudiantes con la evaluacion Completa, Incompleta y los que no han ingresado y da el avance de la evalaucion
 public void generalListas(List<dtoEstudiantesEvalauciones> estudiantes){
-        //TODO:Recorre la lista de los estudiantes ya filtrados ya sea del tutor, director, SE.
+        //Recorre la lista de los estudiantes ya filtrados ya sea del tutor, director, SE.
         
         listCompleto = new ArrayList<>();
         listIncompletos = new ArrayList<>();
         listNoIngreso = new ArrayList<>();
         estudiantes.forEach(e->{
-            ResultadoEJB<EvaluacionTutoresResultados> res = ejbAdmminEvTutor.getResultadoEvaluacionByEstudiante(e);
-           
+           // ResultadoEJB<EvaluacionTutoresResultados> res = ejbAdmminEvTutor.getResultadoEvaluacionByEstudiante(e); --> Esta es la version anterior de la evaluación
+            ResultadoEJB<EvaluacionTutoresResultados2> res = ejbAdmminEvTutor.getResultadosEvByEstudiante(e,evaluacion);
+
             if(res.getCorrecto()==true){
-                EvaluacionTutoresResultados resultado = new EvaluacionTutoresResultados();
+                //EvaluacionTutoresResultados resultado = new EvaluacionTutoresResultados();
+                EvaluacionTutoresResultados2 resultado = new EvaluacionTutoresResultados2();
                 resultado = res.getValor();
-               // System.out.println("Resultados" + resultado);
-                Comparador<EvaluacionTutoresResultados> comparador = new ComparadorEvaluacionTutor();
+               //System.out.println("Resultados encontrados" + resultado);
+                //Comparador<EvaluacionTutoresResultados> comparador = new ComparadorEvaluacionTutor();
+                Comparador<EvaluacionTutoresResultados2> comparador = new ComparadorEvaluacionTutor2();
                 boolean finalizado = comparador.isCompleto(resultado);
                 if(resultado!=null){
                     if(finalizado){
@@ -149,14 +154,14 @@ public void generalListas(List<dtoEstudiantesEvalauciones> estudiantes){
 
         }
 
-    //TODO: Hace calculos de avance de la evalaucion
+    //Hace calculos de avance de la evalaucion
         public void generarAvaance(){
             listAvance = new ArrayList<>();
             totalFaltantes = totalEstudiantes - totalCompletos;
             Double dte = new Double(totalEstudiantes);
             Double dc= new Double(totalCompletos);
             porcentaje = (dc * 100) / dte;
-            // TODO: LO AGREGA AL DTO Y DESPUES A LA LISTA
+            // LO AGREGA AL DTO Y DESPUES A LA LISTA
             dtoAvanceEvaluaciones dto = new dtoAvanceEvaluaciones();
             dto.setTotalEstudiantes(totalEstudiantes);
             dto.setTotalCompletos(totalCompletos);
@@ -165,9 +170,9 @@ public void generalListas(List<dtoEstudiantesEvalauciones> estudiantes){
             dto.setPorcentaje(porcentaje);
             listAvance.add(dto);
         }
-        //TODO: Generar avance por PE
+        //Generar avance por PE
     public void generarAvancePE(List<dtoEstudiantesEvalauciones> estudiantes){
-        //TODO:Obtiene la lista de programas edictaivos activos
+        //Obtiene la lista de programas edictaivos activos
         ResultadoEJB<List<ProgramasEducativos>> resPE= ejbAdimEstudianteBase.getPEActivos();
         if(resPE.getCorrecto() == true){
             listPE = new ArrayList<>();
@@ -194,16 +199,17 @@ public void generalListas(List<dtoEstudiantesEvalauciones> estudiantes){
     }
 
 
-//TODO: Obtiene lista de resultados de evaluaciones completas o inclompletas de sus estudiantes tutorados, ademas del total de los estudiantes que tiene a su cargo
+//Obtiene lista de resultados de evaluaciones completas o inclompletas de sus estudiantes tutorados, ademas del total de los estudiantes que tiene a su cargo
 public void seguimientoTutor(){
     try {
             listGeneral = new ArrayList<>();
             getEstudiantesActivosbyPeriodo();
-            //TODO: Obtiene la lista de estudiantes tutorados por el personal logeado!
+            //Obtiene la lista de estudiantes tutorados por el personal logeado!
             listEstudiantesFiltrados =new ArrayList<>();
             listEstudiantesFiltrados= listGeneral.stream().filter(e-> persona.getClave().equals(e.getClaveTutor())).collect(Collectors.toList());
             totalEstudiantes = listEstudiantesFiltrados.size();
-            //TODO:Genera las listas completas e incompletas
+            //System.out.println( "Total estudiantes " + totalEstudiantes);
+            //Genera las listas completas e incompletas
             generalListas(listEstudiantesFiltrados);
             generarAvaance();
 
@@ -211,15 +217,15 @@ public void seguimientoTutor(){
         Logger.getLogger(AdministracionEncuestaTsu.class.getName()).log(Level.SEVERE, null, e);
     }
     }
-//TODO: Obtiene lista de resultados de evaluaciones completas o inclompletas de sus estudiantes bajo su direccion, ademas del total de los estudiantes que tiene a su cargo
+//Obtiene lista de resultados de evaluaciones completas o inclompletas de sus estudiantes bajo su direccion, ademas del total de los estudiantes que tiene a su cargo
     public void seguimientoDirector(){
         try{
             listGeneral = new ArrayList<>();
             getEstudiantesActivosbyPeriodo();
-            //TODO: Obtiene la lista general de estudiantes bajo su dirección
+            //Obtiene la lista general de estudiantes bajo su dirección
             listEstudiantesFiltrados = new ArrayList<>();
             listEstudiantesFiltrados = listGeneral.stream().filter(e->persona.getClave().equals(e.getClaveDirector())).collect(Collectors.toList());
-            //TODO:Genera las listas
+            //Genera las listas
             totalEstudiantes = listEstudiantesFiltrados.size();
             generalListas(listEstudiantesFiltrados);
             generarAvaance();
@@ -228,12 +234,12 @@ public void seguimientoTutor(){
             Logger.getLogger(AdministracionEncuestaTsu.class.getName()).log(Level.SEVERE, null, e);
         }
     }
-//TODO: Obtiene lista de resultados de evaluaciones completas o inclompletas de sus estudiantes activos
+//Obtiene lista de resultados de evaluaciones completas o inclompletas de sus estudiantes activos
     public void seguimientoSE(){
         try{
             listGeneral = new ArrayList<>();
             getEstudiantesActivosbyPeriodo();
-            //TODO: Obtiene la lista general de estudiantes activos
+            //Obtiene la lista general de estudiantes activos
             listEstudiantesFiltrados = new ArrayList<>();
             listEstudiantesFiltrados = listGeneral;
             totalEstudiantes = listEstudiantesFiltrados.size();

@@ -87,7 +87,8 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     @EJB EjbPropiedades ep;
     @EJB EjbPacker packer;
     @EJB EjbCasoCritico ecc;
-    private Integer hora=0,minutos=0,tasis=0,noSesi=2;
+    private Integer hora=0,minutos=0,noSesi=2;
+    private Double tasis=0D;
     private String dateAnterior="",dateActual="";
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
@@ -348,7 +349,7 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
             List<Asistenciasacademicas> asFilter = new ArrayList<>();
             rol.setAsistenciases(new ArrayList<>());
             asFilter = res.getValor().stream().filter(t -> (t.getAsistencia().getFechaHora().after(fI) || t.getAsistencia().getFechaHora().equals(fI)) && (t.getAsistencia().getFechaHora().before(fF) || t.getAsistencia().getFechaHora().equals(fF))).collect(Collectors.toList());
-            tasis = 0;
+            tasis = 0D;
             if (asFilter.size() > 0 && !asFilter.isEmpty()) {
                 asFilter.forEach((t) -> {
                     switch (t.getTipoAsistenciaA()) {
@@ -358,8 +359,12 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                         case "Justificado":                            t.setTipoAsistenciaA("J");                            break;
                         case "Retardo":                            t.setTipoAsistenciaA("R");                            break;
                     }
-                    if(!t.getTipoAsistenciaA().equals("F")){
-                        tasis=tasis+1;
+                    
+                    switch (t.getTipoAsistenciaA()){
+                        case "A": tasis=tasis+1;break;
+                        case "R": tasis=tasis+.75;break;
+                        case "P": tasis=tasis+.50;break;
+                        case "J": tasis=tasis+.50;break;
                     }
                     rol.getAsistenciases().add(t.getAsistencia());
                 });
@@ -369,7 +374,6 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
                 if (rejb.getCorrecto()) {
                     a.setDtoCasoCritico(rejb.getValor());
                 }
-
                 ResultadoEJB<DtoCasoCritico> registrarPorAsistenciaIrregular = ecc.registrarPorAsistenciaIrregular(a, d);
                 if (registrarPorAsistenciaIrregular.getCorrecto()) {
                     mostrarMensaje("Se generó un caso crítico automáticamente por Asistencia irregular.");
@@ -664,7 +668,6 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
     public void updateSesiones(RowEditEvent event) {
         try {
             Asistencias asistencias = (Asistencias) event.getObject();
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc.updateSesiones()"+asistencias.getAsistencia()+"--"+asistencias.getFechaHora());
             ejb.actualizarSesionesPaseLista(asistencias);
             ResultadoEJB<DtoUnidadConfiguracion> ducB = packer.packUnidadConfiguracion(rol.getDtoConfUniMat().getUnidadMateriaConfiguracion(), rol.getCarga());
             ResultadoEJB<DtoGrupoEstudiante> resGrupo = packer.packGrupoEstudiante(rol.getCarga(), ducB.getValor());

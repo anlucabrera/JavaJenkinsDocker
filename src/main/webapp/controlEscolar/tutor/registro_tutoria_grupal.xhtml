@@ -37,368 +37,144 @@
 
     <ui:define name="body">
         <c:if test="#{registroTutoriaGrupal.cargado}">
-        <adm:breadcrumb title="Registro de Tutorías Grupales"/>
+            <adm:breadcrumb title="Registro de Tutorías Grupales"/>
+            <adm:sidebar collapsed="true"/>
+            <div class="contenedor">
+                <c:if test="#{registroTutoriaGrupal.tieneAcceso}">
+                    <!-- zona de importación de enums -->
 
-        <div class="contenedor">
-            <c:if test="#{registroTutoriaGrupal.tieneAcceso}">
-                <!-- zona de importación de enums -->
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h:form id="frmEncabezado" prependId="false" class="form-inline">
+                                <div id="main-buttons" class="hidden-sm hidden-xs">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+                                            <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(registroTutoriaGrupal.rol.periodoActivo)} " />
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Evento de registro activo: #{registroTutoriaGrupal.rol.eventoRegistroActivo.mes}" />
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Antes de iniciar su registro favor de verificar que los filtros seleccionados seán los correctos" />
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
+                                                           onclick="PF('modalAyuda').show();"
+                                                           process="@this"
+                                                           title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
+                                            </p:commandLink>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </h:form>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <h:form id="frmFiltros" prependId="false" class="form-inline">
+                                        <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                        <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                        <c:set var="casilla4" value="#{'col-sm-12 col-md-6 col-lg-4'}" />
+                                        <div class="row margin-bottom" style="margin-top: 20px;">
 
-                <div class="box box-primary">
-                    <div class="box-header with-border">
-                        <h:form id="frmEncabezado" prependId="false" class="form-inline">
-                            <div id="main-buttons" class="hidden-sm hidden-xs">
-                                <p:toolbar id="tb">
-                                    <f:facet name="left">
-                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(registroTutoriaGrupal.rol.periodoActivo)} " />
-                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                        <p:outputLabel value="Evento de registro activo: #{registroTutoriaGrupal.rol.eventoRegistroActivo.mes}" />
-                                    </f:facet>
-                                    <f:facet name="right">
-                                        <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
-                                                       onclick="PF('modalAyuda').show();"
-                                                       process="@this"
-                                                       title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
-                                        </p:commandLink>
-                                    </f:facet>
-                                </p:toolbar>
-                            </div>
-                        </h:form>
-                        <div class="box box-solid">
-                            <div class="box-body">
-                                <h:form id="frmFiltros" prependId="false" class="form-inline">
-                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
-                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
-                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
-                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-6 col-lg-4'}" />
-                                    <div class="row margin-bottom" style="margin-top: 20px;">
-
-                                        <div class="#{casilla}">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="periodo" value="#{registroTutoriaGrupal.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
-                                                    <f:selectItems value="#{registroTutoriaGrupal.rol.periodosConCargaGrupo}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this" update="@this grupo sesion mes contenedor contenedorEstudiantes" listener="#{registroTutoriaGrupal.cambiarPeriodo}" />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Periodo" for="periodo"/>
-                                                <p:message for="periodo" />
-                                            </div>
-                                        </div>
-
-                                        <div class="#{casilla4}">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="grupo" value="#{registroTutoriaGrupal.rol.grupoTutorSeleccionado}" converter="entityConverter" styleClass="form-control" >
-                                                    <f:selectItems value="#{registroTutoriaGrupal.rol.listadoGruposTutor}" var="grupo" itemValue="#{grupo}" itemLabel="#{grupo.grupo.grado}° #{grupo.grupo.literal} #{grupo.grupo.idSistema.nombre} de #{grupo.programaEducativo.nombre}" />
-                                                    <p:ajax process="@this" update="@this sesion contenedor contenedorEstudiantes" listener="#{registroTutoriaGrupal.cambiarGrupo}" />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Grupo Tutorado" for="grupo"/>
-                                                <p:message for="grupo" ><p:autoUpdate/></p:message>
-                                            </div>
-                                        </div>
-
-                                        <div class="#{casilla4}">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="sesion" value="#{registroTutoriaGrupal.rol.sesionGrupalSeleccionada}" converter="entityConverter" styleClass="form-control" >
-                                                    <f:selectItems value="#{registroTutoriaGrupal.rol.listaSesionesGrupalesTutorias}" var="sesion" itemValue="#{sesion}" itemLabel="P.#{sesion.planAccionTutoria.planAccionTutoria}-S.#{sesion.sesionGrupal}-No.#{sesion.noSesion}- #{sesion.actividadProgramada}" />
-                                                    <p:ajax process="@this" update="@this contenedor contenedorEstudiantes" listener="#{registroTutoriaGrupal.cambiarSesiones()}" />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Sesión Grupal de Tutoría" for="sesion"/>
-                                                <p:message for="sesion" ><p:autoUpdate/></p:message>
-                                            </div>
-                                        </div>
-
-                                        <div class="#{casilla}">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="mes" value="#{registroTutoriaGrupal.rol.eventoSeleccionado}" converter="entityConverter" styleClass="form-control" >
-                                                    <f:selectItems value="#{registroTutoriaGrupal.rol.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" />
-                                                    <p:ajax process="@this" update="@this contenedor contenedorEstudiantes" listener="#{registroTutoriaGrupal.cambiarSesiones()}" />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Mes" for="mes"/>
-                                                <p:message for="mes" />
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </h:form>
-                                <h:form id="frmRegistro" prependId="false" class="form-inline">
-                                    <p:remoteCommand id="actualizarRegistroTutoria" name="actualizarRegistroTutoria" actionListener="#{registroTutoriaGrupal.actualizar}" process="@this" update="contenedor" />
-                                    <div class="row">
-                                        <div class="col-sm-12 col-md-12"><p:separator/></div>
-                                        <div class="col-lg-12 col-md-12 text-info">
-
-                                            <p:outputPanel id="contenedor">
-                                                <div style="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'margin-bottom: 10px;display: none':'margin-bottom: 10px;'}">
-                                                    <p:outputLabel value="Ingrese los datos de la tutoría grupal "/>
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="periodo" value="#{registroTutoriaGrupal.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                        <f:selectItems value="#{registroTutoriaGrupal.rol.periodosConCargaGrupo}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                        <p:ajax process="@this" update="@this grupo sesion mes contenedor contenedorEstudiantes" listener="#{registroTutoriaGrupal.cambiarPeriodo}" />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Periodo" for="periodo"/>
+                                                    <p:message for="periodo" />
                                                 </div>
-                                                <div class="row margin-bottom" style="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'display: none':''}">
+                                            </div>
 
-                                                    <div class="col-sm-12 col-md-6 col-lg-3">
-                                                        <div class="ui-material">
-                                                            <p:inputText value="#{registroTutoriaGrupal.rol.sesionGrupalSeleccionada.actividadProgramada}"
-                                                                         style="width: 18em;"
-                                                                         disabled="true"
-                                                                         />
-                                                        </div>
-                                                        <p>Sesión grupal de tutoría</p>
-                                                    </div>
-
-                                                    <div class="col-sm-12 col-md-6 col-lg-3">
-                                                        <div class="ui-material">
-                                                            <p:autoComplete id="estudiante" 
-                                                                            value="#{registroTutoriaGrupal.rol.estudianteJefeGrupoSeleccionado}" 
-                                                                            completeMethod="#{registroTutoriaGrupal.completeEstudiantes}" 
-                                                                            queryDelay="800"
-                                                                            valueChangeListener="#{registroTutoriaGrupal.cambiarEstudianteSeleccionado}"
-                                                                            var="estudiante" 
-                                                                            itemValue="#{estudiante}" 
-                                                                            itemLabel="#{estudiante.datosComplete}" 
-                                                                            converter="entityConverter" 
-                                                                            forceSelection="true"
-                                                                            minQueryLength="4"
-                                                                            required="true"
-                                                                            requiredMessage="Favor de seleccionar un estudiante"
-                                                                            styleClass="campoAutocompleteEstudiante"
-                                                                            scrollHeight="300"
-                                                                            disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                            >
-                                                                <p:column>#{estudiante.datosComplete}</p:column>
-                                                                <p:ajax event="itemSelect" update="@this" process="@this"/>
-                                                            </p:autoComplete>
-                                                        </div>
-                                                        <p:watermark for="estudiante" value="190000 ó Nayeli Martinez Lechuga" />
-                                                        <p:message for="estudiante" />
-                                                        <p>Jefe de Grupo</p>
-                                                    </div>
-
-                                                    <div class="col-sm-12 col-md-6 col-lg-2">
-                                                        <div class="ui-material">
-                                                            <p:calendar id="rtgFecha"
-                                                                        label="rtgFecha"
-                                                                        required="true"
-                                                                        requiredMessage="Ingrese Fecha de la Tutoría Grupal"
-                                                                        value="#{registroTutoriaGrupal.rol.fecha}"
-                                                                        pattern="yyyy-MM-dd"
-                                                                        style="width: 18em;"
-                                                                        locale="es"
-                                                                        readonlyInput="true"
-                                                                        disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                        mask="true"
-                                                                        mindate="#{caster.fechaMinina(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
-                                                                        maxdate="#{caster.fechaMaxima(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
-                                                                        >
-                                                            </p:calendar>
-                                                        </div>
-                                                        <p:watermark for="rtgFecha" value="2019-10-01 (aa-MM-dd)*" />
-                                                        <p:message for="rtgFecha" />
-                                                        <p>Fecha de la tutoría grupal</p>
-                                                    </div>
-
-                                                    <div class="col-sm-12 col-md-6 col-lg-2">
-                                                        <div class="ui-material">
-                                                            <pe:timePicker id="rtgHoraInicio"
-                                                                           value="#{registroTutoriaGrupal.rol.horaInicio}" 
-                                                                           locale="es"
-                                                                           timeSeparator="-" 
-                                                                           startHours="7" 
-                                                                           endHours="20"  
-                                                                           startMinutes="00" 
-                                                                           endMinutes="59" 
-                                                                           intervalMinutes="10" 
-                                                                           showDeselectButton="true" 
-                                                                           showNowButton="true"
-                                                                           showCloseButton="true"
-                                                                           rows="3" 
-                                                                           showPeriod="true"
-                                                                           widgetVar="customTimeWidget" 
-                                                                           label="Hora de inicio de la tutoría grupal" 
-                                                                           required="true" 
-                                                                           requiredMessage="La hora de inicio de la tutoría grupal es requerida"
-                                                                           mode="popup"
-                                                                           disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                           styleClass="campo3Partes"
-                                                                           />
-                                                        </div>
-                                                        <p:watermark for="rtgHoraInicio" value="08:30AM (hh:mm) *" />
-                                                        <p:message for="rtgHoraInicio" />
-                                                        <p>Hora de Inicio</p>  
-                                                    </div>
-
-                                                    <div class="col-sm-12 col-md-6 col-lg-2">
-                                                        <div class="ui-material">
-                                                            <pe:timePicker id="rtgHoraCierre"
-                                                                           value="#{registroTutoriaGrupal.rol.horaCierre}" 
-                                                                           locale="es"
-                                                                           timeSeparator="-" 
-                                                                           startHours="7" 
-                                                                           endHours="20"  
-                                                                           startMinutes="00" 
-                                                                           endMinutes="59" 
-                                                                           intervalMinutes="10" 
-                                                                           showDeselectButton="true" 
-                                                                           showNowButton="true"
-                                                                           showCloseButton="true"
-                                                                           rows="3" 
-                                                                           showPeriod="true"
-                                                                           widgetVar="customTimeWidget" 
-                                                                           label="Hora de cierre de la tutoría grupal" 
-                                                                           required="true" 
-                                                                           requiredMessage="La hora de cierre de la tutoría grupal es requerida"
-                                                                           mode="popup"
-                                                                           disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                           styleClass="campo3Partes"
-                                                                           />
-                                                        </div>
-                                                        <p:watermark for="rtgHoraCierre" value="09:30AM (hh:mm) *" />
-                                                        <p:message for="rtgHoraCierre" />
-                                                        <p>Hora de Cierre</p>  
-                                                    </div>
-
-                                                    <div class="col-sm-12 col-md-12 col-lg-12"></div>
-
-                                                    <div class="col-sm-12 col-md-12 col-lg-6" style="margin-bottom: 15px;">
-                                                        <div class="ui-material">
-                                                            <p:inputTextarea id="rtgOrdenDia"
-                                                                             rows="3" 
-                                                                             cols="80"
-                                                                             counter="displayOrdenDia" 
-                                                                             maxlength="3000" 
-                                                                             counterTemplate="{0} caracteres en total." 
-                                                                             autoResize="true"
-                                                                             required="true"
-                                                                             class="form-control"
-                                                                             requiredMessage="Es requerido el campo de orden del día"
-                                                                             value="#{registroTutoriaGrupal.rol.tutoriaGrupal.ordenDia}"
-                                                                             disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                             />
-                                                            <h:outputText id="displayOrdenDia" />
-                                                            <p:watermark for="rtgOrdenDia" value="Ejemplo de orden del día *" />
-                                                            <p:message for="rtgOrdenDia" />
-                                                            <p:outputLabel for="rtgOrdenDia" value="Orden del día" />
-                                                        </div>
-                                                        <p:message for="rtgOrdenDia" />
-                                                    </div>
-
-                                                    <div class="col-sm-12 col-md-12 col-lg-6" style="margin-bottom: 15px;">
-                                                        <div class="ui-material">
-                                                            <p:inputTextarea id="rtgAcuerdos"
-                                                                             rows="3" 
-                                                                             cols="80"
-                                                                             counter="displayAcuerdos" 
-                                                                             maxlength="3000" 
-                                                                             counterTemplate="{0} caracteres en total." 
-                                                                             autoResize="true"
-                                                                             required="true"
-                                                                             class="form-control"
-                                                                             requiredMessage="Es requerido el campo de acuerdos"
-                                                                             value="#{registroTutoriaGrupal.rol.tutoriaGrupal.acuerdos}"
-                                                                             disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                             />
-                                                            <h:outputText id="displayAcuerdos" />
-                                                            <p:watermark for="rtgAcuerdos" value="Ejemplo de acuerdos *" />
-                                                            <p:message for="rtgAcuerdos" />
-                                                            <p:outputLabel for="rtgAcuerdos" value="Acuerdos" />
-                                                        </div>
-                                                        <p:message for="rtgAcuerdos" />
-                                                    </div>
-
-                                                    <div class="col-sm-12 col-md-12 col-lg-6" style="margin-bottom: 15px;">
-                                                        <div class="ui-material">
-                                                            <p:inputTextarea id="rtgObservaciones"
-                                                                             rows="3" 
-                                                                             cols="80"
-                                                                             counter="displayObservaciones" 
-                                                                             maxlength="3000" 
-                                                                             counterTemplate="{0} caracteres en total." 
-                                                                             autoResize="true"
-                                                                             required="true"
-                                                                             class="form-control"
-                                                                             requiredMessage="Es requerido el campo de observaciones"
-                                                                             value="#{registroTutoriaGrupal.rol.tutoriaGrupal.observaciones}"
-                                                                             disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                             />
-                                                            <h:outputText id="displayObservaciones" />
-                                                            <p:watermark for="rtgObservaciones" value="Ejemplo de observaciones *" />
-                                                            <p:message for="rtgObservaciones" />
-                                                            <p:outputLabel for="rtgObservaciones" value="Observaciones" />
-                                                        </div>
-                                                        <p:message for="rtgObservaciones" />
-                                                    </div>
-
-                                                    <div class="col-sm-12 col-md-12 col-lg-6">
-                                                        <p:commandButton id="btnGuardarTutoriaGrupal" 
-                                                                         value="Guardar tutoría grupal" 
-                                                                         action="#{registroTutoriaGrupal.guardarTutoriaGrupal}" 
-                                                                         oncomplete="actualizarRegistroTutoria();" 
-                                                                         icon="fa fa-pencil-square-o" 
-                                                                         class="btn-primary" 
-                                                                         style="width:15em;" 
-                                                                         disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                         title="Guardar tutoría grupal"
-                                                                         />
-                                                    </div>
-                                                    <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                            <div class="#{casilla4}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="grupo" value="#{registroTutoriaGrupal.rol.grupoTutorSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                        <f:selectItems value="#{registroTutoriaGrupal.rol.listadoGruposTutor}" var="grupo" itemValue="#{grupo}" itemLabel="#{grupo.grupo.grado}° #{grupo.grupo.literal} #{grupo.grupo.idSistema.nombre} de #{grupo.programaEducativo.nombre}" />
+                                                        <p:ajax process="@this" update="@this sesion contenedor contenedorEstudiantes" listener="#{registroTutoriaGrupal.cambiarGrupo}" />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Grupo Tutorado" for="grupo"/>
+                                                    <p:message for="grupo" ><p:autoUpdate/></p:message>
                                                 </div>
+                                            </div>
 
-                                                <div class="row margin-bottom" style="margin-bottom: 10px">
-                                                    <p:toolbar>
-                                                        <f:facet name="left">
-                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                            <p:outputLabel value="Listado de tutorías grupales registrados en la sesión y mes de registro seleccionados" style="padding-top: 5px;" />
-                                                            <p></p>
-                                                        </f:facet>
-                                                    </p:toolbar>
-                                                    <center>
-                                                        <p:dataTable id="dtTutoriasGrupales" 
-                                                                     var="tutoriaGrupal" 
-                                                                     value="#{registroTutoriaGrupal.rol.listaDtoTuriasGrupales}"
-                                                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
-                                                                     resizeMode="expand"
-                                                                     emptyMessage="Aún no se han registrado tutorías en la sesión y evento de registro seleccionado"
-                                                                     selection="#{registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada}" 
-                                                                     rowKey="#{tutoriaGrupal.tutoriaGrupal.tutoriaGrupal}"
+                                            <div class="#{casilla4}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="sesion"
+                                                                     value="#{registroTutoriaGrupal.rol.sesionGrupalSeleccionada}"
+                                                                     converter="entityConverter"
+                                                                     panelStyle="width:30em"
+                                                                     effect="fade"
+                                                                     var="t"
+                                                                     style="width:30em"
+                                                                     filter="true"
+                                                                     filterMatchMode="startsWith"
                                                                      >
-                                                            <p:columnGroup type="header">
-                                                                <p:row class="sucess">
-                                                                    <p:column headerText=""  width="30"/>
-                                                                    <p:column headerText="Opciones"  width="60"/>
-                                                                    <p:column headerText="Jefe de grupo" width="300"/>
-                                                                    <p:column headerText="Fecha" width="130"/>
-                                                                    <p:column headerText="Hora Inicio" width="150"/>
-                                                                    <p:column headerText="Hora Cierre" width="150"/>
-                                                                    <p:column headerText="Orden día" width="500"/>
-                                                                    <p:column headerText="Acuerdos" width="500"/>
-                                                                    <p:column headerText="Observaciones" width="500"/>
-                                                                </p:row>
-                                                            </p:columnGroup>
+                                                        <f:selectItems value="#{registroTutoriaGrupal.rol.listaSesionesGrupalesTutorias}"
+                                                                       var="sesion"
+                                                                       itemLabel="P.#{sesion.planAccionTutoria.planAccionTutoria}-S.#{sesion.sesionGrupal}-No.#{sesion.noSesion}- #{fn:length(sesion.actividadProgramada) > 60 ? sesion.actividadProgramada.substring(1,60):sesion.actividadProgramada}..."
+                                                                       itemValue="#{sesion}"
+                                                                       />
 
-                                                            <c:set var="idTutoriaGrupal" value="#{tutoriaGrupal.tutoriaGrupal.tutoriaGrupal}"/>
-                                                            <!--Selección-->
-                                                            <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                                                        <p:column style="width:20%">
+                                                            <f:facet name="header">
+                                                                <c:set var="porcentaje" value="#{registroTutoriaGrupal.comprobarPorcentaje(t)}"/>
+                                                                <h:outputText value="% de firmas"/>
+                                                            </f:facet>
 
-                                                            <!--Eliminación-->
-                                                            <p:column>
-                                                                <center>
-                                                                    <div class="btn-group">
-                                                                        <p:commandButton class="btn btn-info btn-sm" 
-                                                                                         icon="fa fa-trash" 
-                                                                                         actionListener="#{registroTutoriaGrupal.eliminarTutoriaGrupal(idTutoriaGrupal)}" 
-                                                                                         title="Eliminar registro." 
-                                                                                         process="dtTutoriasGrupales" 
-                                                                                         oncomplete="actualizarRegistroTutoria();" 
-                                                                                         global="false"
-                                                                                         disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                                         >
-                                                                            <p:confirm header="Eliminar" message="¿Está seguro de eliminar la tutoría grupal seleccionada?" icon="ui-icon-alert" />
-                                                                        </p:commandButton>
-                                                                    </div>
-                                                                </center>
-                                                            </p:column>
+                                                            <h:outputText value="#{porcentaje} %" />
+                                                        </p:column>
 
-                                                            <!--Edición de jefe de grupo-->
-                                                            <!--TODO: valor del estudiante seleccionado-->
-                                                            <p:column>
-                                                                <p:autoComplete value="#{tutoriaGrupal.dtoEstudianteComplete}" 
+                                                        <p:column style="width:80%">
+                                                            <f:facet name="header">
+                                                                <h:outputText value="Sesión grupal"/>
+                                                            </f:facet>
+                                                            <h:outputText value="P.#{t.planAccionTutoria.planAccionTutoria}-S.#{t.sesionGrupal}-No.#{t.noSesion}- #{fn:length(t.actividadProgramada) > 60 ? t.actividadProgramada.substring(1,60):t.actividadProgramada}..." />
+                                                        </p:column>
+
+                                                        <f:facet name="footer">
+                                                            <p:separator />
+                                                            <h:outputText value="#{fn:length(registroTutoriaGrupal.rol.listaSesionesGrupalesTutorias)} sesiones grupales" style="font-weight:bold;"/>
+                                                        </f:facet>
+
+                                                        <p:ajax process="@this" update="@this contenedor contenedorEstudiantes" listener="#{registroTutoriaGrupal.cambiarSesiones()}" />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Sesión Grupal de Tutoría" for="sesion"/>
+                                                    <p:message for="sesion" ><p:autoUpdate/></p:message>
+                                                </div>
+                                            </div>
+
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="mes" value="#{registroTutoriaGrupal.rol.eventoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                        <f:selectItems value="#{registroTutoriaGrupal.rol.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" />
+                                                        <p:ajax process="@this" update="@this contenedor contenedorEstudiantes" listener="#{registroTutoriaGrupal.cambiarSesiones()}" />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Mes" for="mes"/>
+                                                    <p:message for="mes" />
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </h:form>
+                                    <h:form id="frmRegistro" prependId="false" class="form-inline">
+                                        <p:remoteCommand id="actualizarRegistroTutoria" name="actualizarRegistroTutoria" actionListener="#{registroTutoriaGrupal.actualizar}" process="@this" update="contenedor" />
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                            <div class="col-lg-12 col-md-12 text-info">
+
+                                                <p:outputPanel id="contenedor">
+                                                    <div style="margin-bottom: 10px;">
+                                                        <!--<div style="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'margin-bottom: 10px;display: none':'margin-bottom: 10px;'}">-->
+                                                        <p:outputLabel value="1.- Ingrese los datos de la tutoría grupal (asegúrese de llenar todos los campos)."/>
+                                                    </div>
+                                                    <div class="row margin-bottom" >
+                                                        <!--style="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'display: none':''}"-->
+                                                        <div class="col-sm-12 col-md-6 col-lg-3">
+                                                            <div class="ui-material">
+                                                                <p:autoComplete id="estudiante" 
+                                                                                value="#{registroTutoriaGrupal.rol.estudianteJefeGrupoSeleccionado}" 
                                                                                 completeMethod="#{registroTutoriaGrupal.completeEstudiantes}" 
                                                                                 queryDelay="800"
-                                                                                valueChangeListener="#{registroTutoriaGrupal.actualizarJefeGrupo}"
+                                                                                valueChangeListener="#{registroTutoriaGrupal.cambiarEstudianteSeleccionado}"
                                                                                 var="estudiante" 
                                                                                 itemValue="#{estudiante}" 
                                                                                 itemLabel="#{estudiante.datosComplete}" 
@@ -409,62 +185,77 @@
                                                                                 requiredMessage="Favor de seleccionar un estudiante"
                                                                                 styleClass="campoAutocompleteEstudiante"
                                                                                 scrollHeight="300"
-                                                                                disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                                >
-                                                                    <p:column>#{estudiante.datosComplete}</p:column>
-                                                                    <p:ajax event="itemSelect" 
-                                                                            process="@this" 
-                                                                            update="dtTutoriasGrupales"
-                                                                            global="false"
-                                                                            listener="#{registroTutoriaGrupal.cambiarSesionesDate}"
-                                                                            />
-                                                                    <f:attribute name="tutoriaGrupal" 
-                                                                                 value="#{tutoriaGrupal.tutoriaGrupal}" 
-                                                                                 />
-                                                                </p:autoComplete>
-                                                            </p:column>
 
-                                                            <!--Fecha-->
-                                                            <p:column>
-                                                                <p:calendar required="true"
-                                                                            requiredMessage="Ingrese Fecha de la Tutoría Gripal"
-                                                                            value="#{tutoriaGrupal.tutoriaGrupal.fecha}"
-                                                                            locale="es"
-                                                                            valueChangeListener="#{registroTutoriaGrupal.actualizarFecha}"
+                                                                                >
+                                                                    <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                    <p:column>#{estudiante.datosComplete}</p:column>
+                                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                                </p:autoComplete>
+                                                            </div>
+                                                            <p:watermark for="estudiante" value="190000 ó Nayeli Martinez Lechuga" />
+                                                            <p:message for="estudiante" />
+                                                            <p>Jefe de Grupo</p>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-2">
+                                                            <div class="ui-material">
+                                                                <p:calendar id="rtgFecha"
+                                                                            label="rtgFecha"
+                                                                            required="true"
+                                                                            requiredMessage="Ingrese Fecha de la Tutoría Grupal"
+                                                                            value="#{registroTutoriaGrupal.rol.fecha}"
                                                                             pattern="yyyy-MM-dd"
-                                                                            styleClass="campoTutoriaGrupalDT"
-                                                                            disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                            title="Si desea actualizar dar clic aqui y seleccionar y presionar TAB ó ENTER, ó bien colocar el cursor en el siguiente campo"
-                                                                            placeholder="2019-10-01 (aa-MM-dd)*"
+                                                                            style="width: 18em;"
+                                                                            locale="es"
                                                                             readonlyInput="true"
+
                                                                             mask="true"
                                                                             mindate="#{caster.fechaMinina(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
                                                                             maxdate="#{caster.fechaMaxima(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
                                                                             >
-                                                                    <p:ajax event="dateSelect"
-                                                                            process="@this"
-                                                                            update="dtTutoriasGrupales"
-                                                                            global="false"
-                                                                            listener="#{registroTutoriaGrupal.cambiarSesionesDate}"
-                                                                            />
-                                                                    <p:ajax event="change"
-                                                                            process="@this"
-                                                                            update="dtTutoriasGrupales"
-                                                                            global="false"
-                                                                            listener="#{registroTutoriaGrupal.cambiarSesionesDate}"
-                                                                            />
-                                                                    <f:attribute name="tutoriaGrupal" 
-                                                                                 value="#{tutoriaGrupal.tutoriaGrupal}" 
-                                                                                 />
+                                                                    <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
                                                                 </p:calendar>
-                                                            </p:column>
+                                                            </div>
+                                                            <p:watermark for="rtgFecha" value="2019-10-01 (aa-MM-dd)*" />
+                                                            <p:message for="rtgFecha" />
+                                                            <p>Fecha de la tutoría grupal</p>
+                                                        </div>
 
-                                                            <!--Hora de inicio-->
-                                                            <p:column>
-                                                                <pe:timePicker required="true" 
+                                                        <div class="col-sm-12 col-md-6 col-lg-2">
+                                                            <div class="ui-material">
+                                                                <pe:timePicker id="rtgHoraInicio"
+                                                                               value="#{registroTutoriaGrupal.rol.horaInicio}" 
+                                                                               locale="es"
+                                                                               timeSeparator="-" 
+                                                                               startHours="7" 
+                                                                               endHours="20"  
+                                                                               startMinutes="00" 
+                                                                               endMinutes="59" 
+                                                                               intervalMinutes="10" 
+                                                                               showDeselectButton="true" 
+                                                                               showNowButton="true"
+                                                                               showCloseButton="true"
+                                                                               rows="3" 
+                                                                               showPeriod="true"
+                                                                               widgetVar="customTimeWidget" 
+                                                                               label="Hora de inicio de la tutoría grupal" 
+                                                                               required="true" 
                                                                                requiredMessage="La hora de inicio de la tutoría grupal es requerida"
-                                                                               value="#{tutoriaGrupal.tutoriaGrupal.horaInicio}" 
-                                                                               valueChangeListener="#{registroTutoriaGrupal.actualizarHoraInicio}"
+                                                                               mode="popup"
+
+                                                                               styleClass="campo3Partes"
+                                                                               />
+                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                            </div>
+                                                            <p:watermark for="rtgHoraInicio" value="08:30AM (hh:mm) *" />
+                                                            <p:message for="rtgHoraInicio" />
+                                                            <p>Hora de Inicio</p>  
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-2">
+                                                            <div class="ui-material">
+                                                                <pe:timePicker id="rtgHoraCierre"
+                                                                               value="#{registroTutoriaGrupal.rol.horaCierre}" 
                                                                                locale="es"
                                                                                timeSeparator="-" 
                                                                                startHours="7" 
@@ -477,427 +268,723 @@
                                                                                showCloseButton="true"
                                                                                rows="3" 
                                                                                showPeriod="true"
-                                                                               mode="popup"
-                                                                               title="Si desea actualizar dar clic aqui y seleccionar y presionar TAB, ó bien colocar el cursor en el siguiente campo"
-                                                                               disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                               >
-                                                                    <p:ajax process="@this"
-                                                                            update="dtTutoriasGrupales"
-                                                                            global="false"
-                                                                            listener="#{registroTutoriaGrupal.cambiarSesionesDate}"
-                                                                            />
-                                                                    <f:attribute name="tutoriaGrupal" 
-                                                                                 value="#{tutoriaGrupal.tutoriaGrupal}" 
-                                                                                 />
-                                                                </pe:timePicker>
-                                                            </p:column>
-
-                                                            <!--Hora de cierre-->
-                                                            <p:column>
-                                                                <pe:timePicker required="true" 
+                                                                               widgetVar="customTimeWidget" 
+                                                                               label="Hora de cierre de la tutoría grupal" 
+                                                                               required="true" 
                                                                                requiredMessage="La hora de cierre de la tutoría grupal es requerida"
-                                                                               value="#{tutoriaGrupal.tutoriaGrupal.horaCierre}" 
-                                                                               valueChangeListener="#{registroTutoriaGrupal.actualizarHoraCierre}"
-                                                                               locale="es"
-                                                                               timeSeparator="-" 
-                                                                               startHours="7" 
-                                                                               endHours="20"  
-                                                                               startMinutes="00" 
-                                                                               endMinutes="59" 
-                                                                               intervalMinutes="10" 
-                                                                               showDeselectButton="true" 
-                                                                               showNowButton="true"
-                                                                               showCloseButton="true"
-                                                                               rows="3" 
-                                                                               showPeriod="true"
                                                                                mode="popup"
-                                                                               title="Si desea actualizar dar clic aqui y seleccionar y presionar TAB, ó bien colocar el cursor en el siguiente campo"
-                                                                               disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                               >
-                                                                    <p:ajax process="@this"
-                                                                            update="dtTutoriasGrupales"
-                                                                            global="false"
-                                                                            listener="#{registroTutoriaGrupal.cambiarSesionesDate}"
-                                                                            />
-                                                                    <f:attribute name="tutoriaGrupal" 
-                                                                                 value="#{tutoriaGrupal.tutoriaGrupal}" 
-                                                                                 />
-                                                                </pe:timePicker>
-                                                            </p:column>
 
-                                                            <!--Orden del día-->
-                                                            <p:column>
-                                                                <p:inputTextarea rows="1" 
-                                                                                 cols="76"
+                                                                               styleClass="campo3Partes"
+                                                                               />
+                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                            </div>
+                                                            <p:watermark for="rtgHoraCierre" value="09:30AM (hh:mm) *" />
+                                                            <p:message for="rtgHoraCierre" />
+                                                            <p>Hora de Cierre</p>  
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;"></div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-6" style="margin-bottom: 15px;">
+                                                            <div class="ui-material">
+                                                                <p:inputTextarea id="rtgOrdenDia"
+                                                                                 rows="3" 
+                                                                                 cols="80"
+                                                                                 counter="displayOrdenDia" 
                                                                                  maxlength="3000" 
+                                                                                 counterTemplate="{0} caracteres en total." 
                                                                                  autoResize="true"
                                                                                  required="true"
-                                                                                 requiredMessage="Es requerido el campo de observaciones"
                                                                                  class="form-control"
-                                                                                 title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
-                                                                                 value="#{tutoriaGrupal.tutoriaGrupal.ordenDia}"
-                                                                                 valueChangeListener="#{registroTutoriaGrupal.actualizarOrdenDia}"
-                                                                                 disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                                 >
-                                                                    <p:ajax process="@this" 
-                                                                            update="dtTutoriasGrupales" 
-                                                                            global="false"
-                                                                            /> 
-                                                                    <f:attribute name="tutoriaGrupal" 
-                                                                                 value="#{tutoriaGrupal.tutoriaGrupal}" 
-                                                                                 />
-                                                                </p:inputTextarea>
-                                                            </p:column>
+                                                                                 requiredMessage="Es requerido el campo de orden del día"
+                                                                                 value="#{registroTutoriaGrupal.rol.tutoriaGrupal.ordenDia}"
 
-                                                            <!--Acuerdos-->
-                                                            <p:column>
-                                                                <p:inputTextarea rows="1" 
-                                                                                 cols="76"
+                                                                                 />
+                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                <h:outputText id="displayOrdenDia" />
+                                                                <p:watermark for="rtgOrdenDia" value="Ejemplo de orden del día *" />
+                                                                <p:message for="rtgOrdenDia" />
+                                                                <p:outputLabel for="rtgOrdenDia" value="Orden del día" />
+                                                            </div>
+                                                            <p:message for="rtgOrdenDia" />
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-6" style="margin-bottom: 15px;">
+                                                            <div class="ui-material">
+                                                                <p:inputTextarea id="rtgAcuerdos"
+                                                                                 rows="3" 
+                                                                                 cols="80"
+                                                                                 counter="displayAcuerdos" 
                                                                                  maxlength="3000" 
+                                                                                 counterTemplate="{0} caracteres en total." 
                                                                                  autoResize="true"
                                                                                  required="true"
+                                                                                 class="form-control"
                                                                                  requiredMessage="Es requerido el campo de acuerdos"
-                                                                                 class="form-control"
-                                                                                 title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
-                                                                                 value="#{tutoriaGrupal.tutoriaGrupal.acuerdos}"
-                                                                                 valueChangeListener="#{registroTutoriaGrupal.actualizarAcuerdos}"
-                                                                                 disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                                 >
-                                                                    <p:ajax process="@this" 
-                                                                            update="dtTutoriasGrupales" 
-                                                                            global="false"
-                                                                            /> 
-                                                                    <f:attribute name="tutoriaGrupal" 
-                                                                                 value="#{tutoriaGrupal.tutoriaGrupal}" 
-                                                                                 />
-                                                                </p:inputTextarea>
-                                                            </p:column>
+                                                                                 value="#{registroTutoriaGrupal.rol.tutoriaGrupal.acuerdos}"
 
-                                                            <!--Observaciones-->
-                                                            <p:column>
-                                                                <p:inputTextarea rows="1" 
-                                                                                 cols="76"
+                                                                                 />
+                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                <h:outputText id="displayAcuerdos" />
+                                                                <p:watermark for="rtgAcuerdos" value="Ejemplo de acuerdos *" />
+                                                                <p:message for="rtgAcuerdos" />
+                                                                <p:outputLabel for="rtgAcuerdos" value="Acuerdos" />
+                                                            </div>
+                                                            <p:message for="rtgAcuerdos" />
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-6" style="margin-bottom: 15px;">
+                                                            <div class="ui-material">
+                                                                <p:inputTextarea id="rtgObservaciones"
+                                                                                 rows="3" 
+                                                                                 cols="80"
+                                                                                 counter="displayObservaciones" 
                                                                                  maxlength="3000" 
+                                                                                 counterTemplate="{0} caracteres en total." 
                                                                                  autoResize="true"
                                                                                  required="true"
-                                                                                 requiredMessage="Es requerido el campo de observaciones"
                                                                                  class="form-control"
-                                                                                 title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
-                                                                                 value="#{tutoriaGrupal.tutoriaGrupal.observaciones}"
-                                                                                 valueChangeListener="#{registroTutoriaGrupal.actualizarObservaciones}"
-                                                                                 disabled="#{registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"
-                                                                                 >
-                                                                    <p:ajax process="@this" 
-                                                                            update="dtTutoriasGrupales" 
-                                                                            global="false"
-                                                                            /> 
-                                                                    <f:attribute name="tutoriaGrupal" 
-                                                                                 value="#{tutoriaGrupal.tutoriaGrupal}" 
+                                                                                 requiredMessage="Es requerido el campo de observaciones"
+                                                                                 value="#{registroTutoriaGrupal.rol.tutoriaGrupal.observaciones}"
+
                                                                                  />
-                                                                </p:inputTextarea>
+                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                <h:outputText id="displayObservaciones" />
+                                                                <p:watermark for="rtgObservaciones" value="Ejemplo de observaciones *" />
+                                                                <p:message for="rtgObservaciones" />
+                                                                <p:outputLabel for="rtgObservaciones" value="Observaciones" />
+                                                            </div>
+                                                            <p:message for="rtgObservaciones" />
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                                            <p:commandButton id="btnGuardarTutoriaGrupal" 
+                                                                             value="Guardar tutoría grupal" 
+                                                                             action="#{registroTutoriaGrupal.guardarTutoriaGrupal}" 
+                                                                             oncomplete="actualizarRegistroTutoria();" 
+                                                                             icon="fa fa-pencil-square-o" 
+                                                                             class="btn-primary" 
+                                                                             style="width:15em;" 
+
+                                                                             title="Guardar tutoría grupal"
+                                                                             />
+                                                            <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                                    </div>
+
+                                                    <div class="row margin-bottom" style="margin-bottom: 10px">
+                                                        <p:toolbar>
+                                                            <f:facet name="left">
+                                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                <p:outputLabel value="Listado de tutorías grupales registrados en la sesión y mes de registro seleccionados." style="padding-top: 5px;" />
+                                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                <p:outputLabel value="Para modificar la información de una tutoría grupal solo modifique directamente los campos y se guardarán de manera automática." style="padding-top: 5px;" />
+                                                                <p></p>
+                                                            </f:facet>
+                                                        </p:toolbar>
+                                                        <center>
+                                                            <p:dataTable id="dtTutoriasGrupales" 
+                                                                         var="tutoriaGrupal" 
+                                                                         value="#{registroTutoriaGrupal.rol.listaDtoTuriasGrupales}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                         resizeMode="expand"
+                                                                         emptyMessage="Aún no se han registrado tutorías en la sesión y evento de registro seleccionado"
+                                                                         selection="#{registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada}" 
+                                                                         rowKey="#{tutoriaGrupal.tutoriaGrupal.tutoriaGrupal}"
+                                                                         >
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="sucess">
+                                                                        <p:column headerText="Seleccione y de clic en Verificar Participantes"  width="150"/>
+                                                                        <p:column headerText="Opciones"  width="70"/>
+                                                                        <p:column headerText="Jefe de grupo" width="300"/>
+                                                                        <p:column headerText="Fecha" width="130"/>
+                                                                        <p:column headerText="Hora Inicio" width="150"/>
+                                                                        <p:column headerText="Hora Cierre" width="150"/>
+                                                                        <p:column headerText="Orden día" width="500"/>
+                                                                        <p:column headerText="Acuerdos" width="500"/>
+                                                                        <p:column headerText="Observaciones" width="500"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+
+                                                                <c:set var="idTutoriaGrupal" value="#{tutoriaGrupal.tutoriaGrupal.tutoriaGrupal}"/>
+                                                                <!--Selección-->
+                                                                <p:column selectionMode="single" style="width:16px;text-align:center"/>
+
+                                                                <!--Eliminación-->
+                                                                <p:column>
+                                                                    <center>
+                                                                        <div class="btn-group">
+                                                                            <p:commandButton class="btn btn-info btn-sm" 
+                                                                                             icon="fa fa-trash" 
+                                                                                             actionListener="#{registroTutoriaGrupal.eliminarTutoriaGrupal(idTutoriaGrupal)}" 
+                                                                                             title="Eliminar registro." 
+                                                                                             process="dtTutoriasGrupales" 
+                                                                                             oncomplete="actualizarRegistroTutoria();" 
+                                                                                             global="false"
+
+                                                                                             >
+                                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                                <p:confirm header="Eliminar" message="¿Está seguro de eliminar la tutoría grupal seleccionada?" icon="ui-icon-alert" />
+                                                                            </p:commandButton>
+                                                                        </div>
+                                                                    </center>
+                                                                </p:column>
+
+                                                                <!--Edición de jefe de grupo-->
+                                                                <!--TODO: valor del estudiante seleccionado-->
+                                                                <p:column>
+                                                                    <p:autoComplete value="#{tutoriaGrupal.dtoEstudianteComplete}" 
+                                                                                    completeMethod="#{registroTutoriaGrupal.completeEstudiantes}" 
+                                                                                    queryDelay="800"
+                                                                                    valueChangeListener="#{registroTutoriaGrupal.actualizarJefeGrupo}"
+                                                                                    var="estudiante" 
+                                                                                    itemValue="#{estudiante}" 
+                                                                                    itemLabel="#{estudiante.datosComplete}" 
+                                                                                    converter="entityConverter" 
+                                                                                    forceSelection="true"
+                                                                                    minQueryLength="4"
+                                                                                    required="true"
+                                                                                    requiredMessage="Favor de seleccionar un estudiante"
+                                                                                    styleClass="campoAutocompleteEstudiante"
+                                                                                    scrollHeight="300"
+
+                                                                                    title="Si desea modificar este campo solo ingrese el nombre o matricula del esudiante, seleccione el resultado y quedará guardado de manera automática"
+                                                                                    >
+                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                        <p:column>#{estudiante.datosComplete}</p:column>
+                                                                        <p:ajax event="itemSelect" 
+                                                                                process="@this" 
+                                                                                update="dtTutoriasGrupales"
+                                                                                global="false"
+                                                                                listener="#{registroTutoriaGrupal.cambiarSesionesDate}"
+                                                                                />
+                                                                        <f:attribute name="tutoriaGrupal" 
+                                                                                     value="#{tutoriaGrupal.tutoriaGrupal}" 
+                                                                                     />
+                                                                    </p:autoComplete>
+                                                                </p:column>
+
+                                                                <!--Fecha-->
+                                                                <p:column>
+                                                                    <p:calendar required="true"
+                                                                                requiredMessage="Ingrese Fecha de la Tutoría Gripal"
+                                                                                value="#{tutoriaGrupal.tutoriaGrupal.fecha}"
+                                                                                locale="es"
+                                                                                valueChangeListener="#{registroTutoriaGrupal.actualizarFecha}"
+                                                                                pattern="yyyy-MM-dd"
+                                                                                styleClass="campoTutoriaGrupalDT"
+
+                                                                                title="Si desea actualizar dar clic aqui y seleccionar y presionar TAB ó ENTER, ó bien colocar el cursor en el siguiente campo"
+                                                                                placeholder="2019-10-01 (aa-MM-dd)*"
+                                                                                readonlyInput="true"
+                                                                                mask="true"
+                                                                                mindate="#{caster.fechaMinina(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
+                                                                                maxdate="#{caster.fechaMaxima(registroTutoriaGrupal.rol.eventoSeleccionado.ejercicioFiscal.anio, registroTutoriaGrupal.rol.eventoSeleccionado.mes)}"
+                                                                                >
+                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                        <p:ajax event="dateSelect"
+                                                                                process="@this"
+                                                                                update="dtTutoriasGrupales"
+                                                                                global="false"
+                                                                                listener="#{registroTutoriaGrupal.cambiarSesionesDate}"
+                                                                                />
+                                                                        <p:ajax event="change"
+                                                                                process="@this"
+                                                                                update="dtTutoriasGrupales"
+                                                                                global="false"
+                                                                                listener="#{registroTutoriaGrupal.cambiarSesionesDate}"
+                                                                                />
+                                                                        <f:attribute name="tutoriaGrupal" 
+                                                                                     value="#{tutoriaGrupal.tutoriaGrupal}" 
+                                                                                     />
+                                                                    </p:calendar>
+                                                                </p:column>
+
+                                                                <!--Hora de inicio-->
+                                                                <p:column>
+                                                                    <pe:timePicker required="true" 
+                                                                                   requiredMessage="La hora de inicio de la tutoría grupal es requerida"
+                                                                                   value="#{tutoriaGrupal.tutoriaGrupal.horaInicio}" 
+                                                                                   valueChangeListener="#{registroTutoriaGrupal.actualizarHoraInicio}"
+                                                                                   locale="es"
+                                                                                   timeSeparator="-" 
+                                                                                   startHours="7" 
+                                                                                   endHours="20"  
+                                                                                   startMinutes="00" 
+                                                                                   endMinutes="59" 
+                                                                                   intervalMinutes="10" 
+                                                                                   showDeselectButton="true" 
+                                                                                   showNowButton="true"
+                                                                                   showCloseButton="true"
+                                                                                   rows="3" 
+                                                                                   showPeriod="true"
+                                                                                   mode="popup"
+                                                                                   title="Si desea actualizar dar clic aqui y seleccionar y presionar TAB, ó bien colocar el cursor en el siguiente campo"
+
+                                                                                   >
+                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                        <p:ajax process="@this"
+                                                                                update="dtTutoriasGrupales"
+                                                                                global="false"
+                                                                                listener="#{registroTutoriaGrupal.cambiarSesionesDate}"
+                                                                                />
+                                                                        <f:attribute name="tutoriaGrupal" 
+                                                                                     value="#{tutoriaGrupal.tutoriaGrupal}" 
+                                                                                     />
+                                                                    </pe:timePicker>
+                                                                </p:column>
+
+                                                                <!--Hora de cierre-->
+                                                                <p:column>
+                                                                    <pe:timePicker required="true" 
+                                                                                   requiredMessage="La hora de cierre de la tutoría grupal es requerida"
+                                                                                   value="#{tutoriaGrupal.tutoriaGrupal.horaCierre}" 
+                                                                                   valueChangeListener="#{registroTutoriaGrupal.actualizarHoraCierre}"
+                                                                                   locale="es"
+                                                                                   timeSeparator="-" 
+                                                                                   startHours="7" 
+                                                                                   endHours="20"  
+                                                                                   startMinutes="00" 
+                                                                                   endMinutes="59" 
+                                                                                   intervalMinutes="10" 
+                                                                                   showDeselectButton="true" 
+                                                                                   showNowButton="true"
+                                                                                   showCloseButton="true"
+                                                                                   rows="3" 
+                                                                                   showPeriod="true"
+                                                                                   mode="popup"
+                                                                                   title="Si desea actualizar dar clic aqui y seleccionar y presionar TAB, ó bien colocar el cursor en el siguiente campo"
+
+                                                                                   >
+                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                        <p:ajax process="@this"
+                                                                                update="dtTutoriasGrupales"
+                                                                                global="false"
+                                                                                listener="#{registroTutoriaGrupal.cambiarSesionesDate}"
+                                                                                />
+                                                                        <f:attribute name="tutoriaGrupal" 
+                                                                                     value="#{tutoriaGrupal.tutoriaGrupal}" 
+                                                                                     />
+                                                                    </pe:timePicker>
+                                                                </p:column>
+
+                                                                <!--Orden del día-->
+                                                                <p:column>
+                                                                    <p:inputTextarea rows="1" 
+                                                                                     cols="76"
+                                                                                     maxlength="3000" 
+                                                                                     autoResize="true"
+                                                                                     required="true"
+                                                                                     requiredMessage="Es requerido el campo de observaciones"
+                                                                                     class="form-control"
+                                                                                     title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
+                                                                                     value="#{tutoriaGrupal.tutoriaGrupal.ordenDia}"
+                                                                                     valueChangeListener="#{registroTutoriaGrupal.actualizarOrdenDia}"
+
+                                                                                     >
+                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                        <p:ajax process="@this" 
+                                                                                update="dtTutoriasGrupales" 
+                                                                                global="false"
+                                                                                /> 
+                                                                        <f:attribute name="tutoriaGrupal" 
+                                                                                     value="#{tutoriaGrupal.tutoriaGrupal}" 
+                                                                                     />
+                                                                    </p:inputTextarea>
+                                                                </p:column>
+
+                                                                <!--Acuerdos-->
+                                                                <p:column>
+                                                                    <p:inputTextarea rows="1" 
+                                                                                     cols="76"
+                                                                                     maxlength="3000" 
+                                                                                     autoResize="true"
+                                                                                     required="true"
+                                                                                     requiredMessage="Es requerido el campo de acuerdos"
+                                                                                     class="form-control"
+                                                                                     title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
+                                                                                     value="#{tutoriaGrupal.tutoriaGrupal.acuerdos}"
+                                                                                     valueChangeListener="#{registroTutoriaGrupal.actualizarAcuerdos}"
+
+                                                                                     >
+                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                        <p:ajax process="@this" 
+                                                                                update="dtTutoriasGrupales" 
+                                                                                global="false"
+                                                                                /> 
+                                                                        <f:attribute name="tutoriaGrupal" 
+                                                                                     value="#{tutoriaGrupal.tutoriaGrupal}" 
+                                                                                     />
+                                                                    </p:inputTextarea>
+                                                                </p:column>
+
+                                                                <!--Observaciones-->
+                                                                <p:column>
+                                                                    <p:inputTextarea rows="1" 
+                                                                                     cols="76"
+                                                                                     maxlength="3000" 
+                                                                                     autoResize="true"
+                                                                                     required="true"
+                                                                                     requiredMessage="Es requerido el campo de observaciones"
+                                                                                     class="form-control"
+                                                                                     title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
+                                                                                     value="#{tutoriaGrupal.tutoriaGrupal.observaciones}"
+                                                                                     valueChangeListener="#{registroTutoriaGrupal.actualizarObservaciones}"
+
+                                                                                     >
+                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                        <p:ajax process="@this" 
+                                                                                update="dtTutoriasGrupales" 
+                                                                                global="false"
+                                                                                /> 
+                                                                        <f:attribute name="tutoriaGrupal" 
+                                                                                     value="#{tutoriaGrupal.tutoriaGrupal}" 
+                                                                                     />
+                                                                    </p:inputTextarea>
+                                                                </p:column>
+
+                                                                <f:facet name="footer">
+                                                                    <div style="text-align: left">
+                                                                        <p:column style="text-align: left;">
+                                                                            <p:commandButton process="dtTutoriasGrupales" 
+                                                                                             update="contenedorEstudiantes" 
+                                                                                             oncomplete="actualizarEstudiantes();"
+                                                                                             actionListener="#{registroTutoriaGrupal.listarEstudiantes}" 
+                                                                                             icon="fa fa-search" 
+                                                                                             class="btn-primary" 
+                                                                                             value="Verificar Participantes"
+                                                                                             title="Presione este botón para verificar o asignar participantes a la tutoría grupal seleccionada"
+                                                                                             disabled="#{!empty registroTutoriaGrupal.rol.listaDtoTuriasGrupales?'false':'true'}"
+                                                                                             />
+
+                                                                        </p:column>
+                                                                        <p:column style="text-align: left;">
+                                                                            Usted ha registrado un total de: #{fn:length(registroTutoriaGrupal.rol.listaDtoTuriasGrupales)} tutorías grupales.
+                                                                        </p:column>
+                                                                    </div>
+                                                                </f:facet>
+
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog>
+                                                        </center>
+                                                        <div class="col-sm-12 col-md-12"><p:separator/></div>
+                                                    </div>
+                                                </p:outputPanel>
+                                            </div>
+                                        </div>    
+                                    </h:form>
+                                    <h:form id="frmRegistroParticipantes" prependId="false" class="form-inline">
+                                        <p:remoteCommand id="actualizarEstudiantes" name="actualizarEstudiantes" actionListener="#{registroTutoriaGrupal.actualizarEstudiantes()}" process="@this" update="contenedorEstudiantes frmCasosCriticos modalRegistroCasoCritico" />
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 text-info">
+                                                <p:outputPanel id="contenedorEstudiantes">
+                                                    <div class="row margin-bottom" style="margin-bottom: 10px">
+                                                        <p:toolbar>
+                                                            <f:facet name="left">
+                                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                <p:outputLabel value="Para registrar la asistencia de los estudiantes deberá seleccionar previamente una tutoría grupal" style="padding-top: 5px;" />
+                                                                <p></p>
+                                                            </f:facet>
+                                                        </p:toolbar>
+                                                        
+                                                        <c:if test="#{registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada.tutoriaGrupal.tutoriaGrupal ne null}">
+                                                            <div class="callout callout-info">
+                                                                <p><code style="color:#4185A0;">Usted ha seleccionado la tutoría grupal con fecha: #{registroTutoriaGrupal.rol.formatoFechaAsesoria}</code></p>
+                                                                <p><code style="color:#4185A0;">#{fn:length(registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada.tutoriaGrupal.ordenDia) > 150 ? registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada.tutoriaGrupal.ordenDia.substring(1,150):registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada.tutoriaGrupal.ordenDia}...</code></p>
+                                                            </div>
+                                                        </c:if>
+                                                        
+                                                        <p:dataTable id="dtTGEstudiantes" 
+                                                                     widgetVar="dtTGEstudiantes"
+                                                                     var="est" 
+                                                                     value="#{registroTutoriaGrupal.rol.listaEstudiantes}" 
+                                                                     filteredValue="#{registroTutoriaGrupal.rol.listaEstudiantesFiltro}"
+                                                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                     resizeMode="expand"
+                                                                     emptyMessage="No se encontrarón estudiantes en el grupo y tutoría seleccionados"
+                                                                     >
+
+                                                            <p:column filterBy="#{est.estudiante.estudiante.matricula}" headerText="Matricula" filterMatchMode="contains" width="60" style="text-align:  center">
+                                                                <h:outputText value="#{est.estudiante.estudiante.matricula}" />
+                                                            </p:column>
+
+                                                            <p:column filterBy="#{est.estudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.estudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.estudiante.estudiante.aspirante.idPersona.nombre}" headerText="Nombre" filterMatchMode="contains" width="200" priority="2">
+                                                                <h:outputText value="#{est.estudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.estudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.estudiante.estudiante.aspirante.idPersona.nombre}" />
+                                                            </p:column>
+
+                                                            <p:column filterBy="#{est.participacion}" headerText="Asistencia" filterMatchMode="equals" width="200" style="text-align:  center">
+                                                                <f:facet name="filter">
+                                                                    <p:selectOneButton onchange="PF('dtTGEstudiantes').filter()" styleClass="custom-filter">
+                                                                        <f:converter converterId="javax.faces.Boolean" />
+                                                                        <f:selectItem itemLabel="Todos" itemValue="" />
+                                                                        <f:selectItem itemLabel="Asistió" itemValue="true" />
+                                                                        <f:selectItem itemLabel="No Asistió" itemValue="false" />
+                                                                    </p:selectOneButton>
+                                                                </f:facet>
+
+                                                                <p:selectBooleanButton value="#{est.participacion}" 
+                                                                                       onLabel="Asistió" 
+                                                                                       offLabel="No Asistió" 
+                                                                                       title="De clic aqui para modificar la asistencia, el registro se guarda de manera automática"
+                                                                                       valueChangeListener="#{registroTutoriaGrupal.guardarParticipanteTutoriaGrupal}"
+                                                                                       onIcon="ui-icon-check"
+                                                                                       offIcon="ui-icon-close"
+                                                                                       style="text-align: left"
+                                                                                       disabled="#{registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada.tutoriaGrupal.tutoriaGrupal eq null?'true':'false'}"
+                                                                                       >
+                                                                    <!--or registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo-->
+                                                                    <p:ajax process="@this"
+                                                                            oncomplete="actualizarEstudiantes();"
+                                                                            />
+                                                                    <f:attribute name="participante" 
+                                                                                 value="#{est.participanteTutoriaGrupal}" 
+                                                                                 />
+                                                                </p:selectBooleanButton>
+                                                            </p:column>
+
+                                                            <p:column headerText="Genéro" width="60" style="text-align:  center" priority="4">
+                                                                <h:outputText value="#{est.estudiante.estudiante.aspirante.idPersona.genero eq 1?'Femenino':'Masculino'}" />
+                                                            </p:column>
+
+                                                            <p:column headerText="Situación" width="60" style="text-align:  center" priority="3">
+                                                                <h:outputText value="#{est.estudiante.estudiante.tipoEstudiante.descripcion}" />
+                                                            </p:column>
+
+                                                            <p:column headerText="Aceptación de acuerdos (Estudiante)" width="155" style="text-align:center" priority="5">
+                                                                <h:outputText value="#{est.participanteTutoriaGrupal.aceptacionAcuerdos}" />
+                                                            </p:column>
+
+                                                            <p:column headerText="Comentarios (Estudiante)" width="300" priority="6">
+                                                                <h:outputText value="#{est.participanteTutoriaGrupal.comentarios}" />
+                                                            </p:column>
+
+                                                            <p:column headerText="Casos Críticos Registrados" width="60" style="text-align:  center" priority="1">
+                                                                <p:commandButton actionListener="#{registroTutoriaGrupal.listarCasosCriticos(est.estudiante.estudiante)}"
+                                                                                 class="btn btn-sm #{fn:length(est.listaCasosCriticos)>0?'btn-danger':'btn-info'}" 
+                                                                                 icon="fa fa-check-square"
+                                                                                 title="Presione el botón para visualizar casos críticos"
+                                                                                 process="@this"
+                                                                                 global="false"
+                                                                                 oncomplete="actualizarEstudiantes();"
+                                                                                 />
                                                             </p:column>
 
                                                             <f:facet name="footer">
                                                                 <div style="text-align: left">
                                                                     <p:column style="text-align: left;">
-                                                                        <p:commandButton process="dtTutoriasGrupales" 
-                                                                                         update="contenedorEstudiantes" 
+                                                                        <p:commandButton process="dtTGEstudiantes"
+                                                                                         actionListener="#{registroTutoriaGrupal.guardarParticipantesGeneralTutoriaGrupal(registroTutoriaGrupal.rol.listaEstudiantes)}" 
+                                                                                         icon="fa fa-save" 
+                                                                                         class="btn btn-sm btn-primary" 
+                                                                                         value="Pase de lista General"
+                                                                                         title="Presione este botón para realizar un pase de lista general en el grupo seleccionado"
+                                                                                         disabled="#{registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada.tutoriaGrupal.tutoriaGrupal eq null?'true':'false'}"
                                                                                          oncomplete="actualizarEstudiantes();"
-                                                                                         actionListener="#{registroTutoriaGrupal.listarEstudiantes}" 
-                                                                                         icon="fa fa-search" 
-                                                                                         class="btn-primary" 
-                                                                                         value="Verificar Participantes"
-                                                                                         title="Presione este botón para verificar o asignar participantes a la tutoría grupal seleccionada"
-                                                                                         disabled="#{!empty registroTutoriaGrupal.rol.listaDtoTuriasGrupales?'false':'true'}"
                                                                                          />
-
                                                                     </p:column>
                                                                     <p:column style="text-align: left;">
-                                                                        Usted ha registrado un total de: #{fn:length(registroTutoriaGrupal.rol.listaDtoTuriasGrupales)} tutorías grupales.
+                                                                        <p:commandButton process="dtTGEstudiantes" 
+                                                                                         actionListener="#{registroTutoriaGrupal.eliminarParticipantesGeneralTutoriaGrupal(registroTutoriaGrupal.rol.listaEstudiantes)}" 
+                                                                                         icon="fa fa-trash" 
+                                                                                         class="btn btn-sm btn-danger" 
+                                                                                         value="Eliminar pase de lista General"
+                                                                                         title="Presione este botón para eliminar el pase de lista general en el grupo seleccionado"
+                                                                                         disabled="#{registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada.tutoriaGrupal.tutoriaGrupal eq null?'true':'false'}"
+                                                                                         oncomplete="actualizarEstudiantes();"
+                                                                                         />
+                                                                    </p:column>
+                                                                    <p:column style="text-align: left;">
+                                                                        <p:outputLabel value=" (Asegurese de haber seleccionado previamente y correctamente una tutoría grupal a la que se le asignarán los participantes)"/>
+                                                                    </p:column>
+                                                                </div>
+                                                                <div style="margin-top: 10px;text-align: left">
+                                                                    <p:column style="text-align: left;">
+                                                                        Actualmente están inscritos: #{fn:length(registroTutoriaGrupal.rol.listaEstudiantes)} estudiantes en el grupo seleccionado.
                                                                     </p:column>
                                                                 </div>
                                                             </f:facet>
-
                                                         </p:dataTable>
-                                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                                        </p:confirmDialog>
-                                                    </center>
-                                                    <div class="col-sm-12 col-md-12"><p:separator/></div>
-                                                </div>
-                                            </p:outputPanel>
+                                                    </div>
+                                                </p:outputPanel>
+                                            </div>
                                         </div>
-                                    </div>    
-                                </h:form>
-                                <h:form id="frmRegistroParticipantes" prependId="false" class="form-inline">
-                                    <p:remoteCommand id="actualizarEstudiantes" name="actualizarEstudiantes" actionListener="#{registroTutoriaGrupal.actualizarEstudiantes()}" process="@this" update="contenedorEstudiantes frmCasosCriticos modalRegistroCasoCritico" />
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 text-info">
-                                            <p:outputPanel id="contenedorEstudiantes">
-                                                <div class="row margin-bottom" style="margin-bottom: 10px">
-                                                    <p:toolbar>
-                                                        <f:facet name="left">
-                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                            <p:outputLabel value="Para registrar la asistencia de los estudiantes deberá seleccionar previamente una tutoría grupal" style="padding-top: 5px;" />
-                                                            <p></p>
-                                                        </f:facet>
-                                                    </p:toolbar>
-                                                    <p:dataTable id="dtTGEstudiantes" 
-                                                                 widgetVar="dtTGEstudiantes"
-                                                                 var="est" 
-                                                                 value="#{registroTutoriaGrupal.rol.listaEstudiantes}" 
-                                                                 filteredValue="#{registroTutoriaGrupal.rol.listaEstudiantesFiltro}"
-                                                                 sortBy="#{est.estudiante.estudiante.idEstudiante}"
-                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
-                                                                 resizeMode="expand"
-                                                                 emptyMessage="No se encontrarón estudiantes en el grupo y tutoría seleccionados"
-                                                                 >
-
-                                                        <p:column filterBy="#{est.estudiante.estudiante.matricula}" headerText="Matricula" filterMatchMode="contains" width="60" style="text-align:  center">
-                                                            <h:outputText value="#{est.estudiante.estudiante.matricula}" />
-                                                        </p:column>
-
-                                                        <p:column filterBy="#{est.estudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.estudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.estudiante.estudiante.aspirante.idPersona.nombre}" headerText="Nombre" filterMatchMode="contains" width="200" priority="2">
-                                                            <h:outputText value="#{est.estudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.estudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.estudiante.estudiante.aspirante.idPersona.nombre}" />
-                                                        </p:column>
-
-                                                        <p:column filterBy="#{est.participacion}" headerText="Asistencia" filterMatchMode="equals" width="200" style="text-align:  center">
-                                                            <f:facet name="filter">
-                                                                <p:selectOneButton onchange="PF('dtTGEstudiantes').filter()" styleClass="custom-filter">
-                                                                    <f:converter converterId="javax.faces.Boolean" />
-                                                                    <f:selectItem itemLabel="Todos" itemValue="" />
-                                                                    <f:selectItem itemLabel="Asistió" itemValue="true" />
-                                                                    <f:selectItem itemLabel="No Asistió" itemValue="false" />
-                                                                </p:selectOneButton>
-                                                            </f:facet>
-
-                                                            <p:selectBooleanButton value="#{est.participacion}" 
-                                                                                   onLabel="Asistió" 
-                                                                                   offLabel="No Asistió" 
-                                                                                   valueChangeListener="#{registroTutoriaGrupal.guardarParticipanteTutoriaGrupal}"
-                                                                                   onIcon="ui-icon-check"
-                                                                                   offIcon="ui-icon-close"
-                                                                                   style="text-align: left"
-                                                                                   disabled="#{registroTutoriaGrupal.rol.tutoriaGrupalSeleccionada.tutoriaGrupal eq null or registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo?'true':'false'}"
-                                                                                   >
-                                                                <p:ajax process="@this"
-                                                                        oncomplete="actualizarEstudiantes();"
-                                                                        />
-                                                                <f:attribute name="participante" 
-                                                                             value="#{est.participanteTutoriaGrupal}" 
-                                                                             />
-                                                            </p:selectBooleanButton>
-                                                        </p:column>
-
-                                                        <p:column headerText="Genéro" width="60" style="text-align:  center" priority="4">
-                                                            <h:outputText value="#{est.estudiante.estudiante.aspirante.idPersona.genero eq 1?'Femenino':'Masculino'}" />
-                                                        </p:column>
-
-                                                        <p:column headerText="Situación" width="60" style="text-align:  center" priority="3">
-                                                            <h:outputText value="#{est.estudiante.estudiante.tipoEstudiante.descripcion}" />
-                                                        </p:column>
-
-                                                        <p:column headerText="Aceptación de acuerdos (Estudiante)" width="155" style="text-align:center" priority="5">
-                                                            <h:outputText value="#{est.participanteTutoriaGrupal.aceptacionAcuerdos}" />
-                                                        </p:column>
-
-                                                        <p:column headerText="Comentarios (Estudiante)" width="300" priority="6">
-                                                            <h:outputText value="#{est.participanteTutoriaGrupal.comentarios}" />
-                                                        </p:column>
-
-                                                        <p:column headerText="Casos Críticos Registrados" width="60" style="text-align:  center" priority="1">
-                                                            <p:commandButton actionListener="#{registroTutoriaGrupal.listarCasosCriticos(est.estudiante.estudiante)}"
-                                                                             class="btn btn-sm #{fn:length(est.listaCasosCriticos)>0?'btn-danger':'btn-info'}" 
-                                                                             icon="fa fa-check-square"
-                                                                             title="Presione el botón para visualizar casos críticos"
-                                                                             process="@this"
-                                                                             global="false"
-                                                                             oncomplete="actualizarEstudiantes();"
-                                                                             />
-                                                        </p:column>
-
-                                                        <f:facet name="footer">
-                                                            Actualmente están inscritos: #{fn:length(registroTutoriaGrupal.rol.listaEstudiantes)} estudiantes en el grupo seleccionado.
-                                                        </f:facet>
-
-                                                    </p:dataTable>
-                                                </div>
-                                            </p:outputPanel>
-                                        </div>
-                                    </div>
-                                </h:form>
+                                    </h:form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <c:if test="#{!empty registroTutoriaGrupal.alertas || true}">
-                    <div class="box box-info">
-                        <div class="box-header">
-                            <ui:include src="/includes/alertas.xhtml">
-                                <ui:param name="alertas" value="#{registroTutoriaGrupal.alertas}"></ui:param>
-                            </ui:include>
-                        </div>
-                    </div>
-                </c:if>
-                <!-- Zona de cuadros de diálogo -->
-                <p:dialog id="modalAyuda"
-                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
-                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
-                    <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para el registro de tutorías grupales</h3></div>
-                        <div class="box-body">
-                            <ul class="todo-list">
-                                <c:forEach items="#{registroTutoriaGrupal.rol.instrucciones}" var="instruccion">
-                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
-                                </c:forEach>
-                            </ul>
-                        </div>
-                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
-                    </div>
-                </p:dialog>
-
-                <p:dialog id="modalCasosCriticos"
-                          widgetVar="modalCasosCriticos" 
-                          width="700" 
-                          height="auto" 
-                          closeOnEscape="true" 
-                          visible="#{false}" 
-                          showEffect="fade" 
-                          hideEffect="fade"
-                          modal="true" 
-                          draggable="true"
-                          header="Casos criticos registrados mediante sistema ó por el docente"
-                          onHide="actualizarEstudiantes();"
-                          styleClass="panel panel-primary" 
-                          responsive="true" 
-                          resizable="false"
-                          maximizable="false"
-                          >
-                    <h:form id="frmCasosCriticos" prependId="false" class="form-inline">
-                        <div class="box box-primary">
-                            <c:if test="#{!empty registroTutoriaGrupal.rol.listaSecundaria}">
-                                <div class="box-body">
-                                    <ul class="todo-list">
-                                        <c:forEach items="#{registroTutoriaGrupal.rol.listaSecundaria}" var="instruccion">
-                                            <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
-                                        </c:forEach>
-                                    </ul>
-                                </div>
-                            </c:if>
-
-                            <c:if test="#{empty registroTutoriaGrupal.rol.listaSecundaria}">
-                                <div class="box-body">
-                                    <ul class="todo-list">
-                                        <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> El estudiante no tiene casos críticos registrados</span></li>
-                                    </ul>
-                                </div>
-                            </c:if>
-
-                            <div class="box-footer clearfix no-border">
-                                <button type="button" class="btn btn-primary pull-right" onclick="PF('modalCasosCriticos').hide();"><i class="fa fa-times"></i> Cerrar</button>
-                                <div class="ui-material" style="margin-bottom: 5px">
-                                    <p:commandButton id="btnTGAbrirRegistroCasoCrítico"
-                                                     value="Registrar nuevo caso crítico"
-                                                     actionListener="#{registroTutoriaGrupal.abriDialogoRegistroCasoCritico}"
-                                                     class="btn btn-danger pull-right" 
-                                                     icon="fa fa-check-square"
-                                                     title="Registrar caso crítico"
-                                                     style="width: 16.5em"
-                                                     process="@this"
-                                                     global="false"
-                                                     />
-                                </div>
+                    <c:if test="#{!empty registroTutoriaGrupal.alertas || true}">
+                        <div class="box box-info">
+                            <div class="box-header">
+                                <ui:include src="/includes/alertas.xhtml">
+                                    <ui:param name="alertas" value="#{registroTutoriaGrupal.alertas}"></ui:param>
+                                </ui:include>
                             </div>
-                        </div>
-                    </h:form>
-                </p:dialog>
-
-                <p:dialog id="modalRegistroCasoCritico"
-                          widgetVar="modalRegistroCasoCritico" 
-                          width="700" 
-                          height="auto" 
-                          closeOnEscape="true" 
-                          visible="#{false}" 
-                          showEffect="fade" 
-                          hideEffect="fade"
-                          onHide="actualizarEstudiantes();"
-                          modal="true" 
-                          draggable="true" 
-                          header="Caso crítico"
-                          styleClass="panel panel-primary" 
-                          responsive="true" 
-                          resizable="false" 
-                          closable="false" 
-                          maximizable="true"
-                          >
-                    <p:autoUpdate />
-                    <c:if test="#{registroTutoriaGrupal.rol.dtoCasoCritico ne null}">
-                        <div class="box box-primary">
-                            <h:form id="frmRegistroCasoCritico">
-                                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo" var="casoCriticoTipo" allSuffix="ALL" />
-                                <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Registro de caso crítico</h3></div>
-                                <div class="box-body">
-                                    <div class="row margin-bottom">
-                                        <div class="col-md-12">
-                                            <div class="ui-material">
-                                                <p:inputText id="ccEstudiante" value="#{caster.dtoEstudianteToString(registroTutoriaGrupal.rol.dtoEstudiante)}" readonly="true" styleClass="form-control" />
-                                                <p:outputLabel value="Estudiante" for="ccEstudiante"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row margin-bottom">
-                                        <div class="col-md-12">
-                                            <div class="ui-material">
-                                                <p:inputTextarea id="ccDescripcion" maxlength="1500" styleClass="form-control"
-                                                                 value="#{registroTutoriaGrupal.rol.dtoCasoCritico.casoCritico.descripcion}"
-                                                                 placeholder="Ingrese una descripción específica del levantamiento del caso crítico." />
-                                                <p:outputLabel value="Descripcion" for="ccDescripcion"/>
-                                                <p:message for="ccDescripcion" ><p:autoUpdate/></p:message>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row margin-bottom">
-                                        <div class="col-md-12">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="ccTipo" value="#{registroTutoriaGrupal.rol.dtoCasoCritico.casoCritico.tipo}" converter="entityConverter" required="true" styleClass="form-control" >
-                                                    <f:selectItems value="#{registroTutoriaGrupal.listaCasoCriticoTipos}" var="ccTipo" itemValue="#{ccTipo.label}" itemLabel="#{ccTipo.label}" />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Tipo" for="ccTipo"/>
-                                                <p:message for="ccTipo" ><p:autoUpdate/></p:message>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="box-footer clearfix no-border">
-                                    <p:button value="Cancelar" styleClass="btn btn-primary pull-right" icon="fa fa-times" onclick="PF('modalRegistroCasoCritico').hide(); return false;" />
-                                    <p:commandButton value="Eliminar" actionListener="#{registroTutoriaGrupal.eliminarCasoCritico}" oncomplete="actualizarEstudiantes();" rendered="#{registroTutoriaGrupal.rol.dtoCasoCritico.casoCritico.descripcion ne null and registroTutoriaGrupal.rol.dtoCasoCritico.casoCritico.descripcion ne ''}" styleClass="btn btn-primary pull-right" icon="fa fa-trash" />
-                                    <p:commandButton value="Registrar" actionListener="#{registroTutoriaGrupal.guardaCasoCritico}" oncomplete="actualizarEstudiantes();"  styleClass="btn btn-primary pull-right" icon="fa fa-save" />
-                                </div>
-                            </h:form>
                         </div>
                     </c:if>
-                </p:dialog>
+                    <!-- Zona de cuadros de diálogo -->
+                    <p:dialog id="modalAyuda"
+                              widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade" onHide="actualizarEstudiantes();"
+                              modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                        <div class="box box-primary">
+                            <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para el registro de tutorías grupales</h3></div>
+                            <div class="box-body">
+                                <ul class="todo-list">
+                                    <c:forEach items="#{registroTutoriaGrupal.rol.instrucciones}" var="instruccion">
+                                        <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                            <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                        </div>
+                    </p:dialog>
 
-            </c:if>
-            <c:if test="#{!registroTutoriaGrupal.tieneAcceso}">
-                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a docentes con cargas académicas."/>
-                    </h:panelGrid>
-                    <f:facet name="footer"></f:facet>
-                </p:panel>
-            </c:if>
-            <div style="display: none;">
-                <!-- Es necesario este bloque para que se cargue en el navegador el soporte para el control inputnumber -->
-                <h:form>
-                    <p:inputNumber />
-                </h:form>
+                    <p:dialog id="modalCasosCriticos"
+                              widgetVar="modalCasosCriticos" 
+                              width="700" 
+                              height="auto" 
+                              closeOnEscape="true" 
+                              visible="#{false}" 
+                              showEffect="fade" 
+                              hideEffect="fade"
+                              modal="true" 
+                              draggable="true"
+                              header="Casos criticos registrados mediante sistema ó por el docente"
+                              onHide="actualizarEstudiantes();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false"
+                              maximizable="false"
+                              >
+                        <h:form id="frmCasosCriticos" prependId="false" class="form-inline">
+                            <div class="box box-primary">
+                                <c:if test="#{!empty registroTutoriaGrupal.rol.listaSecundaria}">
+                                    <div class="box-body">
+                                        <ul class="todo-list">
+                                            <c:forEach items="#{registroTutoriaGrupal.rol.listaSecundaria}" var="instruccion">
+                                                <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                            </c:forEach>
+                                        </ul>
+                                    </div>
+                                </c:if>
+
+                                <c:if test="#{empty registroTutoriaGrupal.rol.listaSecundaria}">
+                                    <div class="box-body">
+                                        <ul class="todo-list">
+                                            <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> El estudiante no tiene casos críticos registrados</span></li>
+                                        </ul>
+                                    </div>
+                                </c:if>
+
+                                <div class="box-footer clearfix no-border">
+                                    <button type="button" class="btn btn-primary pull-right" onclick="PF('modalCasosCriticos').hide();"><i class="fa fa-times"></i> Cerrar</button>
+                                    <div class="ui-material" style="margin-bottom: 5px">
+                                        <p:commandButton id="btnTGAbrirRegistroCasoCrítico"
+                                                         value="Registrar nuevo caso crítico"
+                                                         actionListener="#{registroTutoriaGrupal.abriDialogoRegistroCasoCritico}"
+                                                         class="btn btn-danger pull-right" 
+                                                         icon="fa fa-check-square"
+                                                         title="Registrar caso crítico"
+                                                         style="width: 16.5em"
+                                                         process="@this"
+                                                         global="false"
+                                                         disabled="#{registroTutoriaGrupal.rol.periodoActivo ne registroTutoriaGrupal.rol.periodoSeleccionado.periodo}"
+                                                         />
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog id="modalRegistroCasoCritico"
+                              widgetVar="modalRegistroCasoCritico" 
+                              width="700" 
+                              height="auto" 
+                              closeOnEscape="true" 
+                              visible="#{false}" 
+                              showEffect="fade" 
+                              hideEffect="fade"
+                              onHide="actualizarEstudiantes();"
+                              modal="true" 
+                              draggable="true" 
+                              header="Caso crítico"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              closable="false" 
+                              maximizable="true"
+                              >
+                        <p:autoUpdate />
+                        <c:if test="#{registroTutoriaGrupal.rol.dtoCasoCritico ne null}">
+                            <div class="box box-primary">
+                                <h:form id="frmRegistroCasoCritico">
+                                    <p:importEnum type="mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo" var="casoCriticoTipo" allSuffix="ALL" />
+                                    <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Registro de caso crítico</h3></div>
+                                    <div class="box-body">
+                                        <div class="row margin-bottom">
+                                            <div class="col-md-12">
+                                                <div class="ui-material">
+                                                    <p:inputText id="ccEstudiante" value="#{caster.dtoEstudianteToString(registroTutoriaGrupal.rol.dtoEstudiante)}" readonly="true" styleClass="form-control" />
+                                                    <p:outputLabel value="Estudiante" for="ccEstudiante"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row margin-bottom">
+                                            <div class="col-md-12">
+                                                <div class="ui-material">
+                                                    <p:inputTextarea id="ccDescripcion" maxlength="1500" styleClass="form-control"
+                                                                     value="#{registroTutoriaGrupal.rol.dtoCasoCritico.casoCritico.descripcion}"
+                                                                     placeholder="Ingrese una descripción específica del levantamiento del caso crítico." />
+                                                    <p:outputLabel value="Descripcion" for="ccDescripcion"/>
+                                                    <p:message for="ccDescripcion" ><p:autoUpdate/></p:message>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row margin-bottom">
+                                            <div class="col-md-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="ccTipo" value="#{registroTutoriaGrupal.rol.dtoCasoCritico.casoCritico.tipo}" converter="entityConverter" required="true" styleClass="form-control" >
+                                                        <f:selectItems value="#{registroTutoriaGrupal.listaCasoCriticoTipos}" var="ccTipo" itemValue="#{ccTipo.label}" itemLabel="#{ccTipo.label}" />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Tipo" for="ccTipo"/>
+                                                    <p:message for="ccTipo" ><p:autoUpdate/></p:message>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix no-border">
+                                        <p:button value="Cancelar" styleClass="btn btn-primary pull-right" icon="fa fa-times" onclick="PF('modalRegistroCasoCritico').hide(); return false;" />
+                                        <p:commandButton value="Eliminar" actionListener="#{registroTutoriaGrupal.eliminarCasoCritico}" oncomplete="actualizarEstudiantes();" rendered="#{registroTutoriaGrupal.rol.dtoCasoCritico.casoCritico.descripcion ne null and registroTutoriaGrupal.rol.dtoCasoCritico.casoCritico.descripcion ne ''}" styleClass="btn btn-primary pull-right" icon="fa fa-trash" />
+                                        <p:commandButton value="Registrar" actionListener="#{registroTutoriaGrupal.guardaCasoCritico}" oncomplete="actualizarEstudiantes();"  styleClass="btn btn-primary pull-right" icon="fa fa-save" />
+                                    </div>
+                                </h:form>
+                            </div>
+                        </c:if>
+                    </p:dialog>
+
+                </c:if>
+                <c:if test="#{!registroTutoriaGrupal.tieneAcceso}">
+                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="El acceso solo está autorizado a docentes con cargas académicas."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+                <div style="display: none;">
+                    <!-- Es necesario este bloque para que se cargue en el navegador el soporte para el control inputnumber -->
+                    <h:form>
+                        <p:inputNumber />
+                    </h:form>
+                </div>
             </div>
-        </div>
-        <script>
-            //collapseSidebar(); activar para colapsar barra lateral
-        </script>
+            <script>
+                //collapseSidebar(); activar para colapsar barra lateral
+            </script>
         </c:if>
     </ui:define>
 </ui:composition>

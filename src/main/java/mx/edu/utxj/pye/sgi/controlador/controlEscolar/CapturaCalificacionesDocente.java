@@ -71,15 +71,15 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         setVistaControlador(ControlEscolarVistaControlador.CAPTURA_CALIFICACIONES);
         ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDocente(logon.getPersonal().getClave());
 //        System.out.println("resAcceso = " + resAcceso);
-        if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
+//        if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 
         ResultadoEJB<Boolean> resVerificarCargasExistentes = ejb.verificarCargasExistentes(resAcceso.getValor().getEntity());
 //        System.out.println("resVerificarCargasExistentes = " + resVerificarCargasExistentes);
-        if(!resAcceso.getCorrecto()){mostrarMensajeResultadoEJB(resAcceso);return;}
+//        if(!resAcceso.getCorrecto()){mostrarMensajeResultadoEJB(resAcceso);return;}
 
         rol = new CapturaCalificacionesRolDocente(resAcceso.getValor());
 
-        tieneAcceso = rol.tieneAcceso(rol.getDocenteLogueado()) && resVerificarCargasExistentes.getValor();
+        tieneAcceso = rol.tieneAcceso(rol.getDocenteLogueado()) || resVerificarCargasExistentes.getValor();
 //        System.out.println("tieneAcceso = " + tieneAcceso);
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////

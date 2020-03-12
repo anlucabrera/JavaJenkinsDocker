@@ -109,6 +109,21 @@ h4, .h4, h5, .h5, h6, .h6 {
         padding: 1px 1px;
     }   
     .hrclas{
-      page-break-inside:avoid; page-break-after:auto    
+        page-break-inside:avoid; page-break-after:auto    
     }
+
+    .porcInicio{
+        background: #FFFFFF !important;
+        color: #FFFFFF !important
+    }
+    .porcUtili{
+        background: #cccccc !important;
+        color: #cccccc !important
+    }
+    .porcRes{
+        background: #FFFFFF !important;
+        color: #FFFFFF !important;
+
+    }
+
 }

@@ -62,7 +62,7 @@ import org.primefaces.component.selectonemenu.SelectOneMenu;
  */
 @Named
 @SessionScoped
-public class EvaluacionDoncenteMateriaControler extends ViewScopedRol {
+public class    EvaluacionDoncenteMateriaControler extends ViewScopedRol {
 
     @Getter private Boolean finalizado = false;
     @Getter private Integer numeroNomina;

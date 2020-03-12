@@ -26,6 +26,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbCatalogos;
@@ -87,7 +88,12 @@ public class ControladorProductosAcademicosPYE implements Serializable{
         cargado = true;
         try {
         dtoProductoAcademico = new DtoProductoAcademico();
-        dtoProductoAcademico.setArea(ejbModulos.getAreaUniversidadPrincipalRegistro((short)controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()));
+        
+        ResultadoEJB<AreasUniversidad> resArea = ejbModulos.getAreaUniversidadPrincipalRegistro((short)controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+            if(!resArea.getCorrecto()){
+                return;
+            }
+        dtoProductoAcademico.setArea(resArea.getValor());
         
         dtoProductoAcademico.setListaAreasAcademicas(ejbCatalogos.getAreasAcademicas());
         Faces.setSessionAttribute("programasEducativos", dtoProductoAcademico.getListaAreasAcademicas());

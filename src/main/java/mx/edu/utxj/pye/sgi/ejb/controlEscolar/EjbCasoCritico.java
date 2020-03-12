@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 @Stateless
 public class EjbCasoCritico implements Serializable {
@@ -87,10 +88,7 @@ public class EjbCasoCritico implements Serializable {
     }
     
     /**
-     * Permite identificar si existen casos críticos abiertos para un estudiante 
-     * @param dtoEstudiante Empaquetado de la inscripción activa del estudiante
-     * @param dtoCargaAcademica Empaquetado de la carga académica del docente en la materia y grupo
-     * @param dtoUnidadConfiguracion dtoUnidadConfiguracion Empaquetado de la configuración de unidad que se muestra en pantalla
+     * Permite identificar si existen casos críticos para un estudiante 
      * @return Regresa lista de casos criticos o código de error en caso de no poder generarla
      */
     public ResultadoEJB<List<DtoCasoCritico>> identificarPorEsdudiante(Estudiante estudiante){
@@ -99,9 +97,9 @@ public class EjbCasoCritico implements Serializable {
             ResultadoEJB<DtoEstudiante> dtoEstudiante = packer.packEstudiante(estudiante);
             if (dtoEstudiante.getCorrecto()) {
 //                List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante=:estudiante and cc.estado in :estadosAbiertos order by cc.fechaRegistro desc", CasoCritico.class)
-                List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante=:estudiante order by cc.fechaRegistro desc", CasoCritico.class)
-                        .setParameter("estudiante", dtoEstudiante.getValor().getInscripcionActiva().getInscripcion())
-//                        .setParameter("estadosAbiertos", estadosAbiertos)
+                List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante.matricula = :matricula AND cc.idEstudiante.periodo = :periodo order by cc.fechaRegistro desc", CasoCritico.class)
+                        .setParameter("matricula", estudiante.getMatricula())
+                        .setParameter("periodo", estudiante.getPeriodo())
                         .getResultStream()
                         .collect(Collectors.toList());
 
@@ -141,16 +139,11 @@ public class EjbCasoCritico implements Serializable {
 //            Empaquetado de estudiantes:
             ResultadoEJB<DtoEstudiante> dtoEstudiante = packer.packEstudiante(estudiante);
             if (dtoEstudiante.getCorrecto()) {
-                //lista de estados de casos críticos que indican que estén abiertos
-                List<CasoCriticoEstado> estadosAbiertos = Arrays.stream(CasoCriticoEstado.values())
-                        .filter(casoCriticoEstado -> casoCriticoEstado.getNivel() > 0D)
-                        .collect(Collectors.toList());
-
-                //lista de casos críticos abiertos del estudiante correspondientes a la carga académica
+                //lista de casos críticos del estudiante
 //                List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante=:estudiante AND cc.caso = :caso and cc.estado in :estadosAbiertos order by cc.fechaRegistro desc", CasoCritico.class)
-                  List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante=:estudiante AND cc.caso = :caso order by cc.fechaRegistro desc", CasoCritico.class)
-                        .setParameter("estudiante", dtoEstudiante.getValor().getInscripcionActiva().getInscripcion())
-//                        .setParameter("estadosAbiertos", estadosAbiertos)
+                  List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante.matricula = :matricula AND cc.idEstudiante.periodo = :periodo AND cc.caso = :caso order by cc.fechaRegistro desc", CasoCritico.class)
+                        .setParameter("matricula", estudiante.getMatricula())
+                        .setParameter("periodo", estudiante.getPeriodo())
                         .setParameter("caso", caso)
                         .getResultStream()
                         .collect(Collectors.toList());
@@ -400,7 +393,7 @@ public class EjbCasoCritico implements Serializable {
         try {
             Boolean existe = (dtoCasoCritico.getCasoCritico().getCaso() != null && dtoCasoCritico.getCasoCritico().getCaso() > 0);
             if(!existe){
-                return ResultadoEJB.crearErroneo(2, "No se pudo actualizar el caso crítico debido a que no este registrado en la base de datos", DtoCasoCritico.class);
+                return ResultadoEJB.crearErroneo(2, "No se pudo actualizar el caso crítico debido a que no esta registrado en la base de datos", DtoCasoCritico.class);
             }else{
                 if (dtoCasoCritico.getEstado().getNivel() > CasoCriticoEstado.CERRADO_ESPECIALISTA.getNivel() && dtoCasoCritico.getEstado().getNivel() > CasoCriticoEstado.CERRADO_TUTOR.getNivel()) {
                     em.merge(dtoCasoCritico.getCasoCritico());
@@ -410,6 +403,32 @@ public class EjbCasoCritico implements Serializable {
                 }
             } 
         }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar el caso crítico (EjbCasoCritico.actualizarCasoCritico).", e, DtoCasoCritico.class);
+        }
+    }
+    
+//    public ResultadoEJB<DtoCasoCritico> abrirCasoCriticoEspecialista(DtoCasoCritico dtoCasoCritico){
+//        dtoCasoCritico.getCasoCritico().setEstado(CasoCriticoEstado.EN_SEGUIMIENTO_ESPECIALISTA.getLabel());
+//        dtoCasoCritico.getCasoCritico().setFechaCierre(null);
+//        return abrirCasoCritico(dtoCasoCritico);
+//    }
+//    
+//    public ResultadoEJB<DtoCasoCritico> abrirCasoCriticoTutor(DtoCasoCritico dtoCasoCritico){
+//        dtoCasoCritico.getCasoCritico().setEstado(CasoCriticoEstado.EN_SEGUMIENTO_TUTOR.getLabel());
+//        dtoCasoCritico.getCasoCritico().setFechaCierre(null);
+//        return abrirCasoCritico(dtoCasoCritico);
+//    }
+    
+    public ResultadoEJB<DtoCasoCritico> abrirCasoCritico(DtoCasoCritico dtoCasoCritico){
+        try {
+            Boolean existe = (dtoCasoCritico.getCasoCritico().getCaso() != null && dtoCasoCritico.getCasoCritico().getCaso() > 0);
+            if(!existe){
+                return ResultadoEJB.crearErroneo(2, "No se pudo actualizar el caso crítico debido a que no esta registrado en la base de datos", DtoCasoCritico.class);
+            }else{
+                em.merge(dtoCasoCritico.getCasoCritico());    
+                return  ResultadoEJB.crearCorrecto(dtoCasoCritico, "Caso crítico actualizado correctamente");
+            }
+        } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo actualizar el caso crítico (EjbCasoCritico.actualizarCasoCritico).", e, DtoCasoCritico.class);
         }
     }
@@ -555,7 +574,16 @@ public class EjbCasoCritico implements Serializable {
     
     public ResultadoEJB<DtoCasoCritico> registrarPorAsistenciaIrregular(DtoCapturaCalificacion dtoCapturaCalificacion, Double porcentDouble) {
         try {
-            if (porcentDouble < 80.0) {
+            List<CasoCritico> ccs = em.createQuery("SELECT cc FROM CasoCritico cc WHERE cc.idEstudiante.idEstudiante = :idEstudiante AND cc.tipo=:tipo", CasoCritico.class)
+                    .setParameter("idEstudiante", dtoCapturaCalificacion.getDtoEstudiante().getInscripcionActiva().getInscripcion().getIdEstudiante())
+                    .setParameter("tipo", CasoCriticoTipo.SISTEMA_ASISTENCIA_IRREGURLAR.getLabel()).getResultList();
+            List<CasoCritico> ccs2 = new ArrayList<>();
+            if (!ccs.isEmpty()) {
+                ccs2 = ccs.stream().filter(t -> Objects.equals(t.getCarga().getCarga(), dtoCapturaCalificacion.getDtoCargaAcademica().getCargaAcademica().getCarga())
+                        && Objects.equals(t.getConfiguracion().getConfiguracion(), dtoCapturaCalificacion.getDtoUnidadConfiguracion().getUnidadMateriaConfiguracion().getConfiguracion())).collect(Collectors.toList());
+            }
+
+            if ((ccs2.isEmpty()) && (porcentDouble < 80.0)) {
                 ResultadoEJB<DtoCasoCritico> generarNuevo = generarNuevo(dtoCapturaCalificacion.getDtoEstudiante(), dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoUnidadConfiguracion(), CasoCriticoTipo.SISTEMA_ASISTENCIA_IRREGURLAR);
                 if (generarNuevo.getCorrecto()) {
                     DtoCasoCritico dtoCasoCritico = generarNuevo.getValor();
@@ -569,21 +597,40 @@ public class EjbCasoCritico implements Serializable {
                 } else {
                     return ResultadoEJB.crearErroneo(2, "No se pudo registrar de forma automática el caso crítico correspondiente a una Asistencia irregular.", DtoCasoCritico.class);
                 }
-            } else {
-                if (dtoCapturaCalificacion.getTieneCasoCriticoSistema()) {
-                    DtoCasoCritico dtoCasoCritico = dtoCapturaCalificacion.getCasosCriticosSistema().get(CasoCriticoTipo.SISTEMA_ASISTENCIA_IRREGURLAR);
-                    if (dtoCasoCritico != null) {
-                        ResultadoEJB<Boolean> eliminar = eliminar(dtoCasoCritico);
-                        if (!eliminar.getCorrecto()) {
-                            return ResultadoEJB.crearErroneo(3, eliminar.getMensaje(), DtoCasoCritico.class);
-                        }
+            } else if ((!ccs2.isEmpty()) && (porcentDouble > 80.0)) {
+                DtoCasoCritico dtoCasoCritico = dtoCapturaCalificacion.getCasosCriticosSistema().get(CasoCriticoTipo.SISTEMA_ASISTENCIA_IRREGURLAR);
+                if (dtoCasoCritico != null) {
+                    ResultadoEJB<Boolean> eliminar = eliminar(dtoCasoCritico);
+                    if (!eliminar.getCorrecto()) {
+                        return ResultadoEJB.crearErroneo(3, eliminar.getMensaje(), DtoCasoCritico.class);
                     }
                 }
                 return ResultadoEJB.crearErroneo(4, "No se puede registrar caso crítico por Asistencia irregular ya que el Alumno asistio a clases.", DtoCasoCritico.class);
+            } else {
+                return ResultadoEJB.crearErroneo(4, "Ya existe un registro de caso crítico por Asistencia irregular", DtoCasoCritico.class);
             }
         } catch (Exception e) {
             e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar de forma automática el caso crítico correspondiente a una Asistencia irregular (EjbCasoCritico.registrarPorReprobacion).", e, DtoCasoCritico.class);
+        }
+    }
+
+    public ResultadoEJB<List<PeriodosEscolares>> consultaPeriodosEscolaresCasoCriticoEstudiante(Integer matricula) {
+        try {
+            List<PeriodosEscolares> periodosEscolares = em.createQuery("SELECT cc.idEstudiante.periodo FROM CasoCritico cc WHERE cc.idEstudiante.matricula = :matricula", Integer.class)
+                    .setParameter("matricula", matricula)
+                    .getResultStream()
+                    .map(periodo -> em.find(PeriodosEscolares.class, periodo))
+                    .distinct()
+                    .sorted(Comparator.comparingInt(PeriodosEscolares::getPeriodo).reversed())
+                    .collect(Collectors.toList());
+            if (periodosEscolares.isEmpty()) {
+                return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST, "No se han podido recuperar periodos escolars debido a que el estudiante no cuenta con casos críticos");
+            } else {
+                return ResultadoEJB.crearCorrecto(periodosEscolares, "Lista de periodos escolares en donde el estudiante ha tenido caso críticos");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares (EjbCasoCritico.consultaPeriodosEscolares)", e, null);
         }
     }
 }

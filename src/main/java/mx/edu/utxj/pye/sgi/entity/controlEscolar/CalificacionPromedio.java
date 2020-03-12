@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -48,6 +49,11 @@ public class CalificacionPromedio implements Serializable {
     @Column(name = "fecha_actualizacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 12)
+    @Column(name = "tipo")
+    private String tipo;
     @JoinColumn(name = "carga", referencedColumnName = "carga", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private CargaAcademica cargaAcademica;
@@ -62,10 +68,11 @@ public class CalificacionPromedio implements Serializable {
         this.calificacionPromedioPK = calificacionPromedioPK;
     }
 
-    public CalificacionPromedio(CalificacionPromedioPK calificacionPromedioPK, double valor, Date fechaActualizacion) {
+    public CalificacionPromedio(CalificacionPromedioPK calificacionPromedioPK, double valor, Date fechaActualizacion, String tipo) {
         this.calificacionPromedioPK = calificacionPromedioPK;
         this.valor = valor;
         this.fechaActualizacion = fechaActualizacion;
+        this.tipo = tipo;
     }
 
     public CalificacionPromedio(int carga, int idEstudiante) {
@@ -135,6 +142,14 @@ public class CalificacionPromedio implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedio[ calificacionPromedioPK=" + calificacionPromedioPK + " ]";
+    }
+    
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
     
 }

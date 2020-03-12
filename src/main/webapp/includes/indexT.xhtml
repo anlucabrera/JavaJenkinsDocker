@@ -242,7 +242,28 @@
                         </div>
                     </div>
                     <div class="box-body">  
-                        <div class="row">
+                        <div class="row"><c:if test="#{evaluacionDesempenioAmbiental.tieneAcceso}">
+                                <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-xs-12'}" />
+                                <div class="#{claseResumen}" style="height: 100px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="evaluacionDesempenioAmbiental();">
+                                            <h3>
+                                                <h:outputLabel value="Evaluación"></h:outputLabel>
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p:spacer height="25"/>
+                                            <p>Evaluación del Desempeño Ambiental</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-check-square"></i>
+                                        </div>
+                                        <p:link outcome="encuestas/evaluacionDesempenioAmbiental"  class="small-box-footer">
+                                            Ingresar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="evaluacionDesempenioAmbiental" action="encuestas/evaluacionDesempenioAmbiental" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
                             <div class="col-lg-3 col-md-6 col-xs-12">
                                 <div class="small-box bg-green">
                                     <div class="inner">
@@ -342,6 +363,7 @@
                                         </div>
                                     </div>
                                 </c:if>
+
                                 <c:if test="#{evaluacionDesempenioAdmin.cargada}">
                                     <c:if test="#{evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 2 || evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 4 }">
                                         <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
