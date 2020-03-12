@@ -1,10 +1,7 @@
 package mx.edu.utxj.pye.sgi.ejb.consulta;
 
-import com.google.gson.internal.$Gson$Preconditions;
-import edu.mx.utxj.pye.seut.util.dto.Dto;
 import edu.mx.utxj.pye.seut.util.preguntas.Pregunta;
 import lombok.NonNull;
-import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.DtoAreaAcademica;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
@@ -14,7 +11,6 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.*;
 import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
@@ -133,14 +129,21 @@ public class EjbSatisfaccionServiciosConsulta {
         }
     }
 
-    public ResultadoEJB<List<DtoAreaAcademica>> getProgramasEvaluacion(Evaluaciones evaluacion){
+    public ResultadoEJB<List<DtoAreaAcademica>> getProgramasEvaluacion(Evaluaciones evaluacion, DtoSatisfaccionServiciosEncuesta encuesta){
         try{
             ResultadoEJB<List<DtoAreaAcademica>> leerDtoAreaAcademicaSerializadas = leerDtoAreaAcademicaSerializadas(evaluacion.getPeriodo());
             if(leerDtoAreaAcademicaSerializadas.getCorrecto()) return ResultadoEJB.crearCorrecto(leerDtoAreaAcademicaSerializadas.getValor(), "Objetos ya serializados");
             List<AreasUniversidad> areas = em.createQuery("select a from AreasUniversidad a inner join a.categoria c where c.categoria=:categoria order by a.nombre", AreasUniversidad.class).setParameter("categoria", (short) 8).getResultList();
-            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad a inner join a.categoria c inner join a.nivelEducativo n where c.categoria=:categoria and a.vigente = '1' order by n.nivel desc, a.vigente desc, a.nombre asc", AreasUniversidad.class).setParameter("categoria", (short) 9).getResultList();
+            List<AreasUniversidad> programas = encuesta.getSatisfaccionServiciosEstudiantes()
+                    .stream()
+                    .map(DtoSatisfaccionServiciosEstudiante::getDtoEstudiantePeriodo)
+                    .map(DtoEstudiantePeriodo::getPrograma)
+                    .distinct()
+                    .sorted(DtoSatisfaccionServiciosEncuesta.areasUniversidadComparator)
+                    .collect(Collectors.toList());
+            //em.createQuery("select a from AreasUniversidad a inner join a.categoria c inner join a.nivelEducativo n where c.categoria=:categoria and a.vigente = '1' order by n.nivel desc, a.vigente desc, a.nombre asc", AreasUniversidad.class).setParameter("categoria", (short) 9).getResultList();
             List<DtoAreaAcademica> dtoAreaAcademicas = new Vector<>();
-            areas.parallelStream().forEach(area -> {
+            areas.parallelStream().forEachOrdered(area -> {
                 DtoAreaAcademica dtoAreaAcademica = new DtoAreaAcademica(area, evaluacion.getPeriodo());
                 List<AreasUniversidad> programasPorArea = programas.stream().filter(programa -> Objects.equals(programa.getAreaSuperior(), area.getArea())).collect(Collectors.toList());
                 dtoAreaAcademica.setProgramas(programasPorArea);
@@ -148,7 +151,6 @@ public class EjbSatisfaccionServiciosConsulta {
                 dtoAreaAcademicas.add(dtoAreaAcademica);
             });
             return ResultadoEJB.crearCorrecto(dtoAreaAcademicas.stream().sorted(Comparator.comparing(dtoAreaAcademica -> dtoAreaAcademica.getAreaAcademica().getArea())).collect(Collectors.toList()),"Areas académicas empaquetadas");
-            //TODO: agregar validación de exitencia de programas
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Ocurrió un error al intentar crear el concentraro de encuesta de satisfacción de servicios (EjbSatisfaccionServiciosConsulta.getProgramasEvaluacion).", e , null);
         }
@@ -674,12 +676,37 @@ public class EjbSatisfaccionServiciosConsulta {
             satisfaccionHistoricoInstitucionalActual.setSatisfaccionNivel(filaInstitucionalApartado.getTotalK().doubleValue());
             satisfaccionHistoricoInstitucionalActual.setAreasUniversidad(areaInstitucional);
             satisfaccionHistoricoInstitucionalActual.setCiclosEscolares(encuesta.getCiclosEscolares());
-            satisfaccionHistoricoInstitucionalActual.setSatisfaccionPorcentaje(0d);
+            satisfaccionHistoricoInstitucionalActual.setSatisfaccionPorcentaje(filaInstitucionalApartado.getPorcentajeSatisfechos().doubleValue());
 //            System.out.println("nuevo = " + nuevo + ", satisfaccionHistoricoInstitucionalActual = " + satisfaccionHistoricoInstitucionalActual);
             if(nuevo) em.persist(satisfaccionHistoricoInstitucionalActual);
             else em.merge(satisfaccionHistoricoInstitucionalActual);
 
             return ResultadoEJB.crearCorrecto(satisfaccionHistoricoInstitucionalActual, "Resultado institucional histórico sincronizado con el contexto JPA");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "", e, SatisfaccionHistorico.class);
+        }
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public ResultadoEJB<SatisfaccionHistorico> actualizarHistoricoArea(Apartado apartado, DtoSatisfaccionServiciosEncuesta encuesta, DtoSatisfaccionServiciosEncuesta.FilaProgramaApartado filaInstitucionalApartado, AreasUniversidad areaInstitucional){
+        try{
+            Double apartadoClave = (double) apartado.getId();
+//            encuesta.getApartadoFilaAreaMap().put(apartado, filaInstitucionalApartado);
+            SatisfaccionHistoricoPK pk = new SatisfaccionHistoricoPK(encuesta.getCiclosEscolares().getCiclo(), areaInstitucional.getArea(), apartadoClave);
+            SatisfaccionHistorico satisfaccionHistoricoAreaActual = em.find(SatisfaccionHistorico.class, pk);
+            boolean nuevo = satisfaccionHistoricoAreaActual == null;
+            if(satisfaccionHistoricoAreaActual == null) satisfaccionHistoricoAreaActual = new SatisfaccionHistorico(pk);
+
+            satisfaccionHistoricoAreaActual.setSatisfaccionNivel(filaInstitucionalApartado.getTotalK().doubleValue());
+            satisfaccionHistoricoAreaActual.setAreasUniversidad(areaInstitucional);
+            satisfaccionHistoricoAreaActual.setCiclosEscolares(encuesta.getCiclosEscolares());
+            satisfaccionHistoricoAreaActual.setSatisfaccionPorcentaje(filaInstitucionalApartado.getPorcentajeSatisfechos().doubleValue());
+//            System.out.println("nuevo = " + nuevo + ", satisfaccionHistoricoInstitucionalActual = " + satisfaccionHistoricoInstitucionalActual);
+            if(nuevo) em.persist(satisfaccionHistoricoAreaActual);
+            else em.merge(satisfaccionHistoricoAreaActual);
+
+            return ResultadoEJB.crearCorrecto(satisfaccionHistoricoAreaActual, "Resultado institucional histórico sincronizado con el contexto JPA");
         }catch (Exception e){
             e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "", e, SatisfaccionHistorico.class);
@@ -775,9 +802,9 @@ public class EjbSatisfaccionServiciosConsulta {
     public ResultadoEJB<DtoSatisfaccionServiciosEncuesta.FilaPrograma> fusionarPreguntaPorAreaSuperior(DtoSatisfaccionServiciosEncuesta encuesta, AreasUniversidad area, Pregunta pregunta, @NonNull List<BigDecimal> respuestas){
         try {
 //            System.out.println("EjbSatisfaccionServiciosConsulta.fusionarApartadoPorAreaSuperior");
-            System.out.println("encuesta.getCiclosEscolares().getFin().getYear() = " + encuesta.getCiclosEscolares().getFin().getYear());
-            System.out.println("area = " + area.getSiglas());
-            System.out.println("pregunta = " + pregunta.getTitulo());
+//            System.out.println("encuesta.getCiclosEscolares().getFin().getYear() = " + encuesta.getCiclosEscolares().getFin().getYear());
+//            System.out.println("area = " + area.getSiglas());
+//            System.out.println("pregunta = " + pregunta.getTitulo());
 //            System.out.println("encuesta.getApartadoFilaProgramaMap().size() = " + encuesta.getApartadoFilaProgramaMap().size());
             DtoSatisfaccionServiciosEncuesta.FilaProgramaPK pk = new DtoSatisfaccionServiciosEncuesta.FilaProgramaPK(area, pregunta);
             if(encuesta.getPreguntaFilaAreaMap().containsKey(pk)){
@@ -790,7 +817,7 @@ public class EjbSatisfaccionServiciosConsulta {
                     .filter(entry -> entry.getKey().getPregunta().getNumero().doubleValue() == pregunta.getNumero().doubleValue())
                     .map(entry -> entry.getValue())
                     .collect(Collectors.toList());
-            System.out.println("filaProgramas = " + filaProgramas.size());
+//            System.out.println("filaProgramas = " + filaProgramas.size());
 
             respuestas.parallelStream().forEach(respuesta -> {
                 long suma = filaProgramas
@@ -858,6 +885,26 @@ public class EjbSatisfaccionServiciosConsulta {
         }
     }
 
+    public ResultadoEJB<DtoSatisfaccionServiciosEncuesta.GraficaSerieInstitucionalHistorico> leerValorInstitucionalHistorico(DtoSatisfaccionServiciosEncuesta encuesta){
+        try{
+            Map<Integer, Double> satisfaccionServiciosInstitucional = ep.leerPropiedadDecimalMapa("satisfaccionServiciosInstitucionalPorcentaje");
+            DtoSatisfaccionServiciosEncuesta.GraficaSerieInstitucionalHistorico graficaSerieInstitucionalHistorico = new DtoSatisfaccionServiciosEncuesta.GraficaSerieInstitucionalHistorico();
+            List<DtoSatisfaccionServiciosEncuesta.DtoSatisfaccionHistoricoInstitucional> lista = new Vector<>();
+            satisfaccionServiciosInstitucional.entrySet().forEach(entrada -> {
+                DtoSatisfaccionServiciosEncuesta.DtoSatisfaccionHistoricoInstitucional dtoSatisfaccionHistorico = new DtoSatisfaccionServiciosEncuesta.DtoSatisfaccionHistoricoInstitucional(entrada.getKey(), 0d, entrada.getValue());
+                lista.add(dtoSatisfaccionHistorico);
+            });
+
+            graficaSerieInstitucionalHistorico.setDtoSatisfaccionHistoricos(lista.stream().sorted(DtoSatisfaccionServiciosEncuesta.dtoSatisfaccionHistoricoInstitucionalComparator).collect(Collectors.toList()));
+            encuesta.setGraficaSerieInstitucionalHistorico(graficaSerieInstitucionalHistorico);
+            return ResultadoEJB.crearCorrecto(graficaSerieInstitucionalHistorico, "Datos tomados de la tabla de propiedades de configuración.");
+        }catch (Exception e){
+            System.out.println("EjbSatisfaccionServiciosConsulta.leerValorInstitucionalHistorico");
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "Ocurrió un error. ".concat(DtoSatisfaccionServiciosEncuesta.GraficaSerieInstitucionalHistorico.class.getName()).concat(". leerValorInstitucionalHistorico"), e, DtoSatisfaccionServiciosEncuesta.GraficaSerieInstitucionalHistorico.class);
+        }
+    }
+
     public ResultadoEJB<Boolean> calcularFrecuencias(DtoSatisfaccionServiciosEncuesta encuesta, @NonNull List<BigDecimal> respuestas, List<@NonNull DtoSatisfaccionServiciosEstudiante> dtoSatisfaccionServiciosEstudiantes){
         try{
             short areaInstitucionalClave = (short)ep.leerPropiedadEntera("areaInstitucional").orElse(72);
@@ -872,7 +919,7 @@ public class EjbSatisfaccionServiciosConsulta {
                     .collect(Collectors.toList());
             encuesta.setProgramas(programas);
 
-            ResultadoEJB<List<DtoAreaAcademica>> getProgramasEvaluacion = getProgramasEvaluacion(encuesta.getEvaluacion());
+            ResultadoEJB<List<DtoAreaAcademica>> getProgramasEvaluacion = getProgramasEvaluacion(encuesta.getEvaluacion(), encuesta);
             List<DtoAreaAcademica> dtoAreasAcademicas = getProgramasEvaluacion.getCorrecto() ? getProgramasEvaluacion.getValor() : Collections.EMPTY_LIST;
 
             encuesta.getCuestionario().preguntas.forEach(pregunta -> {
@@ -924,6 +971,19 @@ public class EjbSatisfaccionServiciosConsulta {
                 else System.out.println("calcularFrecuenciaProgramaGeneral sin calculo = " + calcularFrecuenciaProgramaGeneral);
             });
 
+            //fusionar calculos de programas en areas
+            encuesta.getCuestionario().getApartados().forEach(apartado -> {
+                dtoAreasAcademicas.forEach(dtoAreaAcademica -> {
+                    ResultadoEJB<DtoSatisfaccionServiciosEncuesta.FilaProgramaApartado> fusionarApartadoPorAreaSuperior = fusionarApartadoPorAreaSuperior(encuesta, dtoAreaAcademica.getAreaAcademica(), apartado, respuestas);
+                    if(fusionarApartadoPorAreaSuperior.getCorrecto()) {
+                        ResultadoEJB<SatisfaccionHistorico> actualizarHistoricoArea = actualizarHistoricoArea(apartado, encuesta, fusionarApartadoPorAreaSuperior.getValor(), dtoAreaAcademica.getAreaAcademica());
+                        if(!actualizarHistoricoArea.getCorrecto())
+                            System.out.println("actualizarHistoricoArea sin calculo = " + actualizarHistoricoArea);
+                    }
+                    else System.out.println("fusionarApartadoPorAreaSuperior sin calculo = " + fusionarApartadoPorAreaSuperior);
+                });
+            });
+
             List<SatisfaccionHistorico> resultList = em.createQuery("select s from SatisfaccionHistorico s inner join s.areasUniversidad a inner join s.ciclosEscolares c order by s.satisfaccionHistoricoPK.ciclo, s.satisfaccionHistoricoPK.apartado", SatisfaccionHistorico.class).getResultList();
             resultList.forEach(satisfaccionHistorico -> {
                 DtoSatisfaccionServiciosEncuesta.GraficaSerieAreaHistoricoPK pk = new DtoSatisfaccionServiciosEncuesta.GraficaSerieAreaHistoricoPK(satisfaccionHistorico.getAreasUniversidad(), SatisfaccionServiciosApartadoConverter.of(satisfaccionHistorico.getSatisfaccionHistoricoPK().getApartado()));
@@ -944,7 +1004,7 @@ public class EjbSatisfaccionServiciosConsulta {
             List<SatisfaccionHistorico> satisfaccionHistoricosInstitucionales = em.createQuery("select s from SatisfaccionHistorico s where s.satisfaccionHistoricoPK.area = :area", SatisfaccionHistorico.class).setParameter("area", areaInstitucionalClave).getResultList();
 
             Arrays.stream(SatisfaccionServiciosApartado.values()).forEach(satisfaccionServiciosApartado -> {
-                encuesta.getGraficaSerieInstitucionalHistoricoMap().put(satisfaccionServiciosApartado, new DtoSatisfaccionServiciosEncuesta.GraficaSerieInstitucionalHistorico(satisfaccionServiciosApartado, new Vector<>()));
+                encuesta.getGraficaSerieInstitucionalHistoricoApartadoMap().put(satisfaccionServiciosApartado, new DtoSatisfaccionServiciosEncuesta.GraficaSerieInstitucionalHistoricoApartado(satisfaccionServiciosApartado, new Vector<>()));
                 ciclosEscolares.forEach(ciclosEscolar -> {
                     SatisfaccionHistoricoPK pk = new SatisfaccionHistoricoPK(ciclosEscolar.getCiclo(), areaInstitucionalClave, satisfaccionServiciosApartado.getApartado());
                     SatisfaccionHistorico satisfaccionHistorico = new SatisfaccionHistorico(pk);
@@ -958,17 +1018,8 @@ public class EjbSatisfaccionServiciosConsulta {
                         em.persist(satisfaccionHistorico);
                     }
 
-                    DtoSatisfaccionServiciosEncuesta.DtoSatisfaccionHistoricoInstitucional dtoSatisfaccionHistoricoInstitucional = new DtoSatisfaccionServiciosEncuesta.DtoSatisfaccionHistoricoInstitucional(ciclosEscolar, satisfaccionServiciosApartado, satisfaccionHistorico.getSatisfaccionNivel(), satisfaccionHistorico.getSatisfaccionPorcentaje());
-                    encuesta.getGraficaSerieInstitucionalHistoricoMap().get(satisfaccionServiciosApartado).getDtoSatisfaccionHistoricos().add(dtoSatisfaccionHistoricoInstitucional);
-                });
-            });
-
-            //fusionar calculos de programas en areas
-            encuesta.getCuestionario().getApartados().forEach(apartado -> {
-                dtoAreasAcademicas.forEach(dtoAreaAcademica -> {
-                    ResultadoEJB<DtoSatisfaccionServiciosEncuesta.FilaProgramaApartado> fusionarApartadoPorAreaSuperior = fusionarApartadoPorAreaSuperior(encuesta, dtoAreaAcademica.getAreaAcademica(), apartado, respuestas);
-                    if(fusionarApartadoPorAreaSuperior.getCorrecto()) {/*System.out.println("fusionarApartadoPorAreaSuperior = " + fusionarApartadoPorAreaSuperior);*/}
-                    else System.out.println("fusionarApartadoPorAreaSuperior sin calculo = " + fusionarApartadoPorAreaSuperior);
+                    DtoSatisfaccionServiciosEncuesta.DtoSatisfaccionHistoricoInstitucionalApartado dtoSatisfaccionHistoricoInstitucionalApartado = new DtoSatisfaccionServiciosEncuesta.DtoSatisfaccionHistoricoInstitucionalApartado(ciclosEscolar, satisfaccionServiciosApartado, satisfaccionHistorico.getSatisfaccionNivel(), satisfaccionHistorico.getSatisfaccionPorcentaje());
+                    encuesta.getGraficaSerieInstitucionalHistoricoApartadoMap().get(satisfaccionServiciosApartado).getDtoSatisfaccionHistoricos().add(dtoSatisfaccionHistoricoInstitucionalApartado);
                 });
             });
 
@@ -976,11 +1027,14 @@ public class EjbSatisfaccionServiciosConsulta {
             encuesta.getCuestionario().getPreguntas().forEach(pregunta -> {
                 dtoAreasAcademicas.forEach(dtoAreaAcademica -> {
                     ResultadoEJB<DtoSatisfaccionServiciosEncuesta.FilaPrograma> fusionarPreguntaPorAreaSuperior = fusionarPreguntaPorAreaSuperior(encuesta, dtoAreaAcademica.getAreaAcademica(), pregunta, respuestas);
-                    if(fusionarPreguntaPorAreaSuperior.getCorrecto()) {System.out.println("fusionarPreguntaPorAreaSuperior = " + fusionarPreguntaPorAreaSuperior);}
+                    if(fusionarPreguntaPorAreaSuperior.getCorrecto()) {/*System.out.println("fusionarPreguntaPorAreaSuperior = " + fusionarPreguntaPorAreaSuperior);*/}
                     else System.out.println("fusionarPreguntaPorAreaSuperior sin calculo = " + fusionarPreguntaPorAreaSuperior);
                 });
             });
 
+            ResultadoEJB<DtoSatisfaccionServiciosEncuesta.GraficaSerieInstitucionalHistorico> leerValorInstitucionalHistorico = leerValorInstitucionalHistorico(encuesta);
+            if(!leerValorInstitucionalHistorico.getCorrecto())
+                System.out.println("leerValorInstitucionalHistorico sin calculo = " + leerValorInstitucionalHistorico);
 
             return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Calculos realizados");
         }catch (Exception e){

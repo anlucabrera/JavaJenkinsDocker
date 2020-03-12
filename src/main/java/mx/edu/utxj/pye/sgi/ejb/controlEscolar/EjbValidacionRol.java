@@ -169,7 +169,18 @@ public class EjbValidacionRol {
             return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar como directivo con POA.", e, null);
         }
     }
-    
+
+    public ResultadoEJB<Filter<PersonalActivo>> validarPersonalActivo(Integer clave){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filter = new Filter<>();
+            filter.setEntity(p);
+            return ResultadoEJB.crearCorrecto(filter, "El usuario ha sido preparado para validar que sea personal activo.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar como directivo con POA.", e, null);
+        }
+    }
+
     public ResultadoEJB<Filter<PersonalActivo>> validarCoordinadorTutor(Integer clave){
         try{
             List<CordinadoresTutores> ct = em.createQuery("SELECT c FROM CordinadoresTutores c WHERE c.personal = :clave", CordinadoresTutores.class)

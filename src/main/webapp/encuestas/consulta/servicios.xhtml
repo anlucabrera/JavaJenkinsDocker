@@ -73,6 +73,11 @@
                                         <p:spacer width="5" />
                                     </f:facet>
                                     <f:facet name="right">
+                                        <p:commandLink styleClass="btn btn-primary" rendered="#{serviciosConsulta.mostrarBotonLimpiarContexto()}"
+                                                       actionListener="#{serviciosConsulta.limpiarContexto}" process="@this" title="Presionar para limpiar elementos en contexto." >
+                                            Limpiar caché
+                                            <i class="fa fa-trash" />
+                                        </p:commandLink>
                                         <p:spacer width="5" />
                                         <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
                                                        onclick="PF('modalAyuda').show();"
@@ -145,6 +150,39 @@
 
                                                         this.navigation = {buttonOptions: {enabled: true}}
                                                     }
+
+                                                    function linepercentageconfig() {
+                                                        this.yAxis = {
+                                                            max: 100, min: 0, tickAmount:11, tickInterval:10,
+                                                            title: {text: 'Porcentaje de satisfacción (%)'},
+                                                            plotBands: [{color: '#ffebe8', from: 0, to:74.99},{color: '#cfffd7', from: 75, to:100}]
+                                                        };
+
+                                                        this.tooltip = {
+                                                            shared: true,
+                                                            useHTML: true,
+                                                            headerFormat: '&lt;table>&lt;tr>&lt;td style=\'color:black;font-weight:bold;padding-right:5px;\'>{point.key}&lt;/td>&lt;td style=\'border-left:1px solid black;padding-left: 10px;\'>',
+                                                            pointFormat: '&lt;span style=\'color:{point.color}\'>{series.marker.symbol} {series.name}: &lt;b>{point.y}&lt;/b>&lt;/span>&lt;br/>',
+                                                            footerFormat: '&lt;/td>&lt;/tr>&lt;/table>',
+                                                            valueDecimals: 2
+                                                        };
+
+                                                        this.plotOptions = {
+                                                            series: {
+                                                                connectNulls: false,
+                                                                zones: [
+                                                                    {value: 0, color: '#fff'},
+                                                                    {value: 75, color: '#910000'},
+                                                                    {value: 100, color: '#8bbc21'}
+                                                                ]
+                                                            }
+                                                        };
+
+                                                        this.exporting = {enabled: true};
+
+                                                        this.navigation = {buttonOptions: {enabled: true}}
+                                                    }
+
                                                     function questionconfig() {
                                                         this.yAxis = {
                                                             max: 5, min: 0, tickAmount:6, tickInterval:1,
@@ -170,10 +208,143 @@
                                                 </script>
                                                 <c:forEach items="#{serviciosConsulta.dto.evaluaciones}" var="evaluacion2">
                                                     <c:set var="contenedor" value="#{serviciosConsulta.getContenedor(evaluacion2)}" />
+                                                    <c:set var="contenedorAnterior" value="#{serviciosConsulta.getContenedorAnterior(contenedor)}" />
+                                                    <c:set var="hayContenedorAnterior" value="#{not(empty contenedorAnterior)}" />
                                                     <p:outputPanel rendered="#{evaluacion2 eq serviciosConsulta.dto.evaluacionSeleccionada}">
                                                         <p:autoUpdate />
+                                                        <c:set var="mostrarDatos" value="#{true}" />
                                                         <p:tabView rendered="#{serviciosConsulta.dto.programaSeleccionado.area eq 0}">
-                                                            <p:tab title="Tabla de nivel de satisfacción">
+                                                            <p:tab title="PECE">
+                                                                <div class="callout callout-primary">
+                                                                    <h4><b>MECASUT</b> - Programas educativos centrados en la/el estudiante</h4>
+                                                                    <p style="text-align: justify;">
+                                                                        Encuesta que mide el nivel de satisfacción de las/os estudiantes sobre los servicios que presta la Universidad,
+                                                                        relacionados con su formación integral. Esta encuesta se aplica a solicitud de la CGUTyP para la elaboración de
+                                                                        los indicadores del Modelo de Evaluación de la Calidad del Subsistema de Universidades Tecnológicas (MECASUT),
+                                                                        por cada ciclo escolar.
+                                                                    </p>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-body no-padding">
+                                                                                <ul class="nav nav-stacked" style="text-align: left;">
+                                                                                    <li>Fecha de aplicación:  <span class="pull-right">Durante abril– septiembre</span></li>
+                                                                                    <li>Número de preguntas:  <span class="pull-right">73, divididas en 15 categorías</span></li>
+                                                                                    <li>Nivel de evaluación o escala:  <span class="pull-right">5</span></li>
+                                                                                    <li>Medio de Aplicación:  <span class="pull-right">en línea a través del SII</span></li>
+                                                                                </ul>
+                                                                            </div>
+                                                                        </div>
+                                                                        <table class="table table-condensed table-bordered table-hover table-striped table-responsive tabla ui-datatable">
+                                                                            <thead>
+                                                                                <tr role="row"><th role="columnheader" class="ui-state-default"><span class="ui-column-title">Categorías</span></th></tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <c:forEach items="#{satisfaccionServiciosApartado.ALL}" var="satisfaccionServiciosApartadoItem">
+                                                                                    <tr><td role="gridcell">#{satisfaccionServiciosApartadoItem.tema_corto}</td></tr>
+                                                                                </c:forEach>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header"><h3 class="box-title">Escala</h3></div>
+                                                                            <div class="box-body no-padding">
+                                                                                <table class="table table-striped table-condensed table-responsive">
+                                                                                    <tr>
+                                                                                        <th style="text-align: center;">Evaluación</th>
+                                                                                        <th style="text-align: center;" colspan="2">Valor</th>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>No Satisfecho(a)</td>
+                                                                                        <td><div class="progress progress-xs" style="min-width: 100px;"><div class="progress-bar progress-bar-danger" style="width: 79%"></div></div></td>
+                                                                                        <td><span class="badge bg-red">1 - 3.9</span></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Satisfecho(a) / Muy Sastisfecho(a)</td>
+                                                                                        <td><div class="progress progress-xs"><div class="progress-bar progress-bar-green" style="width: 100%"></div></div></td>
+                                                                                        <td><span class="badge bg-green">4-5</span></td>
+                                                                                    </tr>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-6 col-lg-8">
+                                                                        <table class="table table-condensed table-bordered table-hover table-striped table-responsive tabla ui-datatable">
+                                                                            <thead>
+                                                                            <tr role="row"><th role="columnheader" class="ui-state-default" colspan="4"><span class="ui-column-title">Total de escuestados/as</span></th></tr>
+                                                                            <tr role="row">
+                                                                                <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Nivel</span></th>
+                                                                                <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Programa</span></th>
+                                                                                <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Estudiantes</span></th>
+                                                                            </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                            <c:forEach items="#{serviciosConsulta.dto.areasAcademicas}" var="dtoAreaAcademica">
+                                                                                <tr role="row"><th role="columnheader" class="ui-state-default" colspan="3" style="text-align: center;"><span class="ui-column-title">#{dtoAreaAcademica.areaAcademica.nombre}</span></th></tr>
+                                                                                <c:forEach items="#{dtoAreaAcademica.programas}" var="programa">
+                                                                                    <tr>
+                                                                                        <td role="gridcell">#{programa.nivelEducativo.nombre}</td>
+                                                                                        <td role="gridcell">#{programa.nombre}</td>
+                                                                                        <td role="gridcell">#{contenedor.satisfaccionServiciosEstudiantes.stream().filter(dto -> dto.dtoEstudiantePeriodo.programa eq programa).toList().size()}</td>
+                                                                                    </tr>
+                                                                                </c:forEach>
+                                                                                <tr>
+                                                                                    <td role="gridcell" colspan="2" style="text-align: right;">Subtotal:</td>
+                                                                                    <th role="columnheader" class="ui-state-default" style="text-align: center;"><span class="ui-column-title">#{contenedor.satisfaccionServiciosEstudiantes.stream().filter(dto -> dto.dtoEstudiantePeriodo.programa.areaSuperior eq dtoAreaAcademica.areaAcademica.area).toList().size()}</span></th>
+                                                                                </tr>
+                                                                            </c:forEach>
+                                                                            <tr>
+                                                                                <td role="gridcell" colspan="2" style="text-align: right;">Total:</td>
+                                                                                <th role="columnheader" class="ui-state-default" style="text-align: center;"><span class="ui-column-title">#{contenedor.satisfaccionServiciosEstudiantes.size()}</span></th>
+                                                                            </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-body no-padding">
+                                                                                <hf:chart type="line" title="Porcentaje de satisfacción general" 
+                                                                                          yaxisLabel="Porcentaje de satisfacción" credits="siip.utxj.edu.mx/sii2"
+                                                                                          height="300" extender="linepercentageconfig">
+                                                                                    <hf:chartSerie name="UTXJ" dataLabel="{point.y:.2f}%"
+                                                                                                   value="#{contenedor.graficaSerieInstitucionalHistorico.dtoSatisfaccionHistoricos}"
+                                                                                                   var="dtoSatisfaccionHistorico" point="#{dtoSatisfaccionHistorico.porcentaje * 100}" tickLabel="#{dtoSatisfaccionHistorico.ciclo}" />
+                                                                                </hf:chart>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-body no-padding">
+                                                                                <p:outputPanel rendered="#{!empty contenedorAnterior}">
+                                                                                    <hf:chart type="column" title="Satisfacción de servicios #{serviciosConsulta.dto.contenedor.ciclosEscolares.fin.year + 1900}"
+                                                                                              yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2"
+                                                                                              height="300" extender="lineconfig">
+                                                                                        <hf:chartSerie name="UTXJ #{contenedorAnterior.ciclosEscolares.fin.year + 1900}" dataLabel="{point.y:.2f}"
+                                                                                                       value="#{serviciosConsulta.ordenarFilaInstitucionalApartado(contenedorAnterior)}"
+                                                                                                       var="filaInstitucionalApartado" point="#{filaInstitucionalApartado.totalK}" tickLabel="#{serviciosConsulta.apartadoToEnum(filaInstitucionalApartado.apartado).tema_corto}" />
+                                                                                        <hf:chartSerie name="UTXJ #{contenedor.ciclosEscolares.fin.year + 1900}" dataLabel="{point.y:.2f}"
+                                                                                                       value="#{serviciosConsulta.ordenarFilaInstitucionalApartado(contenedor)}"
+                                                                                                       var="filaInstitucionalApartado" point="#{filaInstitucionalApartado.totalK}" tickLabel="#{serviciosConsulta.apartadoToEnum(filaInstitucionalApartado.apartado).tema_corto}" />
+                                                                                    </hf:chart>
+                                                                                </p:outputPanel>
+                                                                                <p:outputPanel rendered="#{empty contenedorAnterior}">
+                                                                                    <hf:chart type="column" title="Satisfacción de servicios #{serviciosConsulta.dto.contenedor.ciclosEscolares.fin.year + 1900}"
+                                                                                              yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2"
+                                                                                              height="300" extender="lineconfig">
+                                                                                        <hf:chartSerie name="UTXJ #{contenedor.ciclosEscolares.fin.year + 1900}" dataLabel="{point.y:.2f}"
+                                                                                                       value="#{serviciosConsulta.ordenarFilaInstitucionalApartado(contenedor)}"
+                                                                                                       var="filaInstitucionalApartado" point="#{filaInstitucionalApartado.totalK}" tickLabel="#{serviciosConsulta.apartadoToEnum(filaInstitucionalApartado.apartado).tema_corto}" />
+                                                                                    </hf:chart>
+                                                                                </p:outputPanel>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </p:tab>
+                                                            <p:tab title="Tabla de nivel de satisfacción" rendered="#{mostrarDatos}">
                                                                 <table class="table table-condensed table-bordered table-hover table-responsive tabla ui-datatable">
                                                                     <thead>
                                                                     <tr role="row">
@@ -262,7 +433,7 @@
                                                                     </tfoot>
                                                                 </table>
                                                             </p:tab>
-                                                            <p:tab title="Histórico por tema">
+                                                            <p:tab title="Histórico por categoría" rendered="#{mostrarDatos}">
                                                                 <p:tabView>
                                                                     <p:tab title="UTXJ">
                                                                         <p:outputPanel deferred="true" deferredMode="visible">
@@ -273,7 +444,7 @@
                                                                                               height="300" extender="lineconfig">
                                                                                         <c:if test="#{true}">
                                                                                             <hf:chartSerie name="UTXJ" dataLabel="{point.y:.2f}"
-                                                                                                           value="#{contenedor.graficaSerieInstitucionalHistoricoMap[satisfaccionServiciosApartadoItem].dtoSatisfaccionHistoricos}"
+                                                                                                           value="#{contenedor.graficaSerieInstitucionalHistoricoApartadoMap[satisfaccionServiciosApartadoItem].dtoSatisfaccionHistoricos}"
                                                                                                            var="satisfaccionInstitucional" point="#{satisfaccionInstitucional.satisfaccionNivel}" tickLabel="#{satisfaccionInstitucional.ciclo.fin.year + 1900}" />
                                                                                         </c:if>
                                                                                         <c:if test="#{false}">
@@ -292,14 +463,14 @@
                                                                         <p:tab title="#{dtoAreasAcademica.areaAcademica.siglas}">
                                                                             <p:outputPanel deferred="false" deferredMode="visible">
                                                                                 <c:forEach items="#{satisfaccionServiciosApartado.ALL}" var="satisfaccionServiciosApartadoItem">
-                                                                                    <div class="col-lg-4 col-md-6 col-sm-12">
+                                                                                    <div class="col-lg-4 col-md-6 col-sm-12" style="height: 305px !important; z-index: 1000 !important;">
                                                                                         <hf:chart type="line" title="#{satisfaccionServiciosApartadoItem.tema_corto}"
                                                                                                   yaxisLabel="Nivel de satisfacción"
                                                                                                   credits="siip.utxj.edu.mx/sii2"
                                                                                                   height="300" extender="lineconfig">
                                                                                             <c:if test="#{false}">
                                                                                                 <hf:chartSerie name="UTXJ" dataLabel="{point.y:.2f}"
-                                                                                                               value="#{contenedor.graficaSerieInstitucionalHistoricoMap[satisfaccionServiciosApartadoItem].dtoSatisfaccionHistoricos}"
+                                                                                                               value="#{contenedor.graficaSerieInstitucionalHistoricoApartadoMap[satisfaccionServiciosApartadoItem].dtoSatisfaccionHistoricos}"
                                                                                                                var="satisfaccionInstitucional" point="#{satisfaccionInstitucional.satisfaccionNivel}" tickLabel="#{satisfaccionInstitucional.ciclo.fin.year + 1900}" />
                                                                                             </c:if>
                                                                                             <hf:chartSerie name="#{area2.siglas}" dataLabel="{point.y:.2f}"
@@ -313,69 +484,79 @@
                                                                     </c:forEach>
                                                                 </p:tabView>
                                                             </p:tab>
-                                                            <p:tab title="PECE por tema y programa">
+                                                            <p:tab title="PECE por categoría y programa" rendered="#{mostrarDatos}">
                                                                 <p:outputPanel deferred="true" deferredMode="visible">
                                                                     <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
-                                                                        <hf:chart type="columns" title="#{apartado.contenido}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="lineconfig">
-                                                                            <hf:chartSerie type="column" name="Programas Educativos" value="#{contenedor.getNivelSatisfaccionProgramaPorApartado(apartado)}"
-                                                                                           var="filaProgramaApartado" point="#{filaProgramaApartado.totalK}" tickLabel="#{filaProgramaApartado.pk.programa.siglas}" dataLabel="{point.y:.2f}" />
-                                                                        </hf:chart>
+                                                                        <div class="col-md-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                            <hf:chart type="columns" title="#{serviciosConsulta.apartadoToEnum(apartado).tema_corto}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="lineconfig">
+                                                                                <hf:chartSerie type="column" name="Programas Educativos" value="#{contenedor.getNivelSatisfaccionProgramaPorApartado(apartado)}"
+                                                                                               var="filaProgramaApartado" point="#{filaProgramaApartado.totalK}" tickLabel="#{filaProgramaApartado.pk.programa.siglas}" dataLabel="{point.y:.2f}" />
+                                                                            </hf:chart>
+                                                                        </div>
                                                                     </c:forEach>
                                                                 </p:outputPanel>
                                                             </p:tab>
-                                                            <p:tab title="PECE por tema y área" rendered="#{true}">
+                                                            <p:tab title="PECE por categoría y área" rendered="#{mostrarDatos}">
                                                                 <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
-                                                                    <hf:chart type="columns" title="#{apartado.contenido}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="lineconfig">
-                                                                        <hf:chartSerie type="column" name="Áreas académicas" value="#{contenedor.getNivelSatisfaccionAreaPorApartado(apartado)}"
-                                                                                       var="filaProgramaApartado" point="#{filaProgramaApartado.totalK}" tickLabel="#{filaProgramaApartado.pk.programa.siglas}" dataLabel="{point.y:.2f}" />
-                                                                    </hf:chart>
+                                                                    <div class="col-md-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                        <hf:chart type="columns" title="#{serviciosConsulta.apartadoToEnum(apartado).tema_corto}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="lineconfig">
+                                                                            <hf:chartSerie type="column" name="Áreas académicas" value="#{contenedor.getNivelSatisfaccionAreaPorApartado(apartado)}"
+                                                                                           var="filaProgramaApartado" point="#{filaProgramaApartado.totalK}" tickLabel="#{filaProgramaApartado.pk.programa.siglas}" dataLabel="{point.y:.2f}" />
+                                                                        </hf:chart>
+                                                                    </div>
                                                                 </c:forEach>
                                                             </p:tab>
-                                                            <p:tab title="PECE por área, tema y pregunta" rendered="#{true}">
+                                                            <p:tab title="PECE por área, categoría y pregunta" rendered="#{mostrarDatos}">
                                                                 <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
                                                                     <p:tabView>
                                                                         <p:tab title="UTXJ">
-                                                                            <hf:chart type="columns" title="#{apartado.contenido}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="questionconfig">
-                                                                                <hf:chartSerie type="column" name="Preguntas" value="#{contenedor.getNivelSatisfaccionInstitucionalPorApartado(apartado)}"
-                                                                                               var="filaInstitucional" point="#{filaInstitucional.totalK}" tickLabel="#{filaInstitucional.pregunta}" dataLabel="{point.y:.2f}" />
-                                                                                <hf:chartTooltip>
-                                                                                    <f:facet name="header"><h:outputText escape="false" value="&lt;table>&lt;tr>&lt;td style='color:black;font-weight:bold;padding-right:5px;'>{point.key} &lt;/td>&lt;td style='border-left:1px solid black;padding-left: 10px;>"/></f:facet>
-                                                                                    <f:facet name="body"><h:outputText value="&lt;span style='color:{point.color}'> {series.name}: &lt;b>{point.y:.2f}&lt;/b>&lt;/span>&lt;br/>"/></f:facet>
-                                                                                    <f:facet name="footer"><h:outputText escape="false" value='&lt;/td>&lt;/tr>&lt;/table>' /></f:facet>
-                                                                                </hf:chartTooltip>
-                                                                            </hf:chart>
+                                                                            <div class="col-md-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                                <hf:chart type="columns" title="#{serviciosConsulta.apartadoToEnum(apartado).tema_corto}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="questionconfig">
+                                                                                    <hf:chartSerie type="column" name="Preguntas" value="#{contenedor.getNivelSatisfaccionInstitucionalPorApartado(apartado)}"
+                                                                                                   var="filaInstitucional" point="#{filaInstitucional.totalK}" tickLabel="#{filaInstitucional.pregunta}" dataLabel="{point.y:.2f}" />
+                                                                                    <hf:chartTooltip>
+                                                                                        <f:facet name="header"><h:outputText escape="false" value="&lt;table>&lt;tr>&lt;td style='color:black;font-weight:bold;padding-right:5px;'>{point.key} &lt;/td>&lt;td style='border-left:1px solid black;padding-left: 10px;>"/></f:facet>
+                                                                                        <f:facet name="body"><h:outputText value="&lt;span style='color:{point.color}'> {series.name}: &lt;b>{point.y:.2f}&lt;/b>&lt;/span>&lt;br/>"/></f:facet>
+                                                                                        <f:facet name="footer"><h:outputText escape="false" value='&lt;/td>&lt;/tr>&lt;/table>' /></f:facet>
+                                                                                    </hf:chartTooltip>
+                                                                                </hf:chart>
+                                                                            </div>
                                                                         </p:tab>
                                                                         <c:forEach items="#{serviciosConsulta.dto.areasAcademicas}" var="dtoAreasAcademica">
                                                                             <p:tab title="#{dtoAreasAcademica.areaAcademica.siglas}">
                                                                                 <p:outputPanel deferred="false" deferredMode="visible">
-                                                                                    <hf:chart type="columns" title="#{apartado.contenido}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="questionconfig">
-                                                                                        <hf:chartSerie type="column" name="Preguntas" value="#{contenedor.getNivelSatisfaccionAreaPreguntaPorAreaApartado(dtoAreasAcademica.areaAcademica, apartado)}"
-                                                                                                       var="filaPrograma" point="#{filaPrograma.totalK}" tickLabel="#{filaPrograma.pk.pregunta}" dataLabel="{point.y:.2f}" />
-                                                                                        <hf:chartTooltip>
-                                                                                            <f:facet name="header"><h:outputText escape="false" value="&lt;table>&lt;tr>&lt;td style='color:black;font-weight:bold;padding-right:5px;'>{point.key} &lt;/td>&lt;td style='border-left:1px solid black;padding-left: 10px;>"/></f:facet>
-                                                                                            <f:facet name="body"><h:outputText value="&lt;span style='color:{point.color}'> {series.name}: &lt;b>{point.y:.2f}&lt;/b>&lt;/span>&lt;br/>"/></f:facet>
-                                                                                            <f:facet name="footer"><h:outputText escape="false" value='&lt;/td>&lt;/tr>&lt;/table>' /></f:facet>
-                                                                                        </hf:chartTooltip>
-                                                                                    </hf:chart>
+                                                                                    <div class="col-md-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                                        <hf:chart type="columns" title="#{serviciosConsulta.apartadoToEnum(apartado).tema_corto}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="questionconfig">
+                                                                                            <hf:chartSerie type="column" name="Preguntas" value="#{contenedor.getNivelSatisfaccionAreaPreguntaPorAreaApartado(dtoAreasAcademica.areaAcademica, apartado)}"
+                                                                                                           var="filaPrograma" point="#{filaPrograma.totalK}" tickLabel="#{filaPrograma.pk.pregunta}" dataLabel="{point.y:.2f}" />
+                                                                                            <hf:chartTooltip>
+                                                                                                <f:facet name="header"><h:outputText escape="false" value="&lt;table>&lt;tr>&lt;td style='color:black;font-weight:bold;padding-right:5px;'>{point.key} &lt;/td>&lt;td style='border-left:1px solid black;padding-left: 10px;>"/></f:facet>
+                                                                                                <f:facet name="body"><h:outputText value="&lt;span style='color:{point.color}'> {series.name}: &lt;b>{point.y:.2f}&lt;/b>&lt;/span>&lt;br/>"/></f:facet>
+                                                                                                <f:facet name="footer"><h:outputText escape="false" value='&lt;/td>&lt;/tr>&lt;/table>' /></f:facet>
+                                                                                            </hf:chartTooltip>
+                                                                                        </hf:chart>
+                                                                                    </div>
                                                                                 </p:outputPanel>
                                                                             </p:tab>
                                                                         </c:forEach>
                                                                     </p:tabView>
                                                                 </c:forEach>
                                                             </p:tab>
-                                                            <p:tab title="PECE por pregunta y área">
+                                                            <p:tab title="PECE por pregunta y área" rendered="#{mostrarDatos}">
                                                                 <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
-                                                                    <p:panel header="#{apartado.contenido}">
+                                                                    <p:panel header="#{serviciosConsulta.apartadoToEnum(apartado).tema_corto}" styleClass="box-primary">
                                                                         <c:forEach items="#{apartado.preguntas}" var="pregunta">
-                                                                            <hf:chart type="columns" subTitle="#{pregunta.numero} #{pregunta.titulo}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="questionconfig">
-                                                                                <hf:chartSerie type="column" name="Preguntas" value="#{serviciosConsulta.dto.contenedor.getNivelSatisfaccionAreaPreguntaPorPregunta(pregunta)}"
-                                                                                               var="filaPrograma" point="#{filaPrograma.totalK}" tickLabel="#{filaPrograma.pk.programa.siglas}" dataLabel="{point.y:.2f}" />
-                                                                                <hf:chartTooltip>
-                                                                                    <f:facet name="header"><h:outputText escape="false" value="&lt;table>&lt;tr>&lt;td style='color:black;font-weight:bold;padding-right:5px;'>{point.key} &lt;/td>&lt;td style='border-left:1px solid black;padding-left: 10px;>"/></f:facet>
-                                                                                    <f:facet name="body"><h:outputText value="&lt;span style='color:{point.color}'> {series.name}: &lt;b>{point.y:.2f}&lt;/b>&lt;/span>&lt;br/>"/></f:facet>
-                                                                                    <f:facet name="footer"><h:outputText escape="false" value='&lt;/td>&lt;/tr>&lt;/table>' /></f:facet>
-                                                                                </hf:chartTooltip>
-                                                                            </hf:chart>
+                                                                            <div class="col-md-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                                <hf:chart type="columns" subTitle="#{pregunta.numero} #{pregunta.titulo}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="questionconfig">
+                                                                                    <hf:chartSerie type="column" name="Preguntas" value="#{serviciosConsulta.dto.contenedor.getNivelSatisfaccionAreaPreguntaPorPregunta(pregunta)}"
+                                                                                                   var="filaPrograma" point="#{filaPrograma.totalK}" tickLabel="#{filaPrograma.pk.programa.siglas}" dataLabel="{point.y:.2f}" />
+                                                                                    <hf:chartTooltip>
+                                                                                        <f:facet name="header"><h:outputText escape="false" value="&lt;table>&lt;tr>&lt;td style='color:black;font-weight:bold;padding-right:5px;'>{point.key} &lt;/td>&lt;td style='border-left:1px solid black;padding-left: 10px;>"/></f:facet>
+                                                                                        <f:facet name="body"><h:outputText value="&lt;span style='color:{point.color}'> {series.name}: &lt;b>{point.y:.2f}&lt;/b>&lt;/span>&lt;br/>"/></f:facet>
+                                                                                        <f:facet name="footer"><h:outputText escape="false" value='&lt;/td>&lt;/tr>&lt;/table>' /></f:facet>
+                                                                                    </hf:chartTooltip>
+                                                                                </hf:chart>
+                                                                            </div>
                                                                         </c:forEach>
                                                                     </p:panel>
                                                                 </c:forEach>
@@ -481,14 +662,14 @@
                                                                 <p:tab title="PECE por tema" rendered="#{serviciosConsulta.dto.programaSeleccionado eq programa}">
                                                                     <p:outputPanel deferred="false" deferredMode="visible">
                                                                         <c:forEach items="#{satisfaccionServiciosApartado.ALL}" var="satisfaccionServiciosApartadoItem">
-                                                                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                                                            <div class="col-lg-4 col-md-6 col-sm-12" style="height: 305px !important; z-index: 1000 !important;">
                                                                                 <hf:chart type="line" title="#{satisfaccionServiciosApartadoItem.tema_corto}"
                                                                                           yaxisLabel="Nivel de satisfacción"
                                                                                           credits="siip.utxj.edu.mx/sii2"
                                                                                           height="300" extender="lineconfig">
                                                                                     <c:if test="#{false}">
                                                                                         <hf:chartSerie name="UTXJ" dataLabel="{point.y:.2f}"
-                                                                                                       value="#{contenedor.graficaSerieInstitucionalHistoricoMap[satisfaccionServiciosApartadoItem].dtoSatisfaccionHistoricos}"
+                                                                                                       value="#{contenedor.graficaSerieInstitucionalHistoricoApartadoMap[satisfaccionServiciosApartadoItem].dtoSatisfaccionHistoricos}"
                                                                                                        var="satisfaccionInstitucional" point="#{satisfaccionInstitucional.satisfaccionNivel}" tickLabel="#{satisfaccionInstitucional.ciclo.fin.year + 1900}" />
                                                                                     </c:if>
                                                                                     <hf:chartSerie name="#{area2.siglas}" dataLabel="{point.y:.2f}"
@@ -500,8 +681,8 @@
                                                                     </p:outputPanel>
                                                                 </p:tab>
                                                                 <p:tab title="PECE por pregunta" rendered="#{serviciosConsulta.dto.programaSeleccionado eq programa}">
-                                                                    <p:outputPanel deferred="true" deferredMode="visible">
-                                                                        <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
+                                                                    <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
+                                                                        <div class="col-md-12" style="height: 305px !important; z-index: 1000 !important;">
                                                                             <hf:chart type="columns" title="#{apartado.contenido}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="questionconfig">
                                                                                 <hf:chartSerie type="column" name="Preguntas" value="#{serviciosConsulta.dto.contenedor.getNivelSatisfaccionAreaPreguntaPorAreaApartado(area2, apartado)}"
                                                                                                var="filaPrograma" point="#{filaPrograma.totalK}" tickLabel="#{filaPrograma.pk.pregunta}" dataLabel="{point.y:.2f}" />
@@ -511,8 +692,8 @@
                                                                                     <f:facet name="footer"><h:outputText escape="false" value='&lt;/td>&lt;/tr>&lt;/table>' /></f:facet>
                                                                                 </hf:chartTooltip>
                                                                             </hf:chart>
-                                                                        </c:forEach>
-                                                                    </p:outputPanel>
+                                                                        </div>
+                                                                    </c:forEach>
                                                                 </p:tab>
                                                             </c:forEach>
                                                         </p:tabView>

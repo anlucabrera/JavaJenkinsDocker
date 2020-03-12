@@ -101,4 +101,12 @@ public class ServicioPropiedades implements EjbPropiedades {
                 .collect(Collectors.toMap(cp -> Integer.parseInt(cp.getClave().replaceAll(clave, "")), cp-> cp.getValorCadena()));
     }
 
+    @Override
+    public Map<Integer, Double> leerPropiedadDecimalMapa(String clave) {
+        return em.createQuery("select cp from ConfiguracionPropiedades cp where cp.clave like concat(:clave, '%')  and cp.tipo='Lista'", ConfiguracionPropiedades.class)
+                .setParameter("clave", clave)
+                .getResultStream()
+                .collect(Collectors.toMap(cp -> Integer.parseInt(cp.getClave().replaceAll(clave, "")), cp-> cp.getValorDecimal()));
+    }
+
 }

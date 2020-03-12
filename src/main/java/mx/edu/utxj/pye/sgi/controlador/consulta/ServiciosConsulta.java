@@ -21,6 +21,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.SatisfaccionServiciosApartado;
+import mx.edu.utxj.pye.sgi.enums.converter.SatisfaccionServiciosApartadoConverter;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import mx.edu.utxj.pye.sgi.util.Serializador;
 import org.omnifaces.cdi.ViewScoped;
@@ -34,10 +35,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Named
@@ -62,11 +60,11 @@ public class ServiciosConsulta extends ViewScopedRol implements Desarrollable {
     public void init(){
         try{
             setVistaControlador(ControlEscolarVistaControlador.SATISFACCION_SERVICIOS_CONSULTA);
-            ResultadoEJB<Filter<PersonalActivo>> validarTienePOA = ejbValidacionRol.validarTienePOA(logon.getPersonal().getClave());
-            if(!validarTienePOA.getCorrecto()) {mostrarMensajeResultadoEJB(validarTienePOA); return;}
+            ResultadoEJB<Filter<PersonalActivo>> validarPersonalActivo = ejbValidacionRol.validarPersonalActivo(logon.getPersonal().getClave());
+            if(!validarPersonalActivo.getCorrecto()) {mostrarMensajeResultadoEJB(validarPersonalActivo); return;}
 
-            dto = new ServiciosConsultaDto(validarTienePOA.getValor());
-            tieneAcceso = dto.tieneAcceso(validarTienePOA.getValor().getEntity());
+            dto = new ServiciosConsultaDto(validarPersonalActivo.getValor());
+            tieneAcceso = dto.tieneAcceso(validarPersonalActivo.getValor().getEntity());
 
             ////////////////////////////////
 
@@ -102,7 +100,7 @@ public class ServiciosConsulta extends ViewScopedRol implements Desarrollable {
         if(dto.hayContenedor(evaluacion)) return dto.getContenedores().get(evaluacion);
 
         String identificadorEnSesion = "contenedor_".concat(evaluacion.getEvaluacion().toString());
-        DtoSatisfaccionServiciosEncuesta contenedor = Faces.getSessionAttribute(identificadorEnSesion);
+        DtoSatisfaccionServiciosEncuesta contenedor = Faces.getApplicationAttribute(identificadorEnSesion);
         if(contenedor != null){
             dto.getContenedores().put(evaluacion, contenedor);
             return contenedor;
@@ -113,7 +111,7 @@ public class ServiciosConsulta extends ViewScopedRol implements Desarrollable {
 //        System.out.println("evaluacion en concentrado calcularConcentrado = " + calcularConcentrado.getValor().getEvaluacion());
         if(!calcularConcentrado.getCorrecto()){mostrarMensajeResultadoEJB(calcularConcentrado); return null;}
         dto.getContenedores().put(evaluacion, calcularConcentrado.getValor());
-        Faces.setSessionAttribute(identificadorEnSesion, calcularConcentrado.getValor());
+        Faces.setApplicationAttribute(identificadorEnSesion, calcularConcentrado.getValor());
 //        System.out.println("dto.getContenedores().size() = " + dto.getContenedores().size());
 //        System.out.println("Evaluaciones como claves");
 //        dto.getContenedores().keySet().forEach(System.out::println);
@@ -125,13 +123,24 @@ public class ServiciosConsulta extends ViewScopedRol implements Desarrollable {
         return dto.getContenedores().get(evaluacion);
     }
 
+    public void limpiarContexto(){
+        dto.getEvaluaciones().forEach(evaluacion -> {
+            String identificadorEnSesion = "contenedor_".concat(evaluacion.getEvaluacion().toString());
+            Faces.removeApplicationAttribute(identificadorEnSesion);
+        });
+    }
+
+    public boolean mostrarBotonLimpiarContexto(){
+        return dto.getFiltro().getEntity().getAreaOperativa().getArea().intValue() == 9;
+    }
+
     public void cambiarEvaluacion(){
 //        System.out.println();
 //        System.out.println("ServiciosConsulta.cambiarEvaluacion");
 //        System.out.println("dto.getEvaluacionSeleccionada() = " + caster.clavePeriodoToString(dto.getEvaluacionSeleccionada().getPeriodo()));
         if(dto.hayEvaluacion()){
-            getContenedor(dto.getEvaluacionSeleccionada());
-            ResultadoEJB<List<DtoAreaAcademica>> getProgramasEvaluacion = ejbSatisfaccionServiciosConsulta.getProgramasEvaluacion(dto.getEvaluacionSeleccionada());
+            DtoSatisfaccionServiciosEncuesta contenedor = getContenedor(dto.getEvaluacionSeleccionada());
+            ResultadoEJB<List<DtoAreaAcademica>> getProgramasEvaluacion = ejbSatisfaccionServiciosConsulta.getProgramasEvaluacion(dto.getEvaluacionSeleccionada(), contenedor);
 //            System.out.println("getProgramasEvaluacion = " + getProgramasEvaluacion);
             if(getProgramasEvaluacion.getCorrecto()) dto.setAreasAcademicas(getProgramasEvaluacion.getValor());
             else mostrarMensajeResultadoEJB(getProgramasEvaluacion);
@@ -175,5 +184,26 @@ public class ServiciosConsulta extends ViewScopedRol implements Desarrollable {
     public List<DtoAreaAcademica> getAreasAcademicas(){
 //        dto.getAreasAcademicas().forEach(System.out::println);
         return dto.getAreasAcademicas().stream().filter(dtoAreaAcademica -> dtoAreaAcademica.getAreaAcademica().getArea() != null).sorted(Comparator.comparing(dtoAreaAcademica -> dtoAreaAcademica.getAreaAcademica().getNombre())).collect(Collectors.toList());
+    }
+
+    public SatisfaccionServiciosApartado apartadoToEnum(Apartado apartado){
+        if(apartado == null) return null;
+
+        return SatisfaccionServiciosApartadoConverter.of(apartado.getId().doubleValue());
+    }
+
+    public List<DtoSatisfaccionServiciosEncuesta.FilaInstitucionalApartado> ordenarFilaInstitucionalApartado(DtoSatisfaccionServiciosEncuesta contenedor){
+        return contenedor.getApartadoFilaInstitucionalMap().values().stream().sorted(Comparator.comparing(filaInstitucionalApartado -> filaInstitucionalApartado.getApartado().getId())).collect(Collectors.toList());
+    }
+
+    public DtoSatisfaccionServiciosEncuesta getContenedorAnterior(DtoSatisfaccionServiciosEncuesta contenedor){
+        int index = dto.getEvaluaciones().indexOf(contenedor.getEvaluacion());
+        if(index < dto.getEvaluaciones().size() - 1){
+            Evaluaciones evaluacion = dto.getEvaluaciones().get(index + 1);
+            if(dto.getContenedores().containsKey(evaluacion))
+                return dto.getContenedores().get(evaluacion);
+        }
+
+        return null;
     }
 }

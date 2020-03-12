@@ -37,4 +37,6 @@ public interface EjbPropiedades extends Serializable{
     public Optional<LocalDate> leerPropiedadFecha(String clave);
 
     public Map<Integer,String> leerPropiedadMapa(String clave, String valor);
+
+    public Map<Integer, Double> leerPropiedadDecimalMapa(String claves);
 }

@@ -2,10 +2,8 @@ package mx.edu.utxj.pye.sgi.dto.consulta;
 
 import edu.mx.utxj.pye.seut.util.preguntas.Pregunta;
 import lombok.*;
-import mx.edu.utxj.pye.sgi.controlador.controlEscolar.FichaAdmision;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -36,15 +34,20 @@ public class DtoSatisfaccionServiciosEncuesta implements Serializable {
     @Getter @Setter private FilaInstitucionalGeneral filaInstitucionalGeneral;
     @Getter @Setter private Map<AreasUniversidad, FilaProgramaGeneral> filaProgramaGeneralMap = new ConcurrentHashMap<>();
     @Getter @Setter private Map<GraficaSerieAreaHistoricoPK, GraficaSerieAreaHistorico> graficaSerieAreaHistoricoMap = new ConcurrentHashMap<>();
-    @Getter @Setter private Map<SatisfaccionServiciosApartado, GraficaSerieInstitucionalHistorico> graficaSerieInstitucionalHistoricoMap = new ConcurrentHashMap<>();
+    @Getter @Setter private Map<SatisfaccionServiciosApartado, GraficaSerieInstitucionalHistoricoApartado> graficaSerieInstitucionalHistoricoApartadoMap = new ConcurrentHashMap<>();
+    @Getter @Setter private GraficaSerieInstitucionalHistorico graficaSerieInstitucionalHistorico;
 
     public static Comparator<AreasUniversidad> areasUniversidadComparator;
     public static Comparator<FilaProgramaApartado> filaProgramaApartadoComparator;
+    public static Comparator<DtoSatisfaccionHistoricoInstitucional> dtoSatisfaccionHistoricoInstitucionalComparator;
 
     static {
-        areasUniversidadComparator = Comparator.comparing(AreasUniversidad::getAreaSuperior).thenComparing(AreasUniversidad::getSiglas);
+        Comparator<AreasUniversidad> nivelAreasUniversidadComparator = Comparator.comparing(areasUniversidad -> areasUniversidad.getNivelEducativo().getNivel());
+        Comparator<AreasUniversidad> nivelAreasUniversidadComparatorReversed = nivelAreasUniversidadComparator.reversed().thenComparing(Comparator.comparing(AreasUniversidad::getSiglas));
+        areasUniversidadComparator = Comparator.comparing(AreasUniversidad::getAreaSuperior).thenComparing(nivelAreasUniversidadComparatorReversed);
         Comparator<FilaProgramaApartado> comparing = Comparator.comparing(filaProgramaApartado -> filaProgramaApartado.getPk().getPrograma().getAreaSuperior());
         filaProgramaApartadoComparator = comparing.thenComparing(filaProgramaApartado -> filaProgramaApartado.getPk().getPrograma().getSiglas());
+        dtoSatisfaccionHistoricoInstitucionalComparator = Comparator.comparing(DtoSatisfaccionHistoricoInstitucional::getCiclo);
     }
 
     public void setSatisfaccionServiciosEstudiantes(List<DtoSatisfaccionServiciosEstudiante> satisfaccionServiciosEstudiantes) {
@@ -224,9 +227,14 @@ public class DtoSatisfaccionServiciosEncuesta implements Serializable {
     }
 
     @RequiredArgsConstructor @AllArgsConstructor @EqualsAndHashCode @ToString
-    public static class GraficaSerieInstitucionalHistorico{
+    public static class GraficaSerieInstitucionalHistoricoApartado {
         @Getter @Setter @NonNull SatisfaccionServiciosApartado satisfaccionServiciosApartado;
-        @Getter @Setter List<DtoSatisfaccionHistoricoInstitucional> dtoSatisfaccionHistoricos;
+        @Getter @Setter List<DtoSatisfaccionHistoricoInstitucionalApartado> dtoSatisfaccionHistoricos;
+    }
+
+    @RequiredArgsConstructor @AllArgsConstructor @EqualsAndHashCode @ToString
+    public static class GraficaSerieInstitucionalHistorico {
+        @Getter @Setter List<DtoSatisfaccionHistoricoInstitucional> dtoSatisfaccionHistoricos = new Vector<>();
     }
 
     @RequiredArgsConstructor @EqualsAndHashCode @ToString
@@ -243,8 +251,15 @@ public class DtoSatisfaccionServiciosEncuesta implements Serializable {
         @Getter @Setter @NonNull SatisfaccionHistorico satisfaccionHistorico;
     }
 
-    @RequiredArgsConstructor @EqualsAndHashCode @ToString @AllArgsConstructor
+    @RequiredArgsConstructor @EqualsAndHashCode(of = {"ciclo"}) @ToString
     public static class DtoSatisfaccionHistoricoInstitucional{
+        @Getter @Setter @NonNull Integer ciclo;
+        @Getter @Setter @NonNull Double nivel;
+        @Getter @Setter @NonNull Double porcentaje;
+    }
+
+    @RequiredArgsConstructor @EqualsAndHashCode @ToString @AllArgsConstructor
+    public static class DtoSatisfaccionHistoricoInstitucionalApartado {
         @Getter @Setter @NonNull CiclosEscolares ciclo;
         @Getter @Setter @NonNull SatisfaccionServiciosApartado satisfaccionServiciosApartado;
         @Getter @Setter Double satisfaccionNivel;

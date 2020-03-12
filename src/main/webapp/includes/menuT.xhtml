@@ -128,7 +128,8 @@
                     <!-- Especialista -->
                     <c:if test="#{seguimientoCasoCriticoEspecialista.mostrarEnDesarrollo(request) and seguimientoCasoCriticoEspecialista.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento Caso Crítico Especialista</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 </c:if>
-                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluación del Personal</li>
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluaciones y encuestas</li>
+                <c:if test="#{serviciosConsulta.mostrarEnDesarrollo(request) and serviciosConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/consulta/servicios.xhtml" title="Satisfacción de servicios"><i class="fa fa-slideshare"></i><span>Satisfacción de servicios</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{controlEscolarMenu.tieneElementos()}">
                     <li class="treeview">
                         <a href="#">
@@ -518,7 +519,6 @@
                             </li>
                         </ul>
                     </li>
-                    <c:if test="#{serviciosConsulta.mostrarEnDesarrollo(request) and serviciosConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/consulta/servicios.xhtml" title="Satisfacción de servicios"><i class="fa fa-slideshare"></i><span>Satisfacción de servicios</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 </c:if>
 
 
@@ -563,7 +563,7 @@
                     <ul class="treeview-menu" style="display: none;">
                         <li>
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos/Procedimiento de atencion a quejas 025.pdf#toolbar=0" target="_blank">
-                                <span>Atencion a quejas</span>
+                                <span>Atención a quejas</span>
                             </p:link>
                         </li>
                     </ul>
@@ -1069,7 +1069,7 @@
                     </li>
                 </c:if>
                 <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 148}">
-                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Estadistica</li>
+                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Estadística</li>
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-history"></i> <span>Estadística</span>
@@ -1098,7 +1098,7 @@
                         </p:link>
                     </li>
                 </c:if>
-                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Comunicacion interna</li>
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Comunicación interna</li>
                 <li>
                     <p:link href="#{request.contextPath}/directorioCorreos.xhtml">
                         <i class="fa fa-envelope" />
