@@ -53,7 +53,7 @@ public class Desagregados implements Serializable {
     private short indice;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "desagregados")
     private DesagregadosProgramas desagregadosProgramas;
-    @JoinColumns({@JoinColumn(name = "indicador", referencedColumnName = "indicador"),@JoinColumn(name = "clave", referencedColumnName = "clave")})    
+    @JoinColumns({@JoinColumn(name = "indicador", referencedColumnName = "indicador"),@JoinColumn(name = "clave", referencedColumnName = "clave")})
     @ManyToOne(optional = false)
     private Indicadores indicador;
     @JoinColumn(name = "tipo", referencedColumnName = "tipo")

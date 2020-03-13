@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:hf="http://highfaces.org"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputStylesheet library="primefaces62" name="inputnumber.css" />
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="primefaces62" name="inputnumber.js"  />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script>
+            Highcharts.setOptions({
+                colors: ['#0d233a', '#2f7ed8', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
+                lang: {
+                    loading: 'Cargando...',
+                    months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    weekdays: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    shortMonths: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    exportButtonTitle: "Exportar",
+                    printButtonTitle: "Importar",
+                    rangeSelectorFrom: "Desde",
+                    rangeSelectorTo: "Hasta",
+                    rangeSelectorZoom: "Período",
+                    downloadPNG: 'Descargar imagen PNG',
+                    downloadJPEG: 'Descargar imagen JPEG',
+                    downloadPDF: 'Descargar imagen PDF',
+                    downloadSVG: 'Descargar imagen SVG',
+                    printChart: 'Imprimir',
+                    resetZoom: 'Reiniciar zoom',
+                    resetZoomTitle: 'Reiniciar zoom',
+                    thousandsSep: ",",
+                    decimalPoint: '.'
+                }
+            });
+        </script>
+    </ui:define>
+
+    <ui:define name="title">
+        Satisfacción sobre los servicios que presta la institución
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Captura de tarea integradora"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.SatisfaccionServiciosApartado" var="satisfaccionServiciosApartado" allSuffix="ALL" />
+        <div class="contenedor">
+            <c:if test="#{serviciosConsulta.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="5" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink styleClass="btn btn-primary" rendered="#{serviciosConsulta.mostrarBotonLimpiarContexto()}"
+                                                       actionListener="#{serviciosConsulta.limpiarContexto}" process="@this" title="Presionar para limpiar elementos en contexto." >
+                                            Limpiar caché
+                                            <i class="fa fa-trash" />
+                                        </p:commandLink>
+                                        <p:spacer width="5" />
+                                        <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
+                                                       onclick="PF('modalAyuda').show();"
+                                                       process="@this"
+                                                       title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-6 col-lg-4'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="evaluacion" value="#{serviciosConsulta.dto.evaluacionSeleccionada}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{serviciosConsulta.dto.evaluaciones}" var="evaluacion" itemValue="#{evaluacion}" itemLabel="#{caster.clavePeriodoToString(evaluacion.periodo)}" />
+                                                    <p:ajax process="@this" update="@this contenedor programa" listener="#{serviciosConsulta.cambiarEvaluacion}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Evaluación" for="evaluacion"/>
+                                                <p:message for="evaluacion" display="tooltip" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="programa" value="#{serviciosConsulta.dto.programaSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{serviciosConsulta.dto.programasEducativos}" />
+                                                    <p:ajax process="@this" update="@this contenedor evaluacion" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Programa educativo" for="programa"/>
+                                                <p:message for="programa" display="tooltip" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info text-center">
+                                            <p:outputPanel id="contenedor">
+                                                <script type="text/javascript">
+                                                    function lineconfig() {
+                                                        this.yAxis = {
+                                                            max: 5, min: 0, tickAmount:6, tickInterval:1,
+                                                            title: {text: 'Nivel de satisfacción'},
+                                                            plotBands: [{color: '#ffebe8', from: 0, to:3.99},{color: '#cfffd7', from: 4, to:5}]
+                                                        };
+
+                                                        this.tooltip = {
+                                                            shared: true,
+                                                            useHTML: true,
+                                                            headerFormat: '&lt;table>&lt;tr>&lt;td style=\'color:black;font-weight:bold;padding-right:5px;\'>{point.key}&lt;/td>&lt;td style=\'border-left:1px solid black;padding-left: 10px;\'>',
+                                                            pointFormat: '&lt;span style=\'color:{point.color}\'>{series.marker.symbol} {series.name}: &lt;b>{point.y}&lt;/b>&lt;/span>&lt;br/>',
+                                                            footerFormat: '&lt;/td>&lt;/tr>&lt;/table>',
+                                                            valueDecimals: 2
+                                                        };
+
+                                                        this.plotOptions = {
+                                                            series: {
+                                                                connectNulls: false,
+                                                                zones: [
+                                                                    {value: 0, color: '#fff'},
+                                                                    {value: 4, color: '#910000'},
+                                                                    {value: 5, color: '#8bbc21'}
+                                                                ]
+                                                            }
+                                                        };
+
+                                                        this.exporting = {enabled: true};
+
+                                                        this.navigation = {buttonOptions: {enabled: true}}
+                                                    }
+
+                                                    function linepercentageconfig() {
+                                                        this.yAxis = {
+                                                            max: 100, min: 0, tickAmount:11, tickInterval:10,
+                                                            title: {text: 'Porcentaje de satisfacción (%)'},
+                                                            plotBands: [{color: '#ffebe8', from: 0, to:74.99},{color: '#cfffd7', from: 75, to:100}]
+                                                        };
+
+                                                        this.tooltip = {
+                                                            shared: true,
+                                                            useHTML: true,
+                                                            headerFormat: '&lt;table>&lt;tr>&lt;td style=\'color:black;font-weight:bold;padding-right:5px;\'>{point.key}&lt;/td>&lt;td style=\'border-left:1px solid black;padding-left: 10px;\'>',
+                                                            pointFormat: '&lt;span style=\'color:{point.color}\'>{series.marker.symbol} {series.name}: &lt;b>{point.y}&lt;/b>&lt;/span>&lt;br/>',
+                                                            footerFormat: '&lt;/td>&lt;/tr>&lt;/table>',
+                                                            valueDecimals: 2
+                                                        };
+
+                                                        this.plotOptions = {
+                                                            series: {
+                                                                connectNulls: false,
+                                                                zones: [
+                                                                    {value: 0, color: '#fff'},
+                                                                    {value: 75, color: '#910000'},
+                                                                    {value: 100, color: '#8bbc21'}
+                                                                ]
+                                                            }
+                                                        };
+
+                                                        this.exporting = {enabled: true};
+
+                                                        this.navigation = {buttonOptions: {enabled: true}}
+                                                    }
+
+                                                    function questionconfig() {
+                                                        this.yAxis = {
+                                                            max: 5, min: 0, tickAmount:6, tickInterval:1,
+                                                            title: {text: 'Nivel de satisfacción'},
+                                                            plotBands: [{color: '#ffebe8', from: 0, to:3.99},{color: '#cfffd7', from: 4, to:5}]
+                                                        };
+
+                                                        this.plotOptions = {
+                                                            series: {
+                                                                connectNulls: false,
+                                                                zones: [
+                                                                    {value: 0, color: '#fff'},
+                                                                    {value: 4, color: '#910000'},
+                                                                    {value: 5, color: '#8bbc21'}
+                                                                ]
+                                                            }
+                                                        };
+
+                                                        this.exporting = {enabled: true};
+
+                                                        this.navigation = {buttonOptions: {enabled: true}}
+                                                    }
+                                                </script>
+                                                <c:forEach items="#{serviciosConsulta.dto.evaluaciones}" var="evaluacion2">
+                                                    <c:set var="contenedor" value="#{serviciosConsulta.getContenedor(evaluacion2)}" />
+                                                    <c:set var="contenedorAnterior" value="#{serviciosConsulta.getContenedorAnterior(contenedor)}" />
+                                                    <c:set var="hayContenedorAnterior" value="#{not(empty contenedorAnterior)}" />
+                                                    <p:outputPanel rendered="#{evaluacion2 eq serviciosConsulta.dto.evaluacionSeleccionada}">
+                                                        <p:autoUpdate />
+                                                        <c:set var="mostrarDatos" value="#{true}" />
+                                                        <p:tabView rendered="#{serviciosConsulta.dto.programaSeleccionado.area eq 0}">
+                                                            <p:tab title="PECE">
+                                                                <div class="callout callout-primary">
+                                                                    <h4><b>MECASUT</b> - Programas educativos centrados en la/el estudiante</h4>
+                                                                    <p style="text-align: justify;">
+                                                                        Encuesta que mide el nivel de satisfacción de las/os estudiantes sobre los servicios que presta la Universidad,
+                                                                        relacionados con su formación integral. Esta encuesta se aplica a solicitud de la CGUTyP para la elaboración de
+                                                                        los indicadores del Modelo de Evaluación de la Calidad del Subsistema de Universidades Tecnológicas (MECASUT),
+                                                                        por cada ciclo escolar.
+                                                                    </p>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 col-md-6 col-lg-4">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-body no-padding">
+                                                                                <ul class="nav nav-stacked" style="text-align: left;">
+                                                                                    <li>Fecha de aplicación:  <span class="pull-right">Durante abril– septiembre</span></li>
+                                                                                    <li>Número de preguntas:  <span class="pull-right">73, divididas en 15 categorías</span></li>
+                                                                                    <li>Nivel de evaluación o escala:  <span class="pull-right">5</span></li>
+                                                                                    <li>Medio de Aplicación:  <span class="pull-right">en línea a través del SII</span></li>
+                                                                                </ul>
+                                                                            </div>
+                                                                        </div>
+                                                                        <table class="table table-condensed table-bordered table-hover table-striped table-responsive tabla ui-datatable">
+                                                                            <thead>
+                                                                                <tr role="row"><th role="columnheader" class="ui-state-default"><span class="ui-column-title">Categorías</span></th></tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <c:forEach items="#{satisfaccionServiciosApartado.ALL}" var="satisfaccionServiciosApartadoItem">
+                                                                                    <tr><td role="gridcell">#{satisfaccionServiciosApartadoItem.tema_corto}</td></tr>
+                                                                                </c:forEach>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header"><h3 class="box-title">Escala</h3></div>
+                                                                            <div class="box-body no-padding">
+                                                                                <table class="table table-striped table-condensed table-responsive">
+                                                                                    <tr>
+                                                                                        <th style="text-align: center;">Evaluación</th>
+                                                                                        <th style="text-align: center;" colspan="2">Valor</th>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>No Satisfecho(a)</td>
+                                                                                        <td><div class="progress progress-xs" style="min-width: 100px;"><div class="progress-bar progress-bar-danger" style="width: 79%"></div></div></td>
+                                                                                        <td><span class="badge bg-red">1 - 3.9</span></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Satisfecho(a) / Muy Sastisfecho(a)</td>
+                                                                                        <td><div class="progress progress-xs"><div class="progress-bar progress-bar-green" style="width: 100%"></div></div></td>
+                                                                                        <td><span class="badge bg-green">4-5</span></td>
+                                                                                    </tr>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-6 col-lg-8">
+                                                                        <table class="table table-condensed table-bordered table-hover table-striped table-responsive tabla ui-datatable">
+                                                                            <thead>
+                                                                            <tr role="row"><th role="columnheader" class="ui-state-default" colspan="4"><span class="ui-column-title">Total de escuestados/as</span></th></tr>
+                                                                            <tr role="row">
+                                                                                <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Nivel</span></th>
+                                                                                <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Programa</span></th>
+                                                                                <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Estudiantes</span></th>
+                                                                            </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                            <c:forEach items="#{serviciosConsulta.dto.areasAcademicas}" var="dtoAreaAcademica">
+                                                                                <tr role="row"><th role="columnheader" class="ui-state-default" colspan="3" style="text-align: center;"><span class="ui-column-title">#{dtoAreaAcademica.areaAcademica.nombre}</span></th></tr>
+                                                                                <c:forEach items="#{dtoAreaAcademica.programas}" var="programa">
+                                                                                    <tr>
+                                                                                        <td role="gridcell">#{programa.nivelEducativo.nombre}</td>
+                                                                                        <td role="gridcell">#{programa.nombre}</td>
+                                                                                        <td role="gridcell">#{contenedor.satisfaccionServiciosEstudiantes.stream().filter(dto -> dto.dtoEstudiantePeriodo.programa eq programa).toList().size()}</td>
+                                                                                    </tr>
+                                                                                </c:forEach>
+                                                                                <tr>
+                                                                                    <td role="gridcell" colspan="2" style="text-align: right;">Subtotal:</td>
+                                                                                    <th role="columnheader" class="ui-state-default" style="text-align: center;"><span class="ui-column-title">#{contenedor.satisfaccionServiciosEstudiantes.stream().filter(dto -> dto.dtoEstudiantePeriodo.programa.areaSuperior eq dtoAreaAcademica.areaAcademica.area).toList().size()}</span></th>
+                                                                                </tr>
+                                                                            </c:forEach>
+                                                                            <tr>
+                                                                                <td role="gridcell" colspan="2" style="text-align: right;">Total:</td>
+                                                                                <th role="columnheader" class="ui-state-default" style="text-align: center;"><span class="ui-column-title">#{contenedor.satisfaccionServiciosEstudiantes.size()}</span></th>
+                                                                            </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-body no-padding">
+                                                                                <hf:chart type="line" title="Porcentaje de satisfacción general" 
+                                                                                          yaxisLabel="Porcentaje de satisfacción" credits="siip.utxj.edu.mx/sii2"
+                                                                                          height="300" extender="linepercentageconfig">
+                                                                                    <hf:chartSerie name="UTXJ" dataLabel="{point.y:.2f}%"
+                                                                                                   value="#{contenedor.graficaSerieInstitucionalHistorico.dtoSatisfaccionHistoricos}"
+                                                                                                   var="dtoSatisfaccionHistorico" point="#{dtoSatisfaccionHistorico.porcentaje * 100}" tickLabel="#{dtoSatisfaccionHistorico.ciclo}" />
+                                                                                </hf:chart>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-body no-padding">
+                                                                                <p:outputPanel rendered="#{!empty contenedorAnterior}">
+                                                                                    <hf:chart type="column" title="Satisfacción de servicios #{serviciosConsulta.dto.contenedor.ciclosEscolares.fin.year + 1900}"
+                                                                                              yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2"
+                                                                                              height="300" extender="lineconfig">
+                                                                                        <hf:chartSerie name="UTXJ #{contenedorAnterior.ciclosEscolares.fin.year + 1900}" dataLabel="{point.y:.2f}"
+                                                                                                       value="#{serviciosConsulta.ordenarFilaInstitucionalApartado(contenedorAnterior)}"
+                                                                                                       var="filaInstitucionalApartado" point="#{filaInstitucionalApartado.totalK}" tickLabel="#{serviciosConsulta.apartadoToEnum(filaInstitucionalApartado.apartado).tema_corto}" />
+                                                                                        <hf:chartSerie name="UTXJ #{contenedor.ciclosEscolares.fin.year + 1900}" dataLabel="{point.y:.2f}"
+                                                                                                       value="#{serviciosConsulta.ordenarFilaInstitucionalApartado(contenedor)}"
+                                                                                                       var="filaInstitucionalApartado" point="#{filaInstitucionalApartado.totalK}" tickLabel="#{serviciosConsulta.apartadoToEnum(filaInstitucionalApartado.apartado).tema_corto}" />
+                                                                                    </hf:chart>
+                                                                                </p:outputPanel>
+                                                                                <p:outputPanel rendered="#{empty contenedorAnterior}">
+                                                                                    <hf:chart type="column" title="Satisfacción de servicios #{serviciosConsulta.dto.contenedor.ciclosEscolares.fin.year + 1900}"
+                                                                                              yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2"
+                                                                                              height="300" extender="lineconfig">
+                                                                                        <hf:chartSerie name="UTXJ #{contenedor.ciclosEscolares.fin.year + 1900}" dataLabel="{point.y:.2f}"
+                                                                                                       value="#{serviciosConsulta.ordenarFilaInstitucionalApartado(contenedor)}"
+                                                                                                       var="filaInstitucionalApartado" point="#{filaInstitucionalApartado.totalK}" tickLabel="#{serviciosConsulta.apartadoToEnum(filaInstitucionalApartado.apartado).tema_corto}" />
+                                                                                    </hf:chart>
+                                                                                </p:outputPanel>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </p:tab>
+                                                            <p:tab title="Tabla de nivel de satisfacción" rendered="#{mostrarDatos}">
+                                                                <table class="table table-condensed table-bordered table-hover table-responsive tabla ui-datatable">
+                                                                    <thead>
+                                                                    <tr role="row">
+                                                                        <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">No.</span></th>
+                                                                        <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">Descripción de la pregunta</span></th>
+                                                                        <th role="columnheader" class="ui-state-default" colspan="6"><span class="ui-column-title">Frecuencias</span></th>
+                                                                        <th role="columnheader" class="ui-state-default" rowspan="2"><span class="ui-column-title">Total G</span></th>
+                                                                        <th role="columnheader" class="ui-state-default" rowspan="2"><span class="ui-column-title">Total H</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Total J</span></th>
+                                                                        <th role="columnheader" class="ui-state-default" rowspan="2"><span class="ui-column-title">Total K</span></th>
+                                                                        <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">Total base 10</span></th>
+                                                                        <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">% de satisfechos</span></th>
+                                                                        <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">% de no satisfechos</span></th>
+                                                                    </tr>
+                                                                    <tr role="row">
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Muy bien</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Bien</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Regular</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Mal</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Pésimo</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">No aplica</span></th>
+                                                                        <th role="columnheader" class="ui-state-default" rowspan="2"><span class="ui-column-title">A*5 + B*4 + C*3<br/> + D*2 + E*1</span></th>
+                                                                    </tr>
+                                                                    <tr role="row">
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">A</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">B</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">C</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">D</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">E</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">F</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">∑ A a F</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">∑ A a E</span></th>
+                                                                        <th role="columnheader" class="ui-state-default"><span class="ui-column-title">J/H</span></th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
+                                                                        <tr role="row">
+                                                                            <th role="columnheader" class="ui-state-default" colspan="15" style="text-align: center; text-transform: uppercase;"><span class="ui-column-title">#{apartado.contenido}</span></th>
+                                                                        </tr>
+                                                                        <c:forEach items="#{apartado.preguntas}" var="pregunta" varStatus="status">
+                                                                            <tr data-ri="#{status.index}" class="ui-widget-content #{status.index%2 eq 1?'ui-datatable-odd':'ui-datatable-even'}">
+                                                                                <td role="gridcell"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                                <td role="gridcell" style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                                <c:forEach items="#{serviciosConsulta.respuestas}" var="respuesta">
+                                                                                    <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaInstitucionalMap[pregunta].datoInstitucionalMap[respuesta].frecuencia}"><f:convertNumber pattern="###,###.#"/> </h:outputText></td>
+                                                                                </c:forEach>
+                                                                                <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaInstitucionalMap[pregunta].totalG}"><f:convertNumber pattern="###,###.#"/> </h:outputText></td>
+                                                                                <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaInstitucionalMap[pregunta].totalH}"><f:convertNumber pattern="###,###.#"/> </h:outputText></td>
+                                                                                <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaInstitucionalMap[pregunta].totalJ}"><f:convertNumber pattern="###,###.#"/> </h:outputText></td>
+                                                                                <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaInstitucionalMap[pregunta].totalK}"><f:convertNumber pattern="###,###.##"/> </h:outputText></td>
+                                                                                <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaInstitucionalMap[pregunta].totalBase10}"><f:convertNumber pattern="###,###.##"/> </h:outputText></td>
+                                                                                <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaInstitucionalMap[pregunta].porcentajeSatisfechos}"><f:convertNumber type="percent" minFractionDigits="2" /> </h:outputText></td>
+                                                                                <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaInstitucionalMap[pregunta].porcentajeNoSatisfechos}"><f:convertNumber type="percent" minFractionDigits="2"/> </h:outputText></td>
+                                                                            </tr>
+                                                                        </c:forEach>
+                                                                        <tr>
+                                                                            <th role="columnheader" class="ui-state-default" colspan="2" style="text-align: right;">Total</th>
+                                                                            <c:forEach items="#{serviciosConsulta.respuestas}" var="respuesta">
+                                                                                <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaInstitucionalMap[apartado].datoInstitucionalMap[respuesta].frecuencia}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                            </c:forEach>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaInstitucionalMap[apartado].totalG}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaInstitucionalMap[apartado].totalH}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaInstitucionalMap[apartado].totalJ}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaInstitucionalMap[apartado].totalK}"><f:convertNumber pattern="###,###.##"/> </h:outputText></th>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaInstitucionalMap[apartado].totalBase10}"><f:convertNumber pattern="###,###.##"/> </h:outputText></th>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaInstitucionalMap[apartado].porcentajeSatisfechos}"><f:convertNumber type="percent" minFractionDigits="2" /> </h:outputText></th>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaInstitucionalMap[apartado].porcentajeNoSatisfechos}"><f:convertNumber type="percent" minFractionDigits="2"/> </h:outputText></th>
+                                                                        </tr>
+                                                                    </c:forEach>
+                                                                    </tbody>
+                                                                    <tfoot>
+                                                                    <tr role="row">
+                                                                        <th role="columnheader" class="ui-state-default" colspan="2" style="text-align: right;">Total general</th>
+                                                                        <c:forEach items="#{serviciosConsulta.respuestas}" var="respuesta">
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaInstitucionalGeneral.datoInstitucionalMap[respuesta].frecuencia}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                        </c:forEach>
+                                                                        <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaInstitucionalGeneral.totalG}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                        <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaInstitucionalGeneral.totalH}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                        <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaInstitucionalGeneral.totalJ}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                        <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaInstitucionalGeneral.totalK}"><f:convertNumber pattern="###,###.##"/> </h:outputText></th>
+                                                                        <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaInstitucionalGeneral.totalBase10}"><f:convertNumber pattern="###,###.##"/> </h:outputText></th>
+                                                                        <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaInstitucionalGeneral.porcentajeSatisfechos}"><f:convertNumber type="percent" minFractionDigits="2" /> </h:outputText></th>
+                                                                        <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaInstitucionalGeneral.porcentajeNoSatisfechos}"><f:convertNumber type="percent" minFractionDigits="2"/> </h:outputText></th>
+                                                                    </tr>
+                                                                    </tfoot>
+                                                                </table>
+                                                            </p:tab>
+                                                            <p:tab title="Histórico por categoría" rendered="#{mostrarDatos}">
+                                                                <p:tabView>
+                                                                    <p:tab title="UTXJ">
+                                                                        <p:outputPanel deferred="true" deferredMode="visible">
+                                                                            <c:forEach items="#{satisfaccionServiciosApartado.ALL}" var="satisfaccionServiciosApartadoItem">
+                                                                                <div class="col-lg-4 col-md-6 col-sm-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                                    <hf:chart type="line" title="#{satisfaccionServiciosApartadoItem.tema_corto}"
+                                                                                              yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2"
+                                                                                              height="300" extender="lineconfig">
+                                                                                        <c:if test="#{true}">
+                                                                                            <hf:chartSerie name="UTXJ" dataLabel="{point.y:.2f}"
+                                                                                                           value="#{contenedor.graficaSerieInstitucionalHistoricoApartadoMap[satisfaccionServiciosApartadoItem].dtoSatisfaccionHistoricos}"
+                                                                                                           var="satisfaccionInstitucional" point="#{satisfaccionInstitucional.satisfaccionNivel}" tickLabel="#{satisfaccionInstitucional.ciclo.fin.year + 1900}" />
+                                                                                        </c:if>
+                                                                                        <c:if test="#{false}">
+                                                                                            <c:forEach items="#{serviciosConsulta.areasAcademicas}" var="area">
+                                                                                                <hf:chartSerie name="#{area.areaAcademica.siglas}"
+                                                                                                               value="#{contenedor.graficaSerieAreaHistoricoMap[serviciosConsulta.getGraficaSerieAreaHistoricoPK(area.areaAcademica, satisfaccionServiciosApartado.APOYO_PSICOPEDAGOGICO_1)].dtoSatisfaccionHistoricos}"
+                                                                                                               var="dtoSatisfaccionHistorico" point="#{dtoSatisfaccionHistorico.satisfaccionHistorico.satisfaccionNivel}" tickLabel="#{dtoSatisfaccionHistorico.ciclo.fin.year + 1900}"/>
+                                                                                            </c:forEach>
+                                                                                        </c:if>
+                                                                                    </hf:chart>
+                                                                                </div>
+                                                                            </c:forEach>
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                    <c:forEach items="#{serviciosConsulta.dto.areasAcademicas}" var="dtoAreasAcademica">
+                                                                        <p:tab title="#{dtoAreasAcademica.areaAcademica.siglas}">
+                                                                            <p:outputPanel deferred="false" deferredMode="visible">
+                                                                                <c:forEach items="#{satisfaccionServiciosApartado.ALL}" var="satisfaccionServiciosApartadoItem">
+                                                                                    <div class="col-lg-4 col-md-6 col-sm-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                                        <hf:chart type="line" title="#{satisfaccionServiciosApartadoItem.tema_corto}"
+                                                                                                  yaxisLabel="Nivel de satisfacción"
+                                                                                                  credits="siip.utxj.edu.mx/sii2"
+                                                                                                  height="300" extender="lineconfig">
+                                                                                            <c:if test="#{false}">
+                                                                                                <hf:chartSerie name="UTXJ" dataLabel="{point.y:.2f}"
+                                                                                                               value="#{contenedor.graficaSerieInstitucionalHistoricoApartadoMap[satisfaccionServiciosApartadoItem].dtoSatisfaccionHistoricos}"
+                                                                                                               var="satisfaccionInstitucional" point="#{satisfaccionInstitucional.satisfaccionNivel}" tickLabel="#{satisfaccionInstitucional.ciclo.fin.year + 1900}" />
+                                                                                            </c:if>
+                                                                                            <hf:chartSerie name="#{area2.siglas}" dataLabel="{point.y:.2f}"
+                                                                                                           value="#{contenedor.graficaSerieAreaHistoricoMap[serviciosConsulta.getGraficaSerieAreaHistoricoPK(dtoAreasAcademica.areaAcademica, satisfaccionServiciosApartadoItem)].dtoSatisfaccionHistoricos}"
+                                                                                                           var="dtoSatisfaccionHistorico" point="#{dtoSatisfaccionHistorico.satisfaccionHistorico.satisfaccionNivel}" tickLabel="#{dtoSatisfaccionHistorico.ciclo.fin.year + 1900}"/>
+                                                                                        </hf:chart>
+                                                                                    </div>
+                                                                                </c:forEach>
+                                                                            </p:outputPanel>
+                                                                        </p:tab>
+                                                                    </c:forEach>
+                                                                </p:tabView>
+                                                            </p:tab>
+                                                            <p:tab title="PECE por categoría y programa" rendered="#{mostrarDatos}">
+                                                                <p:outputPanel deferred="true" deferredMode="visible">
+                                                                    <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
+                                                                        <div class="col-md-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                            <hf:chart type="columns" title="#{serviciosConsulta.apartadoToEnum(apartado).tema_corto}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="lineconfig">
+                                                                                <hf:chartSerie type="column" name="Programas Educativos" value="#{contenedor.getNivelSatisfaccionProgramaPorApartado(apartado)}"
+                                                                                               var="filaProgramaApartado" point="#{filaProgramaApartado.totalK}" tickLabel="#{filaProgramaApartado.pk.programa.siglas}" dataLabel="{point.y:.2f}" />
+                                                                            </hf:chart>
+                                                                        </div>
+                                                                    </c:forEach>
+                                                                </p:outputPanel>
+                                                            </p:tab>
+                                                            <p:tab title="PECE por categoría y área" rendered="#{mostrarDatos}">
+                                                                <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
+                                                                    <div class="col-md-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                        <hf:chart type="columns" title="#{serviciosConsulta.apartadoToEnum(apartado).tema_corto}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="lineconfig">
+                                                                            <hf:chartSerie type="column" name="Áreas académicas" value="#{contenedor.getNivelSatisfaccionAreaPorApartado(apartado)}"
+                                                                                           var="filaProgramaApartado" point="#{filaProgramaApartado.totalK}" tickLabel="#{filaProgramaApartado.pk.programa.siglas}" dataLabel="{point.y:.2f}" />
+                                                                        </hf:chart>
+                                                                    </div>
+                                                                </c:forEach>
+                                                            </p:tab>
+                                                            <p:tab title="PECE por área, categoría y pregunta" rendered="#{mostrarDatos}">
+                                                                <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
+                                                                    <p:tabView>
+                                                                        <p:tab title="UTXJ">
+                                                                            <div class="col-md-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                                <hf:chart type="columns" title="#{serviciosConsulta.apartadoToEnum(apartado).tema_corto}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="questionconfig">
+                                                                                    <hf:chartSerie type="column" name="Preguntas" value="#{contenedor.getNivelSatisfaccionInstitucionalPorApartado(apartado)}"
+                                                                                                   var="filaInstitucional" point="#{filaInstitucional.totalK}" tickLabel="#{filaInstitucional.pregunta}" dataLabel="{point.y:.2f}" />
+                                                                                    <hf:chartTooltip>
+                                                                                        <f:facet name="header"><h:outputText escape="false" value="&lt;table>&lt;tr>&lt;td style='color:black;font-weight:bold;padding-right:5px;'>{point.key} &lt;/td>&lt;td style='border-left:1px solid black;padding-left: 10px;>"/></f:facet>
+                                                                                        <f:facet name="body"><h:outputText value="&lt;span style='color:{point.color}'> {series.name}: &lt;b>{point.y:.2f}&lt;/b>&lt;/span>&lt;br/>"/></f:facet>
+                                                                                        <f:facet name="footer"><h:outputText escape="false" value='&lt;/td>&lt;/tr>&lt;/table>' /></f:facet>
+                                                                                    </hf:chartTooltip>
+                                                                                </hf:chart>
+                                                                            </div>
+                                                                        </p:tab>
+                                                                        <c:forEach items="#{serviciosConsulta.dto.areasAcademicas}" var="dtoAreasAcademica">
+                                                                            <p:tab title="#{dtoAreasAcademica.areaAcademica.siglas}">
+                                                                                <p:outputPanel deferred="false" deferredMode="visible">
+                                                                                    <div class="col-md-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                                        <hf:chart type="columns" title="#{serviciosConsulta.apartadoToEnum(apartado).tema_corto}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="questionconfig">
+                                                                                            <hf:chartSerie type="column" name="Preguntas" value="#{contenedor.getNivelSatisfaccionAreaPreguntaPorAreaApartado(dtoAreasAcademica.areaAcademica, apartado)}"
+                                                                                                           var="filaPrograma" point="#{filaPrograma.totalK}" tickLabel="#{filaPrograma.pk.pregunta}" dataLabel="{point.y:.2f}" />
+                                                                                            <hf:chartTooltip>
+                                                                                                <f:facet name="header"><h:outputText escape="false" value="&lt;table>&lt;tr>&lt;td style='color:black;font-weight:bold;padding-right:5px;'>{point.key} &lt;/td>&lt;td style='border-left:1px solid black;padding-left: 10px;>"/></f:facet>
+                                                                                                <f:facet name="body"><h:outputText value="&lt;span style='color:{point.color}'> {series.name}: &lt;b>{point.y:.2f}&lt;/b>&lt;/span>&lt;br/>"/></f:facet>
+                                                                                                <f:facet name="footer"><h:outputText escape="false" value='&lt;/td>&lt;/tr>&lt;/table>' /></f:facet>
+                                                                                            </hf:chartTooltip>
+                                                                                        </hf:chart>
+                                                                                    </div>
+                                                                                </p:outputPanel>
+                                                                            </p:tab>
+                                                                        </c:forEach>
+                                                                    </p:tabView>
+                                                                </c:forEach>
+                                                            </p:tab>
+                                                            <p:tab title="PECE por pregunta y área" rendered="#{mostrarDatos}">
+                                                                <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
+                                                                    <p:panel header="#{serviciosConsulta.apartadoToEnum(apartado).tema_corto}" styleClass="box-primary">
+                                                                        <c:forEach items="#{apartado.preguntas}" var="pregunta">
+                                                                            <div class="col-md-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                                <hf:chart type="columns" subTitle="#{pregunta.numero} #{pregunta.titulo}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="questionconfig">
+                                                                                    <hf:chartSerie type="column" name="Preguntas" value="#{serviciosConsulta.dto.contenedor.getNivelSatisfaccionAreaPreguntaPorPregunta(pregunta)}"
+                                                                                                   var="filaPrograma" point="#{filaPrograma.totalK}" tickLabel="#{filaPrograma.pk.programa.siglas}" dataLabel="{point.y:.2f}" />
+                                                                                    <hf:chartTooltip>
+                                                                                        <f:facet name="header"><h:outputText escape="false" value="&lt;table>&lt;tr>&lt;td style='color:black;font-weight:bold;padding-right:5px;'>{point.key} &lt;/td>&lt;td style='border-left:1px solid black;padding-left: 10px;>"/></f:facet>
+                                                                                        <f:facet name="body"><h:outputText value="&lt;span style='color:{point.color}'> {series.name}: &lt;b>{point.y:.2f}&lt;/b>&lt;/span>&lt;br/>"/></f:facet>
+                                                                                        <f:facet name="footer"><h:outputText escape="false" value='&lt;/td>&lt;/tr>&lt;/table>' /></f:facet>
+                                                                                    </hf:chartTooltip>
+                                                                                </hf:chart>
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </p:panel>
+                                                                </c:forEach>
+                                                            </p:tab>
+                                                        </p:tabView>
+                                                        <p:tabView>
+                                                            <c:forEach items="#{contenedor.programas}" var="programa">
+                                                                <c:set var="area2" value="#{serviciosConsulta.getAreaPorPrograma(programa)}" />
+                                                                <p:tab title="Tabla" rendered="#{serviciosConsulta.dto.programaSeleccionado eq programa}">
+                                                                    <table class="table table-condensed table-bordered table-hover table-responsive tabla ui-datatable ">
+                                                                        <thead>
+                                                                        <tr role="row">
+                                                                            <th role="columnheader" class="ui-state-default" colspan="15"><span class="ui-column-title">#{programa.nombre}</span></th>
+                                                                        </tr>
+                                                                        <tr role="row">
+                                                                            <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">No.</span></th>
+                                                                            <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">Descripción de la pregunta</span></th>
+                                                                            <th role="columnheader" class="ui-state-default" colspan="6"><span class="ui-column-title">Frecuencias</span></th>
+                                                                            <th role="columnheader" class="ui-state-default" rowspan="2"><span class="ui-column-title">Total G</span></th>
+                                                                            <th role="columnheader" class="ui-state-default" rowspan="2"><span class="ui-column-title">Total H</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Total J</span></th>
+                                                                            <th role="columnheader" class="ui-state-default" rowspan="2"><span class="ui-column-title">Total K</span></th>
+                                                                            <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">Total base 10</span></th>
+                                                                            <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">% de satisfechos</span></th>
+                                                                            <th role="columnheader" class="ui-state-default" rowspan="3"><span class="ui-column-title">% de no satisfechos</span></th>
+                                                                        </tr>
+                                                                        <tr role="row">
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Muy bien</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Bien</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Regular</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Mal</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">Pésimo</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">No aplica</span></th>
+                                                                            <th role="columnheader" class="ui-state-default" rowspan="2"><span class="ui-column-title">A*5 + B*4 + C*3<br/> + D*2 + E*1</span></th>
+                                                                        </tr>
+                                                                        <tr role="row">
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">A</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">B</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">C</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">D</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">E</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">F</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">∑ A a F</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">∑ A a E</span></th>
+                                                                            <th role="columnheader" class="ui-state-default"><span class="ui-column-title">J/H</span></th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
+                                                                            <c:set var="apartadoPK" value="#{serviciosConsulta.getFilaProgramaApartadoPK(programa, apartado)}" />
+                                                                            <tr role="row">
+                                                                                <th role="columnheader" class="ui-state-default" colspan="15" style="text-align: center; text-transform: uppercase;"><span class="ui-column-title">#{apartado.contenido}</span></th>
+                                                                            </tr>
+                                                                            <c:forEach items="#{apartado.preguntas}" var="pregunta" varStatus="status">
+                                                                                <c:set var="pk" value="#{serviciosConsulta.getFilaProgramaPK(programa, pregunta)}" />
+                                                                                <tr data-ri="#{status.index}" class="ui-widget-content #{status.index%2 eq 1?'ui-datatable-odd':'ui-datatable-even'}">
+                                                                                    <td role="gridcell"><h:outputText value="#{pregunta.numero}"><f:convertNumber pattern="#.#"/> </h:outputText></td>
+                                                                                    <td role="gridcell" style="text-align: justify;">#{pregunta.titulo}</td>
+                                                                                    <c:forEach items="#{serviciosConsulta.respuestas}" var="respuesta">
+                                                                                        <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaProgramaMap[pk].datoMap[respuesta].frecuencia}"><f:convertNumber pattern="###,###.#"/> </h:outputText></td>
+                                                                                    </c:forEach>
+                                                                                    <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaProgramaMap[pk].totalG}"><f:convertNumber pattern="###,###.#"/> </h:outputText></td>
+                                                                                    <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaProgramaMap[pk].totalH}"><f:convertNumber pattern="###,###.#"/> </h:outputText></td>
+                                                                                    <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaProgramaMap[pk].totalJ}"><f:convertNumber pattern="###,###.#"/> </h:outputText></td>
+                                                                                    <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaProgramaMap[pk].totalK}"><f:convertNumber pattern="###,###.##"/> </h:outputText></td>
+                                                                                    <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaProgramaMap[pk].totalBase10}"><f:convertNumber pattern="###,###.##"/> </h:outputText></td>
+                                                                                    <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaProgramaMap[pk].porcentajeSatisfechos}"><f:convertNumber type="percent" minFractionDigits="2" /> </h:outputText></td>
+                                                                                    <td role="gridcell"><h:outputText value="#{contenedor.preguntaFilaProgramaMap[pk].porcentajeNoSatisfechos}"><f:convertNumber type="percent" minFractionDigits="2"/> </h:outputText></td>
+                                                                                </tr>
+                                                                            </c:forEach>
+                                                                            <tr>
+                                                                                <th role="columnheader" class="ui-state-default" colspan="2" style="text-align: right;">Total</th>
+                                                                                <c:forEach items="#{serviciosConsulta.respuestas}" var="respuesta">
+                                                                                    <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaProgramaMap[apartadoPK].datoMap[respuesta].frecuencia}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                                </c:forEach>
+                                                                                <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaProgramaMap[apartadoPK].totalG}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                                <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaProgramaMap[apartadoPK].totalH}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                                <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaProgramaMap[apartadoPK].totalJ}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                                <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaProgramaMap[apartadoPK].totalK}"><f:convertNumber pattern="###,###.##"/> </h:outputText></th>
+                                                                                <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaProgramaMap[apartadoPK].totalBase10}"><f:convertNumber pattern="###,###.##"/> </h:outputText></th>
+                                                                                <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaProgramaMap[apartadoPK].porcentajeSatisfechos}"><f:convertNumber type="percent" minFractionDigits="2" /> </h:outputText></th>
+                                                                                <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.apartadoFilaProgramaMap[apartadoPK].porcentajeNoSatisfechos}"><f:convertNumber type="percent" minFractionDigits="2"/> </h:outputText></th>
+                                                                            </tr>
+                                                                        </c:forEach>
+                                                                        </tbody>
+                                                                        <tfoot>
+                                                                        <tr role="row">
+                                                                            <th role="columnheader" class="ui-state-default" colspan="2" style="text-align: right;">Total general</th>
+                                                                            <c:forEach items="#{serviciosConsulta.respuestas}" var="respuesta">
+                                                                                <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaProgramaGeneralMap[programa].datoMap[respuesta].frecuencia}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                            </c:forEach>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaProgramaGeneralMap[programa].totalG}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaProgramaGeneralMap[programa].totalH}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaProgramaGeneralMap[programa].totalJ}"><f:convertNumber pattern="###,###.#"/> </h:outputText></th>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaProgramaGeneralMap[programa].totalK}"><f:convertNumber pattern="###,###.##"/> </h:outputText></th>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaProgramaGeneralMap[programa].totalBase10}"><f:convertNumber pattern="###,###.##"/> </h:outputText></th>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaProgramaGeneralMap[programa].porcentajeSatisfechos}"><f:convertNumber type="percent" minFractionDigits="2" /> </h:outputText></th>
+                                                                            <th role="columnheader" class="ui-state-default" style="text-align: center;"><h:outputText value="#{contenedor.filaProgramaGeneralMap[programa].porcentajeNoSatisfechos}"><f:convertNumber type="percent" minFractionDigits="2"/> </h:outputText></th>
+                                                                        </tr>
+                                                                        </tfoot>
+                                                                    </table>
+                                                                </p:tab>
+                                                                <p:tab title="PECE por tema" rendered="#{serviciosConsulta.dto.programaSeleccionado eq programa}">
+                                                                    <p:outputPanel deferred="false" deferredMode="visible">
+                                                                        <c:forEach items="#{satisfaccionServiciosApartado.ALL}" var="satisfaccionServiciosApartadoItem">
+                                                                            <div class="col-lg-4 col-md-6 col-sm-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                                <hf:chart type="line" title="#{satisfaccionServiciosApartadoItem.tema_corto}"
+                                                                                          yaxisLabel="Nivel de satisfacción"
+                                                                                          credits="siip.utxj.edu.mx/sii2"
+                                                                                          height="300" extender="lineconfig">
+                                                                                    <c:if test="#{false}">
+                                                                                        <hf:chartSerie name="UTXJ" dataLabel="{point.y:.2f}"
+                                                                                                       value="#{contenedor.graficaSerieInstitucionalHistoricoApartadoMap[satisfaccionServiciosApartadoItem].dtoSatisfaccionHistoricos}"
+                                                                                                       var="satisfaccionInstitucional" point="#{satisfaccionInstitucional.satisfaccionNivel}" tickLabel="#{satisfaccionInstitucional.ciclo.fin.year + 1900}" />
+                                                                                    </c:if>
+                                                                                    <hf:chartSerie name="#{area2.siglas}" dataLabel="{point.y:.2f}"
+                                                                                                   value="#{contenedor.graficaSerieAreaHistoricoMap[serviciosConsulta.getGraficaSerieAreaHistoricoPK(area2, satisfaccionServiciosApartadoItem)].dtoSatisfaccionHistoricos}"
+                                                                                                   var="dtoSatisfaccionHistorico" point="#{dtoSatisfaccionHistorico.satisfaccionHistorico.satisfaccionNivel}" tickLabel="#{dtoSatisfaccionHistorico.ciclo.fin.year + 1900}"/>
+                                                                                </hf:chart>
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </p:outputPanel>
+                                                                </p:tab>
+                                                                <p:tab title="PECE por pregunta" rendered="#{serviciosConsulta.dto.programaSeleccionado eq programa}">
+                                                                    <c:forEach items="#{serviciosConsulta.dto.cuestionario.apartados}" var="apartado">
+                                                                        <div class="col-md-12" style="height: 305px !important; z-index: 1000 !important;">
+                                                                            <hf:chart type="columns" title="#{apartado.contenido}" yaxisLabel="Nivel de satisfacción" credits="siip.utxj.edu.mx/sii2" height="300" extender="questionconfig">
+                                                                                <hf:chartSerie type="column" name="Preguntas" value="#{serviciosConsulta.dto.contenedor.getNivelSatisfaccionAreaPreguntaPorAreaApartado(area2, apartado)}"
+                                                                                               var="filaPrograma" point="#{filaPrograma.totalK}" tickLabel="#{filaPrograma.pk.pregunta}" dataLabel="{point.y:.2f}" />
+                                                                                <hf:chartTooltip>
+                                                                                    <f:facet name="header"><h:outputText escape="false" value="&lt;table>&lt;tr>&lt;td style='color:black;font-weight:bold;padding-right:5px;'>{point.key} &lt;/td>&lt;td style='border-left:1px solid black;padding-left: 10px;>"/></f:facet>
+                                                                                    <f:facet name="body"><h:outputText value="&lt;span style='color:{point.color}'> {series.name}: &lt;b>{point.y:.2f}&lt;/b>&lt;/span>&lt;br/>"/></f:facet>
+                                                                                    <f:facet name="footer"><h:outputText escape="false" value='&lt;/td>&lt;/tr>&lt;/table>' /></f:facet>
+                                                                                </hf:chartTooltip>
+                                                                            </hf:chart>
+                                                                        </div>
+                                                                    </c:forEach>
+                                                                </p:tab>
+                                                            </c:forEach>
+                                                        </p:tabView>
+                                                    </p:outputPanel>
+                                                </c:forEach>
+                                            </p:outputPanel>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                                             styleClass="panel panel-primary" width="500"
+                                                             closable="false" closeOnEscape="true">
+                                                <p:commandButton value="Si" type="button"
+                                                                 styleClass="ui-confirmdialog-yes btn btn-primary"
+                                                                 icon="ui-icon-check"/>
+                                                <p:commandButton value="No" type="button"
+                                                                 styleClass="ui-confirmdialog-no btn btn-primary"
+                                                                 icon="ui-icon-close"/>
+                                            </p:confirmDialog>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty serviciosConsulta.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{serviciosConsulta.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para capturar calificaciones</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{serviciosConsulta.dto.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!serviciosConsulta.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a directivos."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+            <div style="display: none;">
+                <!-- Es necesario este bloque para que se cargue en el navegador el soporte para el control inputnumber necesario para capturar el valor de las calificaciones -->
+                <h:form>
+                    <p:inputNumber />
+                </h:form>
+            </div>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+    </ui:define>
+</ui:composition>

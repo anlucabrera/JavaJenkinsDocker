@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author UTXJ
  */
 @Entity
-@Table(name = "variables_prontuario", schema = "prontuario", catalog = "")
+@Table(name = "variables_prontuario", catalog = "prontuario", schema = "")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "VariablesProntuario.findAll", query = "SELECT v FROM VariablesProntuario v")

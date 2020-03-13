@@ -19,7 +19,7 @@
                     <span>Prontuario</span>
                 </p:link>
             </li>
-            <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.TRABAJADOR}">  
+            <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.TRABAJADOR}">
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Perfil del personal</li>
                 <li>
                     <p:link href="#{request.contextPath}/capitalHumano/perfilEmpleado.xhtml">
@@ -106,8 +106,8 @@
                     <c:if test="#{seguimientoCasoCriticoEspecialista.mostrarEnDesarrollo(request) and seguimientoCasoCriticoEspecialista.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento Caso Crítico Especialista</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <!-- Registro multiple -->
                     <c:if test="#{registroNotificacionesGeneral.mostrarEnDesarrollo(request) and registroNotificacionesGeneral.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/registro_notificaciones.xhtml"><i class="fa fa-list-ol"></i><span>Registrar Notificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                    <c:if test="#{registroAsesoriaEstudianteGeneral.mostrarEnDesarrollo(request) and registroAsesoriaEstudianteGeneral.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/registro_asesorias_general.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Asesorías Generales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if> 
-                    
+                    <c:if test="#{registroAsesoriaEstudianteGeneral.mostrarEnDesarrollo(request) and registroAsesoriaEstudianteGeneral.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/registro_asesorias_general.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Asesorías Generales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+
                     <!-- Docente -->
                     <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Docente</li>
@@ -151,9 +151,10 @@
 
                     <!-- Consulta multiples -->
                     <c:if test="#{consultaCalificaciones.mostrarEnDesarrollo(request) and consultaCalificaciones.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/consultarCalificaciones.xhtml"><i class="fa fa-list-ol"></i><span>Consultar calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                    
+
                 </c:if>
-                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluación del Personal</li>
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluaciones y encuestas</li>
+                <c:if test="#{serviciosConsulta.mostrarEnDesarrollo(request) and serviciosConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/consulta/servicios.xhtml" title="Satisfacción de servicios"><i class="fa fa-slideshare"></i><span>Satisfacción de servicios</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{controlEscolarMenu.tieneElementos()}">
                     <li class="treeview">
                         <a href="#">
@@ -323,7 +324,7 @@
                         <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoDatosPer.xhtml"><i class="fa fa-id-card-o"></i>
                                 <span>Datos personales</span>
                             </p:link>
-                        </li>        
+                        </li>
                         <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoEdu.xhtml"><i class="fa fa-graduation-cap"></i>
                                 <span>Educación</span>
                             </p:link>
@@ -394,7 +395,7 @@
                                         </p:link>
                                     </li>
                                 </c:if>
-                            </c:if>                        
+                            </c:if>
                             <c:if test="#{controladorEmpleado.procesopoa.activaEtapa2}">
                                 <c:if test="#{controladorEmpleado.evaluable}">
                                     <li>
@@ -408,19 +409,19 @@
                                 <p:link href="#{request.contextPath}/poa/areas/consulta.xhtml"><i class="fa fa-search"></i>
                                     <span>Consulta</span>
                                 </p:link>
-                            </li> 
+                            </li>
                             <c:if test="#{controladorEmpleado.procesopoa.activaEtapa2}">
                                 <li>
                                     <p:link href="#{request.contextPath}/poa/areas/areaCMI.xhtml"><i class="fa fa-bar-chart"></i>
                                         <span>CMI Área</span>
                                     </p:link>
-                                </li> 
+                                </li>
                             </c:if>
                             <li>
                                 <p:link href="#{request.contextPath}/poa/dpye/universidadCMI.xhtml"><i class="fa fa-line-chart"></i>
                                     <span>CMI Institucional</span>
                                 </p:link>
-                            </li> 
+                            </li>
                         </ul>
                     </li>
                 </c:if>
@@ -531,12 +532,12 @@
                             <p:link href="#{request.contextPath}/capitalHumano/incidencias.xhtml"><i class="fa fa-clock-o"></i>
                                 <span>Incidencias</span>
                             </p:link>
-                        </li>      
+                        </li>
                         <li>
                             <p:link href="#{request.contextPath}/capitalHumano/incapacidades.xhtml"><i class="fa fa-ambulance"></i>
                                 <span>Incapacidades</span>
                             </p:link>
-                        </li>   
+                        </li>
                         <li>
                             <p:link href="#{request.contextPath}/capitalHumano/cuidados.xhtml"><i class="fa fa-users"></i>
                                 <span>Cuidados</span>
@@ -557,7 +558,7 @@
                             <span>Consulta</span>
                         </p:link>
                     </li>
-                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Herramientas directivos</li>            
+                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Herramientas directivos</li>
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-user"></i> <span>Directivo</span>
@@ -571,7 +572,7 @@
                                 <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoSubordinados.xhtml"><i class="fa fa-users"></i>
                                     <span>Perfil de subordinados(as)</span>
                                 </p:link>
-                            </li>   
+                            </li>
                             <li>
                                 <p:link href="#{request.contextPath}/capitalHumano/directivos/perfilEmpleadoReporteRegistros.xhtml"><i class="fa fa-file-text-o"></i>
                                     <span>Reporte de Registros</span>
@@ -583,7 +584,7 @@
                                 </p:link>
                             </li>
                         </ul>
-                    </li>  
+                    </li>
                 </c:if>
 
 
@@ -610,14 +611,14 @@
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/proceso_tutoria_asesoria.pdf#toolbar=0" target="_blank">
                                 <span>Tutorías y Asesorías</span>
                             </p:link>
-                        </li>  
+                        </li>
                         <li>
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/Proceso_de_Visitas_Rev_04.pdf#toolbar=0" target="_blank">
                                 <span>Visitas</span>
                             </p:link>
-                        </li>  
+                        </li>
                     </ul>
-                </li>    
+                </li>
                 <li class="treeview">
                     <a href="#">
                         <i class="fa fa-file-text-o"></i> <span>Procedimientos</span>
@@ -628,11 +629,11 @@
                     <ul class="treeview-menu" style="display: none;">
                         <li>
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos/Procedimiento de atencion a quejas 025.pdf#toolbar=0" target="_blank">
-                                <span>Atencion a quejas</span>
+                                <span>Atención a quejas</span>
                             </p:link>
-                        </li>  
+                        </li>
                     </ul>
-                </li> 
+                </li>
 
                 <li class="treeview">
                     <a href="#">
@@ -655,12 +656,12 @@
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/AccionesCorrectivas.docx">
                                         <span>Acciones Correctivas</span>
                                     </p:link>
-                                </li>      
+                                </li>
                                 <li>
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/ListadoRegistros.xls">
                                         <span>Listado de Registros</span>
                                     </p:link>
-                                </li>   
+                                </li>
                                 <li>
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/ListaMaestraDocumentosExternos.xls">
                                         <span>Lista Maestra Docs. Externos</span>
@@ -670,19 +671,19 @@
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/ListaMaestraDocumentosInternos.xls">
                                         <span>Lista Maestra Docs. Internos</span>
                                     </p:link>
-                                </li>      
+                                </li>
                                 <li>
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/RegistroSalidaNoConforme.docx">
                                         <span>Registro de Salida No Conforme</span>
                                     </p:link>
-                                </li>   
+                                </li>
                                 <li>
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/generales/RevisionAprobacionDocumentos.xlsx">
                                         <span>Revisión y Aprobación de Docs</span>
                                     </p:link>
                                 </li>
                             </ul>
-                        </li>  
+                        </li>
                         <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71)or (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) or (controladorEmpleado.nuevoOBJListaPersonal.clave eq 518 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 394 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
                             <li class="treeview">
                                 <a href="#">
@@ -696,48 +697,48 @@
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/1_ESPACIOS_CONCERTADOS_DE_ESTADIA_2020.xlsx">
                                             <span>1. Espacios concertados</span>
                                         </p:link>
-                                    </li>      
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/2_CONCENTRADO_DE_ESTADIAS_2020.xlsx">
                                             <span>2. Concentrado de estadías</span>
                                         </p:link>
-                                    </li>       
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/3_CARTA_DE_PRESENTACION_2020.docx">
                                             <span>3. Carta de presentación</span>
                                         </p:link>
-                                    </li>       
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/4_CARTA_DE_ACEPTACION_2020.docx">
                                             <span>4. Carta de aceptación</span>
                                         </p:link>
-                                    </li>   
+                                    </li>
                                     <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71) or (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
                                         <li>
                                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/5_Seguimiento_Estadia_Tecnica_2020.xls">
                                                 <span>5. Seguimiento de la estadía</span>
                                             </p:link>
-                                        </li>       
+                                        </li>
                                         <li>
                                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/6_Informe_Mensual_2020.doc">
                                                 <span>6. Informe mensual</span>
                                             </p:link>
-                                        </li>       
+                                        </li>
                                         <li>
                                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/7_EVALUACION_POR_ASESOR_EMPRESARIAL_2020.docx">
                                                 <span>7. Evaluación asesor <br/>empresarial</span>
                                             </p:link>
-                                        </li>       
+                                        </li>
                                         <li>
                                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/8_CARTA_DE_LIBERACION_2020.docx">
                                                 <span>8. Carta de liberación <br/>empresarial</span>
                                             </p:link>
-                                        </li>       
+                                        </li>
                                         <li>
                                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/9_Carta_de_evaluacion_y_acreditacion_de_estadia_2020.doc">
                                                 <span>9. Evaluación, acreditación <br/>estadía</span>
                                             </p:link>
-                                        </li> 
+                                        </li>
                                     </c:if>
                                 </ul>
                             </li>
@@ -755,37 +756,37 @@
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/2. Plan Acción Tutorial modif.docx">
                                             <span>2. Plan Acción Tutorial</span>
                                         </p:link>
-                                    </li>      
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/3. Cédula de Identificacion del Tutorado modif.xlsx">
                                             <span>3. Cédula de Identificacion del<br/>Tutorado </span>
                                         </p:link>
-                                    </li>       
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/4. Tutoría Grupal.xls">
                                             <span>4. Tutoría Grupal</span>
                                         </p:link>
-                                    </li>       
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/5. Tutoria Indiv y Casos Critícos modif.xlsx">
                                             <span>5. Tutoria Indiv y Casos Critícos</span>
                                         </p:link>
-                                    </li>   
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/6. Justificante modif.xls">
                                             <span>6. Justificante</span>
                                         </p:link>
-                                    </li>      
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/7. Asesorias.xlsx">
                                             <span>7. Asesorias</span>
                                         </p:link>
-                                    </li>       
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/8. Citatorio modif.doc">
                                             <span>8. Citatorio</span>
                                         </p:link>
-                                    </li>  
+                                    </li>
                                 </ul>
                             </li>
                             <li class="treeview">
@@ -800,12 +801,12 @@
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_1.docx">
                                             <span>Propuesto 1°</span>
                                         </p:link>
-                                    </li>     
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_2.docx">
                                             <span>Propuesto 2°</span>
                                         </p:link>
-                                    </li>     
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_4.docx">
                                             <span>Propuesto 4°</span>
@@ -830,13 +831,13 @@
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/Plan_Accion_Tutorial_10.docx">
                                             <span>Propuesto 10°</span>
                                         </p:link>
-                                    </li>   
+                                    </li>
                                 </ul>
                             </li>
                         </c:if>
                         <c:if test="#{
                               (controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71) 
-                                  or (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 5 or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9 
+                                  or (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 5 or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9
                                   or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 16
                                   or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 21
                                   or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 22)
@@ -853,32 +854,32 @@
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/2_Programa_de_visitas.xls">
                                             <span>2. Programa de visitas</span>
                                         </p:link>
-                                    </li>      
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/3_Confirmacion_Itinerario_e_informe_de_Visitas.xlsx">
                                             <span>3. Confirmación, Itinerario e <br/>einforme de Visitas 2020</span>
                                         </p:link>
-                                    </li>       
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/4_LISTADO_DE_ESTUDIANTES_CON_SS.xlsx">
                                             <span>4. Listado de estudiantes con <br/>eSS vigente</span>
                                         </p:link>
-                                    </li>       
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/5. Carta Responsiva.docx">
                                             <span>5. Carta Responsiva</span>
                                         </p:link>
-                                    </li>   
+                                    </li>
                                     <li>
                                         <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/visitas/6. Encuesta Proceso de Visitas.docx">
                                             <span>6. Encuesta Proceso de Visitas</span>
                                         </p:link>
-                                    </li>      
+                                    </li>
                                 </ul>
                             </li>
                         </c:if>
                     </ul>
-                </li>   
+                </li>
 
                 <li class="treeview">
                     <a href="#">
@@ -892,27 +893,27 @@
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_de_Acciones_Correctivas.pdf" target="_blank">
                                 <span>Acciones Correctivas</span>
                             </p:link>
-                        </li> 
+                        </li>
                         <li>
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_de_quejas_observaciones_y_sugerencias.pdf" target="_blank">
                                 <span>Quejas, observaciones y sugerencias</span>
                             </p:link>
-                        </li> 
+                        </li>
                         <li>
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_de_Salida_No_Conforme.pdf" target="_blank">
                                 <span>Salida No Conforme</span>
                             </p:link>
-                        </li> 
+                        </li>
                         <li>
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_del_Control_de_Registros.pdf" target="_blank">
                                 <span>Control de Registros</span>
                             </p:link>
-                        </li> 
+                        </li>
                         <li>
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos_mandatorios/Procedimiento_para_el_control_de_documentos.pdf" target="_blank">
                                 <span>Control de documentos</span>
                             </p:link>
-                        </li> 
+                        </li>
                     </ul>
                 </li>
 
@@ -936,7 +937,7 @@
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/4.1_Comprension_de_la_UTXJ_y_su_contexto.pdf" target="_blank">
                                         <span>4.1.Comprensión de la UTXJ <br/>y su contexto</span>
                                     </p:link>
-                                </li>   
+                                </li>
                                 <li>
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/4.2_Comprension_de_las_necesidades_y_expectativas_de_Partes_Interesadas.pdf" target="_blank">
                                         <span>4.2.Comprensión de las <br/>necesidades y expectativas de <br/>Partes Interesadas</span>
@@ -965,7 +966,7 @@
                                             </p:link>
                                         </li>
                                     </ul>
-                                </li>     
+                                </li>
                                 <li class="treeview">
                                     <a href="#">
                                         <i class="fa fa-file"></i> <span>Obligaciones Legales</span>
@@ -986,7 +987,7 @@
                                             </p:link>
                                         </li>
                                     </ul>
-                                </li>     
+                                </li>
                                 <li class="treeview">
                                     <a href="#">
                                         <i class="fa fa-file"></i> <span>Acciones para afrontar <br/>Riesgos y Oportunidades</span>
@@ -1004,19 +1005,19 @@
                                             </p:link>
                                         </li>
                                     </ul>
-                                </li>                                                                                                     
+                                </li>
                                 <li>
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/PROCEDIMIENTO_PARA_EL_ALMACENAMIENTO_DE_RESIDUOS.pdf" target="_blank">
                                         <span>Procedimiento para el <br/>almacenamiento de <br/>residuos</span>
                                     </p:link>
-                                </li> 
+                                </li>
                                 <li>
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/14001/PROCEDIMIENTO_PARA_MANEJO_INTEGRAL_DE_RESIDUOS_QUIMICOS_PELIGROSOS_REV2.pdf" target="_blank">
                                         <span>procedimiento para manejo <br/>integral de residuos <br/>químicos peligrosos <br/>Rev 2</span>
                                     </p:link>
-                                </li> 
+                                </li>
                             </ul>
-                        </li>  
+                        </li>
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-file"></i> <span>9001</span>
@@ -1065,9 +1066,9 @@
                                     <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/contextoUTXJ/9001/7.4_Cedula_de_Comunicacion_Institucional.pdf" target="_blank">
                                         <span>7.4 Cédula de Comunicación <br/>Institucional</span>
                                     </p:link>
-                                </li>      
+                                </li>
                             </ul>
-                        </li>  
+                        </li>
                     </ul>
                 </li>
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Manuales de Asignatura</li>
@@ -1083,17 +1084,17 @@
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/FORMACION_SOCIOCULTURAL.pdf" target="_blank">
                                 <span>Formación Sociocultural</span>
                             </p:link>
-                        </li>  
+                        </li>
                         <li>
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_PRACTICAS_UTXJ_EOyE_II.docx" target="_blank">
                                 <span>Manual de Prácticas UTXJ <br/> EOyE II</span>
                             </p:link>
-                        </li>  
+                        </li>
                         <li>
                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_PRACTICAS_UTXJ_FORMACION_SOCIOCULTURAL_II.docx" target="_blank">
                                 <span>Manual de Prácticas UTXJ <br/>Formación Sociocultural II</span>
                             </p:link>
-                        </li>  
+                        </li>
                     </ul>
                 </li>
 
@@ -1114,16 +1115,16 @@
                                             </span>
                                         </c:if>
                                     </p:link>
-                                </li>                          
+                                </li>
                             </c:if>
                             <c:if test="#{n2.nivel3s.size() ne 0}">
                                 <li class="treeview">
                                     <a href="#{n2.enlace}">
                                         <i class="#{n2.icono}"></i> <span>#{n2.titulo}</span>
-                                        <span class="pull-right-container">                                        
+                                        <span class="pull-right-container">
                                             <i class="fa fa-angle-left pull-right"></i>
                                         </span>
-                                    </a>          
+                                    </a>
                                     <ul class="treeview-menu" style="display: none;">
                                         <c:forEach var="k" begin="0" end="#{n2.nivel3s.size()-1}">
                                             <c:set var="n3" value="#{n2.nivel3s.get(k)}"/>
@@ -1138,7 +1139,7 @@
                                                             </span>
                                                         </c:if>
                                                     </p:link>
-                                                </li>                             
+                                                </li>
                                             </c:if>
                                             <c:if test="#{n3.nivel4s.size() ne 0}">
                                                 <li class="treeview">
@@ -1147,7 +1148,7 @@
                                                         <span class="pull-right-container">
                                                             <i class="fa fa-angle-left pull-right"></i>
                                                         </span>
-                                                    </a>          
+                                                    </a>
                                                     <ul class="treeview-menu" style="display: none;">
                                                         <c:forEach var="l" begin="0" end="#{n3.nivel4s.size()-1}">
                                                             <c:set var="n4" value="#{n3.nivel4s.get(l)}"/>
@@ -1161,18 +1162,18 @@
                                                                         </span>
                                                                     </c:if>
                                                                 </p:link>
-                                                            </li>                           
+                                                            </li>
                                                         </c:forEach>
                                                     </ul>
-                                                </li>   
+                                                </li>
                                             </c:if>
                                         </c:forEach>
                                     </ul>
-                                </li>   
+                                </li>
                             </c:if>
                         </c:forEach>
                     </c:if>
-                </c:forEach> 
+                </c:forEach>
                 <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
                     <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564}">
                         <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Personal</li>
@@ -1186,7 +1187,7 @@
                         </a>
                         <ul class="treeview-menu" style="display: none;">
                             <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 49 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 501 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
-                                <li> 
+                                <li>
                                     <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonal.xhtml"><i class="fa fa-user-circle-o"></i>
                                         <span>Activo</span>
                                     </p:link>
@@ -1230,7 +1231,7 @@
                     </li>
                 </c:if>
                 <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 148}">
-                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Estadistica</li>
+                    <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Estadística</li>
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-history"></i> <span>Estadística</span>
@@ -1259,7 +1260,7 @@
                         </p:link>
                     </li>
                 </c:if>
-                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Comunicacion interna</li>
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Comunicación interna</li>
                 <li>
                     <p:link href="#{request.contextPath}/directorioCorreos.xhtml">
                         <i class="fa fa-envelope" />
@@ -1337,7 +1338,7 @@
                             <span>Calendario</span>
                         </p:link>
                     </li>
-                <!--/c:if-->   
+                <!--/c:if-->
             </c:if>
         </c:if>
     </ul>

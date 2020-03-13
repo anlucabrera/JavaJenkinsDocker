@@ -51,31 +51,31 @@ public class ServiciosTecnologicosEncuestasSatisfaccion implements Serializable 
     @NotNull
     @Column(name = "total_encuestas")
     private int totalEncuestas;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Column(name = "muy_satis")
-    private int muySatis;
+    private BigDecimal muySatis;
     @Basic(optional = false)
     @NotNull
     @Column(name = "satisfechos")
-    private int satisfechos;
+    private BigDecimal satisfechos;
     @Basic(optional = false)
     @NotNull
     @Column(name = "regularmente_satis")
-    private int regularmenteSatis;
+    private BigDecimal regularmenteSatis;
     @Basic(optional = false)
     @NotNull
     @Column(name = "poco_satis")
-    private int pocoSatis;
+    private BigDecimal pocoSatis;
     @Basic(optional = false)
     @NotNull
     @Column(name = "no_satis")
-    private int noSatis;
+    private BigDecimal noSatis;
     @Basic(optional = false)
     @NotNull
     @Column(name = "no_aplica")
-    private int noAplica;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    private BigDecimal noAplica;
     @Basic(optional = false)
     @NotNull
     @Column(name = "satisbase_5")
@@ -102,7 +102,7 @@ public class ServiciosTecnologicosEncuestasSatisfaccion implements Serializable 
         this.claveEncuesta = claveEncuesta;
     }
 
-    public ServiciosTecnologicosEncuestasSatisfaccion(Integer claveEncuesta, int totalEncuestas, int muySatis, int satisfechos, int regularmenteSatis, int pocoSatis, int noSatis, int noAplica, BigDecimal satisbase5, BigDecimal satisbase10) {
+    public ServiciosTecnologicosEncuestasSatisfaccion(Integer claveEncuesta, int totalEncuestas, BigDecimal muySatis, BigDecimal satisfechos, BigDecimal regularmenteSatis, BigDecimal pocoSatis, BigDecimal noSatis, BigDecimal noAplica, BigDecimal satisbase5, BigDecimal satisbase10) {
         this.claveEncuesta = claveEncuesta;
         this.totalEncuestas = totalEncuestas;
         this.muySatis = muySatis;
@@ -131,51 +131,51 @@ public class ServiciosTecnologicosEncuestasSatisfaccion implements Serializable 
         this.totalEncuestas = totalEncuestas;
     }
 
-    public int getMuySatis() {
+    public BigDecimal getMuySatis() {
         return muySatis;
     }
 
-    public void setMuySatis(int muySatis) {
+    public void setMuySatis(BigDecimal muySatis) {
         this.muySatis = muySatis;
     }
 
-    public int getSatisfechos() {
+    public BigDecimal getSatisfechos() {
         return satisfechos;
     }
 
-    public void setSatisfechos(int satisfechos) {
+    public void setSatisfechos(BigDecimal satisfechos) {
         this.satisfechos = satisfechos;
     }
 
-    public int getRegularmenteSatis() {
+    public BigDecimal getRegularmenteSatis() {
         return regularmenteSatis;
     }
 
-    public void setRegularmenteSatis(int regularmenteSatis) {
+    public void setRegularmenteSatis(BigDecimal regularmenteSatis) {
         this.regularmenteSatis = regularmenteSatis;
     }
 
-    public int getPocoSatis() {
+    public BigDecimal getPocoSatis() {
         return pocoSatis;
     }
 
-    public void setPocoSatis(int pocoSatis) {
+    public void setPocoSatis(BigDecimal pocoSatis) {
         this.pocoSatis = pocoSatis;
     }
 
-    public int getNoSatis() {
+    public BigDecimal getNoSatis() {
         return noSatis;
     }
 
-    public void setNoSatis(int noSatis) {
+    public void setNoSatis(BigDecimal noSatis) {
         this.noSatis = noSatis;
     }
 
-    public int getNoAplica() {
+    public BigDecimal getNoAplica() {
         return noAplica;
     }
 
-    public void setNoAplica(int noAplica) {
+    public void setNoAplica(BigDecimal noAplica) {
         this.noAplica = noAplica;
     }
 

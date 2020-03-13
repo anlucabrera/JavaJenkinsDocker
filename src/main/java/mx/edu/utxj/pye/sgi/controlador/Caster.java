@@ -213,7 +213,7 @@ public class Caster {
      public String cicloToString(CiclosEscolares ciclo){
         return (new StringBuilder())
                 .append(ciclo.getInicio())
-                .append(" - ")
+                .append("-")
                 .append(ciclo.getFin())
                 .toString();
 
@@ -260,7 +260,7 @@ public class Caster {
                 +" de "+
                 anio.format(fechaFin);
     }
-    
+
     public static String convertirFormatoFecha(Date date) {
         if (date != null) {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm a");
@@ -373,7 +373,7 @@ public class Caster {
             return 0;
         }
     }
-    
+
     public String parseHoraMinutos(Date hora){
         DateFormat formatoHora = new SimpleDateFormat("HH:mm a");    
         return formatoHora.format(hora);
@@ -425,7 +425,7 @@ public class Caster {
         if(res.getCorrecto())return res.getValor();
         else return (new AreasUniversidad());
     }
-    
+
     public static String obtenerNombreMes(Date mes) {
         if (mes == null) {
             return "nulo";

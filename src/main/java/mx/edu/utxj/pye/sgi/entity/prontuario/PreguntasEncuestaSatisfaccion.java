@@ -55,14 +55,14 @@ public class PreguntasEncuestaSatisfaccion implements Serializable {
     @Column(name = "pregunta")
     private String pregunta;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaSatisfaccion")
+    private List<EncuestaSatisfaccion> encuestaSatisfaccionList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaSatisfaccion")
     private List<EncuestaSatisfaccionEmpleadoresPece> encuestaSatisfaccionEmpleadoresPeceList;
     @JoinColumn(name = "categoria", referencedColumnName = "id_categoria")
     @ManyToOne(optional = false)
     private CategoriasEncuestaSatisfaccion categoria;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaSatisfaccion")
     private List<EncuestaSatisfaccionEgresadosPece> encuestaSatisfaccionEgresadosPeceList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaSatisfaccion")
-    private List<EncuestaSatisfaccion> encuestaSatisfaccionList;
 
     public PreguntasEncuestaSatisfaccion() {
     }
@@ -109,6 +109,15 @@ public class PreguntasEncuestaSatisfaccion implements Serializable {
     }
 
     @XmlTransient
+    public List<EncuestaSatisfaccion> getEncuestaSatisfaccionList() {
+        return encuestaSatisfaccionList;
+    }
+
+    public void setEncuestaSatisfaccionList(List<EncuestaSatisfaccion> encuestaSatisfaccionList) {
+        this.encuestaSatisfaccionList = encuestaSatisfaccionList;
+    }
+
+    @XmlTransient
     public List<EncuestaSatisfaccionEmpleadoresPece> getEncuestaSatisfaccionEmpleadoresPeceList() {
         return encuestaSatisfaccionEmpleadoresPeceList;
     }
@@ -132,15 +141,6 @@ public class PreguntasEncuestaSatisfaccion implements Serializable {
 
     public void setEncuestaSatisfaccionEgresadosPeceList(List<EncuestaSatisfaccionEgresadosPece> encuestaSatisfaccionEgresadosPeceList) {
         this.encuestaSatisfaccionEgresadosPeceList = encuestaSatisfaccionEgresadosPeceList;
-    }
-
-    @XmlTransient
-    public List<EncuestaSatisfaccion> getEncuestaSatisfaccionList() {
-        return encuestaSatisfaccionList;
-    }
-
-    public void setEncuestaSatisfaccionList(List<EncuestaSatisfaccion> encuestaSatisfaccionList) {
-        this.encuestaSatisfaccionList = encuestaSatisfaccionList;
     }
 
     @Override

@@ -1,31 +1,44 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import edu.mx.utxj.pye.seut.util.util.Cuestionario;
 import lombok.NonNull;
+import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.consulta.DtoAreaUniversidadCategoria;
+import mx.edu.utxj.pye.sgi.dto.consulta.DtoEstudiantePeriodo;
+import mx.edu.utxj.pye.sgi.dto.consulta.DtoSatisfaccionServiciosCuestionario;
+import mx.edu.utxj.pye.sgi.dto.consulta.DtoSatisfaccionServiciosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.ejb.finanzas.EjbFiscalizacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
+import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.*;
+import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado;
 import mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.converter.CasoCriticoEstadoConverter;
 import mx.edu.utxj.pye.sgi.enums.converter.CasoCriticoTipoConverter;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.saiiut.ejb.EjbLogin;
 import mx.edu.utxj.pye.sgi.util.DateUtils;
+import mx.edu.utxj.pye.sgi.util.NumberUtils;
+import mx.edu.utxj.pye.sgi.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import java.awt.dnd.DragGestureEvent;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Stateless(name = "EjbPacker")
 public class EjbPacker {
@@ -37,6 +50,7 @@ public class EjbPacker {
     @EJB EjbValidacionComentarios ejbValidacionComentarios;
     @EJB EjbConverter ejbConverter;
     @EJB EjbPropiedades ep;
+    @EJB EjbLogin ejbLogin;
     private EntityManager em;
 
      @PostConstruct
@@ -640,6 +654,219 @@ public class EjbPacker {
             return ResultadoEJB.crearCorrecto(dtoCalificacionNivelacion, "Empaquetado de nivelación.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la calificación de nivelación (EjbPacker.packDtoCalificacionNivelacion).", e, DtoCalificacionNivelacion.class);
+        }
+    }
+
+    /**
+     * Permite empaquetar un área institucional y su categoría
+     * @param area Clave del área requerida
+     * @return Regresa el empaquetado, código 1 para error desconocido, código 2  para indicar una clave incorrecta o código 3 para indicar que el área no tiene categoría
+     */
+    public ResultadoEJB<DtoAreaUniversidadCategoria> packDtoAreaUniversidadCategoria(@NonNull Short area){
+        try{
+            //
+            AreasUniversidad areasUniversidad = em.find(AreasUniversidad.class, area);
+            if(areasUniversidad == null) return ResultadoEJB.crearErroneo(2, "No se encontró un área institucional con la clave especificada.", DtoAreaUniversidadCategoria.class);
+            Categorias categoria = areasUniversidad.getCategoria();
+            if(categoria == null) return ResultadoEJB.crearErroneo(3, "No se encontró la categoría del área requerida.", DtoAreaUniversidadCategoria.class);
+            DtoAreaUniversidadCategoria dtoAreaUniversidadCategoria = new DtoAreaUniversidadCategoria(areasUniversidad, categoria);
+            return ResultadoEJB.crearCorrecto(dtoAreaUniversidadCategoria, "Area de la universidad y su categoría empaquetados.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Ocurrió un error al intentar empaquetar un área intitucional con su clave.", e, DtoAreaUniversidadCategoria.class);
+        }
+    }
+
+    /**
+     * Empaqueta una asociación del estudiante con sus periodo escolar, en caso de ser un estudinate del nuevo sistema se inlcuye un empaquetado del estudiante
+     * @param matricula Valor de la matrícula
+     * @param periodo Valor del periodo a asociar
+     * @return Regresa el empaquetado, código 1 para error desconocido, código 2 para indicar que la matricula no está registrada en el epriodo, código 3 para indicar que el periodo no es válido
+     */
+    public ResultadoEJB<DtoEstudiantePeriodo> packDtoEstudiantePeriodo(String matricula, Integer periodo){
+        try{
+            PeriodosEscolares periodosEscolares = em.find(PeriodosEscolares.class, periodo);
+            if(periodosEscolares == null) return ResultadoEJB.crearErroneo(3, "El periodo no es válido", DtoEstudiantePeriodo.class);
+            CiclosEscolares ciclosEscolares = periodosEscolares.getCiclo();
+
+            MatriculaPeriodosEscolares matriculaPeriodosEscolares = em.createQuery("select m from MatriculaPeriodosEscolares m where m.periodo=:periodo and m.matricula=:matricula", MatriculaPeriodosEscolares.class)
+                    .setParameter("matricula", StringUtils.trim(matricula))
+                    .setParameter("periodo", periodo)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            if(matriculaPeriodosEscolares == null) return ResultadoEJB.crearErroneo(2, "La matrícula no está asociada al period en la BD", DtoEstudiantePeriodo.class);
+
+            AreasUniversidad programa = em.find(AreasUniversidad.class, matriculaPeriodosEscolares.getProgramaEducativo());
+
+            DtoEstudiantePeriodo dtoEstudiantePeriodo = new DtoEstudiantePeriodo(matriculaPeriodosEscolares, programa, periodosEscolares, ciclosEscolares, UsuarioTipo.ESTUDIANTE);
+            /*ResultadoEJB<DtoEstudiante> packEstudiante = packEstudiante(NumberUtils.stringToInt(matricula));
+            if(packEstudiante.getCorrecto()) {
+                dtoEstudiantePeriodo.setDtoEstudiante(packEstudiante.getValor());
+                dtoEstudiantePeriodo.setUsuarioTipo(UsuarioTipo.ESTUDIANTE19);
+            }*/
+
+            return ResultadoEJB.crearCorrecto(dtoEstudiantePeriodo, "Asociación de estudiante con periodo empaquetada");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el estudiante con su periodo (EjbPacker.packDtoAreaUniversidadCategoria)", e, DtoEstudiantePeriodo.class);
+        }
+    }
+
+    /**
+     * Empaqueta una asociación del estudiante con sus periodo escolar, en caso de ser un estudinate del nuevo sistema se inlcuye un empaquetado del estudiante
+     * @param matricula Valor de la matrícula
+     * @param periodo Valor del periodo a asociar
+     * @return Regresa el empaquetado, código 1 para error desconocido, código 2 para indicar que la matricula no está registrada en el epriodo, código 3 para indicar que el periodo no es válido
+     */
+    public ResultadoEJB<DtoEstudiantePeriodo> packDtoEstudiantePeriodoEnDemanda(String matricula, Integer periodo, List<MatriculaPeriodosEscolares> matriculasPeriodosEscolares, List<AreasUniversidad> programas){
+        try{
+            PeriodosEscolares periodosEscolares = em.find(PeriodosEscolares.class, periodo);
+            if(periodosEscolares == null) return ResultadoEJB.crearErroneo(3, "El periodo no es válido", DtoEstudiantePeriodo.class);
+            CiclosEscolares ciclosEscolares = periodosEscolares.getCiclo();
+
+            MatriculaPeriodosEscolares matriculaPeriodosEscolares = matriculasPeriodosEscolares.stream().filter(m -> Objects.equals(m.getMatricula(), matricula)).filter(m -> Objects.equals(m.getPeriodo(), periodo)).findFirst().orElse(null);
+
+            /*MatriculaPeriodosEscolares matriculaPeriodosEscolares = em.createQuery("select m from MatriculaPeriodosEscolares m where m.periodo=:periodo and m.matricula=:matricula", MatriculaPeriodosEscolares.class)
+                    .setParameter("matricula", StringUtils.trim(matricula))
+                    .setParameter("periodo", periodo)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);*/
+            if(matriculaPeriodosEscolares == null) {
+                List<Integer> periodos = ciclosEscolares.getPeriodosEscolaresList().stream().map(PeriodosEscolares::getPeriodo).collect(Collectors.toList());
+                matriculaPeriodosEscolares = em.createQuery("select m from MatriculaPeriodosEscolares  m where m.matricula = :matricula and m.periodo in :periodos order by m.periodo desc", MatriculaPeriodosEscolares.class)
+                        .setParameter("matricula", matricula)
+                        .setParameter("periodos", periodos)
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
+                if(matriculaPeriodosEscolares == null) return ResultadoEJB.crearErroneo(2, "La matrícula no está asociada al period en la BD", DtoEstudiantePeriodo.class);
+                System.out.println("matriculaPeriodosEscolares = " + matriculaPeriodosEscolares);
+            }
+
+            final short programaEducativo = matriculaPeriodosEscolares.getProgramaEducativo();
+            AreasUniversidad programa = programas.stream().filter(p -> Objects.equals(p.getArea(), programaEducativo)).findFirst().orElse(null); //em.find(AreasUniversidad.class, matriculaPeriodosEscolares.getProgramaEducativo());
+
+            DtoEstudiantePeriodo dtoEstudiantePeriodo = new DtoEstudiantePeriodo(matriculaPeriodosEscolares, programa, periodosEscolares, ciclosEscolares, UsuarioTipo.ESTUDIANTE);
+            /*ResultadoEJB<DtoEstudiante> packEstudiante = packEstudiante(NumberUtils.stringToInt(matricula));
+            if(packEstudiante.getCorrecto()) {
+                dtoEstudiantePeriodo.setDtoEstudiante(packEstudiante.getValor());
+                dtoEstudiantePeriodo.setUsuarioTipo(UsuarioTipo.ESTUDIANTE19);
+            }*/
+
+            return ResultadoEJB.crearCorrecto(dtoEstudiantePeriodo, "Asociación de estudiante con periodo empaquetada");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el estudiante con su periodo (EjbPacker.packDtoAreaUniversidadCategoria)", e, DtoEstudiantePeriodo.class);
+        }
+    }
+
+    /**
+     * Empaqueta los resultados obtenidos de la encuesta de satisfacción de servicios incluyendo el empaquetado del estudiante/periodo, el registro de los resultados de la encuesta y un mapa de preguntas y sus valores de respuestas
+     * de un estudiante
+     * @param encuestaServiciosResultados Registro de respuestas que dió el estudiante en su cuestionario
+     * @param evaluacion Instancia de la evaluación correspondiente de la que se desea obtener las
+     * @param cuestionario
+     * @return
+     */
+    public ResultadoEJB<DtoSatisfaccionServiciosEstudiante> packDtoSatisfaccionServiciosEstudiante(EncuestaServiciosResultados encuestaServiciosResultados, Evaluaciones evaluacion, DtoSatisfaccionServiciosCuestionario cuestionario, List<MatriculaPeriodosEscolares> matriculaPeriodosEscolaresList, List<AreasUniversidad> programas){
+        try{
+//            System.out.println("EjbPacker.packDtoSatisfaccionServiciosEstudiante");
+//            System.out.println("evaluacion.getPeriodo() = " + evaluacion.getPeriodo());
+            ResultadoEJB<DtoEstudiantePeriodo> packDtoEstudiantePeriodo = packDtoEstudiantePeriodoEnDemanda(String.valueOf(encuestaServiciosResultados.getEncuestaServiciosResultadosPK().getEvaluador()), evaluacion.getPeriodo(), matriculaPeriodosEscolaresList, programas);
+            if(!packDtoEstudiantePeriodo.getCorrecto()) {
+//                System.out.println("EjbPacker.packDtoSatisfaccionServiciosEstudiante");
+//                System.out.println("encuestaServiciosResultados = " + encuestaServiciosResultados + ", evaluacion = " + evaluacion);
+                System.out.println("String.valueOf(encuestaServiciosResultados.getEncuestaServiciosResultadosPK().getEvaluador()) = " + String.valueOf(encuestaServiciosResultados.getEncuestaServiciosResultadosPK().getEvaluador()));
+                System.out.println("packDtoEstudiantePeriodo.getMensaje() = " + packDtoEstudiantePeriodo.getMensaje());
+                return ResultadoEJB.crearErroneo(2, "No se pudo empaquetar DtoSatisfaccionServiciosEstudiante. Mensaje: ".concat(packDtoEstudiantePeriodo.getMensaje()), DtoSatisfaccionServiciosEstudiante.class);
+            }else{
+//                System.out.println("packDtoEstudiantePeriodo.getValor().getMatriculaPeriodosEscolares().getMatricula() = " + packDtoEstudiantePeriodo.getValor().getMatriculaPeriodosEscolares().getMatricula());
+            }
+
+            DtoSatisfaccionServiciosEstudiante dtoSatisfaccionServiciosEstudiante = new DtoSatisfaccionServiciosEstudiante(packDtoEstudiantePeriodo.getValor(), encuestaServiciosResultados);
+            cuestionario.getPreguntas().forEach(pregunta -> {
+                Integer posicion = cuestionario.getPosiciones().get(pregunta.getNumero());
+//                System.out.println("posicion = " + posicion);
+                switch (posicion){
+                    case 0: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR1())); break;
+                    case 1: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR2())); break;
+                    case 2: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR3())); break;
+                    case 3: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR4())); break;
+                    case 4: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR5())); break;
+                    case 5: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR6())); break;
+                    case 6: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR7())); break;
+                    case 7: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR8())); break;
+                    case 8: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR9())); break;
+                    case 9: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR10())); break;
+                    case 10: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR11())); break;
+                    case 11: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR12())); break;
+                    case 12: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR13())); break;
+                    case 13: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR14())); break;
+                    case 14: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR15())); break;
+                    case 15: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR16())); break;
+                    case 16: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR17())); break;
+                    case 17: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR18())); break;
+                    case 18: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR19())); break;
+                    case 19: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR20())); break;
+                    case 20: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR21())); break;
+                    case 21: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR22())); break;
+                    case 22: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR23())); break;
+                    case 23: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR24())); break;
+                    case 24: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR25())); break;
+                    case 25: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR26())); break;
+                    case 26: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR27())); break;
+                    case 27: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR28())); break;
+                    case 28: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR29())); break;
+                    case 29: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR30())); break;
+                    case 30: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR31())); break;
+                    case 31: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR32())); break;
+                    case 32: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR33())); break;
+                    case 33: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR34())); break;
+                    case 34: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR35())); break;
+                    case 35: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR36())); break;
+                    case 36: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR37())); break;
+                    case 37: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR38())); break;
+                    case 38: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR39())); break;
+                    case 39: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR40())); break;
+                    case 40: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR41())); break;
+                    case 41: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR42())); break;
+                    case 42: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR43())); break;
+                    case 43: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR44())); break;
+                    case 44: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR45())); break;
+                    case 45: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR46())); break;
+                    case 46: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR47())); break;
+                    case 47: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR48())); break;
+                    case 48: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR49())); break;
+                    case 49: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR50())); break;
+                    case 50: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR51())); break;
+                    case 51: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR52())); break;
+                    case 52: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR53())); break;
+                    case 53: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR54())); break;
+                    case 54: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR55())); break;
+                    case 55: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR56())); break;
+                    case 56: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR57())); break;
+                    case 57: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR58())); break;
+                    case 58: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR59())); break;
+                    case 59: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR60())); break;
+                    case 60: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR61())); break;
+                    case 61: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR62())); break;
+                    case 62: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR63())); break;
+                    case 63: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR64())); break;
+                    case 64: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR65())); break;
+                    case 65: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR66())); break;
+                    case 66: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR67())); break;
+                    case 67: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR68())); break;
+                    case 68: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR69())); break;
+                    case 69: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR70())); break;
+                    case 70: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR71())); break;
+                    case 71: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR72())); break;
+                    case 72: dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap().put(pregunta, new BigDecimal(encuestaServiciosResultados.getR73())); break;
+                }
+            });
+
+//            System.out.println("dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap() = " + dtoSatisfaccionServiciosEstudiante.getPreguntaValorMap());
+            return ResultadoEJB.crearCorrecto(dtoSatisfaccionServiciosEstudiante, "dtoSatisfaccionServiciosEstudiante empaquetado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Ocurrió un error al empaquetar DtoSatisfaccionServiciosEstudiante (EjbPacker.packDtoSatisfaccionServiciosEstudiante)", e, DtoSatisfaccionServiciosEstudiante.class);
         }
     }
 }

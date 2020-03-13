@@ -156,7 +156,11 @@ public class ServicioArchivos implements Serializable{
     public static String genRutaRelativa(String categoria){
         return categoria.concat(File.separator).concat(Year.now().toString()).concat(File.separator);
     }
-    
+
+    public static String genRutaRelativa(String categoria, Integer periodo){
+        return categoria.concat(File.separator).concat(periodo.toString()).concat(File.separator);
+    }
+
     /**
      * Genera una ruta relativa por area, mes y nombre de registro,
      * @param ejercicioFiscal Ejercicio fiscal del evento del registro
@@ -371,21 +375,21 @@ public class ServicioArchivos implements Serializable{
                 .concat(tipo.toLowerCase().trim().concat(File.separator))
                 .concat(personalRegistro.trim().concat(File.separator));
     }
-    
+
     public static String almacenarEvidenciaRegistroNotificacion(NotificacionesCe notificacionCe, Part archivo) throws IOException, EvidenciaRegistroExtensionNoValidaException{
         if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
             throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
         }
         String ruta = ServicioArchivos.genRutaRelativaNotificacion(
-                Caster.obtenerEjercicio(notificacionCe.getFechaRegistro()), 
-                Caster.obtenerNombreMes(notificacionCe.getFechaRegistro()), 
-                notificacionCe.getTipo(), 
+                Caster.obtenerEjercicio(notificacionCe.getFechaRegistro()),
+                Caster.obtenerNombreMes(notificacionCe.getFechaRegistro()),
+                notificacionCe.getTipo(),
                 String.valueOf(notificacionCe.getPersonaRegistro()));
-        
+
         String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
         String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(StringUtils.prettyURL(nombreArchivo.toLowerCase()))));
         String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
-        
+
         Integer cont = 1;
         while (Files.exists(Paths.get(rutaAbsoluta))){
             nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
@@ -397,5 +401,5 @@ public class ServicioArchivos implements Serializable{
         archivo.write(rutaArchivo);
         return rutaAbsoluta;
     }
-    
+
 }

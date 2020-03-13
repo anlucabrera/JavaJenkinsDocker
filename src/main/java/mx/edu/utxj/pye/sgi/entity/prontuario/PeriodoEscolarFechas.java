@@ -122,11 +122,7 @@ public class PeriodoEscolarFechas implements Serializable {
 
     @Override
     public String toString() {
-        return "PeriodoEscolarFechas{" +
-                "periodo=" + periodo +
-                ", inicio=" + inicio +
-                ", fin=" + fin +
-                ", periodosEscolares=" + periodosEscolares +
-                '}';
+        return "mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas[ periodo=" + periodo + " ]";
     }
+    
 }

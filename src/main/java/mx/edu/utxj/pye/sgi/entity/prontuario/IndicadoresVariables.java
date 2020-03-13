@@ -38,7 +38,7 @@ public class IndicadoresVariables implements Serializable {
     @Basic(optional = false)
     @Column(name = "indicador_variable")
     private Integer indicadorVariable;
-    @JoinColumns({@JoinColumn(name = "indicador", referencedColumnName = "indicador"),@JoinColumn(name = "clave", referencedColumnName = "clave")})    
+    @JoinColumns({@JoinColumn(name = "indicador", referencedColumnName = "indicador"),@JoinColumn(name = "clave", referencedColumnName = "clave")})
     @ManyToOne(optional = false)
     private Indicadores indicador;
     @JoinColumn(name = "variable", referencedColumnName = "variable")

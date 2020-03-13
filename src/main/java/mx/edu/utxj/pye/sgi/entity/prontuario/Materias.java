@@ -110,5 +110,5 @@ public class Materias implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.prontuario.Materias[ cveMateria=" + cveMateria + " ]";
     }
-
+    
 }

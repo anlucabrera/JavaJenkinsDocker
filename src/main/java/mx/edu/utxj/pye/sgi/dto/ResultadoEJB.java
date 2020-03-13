@@ -165,7 +165,7 @@ public class ResultadoEJB<T> implements Serializable {
     }
 
     public static <T> List<T> getListaTipo(Class<T> tipo){
-        List<T> l = Collections.EMPTY_LIST;
+        List<T> l = new ArrayList<T>();
         return l;
     }
 

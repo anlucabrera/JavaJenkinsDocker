@@ -49,11 +49,11 @@ public class PreguntasEncuestaClimaLaboral implements Serializable {
     @Size(min = 1, max = 500)
     @Column(name = "pregunta")
     private String pregunta;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaClimaLaboral")
+    private List<EncuestaCapacitacionClimaLaboral> encuestaCapacitacionClimaLaboralList;
     @JoinColumn(name = "categoria", referencedColumnName = "id_categoria")
     @ManyToOne(optional = false)
     private CategoriasEncuestaClimaLaboral categoria;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaClimaLaboral")
-    private List<EncuestaCapacitacionClimaLaboral> encuestaCapacitacionClimaLaboralList;
 
     public PreguntasEncuestaClimaLaboral() {
     }
@@ -83,14 +83,6 @@ public class PreguntasEncuestaClimaLaboral implements Serializable {
         this.pregunta = pregunta;
     }
 
-    public CategoriasEncuestaClimaLaboral getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(CategoriasEncuestaClimaLaboral categoria) {
-        this.categoria = categoria;
-    }
-
     @XmlTransient
     public List<EncuestaCapacitacionClimaLaboral> getEncuestaCapacitacionClimaLaboralList() {
         return encuestaCapacitacionClimaLaboralList;
@@ -98,6 +90,14 @@ public class PreguntasEncuestaClimaLaboral implements Serializable {
 
     public void setEncuestaCapacitacionClimaLaboralList(List<EncuestaCapacitacionClimaLaboral> encuestaCapacitacionClimaLaboralList) {
         this.encuestaCapacitacionClimaLaboralList = encuestaCapacitacionClimaLaboralList;
+    }
+
+    public CategoriasEncuestaClimaLaboral getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(CategoriasEncuestaClimaLaboral categoria) {
+        this.categoria = categoria;
     }
 
     @Override
