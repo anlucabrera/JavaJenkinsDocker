@@ -17,7 +17,8 @@ public enum EvaluacionesTipo {//Tutor, Control interno, Docente, Satisfacción d
     EVALUACION_ESTADIA(5, "Evaluación Estadía"),
     CEDULA_IDENTIFICACION(6, "Cédula de identificación"),
     CUESTIONARIO_PSICOPEDAGOGICO(7, "Cuestionario Psicopedagógico"),
-    EVALUACION_ETICA(8, "Evaluación ética"), EVALUACION_AMBIENTAL(9);
+    EVALUACION_ETICA(8, "Evaluación ética"),
+    EVALUACION_AMBIENTAL(9, "Evaluación ambiental");
     
     @Getter @NonNull private final Integer numero;
     @Getter @NonNull private final String label;

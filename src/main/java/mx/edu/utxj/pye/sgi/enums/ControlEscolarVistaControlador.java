@@ -100,8 +100,7 @@ public enum ControlEscolarVistaControlador {
 
     REGISTRO_ASESORIAS_GENERAL("/controlEscolar/registro_asesorias_general.xhtml", RegistroAsesoriaEstudianteGeneral.class),
 
-    ADMINISTRACION_DESEMPENIO_AMBIENTAL("/encuestas/seguimiento/administracionEvaluacionAmbiental.xhtml", AdministracionEvaluacionAmbiental.class);
-    EVALUACION_CONOCIMIENTO_CUMPLIMIENTO("/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml", EvaluacionConocimientoCodigoEtica.class),
+    ADMINISTRACION_DESEMPENIO_AMBIENTAL("/encuestas/seguimiento/administracionEvaluacionAmbiental.xhtml", AdministracionEvaluacionAmbiental.class),
     /////////////////////////////////////////////////////////////////////////////
     SATISFACCION_SERVICIOS_CONSULTA("/encuestas/consulta/servicios.xhtml", ServiciosConsulta.class);
     /////////////////////////////////////////////////////////////////////////////
