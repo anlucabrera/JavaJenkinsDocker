@@ -27,13 +27,9 @@ import java.util.*;
 @Stateless
 public class EjbEncuestaServicios implements Serializable {
     private static final long serialVersionUID = 8258275727749911168L;
-    @EJB
-    Facade f;
-    @EJB
-    Facade2 f2;
-    @Getter
-    @Setter
-    private Integer periodo;
+    @EJB Facade f;
+    @EJB Facade2 f2;
+    @Getter @Setter private Integer periodo;
 
     /**
      * Metodo que ayuda a encontrar la evaluacion activa, detro de la tabla Evaluaciones
