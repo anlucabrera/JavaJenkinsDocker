@@ -73,6 +73,28 @@
                     </div>
                     <div class="box-body">  
                         <div class="row">
+                            <c:if test="#{encuestaCondicionesEstudio.cargada}">
+                                <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-xs-12'}" />
+                                <div class="#{claseResumen}" style="height: 100px;">
+                                    <div class="small-box #{encuestaCondicionesEstudio.finalizado?'bg-blue':'bg-red'}">
+                                        <div class="inner" style="cursor: pointer;" onclick="encuestaCondicionesEstudio();">
+                                            <h3>
+                                                <h:outputLabel value="Encuesta"></h:outputLabel>
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Encuesta de condiciones de estudio</p>
+                                            <p>#{encuestaCondicionesEstudio.finalizado?'Finalizada':'Pendiente'}</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-check-square"></i>
+                                        </div>
+                                        <p:link outcome="encuestas/Estudiantes/condiciones_estudio"  class="small-box-footer">
+                                            Ingresar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="encuestaCondicionesEstudio" action="encuestas/Estudiantes/condiciones_estudio" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
                             <c:if test="#{evaluacionDesempenioAmbientalEstudiante.tieneAcceso}">
                                 <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-xs-12'}" />
                                 <div class="#{claseResumen}" style="height: 100px;">

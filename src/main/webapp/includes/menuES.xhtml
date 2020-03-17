@@ -21,6 +21,7 @@
                         <i class=""></i>
                     </span>
                 </a>
+                <c:if test="#{encuestaCondicionesEstudio.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/condiciones_estudio.xhtml"><i class="fa fa-check-square"></i><span>Condiciones de estudio</span></p:link></li></c:if>
                 <c:if test="#{evaluacionDocenteEstudiante.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/evaluacionDocente.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
                 <!--<c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/docentesMateriaIndex.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>-->
                 <!--<c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>-->
