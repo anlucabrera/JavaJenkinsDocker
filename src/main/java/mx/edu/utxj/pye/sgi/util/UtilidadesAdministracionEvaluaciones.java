@@ -57,8 +57,8 @@ import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionTutor;
 import mx.edu.utxj.pye.sgi.funcional.PromediarDesempenio;
 import mx.edu.utxj.pye.sgi.funcional.PromediarTutor;
 import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionDocenteMateriaPye;
-import org.highfaces.component.api.impl.DefaultChartModel;
-import org.highfaces.component.api.impl.DefaultChartSeries;
+//import org.highfaces.component.api.impl.DefaultChartModel;
+//import org.highfaces.component.api.impl.DefaultChartSeries;
 import org.omnifaces.util.Messages;
 //import org.primefaces.context.RequestContext;
 
@@ -77,7 +77,7 @@ public class UtilidadesAdministracionEvaluaciones implements Serializable{
 //    @Getter @Setter protected List<ListadoChartEvaluacionDocente> chartCompletas, chartIncompletas, chartTotal;
 //    @Getter @Setter protected String selectedPoint;
 //    @Getter @Setter protected String selectedSeries;
-    @Getter @Setter protected DefaultChartModel model;
+//    @Getter @Setter protected DefaultChartModel model;
     //
         
     @Getter @Setter private Boolean tutor = false, directorDeCarrera = false, directivo = false, evaluacionActiva = false , secretariaAc = false, personal = false, botoneraActiva = false, botoneraActivaPersonal=false;
@@ -570,7 +570,7 @@ try {
             } else {
                //System.out.println("el tamaño de la lista es : " + listaChartEvaluacionDocentes.size());
                //System.out.println("GRAFICA");
-                graficar();
+//                graficar();
             }
 
         }
@@ -603,26 +603,26 @@ try {
      * gráfica según sea el área seleccionada previamente en los filtros de la
      * interfaz grafica
      */
-    public void graficar() {
-        model = new DefaultChartModel();
-        DefaultChartSeries serieCompletados = new DefaultChartSeries();
-        DefaultChartSeries serieIncompletos = new DefaultChartSeries();
-        DefaultChartSeries serieTotal = new DefaultChartSeries();
-        serieCompletados.setName("Completos");
-        serieIncompletos.setName("Incompletos");
-        serieTotal.setName("Total");
-       //System.out.println("lista de evaluaciones _ " + listaChartEvaluacionDocentes);
-               
-        listaChartEvaluacionDocentes.forEach(x -> {
-           //System.out.println("el registro en cuestionn  : "  + x);
-            serieCompletados.addPoint(x.getSiglas(), x.getTerminadas());
-            serieIncompletos.addPoint(x.getSiglas(), x.getIncompleta());
-            serieTotal.addPoint(x.getSiglas(), x.getTotal());
-        });
-        model.getSeries().add(serieCompletados);
-        model.getSeries().add(serieIncompletos);
-        model.getSeries().add(serieTotal);
-    }
+//    public void graficar() {
+//        model = new DefaultChartModel();
+//        DefaultChartSeries serieCompletados = new DefaultChartSeries();
+//        DefaultChartSeries serieIncompletos = new DefaultChartSeries();
+//        DefaultChartSeries serieTotal = new DefaultChartSeries();
+//        serieCompletados.setName("Completos");
+//        serieIncompletos.setName("Incompletos");
+//        serieTotal.setName("Total");
+//       //System.out.println("lista de evaluaciones _ " + listaChartEvaluacionDocentes);
+//               
+//        listaChartEvaluacionDocentes.forEach(x -> {
+//           //System.out.println("el registro en cuestionn  : "  + x);
+//            serieCompletados.addPoint(x.getSiglas(), x.getTerminadas());
+//            serieIncompletos.addPoint(x.getSiglas(), x.getIncompleta());
+//            serieTotal.addPoint(x.getSiglas(), x.getTotal());
+//        });
+//        model.getSeries().add(serieCompletados);
+//        model.getSeries().add(serieIncompletos);
+//        model.getSeries().add(serieTotal);
+//    }
 
     /**
      * apartado de la administración del personal en este apartado se
