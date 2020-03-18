@@ -25,7 +25,7 @@ import java.util.Map;
 public class DtoEvaluaciones implements Serializable{
     
     /////////////////////////General wrappers\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    @Getter @Setter public Boolean cargada, finalizado, estSexto, estOnceavo ,esDeIyE,director, tutor, tutorCe,esSecretario, planeacion,esPsicopedagogia, ESActiva, ESTsuActiva, ESIngActiva, ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2;
+    @Getter @Setter public Boolean cargada, finalizado, estSexto, estOnceavo ,esDeIyE,director, tutor, tutorCe,esSecretario, planeacion,esPsicopedagogia, ESActiva, ESTsuActiva, ESIngActiva, ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2, eCEActiva;
     @Getter @Setter public Short grado;
     @Getter @Setter public String evaluador, valor, cveDirector, nombreCompletoTutor;
     @Getter @Setter public Integer evaluadorr,cveTrabajador,usuarioNomina;
@@ -46,6 +46,7 @@ public class DtoEvaluaciones implements Serializable{
     @Getter @Setter public EncuestaSatisfaccionEgresadosIng resultadoESEI;
     @Getter @Setter public List<ListadoEvaluacionEgresados> listaEvaCompleta, listaEvaIncompleta, listaEvaNA, listaFiltrado;
     @Getter @Setter public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> alumnosEncuesta = new ArrayList<>();
+    @Getter @Setter public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar> alumnosEncuestaCE = new ArrayList<>();
     @Getter @Setter public List<ListaDatosAvanceEncuestaServicio> dtoLDAES, dtoLDAES1, dtoLDAES2, dtoLDAES3;
     @Getter @Setter public List<ViewEstudianteAsesorAcademico> alumnosEncuestas;
     @Getter @Setter public List<ListaDatosAvanceEncuestaServicio.AvanceEncuestaServiciosPorGrupo> dtoAESPG, dtoAESPG1, dtoAESPG2, dtoAESPGFilter;
@@ -58,5 +59,6 @@ public class DtoEvaluaciones implements Serializable{
     @Getter @Setter public Comparador<EvaluacionEstadiaResultados> comparadorEE = new ComparadorEvaluacionEstadia();
     @Getter @Setter public Comparador<EncuestaSatisfaccionEgresadosIng> comparadorESI = new ComparadorEncuestaSatisfaccionEgresadosIng();
     @Getter @Setter public Comparador<EvaluacionesEstudioSocioeconomicoResultados> comparadorESR = new ComparadorEvaluacionEstudioSocioEconomico();
+    @Getter @Setter public Comparador<EncuestaCondicionesEstudio> comparadorECE = new ComparadorCondicionesEstudio();
 
 }

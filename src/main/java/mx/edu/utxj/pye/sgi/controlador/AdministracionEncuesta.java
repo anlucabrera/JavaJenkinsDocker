@@ -105,6 +105,7 @@ private Boolean cargado = false;
         if(ejbAdmEncuesta.aperturaVisualizacionEncuesta("Evaluación Estadía")){dto.EEActiva = true;}
         if(ejbAdmEncuesta.aperturaVisualizacionEncuesta("Evaluación a Tutor")){dto.ETutorActiva=true;}
         if(ejbAdmEncuesta.aperturaVisualizacionEncuesta("Evaluación Docente")){dto.EDocenteActiva=true;}
+        if(ejbAdmEncuesta.aperturaVisualizacionEncuesta("Encuesta Condiciones Estudio")){dto.eCEActiva=true;}
     }
     
 }
