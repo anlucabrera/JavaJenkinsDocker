@@ -31,7 +31,10 @@ public class EjbEvaluacionDocente2 {
     @EJB EJBAdimEstudianteBase estudianteBase;
 
     @PostConstruct
-    public void init(){em = f.getEntityManager();em2 = f2.getEntityManager();}
+    public void init(){
+        em = f.getEntityManager();
+        em2 = f2.getEntityManager();
+    }
     /**
      * Obtiene la evaluacion a docente activa
      * @return Resultado del proceso (Evaluacion activa)
