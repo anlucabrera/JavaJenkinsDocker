@@ -9,10 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.StoredProcedureQuery;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
@@ -50,7 +47,7 @@ public class ServicioLogin implements EjbLogin {
     @EJB    Facade f2;// mysql
     // Comentar las siguiente Importaciones cuando falle saiiut //
     @EJB    Facade2 f;
-    // Fin de Importaciones 
+    // Fin de Importaciones
     
     private final Patron patronMatricula = new PatronMatricula();
     private final Patron patronMatricula19 = new PatronMatricula19();
@@ -89,7 +86,10 @@ public class ServicioLogin implements EjbLogin {
 
     @Override
     public Usuarios getUsuarioPorLogin(String loginUsuario) {
-        TypedQuery<Usuarios> q = f.getEntityManager().createNamedQuery("Usuarios.findByLoginUsuario", Usuarios.class);
+//        System.out.println("f = " + f);
+//        System.out.println("f.getEntityManager() = " + f.getEntityManager());
+        if(f.getEntityManager() == null) return null;
+        TypedQuery<Usuarios> q = f2.getEntityManager().createNamedQuery("Usuarios.findByLoginUsuario", Usuarios.class);
         q.setParameter("loginUsuario", loginUsuario);
         List<Usuarios> l = q.getResultList();
         if (l.isEmpty()) {
@@ -101,7 +101,7 @@ public class ServicioLogin implements EjbLogin {
 
     @Override
     public Login getUsuario19PorLogin(String loginUsuario) {
-        Login login = f2.getEntityManager().createQuery("select l from Login  l where l.usuario=:usuario", Login.class)
+        Login login = em.createQuery("select l from Login  l where l.usuario=:usuario", Login.class)
                 .setParameter("usuario", loginUsuario)
                 .getResultStream()
                 .findFirst()
@@ -111,13 +111,14 @@ public class ServicioLogin implements EjbLogin {
 
     @Override
     public ListaUsuarioClaveNomina getListaUsuarioClaveNomina(String loginUsuario) {
-        f.setEntityClass(ListaUsuarioClaveNomina.class);
+        if(f.getEntityManager() == null) return null;
         return (ListaUsuarioClaveNomina) f.find(loginUsuario);
     }
 
     @Override
     public List<VistaEvaluacionesTutores> getTutoresPeriodoActual() {
-        TypedQuery<Listaperiodosescolares> periodo = f2.getEntityManager().createQuery("SELECT p from Listaperiodosescolares p ORDER BY p.periodo DESC", Listaperiodosescolares.class);
+        if(f.getEntityManager() == null) return null;
+        TypedQuery<Listaperiodosescolares> periodo = em.createQuery("SELECT p from Listaperiodosescolares p ORDER BY p.periodo DESC", Listaperiodosescolares.class);
         if (periodo.getResultList().isEmpty() || periodo.getResultList() == null) {
             System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getTutoresPeriodoActual() no se encontro periodo::: ");
         } else {
@@ -136,8 +137,7 @@ public class ServicioLogin implements EjbLogin {
     
     @Override
     public Personal buscaPersona(Integer numeroNomina){
-        f2.setEntityClass(Personal.class);
-        return (Personal) f2.find(numeroNomina);
+        return em.find(Personal.class, numeroNomina);
     }
             
     @Override
@@ -230,7 +230,7 @@ public class ServicioLogin implements EjbLogin {
 
     @Override
     public List<MenuDinamico> getCategoriaModulos() {
-        StoredProcedureQuery q = f2.getEntityManager().createStoredProcedureQuery("obtener_lista_modulos_usuarios", MenuDinamico.class);
+        StoredProcedureQuery q = em.createStoredProcedureQuery("obtener_lista_modulos_usuarios", MenuDinamico.class);
         List<MenuDinamico> l = q.getResultList();
         if (l == null || l.isEmpty()) {
             return null;
@@ -241,7 +241,7 @@ public class ServicioLogin implements EjbLogin {
 
     @Override
     public List<Permisos> getPermisosModulos() {
-        StoredProcedureQuery q = f2.getEntityManager().createStoredProcedureQuery("obtener_lista_permisos_usuario", Permisos.class);
+        StoredProcedureQuery q = em.createStoredProcedureQuery("obtener_lista_permisos_usuario", Permisos.class);
         List<Permisos> l = q.getResultList();
         if (l == null || l.isEmpty()) {
             return null;
@@ -252,7 +252,7 @@ public class ServicioLogin implements EjbLogin {
 
     @Override
     public AreasUniversidad getAreaByClave(Short area) {
-        TypedQuery<AreasUniversidad> q = f2.getEntityManager().createQuery("SELECT a from AreasUniversidad a WHERE a.area = :area", AreasUniversidad.class);
+        TypedQuery<AreasUniversidad> q = em.createQuery("SELECT a from AreasUniversidad a WHERE a.area = :area", AreasUniversidad.class);
         q.setParameter("area", area);
         if (q.getResultList().isEmpty() || q.getResultList() == null) {
             System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getAreaByClave() es nulo");
@@ -265,7 +265,7 @@ public class ServicioLogin implements EjbLogin {
 
     @Override
     public PersonalCategorias getCategoriaPersonalByarea(Short categoria) {
-        TypedQuery<PersonalCategorias> q = f2.getEntityManager().createQuery("SELECT p from PersonalCategorias p WHERE p.categoria = :categoria", PersonalCategorias.class);
+        TypedQuery<PersonalCategorias> q = em.createQuery("SELECT p from PersonalCategorias p WHERE p.categoria = :categoria", PersonalCategorias.class);
         q.setParameter("categoria", categoria);
         if (q.getResultList().isEmpty() || q.getResultList() == null) {
             return null;
@@ -276,7 +276,7 @@ public class ServicioLogin implements EjbLogin {
 
     @Override
     public MenuDinamico getModuloByClave(Integer modulo) {
-        TypedQuery<MenuDinamico> q = f2.getEntityManager().createQuery("SELECT m from MenuDinamico m WHERE m.modulo = :modulo ", MenuDinamico.class);
+        TypedQuery<MenuDinamico> q = em.createQuery("SELECT m from MenuDinamico m WHERE m.modulo = :modulo ", MenuDinamico.class);
         q.setParameter("modulo", modulo);
         if (q.getResultList().isEmpty() || q.getResultList() == null) {
             return null;
