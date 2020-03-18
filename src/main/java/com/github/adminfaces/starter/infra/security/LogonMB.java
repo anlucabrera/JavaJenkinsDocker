@@ -56,6 +56,7 @@ public class LogonMB extends AdminSession implements Serializable {
     @Getter @Setter private String email;
     @Getter @Setter private String password;
     @Getter @Setter private Boolean acceso;
+    @Getter @Setter private Boolean accesoSaiiut;
     @Getter @Setter private boolean remember;
       
     @Getter    @Setter    private Bitacoraacceso nuevaBitacoraacceso;
@@ -125,67 +126,74 @@ public class LogonMB extends AdminSession implements Serializable {
             }
 
             usuarioTipo = ejbLogin.getTipoUsuario(email);
-            Usuarios res = ejbLogin.getUsuarioPorLogin(email);
-            Usuarios usuario = ejbLogin.autenticar(email, password);
-
-//            User resShiro = ejbLogin.getUsuarioPorLoginShiro(email);
-//            User usuarioShiro = ejbLogin.autenticarShiro(email, password);
-
-//            if (resShiro == null) {
-            if (res == null) {
-                addDetailMessage("El usuario ingresado no existe.");
+            Boolean accesoConcedido = Boolean.FALSE;
+            if (autenticarPorSaiiut()) {
+                accesoSaiiut = Boolean.TRUE;
+                accesoConcedido = Boolean.TRUE;
+            } else if (autenticarPorShiro()) {
+                accesoSaiiut = Boolean.FALSE;
+                accesoConcedido = Boolean.TRUE;
+            }
+            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()"+accesoConcedido);
+            if (accesoConcedido) {
+                addDetailMessage("Bienvenido");
+                Faces.getExternalContext().getFlash().setKeepMessages(true);
+                Faces.redirect("index.xhtml");
+            } else {
+                addDetailMessage("No fue posible conectar con su cuenta, en caso de a ver actualizado recientemente su contraseña intente ingresar con su contraseña anterior, si el problema persiste favor de comunicarse con el departamento de Desarrollo de Software al correo: sistemas@utxicotepec.edu.mx");
                 Faces.getExternalContext().getFlash().setKeepMessages(true);
                 Faces.redirect("login.xhtml");
-            } else {
-//                if (usuarioShiro != null) {
-                if (usuario != null) {
-                    currentUser = usuario.getLoginUsuario();
-//                    currentUser = usuarioShiro.getUsername();
-                    usuarioAutenticado = usuario;
-//                    usuarioAutenticadoShiro = usuarioShiro;
-//                    usuarioTipo = UsuarioTipo.TRABAJADOR;
-                    listaUsuarioClaveNomina = ejbLogin.getListaUsuarioClaveNomina(currentUser);
-//                    listaUsuarioClaveNominaShiro = usuarioAutenticadoShiro;
-//                    acceso = true;
-                    if (usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) {
-//                        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(listaUsuarioClaveNomina)" + listaUsuarioClaveNomina);
-                        if (listaUsuarioClaveNomina == null) {
-                            addDetailMessage("El usuario ingresado no existe.");
-                            Faces.getExternalContext().getFlash().setKeepMessages(true);
-                            Faces.redirect("login.xhtml");
-                            acceso = false;
-                        } else {
-//                        personal = (Personal) f.find(Integer.parseInt(usuarioAutenticadoShiro.getClaveNomina()));
-                            personal = ejbLogin.buscaPersona(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
-//                            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(personal)" + personal);
-                            if (personal.getStatus().equals('B')) {
-//                                System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(B)");
-                                acceso = Boolean.FALSE;
-                                addDetailMessage("El usuario ingresado no existe.");
-                                Faces.getExternalContext().getFlash().setKeepMessages(true);
-                                Faces.redirect("login.xhtml");
-                            }else{                                
-                                acceso = Boolean.TRUE;
-                            }
-                            listaUsuarioClaveNomina.getNumeroNomina();
-//                            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()"+listaUsuarioClaveNomina.getNumeroNomina());
-//                    agregaBitacora();
-//                    getPermisosAcceso();
-                        }
-                    }
-//                    System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login() tipo: " + usuarioTipo);
-//                    addDetailMessage("Bienvenido <b>" + usuario.getPersonas().getNombre() + "</b>");
-                    addDetailMessage("Bienvenido");
-                    Faces.getExternalContext().getFlash().setKeepMessages(true);
-                    Faces.redirect("index.xhtml");
-                } else {
-                    addDetailMessage("La contraseña ingresada es incorrecta.");
-                    Faces.getExternalContext().getFlash().setKeepMessages(true);
-                    Faces.redirect("login.xhtml");
+            }
+
+        }
+//        System.out.println("usuarioTipo2 = " + usuarioTipo);
+    }
+
+    public Boolean autenticarPorSaiiut() {
+        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut(1)");
+        Usuarios res = ejbLogin.getUsuarioPorLogin(email);
+        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut(2)"+res);
+        Usuarios usuario = ejbLogin.autenticar(email, password);
+        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut(3)"+usuario);
+        Boolean accedio = Boolean.FALSE;
+        acceso = Boolean.FALSE;
+        if (res != null) {
+            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut()");
+            if (usuario != null) {
+                System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut()");
+                currentUser = usuario.getLoginUsuario();
+                usuarioAutenticado = usuario;
+                listaUsuarioClaveNomina = ejbLogin.getListaUsuarioClaveNomina(currentUser);
+                if ((usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) && (listaUsuarioClaveNomina != null)) {
+                    System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut()");
+                    personal = ejbLogin.buscaPersona(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
+                    accedio = Boolean.TRUE;
+                    acceso = Boolean.TRUE;;
                 }
             }
         }
-//        System.out.println("usuarioTipo2 = " + usuarioTipo);
+        return accedio;
+    }
+
+    public Boolean autenticarPorShiro() {
+        User resShiro = ejbLogin.getUsuarioPorLoginShiro(email);
+        User usuarioShiro = ejbLogin.autenticarShiro(email, password);
+        Boolean accedio = Boolean.FALSE;
+        acceso = Boolean.FALSE;
+        if (resShiro != null) {
+            if (usuarioShiro != null) {
+                currentUser = usuarioShiro.getUsername();
+                usuarioAutenticadoShiro = usuarioShiro;
+                usuarioTipo = UsuarioTipo.TRABAJADOR;
+                listaUsuarioClaveNominaShiro = usuarioAutenticadoShiro;
+                if ((usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) && (listaUsuarioClaveNominaShiro != null)) {
+                    personal = ejbLogin.buscaPersona(Integer.parseInt(usuarioAutenticadoShiro.getClaveNomina()));
+                    accedio = Boolean.TRUE;
+                    acceso = Boolean.TRUE;;
+                }
+            }
+        }
+        return accedio;
     }
 
     public void getMenuCategorias() {

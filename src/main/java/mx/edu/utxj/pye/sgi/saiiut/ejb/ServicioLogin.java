@@ -11,9 +11,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.*;
 
-import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
-import mx.edu.utxj.pye.sgi.ejb.EJBAdimEstudianteBase;
 import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
@@ -87,16 +84,25 @@ public class ServicioLogin implements EjbLogin {
     @Override
     public Usuarios getUsuarioPorLogin(String loginUsuario) {
 //        System.out.println("f = " + f);
-//        System.out.println("f.getEntityManager() = " + f.getEntityManager());
+        System.out.println("f.getEntityManager() = " + (f.getEntityManager() == null));
         if(f.getEntityManager() == null) return null;
-        TypedQuery<Usuarios> q = f2.getEntityManager().createNamedQuery("Usuarios.findByLoginUsuario", Usuarios.class);
-        q.setParameter("loginUsuario", loginUsuario);
+        Usuarios usuario = f.getEntityManager().createQuery("SELECT u FROM Usuarios u WHERE u.loginUsuario = :loginUsuario", Usuarios.class)
+                .setParameter("loginUsuario", loginUsuario)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLogin(): " + usuario);
+        return usuario;
+         /*TypedQuery<Usuarios> q = f.getEntityManager().createNamedQuery("Usuarios.findByLoginUsuario", Usuarios.class);
+         q.setParameter("loginUsuario", loginUsuario);
         List<Usuarios> l = q.getResultList();
+        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLogin(A)"+l.size());
         if (l.isEmpty()) {
             return null;
         } else {
+            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLogin(B)"+l.get(0));
             return l.get(0);
-        }
+        }*/
     }
 
     @Override
@@ -202,10 +208,11 @@ public class ServicioLogin implements EjbLogin {
 
     @Override
     public User getUsuarioPorLoginShiro(String loginUsuario) {
-        TypedQuery<User> q = em.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);
+        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLoginShiro()"+loginUsuario);
+        TypedQuery<User> q = f2.getEntityManager().createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);
         q.setParameter("username", loginUsuario);
         List<User> l = q.getResultList();
-
+        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLoginShiro()"+l.size());
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.getUsuarioPorLogin() l: " + l);
         if (l.isEmpty()) {
             return null;
@@ -217,8 +224,9 @@ public class ServicioLogin implements EjbLogin {
     @Override
     public User autenticarShiro(String loginUsuario, String password) {
         User usuarioBd = getUsuarioPorLoginShiro(loginUsuario);
-        if (usuarioBd != null) {
-            if (usuarioBd.getPassword().equals(password)) {
+        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.autenticarShiro(I)"+usuarioBd);
+        if (usuarioBd != null) {            
+            if (desPwd(usuarioBd.getPassword()).equals(password)) {
                 return usuarioBd;
             } else {
                 return null;
@@ -283,6 +291,41 @@ public class ServicioLogin implements EjbLogin {
         } else {
             return q.getResultList().get(0);
         }
+    }
+    
+    
+    public String desPwd(String pwd) {
+        String str1 = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz1234567890!$%&/()=?¿¡,.-;:_ ";
+
+        String str2 = "Uqyh.-aJ,g4TPVDE/2WZ15uBC78b3X:_ 6AOHIYrstNFGvcjñzÑdef)=?¿¡omKL90!(i$%&QRklwxnMSp;";
+
+        String str3 = "";
+        for (int i = 0; i < pwd.length(); i++)
+        {
+          int j = 0;
+          while (j < str2.length())
+          {
+            int k = pwd.charAt(i);
+            int m = str2.charAt(j);
+            if (k == m)
+            {
+              if ((i + 1) % 2 == 0)
+              {
+                str3 = String.valueOf(String.valueOf(String.valueOf(str3))) + String.valueOf(String.valueOf(String.valueOf(str1.charAt(j))));break;
+              }
+              if (j == str1.length())
+              {
+                str3 = String.valueOf(String.valueOf(String.valueOf(str3))) + String.valueOf(String.valueOf(String.valueOf(str1.charAt(1))));break;
+              }
+              str3 = String.valueOf(String.valueOf(String.valueOf(str3))) + String.valueOf(String.valueOf(String.valueOf(str1.charAt(j - 1))));
+
+              break;
+            }
+            j++;
+          }
+        }
+        String str4 = str3;
+        return str4;
     }
 
 }

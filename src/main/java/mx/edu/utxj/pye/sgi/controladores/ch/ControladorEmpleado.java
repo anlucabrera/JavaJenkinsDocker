@@ -92,22 +92,26 @@ public class ControladorEmpleado implements Serializable {
 
     @Inject LogonMB logonMB;
     @Getter private Boolean cargado = false;
-    
+   
     @PostConstruct
     public void init() {
         try {
             if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
                 return;
             }
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.init()" + logonMB.getPersonal());
             cargado = true;
 // Comentar la siguiente asignación cuando saiiut falle//
-            if (logonMB.getPersonal().getStatus().equals('B')) {
-                nuevoOBJListaPersonal = null;
-                Messages.addGlobalFatal("El usuario para la clave " + empleadoLogeado + " no Existe o ha sido dado de baja, si cree que es un error favor de Comunicarse con el área de personal");
-                return;
+            if (logonMB.getAccesoSaiiut()) {                
+                empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
+                if (logonMB.getPersonal().getStatus().equals('B')) {
+                    nuevoOBJListaPersonal = null;
+                    Messages.addGlobalFatal("El usuario para la clave " + empleadoLogeado + " no Existe o ha sido dado de baja, si cree que es un error favor de Comunicarse con el área de personal");
+                    return;
+                }
+            } else {
+                empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNominaShiro().getClaveNomina());
             }
-            empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina());
-//      empleadoLogeado = Integer.parseInt(logonMB.getListaUsuarioClaveNominaShiro().getClaveNomina());
             // fin de asignación
             clavePersonalLogeado = empleadoLogeado.toString();
             administradores = new ArrayList();

@@ -63,5 +63,7 @@ public interface EjbLogin {
     public PersonalCategorias getCategoriaPersonalByarea(Short categoria);
 
     public MenuDinamico getModuloByClave(Integer modulo);
+    
+    public String desPwd(String pwd);
 
 }
