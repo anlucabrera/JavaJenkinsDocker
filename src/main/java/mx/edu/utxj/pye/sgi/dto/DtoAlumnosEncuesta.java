@@ -6,6 +6,12 @@
 package mx.edu.utxj.pye.sgi.dto;
 
 import lombok.*;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
+import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Grupos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.ListaUsuarioClaveNomina;
@@ -91,38 +97,30 @@ public class DtoAlumnosEncuesta {
         private String segundoAp;
     }
 
-    @RequiredArgsConstructor
-    @AllArgsConstructor
-    @ToString
+    @RequiredArgsConstructor @AllArgsConstructor @ToString
     public static class DtoAlumnosEncuestaGeneral{
-        @Getter
-        @Setter
-        private Alumnos alumnos;
-        @Getter
-        @Setter
-        private Personas personas;
-        @Getter
-        @Setter
-        private Grupos grupos;
-        @Getter
-        @Setter
-        private DtoCarrera carrerasCgut;
-        @Getter
-        @Setter
-        private Personas tutor;
-        @Getter
-        @Setter
-        private ListaUsuarioClaveNomina dtoDirector;
-        @Getter
-        @Setter
-        private String siglas;
-        @Getter
-        @Setter
-        private String grupo;
-        @Getter
-        @Setter
-        private Short grado;
+        @Getter @Setter private Alumnos alumnos;
+        @Getter @Setter private Personas personas;
+        @Getter @Setter private Grupos grupos;
+        @Getter @Setter private DtoCarrera carrerasCgut;
+        @Getter @Setter private Personas tutor;
+        @Getter @Setter private ListaUsuarioClaveNomina dtoDirector;
+        @Getter @Setter private String siglas;
+        @Getter @Setter private String grupo;
+        @Getter @Setter private Short grado;
+    }
 
+    @RequiredArgsConstructor @AllArgsConstructor @ToString
+    public static class DtoAlumnosEncuestaGeneralControlEscolar{
+        @Getter @Setter private Estudiante alumnos;
+        @Getter @Setter private Persona personas;
+        @Getter @Setter private Grupo grupos;
+        @Getter @Setter private AreasUniversidad areasUniversidad;
+        @Getter @Setter private Personal tutor;
+        @Getter @Setter private ListaUsuarioClaveNomina dtoDirector;
+        @Getter @Setter private String siglas;
+        @Getter @Setter private String grupo;
+        @Getter @Setter private Short grado;
     }
 
     @RequiredArgsConstructor

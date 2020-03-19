@@ -12,6 +12,8 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.VariablesProntuario;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -99,6 +101,27 @@ public class EjbAdministracionEncuestaServicios {
                 .setParameter("grado4", Short.parseShort(grado4))
                 .getResultStream().map(alumnos -> packEstudiantesEncuesta(alumnos)).filter(ResultadoEJB::getCorrecto).map(ResultadoEJB::getValor).collect(Collectors.toList());
         return ResultadoEJB.crearCorrecto(dtoAlumnosEncuesta, "Se empaqueto con éxito.");
+    }
+
+    public ResultadoEJB<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar> packEstudiantesEncuesta(Estudiante estudiante){
+        try{
+            Estudiante estudianteBD = em.find(Estudiante.class, estudiante.getIdEstudiante());
+            Grupo grupo = em.find(Grupo.class, estudianteBD.getGrupo().getIdGrupo());
+            AreasUniversidad areasUniversidad = em.find(AreasUniversidad.class, estudianteBD.getCarrera());
+            Personal tutor = em.find(Personal.class, grupo.getTutor());
+            DtoAlumnosEncuesta.DtoDirectores dtoDirector = listaDirectores().getValor().stream()
+                    .filter(siglas -> siglas.getSiglas().equals(areasUniversidad.getSiglas())).findFirst().orElse(null);
+            assert dtoDirector != null;
+            ListaUsuarioClaveNomina listaUsuarioClaveNomina = em2.createQuery("select l from ListaUsuarioClaveNomina as l where l.numeroNomina = :noNomima", ListaUsuarioClaveNomina.class)
+                    .setParameter("noNomima", dtoDirector.getClaveDirector().toString()).getResultStream().findFirst().orElse(null);
+            DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar dto = new DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar(
+                    estudianteBD, estudianteBD.getAspirante().getIdPersona(), grupo, areasUniversidad, tutor, listaUsuarioClaveNomina,
+                    areasUniversidad.getSiglas(), grupo.getLiteral().toString(), (short) estudiante.getGrupo().getGrado());
+            //System.out.println(dto);
+            return ResultadoEJB.crearCorrecto( dto,"");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1,"No se pudo empaquetar la carga académica (EjbAsignacionAcademica. pack).", e, DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar.class);
+        }
     }
 
     public ResultadoEJB<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> packEstudiantesEncuesta(Alumnos alumnos){
