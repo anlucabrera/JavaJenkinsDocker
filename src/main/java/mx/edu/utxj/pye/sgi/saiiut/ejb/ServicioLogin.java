@@ -84,25 +84,18 @@ public class ServicioLogin implements EjbLogin {
     @Override
     public Usuarios getUsuarioPorLogin(String loginUsuario) {
 //        System.out.println("f = " + f);
-        System.out.println("f.getEntityManager() = " + (f.getEntityManager() == null));
+//        System.out.println("f.getEntityManager() = " + f.getEntityManager());
         if(f.getEntityManager() == null) return null;
-        Usuarios usuario = f.getEntityManager().createQuery("SELECT u FROM Usuarios u WHERE u.loginUsuario = :loginUsuario", Usuarios.class)
-                .setParameter("loginUsuario", loginUsuario)
-                .getResultStream()
-                .findFirst()
-                .orElse(null);
-        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLogin(): " + usuario);
-        return usuario;
-         /*TypedQuery<Usuarios> q = f.getEntityManager().createNamedQuery("Usuarios.findByLoginUsuario", Usuarios.class);
-         q.setParameter("loginUsuario", loginUsuario);
+        TypedQuery<Usuarios> q = f.getEntityManager().createQuery("SELECT u FROM Usuarios u WHERE u.loginUsuario = :loginUsuario", Usuarios.class);
+        q.setParameter("loginUsuario", loginUsuario);
         List<Usuarios> l = q.getResultList();
-        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLogin(A)"+l.size());
+//        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLogin(A)" + l.size());
         if (l.isEmpty()) {
             return null;
         } else {
-            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLogin(B)"+l.get(0));
-            return l.get(0);
-        }*/
+//            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLogin(B)" + l.get(0));
+            return (Usuarios) l.get(0);
+        }
     }
 
     @Override
@@ -118,6 +111,7 @@ public class ServicioLogin implements EjbLogin {
     @Override
     public ListaUsuarioClaveNomina getListaUsuarioClaveNomina(String loginUsuario) {
         if(f.getEntityManager() == null) return null;
+        f.setEntityClass(ListaUsuarioClaveNomina.class);
         return (ListaUsuarioClaveNomina) f.find(loginUsuario);
     }
 
@@ -126,7 +120,7 @@ public class ServicioLogin implements EjbLogin {
         if(f.getEntityManager() == null) return null;
         TypedQuery<Listaperiodosescolares> periodo = em.createQuery("SELECT p from Listaperiodosescolares p ORDER BY p.periodo DESC", Listaperiodosescolares.class);
         if (periodo.getResultList().isEmpty() || periodo.getResultList() == null) {
-            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getTutoresPeriodoActual() no se encontro periodo::: ");
+//            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getTutoresPeriodoActual() no se encontro periodo::: ");
         } else {
 //            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getTutoresPeriodoActual() el periodo es ::: " + periodo.getSingleResult());
         }
@@ -208,11 +202,11 @@ public class ServicioLogin implements EjbLogin {
 
     @Override
     public User getUsuarioPorLoginShiro(String loginUsuario) {
-        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLoginShiro()"+loginUsuario);
+//        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLoginShiro()"+loginUsuario);
         TypedQuery<User> q = f2.getEntityManager().createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);
         q.setParameter("username", loginUsuario);
         List<User> l = q.getResultList();
-        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLoginShiro()"+l.size());
+//        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuarioPorLoginShiro()"+l.size());
 //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ServicioLogin.getUsuarioPorLogin() l: " + l);
         if (l.isEmpty()) {
             return null;
@@ -224,7 +218,7 @@ public class ServicioLogin implements EjbLogin {
     @Override
     public User autenticarShiro(String loginUsuario, String password) {
         User usuarioBd = getUsuarioPorLoginShiro(loginUsuario);
-        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.autenticarShiro(I)"+usuarioBd);
+//        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.autenticarShiro(I)"+usuarioBd);
         if (usuarioBd != null) {            
             if (desPwd(usuarioBd.getPassword()).equals(password)) {
                 return usuarioBd;
@@ -263,7 +257,7 @@ public class ServicioLogin implements EjbLogin {
         TypedQuery<AreasUniversidad> q = em.createQuery("SELECT a from AreasUniversidad a WHERE a.area = :area", AreasUniversidad.class);
         q.setParameter("area", area);
         if (q.getResultList().isEmpty() || q.getResultList() == null) {
-            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getAreaByClave() es nulo");
+//            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getAreaByClave() es nulo");
             return null;
         } else {
 //            System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getAreaByClave() area es : " + q.getResultList().get(0));

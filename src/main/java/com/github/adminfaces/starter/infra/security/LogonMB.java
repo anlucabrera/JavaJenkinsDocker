@@ -90,7 +90,7 @@ public class LogonMB extends AdminSession implements Serializable {
         usuario
     */   
     public void login() throws IOException {
-//        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()");
+////        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()");
         Login estudiante19 = ejbLogin.autenticar19(email, password);
         if ("estudioEgresad@s".equals(email) && password.equals("248163264")) {
             currentUser = email;
@@ -113,12 +113,12 @@ public class LogonMB extends AdminSession implements Serializable {
             Faces.redirect("index.xhtml");
         }else {
             usuarioTipo = ejbLogin.getTipoUsuario(email);
-           // System.out.println("Usario tipo --->" +usuarioTipo);
+//           // System.out.println("Usario tipo --->" +usuarioTipo);
             if(estudiante19 == null && usuarioTipo.equals(UsuarioTipo.ESTUDIANTE19)) {
                 addDetailMessage("La contraseña ingresada es incorrecta.");
                 try{
                     Login usuario19PorLogin = ejbLogin.getUsuario19PorLogin(email);
-                    if(usuario19PorLogin != null) System.out.println("Encrypted.decrypt(res.getPassword()) = " + Encrypted.decrypt(Encrypted.KEY, Encrypted.IV, usuario19PorLogin.getPassword()));
+//                    if(usuario19PorLogin != null) System.out.println("Encrypted.decrypt(res.getPassword()) = " + Encrypted.decrypt(Encrypted.KEY, Encrypted.IV, usuario19PorLogin.getPassword()));
                 }catch (Exception e){e.printStackTrace();}
                 Faces.getExternalContext().getFlash().setKeepMessages(true);
                 Faces.redirect("login.xhtml");
@@ -134,7 +134,7 @@ public class LogonMB extends AdminSession implements Serializable {
                 accesoSaiiut = Boolean.FALSE;
                 accesoConcedido = Boolean.TRUE;
             }
-            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()"+accesoConcedido);
+//            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()"+accesoConcedido);
             if (accesoConcedido) {
                 addDetailMessage("Bienvenido");
                 Faces.getExternalContext().getFlash().setKeepMessages(true);
@@ -146,26 +146,26 @@ public class LogonMB extends AdminSession implements Serializable {
             }
 
         }
-//        System.out.println("usuarioTipo2 = " + usuarioTipo);
+////        System.out.println("usuarioTipo2 = " + usuarioTipo);
     }
 
     public Boolean autenticarPorSaiiut() {
-        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut(1)");
+//        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut(1)");
         Usuarios res = ejbLogin.getUsuarioPorLogin(email);
-        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut(2)"+res);
+//        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut(2)"+res);
         Usuarios usuario = ejbLogin.autenticar(email, password);
-        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut(3)"+usuario);
+//        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut(3)"+usuario);
         Boolean accedio = Boolean.FALSE;
         acceso = Boolean.FALSE;
         if (res != null) {
-            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut()");
+//            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut()");
             if (usuario != null) {
-                System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut()");
+//                System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut()");
                 currentUser = usuario.getLoginUsuario();
                 usuarioAutenticado = usuario;
                 listaUsuarioClaveNomina = ejbLogin.getListaUsuarioClaveNomina(currentUser);
                 if ((usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) && (listaUsuarioClaveNomina != null)) {
-                    System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut()");
+//                    System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut()");
                     personal = ejbLogin.buscaPersona(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
                     accedio = Boolean.TRUE;
                     acceso = Boolean.TRUE;;

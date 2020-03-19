@@ -99,7 +99,7 @@ public class ControladorEmpleado implements Serializable {
             if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
                 return;
             }
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.init()" + logonMB.getPersonal());
+//            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado.init()" + logonMB.getPersonal());
             cargado = true;
 // Comentar la siguiente asignación cuando saiiut falle//
             if (logonMB.getAccesoSaiiut()) {                

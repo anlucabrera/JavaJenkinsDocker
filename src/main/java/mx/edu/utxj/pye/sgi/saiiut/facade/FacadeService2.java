@@ -5,22 +5,14 @@
  */
 package mx.edu.utxj.pye.sgi.saiiut.facade;
 
-import java.sql.Driver;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.ejb.Stateful;
 import javax.persistence.*;
-import javax.sql.ConnectionPoolDataSource;
-import javax.sql.DataSource;
-import javax.sql.XADataSource;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.omnifaces.util.JNDI;
 
 /**
  *
@@ -31,38 +23,39 @@ import org.omnifaces.util.JNDI;
  * Uso facade.setEntityClass(ListaPersonal.class); List<ListaPersonal> lp =
  * facade.findAll();
  */
-@Singleton
+//@Singleton
+@Stateful
 @NoArgsConstructor
 @RequiredArgsConstructor
-@Startup
+//@Startup
 public class FacadeService2<T> implements Facade2 {
 
     @Getter    @NonNull    private Class<T> entityClass;
     // Comentar el siguiente Contexto de persistencia cuando falle saiiut //
-//    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb-saiiut_ejb_1.0PU")
+    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb-saiiut_ejb_1.0PU")
     private EntityManager em;
     // Fin del Contexto de persistencia //
 
-    @PostConstruct
-    public void init(){
-        System.out.println("FacadeService2.init1");
-        try{
-            EntityManagerFactory factory = Persistence.createEntityManagerFactory("mx.edu.utxj.pye_sgi-ejb-saiiut_ejb_1.0PU");
-            em = factory.createEntityManager();
-            System.out.println("em = " + em);
-        }catch (Throwable e){}
-        System.out.println("FacadeService2.init2");
-    }
+//    @PostConstruct
+//    public void init(){
+//        System.out.println("FacadeService2.init1");
+//        try{
+//            EntityManagerFactory factory = Persistence.createEntityManagerFactory("mx.edu.utxj.pye_sgi-ejb-saiiut_ejb_1.0PU");
+//            em = factory.createEntityManager();
+//            System.out.println("em = " + em);
+//        }catch (Throwable e){}
+//        System.out.println("FacadeService2.init2");
+//    }
 
     @Override
     public EntityManager getEntityManager() {
-        try{
+//        try{
             Cache c=em.getEntityManagerFactory().getCache();
             c.evictAll();
             return em;
-        }catch (Exception e){
-            return null;
-        }
+//        }catch (Exception e){
+//            return null;
+//        }
     }
 
     @Override
