@@ -348,10 +348,10 @@ public class ServicioServiciosEnfermeriaCicloPeriodos implements EjbServiciosEnf
     }
 
     @Override
-    public List<ServiciosEnfermeriaCicloPeriodos> getReporteGeneralEjercicioServiciosEnfermeria() {
+    public List<ServiciosEnfermeriaCicloPeriodos> getReporteGeneralEjercicioServiciosEnfermeria(Short ejercicio) {
         try {
             return facadeEscolar.getEntityManager().createQuery("SELECT s FROM ServiciosEnfermeriaCicloPeriodos s INNER JOIN s.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY s.mes",ServiciosEnfermeriaCicloPeriodos.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;

@@ -55,18 +55,18 @@ public class ControladorPlantillasVIN implements Serializable {
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteServiciosTecnologicos() throws IOException, Throwable{
-        File f = new File(ejbReportesVINExcel.getReporteServiciosTecnologicos());
+    public void descargarReporteServiciosTecnologicos(Short ejercicio) throws IOException, Throwable{
+        File f = new File(ejbReportesVINExcel.getReporteServiciosTecnologicos(ejercicio));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteEgresados() throws IOException, Throwable{
-        File f = new File(ejbReportesVINExcel.getReporteGeneralEgresados());
+    public void descargarReporteEgresados(Short ejercicio) throws IOException, Throwable{
+        File f = new File(ejbReportesVINExcel.getReporteGeneralEgresados(ejercicio));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteOrganismosVinculados() throws Throwable{
-        File f = new File(ejbReportesVINExcel.getReporteOrganismosVinculados());
+    public void descargarReporteOrganismosVinculados(Short ejercicio) throws Throwable{
+        File f = new File(ejbReportesVINExcel.getReporteOrganismosVinculados(ejercicio));
         Faces.sendFile(f, true);
     }
     

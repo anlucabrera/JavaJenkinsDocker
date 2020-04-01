@@ -243,13 +243,14 @@ public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
     }
 
     @Override
-    public List<ListaFeriasParticipantesDTO> getRegistroReportePartFerProf() {
+    public List<ListaFeriasParticipantesDTO> getRegistroReportePartFerProf(Short ejercicio) {
         List<FeriasParticipantes> q = new ArrayList<>();
         List<ListaFeriasParticipantesDTO> ldto = new ArrayList<>();
        
-        q = f.getEntityManager().createQuery("SELECT p from FeriasParticipantes p", FeriasParticipantes.class)
-        .getResultList();
-        
+        q = f.getEntityManager().createQuery("SELECT p from FeriasParticipantes p INNER JOIN p.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.ejercicioFiscal = :ejercicio", FeriasParticipantes.class)
+                .setParameter("ejercicio", ejercicio)
+                .getResultList();
+
         if (q.isEmpty() || q == null) {
             return null;
         } else {

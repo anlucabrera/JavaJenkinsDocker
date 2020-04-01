@@ -482,10 +482,11 @@ public class ServicioAcervoBibliografico implements EjbAcervoBibliografico{
     }
 
     @Override
-    public List<DTOAcervoBibliograficoPeriodosEscolares> getRegistroReporteAcervoBib() {
+    public List<DTOAcervoBibliograficoPeriodosEscolares> getRegistroReporteAcervoBib(Short ejercicio) {
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOAcervoBibliograficoPeriodosEscolares> l = new ArrayList<>();
-        List<AcervoBibliograficoPeriodosEscolares> entities = f.getEntityManager().createQuery("SELECT a FROM AcervoBibliograficoPeriodosEscolares a", AcervoBibliograficoPeriodosEscolares.class)
+        List<AcervoBibliograficoPeriodosEscolares> entities = f.getEntityManager().createQuery("SELECT a FROM AcervoBibliograficoPeriodosEscolares a INNER JOIN a.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.anio = :ejercicio", AcervoBibliograficoPeriodosEscolares.class)
+                .setParameter("ejercicio", ejercicio)
                 .getResultList();
       
         //construir la lista de dto's para mostrar en tabla

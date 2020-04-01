@@ -706,10 +706,10 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
     }
 
     @Override
-    public List<ProductosAcademicos> getReporteGeneralProductosAcademicosPorEjercicio() {
+    public List<ProductosAcademicos> getReporteGeneralProductosAcademicosPorEjercicio(Short ejercicio) {
         try {
             return facadeCapitalHumano.getEntityManager().createQuery("SELECT p FROM ProductosAcademicos p INNER JOIN p.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY p.fechaInicio",ProductosAcademicos.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -717,10 +717,10 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
     }
 
     @Override
-    public List<ProductosAcademicosPersonal> getReporteGeneralProductosAcademicosPersonalPorEjercicio() {
+    public List<ProductosAcademicosPersonal> getReporteGeneralProductosAcademicosPersonalPorEjercicio(Short ejercicio) {
         try {
             return facadeCapitalHumano.getEntityManager().createQuery("SELECT p FROM ProductosAcademicosPersonal p INNER JOIN p.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY p.productoAcademico.fechaInicio",ProductosAcademicosPersonal.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;

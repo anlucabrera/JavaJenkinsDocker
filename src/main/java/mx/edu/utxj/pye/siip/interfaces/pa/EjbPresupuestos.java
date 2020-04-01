@@ -70,5 +70,5 @@ public interface EjbPresupuestos {
      * Obtiene la lista de registros actuales del registro
      * @return Lista de registros
      */
-   public List<DTOPresupuestos> getRegistroPresupuestos();
+   public List<DTOPresupuestos> getRegistroPresupuestos(Short ejercicioFiscal);
 }

@@ -132,7 +132,7 @@ public interface EjbMatriculaPeriodosEscolares {
     
     public Boolean buscaMatriculaPeriodoEscolarExistente(MatriculaPeriodosEscolares matriculaPeriodoEscolar);
     
-    public List<MatriculaPeriodosEscolares> getReporteMatriculaPorEjercicio();
+    public List<MatriculaPeriodosEscolares> getReporteMatriculaPorEjercicio(Short ejercicio);
     
     /**
      * Obtiene el número de estudiantes de la matricula inicial dependiendo del periodo escolar (Método para uso en el módulo de registro de Asesorías y Tutorías Cuatrimestrales

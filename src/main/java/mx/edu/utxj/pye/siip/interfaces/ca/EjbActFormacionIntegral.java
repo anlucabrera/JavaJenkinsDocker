@@ -145,14 +145,16 @@ public interface EjbActFormacionIntegral {
      /**
      * Obtiene la lista de registros actuales del registro
      * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
+     * @param ejercicio
      * @return Lista de registros
      */
-    public List<DTOActFormacionIntegral> getListaRegistrosAFI(Short claveArea);
+    public List<DTOActFormacionIntegral> getListaRegistrosAFI(Short claveArea, Short ejercicio);
     
     /**
      * Obtiene la lista de registros actuales del registro
      * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
+     * @param ejercicio
      * @return Lista de registros
      */
-    public List<DTOParticipantesActFormInt> getListaRegistrosPAFI(Short claveArea);
+    public List<DTOParticipantesActFormInt> getListaRegistrosPAFI(Short claveArea, Short ejercicio);
 }

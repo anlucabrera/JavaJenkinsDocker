@@ -85,7 +85,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             cargaAreasParaAsignarNotificacion();
             inicializarGeneral();
             obtenerListaNotificacionesUltimosDiez();
-        } catch (Exception e) {e.printStackTrace();mostrarExcepcion(e);}
+        } catch (Exception e) {mostrarExcepcion(e);}
     }
     
     /*********************************************** Inicializadores *********************************************************/

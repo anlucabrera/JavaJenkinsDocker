@@ -711,10 +711,10 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
     }
 
     @Override
-    public List<ServiciosTecnologicosAnioMes> getReporteGeneralServiciosTecnologicos() {
+    public List<ServiciosTecnologicosAnioMes> getReporteGeneralServiciosTecnologicos(Short ejercicio) {
         try {
             return facadeVinculacion.getEntityManager().createQuery("SELECT s FROM ServiciosTecnologicosAnioMes s INNER JOIN s.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY s.fechaInicio",ServiciosTecnologicosAnioMes.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -722,10 +722,10 @@ public class ServicioServiciosTecnologicosAnioMes implements EjbServiciosTecnolo
     }
 
     @Override
-    public List<ServiciosTecnologicosParticipantes> getReporteGeneralServiciosTecnologicoParticipantes() {
+    public List<ServiciosTecnologicosParticipantes> getReporteGeneralServiciosTecnologicoParticipantes(Short ejercicio) {
         try {
             return facadeVinculacion.getEntityManager().createQuery("SELECT s FROM ServiciosTecnologicosParticipantes s INNER JOIN s.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY s.servicioTecnologico.fechaInicio",ServiciosTecnologicosParticipantes.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;

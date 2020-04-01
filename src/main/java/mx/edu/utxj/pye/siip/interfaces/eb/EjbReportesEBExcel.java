@@ -16,10 +16,10 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 @Local
 public interface EjbReportesEBExcel {
     
-    public String getReporteDistribucionEquipamiento() throws Throwable;
+    public String getReporteDistribucionEquipamiento(Short ejercicioFiscal) throws Throwable;
     
-    public String getReporteMatriculaPorEjercicio() throws Throwable;
+    public String getReporteMatriculaPorEjercicio(Short ejercicio) throws Throwable;
     
-    public String getReportePorPeriodoEscolarDistribucionInstalaciones(PeriodosEscolares periodoEscolar, AreasUniversidad areaUniversidad) throws Throwable;
+    public String getReportePorPeriodoEscolarDistribucionInstalaciones(Short ejercicio, AreasUniversidad areaUniversidad) throws Throwable;
     
 }

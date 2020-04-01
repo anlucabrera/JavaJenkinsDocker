@@ -52,7 +52,7 @@ public interface EjbDistribucionEquipamiento {
      */
     public List<DTOEquiposComputoCPE> getListaEquiposComputoPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo);
     
-    public List<EquiposComputoCicloPeriodoEscolar> reporteEquiposComputoCicloPeriodoEscolares();
+    public List<EquiposComputoCicloPeriodoEscolar> reporteEquiposComputoCicloPeriodoEscolares(Short ejercicioFiscal);
     
     /**
      * Obtiene la lista de registros correspondientes al evento seleccionado.
@@ -64,7 +64,7 @@ public interface EjbDistribucionEquipamiento {
      */
     public List<DTOEquiposComputoInternetCPE> getListaEquiposComputoInternetPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, RegistrosTipo registrosTipo);
 
-    public List<EquiposComputoInternetCicloPeriodoEscolar> reporteEquiposComputoInternetCicloPeriodoEscolares();
+    public List<EquiposComputoInternetCicloPeriodoEscolar> reporteEquiposComputoInternetCicloPeriodoEscolares(Short ejercicioFiscal);
     
     /**
      * Comprueba si el periodo del evento actual se encuentra en el periodo mas reciente, en caso de no encontrarlo obtiene el periodo correspondiente.

@@ -39,7 +39,7 @@ public interface EjbServiciosTecnologicosAnioMes {
      */
     public List<ServiciosTecnologicosAnioMes> getFiltroServiciosTecnologicosEjercicioMesArea(Short ejercicio, String mes, Short area);
     
-    public List<ServiciosTecnologicosAnioMes> getReporteGeneralServiciosTecnologicos();
+    public List<ServiciosTecnologicosAnioMes> getReporteGeneralServiciosTecnologicos(Short ejercicio);
     
     /**
      * Método que se ocupa para el filtrado de Servicios Tecnológicos Participantes por Ejercicio, Mes y área el cual es mostrado para consulta y eliminación
@@ -50,7 +50,7 @@ public interface EjbServiciosTecnologicosAnioMes {
      */
     public List<DTOServiciosTecnologicosParticipantes> getFiltroServiciosTecnologicosPartEjercicioMesArea(Short ejercicio, String mes, Short area);
     
-    public List<ServiciosTecnologicosParticipantes> getReporteGeneralServiciosTecnologicoParticipantes();
+    public List<ServiciosTecnologicosParticipantes> getReporteGeneralServiciosTecnologicoParticipantes(Short ejercicio);
     /**
      * Método que devuelve la lista de registros encontrados en caso de que el registro principal contenga participantes, esta lista será ocupada para eliminar los participantes
      * @param servicioTecnologico   Entity que permite la búsqueda de los participantes

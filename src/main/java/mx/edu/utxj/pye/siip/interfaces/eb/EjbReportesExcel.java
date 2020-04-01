@@ -19,64 +19,66 @@ public interface EjbReportesExcel {
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReporteIngPropios() throws Throwable;
+    public String getReporteIngPropios(Short ejercicioFiscal) throws Throwable;
     
     /**
     * Genera reporte de registro de Presupuestos
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReportePresupuestos() throws Throwable;
+    public String getReportePresupuestos(Short ejercicioFiscal) throws Throwable;
     
     /**
     * Genera reporte de registro de Difusión IEMS
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReporteDifusion() throws Throwable;
+    public String getReporteDifusion(Short ejercicio) throws Throwable;
     
     /**
     * Genera reporte de registro de Visitas Industriales
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReporteVisitas() throws Throwable;
+    public String getReporteVisitas(Short ejercicio) throws Throwable;
     
     /**
     * Genera reporte de registro de Becas
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReporteBecas() throws Throwable;
+    public String getReporteBecas(Short ejercicioFiscal) throws Throwable;
     
     /**
     * Genera reporte de registro de Actividades de Formación Integral - Participantes
     * @param claveArea
+     * @param ejercicio
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReporteAFI(Short claveArea) throws Throwable;
+    public String getReporteAFI(Short claveArea, Short ejercicio) throws Throwable;
     
     /**
     * Genera reporte de registro de Deserción Académica - Reprobación
+     * @param ejercicio
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReporteDesercion() throws Throwable;
+    public String getReporteDesercion(Short ejercicio) throws Throwable;
     
     /**
     * Genera reporte de registro de Personal Capacitado - Participantes
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReportePerCap() throws Throwable;
+    public String getReportePerCap(Short ejercicio) throws Throwable;
     
     /**
     * Genera reporte de registro de Ferias Profesionales - Participantes
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReporteFerProf() throws Throwable;
+    public String getReporteFerProf(Short ejercicio) throws Throwable;
    
     /**
     * Genera reporte de registro de Movilidad Académica y Docente
@@ -84,28 +86,28 @@ public interface EjbReportesExcel {
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReporteMov(Short claveArea) throws Throwable;
+    public String getReporteMov(Short claveArea, Short ejercicio) throws Throwable;
     
     /**
     * Genera reporte de registro de Bolsa de Trabajo - Entrevistas
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReporteBolTrab() throws Throwable;
+    public String getReporteBolTrab(Short ejercicio) throws Throwable;
     
     /**
     * Genera reporte de registro de Acervo Bibliográfico
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReporteAcervo() throws Throwable;
+    public String getReporteAcervo(Short ejercicio) throws Throwable;
     
     /**
     * Genera reporte de registro de Reconocimiento PRODEP
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReporteRecProdep() throws Throwable;
+    public String getReporteRecProdep(Short ejercicio) throws Throwable;
     
     /**
     * Genera reporte de registro de Comisiones Académicas y Participantes

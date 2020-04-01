@@ -256,16 +256,16 @@ public interface EjbOrganismosVinculados {
     
     public Boolean buscaOrganismoVinculadoExistente(OrganismosVinculados organismoVinculado);
     
-    public List<OrganismosVinculados> getReporteOrganismosVinculados();
+    public List<OrganismosVinculados> getReporteOrganismosVinculados(Short ejercicio);
     
-    public List<OrganismosVinculados> getReporteActividadesVinculacion();
+    public List<OrganismosVinculados> getReporteActividadesVinculacion(Short ejercicio);
     
-    public List<ProgramasBeneficiadosVinculacion> getReporteProgramasBeneficiadosVinculacion();
+    public List<ProgramasBeneficiadosVinculacion> getReporteProgramasBeneficiadosVinculacion(Short ejercicio);
     
-    public List<TelefonosEmpresa> getReporteTelefonosEmpresa();
+    public List<TelefonosEmpresa> getReporteTelefonosEmpresa(Short ejercicio);
     
-    public List<CorreosEmpresa> getCorreosEmpresas();
+    public List<CorreosEmpresa> getCorreosEmpresas(Short ejercicio);
     
-    public List<ContactosEmpresa> getReporteContactosEmpresa();
+    public List<ContactosEmpresa> getReporteContactosEmpresa(Short ejercicio);
     
 }

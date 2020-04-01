@@ -70,13 +70,24 @@ public class ControladorPlantillasCA implements Serializable{
         Faces.sendFile(f, true);
     }
     
+    public void descargarReporteActividadesVarias(Short ejercicioFiscal, Short area) throws IOException, Throwable{
+        File f = new File(ejbReportesCAExcel.getReporteActividadesVarias(ejercicioFiscal, area));
+        Faces.sendFile(f, true);
+    }
+    
     public void descargarReporteAsesoriasTutorias(Short ejercicio_fiscal) throws IOException, Throwable{
         File f = new File(ejbReportesCAExcel.getReporteAsesoriasTutorias(ejercicio_fiscal));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteServiciosEnfermeria() throws IOException, Throwable{
-        File f = new File(ejbReportesCAExcel.getReporteServiciosEnfermeria());
+    public void descargarReporteAsesoriasTutorias(Integer ejercicio_fiscal, Short area) throws IOException, Throwable{
+        Short ejercicioShort = ejercicio_fiscal.shortValue();
+        File f = new File(ejbReportesCAExcel.getReporteAsesoriasTutorias(ejercicioShort,area));
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarReporteServiciosEnfermeria(Short ejercicio) throws IOException, Throwable{
+        File f = new File(ejbReportesCAExcel.getReporteServiciosEnfermeria(ejercicio));
         Faces.sendFile(f, true);
     }
     
@@ -85,8 +96,8 @@ public class ControladorPlantillasCA implements Serializable{
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteProductosAcademicos() throws IOException, Throwable{
-        File f = new File(ejbReportesCAExcel.getReporteCompletoProductosAcademicos());
+    public void descargarReporteProductosAcademicos(Short ejercicio) throws IOException, Throwable{
+        File f = new File(ejbReportesCAExcel.getReporteCompletoProductosAcademicos(ejercicio));
         Faces.sendFile(f, true);
     }
     

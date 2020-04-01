@@ -232,8 +232,8 @@ public class ControladorPersonalCapacitado implements Serializable{
     }
     
     public void cargarListaPorEvento(){
-       dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
-       dtopart.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoPart(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo()));
+       dto.setLista(ejb.getListaRegistrosPorEventoAreaPeriodo(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo(),dto.getArea().getArea()));
+       dtopart.setLista(ejb.getListaRegistrosPorEventoAreaPeriodoPart(dto.getEventoSeleccionado(), dto.getAreaPOA().getArea(), dto.getPeriodo(),dto.getArea().getArea()));
     }
     
     public void cargarEvidenciasPorRegistro(){

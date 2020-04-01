@@ -55,6 +55,8 @@ public interface EjbAsesoriasTutoriasCiclosPeriodos {
     
     public List<AsesoriasTutoriasMensualPeriodosEscolares> getListaReporteGeneralAsesoriasTutorias(Short ejercicio_fiscal);
     
+    public List<AsesoriasTutoriasMensualPeriodosEscolares> getListaReporteGeneralAsesoriasTutorias(Short ejercicio_fiscal, Short area);
+    
     /**
      * Comprueba si el periodo del evento actual se encuentra en el periodo mas reciente, en caso de no encontrarlo obtiene el periodo correspondiente.
      * @param periodos Lista de periodos obtenidos con registros.

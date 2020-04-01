@@ -85,7 +85,7 @@ public class ControladorActividadesVariasPYE implements Serializable {
             }
             dto.setArea(resArea.getValor());
 
-            dto.setListaAreasConRegistroMensualGeneral(ejbActividadesVarias.getAreasConRegistroMensualGeneral(Boolean.FALSE, ejbModulos.getEventoRegistro().getMes()));
+            dto.setListaAreasConRegistroMensualGeneral(ejbActividadesVarias.getAreasConRegistroMensualGeneral(Boolean.TRUE, ejbModulos.getEventoRegistro().getEventoRegistro()));
             filtros();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());

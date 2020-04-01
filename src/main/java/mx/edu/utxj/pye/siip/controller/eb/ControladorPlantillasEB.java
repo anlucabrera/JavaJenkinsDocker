@@ -52,18 +52,20 @@ public class ControladorPlantillasEB implements Serializable{
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteDistribucionEquipamiento() throws IOException, Throwable{
-        File f = new File(ejbReportesEBExcel.getReporteDistribucionEquipamiento());
+    public void descargarReporteDistribucionEquipamiento(Integer ejercicioFiscal) throws IOException, Throwable{
+        Short ejercicioShort = ejercicioFiscal.shortValue();
+        File f = new File(ejbReportesEBExcel.getReporteDistribucionEquipamiento(ejercicioShort));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteEjercicioMatriculaPeriodoEscolar() throws IOException, Throwable{
-        File f = new File(ejbReportesEBExcel.getReporteMatriculaPorEjercicio());
+    public void descargarReporteEjercicioMatriculaPeriodoEscolar(Integer ejercicio) throws IOException, Throwable{
+        Short ejercicioShort = ejercicio.shortValue();
+        File f = new File(ejbReportesEBExcel.getReporteMatriculaPorEjercicio(ejercicioShort));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteCuatrimestralDistribucionInstalaciones(PeriodosEscolares periodoEscolar, AreasUniversidad areaUniversidad) throws IOException, Throwable{
-        File f = new File(ejbReportesEBExcel.getReportePorPeriodoEscolarDistribucionInstalaciones(periodoEscolar, areaUniversidad));
+    public void descargarReporteCuatrimestralDistribucionInstalaciones(Short ejercicio, AreasUniversidad areaUniversidad) throws IOException, Throwable{
+        File f = new File(ejbReportesEBExcel.getReportePorPeriodoEscolarDistribucionInstalaciones(ejercicio, areaUniversidad));
         Faces.sendFile(f, true);
     }
 }

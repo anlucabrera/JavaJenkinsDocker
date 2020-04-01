@@ -82,21 +82,24 @@
                             </f:facet>
                             <f:facet name="right">
                                 <h:form id="frmReporte">
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <div class="btn-group">
                                         <p:commandButton value="Cargar Archivo de Excel" 
                                                          icon="fa fa-file-excel-o" 
                                                          onclick="PF('modalCargaArchivo').show()" 
                                                          class="btn btn-primary btn-sm"/>
                                     </div>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <c:if test="#{controladorArchivoCuerpAcad.etapa eq etapa.CARGAR}">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="cuerposAcademicos?faces-redirect=true" title="Consultar registros"><i class="fa fa-list"></i></p:commandLink>
-                                        <p:spacer width="3" />
-                                    </c:if>    
-                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteCuerposAcademicos(controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta)}" target="_blank" title="Descargar Reporte de Excel Cuerpos Académicos"><i class="fa fa-file-excel-o" /></p:commandLink>
-                                    <p:spacer width="3" />
+                                    </c:if>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarPlantillaCuerposAcademicos()}" target="_blank" title="Descargar Plantilla de Cuerpos Académicos"><i class="fa fa-download" /></p:commandLink>
-                                    <p:spacer width="3" />
+                                    <c:if test="#{controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta ne null}">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteCuerposAcademicos(controladorCuerposAcademicos.dtoCuerposAcademicos.anioConsulta)}" target="_blank" title="Descargar Reporte de Excel Cuerpos Académicos"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                    </c:if>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
                                 </h:form>
                             </f:facet>
@@ -213,18 +216,18 @@
                                                     <p:column>
                                                         <h:outputText value="#{cuerpoAcademico.cuerposAcademicosRegistro.disciplina.nombre}"/>
                                                     </p:column>
-                                                    
+
                                                     <p:column>
                                                         <center>
-                                                        <h:outputText value="#{fn:length(cuerpoAcademico.cuerposAcademicosRegistro.cuerpacadIntegrantesList)}"/>
+                                                            <h:outputText value="#{fn:length(cuerpoAcademico.cuerposAcademicosRegistro.cuerpacadIntegrantesList)}"/>
                                                         </center>
                                                     </p:column>
                                                     <p:column>
                                                         <center>
-                                                        <h:outputText value="#{fn:length(cuerpoAcademico.cuerposAcademicosRegistro.cuerpacadLineasList)}"/>
+                                                            <h:outputText value="#{fn:length(cuerpoAcademico.cuerposAcademicosRegistro.cuerpacadLineasList)}"/>
                                                         </center>
                                                     </p:column>
-                                                    
+
                                                     <f:facet name="footer">
                                                         En el mes de: #{controladorCuerposAcademicos.dtoCuerposAcademicos.mesConsulta} hay un total de: #{fn:length(controladorCuerposAcademicos.dtoCuerposAcademicos.lstDtoCuerposAcademicosR)} registros de Cuerpos Académicos.
                                                     </f:facet>

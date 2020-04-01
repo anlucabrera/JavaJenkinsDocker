@@ -103,8 +103,9 @@ public interface EjbDesercionReprobacion {
     
      /**
      * Obtiene la lista de registros actuales del registro
+     * @param ejercicio
      * @return Lista de registros
      */
-    public List<ListaDtoReprobacion> getRegistroReprobacion();
+    public List<ListaDtoReprobacion> getRegistroReprobacion(Short ejercicio);
 }
 

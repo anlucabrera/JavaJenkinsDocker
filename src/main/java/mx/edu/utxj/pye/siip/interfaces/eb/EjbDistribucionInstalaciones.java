@@ -106,10 +106,10 @@ public interface EjbDistribucionInstalaciones {
      */
     public Map.Entry<List<PeriodosEscolares>,List<EventosRegistros>> comprobarEventoActual(List<PeriodosEscolares> periodos, List<EventosRegistros> eventos, EventosRegistros eventoActual, RegistrosTipo registrosTipoCapInst, RegistrosTipo registrosTipoAulas, RegistrosTipo registrosTipoLabTall, AreasUniversidad area) throws PeriodoEscolarNecesarioNoRegistradoException;    
 
-    public List<CapacidadInstaladaCiclosEscolares> getReporteCuatrimestralCapacidadInstaladaCicloPeriodosEscolares(PeriodosEscolares periodoEscolar, AreasUniversidad areasUniversidad);
+    public List<CapacidadInstaladaCiclosEscolares> getReporteCuatrimestralCapacidadInstaladaCicloPeriodosEscolares(Short ejercicio, AreasUniversidad areasUniversidad);
     
-    public List<DistribucionAulasCicloPeriodosEscolares> getReporteCuatrimestralDistribucionAulas(PeriodosEscolares periodoEscolar, AreasUniversidad areasUniversidad);
+    public List<DistribucionAulasCicloPeriodosEscolares> getReporteCuatrimestralDistribucionAulas(Short ejercicio, AreasUniversidad areasUniversidad);
     
-    public List<DistribucionLabtallCicloPeriodosEscolares> getReporteCuatrimestralDistribucionLaboratoriosTalleres(PeriodosEscolares periodoEscolar, AreasUniversidad areasUniversidad);
+    public List<DistribucionLabtallCicloPeriodosEscolares> getReporteCuatrimestralDistribucionLaboratoriosTalleres(Short ejercicio, AreasUniversidad areasUniversidad);
     
 }

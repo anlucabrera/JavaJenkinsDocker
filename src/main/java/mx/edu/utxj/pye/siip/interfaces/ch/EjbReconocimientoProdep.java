@@ -63,5 +63,5 @@ public interface EjbReconocimientoProdep {
      * Obtiene la lista de registros actuales del registro
      * @return Lista de registros
      */
-    public List<DTOReconocimientoProdep> getRegistroRecProdep();
+    public List<DTOReconocimientoProdep> getRegistroRecProdep(Short ejercicio);
 }

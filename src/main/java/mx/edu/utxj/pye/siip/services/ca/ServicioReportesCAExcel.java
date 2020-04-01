@@ -256,6 +256,160 @@ public class ServicioReportesCAExcel implements EjbReportesCAExcel{
     }
     
     @Override
+    public String getReporteActividadesVarias(Short ejercicioFiscal, Short area) throws Throwable {
+        String plantilla = crearDirectorioReporte(ejes[1]).concat(REPORTE_ACTIVIDADES_VARIAS_PLANTILLA);
+        String plantillaCopia = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_ACTIVIDADES_VARIAS_COPIA);
+        String plantillaCompleto = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_ACTIVIDADES_VARIAS_ACTUALIZADO);
+        try {
+            Files.copy(FileSystems.getDefault().getPath(plantilla), FileSystems.getDefault().getPath(plantillaCopia), StandardCopyOption.REPLACE_EXISTING);
+            File archivoCopia = FileSystems.getDefault().getPath(plantillaCopia).toFile();
+            XSSFWorkbook reporteActividadesVarias = new XSSFWorkbook();
+            reporteActividadesVarias = (XSSFWorkbook) WorkbookFactory.create(archivoCopia);
+            XSSFSheet catalogos = reporteActividadesVarias.getSheetAt(0);
+            XSSFRow fila;
+            XSSFCell celda;
+            
+//            Vaciado de información proveniente de la consulta
+            List<ActividadesVariasRegistro> actividadesVariasReporte = ejbActividadesVarias.reporteActividadesVariasPorEjercicio(ejercicioFiscal,area);
+            
+            for(Integer listaActVar = 0; listaActVar < actividadesVariasReporte.size(); listaActVar++){
+                Integer ubicacion = listaActVar + 2;
+                
+                fila = (XSSFRow) (Row) catalogos.getRow(ubicacion);
+                if(null == fila){
+                    fila = catalogos.createRow(ubicacion);
+                }
+                
+//                Inicia el vaciado de los catalogos en las celdas indicadas
+
+//                Registro
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.NUMERIC);
+                }
+                fila.getCell(0).setCellValue(actividadesVariasReporte.get(listaActVar).getRegistro());
+                
+//                Año
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.NUMERIC);
+                }
+                fila.getCell(1).setCellValue(actividadesVariasReporte.get(listaActVar).getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                
+//                Mes
+                celda = fila.getCell(2);
+                if (null == celda) {
+                    fila.createCell(2, CellType.STRING);
+                }
+                fila.getCell(2).setCellValue(actividadesVariasReporte.get(listaActVar).getRegistros().getEventoRegistro().getMes());
+
+//                Búsqueda de área temporal
+                AreasUniversidad areaTemp = new AreasUniversidad();
+                areaTemp = f.getEntityManager().find(AreasUniversidad.class, actividadesVariasReporte.get(listaActVar).getRegistros().getArea());
+                
+//                Siglas
+                celda = fila.getCell(3);
+                if (null == celda) {
+                    fila.createCell(3, CellType.STRING);
+                }
+                fila.getCell(3).setCellValue(areaTemp.getSiglas());
+                
+//                Tipo
+                celda = fila.getCell(4);
+                if (null == celda) {
+                    fila.createCell(4, CellType.STRING);
+                }
+                fila.getCell(4).setCellValue(areaTemp.getCategoria().getDescripcion());
+                
+//                Nombre del área
+                celda = fila.getCell(5);
+                if (null == celda) {
+                    fila.createCell(5, CellType.STRING);
+                }
+                fila.getCell(5).setCellValue(areaTemp.getNombre());
+                
+//                Nombre de la actividad
+                celda = fila.getCell(6);
+                if (null == celda) {
+                    fila.createCell(6, CellType.STRING);
+                }
+                fila.getCell(6).setCellValue(actividadesVariasReporte.get(listaActVar).getNombre());
+                
+//                Fecha de inicio
+                celda = fila.getCell(7);
+                if (null == celda) {
+                    fila.createCell(7, CellType.STRING);
+                }
+                fila.getCell(7).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(actividadesVariasReporte.get(listaActVar).getFechaInicio()));
+                
+//                Fecha de Fin
+                celda = fila.getCell(8);
+                if (null == celda) {
+                    fila.createCell(8, CellType.STRING);
+                }
+                fila.getCell(8).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(actividadesVariasReporte.get(listaActVar).getFechaFin()));
+                
+//                Lugar de realización
+                celda = fila.getCell(9);
+                if (null == celda) {
+                    fila.createCell(9, CellType.STRING);
+                }
+                fila.getCell(9).setCellValue(actividadesVariasReporte.get(listaActVar).getLugar());
+                
+//                Objetivo
+                celda = fila.getCell(10);
+                if (null == celda) {
+                    fila.createCell(10, CellType.STRING);
+                }
+                fila.getCell(10).setCellValue(actividadesVariasReporte.get(listaActVar).getObjetivo());
+                
+//                Impacto ó beneficio
+                celda = fila.getCell(11);
+                if (null == celda) {
+                    fila.createCell(11, CellType.STRING);
+                }
+                fila.getCell(11).setCellValue(actividadesVariasReporte.get(listaActVar).getImpactoBeneficio());
+                
+                
+//                Total hombres
+                celda = fila.getCell(12);
+                if (null == celda) {
+                    fila.createCell(12, CellType.STRING);
+                }
+                fila.getCell(12).setCellValue(actividadesVariasReporte.get(listaActVar).getTotalHombres());
+                
+//                Total mujeres
+                celda = fila.getCell(13);
+                if (null == celda) {
+                    fila.createCell(13, CellType.STRING);
+                }
+                fila.getCell(13).setCellValue(actividadesVariasReporte.get(listaActVar).getTotalMujeres());
+                
+//                Personalidades
+                celda = fila.getCell(14);
+                if (null == celda) {
+                    fila.createCell(14, CellType.STRING);
+                }
+                fila.getCell(14).setCellValue(actividadesVariasReporte.get(listaActVar).getPersonalidades());
+                
+            }
+            
+            File archivoFinal = FileSystems.getDefault().getPath(plantillaCompleto).toFile();
+            FileOutputStream archivoSalida = new FileOutputStream(archivoFinal);
+            reporteActividadesVarias.write(archivoSalida);
+            reporteActividadesVarias.close();
+            archivoSalida.flush();
+            archivoSalida.close();
+            Files.deleteIfExists(FileSystems.getDefault().getPath(plantillaCopia));
+        } catch (FileNotFoundException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServicioReportesCAExcel.getReporteActividadesVarias() - Archivo no escontrado");
+        } catch (IOException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServicioReportesCAExcel.getReporteActividadesVarias() - Error de lectura o escritura (i/o)");
+        }
+        return plantillaCompleto;
+    }
+    
+    @Override
     public String getReporteAsesoriasTutorias(Short ejercicio_fiscal) throws Throwable { 
         String plantilla = crearDirectorioReporte(ejes[1]).concat(REPORTE_ASESORIAS_TUTORIAS_PLANTILLA);
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_ASESORIAS_TUTORIAS_COPIA);
@@ -401,8 +555,153 @@ public class ServicioReportesCAExcel implements EjbReportesCAExcel{
         return plantillaCompleto;
     }
 
+    public String getReporteAsesoriasTutorias(Short ejercicio_fiscal, Short area) throws Throwable { 
+        String plantilla = crearDirectorioReporte(ejes[1]).concat(REPORTE_ASESORIAS_TUTORIAS_PLANTILLA);
+        String plantillaCopia = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_ASESORIAS_TUTORIAS_COPIA);
+        String plantillaCompleto = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_ASESORIAS_TUTORIAS_ACTUALIZADO);
+        try {
+            Files.copy(FileSystems.getDefault().getPath(plantilla), FileSystems.getDefault().getPath(plantillaCopia), StandardCopyOption.REPLACE_EXISTING);
+            File archivoCopia = FileSystems.getDefault().getPath(plantillaCopia).toFile();
+            XSSFWorkbook reporteAsesoriasTutorias = new XSSFWorkbook();
+            reporteAsesoriasTutorias = (XSSFWorkbook) WorkbookFactory.create(archivoCopia);
+            XSSFSheet catalogos = reporteAsesoriasTutorias.getSheetAt(0);
+            
+            XSSFRow fila;
+            XSSFCell celda;
+            
+//            Vaciado de información proveniente de la consulta
+            List<AsesoriasTutoriasMensualPeriodosEscolares> asesoriasTutorias = ejbAsesoriasTutoriasCiclosPeriodos.getListaReporteGeneralAsesoriasTutorias(ejercicio_fiscal,area);
+            
+//            System.err.println("asesoriasTutorias.size(): " + asesoriasTutorias.size());
+            
+            for(Integer listaAsesTut = 0; listaAsesTut < asesoriasTutorias.size(); listaAsesTut++){
+                Integer ubicacion = listaAsesTut + 2;
+                
+                fila = (XSSFRow) (Row) catalogos.getRow(ubicacion);
+                if(null == fila){
+                    fila = catalogos.createRow(ubicacion);
+                }
+                
+//                Inicia el vaciado de los catalogos en las celdas indicadas
+
+                PeriodosEscolares periodoEscolarTemporal = new PeriodosEscolares();
+                periodoEscolarTemporal = f.getEntityManager().find(PeriodosEscolares.class, asesoriasTutorias.get(listaAsesTut).getPeriodoEscolar());
+
+//                Periodo Escolar
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.STRING);
+                }
+                fila.getCell(0).setCellValue(periodoEscolarTemporal.getMesInicio().getMes()+"-"+periodoEscolarTemporal.getMesFin().getMes());
+                
+//                Ejercicio
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.NUMERIC);
+                }
+                fila.getCell(1).setCellValue(asesoriasTutorias.get(listaAsesTut).getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                
+//                Mes
+                celda = fila.getCell(2);
+                if (null == celda) {
+                    fila.createCell(2, CellType.STRING);
+                }
+                fila.getCell(2).setCellValue(asesoriasTutorias.get(listaAsesTut).getMes());
+                
+                AreasUniversidad programaEducativoTemp = new AreasUniversidad();
+                programaEducativoTemp = f.getEntityManager().find(AreasUniversidad.class, asesoriasTutorias.get(listaAsesTut).getProgramaEducativo());
+                
+//                Programa Educativo
+                celda = fila.getCell(3);
+                if (null == celda) {
+                    fila.createCell(3, CellType.STRING);
+                }
+                fila.getCell(3).setCellValue(programaEducativoTemp.getNombre());
+                
+//                Cuatrimestre
+                celda = fila.getCell(4);
+                if (null == celda) {
+                    fila.createCell(4, CellType.NUMERIC);
+                }
+                fila.getCell(4).setCellValue(asesoriasTutorias.get(listaAsesTut).getCuatrimestre());
+                
+//                Grupo
+                celda = fila.getCell(5);
+                if (null == celda) {
+                    fila.createCell(5, CellType.STRING);
+                }
+                fila.getCell(5).setCellValue(asesoriasTutorias.get(listaAsesTut).getGrupo());
+                
+//                Tipo Actividad
+                celda = fila.getCell(6);
+                if (null == celda) {
+                    fila.createCell(6, CellType.STRING);
+                }
+                fila.getCell(6).setCellValue(asesoriasTutorias.get(listaAsesTut).getTipoActividad());
+                
+//                Tipo
+                celda = fila.getCell(7);
+                if (null == celda) {
+                    fila.createCell(7, CellType.STRING);
+                }
+                fila.getCell(7).setCellValue(asesoriasTutorias.get(listaAsesTut).getTipo());
+                
+//                Número de tutorías y asesorías
+                celda = fila.getCell(8);
+                if (null == celda) {
+                    fila.createCell(8, CellType.NUMERIC);
+                }
+                fila.getCell(8).setCellValue(asesoriasTutorias.get(listaAsesTut).getNoTutoriasAsesorias());
+                
+//                Asistentes Hombres
+                celda = fila.getCell(9);
+                if (null == celda) {
+                    fila.createCell(9, CellType.NUMERIC);
+                }
+                fila.getCell(9).setCellValue(asesoriasTutorias.get(listaAsesTut).getAsistentesHombres());
+                
+//                Asistentes Mujeres    
+                celda = fila.getCell(10);
+                if (null == celda) {
+                    fila.createCell(10, CellType.NUMERIC);
+                }
+                fila.getCell(10).setCellValue(asesoriasTutorias.get(listaAsesTut).getAsistentesMujeres());
+                
+//                Fecha de Registro    
+                celda = fila.getCell(11);
+                if (null == celda) {
+                    fila.createCell(11, CellType.STRING);
+                }
+                fila.getCell(11).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(asesoriasTutorias.get(listaAsesTut).getRegistros().getFechaRegistro()));
+                
+                AreasUniversidad areaAcademicaTemp = new AreasUniversidad();
+                areaAcademicaTemp = f.getEntityManager().find(AreasUniversidad.class, asesoriasTutorias.get(listaAsesTut).getRegistros().getArea());
+                
+//                Área académica
+                celda = fila.getCell(12);
+                if (null == celda) {
+                    fila.createCell(12, CellType.STRING);
+                }
+                fila.getCell(12).setCellValue(areaAcademicaTemp.getNombre());
+            }
+            
+            File archivoFinal = FileSystems.getDefault().getPath(plantillaCompleto).toFile();
+            FileOutputStream archivoSalida = new FileOutputStream(archivoFinal);
+            reporteAsesoriasTutorias.write(archivoSalida);
+            reporteAsesoriasTutorias.close();
+            archivoSalida.flush();
+            archivoSalida.close();
+            Files.deleteIfExists(FileSystems.getDefault().getPath(plantillaCopia));
+        } catch (FileNotFoundException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServicioReportesCAExcel.getReporteAsesoriasTutorias() - Archivo no escontrado");
+        } catch (IOException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.ca.ServicioReportesCAExcel.getReporteAsesoriasTutorias() - Error de lectura o escritura (i/o)");
+        }
+        return plantillaCompleto;
+    }
+    
     @Override
-    public String getReporteServiciosEnfermeria() throws Throwable {
+    public String getReporteServiciosEnfermeria(Short ejercicio) throws Throwable {
         String plantilla = crearDirectorioReporte(ejes[1]).concat(REPORTE_SERVICIOS_ENFERMERIA_PLANTILLA );
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_SERVICIOS_ENFERMERIA_COPIA);
         String plantillaCompleto = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_SERVICIOS_ENFERMERIA_ACTUALIZADO);
@@ -417,7 +716,7 @@ public class ServicioReportesCAExcel implements EjbReportesCAExcel{
             XSSFCell celda;
             
 //            Vaciado de información proveniente de la consulta
-            List<ServiciosEnfermeriaCicloPeriodos> serviciosEnfermeria = ejbServiciosEnfermeriaCicloPeriodos.getReporteGeneralEjercicioServiciosEnfermeria();
+            List<ServiciosEnfermeriaCicloPeriodos> serviciosEnfermeria = ejbServiciosEnfermeriaCicloPeriodos.getReporteGeneralEjercicioServiciosEnfermeria(ejercicio);
 
             for(Integer listaServEnf = 0; listaServEnf < serviciosEnfermeria.size(); listaServEnf++){
                 Integer ubicacion = listaServEnf + 3;
@@ -834,7 +1133,7 @@ public class ServicioReportesCAExcel implements EjbReportesCAExcel{
     }
 
     @Override
-    public String getReporteCompletoProductosAcademicos() throws Throwable {
+    public String getReporteCompletoProductosAcademicos(Short ejercicio) throws Throwable {
         String plantilla = crearDirectorioReporte(ejes[1]).concat(REPORTE_PRODUCTOS_ACADEMICOS_PLANTILLA);
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_PRODUCTOS_ACADEMICOS_COPIA);
         String plantillaCompleto = crearDirectorioReporteCompleto(ejes[1]).concat(REPORTE_PRODUCTOS_ACADEMICOS_ACTUALIZADO);
@@ -850,8 +1149,8 @@ public class ServicioReportesCAExcel implements EjbReportesCAExcel{
             XSSFCell celda;
             
 //            Vaciado de información proveniente de la consulta
-            List<ProductosAcademicos> productosAcademicos = ejbProductosAcademicos.getReporteGeneralProductosAcademicosPorEjercicio();
-            List<ProductosAcademicosPersonal> productosAcademicosParticipantes = ejbProductosAcademicos.getReporteGeneralProductosAcademicosPersonalPorEjercicio();
+            List<ProductosAcademicos> productosAcademicos = ejbProductosAcademicos.getReporteGeneralProductosAcademicosPorEjercicio(ejercicio);
+            List<ProductosAcademicosPersonal> productosAcademicosParticipantes = ejbProductosAcademicos.getReporteGeneralProductosAcademicosPersonalPorEjercicio(ejercicio);
 
 //            Productos Académicos
             for(Integer listaPA = 0; listaPA < productosAcademicos.size(); listaPA++){

@@ -83,7 +83,7 @@ public interface EjbProductosAcademicos {
     
     public Municipio getMunicipioProductoAcademico(ProductosAcademicos organismoVinculado);
     
-    public List<ProductosAcademicos> getReporteGeneralProductosAcademicosPorEjercicio();
+    public List<ProductosAcademicos> getReporteGeneralProductosAcademicosPorEjercicio(Short ejercicio);
     
-    public List<ProductosAcademicosPersonal> getReporteGeneralProductosAcademicosPersonalPorEjercicio();
+    public List<ProductosAcademicosPersonal> getReporteGeneralProductosAcademicosPersonalPorEjercicio(Short ejercicio);
 }

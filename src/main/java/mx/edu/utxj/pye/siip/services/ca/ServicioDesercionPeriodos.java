@@ -451,12 +451,13 @@ public class ServicioDesercionPeriodos implements EjbDesercionPeriodos{
     }
 
     @Override
-    public List<ListaDtoDesercion> getRegistroDesercion() {
+    public List<ListaDtoDesercion> getRegistroDesercion(Short ejercicio) {
         List<DesercionPeriodosEscolares> entities = new ArrayList<>();
-       
-        entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v", DesercionPeriodosEscolares.class)
-        .getResultList();
-       
+
+        entities = f.getEntityManager().createQuery("SELECT v FROM DesercionPeriodosEscolares v INNER JOIN v.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.ejercicioFiscal = :ejercicio", DesercionPeriodosEscolares.class)
+                .setParameter("ejercicio", ejercicio)
+                .getResultList();
+
         if (entities.isEmpty() || entities == null) {
             return null;
         } else {

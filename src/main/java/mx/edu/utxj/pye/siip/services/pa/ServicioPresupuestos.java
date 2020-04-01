@@ -327,11 +327,12 @@ public class ServicioPresupuestos implements EjbPresupuestos{
     }
 
     @Override
-    public List<DTOPresupuestos> getRegistroPresupuestos() {
+    public List<DTOPresupuestos> getRegistroPresupuestos(Short ejercicioFiscal) {
         List<DTOPresupuestos> ldto = new ArrayList<>();
         List<Presupuestos> l = new ArrayList<>();
         
-        l = f.getEntityManager().createQuery("SELECT p from Presupuestos p", Presupuestos.class)
+        l = f.getEntityManager().createQuery("SELECT p from Presupuestos p INNER JOIN p.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.ejercicioFiscal = :ejercicioFiscal", Presupuestos.class)
+                .setParameter("ejercicioFiscal", ejercicioFiscal)
         .getResultList();
 
         if (l.isEmpty() || l == null) {

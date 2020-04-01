@@ -1091,10 +1091,10 @@ public class ServicioEgresados implements EjbEgresados {
     }
 
     @Override
-    public List<ActividadEgresadoGeneracion> getReporteActividadEgresadoPorEjercicio() {
+    public List<ActividadEgresadoGeneracion> getReporteActividadEgresadoPorEjercicio(Short ejercicio) {
         try {
             return facadeVinculacion.getEntityManager().createQuery("SELECT a FROM ActividadEgresadoGeneracion a INNER JOIN a.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY a.fecha",ActividadEgresadoGeneracion.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -1102,10 +1102,10 @@ public class ServicioEgresados implements EjbEgresados {
     }
 
     @Override
-    public List<ActividadEconomicaEgresadoGeneracion> getReporteActividadEconomicaEgresadoPorEjercicio() {
+    public List<ActividadEconomicaEgresadoGeneracion> getReporteActividadEconomicaEgresadoPorEjercicio(Short ejercicio) {
         try {
             return facadeVinculacion.getEntityManager().createQuery("SELECT a FROM ActividadEconomicaEgresadoGeneracion a INNER JOIN a.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY a.fecha",ActividadEconomicaEgresadoGeneracion.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -1113,10 +1113,10 @@ public class ServicioEgresados implements EjbEgresados {
     }
 
     @Override
-    public List<NivelOcupacionEgresadosGeneracion> getReporteNivelOcupacionEgresadoPorEjercicio() {
+    public List<NivelOcupacionEgresadosGeneracion> getReporteNivelOcupacionEgresadoPorEjercicio(Short ejercicio) {
         try {
             return facadeVinculacion.getEntityManager().createQuery("SELECT n FROM NivelOcupacionEgresadosGeneracion n INNER JOIN n.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY n.fecha",NivelOcupacionEgresadosGeneracion.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -1124,10 +1124,10 @@ public class ServicioEgresados implements EjbEgresados {
     }
 
     @Override
-    public List<NivelIngresosEgresadosGeneracion> getReporteNivelIngresosEgresadoPorEjercicio() {
+    public List<NivelIngresosEgresadosGeneracion> getReporteNivelIngresosEgresadoPorEjercicio(Short ejercicio) {
         try {
             return facadeVinculacion.getEntityManager().createQuery("SELECT n FROM NivelIngresosEgresadosGeneracion n INNER JOIN n.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY n.fecha",NivelIngresosEgresadosGeneracion.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;

@@ -636,7 +636,7 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
     }
 
     @Override
-    public List<DTOActFormacionIntegral> getListaRegistrosAFI(Short claveArea) {
+    public List<DTOActFormacionIntegral> getListaRegistrosAFI(Short claveArea, Short ejercicio) {
         //verificar que el parametro no sea nulo
         if(claveArea == null){
             return null;
@@ -647,15 +647,17 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
         List<ActividadesFormacionIntegral> entities = new ArrayList<>();
       
         if(claveArea==6 || claveArea==9){
-        entities = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a", ActividadesFormacionIntegral.class)
+        entities = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a INNER JOIN a.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.anio = :ejercicio", ActividadesFormacionIntegral.class)
+                .setParameter("ejercicio", ejercicio)
                 .getResultList();
         }
         else{
             
         areas = ejbModulos.getAreasDependientes(claveArea);
         
-        entities = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a INNER JOIN a.registros reg WHERE reg.area IN :areas", ActividadesFormacionIntegral.class)
+        entities = f.getEntityManager().createQuery("SELECT a FROM ActividadesFormacionIntegral a INNER JOIN a.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas AND er.ejercicioFiscal.anio = :ejercicio", ActividadesFormacionIntegral.class)
                 .setParameter("areas", areas)
+                .setParameter("ejercicio", ejercicio)
                 .getResultList();
         }
         //construir la lista de dto's para mostrar en tabla
@@ -678,7 +680,7 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
     }
 
     @Override
-    public List<DTOParticipantesActFormInt> getListaRegistrosPAFI(Short claveArea) {
+    public List<DTOParticipantesActFormInt> getListaRegistrosPAFI(Short claveArea, Short ejercicio) {
         //verificar que el parametro no sea nulo
         if(claveArea == null){
             return null;
@@ -690,12 +692,14 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
         List<ParticipantesActividadesFormacionIntegral> entities = new ArrayList<>();
         
         if(claveArea==6 || claveArea==9){
-        entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p ORDER BY p.matriculaPeriodosEscolares.matricula ASC", ParticipantesActividadesFormacionIntegral.class)
+        entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p INNER JOIN p.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.anio = :ejercicio ORDER BY p.matriculaPeriodosEscolares.matricula ASC", ParticipantesActividadesFormacionIntegral.class)
+                .setParameter("ejercicio", ejercicio)
                 .getResultList();
         }
         else{
         
-        entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p INNER JOIN p.actividadFormacionIntegral a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas ORDER BY p.matriculaPeriodosEscolares.matricula ASC", ParticipantesActividadesFormacionIntegral.class)
+        entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesActividadesFormacionIntegral p INNER JOIN p.actividadFormacionIntegral a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas AND er.ejercicioFiscal.anio = :ejercicio ORDER BY p.matriculaPeriodosEscolares.matricula ASC", ParticipantesActividadesFormacionIntegral.class)
+                .setParameter("ejercicio", ejercicio)
                 .setParameter("areas", areas)
                 .getResultList();
      

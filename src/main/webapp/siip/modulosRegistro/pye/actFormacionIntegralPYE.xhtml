@@ -15,9 +15,9 @@
         <h:outputStylesheet library="css" name="tablaDatos.css" />
         <h:outputScript library="js" name="dialogs.js" />
         <!-- Inicio estilos par proceso electoral -->
-            <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
-                <h:outputStylesheet library="css" name="procesoElectoral.css" />
-            </c:if>
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <h:outputStylesheet library="css" name="procesoElectoral.css" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
@@ -38,61 +38,61 @@
             </h1>
         </p:panel>
         <c:if test="#{actFormIntegralPYE.listaReg ne null}">
-        <div class="box box-primary">
-            <div class="box-header with-border">
-                <div id="main-buttons" class="hidden-sm hidden-xs" >
-                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
-                        <p:outputPanel >
-                            <p:autoUpdate/>
-                            <p:toolbar id="tb">
-                                <f:facet name="left">
-                                    <p:spacer width="10" />
-                                    <p:outputLabel value="Categoría " for="categoria"/>
-                                    <p:spacer width="5" />
-                                    <p:selectOneMenu id="categoria"
-                                                     required="true"
-                                                     value="#{actFormIntegralPYE.dto.categoria}"
-                                                     valueChangeListener="#{actFormIntegralPYE.actualizarAreas}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     converter="entidadConverter2"
-                                                     class="form-control"
-                                                     style="padding-top: 0px">
-                                        <f:selectItem itemLabel=" - Seleccione - " 
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{actFormIntegralPYE.dto.listaCategoriasPOA}" 
-                                                       var="categoria" 
-                                                       itemValue="#{categoria}" 
-                                                       itemLabel="#{categoria.descripcion}"
-                                                       itemDescription="#{categoria.descripcion}"/>
-                                        <p:ajax process="@this" update="@(form)" />
-                                    </p:selectOneMenu>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                            <p:outputPanel >
+                                <p:autoUpdate/>
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Categoría " for="categoria"/>
+                                        <p:spacer width="5" />
+                                        <p:selectOneMenu id="categoria"
+                                                         required="true"
+                                                         value="#{actFormIntegralPYE.dto.categoria}"
+                                                         valueChangeListener="#{actFormIntegralPYE.actualizarAreas}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         converter="entidadConverter2"
+                                                         class="form-control"
+                                                         style="padding-top: 0px">
+                                            <f:selectItem itemLabel=" - Seleccione - " 
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{actFormIntegralPYE.dto.listaCategoriasPOA}" 
+                                                           var="categoria" 
+                                                           itemValue="#{categoria}" 
+                                                           itemLabel="#{categoria.descripcion}"
+                                                           itemDescription="#{categoria.descripcion}"/>
+                                            <p:ajax process="@this" update="@(form)" />
+                                        </p:selectOneMenu>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
 
-                                    <p:outputLabel value="Área " for="area" />
-                                    <p:spacer width="5" />
-                                    <p:selectOneMenu id="area"
-                                                     required="true"
-                                                     value="#{actFormIntegralPYE.dto.areaPOA}"
-                                                     valueChangeListener="#{actFormIntegralPYE.actualizarPeriodosMeses}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     converter="entidadConverter2"
-                                                     class="form-control"
-                                                     style="padding-top: 0px">
-                                        <f:selectItem itemLabel=" - Seleccione - " 
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{actFormIntegralPYE.dto.listaAreasPOA}" 
-                                                       var="area" 
-                                                       itemValue="#{area}" 
-                                                       itemLabel="#{area.nombre}"
-                                                       itemDescription="#{area.nombre}" />
-                                        <p:ajax process="@this" update="@(form)" />
-                                    </p:selectOneMenu>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    
+                                        <p:outputLabel value="Área " for="area" />
+                                        <p:spacer width="5" />
+                                        <p:selectOneMenu id="area"
+                                                         required="true"
+                                                         value="#{actFormIntegralPYE.dto.areaPOA}"
+                                                         valueChangeListener="#{actFormIntegralPYE.actualizarPeriodosMeses}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         converter="entidadConverter2"
+                                                         class="form-control"
+                                                         style="padding-top: 0px">
+                                            <f:selectItem itemLabel=" - Seleccione - " 
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{actFormIntegralPYE.dto.listaAreasPOA}" 
+                                                           var="area" 
+                                                           itemValue="#{area}" 
+                                                           itemLabel="#{area.nombre}"
+                                                           itemDescription="#{area.nombre}" />
+                                            <p:ajax process="@this" update="@(form)" />
+                                        </p:selectOneMenu>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
                                         <p:outputLabel value="Periodo: " for="periodo" />
                                         <p:spacer width="3" />
                                         <p:selectOneMenu id="periodo" converter="entityConverter"
@@ -102,664 +102,668 @@
                                             <p:ajax process="@this" update="@(form)" />
                                         </p:selectOneMenu>
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                        
+
                                         <p:outputLabel value="Mes: " for="mes" />
                                         <p:spacer width="3" />
                                         <p:selectOneMenu id="mes" value="#{actFormIntegralPYE.dto.eventoSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
                                             <f:selectItems value="#{actFormIntegralPYE.dto.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" itemDescription="#{evento.mes}"  />
                                             <p:ajax process="@this" listener="#{actFormIntegralPYE.cargarListaPorEvento()}" update="@(form)" />
                                         </p:selectOneMenu>
-                                </f:facet>
-                                <f:facet name="right">
-                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reporteRegistros.descargarReporteAFI(actFormIntegralPYE.dto.area.area)}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
-                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
-                                </f:facet>
-                            </p:toolbar>
-                            <p:sticky target="tb" />
-                        </p:outputPanel>
-                    </h:form>
-                </div>
-                <p:separator/>
-
-                <div class="box-body">
-                    <!-- Sección de visualización y eliminación -->
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12">
-                             <center>
-                            <p:tabView>
-                            <p:tab id="twbAFIAct" title="Actividades de Formación Integral">
-                            <h:form id="formMuestraDatosActivos">
-                                    <p:remoteCommand name="actualizar" update="@form:dtbActFormInt" />
-                                    <p:dataTable id="dtbActFormInt" emptyMessage="Sin datos en el periodo seleccionado." value="#{actFormIntegralPYE.dto.lista}" var="ActFormInt"
-                                                 paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                 resizeMode="expand"
-                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                       <c:set var="actForIntReg" value="#{ActFormInt.actividadesFormacionIntegral.registro}"/>
-                                       <c:set var="actForIntClave" value="#{ActFormInt.actividadesFormacionIntegral.actividadFormacionIntegral}"/>
-                                        
-                                        <p:column headerText="Opciones" style="width: 200px; text-align: center;">
-                                            <div class="btn-group">
-                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{actFormIntegral.eliminarRegistro(actForIntReg, actForIntClave)}" onsuccess="actualizar(); actualizar1();" title="Eliminar registro." disabled="#{actFormIntegralPYE.dto.eventoActual ne actFormIntegralPYE.dto.eventoSeleccionado}">
-                                                    <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la Actividad #{ActFormInt.actividadesFormacionIntegral.nombre}?" icon="ui-icon-alert" />
-                                                </p:commandButton>
-                                                <c:set var="evidencias" value="#{actFormIntegral.consultarEvidencias(ActFormInt)}" />
-                                                <p:commandButton actionListener="#{actFormIntegral.seleccionarRegistro(ActFormInt)}"
-                                                                 class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
-                                                                 icon="fa fa-image"
-                                                                 title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                <p:commandButton actionListener="#{actFormIntegralPYE.abrirAlineacionPOA(ActFormInt)}"
-                                                                 class="btn btn-sm #{actFormIntegralPYE.verificaAlineacion(actForIntReg)?'btn-info':'btn-warning'}"
-                                                                 icon="fa fa-cog"
-                                                                 title="Alineación a POA." />
-                                                 <p:commandButton actionListener="#{actFormIntegral.editarRegistro(ActFormInt)}"
-                                                            class="btn btn-sm btn-primary" 
-                                                            icon="fa fa-edit"
-                                                            title="Editar registro" />
-                                            </div>
-                                        </p:column>
-                                        <p:column headerText="Clave" style="width: 150px; text-align: center;">
-                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.actividadFormacionIntegral}"/>
-                                        </p:column>
-
-                                        <p:column headerText="Periodo Escolar" style="width: 200px; text-align: center;">
-                                            <h:outputText value="#{ActFormInt.periodosEscolares.mesInicio.mes} - #{ActFormInt.periodosEscolares.mesFin.mes}"/>
-                                        </p:column>
-                                     
-                                        <p:column headerText="Fecha Inicio" style="width: 100px; text-align: center;">
-                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                        </p:column>
-
-                                        <p:column headerText="Fecha Fin" style="width: 100px; text-align: center;">
-                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                        </p:column>
-
-                                        <p:column headerText="Nombre de la Actividad" style="width: 300px;">
-                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.nombre}"/>
-                                        </p:column>
-
-                                        <p:column headerText="Tipo de Actividad" style="width: 200px; text-align: center;">
-                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.actividadTipo.nombre}"/>
-                                        </p:column>
-
-                                        <p:column headerText="Tipo de Evento" style="width: 200px; text-align: center;">
-                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.eventoTipo.nombre}"/>
-                                        </p:column>
-
-                                        <p:column headerText="Organiza / Participa" style="width: 200px; text-align: center;">
-                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.organizaParticipa}"/>
-                                        </p:column>
-
-                                        <p:column headerText="Lugar de realización" style="width: 250px;">
-                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.lugarRealizacion}"/>
-                                        </p:column>
-
-                                        <p:column headerText="Duración" style="width: 80px; text-align: center;">
-                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.duracion}"/>
-                                        </p:column>
-
-                                        <p:column headerText="Facilitador o Empresa" style="width: 250px;">
-                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.facilitadorEmpresa}"/>
-                                        </p:column>
-
-                                        <p:column headerText="Equipos Participantes" style="width: 250px; text-align: center;">
-                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.equiposParticipantes}"/>
-                                        </p:column>
-
-                                        <p:column headerText="Equipos Ganadores" style="width: 250px; text-align: center;">
-                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.equiposGanadores}"/>
-                                        </p:column>
-                                        
-                                        <p:column headerText="Objetivo" style="width: 400px;">
-                                            <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.objetivo}"/>
-                                        </p:column>
-                                       <p:column headerText="Participantes" style="width: 120px;">
-                                           <c:set var="participantes" value="#{partActFormInt.consultarParticipantes(actForIntClave)}" />
-                                           <center>Consultar <p:commandButton actionListener="#{partActFormInt.seleccionarParticipantes(actForIntClave)}"
-                                                            class="btn btn-sm #{!empty participantes?'btn-info':'btn-danger'}" 
-                                                            icon="fa fa-search"
-                                                            title="#{!empty participantes?'Consultar participantes registrados':'No se han registrado participantes'}" />
-                                           </center>
-                                       </p:column>
-                                    </p:dataTable>
-                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
-                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
-                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
-                                    </p:confirmDialog>
-                            </h:form>
-                            </p:tab>
-                            </p:tabView>
-                             </center>
-                        </div>
-                    </div>
-                    <!-- Modal Evidencia Actividad de Formación Integral -->
-                    <p:dialog id="modalCargaEvidencia" 
-                              widgetVar="modalCargaEvidencia" 
-                              width="700" 
-                              height="auto"  
-                              closeOnEscape="true" 
-                              visible="#{actFormIntegral.dto.forzarAperturaDialogo}"
-                              showEffect="fade" 
-                              hideEffect="fade" 
-                              modal="true" 
-                              draggable="true" 
-                              header="Carga de evidencias" 
-                              onHide="actualizar();"
-                              styleClass="panel panel-primary" 
-                              responsive="true" 
-                              resizable="false" 
-                              maximizable="false">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <p:toolbar id="tb">
-                                    <f:facet name="left">
-                                        <p:spacer width="10" />
-                                        <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
-                                        <p:spacer width="10" />
                                     </f:facet>
                                     <f:facet name="right">
-                                        <o:form id="formularioEvidencia" 
-                                                enctype="multipart/form-data" 
-                                                class="form-inline"  >
-                                            <o:inputFile id="files" 
-                                                         value="#{actFormIntegral.dto.archivos}"  
-                                                         multiple="true" 
-                                                         class="form-control"
-                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" 
-                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
-                                                         maxsize="#{caster.evidenciasTamanioLimite}" 
-                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
-                                                         required="true" 
-                                                         requiredMessage="Debe elegir al menos un archivo." >
-                                            </o:inputFile>
-                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{actFormIntegral.subirEvidencias()}" />
-                                        </o:form>
+                                        <c:if test="#{actFormIntegralPYE.dto.periodo.anio ne null}">
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reporteRegistros.descargarReporteAFI(actFormIntegralPYE.dto.area.area, actFormIntegralPYE.dto.periodo.anio)}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                        </c:if>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
                                     </f:facet>
                                 </p:toolbar>
+                                <p:sticky target="tb" />
+                            </p:outputPanel>
+                        </h:form>
+                    </div>
+                    <p:separator/>
+
+                    <div class="box-body">
+                        <!-- Sección de visualización y eliminación -->
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <center>
+                                    <p:tabView>
+                                        <p:tab id="twbAFIAct" title="Actividades de Formación Integral">
+                                            <h:form id="formMuestraDatosActivos">
+                                                <p:remoteCommand name="actualizar" update="@form:dtbActFormInt" />
+                                                <p:dataTable id="dtbActFormInt" emptyMessage="Sin datos en el periodo seleccionado." value="#{actFormIntegralPYE.dto.lista}" var="ActFormInt"
+                                                             paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             resizeMode="expand"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <c:set var="actForIntReg" value="#{ActFormInt.actividadesFormacionIntegral.registro}"/>
+                                                    <c:set var="actForIntClave" value="#{ActFormInt.actividadesFormacionIntegral.actividadFormacionIntegral}"/>
+
+                                                    <p:column headerText="Opciones" style="width: 200px; text-align: center;">
+                                                        <div class="btn-group">
+                                                            <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{actFormIntegral.eliminarRegistro(actForIntReg, actForIntClave)}" onsuccess="actualizar(); actualizar1();" title="Eliminar registro." disabled="#{actFormIntegralPYE.dto.eventoActual ne actFormIntegralPYE.dto.eventoSeleccionado}">
+                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la Actividad #{ActFormInt.actividadesFormacionIntegral.nombre}?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                            <c:set var="evidencias" value="#{actFormIntegral.consultarEvidencias(ActFormInt)}" />
+                                                            <p:commandButton actionListener="#{actFormIntegral.seleccionarRegistro(ActFormInt)}"
+                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                             icon="fa fa-image"
+                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                            <p:commandButton actionListener="#{actFormIntegralPYE.abrirAlineacionPOA(ActFormInt)}"
+                                                                             class="btn btn-sm #{actFormIntegralPYE.verificaAlineacion(actForIntReg)?'btn-info':'btn-warning'}"
+                                                                             icon="fa fa-cog"
+                                                                             title="Alineación a POA." />
+                                                            <p:commandButton actionListener="#{actFormIntegral.editarRegistro(ActFormInt)}"
+                                                                             class="btn btn-sm btn-primary" 
+                                                                             icon="fa fa-edit"
+                                                                             title="Editar registro" />
+                                                        </div>
+                                                    </p:column>
+                                                    <p:column headerText="Clave" style="width: 150px; text-align: center;">
+                                                        <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.actividadFormacionIntegral}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Periodo Escolar" style="width: 200px; text-align: center;">
+                                                        <h:outputText value="#{ActFormInt.periodosEscolares.mesInicio.mes} - #{ActFormInt.periodosEscolares.mesFin.mes}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Fecha Inicio" style="width: 100px; text-align: center;">
+                                                        <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+
+                                                    <p:column headerText="Fecha Fin" style="width: 100px; text-align: center;">
+                                                        <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+
+                                                    <p:column headerText="Nombre de la Actividad" style="width: 300px;">
+                                                        <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.nombre}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Tipo de Actividad" style="width: 200px; text-align: center;">
+                                                        <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.actividadTipo.nombre}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Tipo de Evento" style="width: 200px; text-align: center;">
+                                                        <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.eventoTipo.nombre}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Organiza / Participa" style="width: 200px; text-align: center;">
+                                                        <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.organizaParticipa}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Lugar de realización" style="width: 250px;">
+                                                        <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.lugarRealizacion}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Duración" style="width: 80px; text-align: center;">
+                                                        <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.duracion}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Facilitador o Empresa" style="width: 250px;">
+                                                        <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.facilitadorEmpresa}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Equipos Participantes" style="width: 250px; text-align: center;">
+                                                        <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.equiposParticipantes}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Equipos Ganadores" style="width: 250px; text-align: center;">
+                                                        <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.equiposGanadores}"/>
+                                                    </p:column>
+
+                                                    <p:column headerText="Objetivo" style="width: 400px;">
+                                                        <h:outputText value="#{ActFormInt.actividadesFormacionIntegral.objetivo}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Participantes" style="width: 120px;">
+                                                        <c:set var="participantes" value="#{partActFormInt.consultarParticipantes(actForIntClave)}" />
+                                                        <center>Consultar <p:commandButton actionListener="#{partActFormInt.seleccionarParticipantes(actForIntClave)}"
+                                                                                           class="btn btn-sm #{!empty participantes?'btn-info':'btn-danger'}" 
+                                                                                           icon="fa fa-search"
+                                                                                           title="#{!empty participantes?'Consultar participantes registrados':'No se han registrado participantes'}" />
+                                                        </center>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                                </p:confirmDialog>
+                                            </h:form>
+                                        </p:tab>
+                                    </p:tabView>
+                                </center>
                             </div>
                         </div>
-                        <h:form id="frmEvidencias" >
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Actividad: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.nombre}" /></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Fecha: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:outputLabel></div>
-                            </div>
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
-                                    <p:dataTable id="tblEvidencias" value="#{actFormIntegral.dto.listaEvidencias}" var="evidencia"
-                                                 emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
-                                                 paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
-                                                 >
-                                        <p:columnGroup type="header">
-                                            <p:row>
-                                                <p:column headerText="Opciones" width="80"/>
-                                                <p:column headerText="Archivo" />
-                                                <p:column headerText="Tipo"     width="80" />
-                                                <p:column headerText="Tamanio"  width="80" />
-                                            </p:row>
-                                        </p:columnGroup>
-                                        <p:column style="text-align: center;">
-                                            <div class="btn-group">
-                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{actFormIntegral.eliminarEvidencia(evidencia)}" onsuccess="actualizar2();" title="Eliminar evidencia.">
-                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
-                                                </p:commandButton>
-                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{actFormIntegral.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
-                                            </div>
-                                        </p:column>
-                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
-                                        <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(actFormIntegral.dto.listaEvidencias)}.</span>
-                                        </f:facet>
-                                    </p:dataTable>
-                                </div>
-                            </div>
-                        </h:form>
-                    </p:dialog>
-                    <!-- Modal Alineación Actividad de Formación Integral -->
-                    <p:dialog id="modalAlineacion" widgetVar="modalAlineacion" width="900" height="auto"  closeOnEscape="true"
-                              showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." onHide="actualizar();"
-                              styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">                        
-                        <h:form id="frmAlineacion" >
+                        <!-- Modal Evidencia Actividad de Formación Integral -->
+                        <p:dialog id="modalCargaEvidencia" 
+                                  widgetVar="modalCargaEvidencia" 
+                                  width="700" 
+                                  height="auto"  
+                                  closeOnEscape="true" 
+                                  visible="#{actFormIntegral.dto.forzarAperturaDialogo}"
+                                  showEffect="fade" 
+                                  hideEffect="fade" 
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Carga de evidencias" 
+                                  onHide="actualizar();"
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar>
+                                    <p:toolbar id="tb">
                                         <f:facet name="left">
-                                            
+                                            <p:spacer width="10" />
+                                            <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
+                                            <p:spacer width="10" />
                                         </f:facet>
                                         <f:facet name="right">
-                                             <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{actFormIntegralPYE.eliminarAlineacion()}" rendered="#{!empty actFormIntegralPYE.dto.registro.actividadAlineada}" >
-                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
-                                            </p:commandButton>
-                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{actFormIntegralPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                            <o:form id="formularioEvidencia" 
+                                                    enctype="multipart/form-data" 
+                                                    class="form-inline"  >
+                                                <o:inputFile id="files" 
+                                                             value="#{actFormIntegral.dto.archivos}"  
+                                                             multiple="true" 
+                                                             class="form-control"
+                                                             accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                             acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                             maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                             maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                             required="true" 
+                                                             requiredMessage="Debe elegir al menos un archivo." >
+                                                </o:inputFile>
+                                                <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{actFormIntegral.subirEvidencias()}" />
+                                            </o:form>
                                         </f:facet>
                                     </p:toolbar>
                                 </div>
-                            </div>                            
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Actividad: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{actFormIntegralPYE.dto.registro.actividadesFormacionIntegral.nombre}" /></div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Fecha: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{actFormIntegralPYE.dto.registro.actividadesFormacionIntegral.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:outputLabel></div>
-                            </div>
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
-                            <c:set var="col1" value="#{'col-md-2'}" />
-                            <c:set var="col2" value="#{'col-md-10'}" />
-                            <div class="row" style="#{fila}">
-                                <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
-                                <div class="#{col2}">
-                                    <p:selectOneMenu id="eje" value="#{actFormIntegralPYE.dto.alineacionEje}" valueChangeListener="#{actFormIntegralPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
-                                        <p:autoUpdate />
-                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{actFormIntegralPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
-                                        <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
-                                    </p:selectOneMenu>
-                                    <p:message for="eje"><p:autoUpdate /></p:message>
+                            <h:form id="frmEvidencias" >
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Actividad: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.nombre}" /></div>
                                 </div>
-                            </div>
-                            <div class="row" style="#{fila}">
-                                <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
-                                <div class="#{col2}">
-                                    <p:selectOneMenu id="estrategia" value="#{actFormIntegralPYE.dto.alineacionEstrategia}" valueChangeListener="#{actFormIntegralPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
-                                        <p:autoUpdate />
-                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{actFormIntegralPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
-                                        <p:ajax process="estrategia" update="lineaAccion,actividad" />
-                                    </p:selectOneMenu>
-                                    <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Fecha: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:outputLabel></div>
                                 </div>
-                            </div>
-                            <div class="row" style="#{fila}">
-                                <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
-                                <div class="#{col2}">
-                                    <p:selectOneMenu id="lineaAccion" value="#{actFormIntegralPYE.dto.alineacionLinea}" valueChangeListener="#{actFormIntegralPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
-                                        <p:autoUpdate />
-                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{actFormIntegralPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
-                                        <p:ajax process="lineaAccion" update="actividad" />
-                                    </p:selectOneMenu>
-                                    <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
+                                        <p:dataTable id="tblEvidencias" value="#{actFormIntegral.dto.listaEvidencias}" var="evidencia"
+                                                     emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                     paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                     >
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column headerText="Opciones" width="80"/>
+                                                    <p:column headerText="Archivo" />
+                                                    <p:column headerText="Tipo"     width="80" />
+                                                    <p:column headerText="Tamanio"  width="80" />
+                                                </p:row>
+                                            </p:columnGroup>
+                                            <p:column style="text-align: center;">
+                                                <div class="btn-group">
+                                                    <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{actFormIntegral.eliminarEvidencia(evidencia)}" onsuccess="actualizar2();" title="Eliminar evidencia.">
+                                                        <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{actFormIntegral.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                                </div>
+                                            </p:column>
+                                            <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                            <f:facet name="footer">
+                                                <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(actFormIntegral.dto.listaEvidencias)}.</span>
+                                            </f:facet>
+                                        </p:dataTable>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row" style="#{fila}">
-                                <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
-                                <div class="#{col2}">
-                                    <p:selectOneMenu id="actividad" value="#{actFormIntegralPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
-                                        <p:autoUpdate />
-                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{actFormIntegralPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
-                                        <p:ajax process="actividad" />
-                                    </p:selectOneMenu>
-                                    <p:message for="actividad"><p:autoUpdate /></p:message>
-                                </div>
-                            </div>
-                        </h:form>
-                    </p:dialog>
-                    <!-- Modal Participantes Actividad de Formación Integral -->
-                    <p:dialog id="modalParticipantes" 
-                              widgetVar="modalParticipantes" 
-                              width="1200" 
-                              height="auto"  
-                              closeOnEscape="true" 
-                              visible="#{partAFI.dto.forzarAperturaDialogo}"
-                              showEffect="fade" 
-                              hideEffect="fade" 
-                              modal="true" 
-                              draggable="true" 
-                              header="Participantes por Actividad" 
-                              styleClass="panel panel-primary" 
-                              responsive="true" 
-                              resizable="false" 
-                              maximizable="false">
-                        
-                        <h:form id="frmModalParticipantes" >
-                            <h4 style="text-align: center; text-decoration: underline;">Participantes por Área, Programa Educativo y Cuatrimestre</h4>
-                            <c:if test="#{partActFormInt.dto.listaParticipantesAEA.size() >0}">
-                                <h5 style="text-align: center; font-weight: bold;">Área Económico Administrativa</h5>
-                                <p:dataTable id="tblPartAEA" value="#{partActFormInt.dto.listaParticipantesAEA}" var="participanteAEA"
-                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                    <p:columnGroup type="header">
-                                        <p:row>
-                                            <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
-                                            <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
-                                            <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
-                                            <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
-                                            <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
-                                        </p:row>
-                                        <p:row>
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/>
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/> 
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/>
-                                        </p:row>
-                                    </p:columnGroup>
-                                    <p:column style="text-align: justify;"><h:outputText value="#{participanteAEA.progEdu}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.cuat}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partH}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partM}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partHLI}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partMLI}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partHD}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partMD}" /></p:column> 
-
-                                </p:dataTable> 
-                            </c:if>
-                            <c:if test="#{partActFormInt.dto.listaParticipantesAAA.size() >0}">
-                                <h5 style="text-align: center; font-weight: bold;">Área Agro-Industrial Alimentaria</h5>
-                                <p:dataTable id="tblPartAAA" value="#{partActFormInt.dto.listaParticipantesAAA}" var="participanteAAA"
-                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                    <p:columnGroup type="header">
-                                         <p:row>
-                                            <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
-                                            <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
-                                            <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
-                                            <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
-                                            <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
-                                        </p:row>
-                                        <p:row>
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/>
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/> 
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/>
-                                        </p:row>
-                                    </p:columnGroup>
-                                    <p:column style="text-align: justify;"><h:outputText value="#{participanteAAA.progEdu}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.cuat}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partH}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partM}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partHLI}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partMLI}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partHD}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partMD}" /></p:column> 
-
-                                </p:dataTable> 
-                                 </c:if>
-                                <c:if test="#{partActFormInt.dto.listaParticipantesAMI.size() >0}">
-                                <h5 style="text-align: center; font-weight: bold;">Área Mantenimiento Industrial</h5>
-                                <p:dataTable id="tblPartAMI" value="#{partActFormInt.dto.listaParticipantesAMI}" var="participanteAMI"
-                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                    <p:columnGroup type="header">
-                                         <p:row>
-                                            <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
-                                            <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
-                                            <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
-                                            <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
-                                            <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
-                                        </p:row>
-                                        <p:row>
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/>
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/> 
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/>
-                                        </p:row>
-                                    </p:columnGroup>
-                                    <p:column style="text-align: justify;"><h:outputText value="#{participanteAMI.progEdu}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.cuat}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partH}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partM}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partHLI}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partMLI}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partHD}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partMD}" /></p:column> 
-
-                                </p:dataTable> 
-                                     </c:if>
-                                    <c:if test="#{partActFormInt.dto.listaParticipantesAMA.size() >0}">
-                                <h5 style="text-align: center; font-weight: bold;">Área Mecatrónica Automatización</h5>
-                                <p:dataTable id="tblPartAMA" value="#{partActFormInt.dto.listaParticipantesAMA}" var="participanteAMA"
-                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                    <p:columnGroup type="header">
-                                         <p:row>
-                                            <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
-                                            <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
-                                            <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
-                                            <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
-                                            <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
-                                        </p:row>
-                                        <p:row>
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/>
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/> 
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/>
-                                        </p:row>
-                                    </p:columnGroup>
-                                    <p:column style="text-align: justify;"><h:outputText value="#{participanteAMA.progEdu}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.cuat}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partH}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partM}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partHLI}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partMLI}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partHD}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partMD}" /></p:column> 
-
-                                </p:dataTable> 
-                                         </c:if>
-                                        <c:if test="#{partActFormInt.dto.listaParticipantesATIC.size() >0}">
-                                <h5 style="text-align: center; font-weight: bold;">Área Tecnologías de la Información y Comunicación</h5>
-                                <p:dataTable id="tblPartATIC" value="#{partActFormInt.dto.listaParticipantesATIC}" var="participanteATIC"
-                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                    <p:columnGroup type="header">
-                                         <p:row>
-                                            <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
-                                            <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
-                                            <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
-                                            <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
-                                            <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
-                                        </p:row>
-                                        <p:row>
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/>
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/> 
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/>
-                                        </p:row>
-                                    </p:columnGroup>
-                                    <p:column style="text-align: justify;"><h:outputText value="#{participanteATIC.progEdu}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.cuat}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partH}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partM}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partHLI}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partMLI}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partHD}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partMD}" /></p:column> 
-
-                                </p:dataTable> 
-                                             </c:if>
-                                            <c:if test="#{partActFormInt.dto.listaParticipantesAS.size() >0}">
-                                <h5 style="text-align: center; font-weight: bold;">Área Salud</h5>
-                                <p:dataTable id="tblPartAS" value="#{partActFormInt.dto.listaParticipantesAS}" var="participanteAS"
-                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                    <p:columnGroup type="header">
-                                         <p:row>
-                                            <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
-                                            <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
-                                            <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
-                                            <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
-                                            <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
-                                        </p:row>
-                                        <p:row>
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/>
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/> 
-                                            <p:column headerText="Hombres" style="width: 100px;"/>
-                                            <p:column headerText="Mujeres" style="width: 100px;"/>
-                                        </p:row>
-                                    </p:columnGroup>
-                                    <p:column style="text-align: justify;"><h:outputText value="#{participanteAS.progEdu}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.cuat}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partH}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partM}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partHLI}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partMLI}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partHD}" /></p:column>
-                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partMD}" /></p:column> 
-
-                                </p:dataTable> 
-                            </c:if>
-                            <h4 style="text-align: center; text-decoration: underline;">Participantes por Nivel</h4>
-                            <p:dataTable id="tblModalPart" value="#{partActFormInt.dto.listaParticipantes}" var="participanteAct"
-                                                 emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive" >
-                                        <p:columnGroup type="header">
-                                             <p:row>
-                                                <p:column rowspan="2" headerText="Nivel" style="width: 300px;"/>
-                                                <p:column colspan="2" headerText="Total Participantes" style="width: 400px;"/>
-                                             </p:row>
-                                             <p:row>
-                                                <p:column headerText="Hombres" style="width: 200px;"/>
-                                                <p:column headerText="Mujeres" style="width: 200px;"/>
-                                             </p:row>
-                                        </p:columnGroup>
-                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.nivel}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.partH}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAct.partM}" /></p:column>
-                                    </p:dataTable>
-                        </h:form>
-                    </p:dialog>
-                    <br></br>
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12">
-                            <h:form id="frmAreasConRegistros">
-                                <p:dataGrid var="areasRegistro" value="#{actFormIntegralPYE.dto.listaAFIAreasConRegistroMensualGeneral}" columns="10" layout="grid"
-                                            id="areasRegistro">
-                                    <f:facet name="header" >
-                                        <span style="font-size: medium;"> Áreas que actualmente tienen registros en el mes: <strong>#{actFormIntegralPYE.dto.eventoSeleccionado.mes} </strong></span>
-                                    </f:facet>
-                                     <p:panel style="text-align:center;" >
-                                        <h:panelGrid columns="1">
-                                            <h:outputText value="#{areasRegistro.categoria.descripcion}" style="font-weight: bold;"/>
-                                            <h:outputText value="#{areasRegistro.nombre}"/>
-                                        </h:panelGrid>
-                                    </p:panel>
-                                </p:dataGrid>
                             </h:form>
+                        </p:dialog>
+                        <!-- Modal Alineación Actividad de Formación Integral -->
+                        <p:dialog id="modalAlineacion" widgetVar="modalAlineacion" width="900" height="auto"  closeOnEscape="true"
+                                  showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." onHide="actualizar();"
+                                  styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">                        
+                            <h:form id="frmAlineacion" >
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:toolbar>
+                                            <f:facet name="left">
+
+                                            </f:facet>
+                                            <f:facet name="right">
+                                                <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{actFormIntegralPYE.eliminarAlineacion()}" rendered="#{!empty actFormIntegralPYE.dto.registro.actividadAlineada}" >
+                                                    <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{actFormIntegralPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                            </f:facet>
+                                        </p:toolbar>
+                                    </div>
+                                </div>                            
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Actividad: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{actFormIntegralPYE.dto.registro.actividadesFormacionIntegral.nombre}" /></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Fecha: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{actFormIntegralPYE.dto.registro.actividadesFormacionIntegral.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:outputLabel></div>
+                                </div>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                                <c:set var="col1" value="#{'col-md-2'}" />
+                                <c:set var="col2" value="#{'col-md-10'}" />
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="eje" value="#{actFormIntegralPYE.dto.alineacionEje}" valueChangeListener="#{actFormIntegralPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{actFormIntegralPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                            <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="eje"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="estrategia" value="#{actFormIntegralPYE.dto.alineacionEstrategia}" valueChangeListener="#{actFormIntegralPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{actFormIntegralPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                            <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="lineaAccion" value="#{actFormIntegralPYE.dto.alineacionLinea}" valueChangeListener="#{actFormIntegralPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{actFormIntegralPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                            <p:ajax process="lineaAccion" update="actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="actividad" value="#{actFormIntegralPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{actFormIntegralPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                            <p:ajax process="actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="actividad"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </p:dialog>
+                        <!-- Modal Participantes Actividad de Formación Integral -->
+                        <p:dialog id="modalParticipantes" 
+                                  widgetVar="modalParticipantes" 
+                                  width="1200" 
+                                  height="auto"  
+                                  closeOnEscape="true" 
+                                  visible="#{partAFI.dto.forzarAperturaDialogo}"
+                                  showEffect="fade" 
+                                  hideEffect="fade" 
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Participantes por Actividad" 
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">
+
+                            <h:form id="frmModalParticipantes" >
+                                <h4 style="text-align: center; text-decoration: underline;">Participantes por Área, Programa Educativo y Cuatrimestre</h4>
+                                <c:if test="#{partActFormInt.dto.listaParticipantesAEA.size() >0}">
+                                    <h5 style="text-align: center; font-weight: bold;">Área Económico Administrativa</h5>
+                                    <p:dataTable id="tblPartAEA" value="#{partActFormInt.dto.listaParticipantesAEA}" var="participanteAEA"
+                                                 emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
+                                                <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
+                                                <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
+                                                <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
+                                                <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/>
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/> 
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/>
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: justify;"><h:outputText value="#{participanteAEA.progEdu}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.cuat}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partH}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partM}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partHLI}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partMLI}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partHD}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAEA.partMD}" /></p:column> 
+
+                                    </p:dataTable> 
+                                </c:if>
+                                <c:if test="#{partActFormInt.dto.listaParticipantesAAA.size() >0}">
+                                    <h5 style="text-align: center; font-weight: bold;">Área Agro-Industrial Alimentaria</h5>
+                                    <p:dataTable id="tblPartAAA" value="#{partActFormInt.dto.listaParticipantesAAA}" var="participanteAAA"
+                                                 emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
+                                                <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
+                                                <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
+                                                <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
+                                                <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/>
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/> 
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/>
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: justify;"><h:outputText value="#{participanteAAA.progEdu}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.cuat}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partH}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partM}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partHLI}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partMLI}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partHD}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAAA.partMD}" /></p:column> 
+
+                                    </p:dataTable> 
+                                </c:if>
+                                <c:if test="#{partActFormInt.dto.listaParticipantesAMI.size() >0}">
+                                    <h5 style="text-align: center; font-weight: bold;">Área Mantenimiento Industrial</h5>
+                                    <p:dataTable id="tblPartAMI" value="#{partActFormInt.dto.listaParticipantesAMI}" var="participanteAMI"
+                                                 emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
+                                                <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
+                                                <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
+                                                <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
+                                                <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/>
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/> 
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/>
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: justify;"><h:outputText value="#{participanteAMI.progEdu}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.cuat}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partH}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partM}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partHLI}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partMLI}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partHD}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMI.partMD}" /></p:column> 
+
+                                    </p:dataTable> 
+                                </c:if>
+                                <c:if test="#{partActFormInt.dto.listaParticipantesAMA.size() >0}">
+                                    <h5 style="text-align: center; font-weight: bold;">Área Mecatrónica Automatización</h5>
+                                    <p:dataTable id="tblPartAMA" value="#{partActFormInt.dto.listaParticipantesAMA}" var="participanteAMA"
+                                                 emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
+                                                <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
+                                                <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
+                                                <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
+                                                <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/>
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/> 
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/>
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: justify;"><h:outputText value="#{participanteAMA.progEdu}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.cuat}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partH}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partM}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partHLI}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partMLI}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partHD}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAMA.partMD}" /></p:column> 
+
+                                    </p:dataTable> 
+                                </c:if>
+                                <c:if test="#{partActFormInt.dto.listaParticipantesATIC.size() >0}">
+                                    <h5 style="text-align: center; font-weight: bold;">Área Tecnologías de la Información y Comunicación</h5>
+                                    <p:dataTable id="tblPartATIC" value="#{partActFormInt.dto.listaParticipantesATIC}" var="participanteATIC"
+                                                 emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
+                                                <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
+                                                <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
+                                                <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
+                                                <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/>
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/> 
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/>
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: justify;"><h:outputText value="#{participanteATIC.progEdu}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.cuat}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partH}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partM}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partHLI}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partMLI}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partHD}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteATIC.partMD}" /></p:column> 
+
+                                    </p:dataTable> 
+                                </c:if>
+                                <c:if test="#{partActFormInt.dto.listaParticipantesAS.size() >0}">
+                                    <h5 style="text-align: center; font-weight: bold;">Área Salud</h5>
+                                    <p:dataTable id="tblPartAS" value="#{partActFormInt.dto.listaParticipantesAS}" var="participanteAS"
+                                                 emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column rowspan="3" headerText="Programa Educativo" style="width: 300px;"/>
+                                                <p:column rowspan="3" headerText="Cuatrimestre" style="width: 100px;"/>
+                                                <p:column colspan="2" headerText="Total Participantes" style="width: 200px;"/>
+                                                <p:column colspan="2" headerText="Lengua Indígena" style="width: 200px;"/>
+                                                <p:column colspan="2" headerText="Discapacidad" style="width: 200px;"/>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/>
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/> 
+                                                <p:column headerText="Hombres" style="width: 100px;"/>
+                                                <p:column headerText="Mujeres" style="width: 100px;"/>
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: justify;"><h:outputText value="#{participanteAS.progEdu}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAS.cuat}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partH}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partM}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partHLI}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partMLI}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partHD}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{participanteAS.partMD}" /></p:column> 
+
+                                    </p:dataTable> 
+                                </c:if>
+                                <h4 style="text-align: center; text-decoration: underline;">Participantes por Nivel</h4>
+                                <p:dataTable id="tblModalPart" value="#{partActFormInt.dto.listaParticipantes}" var="participanteAct"
+                                             emptyMessage="No se han registrado participantes" tableStyleClass="table table-bordered table-hover table-condensed table-responsive" >
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column rowspan="2" headerText="Nivel" style="width: 300px;"/>
+                                            <p:column colspan="2" headerText="Total Participantes" style="width: 400px;"/>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column headerText="Hombres" style="width: 200px;"/>
+                                            <p:column headerText="Mujeres" style="width: 200px;"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAct.nivel}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAct.partH}" /></p:column>
+                                    <p:column style="text-align: center;"><h:outputText value="#{participanteAct.partM}" /></p:column>
+                                </p:dataTable>
+                            </h:form>
+                        </p:dialog>
+                        <br></br>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <h:form id="frmAreasConRegistros">
+                                    <p:dataGrid var="areasRegistro" value="#{actFormIntegralPYE.dto.listaAFIAreasConRegistroMensualGeneral}" columns="10" layout="grid"
+                                                id="areasRegistro">
+                                        <f:facet name="header" >
+                                            <span style="font-size: medium;"> Áreas que actualmente tienen registros en el mes: <strong>#{actFormIntegralPYE.dto.eventoSeleccionado.mes} </strong></span>
+                                        </f:facet>
+                                        <p:panel style="text-align:center;" >
+                                            <h:panelGrid columns="1">
+                                                <h:outputText value="#{areasRegistro.categoria.descripcion}" style="font-weight: bold;"/>
+                                                <h:outputText value="#{areasRegistro.nombre}"/>
+                                            </h:panelGrid>
+                                        </p:panel>
+                                    </p:dataGrid>
+                                </h:form>
+                            </div>
                         </div>
-                    </div>
-                      <!-- Modal para editar registro seleccionado -->
-                    <p:dialog id="modalEdicion" 
-                              widgetVar="modalEdicion" 
-                              width="1200" 
-                              height="auto"  
-                              closeOnEscape="true" 
-                              visible="#{actFormIntegral.dto.forzarAperturaDialogo}"
-                              showEffect="fade" 
-                              hideEffect="fade" 
-                              modal="true" 
-                              draggable="true" 
-                              header="Editar registro" 
-                              styleClass="panel panel-primary" 
-                              responsive="true" 
-                              resizable="false" 
-                              maximizable="false">
-                        
-                             <o:form id="frmModalEdicion" enctype="multipart/form-data"> 
-                                        <p:outputPanel>
-                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                <div class="col-md-12">
-                                                    <div class="box box-widget widget-user-2">
-                                                        <div class="row">
-                                                            <div class="form-group">
-                                                                <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                    <p:outputLabel for="clave" value="Clave"/>                                
-                                                                    <p:inputText id="clave" class="form-control" disabled="true" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.actividadFormacionIntegral}"/>
-                                                                    <p:message for="clave" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                    <p:outputLabel for="nombre" value="Nombre de la Actividad"/>
-                                                                    <p:inputText id="nombre" class="form-control" disabled="true" size="300" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.nombre}"/>
-                                                                    <p:message for="nombre" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <p:outputLabel value="Tipo de Actividad" for="actividad"/>
-                                                                    <p:inputText id="actividad" disabled="true" class="form-control" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.actividadTipo.nombre}"/>
-                                                                    <p:message for="actividad" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <p:outputLabel for="evento" value="Tipo de Evento"/>
-                                                                    <p:inputText id="evento" class="form-control" disabled="true" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.eventoTipo.nombre}"/>
-                                                                    <p:message for="evento" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                 <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <p:outputLabel for="duracion" value="Duración"/>
-                                                                    <p:inputMask id="duracion" class="form-control" mask="99:99:99" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.duracion}"/>
-                                                                    <p:message for="duracion" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>  
-                                                                <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                    <p:outputLabel for="lugar" value="Lugar de realización"/>
-                                                                    <p:inputText id="lugar" class="form-control" placeholder="Lugar de realización" size="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.lugarRealizacion}"/> 
-                                                                    <p:message for="lugar" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                    <p:outputLabel for="facilitador" value="Facilitador/a o Empresa"/>
-                                                                    <p:inputText id="facilitador" class="form-control" placeholder="Facilitador/a o Empresa" size="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.facilitadorEmpresa}"/> 
-                                                                    <p:message for="facilitador" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>  
-                                                                <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                    <p:outputLabel for="eqpart" value="Equipos Participantes"/>
-                                                                    <p:inputText id="eqpart" class="form-control" placeholder="Equipos Participantes" size="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.equiposParticipantes}"/> 
-                                                                    <p:message for="eqpart" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                    <p:outputLabel for="eqgan" value="Equipos Ganadores"/>
-                                                                    <p:inputText id="eqgan" class="form-control" placeholder="Equipos Ganadores" size="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.equiposGanadores}"/> 
-                                                                    <p:message for="eqgan" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>  
-                                                                <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                    <p:outputLabel for="objetivo" value="Objetivo"/>
-                                                                    <p:inputTextarea id="objetivo" class="form-control" placeholder="Objetivo" maxlength="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.objetivo}"/> 
-                                                                    <p:message for="objetivo" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>  
-                                                                 <div class="col-sm-12 col-md-4 col-lg-3">
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                    <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{actFormIntegral.guardarEdicion()}" 
-                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
-                                                                                     update="@form"  process="@form" />
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-3 col-lg-3">
-                                                                </div>  
-                                                            </div>
+                        <!-- Modal para editar registro seleccionado -->
+                        <p:dialog id="modalEdicion" 
+                                  widgetVar="modalEdicion" 
+                                  width="1200" 
+                                  height="auto"  
+                                  closeOnEscape="true" 
+                                  visible="#{actFormIntegral.dto.forzarAperturaDialogo}"
+                                  showEffect="fade" 
+                                  hideEffect="fade" 
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Editar registro" 
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">
+
+                            <o:form id="frmModalEdicion" enctype="multipart/form-data"> 
+                                <p:outputPanel>
+                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                        <div class="col-md-12">
+                                            <div class="box box-widget widget-user-2">
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                                            <p:outputLabel for="clave" value="Clave"/>                                
+                                                            <p:inputText id="clave" class="form-control" disabled="true" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.actividadFormacionIntegral}"/>
+                                                            <p:message for="clave" display="tooltip" />
+                                                            <hr/>
                                                         </div>
-                                                        <hr/>
+                                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                                            <p:outputLabel for="nombre" value="Nombre de la Actividad"/>
+                                                            <p:inputText id="nombre" class="form-control" disabled="true" size="300" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.nombre}"/>
+                                                            <p:message for="nombre" display="tooltip" />
+                                                            <hr/>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                            <p:outputLabel value="Tipo de Actividad" for="actividad"/>
+                                                            <p:inputText id="actividad" disabled="true" class="form-control" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.actividadTipo.nombre}"/>
+                                                            <p:message for="actividad" display="tooltip" />
+                                                            <hr/>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                            <p:outputLabel for="evento" value="Tipo de Evento"/>
+                                                            <p:inputText id="evento" class="form-control" disabled="true" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.eventoTipo.nombre}"/>
+                                                            <p:message for="evento" display="tooltip" />
+                                                            <hr/>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                            <p:outputLabel for="duracion" value="Duración"/>
+                                                            <p:inputMask id="duracion" class="form-control" mask="99:99:99" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.duracion}"/>
+                                                            <p:message for="duracion" display="tooltip" />
+                                                            <hr/>
+                                                        </div>  
+                                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                                            <p:outputLabel for="lugar" value="Lugar de realización"/>
+                                                            <p:inputText id="lugar" class="form-control" placeholder="Lugar de realización" size="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.lugarRealizacion}"/> 
+                                                            <p:message for="lugar" display="tooltip" />
+                                                            <hr/>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                                            <p:outputLabel for="facilitador" value="Facilitador/a o Empresa"/>
+                                                            <p:inputText id="facilitador" class="form-control" placeholder="Facilitador/a o Empresa" size="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.facilitadorEmpresa}"/> 
+                                                            <p:message for="facilitador" display="tooltip" />
+                                                            <hr/>
+                                                        </div>  
+                                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                                            <p:outputLabel for="eqpart" value="Equipos Participantes"/>
+                                                            <p:inputText id="eqpart" class="form-control" placeholder="Equipos Participantes" size="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.equiposParticipantes}"/> 
+                                                            <p:message for="eqpart" display="tooltip" />
+                                                            <hr/>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                                            <p:outputLabel for="eqgan" value="Equipos Ganadores"/>
+                                                            <p:inputText id="eqgan" class="form-control" placeholder="Equipos Ganadores" size="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.equiposGanadores}"/> 
+                                                            <p:message for="eqgan" display="tooltip" />
+                                                            <hr/>
+                                                        </div>  
+                                                        <div class="col-sm-12 col-md-12 col-lg-12">
+                                                            <p:outputLabel for="objetivo" value="Objetivo"/>
+                                                            <p:inputTextarea id="objetivo" class="form-control" placeholder="Objetivo" maxlength="1000" value="#{actFormIntegral.dto.registro.actividadesFormacionIntegral.objetivo}"/> 
+                                                            <p:message for="objetivo" display="tooltip" />
+                                                            <hr/>
+                                                        </div>  
+                                                        <div class="col-sm-12 col-md-4 col-lg-3">
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                                            <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{actFormIntegral.guardarEdicion()}" 
+                                                                             icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
+                                                                             update="@form"  process="@form" />
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-3 col-lg-3">
+                                                        </div>  
                                                     </div>
                                                 </div>
+                                                <hr/>
                                             </div>
-                                        </p:outputPanel>
-                                    </o:form>
-                    </p:dialog>
+                                        </div>
+                                    </div>
+                                </p:outputPanel>
+                            </o:form>
+                        </p:dialog>
+                    </div>
+
                 </div>
-               
             </div>
-        </div>
         </c:if>
     </ui:define>
 </ui:composition>

@@ -135,19 +135,19 @@ public interface EjbRegistroMovilidad {
      * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
      * @return Lista de registros
      */
-    public List<DTORegistroMovilidad> getRegistroReporteMov(Short claveArea);
+    public List<DTORegistroMovilidad> getRegistroReporteMov(Short claveArea, Short ejercicio);
     
     /**
      * Obtiene la lista de registros actuales del registro
      * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
      * @return Lista de registros
      */
-    public List<DTOMovilidadDocente> getRegistroReporteMovDoc(Short claveArea);
+    public List<DTOMovilidadDocente> getRegistroReporteMovDoc(Short claveArea, Short ejercicio);
     
     /**
      * Obtiene la lista de registros actuales del registro
      * @param claveArea Área a la que pertenece el usuario y que servirá como filtro.
      * @return Lista de registros
      */
-    public List<DTOMovilidadEstudiante> getRegistroReporteMovEst(Short claveArea);
+    public List<DTOMovilidadEstudiante> getRegistroReporteMovEst(Short claveArea, Short ejercicio);
 }

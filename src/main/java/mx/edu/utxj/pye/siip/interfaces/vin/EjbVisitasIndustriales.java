@@ -74,5 +74,5 @@ public interface EjbVisitasIndustriales {
      * Obtiene la lista de registros actuales del registro
      * @return Lista de registros
      */
-    public List<ListaDtoVisitasIndustriales> getRegistroVisitas();
+    public List<ListaDtoVisitasIndustriales> getRegistroVisitas(Short ejercicio);
 }

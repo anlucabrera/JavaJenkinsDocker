@@ -943,9 +943,10 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     }
 
     @Override
-    public List<OrganismosVinculados> getReporteOrganismosVinculados() {
+    public List<OrganismosVinculados> getReporteOrganismosVinculados(Short ejercicio) {
         try {
-            return facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosVinculados o INNER JOIN o.registros r ORDER BY r.eventoRegistro.mes, o.nombre",OrganismosVinculados.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT o FROM OrganismosVinculados o INNER JOIN o.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY r.eventoRegistro.mes, o.nombre",OrganismosVinculados.class)
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -953,9 +954,10 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     }
 
     @Override
-    public List<OrganismosVinculados> getReporteActividadesVinculacion() {
+    public List<OrganismosVinculados> getReporteActividadesVinculacion(Short ejercicio) {
         try {
-            return facadeProntuario.getEntityManager().createQuery("SELECT DISTINCT(ov) FROM OrganismosVinculados ov INNER JOIN ov.actividadesVinculacionList av ORDER BY ov.nombre",OrganismosVinculados.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT DISTINCT(ov) FROM OrganismosVinculados ov INNER JOIN ov.actividadesVinculacionList av WHERE ov.registros.eventoRegistro.ejercicioFiscal.anio = :ejercicio ORDER BY ov.nombre",OrganismosVinculados.class)
+                    .setParameter("ejercicio", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -963,9 +965,10 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     }
 
     @Override
-    public List<ProgramasBeneficiadosVinculacion> getReporteProgramasBeneficiadosVinculacion() {
+    public List<ProgramasBeneficiadosVinculacion> getReporteProgramasBeneficiadosVinculacion(Short ejercicio) {
         try {
-            return facadeProntuario.getEntityManager().createQuery("SELECT pb FROM ProgramasBeneficiadosVinculacion pb INNER JOIN pb.organismosVinculados ov ORDER BY ov.empresa",ProgramasBeneficiadosVinculacion.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT pb FROM ProgramasBeneficiadosVinculacion pb INNER JOIN pb.organismosVinculados ov INNER JOIN ov.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.anio = :ejercicio ORDER BY ov.empresa",ProgramasBeneficiadosVinculacion.class)
+                    .setParameter("ejercicio", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -973,9 +976,10 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     }
 
     @Override
-    public List<TelefonosEmpresa> getReporteTelefonosEmpresa() {
+    public List<TelefonosEmpresa> getReporteTelefonosEmpresa(Short ejercicio) {
         try {
-            return facadeProntuario.getEntityManager().createQuery("SELECT te FROM TelefonosEmpresa te INNER JOIN te.empresa e ORDER BY e.empresa",TelefonosEmpresa.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT te FROM TelefonosEmpresa te INNER JOIN te.empresa e WHERE e.registros.eventoRegistro.ejercicioFiscal.anio = :ejercicio ORDER BY e.empresa",TelefonosEmpresa.class)
+                    .setParameter("ejercicio", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -983,9 +987,10 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     }
 
     @Override
-    public List<CorreosEmpresa> getCorreosEmpresas() {
+    public List<CorreosEmpresa> getCorreosEmpresas(Short ejercicio) {
         try {
-            return facadeProntuario.getEntityManager().createQuery("SELECT ce FROM CorreosEmpresa ce INNER JOIN ce.empresa e ORDER BY e.empresa",CorreosEmpresa.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT ce FROM CorreosEmpresa ce INNER JOIN ce.empresa e WHERE e.registros.eventoRegistro.ejercicioFiscal.anio = :ejercicio ORDER BY e.empresa",CorreosEmpresa.class)
+                    .setParameter("ejercicio", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -993,9 +998,10 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
     }
 
     @Override
-    public List<ContactosEmpresa> getReporteContactosEmpresa() {
+    public List<ContactosEmpresa> getReporteContactosEmpresa(Short ejercicio) {
         try {
-            return facadeProntuario.getEntityManager().createQuery("SELECT ce FROM ContactosEmpresa ce INNER JOIN ce.empresa e ORDER BY e.empresa",ContactosEmpresa.class)
+            return facadeProntuario.getEntityManager().createQuery("SELECT ce FROM ContactosEmpresa ce INNER JOIN ce.empresa e WHERE e.registros.eventoRegistro.ejercicioFiscal.anio = :ejercicio ORDER BY e.empresa",ContactosEmpresa.class)
+                    .setParameter("ejercicio", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;

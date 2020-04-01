@@ -89,7 +89,7 @@ public interface EjbPersonalCapacitado {
      * @param periodo Periodo del evento y que servirá como filtro
      * @return Lista de registros mensuales de Capacitación.
      */
-    public List<DTOPersonalCapacitado> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo);
+    public List<DTOPersonalCapacitado> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, Short secretariaAcademica);
     
      /**
      * Obtiene la lista de registros correspondientes al evento seleccionado.
@@ -98,7 +98,7 @@ public interface EjbPersonalCapacitado {
      * @param periodo Periodo del evento y que servirá como filtro
      * @return Lista de registros mensuales de Participantes.
      */
-    public List<DTOPerCapParticipantes> getListaRegistrosPorEventoAreaPeriodoPart(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo);
+    public List<DTOPerCapParticipantes> getListaRegistrosPorEventoAreaPeriodoPart(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, Short areaAcademica);
    
     /**
      * Comprueba si el periodo del evento actual se encuentra en el periodo mas reciente, en caso de no encontrarlo obtiene el periodo correspondiente
@@ -138,11 +138,11 @@ public interface EjbPersonalCapacitado {
      * Obtiene la lista de registros actuales del registro
      * @return Lista de registros
      */
-    public List<DTOPersonalCapacitado> getRegistroPerCap();
+    public List<DTOPersonalCapacitado> getRegistroPerCap(Short ejercicio);
     
      /**
      * Obtiene la lista de registros actuales del registro
      * @return Lista de registros
      */
-    public List<DTOPerCapParticipantes> getRegistroPartCap();
+    public List<DTOPerCapParticipantes> getRegistroPartCap(Short ejercicio);
 }

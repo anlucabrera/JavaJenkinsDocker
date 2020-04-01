@@ -58,6 +58,6 @@ public interface EjbFeriasParticipantes {
      * Obtiene la lista de registros actuales del registro
      * @return Lista de registros
      */
-    public List<ListaFeriasParticipantesDTO> getRegistroReportePartFerProf();
+    public List<ListaFeriasParticipantesDTO> getRegistroReportePartFerProf(Short ejercicio);
 }
 

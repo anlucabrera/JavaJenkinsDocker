@@ -367,27 +367,28 @@ public class ServicioFeriasProfesiograficas implements EjbFeriasProfesiograficas
     }
 
     @Override
-    public List<ListaFeriasDTO> getRegistroReporteFerProf() {
+    public List<ListaFeriasDTO> getRegistroReporteFerProf(Short ejercicio) {
         List<FeriasProfesiograficas> q = new ArrayList<>();
         List<ListaFeriasDTO> ldto = new ArrayList<>();
-        
-        q = f.getEntityManager().createQuery("SELECT a from FeriasProfesiograficas a", FeriasProfesiograficas.class)
-        .getResultList();
-            
+
+        q = f.getEntityManager().createQuery("SELECT a from FeriasProfesiograficas a INNER JOIN a.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.ejercicioFiscal = :ejercicio", FeriasProfesiograficas.class)
+                .setParameter("ejercicio", ejercicio)
+                .getResultList();
+
         if (q.isEmpty() || q == null) {
             return null;
         } else {
             TypedQuery<EventosRegistros> query = f.getEntityManager().createQuery("SELECT er FROM EventosRegistros er WHERE :fecha BETWEEN er.fechaInicio AND er.fechaFin", EventosRegistros.class);
             query.setParameter("fecha", new Date());
             EventosRegistros eventoRegistro = query.getSingleResult();
-            q.forEach(x -> {            
+            q.forEach(x -> {
                 Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
                 AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
-                ActividadesPoa a = registro.getActividadesPoaList().isEmpty()?null:registro.getActividadesPoaList().get(0);
+                ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null : registro.getActividadesPoaList().get(0);
                 ListaFeriasDTO dto;
                 if (eventoRegistro.equals(registro.getEventoRegistro())) {
-                    dto = new ListaFeriasDTO(Boolean.TRUE,  x, au, a);
-                            } else {
+                    dto = new ListaFeriasDTO(Boolean.TRUE, x, au, a);
+                } else {
                     dto = new ListaFeriasDTO(Boolean.FALSE, x, au, a);
                 }
                 ldto.add(dto);

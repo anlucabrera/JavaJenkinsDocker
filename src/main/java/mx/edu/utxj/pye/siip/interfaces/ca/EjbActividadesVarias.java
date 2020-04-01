@@ -36,7 +36,7 @@ public interface EjbActividadesVarias {
     
     public List<ActividadesVariasRegistro> getFiltroActividadesVariasEjercicioMes(Short ejercicio, String mes);
     
-    public List<AreasUniversidad> getAreasConRegistroMensualGeneral(Boolean tipoConsulta, String mes);
+    public List<AreasUniversidad> getAreasConRegistroMensualGeneral(Boolean tipoConsulta, Integer eventoRegistro);
     
     /**
      * Actualiza en base de datos los campos de la tabla de registros de ActividadesVarias
@@ -48,6 +48,8 @@ public interface EjbActividadesVarias {
     public Boolean buscaActividadVariaExistente(ActividadesVariasRegistro actividadVaria);
     
     public List<ActividadesVariasRegistro> reporteActividadesVariasPorEjercicio(Short ejercicioFiscal);
+    
+    public List<ActividadesVariasRegistro> reporteActividadesVariasPorEjercicio(Short ejercicioFiscal, Short area);
     
     public void guardaActividadVaria(ActividadesVariasRegistro actividadVaria, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros);
     

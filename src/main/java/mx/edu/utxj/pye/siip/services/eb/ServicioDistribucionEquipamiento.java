@@ -879,10 +879,10 @@ public class ServicioDistribucionEquipamiento implements EjbDistribucionEquipami
     }
 
     @Override
-    public List<EquiposComputoCicloPeriodoEscolar> reporteEquiposComputoCicloPeriodoEscolares() {
+    public List<EquiposComputoCicloPeriodoEscolar> reporteEquiposComputoCicloPeriodoEscolares(Short ejercicioFiscal) {
         try {
             return facadeServGen.getEntityManager().createQuery("SELECT e FROM EquiposComputoCicloPeriodoEscolar e INNER JOIN e.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY r.eventoRegistro.mes",EquiposComputoCicloPeriodoEscolar.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicioFiscal)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -890,10 +890,10 @@ public class ServicioDistribucionEquipamiento implements EjbDistribucionEquipami
     }
 
     @Override
-    public List<EquiposComputoInternetCicloPeriodoEscolar> reporteEquiposComputoInternetCicloPeriodoEscolares() {
+    public List<EquiposComputoInternetCicloPeriodoEscolar> reporteEquiposComputoInternetCicloPeriodoEscolares(Short ejercicioFiscal) {
         try {
             return facadeServGen.getEntityManager().createQuery("SELECT e FROM EquiposComputoInternetCicloPeriodoEscolar e INNER JOIN e.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY r.eventoRegistro.mes",EquiposComputoInternetCicloPeriodoEscolar.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicioFiscal)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;

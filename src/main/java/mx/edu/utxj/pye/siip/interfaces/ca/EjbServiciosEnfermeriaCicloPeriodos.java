@@ -42,7 +42,7 @@ public interface EjbServiciosEnfermeriaCicloPeriodos {
      */
     public List<DTOServiciosEnfemeriaCicloPeriodos> getFiltroServiciosEnfermeriaEjercicioMesArea(Short ejercicio, String mes, Short area);
     
-    public List<ServiciosEnfermeriaCicloPeriodos> getReporteGeneralEjercicioServiciosEnfermeria();
+    public List<ServiciosEnfermeriaCicloPeriodos> getReporteGeneralEjercicioServiciosEnfermeria(Short ejercicio);
     
     public ServiciosEnfermeriaCicloPeriodos editaServicioEnfermeria(ServiciosEnfermeriaCicloPeriodos servicioEnfermeria);
     
