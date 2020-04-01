@@ -130,13 +130,13 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReporteIngPropios() throws Throwable {
+    public String getReporteIngPropios(Short ejercicioFiscal) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[3]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[3]);
         String plantilla = rutaPlantilla.concat(INGPROCAP_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(INGPROCAP_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("ingP", ejbIngPropios.getListaRegistrosParaReporte());
+        beans.put("ingP", ejbIngPropios.getListaRegistrosParaReporte(ejercicioFiscal));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
 
@@ -144,13 +144,13 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReportePresupuestos() throws Throwable {
+    public String getReportePresupuestos(Short ejercicioFiscal) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[3]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[3]);
         String plantilla = rutaPlantilla.concat(PRESUPUESTOS_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(PRESUPUESTOS_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("presE", ejbPresupuestos.getRegistroPresupuestos());
+        beans.put("presE", ejbPresupuestos.getRegistroPresupuestos(ejercicioFiscal));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
 
@@ -158,13 +158,13 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReporteDifusion() throws Throwable {
+    public String getReporteDifusion(Short ejercicio) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[2]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[2]);
         String plantilla = rutaPlantilla.concat(DIFIEMS_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(DIFIEMS_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("difI", ejbDifusionIems.getRegistroDifusion());
+        beans.put("difI", ejbDifusionIems.getRegistroDifusion(ejercicio));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
         
@@ -172,13 +172,13 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReporteVisitas() throws Throwable {
+    public String getReporteVisitas(Short ejercicio) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[2]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[2]);
         String plantilla = rutaPlantilla.concat(VISIND_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(VISIND_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("visI", ejbVisitasIndustriales.getRegistroVisitas());
+        beans.put("visI", ejbVisitasIndustriales.getRegistroVisitas(ejercicio));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
         
@@ -186,13 +186,13 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReporteBecas() throws Throwable {
+    public String getReporteBecas(Short ejercicioFiscal) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[1]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[1]);
         String plantilla = rutaPlantilla.concat(BECAS_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(BECAS_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("bpe", ejbBecasPeriodo.getRegistroReporteBecas());
+        beans.put("bpe", ejbBecasPeriodo.getRegistroReporteBecas(ejercicioFiscal));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
         
@@ -200,14 +200,14 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReporteAFI(Short claveArea) throws Throwable {
+    public String getReporteAFI(Short claveArea, Short ejercicio) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[1]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[1]);
         String plantilla = rutaPlantilla.concat(ACTFORMINT_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(ACTFORMINT_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("afi", ejbActFormacionIntegral.getListaRegistrosAFI(claveArea));
-        beans.put("pafi", ejbActFormacionIntegral.getListaRegistrosPAFI(claveArea));
+        beans.put("afi", ejbActFormacionIntegral.getListaRegistrosAFI(claveArea,ejercicio));
+        beans.put("pafi", ejbActFormacionIntegral.getListaRegistrosPAFI(claveArea,ejercicio));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
 
@@ -215,14 +215,14 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReporteDesercion() throws Throwable {
+    public String getReporteDesercion(Short ejercicio) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[1]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[1]);
         String plantilla = rutaPlantilla.concat(DESERCION_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(DESERCION_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("desA", ejbDesercionPeriodos.getRegistroDesercion());
-        beans.put("rep", ejbDesercionReprobacion.getRegistroReprobacion());
+        beans.put("desA", ejbDesercionPeriodos.getRegistroDesercion(ejercicio));
+        beans.put("rep", ejbDesercionReprobacion.getRegistroReprobacion(ejercicio));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
 
@@ -230,14 +230,14 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReportePerCap() throws Throwable {
+    public String getReportePerCap(Short ejercicio) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[4]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[4]);
         String plantilla = rutaPlantilla.concat(PERSCAPACITADO_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(PERSCAPACITADO_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("perC",  ejbPersonalCapacitado.getRegistroPerCap());
-        beans.put("partC",  ejbPersonalCapacitado.getRegistroPartCap());
+        beans.put("perC",  ejbPersonalCapacitado.getRegistroPerCap(ejercicio));
+        beans.put("partC",  ejbPersonalCapacitado.getRegistroPartCap(ejercicio));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
 
@@ -245,14 +245,14 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReporteFerProf() throws Throwable {
+    public String getReporteFerProf(Short ejercicio) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[2]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[2]);
         String plantilla = rutaPlantilla.concat(FERPROF_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(FERPROF_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("ferP", ejbFeriasProfesiograficas.getRegistroReporteFerProf());
-        beans.put("partFP", ejbFeriasParticipantes.getRegistroReportePartFerProf());
+        beans.put("ferP", ejbFeriasProfesiograficas.getRegistroReporteFerProf(ejercicio));
+        beans.put("partFP", ejbFeriasParticipantes.getRegistroReportePartFerProf(ejercicio));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
         
@@ -260,15 +260,15 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReporteMov(Short claveArea) throws Throwable {
+    public String getReporteMov(Short claveArea, Short ejercicio) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[1]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[1]);
         String plantilla = rutaPlantilla.concat(MOVILIDAD_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(MOVILIDAD_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("mov", ejbRegistroMovilidad.getRegistroReporteMov(claveArea));
-        beans.put("doc", ejbRegistroMovilidad.getRegistroReporteMovDoc(claveArea));
-        beans.put("est", ejbRegistroMovilidad.getRegistroReporteMovEst(claveArea));
+        beans.put("mov", ejbRegistroMovilidad.getRegistroReporteMov(claveArea, ejercicio));
+        beans.put("doc", ejbRegistroMovilidad.getRegistroReporteMovDoc(claveArea, ejercicio));
+        beans.put("est", ejbRegistroMovilidad.getRegistroReporteMovEst(claveArea, ejercicio));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
 
@@ -276,14 +276,14 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReporteBolTrab() throws Throwable {
+    public String getReporteBolTrab(Short ejercicio) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[2]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[2]);
         String plantilla = rutaPlantilla.concat(BOLSATRABAJO_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(BOLSATRABAJO_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("bolT", ejbBolsaTrabajo.getRegistroReporteBolTrab());
-        beans.put("entBT", ejbBolsaTrabajo.getRegistroReporteEntBolTrab());
+        beans.put("bolT", ejbBolsaTrabajo.getRegistroReporteBolTrab(ejercicio));
+        beans.put("entBT", ejbBolsaTrabajo.getRegistroReporteEntBolTrab(ejercicio));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
 
@@ -291,13 +291,13 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReporteAcervo() throws Throwable {
+    public String getReporteAcervo(Short ejercicio) throws Throwable {
          String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[1]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[1]);
         String plantilla = rutaPlantilla.concat(ACERVO_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(ACERVO_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("acerB", ejbAcervoBibliografico.getRegistroReporteAcervoBib());
+        beans.put("acerB", ejbAcervoBibliografico.getRegistroReporteAcervoBib(ejercicio));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
 
@@ -305,13 +305,13 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReporteRecProdep() throws Throwable {
+    public String getReporteRecProdep(Short ejercicio) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[1]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[1]);
         String plantilla = rutaPlantilla.concat(RECPRODEP_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(RECPRODEP_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("recP", ejbReconocimientoProdep.getRegistroRecProdep());
+        beans.put("recP", ejbReconocimientoProdep.getRegistroRecProdep(ejercicio));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
 

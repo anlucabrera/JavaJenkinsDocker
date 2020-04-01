@@ -404,13 +404,14 @@ public class ServicioVisitasIndustriales implements EjbVisitasIndustriales{
     }
 
     @Override
-    public List<ListaDtoVisitasIndustriales> getRegistroVisitas() {
+    public List<ListaDtoVisitasIndustriales> getRegistroVisitas(Short ejercicio) {
         List<VisitasIndustriales> q = new ArrayList<>();
         List<ListaDtoVisitasIndustriales> ldto = new ArrayList<>();
        
-        q = f.getEntityManager().createQuery("SELECT v FROM VisitasIndustriales v", VisitasIndustriales.class)
-        .getResultList();
-        
+        q = f.getEntityManager().createQuery("SELECT v FROM VisitasIndustriales v INNER JOIN v.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.ejercicioFiscal = :ejercicio", VisitasIndustriales.class)
+                .setParameter("ejercicio", ejercicio)
+                .getResultList();
+
         if (q.isEmpty() || q == null) {
             return null;
         } else {

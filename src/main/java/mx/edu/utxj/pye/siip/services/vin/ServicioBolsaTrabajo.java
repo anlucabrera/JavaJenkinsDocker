@@ -456,10 +456,11 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
     }
 
     @Override
-    public List<DTOBolsa> getRegistroReporteBolTrab() {
+    public List<DTOBolsa> getRegistroReporteBolTrab(Short ejercicio) {
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOBolsa> l = new ArrayList<>();
-        List<BolsaTrabajo> entities = f.getEntityManager().createQuery("SELECT b FROM BolsaTrabajo b INNER JOIN b.registros reg INNER JOIN reg.eventoRegistro er", BolsaTrabajo.class)
+        List<BolsaTrabajo> entities = f.getEntityManager().createQuery("SELECT b FROM BolsaTrabajo b INNER JOIN b.registros reg INNER JOIN reg.eventoRegistro er WHERE er.ejercicioFiscal.anio = :ejercicio", BolsaTrabajo.class)
+                .setParameter("ejercicio", ejercicio)
                 .getResultList();
       
         //construir la lista de dto's para mostrar en tabla
@@ -481,10 +482,11 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
     }
 
     @Override
-    public List<DTOBolsaEntrevistas> getRegistroReporteEntBolTrab() {
+    public List<DTOBolsaEntrevistas> getRegistroReporteEntBolTrab(Short ejercicio) {
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOBolsaEntrevistas> l = new ArrayList<>();
-        List<BolsaTrabajoEntrevistas> entities = f.getEntityManager().createQuery("SELECT e FROM BolsaTrabajoEntrevistas e INNER JOIN e.bolsatrabent b INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er", BolsaTrabajoEntrevistas.class)
+        List<BolsaTrabajoEntrevistas> entities = f.getEntityManager().createQuery("SELECT e FROM BolsaTrabajoEntrevistas e INNER JOIN e.bolsatrabent b INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE er.ejercicioFiscal.anio = :ejercicio", BolsaTrabajoEntrevistas.class)
+                .setParameter("ejercicio", ejercicio)
                 .getResultList();
         
         //construir la lista de dto's para mostrar en tabla

@@ -17,12 +17,16 @@ public interface EjbReportesCAExcel {
     
     public String getReporteActividadesVarias(Short ejercicioFiscal) throws Throwable;
     
+    public String getReporteActividadesVarias(Short ejercicioFiscal, Short area) throws Throwable;
+    
     public String getReporteAsesoriasTutorias(Short ejercicio_fiscal) throws Throwable;
     
-    public String getReporteServiciosEnfermeria() throws Throwable;
+    public String getReporteAsesoriasTutorias(Short ejercicio_fiscal, Short area) throws Throwable;
+    
+    public String getReporteServiciosEnfermeria(Short ejercicio_fical) throws Throwable;
     
     public String getReporteCompletoCuerposAcademicos(Short ejercicio)  throws Throwable;
     
-    public String getReporteCompletoProductosAcademicos() throws Throwable;
+    public String getReporteCompletoProductosAcademicos(Short ejercicio) throws Throwable;
     
 }

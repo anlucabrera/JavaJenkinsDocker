@@ -867,11 +867,11 @@ public class ServiciosDistribucionInstalaciones implements EjbDistribucionInstal
     }
 
     @Override
-    public List<CapacidadInstaladaCiclosEscolares> getReporteCuatrimestralCapacidadInstaladaCicloPeriodosEscolares(PeriodosEscolares periodoEscolar, AreasUniversidad areasUniversidad) {
+    public List<CapacidadInstaladaCiclosEscolares> getReporteCuatrimestralCapacidadInstaladaCicloPeriodosEscolares(Short ejercicio, AreasUniversidad areasUniversidad) {
         try {
-            return facadeServGen.getEntityManager().createQuery("SELECT c FROM CapacidadInstaladaCiclosEscolares c INNER JOIN c.registros r WHERE r.area = :area AND c.cicloEscolar = :cicloEscolar ORDER BY r.eventoRegistro.mes",CapacidadInstaladaCiclosEscolares.class)
+            return facadeServGen.getEntityManager().createQuery("SELECT c FROM CapacidadInstaladaCiclosEscolares c INNER JOIN c.registros r INNER JOIN r.eventoRegistro er WHERE r.area = :area AND er.ejercicioFiscal.anio = :ejercicio ORDER BY r.eventoRegistro.mes",CapacidadInstaladaCiclosEscolares.class)
                     .setParameter("area", areasUniversidad.getArea())
-                    .setParameter("cicloEscolar", periodoEscolar.getCiclo().getCiclo())
+                    .setParameter("ejercicio", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -879,11 +879,11 @@ public class ServiciosDistribucionInstalaciones implements EjbDistribucionInstal
     }
 
     @Override
-    public List<DistribucionAulasCicloPeriodosEscolares> getReporteCuatrimestralDistribucionAulas(PeriodosEscolares periodoEscolar, AreasUniversidad areasUniversidad) {
+    public List<DistribucionAulasCicloPeriodosEscolares> getReporteCuatrimestralDistribucionAulas(Short ejercicio, AreasUniversidad areasUniversidad) {
         try {
-            return facadeServGen.getEntityManager().createQuery("SELECT d FROM DistribucionAulasCicloPeriodosEscolares d INNER JOIN d.registros r WHERE r.area = :area AND d.periodoEscolar = :periodoEscolar ORDER BY r.eventoRegistro.mes",DistribucionAulasCicloPeriodosEscolares.class)
+            return facadeServGen.getEntityManager().createQuery("SELECT d FROM DistribucionAulasCicloPeriodosEscolares d INNER JOIN d.registros r INNER JOIN r.eventoRegistro er WHERE r.area = :area AND er.ejercicioFiscal.anio = :ejercicio ORDER BY r.eventoRegistro.mes",DistribucionAulasCicloPeriodosEscolares.class)
                     .setParameter("area", areasUniversidad.getArea())
-                    .setParameter("periodoEscolar", periodoEscolar.getPeriodo())
+                    .setParameter("ejercicio", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;
@@ -891,11 +891,11 @@ public class ServiciosDistribucionInstalaciones implements EjbDistribucionInstal
     }
 
     @Override
-    public List<DistribucionLabtallCicloPeriodosEscolares> getReporteCuatrimestralDistribucionLaboratoriosTalleres(PeriodosEscolares periodoEscolar, AreasUniversidad areasUniversidad) {
+    public List<DistribucionLabtallCicloPeriodosEscolares> getReporteCuatrimestralDistribucionLaboratoriosTalleres(Short ejercicio, AreasUniversidad areasUniversidad) {
         try {
-            return facadeServGen.getEntityManager().createQuery("SELECT d FROM DistribucionLabtallCicloPeriodosEscolares d INNER JOIN d.registros r WHERE r.area = :area AND d.periodoEscolar = :periodoEscolar ORDER BY r.eventoRegistro.mes",DistribucionLabtallCicloPeriodosEscolares.class)
+            return facadeServGen.getEntityManager().createQuery("SELECT d FROM DistribucionLabtallCicloPeriodosEscolares d INNER JOIN d.registros r INNER JOIN r.eventoRegistro er WHERE r.area = :area AND er.ejercicioFiscal.anio = :ejercicio ORDER BY r.eventoRegistro.mes",DistribucionLabtallCicloPeriodosEscolares.class)
                     .setParameter("area", areasUniversidad.getArea())
-                    .setParameter("periodoEscolar", periodoEscolar.getPeriodo())
+                    .setParameter("ejercicio", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;

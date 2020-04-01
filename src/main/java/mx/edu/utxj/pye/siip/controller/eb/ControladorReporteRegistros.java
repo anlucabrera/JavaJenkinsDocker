@@ -47,68 +47,74 @@ public class ControladorReporteRegistros implements Serializable{
         
     }
      
-    public void descargarReporteIngPropios() throws IOException, Throwable{
-        File f = new File(ejb.getReporteIngPropios());
+    public void descargarReporteIngPropios(Integer ejercicioFiscal) throws IOException, Throwable{
+        Short ejercicioShort = ejercicioFiscal.shortValue();
+        File f = new File(ejb.getReporteIngPropios(ejercicioShort));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReportePresupuestos() throws IOException, Throwable{
-        File f = new File(ejb.getReportePresupuestos());
+    public void descargarReportePresupuestos(Integer ejercicioFiscal) throws IOException, Throwable{
+        Short ejercicioShort = ejercicioFiscal.shortValue();
+        File f = new File(ejb.getReportePresupuestos(ejercicioShort));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteDifusion() throws IOException, Throwable{
-        File f = new File(ejb.getReporteDifusion());
+    public void descargarReporteDifusion(Short ejercicio) throws IOException, Throwable{
+        File f = new File(ejb.getReporteDifusion(ejercicio));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteVisitas() throws IOException, Throwable{
-        File f = new File(ejb.getReporteVisitas());
+    public void descargarReporteVisitas(Short ejercicio) throws IOException, Throwable{
+        File f = new File(ejb.getReporteVisitas(ejercicio));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteBecas() throws IOException, Throwable{
-        File f = new File(ejb.getReporteBecas());
+    public void descargarReporteBecas(Short ejercicioFiscal) throws IOException, Throwable{
+        File f = new File(ejb.getReporteBecas(ejercicioFiscal));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteAFI(Short claveArea) throws IOException, Throwable{
-        File f = new File(ejb.getReporteAFI(claveArea));
+    public void descargarReporteAFI(Short claveArea, Integer ejercicio) throws IOException, Throwable{
+        Short ejercicioShort = ejercicio.shortValue();
+        File f = new File(ejb.getReporteAFI(claveArea,ejercicioShort));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteDesercion() throws IOException, Throwable{
-        File f = new File(ejb.getReporteDesercion());
+    public void descargarReporteDesercion(Short ejercicio) throws IOException, Throwable{
+        File f = new File(ejb.getReporteDesercion(ejercicio));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReportePerCap() throws IOException, Throwable{
-        File f = new File(ejb.getReportePerCap());
+    public void descargarReportePerCap(Integer ejercicio) throws IOException, Throwable{
+        Short ejercicioShort = ejercicio.shortValue();
+        File f = new File(ejb.getReportePerCap(ejercicioShort));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteFerProf() throws IOException, Throwable{
-        File f = new File(ejb.getReporteFerProf());
+    public void descargarReporteFerProf(Short ejercicio) throws IOException, Throwable{
+        File f = new File(ejb.getReporteFerProf(ejercicio));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteMov(Short claveArea) throws IOException, Throwable{
-        File f = new File(ejb.getReporteMov(claveArea));
+    public void descargarReporteMov(Short claveArea, Short ejercicio) throws IOException, Throwable{
+        File f = new File(ejb.getReporteMov(claveArea,ejercicio));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteBolTrab() throws IOException, Throwable{
-        File f = new File(ejb.getReporteBolTrab());
+    public void descargarReporteBolTrab(Integer ejercicio) throws IOException, Throwable{
+        Short ejercicioShort = ejercicio.shortValue();
+        File f = new File(ejb.getReporteBolTrab(ejercicioShort));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteAcervo() throws IOException, Throwable{
-        File f = new File(ejb.getReporteAcervo());
+    public void descargarReporteAcervo(Integer ejercicio) throws IOException, Throwable{
+        Short ejercicioShort = ejercicio.shortValue();
+        File f = new File(ejb.getReporteAcervo(ejercicioShort));
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteRecProdep() throws IOException, Throwable{
-        File f = new File(ejb.getReporteRecProdep());
+    public void descargarReporteRecProdep(Short ejercicio) throws IOException, Throwable{
+        File f = new File(ejb.getReporteRecProdep(ejercicio));
         Faces.sendFile(f, true);
     }
     

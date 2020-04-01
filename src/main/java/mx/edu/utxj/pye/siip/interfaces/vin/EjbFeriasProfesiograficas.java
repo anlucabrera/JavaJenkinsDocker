@@ -79,5 +79,5 @@ public interface EjbFeriasProfesiograficas {
      * Obtiene la lista de registros actuales del registro
      * @return Lista de registros
      */
-    public List<ListaFeriasDTO> getRegistroReporteFerProf();
+    public List<ListaFeriasDTO> getRegistroReporteFerProf(Short ejercicio);
 }

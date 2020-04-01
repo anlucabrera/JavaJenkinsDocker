@@ -81,12 +81,12 @@ public interface EjbEgresados {
     
     public List<DTONivelIngresoEgresadosG> getFiltroNivelIngresoEgresadoEjercicioMesArea(Short ejercicio, String mes, Short area);
     
-    public List<ActividadEgresadoGeneracion> getReporteActividadEgresadoPorEjercicio();
+    public List<ActividadEgresadoGeneracion> getReporteActividadEgresadoPorEjercicio(Short ejercicio);
     
-    public List<ActividadEconomicaEgresadoGeneracion> getReporteActividadEconomicaEgresadoPorEjercicio();
+    public List<ActividadEconomicaEgresadoGeneracion> getReporteActividadEconomicaEgresadoPorEjercicio(Short ejercicio);
     
-    public List<NivelOcupacionEgresadosGeneracion> getReporteNivelOcupacionEgresadoPorEjercicio();
+    public List<NivelOcupacionEgresadosGeneracion> getReporteNivelOcupacionEgresadoPorEjercicio(Short ejercicio);
     
-    public List<NivelIngresosEgresadosGeneracion> getReporteNivelIngresosEgresadoPorEjercicio();
+    public List<NivelIngresosEgresadosGeneracion> getReporteNivelIngresosEgresadoPorEjercicio(Short ejercicio);
     
 }

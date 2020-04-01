@@ -67,16 +67,22 @@
                                     </c:if>
                                 </f:facet>
                                 <f:facet name="right">
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <div class="btn-group">
                                         <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
                                     </div>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <c:if test="#{controladorArchivoTutAsesCE.etapa eq etapa.CARGAR}">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="asesoriasTutorias?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
                                     </c:if>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarPlantillaAsesoriasTutorias(asesoriasTutoriasCicloEscolar.dto.areaPOA.area)}" target="_blank" title="Descargar Plantilla Asesorías y Tutorías"><i class="fa fa-download" /></p:commandLink>
+                                    <c:if test="#{asesoriasTutoriasCicloEscolar.dto.periodo ne null}">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteAsesoriasTutorias(asesoriasTutoriasCicloEscolar.dto.periodo.anio,asesoriasTutoriasCicloEscolar.dto.areaPOA.area)}" target="_blank" title="Descargar Reporte Asesorías/Tutorías"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                    </c:if>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
-
                                 </f:facet>
                             </p:toolbar>
                             <p:sticky target="tb" />

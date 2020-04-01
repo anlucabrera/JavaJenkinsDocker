@@ -110,7 +110,8 @@ public interface EjbDesercionPeriodos {
     
      /**
      * Obtiene la lista de registros actuales del registro
+     * @param ejercicio
      * @return Lista de registros
      */
-    public List<ListaDtoDesercion> getRegistroDesercion();
+    public List<ListaDtoDesercion> getRegistroDesercion(Short ejercicio);
 }

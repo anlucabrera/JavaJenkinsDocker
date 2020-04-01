@@ -144,13 +144,15 @@
 
                             <f:facet name="right">
                                 <h:form id="frmReporte">
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarReporteOrganismosVinculados()}" target="_blank" title="Descargar Reporte de Organismos Vinculados"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                    <c:if test="#{controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.anioConsulta ne null}">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarReporteOrganismosVinculados(controladorOrganismosVinculadosPYE.dtoOrganismosVinculado.anioConsulta)}" target="_blank" title="Descargar Reporte de Organismos Vinculados"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                    </c:if>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
                                 </h:form>
                             </f:facet>
-                            </p:toolbar>
+                        </p:toolbar>
                         <p:sticky target="tb" />
                     </p:outputPanel>
                 </div>

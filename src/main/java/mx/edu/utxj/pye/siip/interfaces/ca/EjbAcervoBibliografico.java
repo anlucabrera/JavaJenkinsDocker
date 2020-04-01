@@ -86,5 +86,5 @@ public interface EjbAcervoBibliografico {
      * Obtiene la lista de registros actuales del registro
      * @return Lista de registros
      */
-    public List<DTOAcervoBibliograficoPeriodosEscolares> getRegistroReporteAcervoBib();
+    public List<DTOAcervoBibliograficoPeriodosEscolares> getRegistroReporteAcervoBib(Short ejercicio);
 }

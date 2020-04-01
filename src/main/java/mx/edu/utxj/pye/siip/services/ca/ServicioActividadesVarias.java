@@ -310,14 +310,15 @@ public class ServicioActividadesVarias implements EjbActividadesVarias {
     }
 
     @Override
-    public List<AreasUniversidad> getAreasConRegistroMensualGeneral(Boolean tipoConsulta, String mes) {
+    public List<AreasUniversidad> getAreasConRegistroMensualGeneral(Boolean tipoConsulta, Integer eventoRegistro) {
         try {
 //            tipoConsulta = true (mensual) , tipoConsulta = false (anual o general)
             List<Short> areas = new ArrayList<>();
             if (tipoConsulta) {
-                areas = f.getEntityManager().createQuery("SELECT r.area FROM ActividadesVariasRegistro a INNER JOIN a.registros r INNER JOIN r.eventoRegistro e WHERE e.mes = :mes GROUP BY r.area", Short.class)
-                        .setParameter("mes", mes)
+                areas = f.getEntityManager().createQuery("SELECT r.area FROM ActividadesVariasRegistro a INNER JOIN a.registros r INNER JOIN r.eventoRegistro e WHERE e.eventoRegistro = :eventoRegistro GROUP BY r.area", Short.class)
+                        .setParameter("eventoRegistro", eventoRegistro)
                         .getResultList();
+                System.err.println("areas: " + areas.toString());
             } else {
                 areas = f.getEntityManager().createQuery("SELECT r.area FROM ActividadesVariasRegistro a INNER JOIN a.registros r GROUP BY r.area", Short.class)
                         .getResultList();
@@ -370,6 +371,18 @@ public class ServicioActividadesVarias implements EjbActividadesVarias {
         try {
             return f.getEntityManager().createQuery("SELECT a FROM ActividadesVariasRegistro a INNER JOIN a.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY a.fechaInicio",ActividadesVariasRegistro.class)
                     .setParameter("ejercicioFiscal", ejercicioFiscal)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+    
+    @Override
+    public List<ActividadesVariasRegistro> reporteActividadesVariasPorEjercicio(Short ejercicioFiscal, Short area) {
+        try {
+            return f.getEntityManager().createQuery("SELECT a FROM ActividadesVariasRegistro a INNER JOIN a.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal AND r.area = :area ORDER BY a.fechaInicio",ActividadesVariasRegistro.class)
+                    .setParameter("ejercicioFiscal", ejercicioFiscal)
+                    .setParameter("area", area)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;

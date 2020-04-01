@@ -66,5 +66,5 @@ public interface EjbDifusionIems {
      * Obtiene la lista de registros actuales del registro
      * @return Lista de registros
      */
-    public List<ListaDifusionIemsDTO> getRegistroDifusion();
+    public List<ListaDifusionIemsDTO> getRegistroDifusion(Short ejercicio);
 }

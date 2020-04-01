@@ -66,15 +66,21 @@
                                         </c:if>
                                     </f:facet>
                                     <f:facet name="right">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <div class="btn-group">
                                             <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
                                         </div>
-                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <c:if test="#{controladorArchivoActFormIntegral.etapa eq etapa.CARGAR}">
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                             <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="actFormacionIntegral?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
                                         </c:if>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{actFormIntegral.descargarPlantilla()}" title="Descargar Plantilla Actividad Formación Integral"><i class="fa fa-download" /></p:commandLink>
-                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reporteRegistros.descargarReporteAFI(actFormIntegral.dto.area.area)}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                        <c:if test="#{actFormIntegral.dto.periodo.anio ne null}">
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reporteRegistros.descargarReporteAFI(actFormIntegral.dto.area.area, actFormIntegral.dto.periodo.anio)}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                        </c:if>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
 
                                     </f:facet>

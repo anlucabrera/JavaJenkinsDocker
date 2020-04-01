@@ -685,10 +685,10 @@ public class ServicioMatriculaPeriodosEscolares implements EjbMatriculaPeriodosE
     }
 
     @Override
-    public List<MatriculaPeriodosEscolares> getReporteMatriculaPorEjercicio() {
+    public List<MatriculaPeriodosEscolares> getReporteMatriculaPorEjercicio(Short ejercicio) {
         try {
             return f.getEntityManager().createQuery("SELECT m FROM MatriculaPeriodosEscolares m INNER JOIN m.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal ORDER BY m.periodo,m.programaEducativo,m.cuatrimestre,m.grupo ASC",MatriculaPeriodosEscolares.class)
-                    .setParameter("ejercicioFiscal", ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio())
+                    .setParameter("ejercicioFiscal", ejercicio)
                     .getResultList();
         } catch (NoResultException e) {
             return Collections.EMPTY_LIST;

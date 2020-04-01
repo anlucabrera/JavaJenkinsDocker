@@ -111,7 +111,6 @@ public class ControladorServiciosEnfermeriaPYE implements Serializable{
     
     public void actualizarAnios(ValueChangeEvent e){
         dto.setAreaUniversidadPOA((AreasUniversidad)e.getNewValue());
-        System.out.println("mx.edu.utxj.pye.siip.controller.pye.ControladorServiciosEnfermeriaPYE.actualizarAnios()Area Universidad: " + dto.getAreaUniversidadPOA().getArea());
         llenaAnios();
         dto.nulificarAnioConsulta();
     }
@@ -146,7 +145,6 @@ public class ControladorServiciosEnfermeriaPYE implements Serializable{
         dto.setAniosConsulta(ejbModulos.getEjercicioRegistros(dto.getRegistros(), dto.getAreaUniversidadPOA()));
         if (!dto.getAniosConsulta().isEmpty()) {
             dto.setAnioConsulta(null);
-            System.out.println("mx.edu.utxj.pye.siip.controller.pye.ControladorServiciosEnfermeriaPYE.llenaAnios()Anio: " + dto.getAnioConsulta());
         }
     }
     
@@ -154,7 +152,6 @@ public class ControladorServiciosEnfermeriaPYE implements Serializable{
         dto.setMesesConsulta(ejbModulos.getMesesRegistros(dto.getAnioConsulta(), dto.getRegistros(), dto.getAreaUniversidadPOA()));
         if (!dto.getMesesConsulta().isEmpty()) {
             dto.setMesConsulta(null);
-            System.out.println("mx.edu.utxj.pye.siip.controller.pye.ControladorServiciosEnfermeriaPYE.llenaMeses()Mes: " + dto.getMesConsulta());
         }
     }
 

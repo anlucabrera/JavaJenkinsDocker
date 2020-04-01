@@ -292,7 +292,6 @@ public class EjbRegistroAsesoriaTutoria {
                 return ResultadoEJB.crearErroneo(2, Boolean.FALSE, "No se ha encontrado el resultado");
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se ha podido realizar la consulta (EjbRegistroAsesoriaTutoria.verificarParticipanteAsesoria.Exception)",e, null);
         }
     }
@@ -328,7 +327,6 @@ public class EjbRegistroAsesoriaTutoria {
             }
             return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Se ha removido el estudiante de la asesoría");
         } catch (Exception e) {
-            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se ha podido realizar la eliminación del estudiante (EjbRegistroAsesoriaTutoria.eliminarParticipanteAsesoria.Exception)", e, null);
         }
     }
@@ -350,7 +348,6 @@ public class EjbRegistroAsesoriaTutoria {
             em.flush();
             return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Se ha asignado el estudiante a la asesoría");
         } catch (Exception e) {
-            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo asignar este estudiante a la asesoria seleccionada (EjbRegistroAsesoriaTutoria.asignaParticipanteAsesoria.Exception).", e, null);
         }
     }

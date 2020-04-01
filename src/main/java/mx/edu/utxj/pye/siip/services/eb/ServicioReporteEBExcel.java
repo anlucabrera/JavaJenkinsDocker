@@ -92,7 +92,7 @@ public class ServicioReporteEBExcel implements EjbReportesEBExcel{
     }
     
     @Override
-    public String getReporteDistribucionEquipamiento() throws Throwable {
+    public String getReporteDistribucionEquipamiento(Short ejercicioFiscal) throws Throwable {
         String plantilla = crearDirectorioReporte(ejes[0]).concat(REPORTE_DISTRIBUCION_EQUIPAMIENTO_PLANTILLA );
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[0]).concat(REPORTE_DISTRIBUCION_EQUIPAMIENTO_COPIA);
         String plantillaCompleto = crearDirectorioReporteCompleto(ejes[0]).concat(REPORTE_DISTRIBUCION_EQUIPAMIENTO_ACTUALIZADO);
@@ -112,8 +112,8 @@ public class ServicioReporteEBExcel implements EjbReportesEBExcel{
 //            Contenido del documento
             
 //            Vaciado de información proveniente de la consulta
-            List<EquiposComputoCicloPeriodoEscolar> equipoComputo = ejbDistribucionEquipamiento.reporteEquiposComputoCicloPeriodoEscolares();
-            List<EquiposComputoInternetCicloPeriodoEscolar> equipoComputoInternet = ejbDistribucionEquipamiento.reporteEquiposComputoInternetCicloPeriodoEscolares();
+            List<EquiposComputoCicloPeriodoEscolar> equipoComputo = ejbDistribucionEquipamiento.reporteEquiposComputoCicloPeriodoEscolares(ejercicioFiscal);
+            List<EquiposComputoInternetCicloPeriodoEscolar> equipoComputoInternet = ejbDistribucionEquipamiento.reporteEquiposComputoInternetCicloPeriodoEscolares(ejercicioFiscal);
             
             for(Integer listaEqCom = 0; listaEqCom < equipoComputo.size(); listaEqCom++){
                 Integer ubicacion = listaEqCom + 3;
@@ -438,7 +438,7 @@ public class ServicioReporteEBExcel implements EjbReportesEBExcel{
     }
 
     @Override
-    public String getReporteMatriculaPorEjercicio() throws Throwable {
+    public String getReporteMatriculaPorEjercicio(Short ejercicio) throws Throwable {
         String plantilla = crearDirectorioReporte(ejes[0]).concat(REPORTE_MATRICULA_PLANTILLA );
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[0]).concat(REPORTE_MATRICULA_COPIA);
         String plantillaCompleto = crearDirectorioReporteCompleto(ejes[0]).concat(REPORTE_MATRICULA_ACTUALIZADO);
@@ -454,7 +454,7 @@ public class ServicioReporteEBExcel implements EjbReportesEBExcel{
             XSSFCell celda;
             
 //            Lista que se vaciará en la hoja de excel
-            List<MatriculaPeriodosEscolares> matriculaPeriodoEscolar = ejbMatriculaPeriodosEscolares.getReporteMatriculaPorEjercicio();
+            List<MatriculaPeriodosEscolares> matriculaPeriodoEscolar = ejbMatriculaPeriodosEscolares.getReporteMatriculaPorEjercicio(ejercicio);
             
             for(Integer listaMPE = 0; listaMPE < matriculaPeriodoEscolar.size(); listaMPE++){
                 Integer ubicacion = listaMPE + 2;
@@ -582,7 +582,7 @@ public class ServicioReporteEBExcel implements EjbReportesEBExcel{
     }
 
     @Override
-    public String getReportePorPeriodoEscolarDistribucionInstalaciones(PeriodosEscolares periodoEscolar, AreasUniversidad areaUniversidad) throws Throwable {
+    public String getReportePorPeriodoEscolarDistribucionInstalaciones(Short ejercicio, AreasUniversidad areaUniversidad) throws Throwable {
         String plantilla = crearDirectorioReporte(ejes[0]).concat(REPORTE_DISTRIBUCION_INSTALACIONES_PLANTILLA );
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[0]).concat(REPORTE_DISTRIBUCION_INSTALACIONES_COPIA);
         String plantillaCompleto = crearDirectorioReporteCompleto(ejes[0]).concat(REPORTE_DISTRIBUCION_INSTALACIONES_ACTUALIZADO);
@@ -599,9 +599,9 @@ public class ServicioReporteEBExcel implements EjbReportesEBExcel{
             XSSFRow fila;
             XSSFCell celda;
             
-            List<CapacidadInstaladaCiclosEscolares> capacidadInstalada = ejbDistribucionInstalaciones.getReporteCuatrimestralCapacidadInstaladaCicloPeriodosEscolares(periodoEscolar, areaUniversidad);
-            List<DistribucionAulasCicloPeriodosEscolares> distribucionAulas = ejbDistribucionInstalaciones.getReporteCuatrimestralDistribucionAulas(periodoEscolar, areaUniversidad);
-            List<DistribucionLabtallCicloPeriodosEscolares> distribucionLabTall = ejbDistribucionInstalaciones.getReporteCuatrimestralDistribucionLaboratoriosTalleres(periodoEscolar, areaUniversidad);
+            List<CapacidadInstaladaCiclosEscolares> capacidadInstalada = ejbDistribucionInstalaciones.getReporteCuatrimestralCapacidadInstaladaCicloPeriodosEscolares(ejercicio, areaUniversidad);
+            List<DistribucionAulasCicloPeriodosEscolares> distribucionAulas = ejbDistribucionInstalaciones.getReporteCuatrimestralDistribucionAulas(ejercicio, areaUniversidad);
+            List<DistribucionLabtallCicloPeriodosEscolares> distribucionLabTall = ejbDistribucionInstalaciones.getReporteCuatrimestralDistribucionLaboratoriosTalleres(ejercicio, areaUniversidad);
             
 //            Capacidad Instalada
             for(Integer listaCI = 0; listaCI < capacidadInstalada.size(); listaCI++){

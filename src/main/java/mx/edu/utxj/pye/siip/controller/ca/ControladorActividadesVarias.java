@@ -69,20 +69,14 @@ public class ControladorActividadesVarias implements Serializable {
     @Getter private Boolean cargado = false;
     
     @PostConstruct
-    public void init() {
-         if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
-            return;
-        }
+    public void init() { 
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {return;}
         cargado = true;
         try {
-        dto = new DtoActividadesVarias();
-        consultaAreaRegistro(); 
-        
-        if(dto.getArea() == null){
-            return;
-        }
-        
-        filtros();
+            dto = new DtoActividadesVarias();
+            consultaAreaRegistro(); 
+            if(dto.getArea() == null){return;}
+            filtros();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorActividadesVarias.class.getName()).log(Level.SEVERE, null, ex);

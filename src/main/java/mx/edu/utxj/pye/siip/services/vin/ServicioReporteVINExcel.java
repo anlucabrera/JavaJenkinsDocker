@@ -249,7 +249,7 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
     }
 
     @Override
-    public String getReporteServiciosTecnologicos() throws Throwable {
+    public String getReporteServiciosTecnologicos(Short ejercicio) throws Throwable {
         String plantilla = crearDirectorioReporte(ejes[2]).concat(REPORTE_SERVICIOS_TECNOLOGICOS_PLANTILLA );
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_SERVICIOS_TECNOLOGICOS_COPIA);
         String plantillaCompleto = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_SERVICIOS_TECNOLOGICOS_ACTUALIZADO);
@@ -266,8 +266,8 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
             XSSFCell celda;
             
 //            Vaciado de información proveniente de la consulta
-            List<ServiciosTecnologicosAnioMes> servTec = ejbServiciosTecnologicosAnioMes.getReporteGeneralServiciosTecnologicos();
-            List<ServiciosTecnologicosParticipantes> servTecPart = ejbServiciosTecnologicosAnioMes.getReporteGeneralServiciosTecnologicoParticipantes();
+            List<ServiciosTecnologicosAnioMes> servTec = ejbServiciosTecnologicosAnioMes.getReporteGeneralServiciosTecnologicos(ejercicio);
+            List<ServiciosTecnologicosParticipantes> servTecPart = ejbServiciosTecnologicosAnioMes.getReporteGeneralServiciosTecnologicoParticipantes(ejercicio);
             
             for(Integer listaST = 0; listaST < servTec.size(); listaST++){
                 Integer ubicacion = listaST + 2;
@@ -494,7 +494,7 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
     }
 
     @Override
-    public String getReporteGeneralEgresados() throws Throwable {
+    public String getReporteGeneralEgresados(Short ejercicio) throws Throwable {
         String plantilla = crearDirectorioReporte(ejes[2]).concat(REPORTE_EGRESADOS_PLANTILLA );
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_EGRESADOS_COPIA);
         String plantillaCompleto = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_EGRESADOS_ACTUALIZADO);
@@ -513,10 +513,10 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
             XSSFCell celda;
             
 //            Listas que contienen la información para el llenado en las hojas de excel
-            List<ActividadEgresadoGeneracion> actividadEgresado = ejbEgresados.getReporteActividadEgresadoPorEjercicio();
-            List<ActividadEconomicaEgresadoGeneracion> actividadEconomicaEgresado = ejbEgresados.getReporteActividadEconomicaEgresadoPorEjercicio();
-            List<NivelOcupacionEgresadosGeneracion> nivelOcupacionEgresado = ejbEgresados.getReporteNivelOcupacionEgresadoPorEjercicio();
-            List<NivelIngresosEgresadosGeneracion> nivelIngresosEgresadosGeneracions = ejbEgresados.getReporteNivelIngresosEgresadoPorEjercicio();
+            List<ActividadEgresadoGeneracion> actividadEgresado = ejbEgresados.getReporteActividadEgresadoPorEjercicio(ejercicio);
+            List<ActividadEconomicaEgresadoGeneracion> actividadEconomicaEgresado = ejbEgresados.getReporteActividadEconomicaEgresadoPorEjercicio(ejercicio);
+            List<NivelOcupacionEgresadosGeneracion> nivelOcupacionEgresado = ejbEgresados.getReporteNivelOcupacionEgresadoPorEjercicio(ejercicio);
+            List<NivelIngresosEgresadosGeneracion> nivelIngresosEgresadosGeneracions = ejbEgresados.getReporteNivelIngresosEgresadoPorEjercicio(ejercicio);
 
 //            Actividad del Egresado
 
@@ -914,7 +914,7 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
     }
 
     @Override
-    public String getReporteOrganismosVinculados() throws Throwable {
+    public String getReporteOrganismosVinculados(Short ejercicio) throws Throwable {
         String plantilla = crearDirectorioReporte(ejes[2]).concat(REPORTE_ORGANISMOS_VINCULADOS_PLANTILLA );
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_ORGANISMOS_VINCULADOS_COPIA);
         String plantillaCompleto = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_ORGANISMOS_VINCULADOS_ACTUALIZADO);
@@ -933,11 +933,11 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
             
             XSSFRow fila;
             XSSFCell celda;
-            
-            ejbOrganismosVinculados.getReporteActividadesVinculacion();
-            
-            List<OrganismosVinculados> organismosVinculados = ejbOrganismosVinculados.getReporteOrganismosVinculados();
-            List<OrganismosVinculados> actividadesVinculacion = ejbOrganismosVinculados.getReporteActividadesVinculacion();
+//            
+//            ejbOrganismosVinculados.getReporteActividadesVinculacion();
+//            
+            List<OrganismosVinculados> organismosVinculados = ejbOrganismosVinculados.getReporteOrganismosVinculados(ejercicio);
+            List<OrganismosVinculados> actividadesVinculacion = ejbOrganismosVinculados.getReporteActividadesVinculacion(ejercicio);
             List<DTOActividadesVinculacion> dtoAV = new ArrayList<>();
             actividadesVinculacion.forEach((ov) -> {
                 List<ActividadesVinculacion> actVin = new ArrayList<>();
@@ -946,10 +946,10 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
                     dtoAV.add(new DTOActividadesVinculacion(av,ov));
                 });
             });
-            List<ProgramasBeneficiadosVinculacion> programasBeneficiados = ejbOrganismosVinculados.getReporteProgramasBeneficiadosVinculacion();
-            List<TelefonosEmpresa> telefonosEmpresa = ejbOrganismosVinculados.getReporteTelefonosEmpresa();
-            List<CorreosEmpresa> correosEmpresa = ejbOrganismosVinculados.getCorreosEmpresas();
-            List<ContactosEmpresa> contactosEmpresa = ejbOrganismosVinculados.getReporteContactosEmpresa();
+            List<ProgramasBeneficiadosVinculacion> programasBeneficiados = ejbOrganismosVinculados.getReporteProgramasBeneficiadosVinculacion(ejercicio);
+            List<TelefonosEmpresa> telefonosEmpresa = ejbOrganismosVinculados.getReporteTelefonosEmpresa(ejercicio);
+            List<CorreosEmpresa> correosEmpresa = ejbOrganismosVinculados.getCorreosEmpresas(ejercicio);
+            List<ContactosEmpresa> contactosEmpresa = ejbOrganismosVinculados.getReporteContactosEmpresa(ejercicio);
             
 //            Organismos Vinculados
             for (Integer listaOV = 0; listaOV < organismosVinculados.size(); listaOV++) {

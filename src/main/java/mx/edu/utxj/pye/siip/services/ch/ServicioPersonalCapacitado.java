@@ -424,7 +424,7 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
     
 
     @Override
-    public List<DTOPersonalCapacitado> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo) {
+    public List<DTOPersonalCapacitado> getListaRegistrosPorEventoAreaPeriodo(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, Short secretariaAcademica) {
         //verificar que los parametros no sean nulos
         if(evento == null || claveArea == null || periodo == null){
            
@@ -436,12 +436,21 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
         
         areas = ejbModulos.getAreasDependientes(claveArea);
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
-        entities = f.getEntityManager().createQuery("SELECT p FROM PersonalCapacitado p INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND p.periodo =:periodo AND reg.area IN :areas",  PersonalCapacitado.class)
-                .setParameter("evento", evento.getEventoRegistro())
-                .setParameter("periodo", periodo.getPeriodo())
-                .setParameter("areas", areas)
-                .getResultList();
-        
+        if (secretariaAcademica == (short)2) {
+            entities = f.getEntityManager().createQuery("SELECT p FROM PersonalCapacitado p INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er INNER JOIN p.participantesPersonalCapacitadoList list WHERE er.eventoRegistro=:evento AND p.periodo =:periodo AND reg.area IN :areas AND list.actividad = :actividad", PersonalCapacitado.class)
+                    .setParameter("evento", evento.getEventoRegistro())
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("areas", areas)
+                    .setParameter("actividad", (short)3)
+                    .getResultList();
+        } else {
+            entities = f.getEntityManager().createQuery("SELECT p FROM PersonalCapacitado p INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND p.periodo =:periodo AND reg.area IN :areas", PersonalCapacitado.class)
+                    .setParameter("evento", evento.getEventoRegistro())
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("areas", areas)
+                    .getResultList();
+        }
+
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             
@@ -462,7 +471,7 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
     }
 
     @Override
-    public List<DTOPerCapParticipantes> getListaRegistrosPorEventoAreaPeriodoPart(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo) {
+    public List<DTOPerCapParticipantes> getListaRegistrosPorEventoAreaPeriodoPart(EventosRegistros evento, Short claveArea, PeriodosEscolares periodo, Short secretariaAcademica) {
         //verificar que los parametros no sean nulos
         if(evento == null || claveArea == null || periodo == null){
             return null;
@@ -474,12 +483,20 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
         areas = ejbModulos.getAreasDependientes(claveArea);
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
-        entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesPersonalCapacitado p INNER JOIN p.percap a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo=:periodo AND reg.area IN :areas", ParticipantesPersonalCapacitado.class)
-                .setParameter("evento", evento.getEventoRegistro())
-                .setParameter("periodo", periodo.getPeriodo())
-                .setParameter("areas", areas)
-                .getResultList();
-     
+        if (secretariaAcademica == (short)2) {
+            entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesPersonalCapacitado p INNER JOIN p.percap a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo=:periodo AND reg.area IN :areas AND p.actividad = :actividad", ParticipantesPersonalCapacitado.class)
+                    .setParameter("evento", evento.getEventoRegistro())
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("areas", areas)
+                    .setParameter("actividad", (short)3)
+                    .getResultList();
+        } else {
+            entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesPersonalCapacitado p INNER JOIN p.percap a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo=:periodo AND reg.area IN :areas", ParticipantesPersonalCapacitado.class)
+                    .setParameter("evento", evento.getEventoRegistro())
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("areas", areas)
+                    .getResultList();
+        }
 
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
@@ -584,13 +601,14 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
     }
 
     @Override
-    public List<DTOPersonalCapacitado> getRegistroPerCap() {
+    public List<DTOPersonalCapacitado> getRegistroPerCap(Short ejercicio) {
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTOPersonalCapacitado> l = new ArrayList<>();
         List<PersonalCapacitado> entities = new ArrayList<>();
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
-        entities = f.getEntityManager().createQuery("SELECT p FROM PersonalCapacitado p INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er",  PersonalCapacitado.class)
+        entities = f.getEntityManager().createQuery("SELECT p FROM PersonalCapacitado p INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.ejercicioFiscal.anio = :ejercicio",  PersonalCapacitado.class)
+                .setParameter("ejercicio", ejercicio)
                 .getResultList();
         
         //construir la lista de dto's para mostrar en tabla
@@ -613,13 +631,14 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
     }
 
     @Override
-    public List<DTOPerCapParticipantes> getRegistroPartCap() {
+    public List<DTOPerCapParticipantes> getRegistroPartCap(Short ejercicio) {
         //obtener la lista de registros mensuales
         List<DTOPerCapParticipantes> l = new ArrayList<>();
         List<ParticipantesPersonalCapacitado> entities = new ArrayList<>();
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
-        entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesPersonalCapacitado p INNER JOIN p.percap a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er", ParticipantesPersonalCapacitado.class)
+        entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesPersonalCapacitado p INNER JOIN p.percap a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.ejercicioFiscal.anio = :ejercicio", ParticipantesPersonalCapacitado.class)
+                .setParameter("ejercicio", ejercicio)
                 .getResultList();
      
 

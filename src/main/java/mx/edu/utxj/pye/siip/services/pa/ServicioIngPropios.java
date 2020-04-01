@@ -372,14 +372,15 @@ public class ServicioIngPropios implements EjbIngPropios{
     }
     
     @Override
-    public List<DTOIngPropios> getListaRegistrosParaReporte() {
+    public List<DTOIngPropios> getListaRegistrosParaReporte(Short ejercicioFiscal) {
         List<DTOIngPropios> l = new ArrayList<>();
         List<IngresosPropiosCaptados> entities = new ArrayList<>();
-        
+
         //obtener la lista de registros mensuales
-        entities = f.getEntityManager().createQuery("SELECT i FROM IngresosPropiosCaptados i", IngresosPropiosCaptados.class)
-                    .getResultList();
-        
+        entities = f.getEntityManager().createQuery("SELECT i FROM IngresosPropiosCaptados i INNER JOIN i.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.anio = :ejercicioFiscal", IngresosPropiosCaptados.class)
+                .setParameter("ejercicioFiscal", ejercicioFiscal)
+                .getResultList();
+
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolar());

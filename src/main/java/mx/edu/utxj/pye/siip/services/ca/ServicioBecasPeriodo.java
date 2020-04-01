@@ -286,12 +286,14 @@ public class ServicioBecasPeriodo implements EjbBecasPeriodo{
     }
 
     @Override
-    public List<ListaBecasDto> getRegistroReporteBecas() {
+    public List<ListaBecasDto> getRegistroReporteBecas(Short ejercicioFiscal) {
+//        TODO: Verificar el ejercicio
         List<BecasPeriodosEscolares> q = new ArrayList<>();
         List<ListaBecasDto> ldto = new ArrayList<>();
-       
-        q = f.getEntityManager().createQuery("SELECT a from BecasPeriodosEscolares a", BecasPeriodosEscolares.class)
-        .getResultList();
+        
+         q = f.getEntityManager().createQuery("SELECT a from BecasPeriodosEscolares a INNER JOIN a.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.ejercicioFiscal = :ejercicioFiscal", BecasPeriodosEscolares.class)
+                .setParameter("ejercicioFiscal", ejercicioFiscal)
+                 .getResultList();
 
         if (q.isEmpty() || q == null) {
             return null;
@@ -311,7 +313,7 @@ public class ServicioBecasPeriodo implements EjbBecasPeriodo{
                 Registros registro = f.getEntityManager().find(Registros.class, x.getRegistro());
                 MatriculaPeriodosEscolares mat = f.getEntityManager().find(MatriculaPeriodosEscolares.class, x.getMatriculaPeriodosEscolares().getRegistro());
                 genero = mat.getCurp().substring(10, 11);
-                
+
                 AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, mat.getProgramaEducativo());
                 ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null :registro.getActividadesPoaList().get(0);
                 ListaBecasDto dto;

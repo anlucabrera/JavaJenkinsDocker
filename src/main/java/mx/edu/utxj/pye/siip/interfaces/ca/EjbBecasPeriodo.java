@@ -57,5 +57,5 @@ public interface EjbBecasPeriodo {
      * Obtiene la lista de registros actuales del registro
      * @return Lista de registros
      */
-    public List<ListaBecasDto> getRegistroReporteBecas();
+    public List<ListaBecasDto> getRegistroReporteBecas(Short ejercicioFiscal);
 }

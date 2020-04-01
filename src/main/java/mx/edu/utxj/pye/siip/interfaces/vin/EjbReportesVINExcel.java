@@ -16,10 +16,10 @@ public interface EjbReportesVINExcel {
     
     public String getReporteConvenios(Short ejercicioFiscal) throws Throwable;
     
-    public String getReporteServiciosTecnologicos() throws Throwable;
+    public String getReporteServiciosTecnologicos(Short ejercicio) throws Throwable;
     
-    public String getReporteGeneralEgresados() throws Throwable;
+    public String getReporteGeneralEgresados(Short ejercicio) throws Throwable;
     
-    public String getReporteOrganismosVinculados() throws Throwable;
+    public String getReporteOrganismosVinculados(Short ejercicio) throws Throwable;
     
 }

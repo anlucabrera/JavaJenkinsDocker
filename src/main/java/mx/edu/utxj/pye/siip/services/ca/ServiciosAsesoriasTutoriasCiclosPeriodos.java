@@ -716,6 +716,18 @@ public class ServiciosAsesoriasTutoriasCiclosPeriodos implements EjbAsesoriasTut
             return Collections.EMPTY_LIST;
         }
     }
+    
+    @Override
+    public List<AsesoriasTutoriasMensualPeriodosEscolares> getListaReporteGeneralAsesoriasTutorias(Short ejercicio_fiscal, Short area) {
+        try {
+            return facadeEscolar.getEntityManager().createQuery("SELECT a FROM AsesoriasTutoriasMensualPeriodosEscolares a JOIN a.registros r WHERE r.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal AND r.area = :area ORDER BY r.eventoRegistro.ejercicioFiscal,a.mes,a.programaEducativo,a.cuatrimestre,a.grupo,a.tipoActividad,a.tipo",AsesoriasTutoriasMensualPeriodosEscolares.class)
+                    .setParameter("ejercicioFiscal", ejercicio_fiscal)
+                    .setParameter("area", area)
+                    .getResultList();
+        } catch (Exception e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
 
     @Override
     public void guardaAsesoriaTutoria(AsesoriasTutoriasMensualPeriodosEscolares asesoriaTutoria, RegistrosTipo registroTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) {

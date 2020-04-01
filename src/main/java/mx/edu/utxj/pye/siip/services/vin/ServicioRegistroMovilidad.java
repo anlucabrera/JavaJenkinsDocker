@@ -777,7 +777,7 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
     }
 
     @Override
-    public List<DTORegistroMovilidad> getRegistroReporteMov(Short claveArea) {
+    public List<DTORegistroMovilidad> getRegistroReporteMov(Short claveArea, Short ejercicio) {
         //verificar que el parametro no sea nulo
         if(claveArea == null){
             return null;
@@ -785,21 +785,22 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
          //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         List<DTORegistroMovilidad> l = new ArrayList<>();
         List<RegistrosMovilidad> entities = new ArrayList<>();
-      
+
         areas = ejbModulos.getAreasDependientes(claveArea);
-        if(claveArea==6 || claveArea==9){
-        entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r", RegistrosMovilidad.class)
-                .getResultList();
-        }
-        else{
-        entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas", RegistrosMovilidad.class)
-                .setParameter("areas", areas)
-                .getResultList();
+        if (claveArea == 6 || claveArea == 9) {
+            entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE er.ejercicioFiscal.anio = :ejercicio", RegistrosMovilidad.class)
+                    .setParameter("ejercicio", ejercicio)
+                    .getResultList();
+        } else {
+            entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas AND er.ejercicioFiscal.anio = :ejercicio", RegistrosMovilidad.class)
+                    .setParameter("areas", areas)
+                    .setParameter("ejercicio", ejercicio)
+                    .getResultList();
         }
         //construir la lista de dto's para mostrar en tabla
         entities.forEach(e -> {
             Registros reg = f.getEntityManager().find(Registros.class, e.getRegistro());
-            ActividadesPoa a = reg.getActividadesPoaList().isEmpty()?null:reg.getActividadesPoaList().get(0);
+            ActividadesPoa a = reg.getActividadesPoaList().isEmpty() ? null : reg.getActividadesPoaList().get(0);
             PeriodosEscolares p = f.getEntityManager().find(PeriodosEscolares.class, e.getPeriodoEscolarCursado());
             String strDateFormat = "yyyy";
             SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
@@ -816,7 +817,7 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
     }
 
     @Override
-    public List<DTOMovilidadDocente> getRegistroReporteMovDoc(Short claveArea) {
+    public List<DTOMovilidadDocente> getRegistroReporteMovDoc(Short claveArea, Short ejercicio) {
         //verificar que el parametro no sea nulo
         if(claveArea == null){
             return null;
@@ -828,12 +829,14 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         areas = ejbModulos.getAreasDependientes(claveArea);
         
         if(claveArea==6 || claveArea==9){
-         entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d", RegistroMovilidadDocente.class)
+         entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.anio = :ejercicio", RegistroMovilidadDocente.class)
+                 .setParameter("ejercicio", ejercicio)
                 .getResultList();
          
         }else{
-        entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registroMovilidad r INNER JOIN d.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas", RegistroMovilidadDocente.class)
+        entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registroMovilidad r INNER JOIN d.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas AND er.ejercicioFiscal.anio = :ejercicio", RegistroMovilidadDocente.class)
                 .setParameter("areas", areas)
+                .setParameter("ejercicio", ejercicio)
                 .getResultList();
         }
         //construir la lista de dto's para mostrar en tabla
@@ -850,7 +853,7 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
     }
 
     @Override
-    public List<DTOMovilidadEstudiante> getRegistroReporteMovEst(Short claveArea) {
+    public List<DTOMovilidadEstudiante> getRegistroReporteMovEst(Short claveArea, Short ejercicio) {
         //verificar que el parametro no sea nulo
         if(claveArea == null){
             return null;
@@ -861,11 +864,13 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
       
         areas = ejbModulos.getAreasDependientes(claveArea);
         if(claveArea==6 || claveArea==9){
-        entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r", RegistroMovilidadEstudiante.class)
+        entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE er.ejercicioFiscal.anio = :ejercicio", RegistroMovilidadEstudiante.class)
+                .setParameter("ejercicio", ejercicio)
                 .getResultList();
          
         }else{
-        entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas", RegistroMovilidadEstudiante.class)
+        entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE reg.area IN :areas AND er.ejercicioFiscal.anio = :ejercicio", RegistroMovilidadEstudiante.class)
+                .setParameter("ejercicio", ejercicio)
                 .setParameter("areas", areas)
                 .getResultList();
         }

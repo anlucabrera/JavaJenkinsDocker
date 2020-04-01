@@ -266,12 +266,13 @@ public class ServicioDifusionIems implements EjbDifusionIems{
     }
 
     @Override
-    public List<ListaDifusionIemsDTO> getRegistroDifusion() {
+    public List<ListaDifusionIemsDTO> getRegistroDifusion(Short ejercicio) {
         List<DifusionIems> q = new ArrayList<>();
         List<ListaDifusionIemsDTO> ldto = new ArrayList<>();
        
-        q = f.getEntityManager().createQuery("SELECT a from DifusionIems a", DifusionIems.class)
-        .getResultList();
+        q = f.getEntityManager().createQuery("SELECT a from DifusionIems a INNER JOIN a.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.ejercicioFiscal = :ejercicio", DifusionIems.class)
+                .setParameter("ejercicio", ejercicio)
+                .getResultList();
 
         if (q.isEmpty() || q == null) {
             return null;

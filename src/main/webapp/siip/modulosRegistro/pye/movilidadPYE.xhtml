@@ -15,9 +15,9 @@
         <h:outputStylesheet library="css" name="tablaDatos.css" />
         <h:outputScript library="js" name="dialogs.js" />
         <!-- Inicio estilos par proceso electoral -->
-            <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
-                <h:outputStylesheet library="css" name="procesoElectoral.css" />
-            </c:if>
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <h:outputStylesheet library="css" name="procesoElectoral.css" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
@@ -38,60 +38,60 @@
             </h1>
         </p:panel>
         <c:if test="#{registrosMovilidadPYE.listaReg ne null}">
-        <div class="box box-primary">
-            <div class="box-header with-border">
-                <div id="main-buttons" class="hidden-sm hidden-xs" >
-                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
-                        <p:outputPanel >
-                            <p:autoUpdate/>
-                            <p:toolbar id="tb">
-                                <f:facet name="left">
-                                    <p:spacer width="10" />
-                                    <p:outputLabel value="Categoría " for="categoria"/>
-                                    <p:spacer width="5" />
-                                    <p:selectOneMenu id="categoria"
-                                                     required="true"
-                                                     value="#{registrosMovilidadPYE.dto.categoria}"
-                                                     valueChangeListener="#{registrosMovilidadPYE.actualizarAreas}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     converter="entidadConverter2"
-                                                     class="form-control"
-                                                     style="padding-top: 0px">
-                                        <f:selectItem itemLabel=" - Seleccione - " 
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{registrosMovilidadPYE.dto.listaCategoriasPOA}" 
-                                                       var="categoria" 
-                                                       itemValue="#{categoria}" 
-                                                       itemLabel="#{categoria.descripcion}"
-                                                       itemDescription="#{categoria.descripcion}"/>
-                                        <p:ajax process="@this" update="@(form)" />
-                                    </p:selectOneMenu>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                            <p:outputPanel >
+                                <p:autoUpdate/>
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Categoría " for="categoria"/>
+                                        <p:spacer width="5" />
+                                        <p:selectOneMenu id="categoria"
+                                                         required="true"
+                                                         value="#{registrosMovilidadPYE.dto.categoria}"
+                                                         valueChangeListener="#{registrosMovilidadPYE.actualizarAreas}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         converter="entidadConverter2"
+                                                         class="form-control"
+                                                         style="padding-top: 0px">
+                                            <f:selectItem itemLabel=" - Seleccione - " 
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{registrosMovilidadPYE.dto.listaCategoriasPOA}" 
+                                                           var="categoria" 
+                                                           itemValue="#{categoria}" 
+                                                           itemLabel="#{categoria.descripcion}"
+                                                           itemDescription="#{categoria.descripcion}"/>
+                                            <p:ajax process="@this" update="@(form)" />
+                                        </p:selectOneMenu>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
 
-                                    <p:outputLabel value="Área " for="area" />
-                                    <p:spacer width="5" />
-                                    <p:selectOneMenu id="area"
-                                                     required="true"
-                                                     value="#{registrosMovilidadPYE.dto.areaPOA}"
-                                                     valueChangeListener="#{registrosMovilidadPYE.actualizarPeriodosMeses}"
-                                                     filter="true"
-                                                     filterPlaceholder="Buscar"
-                                                     filterMatchMode="contains"
-                                                     converter="entidadConverter2"
-                                                     class="form-control"
-                                                     style="padding-top: 0px">
-                                        <f:selectItem itemLabel=" - Seleccione - " 
-                                                      itemValue="#{null}"/>
-                                        <f:selectItems value="#{registrosMovilidadPYE.dto.listaAreasPOA}" 
-                                                       var="area" 
-                                                       itemValue="#{area}" 
-                                                       itemLabel="#{area.nombre}"
-                                                       itemDescription="#{area.nombre}" />
-                                        <p:ajax process="@this" update="@(form)" />
-                                    </p:selectOneMenu>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Área " for="area" />
+                                        <p:spacer width="5" />
+                                        <p:selectOneMenu id="area"
+                                                         required="true"
+                                                         value="#{registrosMovilidadPYE.dto.areaPOA}"
+                                                         valueChangeListener="#{registrosMovilidadPYE.actualizarPeriodosMeses}"
+                                                         filter="true"
+                                                         filterPlaceholder="Buscar"
+                                                         filterMatchMode="contains"
+                                                         converter="entidadConverter2"
+                                                         class="form-control"
+                                                         style="padding-top: 0px">
+                                            <f:selectItem itemLabel=" - Seleccione - " 
+                                                          itemValue="#{null}"/>
+                                            <f:selectItems value="#{registrosMovilidadPYE.dto.listaAreasPOA}" 
+                                                           var="area" 
+                                                           itemValue="#{area}" 
+                                                           itemLabel="#{area.nombre}"
+                                                           itemDescription="#{area.nombre}" />
+                                            <p:ajax process="@this" update="@(form)" />
+                                        </p:selectOneMenu>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:outputLabel value="Periodo: " for="periodo" />
                                         <p:spacer width="3" />
                                         <p:selectOneMenu id="periodo" converter="entityConverter"
@@ -101,724 +101,728 @@
                                             <p:ajax process="@this" update="@(form)" />
                                         </p:selectOneMenu>
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                        
+
                                         <p:outputLabel value="Mes: " for="mes" />
                                         <p:spacer width="3" />
                                         <p:selectOneMenu id="mes" value="#{registrosMovilidadPYE.dto.eventoSeleccionado}" converter="entityConverter" class="form-control" style="padding-top: 0px;">
                                             <f:selectItems value="#{registrosMovilidadPYE.dto.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" itemDescription="#{evento.mes}"  />
                                             <p:ajax process="@this" listener="#{registrosMovilidadPYE.cargarListaPorEvento()}" update="@(form)" />
                                         </p:selectOneMenu>
-                                </f:facet>
-                                <f:facet name="right">
-                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reporteRegistros.descargarReporteMov()}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
-                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
-                                </f:facet>
-                            </p:toolbar>
-                            <p:sticky target="tb" />
-                        </p:outputPanel>
-                    </h:form>
-                </div>
-                <p:separator/>
-
-                <div class="box-body">
-                    <!-- Sección de visualización y eliminación -->
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12">
-                             <center>
-                            <p:tabView>
-                            <p:tab id="twbMovAct" title="Registros de Movilidad">
-                            <h:form id="formMuestraDatosActivos">
-                                    <p:remoteCommand name="actualizar" update="@form:dtbRegMov" />
-                                    <p:dataTable id="dtbRegMov" emptyMessage="Sin datos en el periodo seleccionado." value="#{registrosMovilidadPYE.dto.lista}" var="regMov"
-                                                 paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                 resizeMode="expand"
-                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                        <p:columnGroup type="header">
-                                            <p:row>
-                                                <p:column rowspan="2" headerText="Opciones" style="width: 150px;"/>
-                                                <p:column rowspan="2" headerText="Clave" style="width: 100px;"/>
-                                                <p:column rowspan="2" headerText="Programa de Movilidad" style="width: 150px;"/>
-                                                <p:column rowspan="2" headerText="Tipo de Participante" style="width: 150px;"/>
-                                                <p:column rowspan="2" headerText="Tipo de Movilidad" style="width: 150px;"/>
-                                                <p:column rowspan="2" headerText="Fecha de Inicio" style="width: 120px;"/>
-                                                <p:column rowspan="2" headerText="Fecha de Término" style="width: 120px;"/>
-                                                <p:column rowspan="2" headerText="Participante" style="width: 200px;"/>
-                                                <p:column rowspan="2" headerText="Programa Educativo" style="width: 350px;"/>
-                                                <p:column rowspan="2" headerText="Periodo Escolar" style="width: 150px;"/>
-                                                <p:column rowspan="2" headerText="Cuatrimestre Cursado" style="width: 150px;"/>
-                                                <p:column rowspan="2" headerText="Institución u Organización"  style="width: 300px;"/>
-                                                <p:column rowspan="2" headerText="País" style="width: 100px;"/>
-                                                <p:column rowspan="2" headerText="Ciudad" style="width: 100px;"/>
-                                                <p:column rowspan="2" headerText="Proyecto" style="width: 250px;"/>
-                                                <p:column rowspan="2" headerText="Descripción del Proyecto" style="width: 350px;"/>
-                                                <p:column colspan="5" headerText="Inversión" style="width: 600px;"/>
-                                                <p:column rowspan="2" headerText="Descripción de Ingresos Extraordinarios" style="width: 300px;"/>
-                                            </p:row>
-                                            <p:row>
-                                                <p:column headerText="Presupuesto Estatal" style="width: 12px;"/>
-                                                <p:column headerText="Presupuesto Federal" style="width: 120px;"/>
-                                                <p:column headerText="Captación de Derechos" style="width: 120px;"/>
-                                                <p:column headerText="Ingresos Propios" style="width: 120px;"/>
-                                                <p:column headerText="Ingresos Extraordinarios" style="width: 120px;"/>
-                                            </p:row>
-                                        </p:columnGroup>
-                                        <c:set var="regMovEliminado" value="#{regMov.registrosMovilidad.registro}"/>
-                                        <c:set var="regMovClave" value="#{regMov.registrosMovilidad.registroMovilidad}"/>
-                                        <p:column style="width: 150px; text-align: center;">
-                                            <div class="btn-group">
-                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{registrosMovilidad.eliminarRegistro(regMovEliminado,regMovClave)}" onsuccess="actualizar(); actualizar1(); actualizar2();" title="Eliminar registro." disabled="#{registrosMovilidadPYE.dto.eventoActual ne registrosMovilidadPYE.dto.eventoSeleccionado}">
-                                                    <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de Movilidad #{regMov.registrosMovilidad.registroMovilidad}?" icon="ui-icon-alert" />
-                                                </p:commandButton>
-                                                <c:set var="evidencias" value="#{registrosMovilidad.consultarEvidencias(regMov)}" />
-                                                <p:commandButton actionListener="#{registrosMovilidad.seleccionarRegistro(regMov)}"
-                                                                 class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
-                                                                 icon="fa fa-image"
-                                                                 title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                <p:commandButton actionListener="#{registrosMovilidadPYE.abrirAlineacionPOA(regMov)}"
-                                                                 class="btn btn-sm #{registrosMovilidadPYE.verificaAlineacion(regMovEliminado)?'btn-info':'btn-warning'}"
-                                                                 icon="fa fa-cog"
-                                                                 title="Alineación a POA." />
-                                                 <p:commandButton actionListener="#{registrosMovilidad.editarRegistro(regMov)}"
-                                                            class="btn btn-sm btn-primary" 
-                                                            icon="fa fa-edit"
-                                                            title="Editar registro" />
-                                            </div>
-                                        </p:column>
-                                        <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.registroMovilidad}"/></p:column> 
-                                        <p:column style="width: 150px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.programaMovilidad.nombre}"/></p:column>
-                                        <p:column style="width: 150px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.tipoParticipante}"/></p:column>
-                                        <p:column style="width: 150px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.tipoMovilidad}"/></p:column>
-                                        <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
-                                        <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
-                                        <p:column style="width: 200px;"><h:outputText value="#{regMov.registrosMovilidad.participante}"/></p:column>
-                                        <p:column style="width: 350px;"><h:outputText value="#{regMov.areasUniversidad.nombre}"/></p:column>
-                                        <p:column style="width: 150px; text-align: center;"><h:outputText value="#{regMov.periodosEscolares.mesInicio.mes} - #{regMov.periodosEscolares.mesFin.mes}"/></p:column>
-                                        <p:column style="width: 150px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.cuatrimestreCursado}"/></p:column>
-                                        <p:column style="width: 300px;"><h:outputText value="#{regMov.registrosMovilidad.institucionOrganizacion}"/></p:column>
-                                        <p:column style="width: 100px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.estado.idpais.nombre}"/></p:column>
-                                        <p:column style="width: 100px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.estado.nombre}"/></p:column>
-                                        <p:column style="width: 250px;"><h:outputText value="#{regMov.registrosMovilidad.proyecto}"/></p:column>
-                                        <p:column style="width: 350px;"><h:outputText value="#{regMov.registrosMovilidad.descripcion}"/></p:column>
-                                        <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.presEst}"/></p:column>
-                                        <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.presFed}"/></p:column>
-                                        <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.capDer}"/></p:column>
-                                        <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.ingPropios}"/></p:column>
-                                        <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.ingExtra}"/></p:column>
-                                        <p:column style="width: 300px;"><h:outputText value="#{regMov.registrosMovilidad.descripcionIngExt}"/></p:column>
-                                    </p:dataTable>
-                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
-                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
-                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
-                                    </p:confirmDialog>
-                            </h:form>
-                            </p:tab>
-                                <p:tab id="twbMovDocAct" title="Movilidad Docente">
-                                     <h:form id="formMovDoc">
-                                             <p:remoteCommand name="actualizar1" update="@form:dtbMovilidadDocPrevia" />
-                                             <p:dataTable  id="dtbMovilidadDocPrevia" emptyMessage="Sin datos en el periodo seleccionado." value="#{registrosMovilidadPYE.dtodoc.lista}" var="movilidadDoc"
-                                                           paginator="true" rows="10" rowsPerPageTemplate="5,10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                           resizeMode="expand"
-                                                           tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                                 <c:set var="DocMovEliminado" value="#{movilidadDoc.registroMovilidadDocente.registro}"/>
-                                                 <p:column headerText="Opciones" style="text-align: center;" width="100">
-                                                     <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{registrosMovilidad.eliminarRegistroParticipante(DocMovEliminado)}" onsuccess="actualizar1();" title="Eliminar registro." disabled="#{registrosMovilidad.dto.eventoActual ne registrosMovilidad.dto.eventoSeleccionado}">
-                                                         <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la Movilidad del Personal #{movilidadDoc.personal.nombre}?" icon="ui-icon-alert" />
-                                                     </p:commandButton>
-                                                     <c:set var="evidencias" value="#{movilidadDocente.consultarEvidencias(movilidadDoc)}" />
-                                                     <p:commandButton actionListener="#{movilidadDocente.seleccionarRegistro(movilidadDoc)}"
-                                                                      class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
-                                                                      icon="fa fa-image"
-                                                                      title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                   
-                                                 </p:column>
-                                                 <p:column headerText="Clave Movilidad" style="width:120px; text-align: center;">
-                                                     <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.registroMovilidad}">
-                                                     </h:outputText>
-                                                 </p:column>
-                                                 <p:column headerText="Clave Personal" style="width:100px; text-align: center;">
-                                                     <h:outputText value="#{movilidadDoc.personal.clave}"/>
-                                                 </p:column>
-                                                 <p:column headerText="Nombre del Personal" style="width:300px;">
-                                                     <h:outputText value="#{movilidadDoc.personal.nombre}"/>
-                                                 </p:column>
-                                                 <p:column headerText="Proyecto" style="width:300px;">
-                                                     <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.proyecto}"/>
-                                                 </p:column>
-                                                 <p:column headerText="Programa de Movilidad" style="width:150px; text-align: center;">
-                                                     <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.programaMovilidad.nombre}"/>
-                                                 </p:column>
-                                                 <p:column headerText="Tipo de Movilidad" style="width:150px; text-align: center;">
-                                                      <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.tipoMovilidad}"/>
-                                                  </p:column>
-                                                 <p:column headerText="Fecha Inicio" style="width:120px; text-align: center;">
-                                                     <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                                 </p:column>
-                                                 <p:column headerText="Fecha de Término" style="width:120px; text-align: center;">
-                                                     <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                                 </p:column>
-                                                 <p:column headerText="Ciudad" style="width:120px; text-align: center;">
-                                                     <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.estado.nombre}"/>
-                                                 </p:column>
-                                                 <f:facet name="footer">
-                                                 </f:facet>
-                                             </p:dataTable>
-                                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
-                                                 <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check"  update="formMovDoc"/>
-                                                 <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
-                                             </p:confirmDialog>
-                                     </h:form>
-                                 </p:tab>
-                                 <p:tab id="twbMovEst" title="Movilidad Estudiantil">
-                                      <h:form id="formMovEst">
-                                          <p:remoteCommand name="actualizar2" update="@form:dtbMovilidadEstPrevia" />
-                                             <p:dataTable  id="dtbMovilidadEstPrevia" emptyMessage="Sin datos en el periodo seleccionado." value="#{registrosMovilidadPYE.dtoest.lista}" var="movilidadEst"
-                                                           paginator="true" rows="10" rowsPerPageTemplate="5,10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                           resizeMode="expand"
-                                                           tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                                 <c:set var="EstMovEliminado" value="#{movilidadEst.registroMovilidadEstudiante.registro}"/>
-                                                 <p:column headerText="Opciones" style="text-align: center;" width="100">
-                                                     <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{registrosMovilidad.eliminarRegistroParticipante(EstMovEliminado)}" onsuccess="actualizar2();" title="Eliminar registro." disabled="#{registrosMovilidad.dto.eventoActual ne registrosMovilidad.dto.eventoSeleccionado}">
-                                                         <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la Movilidad de la Matricula #{movilidadEst.registroMovilidadEstudiante.matriculaPeriodosEscolares.matricula}?" icon="ui-icon-alert" />
-                                                     </p:commandButton>
-                                                     <c:set var="evidencias" value="#{movilidadEstudiante.consultarEvidencias(movilidadEst)}" />
-                                                     <p:commandButton actionListener="#{movilidadEstudiante.seleccionarRegistro(movilidadEst)}"
-                                                                      class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
-                                                                      icon="fa fa-image"
-                                                                      title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                 </p:column>
-                                                 <p:column headerText="Clave Movilidad" style="width:100px; text-align: center;">
-                                                     <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.registroMovilidad}">
-                                                     </h:outputText>
-                                                 </p:column>
-                                                 <p:column headerText="Matricula" style="width:100px; text-align: center;">
-                                                     <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.matriculaPeriodosEscolares.matricula}"/>
-                                                 </p:column>
-                                                 <p:column headerText="Proyecto" style="width:300px;">
-                                                     <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.proyecto}"/>
-                                                 </p:column>
-                                                 <p:column headerText="Programa de Movilidad" style="width:150px; text-align: center;">
-                                                     <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.programaMovilidad.nombre}"/>
-                                                 </p:column>
-                                                 <p:column headerText="Tipo de Movilidad" style="width:150px; text-align: center;">
-                                                      <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.tipoMovilidad}"/>
-                                                  </p:column>
-                                                 <p:column headerText="Fecha Inicio" style="width:120px; text-align: center;">
-                                                     <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                                 </p:column>
-                                                 <p:column headerText="Fecha de Término" style="width:120px; text-align: center;">
-                                                     <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                                 </p:column>
-                                                 <p:column headerText="Ciudad" style="width:150px; text-align: center;">
-                                                     <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.estado.nombre}"/>
-                                                 </p:column>
-                                                 <f:facet name="footer">
-                                                 </f:facet>
-                                             </p:dataTable>
-                                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
-                                                 <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
-                                                 <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
-                                             </p:confirmDialog>
-                                      </h:form>
-                                 </p:tab>
-                            </p:tabView>
-                             </center>
-                        </div>
-                    </div>
-                    <!-- Modal Evidencia Registros de Movilidad -->
-                    <p:dialog id="modalCargaEvidencia" 
-                              widgetVar="modalCargaEvidencia" 
-                              width="700" 
-                              height="auto"  
-                              closeOnEscape="true" 
-                              visible="#{registrosMovilidad.dto.forzarAperturaDialogo}"
-                              showEffect="fade" 
-                              hideEffect="fade" 
-                              modal="true" 
-                              draggable="true" 
-                              header="Carga de evidencias" 
-                              onHide="actualizar();"
-                              styleClass="panel panel-primary" 
-                              responsive="true" 
-                              resizable="false" 
-                              maximizable="false">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <p:toolbar id="tb">
-                                    <f:facet name="left">
-                                        <p:spacer width="10" />
-                                        <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
-                                        <p:spacer width="10" />
                                     </f:facet>
                                     <f:facet name="right">
-                                        <o:form id="formularioEvidencia" 
-                                                enctype="multipart/form-data" 
-                                                class="form-inline"  >
-                                            <o:inputFile id="files" 
-                                                         value="#{registrosMovilidad.dto.archivos}"  
-                                                         multiple="true" 
-                                                         class="form-control"
-                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" 
-                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
-                                                         maxsize="#{caster.evidenciasTamanioLimite}" 
-                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
-                                                         required="true" 
-                                                         requiredMessage="Debe elegir al menos un archivo." >
-                                            </o:inputFile>
-                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{registrosMovilidad.subirEvidencias()}" />
-                                        </o:form>
+                                        <c:if test="#{registrosMovilidadPYE.dto.periodo.anio ne null}">
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reporteRegistros.descargarReporteMov(registrosMovilidadPYE.dto.area.area,registrosMovilidadPYE.dto.periodo.anio)}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                        </c:if>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
                                     </f:facet>
                                 </p:toolbar>
+                                <p:sticky target="tb" />
+                            </p:outputPanel>
+                        </h:form>
+                    </div>
+                    <p:separator/>
+
+                    <div class="box-body">
+                        <!-- Sección de visualización y eliminación -->
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <center>
+                                    <p:tabView>
+                                        <p:tab id="twbMovAct" title="Registros de Movilidad">
+                                            <h:form id="formMuestraDatosActivos">
+                                                <p:remoteCommand name="actualizar" update="@form:dtbRegMov" />
+                                                <p:dataTable id="dtbRegMov" emptyMessage="Sin datos en el periodo seleccionado." value="#{registrosMovilidadPYE.dto.lista}" var="regMov"
+                                                             paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             resizeMode="expand"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column rowspan="2" headerText="Opciones" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Clave" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="Programa de Movilidad" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Tipo de Participante" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Tipo de Movilidad" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Fecha de Inicio" style="width: 120px;"/>
+                                                            <p:column rowspan="2" headerText="Fecha de Término" style="width: 120px;"/>
+                                                            <p:column rowspan="2" headerText="Participante" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="Programa Educativo" style="width: 350px;"/>
+                                                            <p:column rowspan="2" headerText="Periodo Escolar" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Cuatrimestre Cursado" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Institución u Organización"  style="width: 300px;"/>
+                                                            <p:column rowspan="2" headerText="País" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="Ciudad" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="Proyecto" style="width: 250px;"/>
+                                                            <p:column rowspan="2" headerText="Descripción del Proyecto" style="width: 350px;"/>
+                                                            <p:column colspan="5" headerText="Inversión" style="width: 600px;"/>
+                                                            <p:column rowspan="2" headerText="Descripción de Ingresos Extraordinarios" style="width: 300px;"/>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column headerText="Presupuesto Estatal" style="width: 12px;"/>
+                                                            <p:column headerText="Presupuesto Federal" style="width: 120px;"/>
+                                                            <p:column headerText="Captación de Derechos" style="width: 120px;"/>
+                                                            <p:column headerText="Ingresos Propios" style="width: 120px;"/>
+                                                            <p:column headerText="Ingresos Extraordinarios" style="width: 120px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <c:set var="regMovEliminado" value="#{regMov.registrosMovilidad.registro}"/>
+                                                    <c:set var="regMovClave" value="#{regMov.registrosMovilidad.registroMovilidad}"/>
+                                                    <p:column style="width: 150px; text-align: center;">
+                                                        <div class="btn-group">
+                                                            <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{registrosMovilidad.eliminarRegistro(regMovEliminado,regMovClave)}" onsuccess="actualizar(); actualizar1(); actualizar2();" title="Eliminar registro." disabled="#{registrosMovilidadPYE.dto.eventoActual ne registrosMovilidadPYE.dto.eventoSeleccionado}">
+                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de Movilidad #{regMov.registrosMovilidad.registroMovilidad}?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                            <c:set var="evidencias" value="#{registrosMovilidad.consultarEvidencias(regMov)}" />
+                                                            <p:commandButton actionListener="#{registrosMovilidad.seleccionarRegistro(regMov)}"
+                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                             icon="fa fa-image"
+                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                            <p:commandButton actionListener="#{registrosMovilidadPYE.abrirAlineacionPOA(regMov)}"
+                                                                             class="btn btn-sm #{registrosMovilidadPYE.verificaAlineacion(regMovEliminado)?'btn-info':'btn-warning'}"
+                                                                             icon="fa fa-cog"
+                                                                             title="Alineación a POA." />
+                                                            <p:commandButton actionListener="#{registrosMovilidad.editarRegistro(regMov)}"
+                                                                             class="btn btn-sm btn-primary" 
+                                                                             icon="fa fa-edit"
+                                                                             title="Editar registro" />
+                                                        </div>
+                                                    </p:column>
+                                                    <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.registroMovilidad}"/></p:column> 
+                                                    <p:column style="width: 150px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.programaMovilidad.nombre}"/></p:column>
+                                                    <p:column style="width: 150px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.tipoParticipante}"/></p:column>
+                                                    <p:column style="width: 150px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.tipoMovilidad}"/></p:column>
+                                                    <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                                    <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                                    <p:column style="width: 200px;"><h:outputText value="#{regMov.registrosMovilidad.participante}"/></p:column>
+                                                    <p:column style="width: 350px;"><h:outputText value="#{regMov.areasUniversidad.nombre}"/></p:column>
+                                                    <p:column style="width: 150px; text-align: center;"><h:outputText value="#{regMov.periodosEscolares.mesInicio.mes} - #{regMov.periodosEscolares.mesFin.mes}"/></p:column>
+                                                    <p:column style="width: 150px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.cuatrimestreCursado}"/></p:column>
+                                                    <p:column style="width: 300px;"><h:outputText value="#{regMov.registrosMovilidad.institucionOrganizacion}"/></p:column>
+                                                    <p:column style="width: 100px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.estado.idpais.nombre}"/></p:column>
+                                                    <p:column style="width: 100px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.estado.nombre}"/></p:column>
+                                                    <p:column style="width: 250px;"><h:outputText value="#{regMov.registrosMovilidad.proyecto}"/></p:column>
+                                                    <p:column style="width: 350px;"><h:outputText value="#{regMov.registrosMovilidad.descripcion}"/></p:column>
+                                                    <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.presEst}"/></p:column>
+                                                    <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.presFed}"/></p:column>
+                                                    <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.capDer}"/></p:column>
+                                                    <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.ingPropios}"/></p:column>
+                                                    <p:column style="width: 120px; text-align: center;"><h:outputText value="#{regMov.registrosMovilidad.ingExtra}"/></p:column>
+                                                    <p:column style="width: 300px;"><h:outputText value="#{regMov.registrosMovilidad.descripcionIngExt}"/></p:column>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                                </p:confirmDialog>
+                                            </h:form>
+                                        </p:tab>
+                                        <p:tab id="twbMovDocAct" title="Movilidad Docente">
+                                            <h:form id="formMovDoc">
+                                                <p:remoteCommand name="actualizar1" update="@form:dtbMovilidadDocPrevia" />
+                                                <p:dataTable  id="dtbMovilidadDocPrevia" emptyMessage="Sin datos en el periodo seleccionado." value="#{registrosMovilidadPYE.dtodoc.lista}" var="movilidadDoc"
+                                                              paginator="true" rows="10" rowsPerPageTemplate="5,10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                              resizeMode="expand"
+                                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <c:set var="DocMovEliminado" value="#{movilidadDoc.registroMovilidadDocente.registro}"/>
+                                                    <p:column headerText="Opciones" style="text-align: center;" width="100">
+                                                        <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{registrosMovilidad.eliminarRegistroParticipante(DocMovEliminado)}" onsuccess="actualizar1();" title="Eliminar registro." disabled="#{registrosMovilidad.dto.eventoActual ne registrosMovilidad.dto.eventoSeleccionado}">
+                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la Movilidad del Personal #{movilidadDoc.personal.nombre}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <c:set var="evidencias" value="#{movilidadDocente.consultarEvidencias(movilidadDoc)}" />
+                                                        <p:commandButton actionListener="#{movilidadDocente.seleccionarRegistro(movilidadDoc)}"
+                                                                         class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                         icon="fa fa-image"
+                                                                         title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+
+                                                    </p:column>
+                                                    <p:column headerText="Clave Movilidad" style="width:120px; text-align: center;">
+                                                        <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.registroMovilidad}">
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column headerText="Clave Personal" style="width:100px; text-align: center;">
+                                                        <h:outputText value="#{movilidadDoc.personal.clave}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Nombre del Personal" style="width:300px;">
+                                                        <h:outputText value="#{movilidadDoc.personal.nombre}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Proyecto" style="width:300px;">
+                                                        <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.proyecto}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Programa de Movilidad" style="width:150px; text-align: center;">
+                                                        <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.programaMovilidad.nombre}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Tipo de Movilidad" style="width:150px; text-align: center;">
+                                                        <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.tipoMovilidad}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Fecha Inicio" style="width:120px; text-align: center;">
+                                                        <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column headerText="Fecha de Término" style="width:120px; text-align: center;">
+                                                        <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column headerText="Ciudad" style="width:120px; text-align: center;">
+                                                        <h:outputText value="#{movilidadDoc.registroMovilidadDocente.registroMovilidad.estado.nombre}"/>
+                                                    </p:column>
+                                                    <f:facet name="footer">
+                                                    </f:facet>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check"  update="formMovDoc"/>
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                                </p:confirmDialog>
+                                            </h:form>
+                                        </p:tab>
+                                        <p:tab id="twbMovEst" title="Movilidad Estudiantil">
+                                            <h:form id="formMovEst">
+                                                <p:remoteCommand name="actualizar2" update="@form:dtbMovilidadEstPrevia" />
+                                                <p:dataTable  id="dtbMovilidadEstPrevia" emptyMessage="Sin datos en el periodo seleccionado." value="#{registrosMovilidadPYE.dtoest.lista}" var="movilidadEst"
+                                                              paginator="true" rows="10" rowsPerPageTemplate="5,10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                              resizeMode="expand"
+                                                              tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <c:set var="EstMovEliminado" value="#{movilidadEst.registroMovilidadEstudiante.registro}"/>
+                                                    <p:column headerText="Opciones" style="text-align: center;" width="100">
+                                                        <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{registrosMovilidad.eliminarRegistroParticipante(EstMovEliminado)}" onsuccess="actualizar2();" title="Eliminar registro." disabled="#{registrosMovilidad.dto.eventoActual ne registrosMovilidad.dto.eventoSeleccionado}">
+                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la Movilidad de la Matricula #{movilidadEst.registroMovilidadEstudiante.matriculaPeriodosEscolares.matricula}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <c:set var="evidencias" value="#{movilidadEstudiante.consultarEvidencias(movilidadEst)}" />
+                                                        <p:commandButton actionListener="#{movilidadEstudiante.seleccionarRegistro(movilidadEst)}"
+                                                                         class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                         icon="fa fa-image"
+                                                                         title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                    </p:column>
+                                                    <p:column headerText="Clave Movilidad" style="width:100px; text-align: center;">
+                                                        <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.registroMovilidad}">
+                                                        </h:outputText>
+                                                    </p:column>
+                                                    <p:column headerText="Matricula" style="width:100px; text-align: center;">
+                                                        <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.matriculaPeriodosEscolares.matricula}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Proyecto" style="width:300px;">
+                                                        <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.proyecto}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Programa de Movilidad" style="width:150px; text-align: center;">
+                                                        <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.programaMovilidad.nombre}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Tipo de Movilidad" style="width:150px; text-align: center;">
+                                                        <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.tipoMovilidad}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Fecha Inicio" style="width:120px; text-align: center;">
+                                                        <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column headerText="Fecha de Término" style="width:120px; text-align: center;">
+                                                        <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column headerText="Ciudad" style="width:150px; text-align: center;">
+                                                        <h:outputText value="#{movilidadEst.registroMovilidadEstudiante.registroMovilidad.estado.nombre}"/>
+                                                    </p:column>
+                                                    <f:facet name="footer">
+                                                    </f:facet>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                                </p:confirmDialog>
+                                            </h:form>
+                                        </p:tab>
+                                    </p:tabView>
+                                </center>
                             </div>
                         </div>
-                        <h:form id="frmEvidencias" >
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Clave: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{registrosMovilidad.dto.registro.registrosMovilidad.registroMovilidad}" /></div>
-                            </div>
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p:remoteCommand name="actualizar3" update="@form:tblEvidencias" />
-                                    <p:dataTable id="tblEvidencias" value="#{registrosMovilidad.dto.listaEvidencias}" var="evidencia"
-                                                 emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
-                                                 paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
-                                                 >
-                                        <p:columnGroup type="header">
-                                            <p:row>
-                                                <p:column headerText="Opciones" width="80"/>
-                                                <p:column headerText="Archivo" />
-                                                <p:column headerText="Tipo"     width="80" />
-                                                <p:column headerText="Tamanio"  width="80" />
-                                            </p:row>
-                                        </p:columnGroup>
-                                        <p:column style="text-align: center;">
-                                            <div class="btn-group">
-                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{registrosMovilidad.eliminarEvidencia(evidencia)}" onsuccess="actualizar3(), actualizar();" title="Eliminar evidencia.">
-                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
-                                                </p:commandButton>
-                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{registrosMovilidad.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
-                                            </div>
-                                        </p:column>
-                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
-                                        <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(registrosMovilidad.dto.listaEvidencias)}.</span>
-                                        </f:facet>
-                                    </p:dataTable>
-                                </div>
-                            </div>
-                        </h:form>
-                    </p:dialog>
-                    <p:dialog id="modalAlineacion" widgetVar="modalAlineacion" width="900" height="auto"  closeOnEscape="true"
-                              showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." onHide="actualizar();"
-                              styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">                        
-                        <h:form id="frmAlineacion" >
+                        <!-- Modal Evidencia Registros de Movilidad -->
+                        <p:dialog id="modalCargaEvidencia" 
+                                  widgetVar="modalCargaEvidencia" 
+                                  width="700" 
+                                  height="auto"  
+                                  closeOnEscape="true" 
+                                  visible="#{registrosMovilidad.dto.forzarAperturaDialogo}"
+                                  showEffect="fade" 
+                                  hideEffect="fade" 
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Carga de evidencias" 
+                                  onHide="actualizar();"
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p:toolbar>
+                                    <p:toolbar id="tb">
                                         <f:facet name="left">
-                                            
+                                            <p:spacer width="10" />
+                                            <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
+                                            <p:spacer width="10" />
                                         </f:facet>
                                         <f:facet name="right">
-                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{registrosMovilidadPYE.eliminarAlineacion()}" rendered="#{!empty registrosMovilidadPYE.dto.registro.actividadAlineada}" >
-                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
-                                            </p:commandButton>
-                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{registrosMovilidadPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                            <o:form id="formularioEvidencia" 
+                                                    enctype="multipart/form-data" 
+                                                    class="form-inline"  >
+                                                <o:inputFile id="files" 
+                                                             value="#{registrosMovilidad.dto.archivos}"  
+                                                             multiple="true" 
+                                                             class="form-control"
+                                                             accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                             acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                             maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                             maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                             required="true" 
+                                                             requiredMessage="Debe elegir al menos un archivo." >
+                                                </o:inputFile>
+                                                <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{registrosMovilidad.subirEvidencias()}" />
+                                            </o:form>
                                         </f:facet>
                                     </p:toolbar>
                                 </div>
-                            </div>                            
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Clave: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{registrosMovilidadPYE.dto.registro.registrosMovilidad.registroMovilidad}" /></div>
                             </div>
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
-                            <c:set var="col1" value="#{'col-md-2'}" />
-                            <c:set var="col2" value="#{'col-md-10'}" />
-                            <div class="row" style="#{fila}">
-                                <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
-                                <div class="#{col2}">
-                                    <p:selectOneMenu id="eje" value="#{registrosMovilidadPYE.dto.alineacionEje}" valueChangeListener="#{registrosMovilidadPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
-                                        <p:autoUpdate />
-                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{registrosMovilidadPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
-                                        <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
-                                    </p:selectOneMenu>
-                                    <p:message for="eje"><p:autoUpdate /></p:message>
+                            <h:form id="frmEvidencias" >
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Clave: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{registrosMovilidad.dto.registro.registrosMovilidad.registroMovilidad}" /></div>
                                 </div>
-                            </div>
-                            <div class="row" style="#{fila}">
-                                <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
-                                <div class="#{col2}">
-                                    <p:selectOneMenu id="estrategia" value="#{registrosMovilidadPYE.dto.alineacionEstrategia}" valueChangeListener="#{registrosMovilidad.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
-                                        <p:autoUpdate />
-                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{registrosMovilidadPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
-                                        <p:ajax process="estrategia" update="lineaAccion,actividad" />
-                                    </p:selectOneMenu>
-                                    <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:remoteCommand name="actualizar3" update="@form:tblEvidencias" />
+                                        <p:dataTable id="tblEvidencias" value="#{registrosMovilidad.dto.listaEvidencias}" var="evidencia"
+                                                     emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                     paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                     >
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column headerText="Opciones" width="80"/>
+                                                    <p:column headerText="Archivo" />
+                                                    <p:column headerText="Tipo"     width="80" />
+                                                    <p:column headerText="Tamanio"  width="80" />
+                                                </p:row>
+                                            </p:columnGroup>
+                                            <p:column style="text-align: center;">
+                                                <div class="btn-group">
+                                                    <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{registrosMovilidad.eliminarEvidencia(evidencia)}" onsuccess="actualizar3(), actualizar();" title="Eliminar evidencia.">
+                                                        <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{registrosMovilidad.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                                </div>
+                                            </p:column>
+                                            <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                            <f:facet name="footer">
+                                                <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(registrosMovilidad.dto.listaEvidencias)}.</span>
+                                            </f:facet>
+                                        </p:dataTable>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row" style="#{fila}">
-                                <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
-                                <div class="#{col2}">
-                                    <p:selectOneMenu id="lineaAccion" value="#{registrosMovilidadPYE.dto.alineacionLinea}" valueChangeListener="#{registrosMovilidadPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
-                                        <p:autoUpdate />
-                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{registrosMovilidadPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
-                                        <p:ajax process="lineaAccion" update="actividad" />
-                                    </p:selectOneMenu>
-                                    <p:message for="lineaAccion"><p:autoUpdate /></p:message>
-                                </div>
-                            </div>
-                            <div class="row" style="#{fila}">
-                                <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
-                                <div class="#{col2}">
-                                    <p:selectOneMenu id="actividad" value="#{registrosMovilidadPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
-                                        <p:autoUpdate />
-                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{registrosMovilidadPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
-                                        <p:ajax process="actividad" />
-                                    </p:selectOneMenu>
-                                    <p:message for="actividad"><p:autoUpdate /></p:message>
-                                </div>
-                            </div>
-                        </h:form>
-                    </p:dialog>
-                    <!-- Evidencias Movilidad Docente -->
-                    <p:dialog id="modalCargaEvidenciaDoc" 
-                              widgetVar="modalCargaEvidenciaDoc" 
-                              width="700" 
-                              height="auto"  
-                              closeOnEscape="true" 
-                              visible="#{movilidadDocente.dto.forzarAperturaDialogo}"
-                              showEffect="fade" 
-                              hideEffect="fade" 
-                              modal="true" 
-                              draggable="true" 
-                              header="Carga de evidencias" 
-                              onHide="actualizar1();"
-                              styleClass="panel panel-primary" 
-                              responsive="true" 
-                              resizable="false" 
-                              maximizable="false">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <p:toolbar id="tbDoc">
-                                    <f:facet name="left">
-                                        <p:spacer width="10" />
-                                        <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
-                                        <p:spacer width="10" />
-                                    </f:facet>
-                                    <f:facet name="right">
-                                        <o:form id="formularioEvidenciaDoc" 
-                                                enctype="multipart/form-data" 
-                                                class="form-inline"  >
-                                            <o:inputFile id="filesDoc" 
-                                                         value="#{movilidadDocente.dto.archivos}"  
-                                                         multiple="true" 
-                                                         class="form-control"
-                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" 
-                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
-                                                         maxsize="#{caster.evidenciasTamanioLimite}" 
-                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
-                                                         required="true" 
-                                                         requiredMessage="Debe elegir al menos un archivo." >
-                                            </o:inputFile>
-                                            <h:commandButton id="btnuploadFilesDoc" value="Subir archivos" class="btn btn-primary" actionListener="#{movilidadDocente.subirEvidencias()}" />
-                                        </o:form>
-                                    </f:facet>
-                                </p:toolbar>
-                            </div>
-                        </div>
-                        <h:form id="frmEvidenciasDoc" >
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Clave: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{movilidadDocente.dto.registro.registroMovilidadDocente.registroMovilidad.registroMovilidad}" /></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Personal: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{movilidadDocente.dto.registro.personal.nombre}" /></div>
-                            </div>
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p:remoteCommand name="actualizar4" update="@form:tblEvidenciasDoc" />
-                                    <p:dataTable id="tblEvidenciasDoc" value="#{movilidadDocente.dto.listaEvidencias}" var="evidenciaDoc"
-                                                 emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
-                                                 paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
-                                                 >
-                                        <p:columnGroup type="header">
-                                            <p:row>
-                                                <p:column headerText="Opciones" width="80"/>
-                                                <p:column headerText="Archivo" />
-                                                <p:column headerText="Tipo"     width="80" />
-                                                <p:column headerText="Tamanio"  width="80" />
-                                            </p:row>
-                                        </p:columnGroup>
-                                        <p:column style="text-align: center;">
-                                            <div class="btn-group">
-                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{movilidadDocente.eliminarEvidencia(evidenciaDoc)}" onsuccess="actualizar4(); actualizar1();" title="Eliminar evidencia.">
-                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidenciaDoc.ruta)}?" icon="ui-icon-alert" />
-                                                </p:commandButton>
-                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{movilidadDocente.descargarEvidencia(evidenciaDoc)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
-                                            </div>
-                                        </p:column>
-                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidenciaDoc.ruta)}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidenciaDoc.mime)}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidenciaDoc.tamanioBytes)}" /></p:column>
-                                        <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(movilidadDocente.dto.listaEvidencias)}.</span>
-                                        </f:facet>
-                                    </p:dataTable>
-                                </div>
-                            </div>
-                        </h:form>
-                    </p:dialog>
-                    <!-- Evidencias Movilidad Estudiantil -->
-                    <p:dialog id="modalCargaEvidenciaEst" 
-                              widgetVar="modalCargaEvidenciaEst" 
-                              width="700" 
-                              height="auto"  
-                              closeOnEscape="true" 
-                              visible="#{movilidadEstudiante.dto.forzarAperturaDialogo}"
-                              showEffect="fade" 
-                              hideEffect="fade" 
-                              modal="true" 
-                              draggable="true" 
-                              header="Carga de evidencias" 
-                              onHide="actualizar2();"
-                              styleClass="panel panel-primary" 
-                              responsive="true" 
-                              resizable="false" 
-                              maximizable="false">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <p:toolbar id="tbEst">
-                                    <f:facet name="left">
-                                        <p:spacer width="10" />
-                                        <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
-                                        <p:spacer width="10" />
-                                    </f:facet>
-                                    <f:facet name="right">
-                                        <o:form id="formularioEvidenciaEst" 
-                                                enctype="multipart/form-data" 
-                                                class="form-inline"  >
-                                            <o:inputFile id="filesEst" 
-                                                         value="#{movilidadEstudiante.dto.archivos}"  
-                                                         multiple="true" 
-                                                         class="form-control"
-                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" 
-                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
-                                                         maxsize="#{caster.evidenciasTamanioLimite}" 
-                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
-                                                         required="true" 
-                                                         requiredMessage="Debe elegir al menos un archivo." >
-                                            </o:inputFile>
-                                            <h:commandButton id="btnuploadFilesEst" value="Subir archivos" class="btn btn-primary" actionListener="#{movilidadEstudiante.subirEvidencias()}" />
-                                        </o:form>
-                                    </f:facet>
-                                </p:toolbar>
-                            </div>
-                        </div>
-                        <h:form id="frmEvidenciasEst" >
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Clave: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{movilidadEstudiante.dto.registro.registroMovilidadEstudiante.registroMovilidad.registroMovilidad}" /></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2"><p:outputLabel value="Matricula: " /></div>
-                                <div class="col-md-10"><p:outputLabel value="#{movilidadEstudiante.dto.registro.registroMovilidadEstudiante.matriculaPeriodosEscolares.matricula}" /></div>
-                            </div>
-                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p:remoteCommand name="actualizar5" update="@form:tblEvidenciasEst" />
-                                    <p:dataTable id="tblEvidenciasEst" value="#{movilidadEstudiante.dto.listaEvidencias}" var="evidenciaEst"
-                                                 emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
-                                                 paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
-                                                 >
-                                        <p:columnGroup type="header">
-                                            <p:row>
-                                                <p:column headerText="Opciones" width="80"/>
-                                                <p:column headerText="Archivo" />
-                                                <p:column headerText="Tipo"     width="80" />
-                                                <p:column headerText="Tamanio"  width="80" />
-                                            </p:row>
-                                        </p:columnGroup>
-                                        <p:column style="text-align: center;">
-                                            <div class="btn-group">
-                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{movilidadEstudiante.eliminarEvidencia(evidenciaEst)}" onsuccess="actualizar2(); actualizar5();" title="Eliminar evidencia.">
-                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidenciaEst.ruta)}?" icon="ui-icon-alert" />
-                                                </p:commandButton>
-                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{movilidadEstudiante.descargarEvidencia(evidenciaEst)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
-                                            </div>
-                                        </p:column>
-                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidenciaEst.ruta)}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidenciaEst.mime)}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidenciaEst.tamanioBytes)}" /></p:column>
-                                        <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(movilidadEstudiante.dto.listaEvidencias)}.</span>
-                                        </f:facet>
-                                    </p:dataTable>
-                                </div>
-                            </div>
-                        </h:form>
-                    </p:dialog>
-                    <br></br>
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12">
-                            <h:form id="frmAreasConRegistros">
-                                <p:dataGrid var="areasRegistro" value="#{registrosMovilidadPYE.dto.listaMovAreasConRegistroMensualGeneral}" columns="10" layout="grid"
-                                            id="areasRegistro" emptyMessage="No se ha registrado información de Movilidad en el mes correspondiente">
-                                    <f:facet name="header" >
-                                        <span style="font-size: medium;"> Áreas que actualmente tienen registros en el mes: <strong>#{registrosMovilidadPYE.dto.eventoSeleccionado.mes} </strong></span>
-                                    </f:facet>
-                                     <p:panel style="text-align:center;" >
-                                        <h:panelGrid columns="1">
-                                            <h:outputText value="#{areasRegistro.categoria.descripcion}" style="font-weight: bold;"/>
-                                            <h:outputText value="#{areasRegistro.nombre}"/>
-                                        </h:panelGrid>
-                                    </p:panel>
-                                </p:dataGrid>
                             </h:form>
+                        </p:dialog>
+                        <p:dialog id="modalAlineacion" widgetVar="modalAlineacion" width="900" height="auto"  closeOnEscape="true"
+                                  showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." onHide="actualizar();"
+                                  styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">                        
+                            <h:form id="frmAlineacion" >
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:toolbar>
+                                            <f:facet name="left">
+
+                                            </f:facet>
+                                            <f:facet name="right">
+                                                <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{registrosMovilidadPYE.eliminarAlineacion()}" rendered="#{!empty registrosMovilidadPYE.dto.registro.actividadAlineada}" >
+                                                    <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{registrosMovilidadPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                            </f:facet>
+                                        </p:toolbar>
+                                    </div>
+                                </div>                            
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Clave: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{registrosMovilidadPYE.dto.registro.registrosMovilidad.registroMovilidad}" /></div>
+                                </div>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                                <c:set var="col1" value="#{'col-md-2'}" />
+                                <c:set var="col2" value="#{'col-md-10'}" />
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="eje" value="#{registrosMovilidadPYE.dto.alineacionEje}" valueChangeListener="#{registrosMovilidadPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{registrosMovilidadPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                            <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="eje"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="estrategia" value="#{registrosMovilidadPYE.dto.alineacionEstrategia}" valueChangeListener="#{registrosMovilidad.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{registrosMovilidadPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                            <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="lineaAccion" value="#{registrosMovilidadPYE.dto.alineacionLinea}" valueChangeListener="#{registrosMovilidadPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{registrosMovilidadPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                            <p:ajax process="lineaAccion" update="actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="actividad" value="#{registrosMovilidadPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{registrosMovilidadPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                            <p:ajax process="actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="actividad"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </p:dialog>
+                        <!-- Evidencias Movilidad Docente -->
+                        <p:dialog id="modalCargaEvidenciaDoc" 
+                                  widgetVar="modalCargaEvidenciaDoc" 
+                                  width="700" 
+                                  height="auto"  
+                                  closeOnEscape="true" 
+                                  visible="#{movilidadDocente.dto.forzarAperturaDialogo}"
+                                  showEffect="fade" 
+                                  hideEffect="fade" 
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Carga de evidencias" 
+                                  onHide="actualizar1();"
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar id="tbDoc">
+                                        <f:facet name="left">
+                                            <p:spacer width="10" />
+                                            <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
+                                            <p:spacer width="10" />
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <o:form id="formularioEvidenciaDoc" 
+                                                    enctype="multipart/form-data" 
+                                                    class="form-inline"  >
+                                                <o:inputFile id="filesDoc" 
+                                                             value="#{movilidadDocente.dto.archivos}"  
+                                                             multiple="true" 
+                                                             class="form-control"
+                                                             accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                             acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                             maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                             maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                             required="true" 
+                                                             requiredMessage="Debe elegir al menos un archivo." >
+                                                </o:inputFile>
+                                                <h:commandButton id="btnuploadFilesDoc" value="Subir archivos" class="btn btn-primary" actionListener="#{movilidadDocente.subirEvidencias()}" />
+                                            </o:form>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <h:form id="frmEvidenciasDoc" >
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Clave: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{movilidadDocente.dto.registro.registroMovilidadDocente.registroMovilidad.registroMovilidad}" /></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Personal: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{movilidadDocente.dto.registro.personal.nombre}" /></div>
+                                </div>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:remoteCommand name="actualizar4" update="@form:tblEvidenciasDoc" />
+                                        <p:dataTable id="tblEvidenciasDoc" value="#{movilidadDocente.dto.listaEvidencias}" var="evidenciaDoc"
+                                                     emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                     paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                     >
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column headerText="Opciones" width="80"/>
+                                                    <p:column headerText="Archivo" />
+                                                    <p:column headerText="Tipo"     width="80" />
+                                                    <p:column headerText="Tamanio"  width="80" />
+                                                </p:row>
+                                            </p:columnGroup>
+                                            <p:column style="text-align: center;">
+                                                <div class="btn-group">
+                                                    <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{movilidadDocente.eliminarEvidencia(evidenciaDoc)}" onsuccess="actualizar4(); actualizar1();" title="Eliminar evidencia.">
+                                                        <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidenciaDoc.ruta)}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{movilidadDocente.descargarEvidencia(evidenciaDoc)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                                </div>
+                                            </p:column>
+                                            <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidenciaDoc.ruta)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidenciaDoc.mime)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidenciaDoc.tamanioBytes)}" /></p:column>
+                                            <f:facet name="footer">
+                                                <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(movilidadDocente.dto.listaEvidencias)}.</span>
+                                            </f:facet>
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </p:dialog>
+                        <!-- Evidencias Movilidad Estudiantil -->
+                        <p:dialog id="modalCargaEvidenciaEst" 
+                                  widgetVar="modalCargaEvidenciaEst" 
+                                  width="700" 
+                                  height="auto"  
+                                  closeOnEscape="true" 
+                                  visible="#{movilidadEstudiante.dto.forzarAperturaDialogo}"
+                                  showEffect="fade" 
+                                  hideEffect="fade" 
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Carga de evidencias" 
+                                  onHide="actualizar2();"
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar id="tbEst">
+                                        <f:facet name="left">
+                                            <p:spacer width="10" />
+                                            <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
+                                            <p:spacer width="10" />
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <o:form id="formularioEvidenciaEst" 
+                                                    enctype="multipart/form-data" 
+                                                    class="form-inline"  >
+                                                <o:inputFile id="filesEst" 
+                                                             value="#{movilidadEstudiante.dto.archivos}"  
+                                                             multiple="true" 
+                                                             class="form-control"
+                                                             accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                             acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                             maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                             maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                             required="true" 
+                                                             requiredMessage="Debe elegir al menos un archivo." >
+                                                </o:inputFile>
+                                                <h:commandButton id="btnuploadFilesEst" value="Subir archivos" class="btn btn-primary" actionListener="#{movilidadEstudiante.subirEvidencias()}" />
+                                            </o:form>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <h:form id="frmEvidenciasEst" >
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Clave: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{movilidadEstudiante.dto.registro.registroMovilidadEstudiante.registroMovilidad.registroMovilidad}" /></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Matricula: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{movilidadEstudiante.dto.registro.registroMovilidadEstudiante.matriculaPeriodosEscolares.matricula}" /></div>
+                                </div>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:remoteCommand name="actualizar5" update="@form:tblEvidenciasEst" />
+                                        <p:dataTable id="tblEvidenciasEst" value="#{movilidadEstudiante.dto.listaEvidencias}" var="evidenciaEst"
+                                                     emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                     paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                     >
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column headerText="Opciones" width="80"/>
+                                                    <p:column headerText="Archivo" />
+                                                    <p:column headerText="Tipo"     width="80" />
+                                                    <p:column headerText="Tamanio"  width="80" />
+                                                </p:row>
+                                            </p:columnGroup>
+                                            <p:column style="text-align: center;">
+                                                <div class="btn-group">
+                                                    <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{movilidadEstudiante.eliminarEvidencia(evidenciaEst)}" onsuccess="actualizar2(); actualizar5();" title="Eliminar evidencia.">
+                                                        <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidenciaEst.ruta)}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{movilidadEstudiante.descargarEvidencia(evidenciaEst)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                                </div>
+                                            </p:column>
+                                            <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidenciaEst.ruta)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidenciaEst.mime)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidenciaEst.tamanioBytes)}" /></p:column>
+                                            <f:facet name="footer">
+                                                <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(movilidadEstudiante.dto.listaEvidencias)}.</span>
+                                            </f:facet>
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </p:dialog>
+                        <br></br>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <h:form id="frmAreasConRegistros">
+                                    <p:dataGrid var="areasRegistro" value="#{registrosMovilidadPYE.dto.listaMovAreasConRegistroMensualGeneral}" columns="10" layout="grid"
+                                                id="areasRegistro" emptyMessage="No se ha registrado información de Movilidad en el mes correspondiente">
+                                        <f:facet name="header" >
+                                            <span style="font-size: medium;"> Áreas que actualmente tienen registros en el mes: <strong>#{registrosMovilidadPYE.dto.eventoSeleccionado.mes} </strong></span>
+                                        </f:facet>
+                                        <p:panel style="text-align:center;" >
+                                            <h:panelGrid columns="1">
+                                                <h:outputText value="#{areasRegistro.categoria.descripcion}" style="font-weight: bold;"/>
+                                                <h:outputText value="#{areasRegistro.nombre}"/>
+                                            </h:panelGrid>
+                                        </p:panel>
+                                    </p:dataGrid>
+                                </h:form>
+                            </div>
                         </div>
-                    </div>
-                       <!-- Modal para editar registro seleccionado -->
-                    <p:dialog id="modalEdicion" 
-                              widgetVar="modalEdicion" 
-                              width="1200" 
-                              height="auto"  
-                              closeOnEscape="true" 
-                              visible="#{registrosMovilidad.dto.forzarAperturaDialogo}"
-                              showEffect="fade" 
-                              hideEffect="fade" 
-                              modal="true" 
-                              draggable="true" 
-                              header="Editar registro" 
-                              styleClass="panel panel-primary" 
-                              responsive="true" 
-                              resizable="false" 
-                              maximizable="false">
-                        
-                             <o:form id="frmModalEdicion" enctype="multipart/form-data"> 
-                                        <p:outputPanel>
-                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                <div class="col-md-12">
-                                                    <div class="box box-widget widget-user-2">
-                                                        <div class="row">
-                                                            <div class="form-group">
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                    <p:outputLabel for="clave" value="Clave"/>                                
-                                                                    <p:inputText id="clave" class="form-control" disabled="true" value="#{registrosMovilidad.dto.registro.registrosMovilidad.registroMovilidad}"/>
-                                                                    <p:message for="clave" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                    <p:outputLabel for="progMov" value="Programa de Movilidad"/>
-                                                                    <p:inputText id="progMov" class="form-control" disabled="true" value="#{registrosMovilidad.dto.registro.registrosMovilidad.programaMovilidad.nombre}"/>
-                                                                    <p:message for="progMov" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                    <p:outputLabel value="Tipo de Participante" for="tipoPart"/>
-                                                                    <p:inputText id="tipoPart" disabled="true" class="form-control" value="#{registrosMovilidad.dto.registro.registrosMovilidad.tipoParticipante}"/>
-                                                                    <p:message for="tipoPart" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                    <p:outputLabel for="tipoMov" value="Tipo de Movilidad"/>
-                                                                    <p:inputText id="tipoMov" class="form-control" disabled="true" value="#{registrosMovilidad.dto.registro.registrosMovilidad.tipoMovilidad}"/>
-                                                                    <p:message for="tipoMov" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                 <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <p:outputLabel for="participacion" value="Participante"/>
-                                                                    <p:inputText id="participacion" class="form-control" placeholder="Participante" size="250" value="#{registrosMovilidad.dto.registro.registrosMovilidad.participante}"/> 
-                                                                    <p:message for="participacion" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>  
-                                                                <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <p:outputLabel for="instOrg" value="Institución u Organización"/>
-                                                                    <p:inputText id="instOrg" class="form-control" placeholder="Institución u Organización" size="150" value="#{registrosMovilidad.dto.registro.registrosMovilidad.institucionOrganizacion}"/> 
-                                                                    <p:message for="instOrg" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <p:outputLabel for="proyecto" value="Proyecto"/>
-                                                                    <p:inputText id="proyecto" class="form-control" placeholder="Proyecto" size="50" value="#{registrosMovilidad.dto.registro.registrosMovilidad.proyecto}"/> 
-                                                                    <p:message for="proyecto" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>  
-                                                                <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                    <p:outputLabel for="descripcion" value="Descripción"/>
-                                                                    <p:inputTextarea id="descripcion" class="form-control" placeholder="Descripción" maxlength="250" value="#{registrosMovilidad.dto.registro.registrosMovilidad.descripcion}"/> 
-                                                                    <p:message for="descripcion" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                    <p:outputLabel for="presEst" value="Presupuesto Estatal"/>
-                                                                    <p:inputNumber id="presEst" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.presEst}"/> 
-                                                                    <p:message for="presEst" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>  
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                    <p:outputLabel for="presFed" value="Presupuesto Federal"/>
-                                                                    <p:inputNumber id="presFed" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.presFed}"/> 
-                                                                    <p:message for="presFed" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>  
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                    <p:outputLabel for="capDer" value="Captación de Derechos"/>
-                                                                    <p:inputNumber id="capDer" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.capDer}"/> 
-                                                                    <p:message for="capDer" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>  
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                    <p:outputLabel for="ingProp" value="Ingresos Propios"/>
-                                                                    <p:inputNumber id="ingProp" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.ingPropios}"/> 
-                                                                    <p:message for="ingProp" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>  
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                    <p:outputLabel for="ingExtra" value="Ingresos Extraordinarios"/>
-                                                                    <p:inputNumber id="ingExtra" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.ingExtra}"/> 
-                                                                    <p:message for="ingExtra" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>  
-                                                                <div class="col-sm-12 col-md-12 col-lg-9">
-                                                                    <p:outputLabel for="desExtra" value="Descripción Extraordinarios"/>
-                                                                    <p:inputText id="desExtra" class="form-control" placeholder="Descripción Extraordinarios" maxlength="255" value="#{registrosMovilidad.dto.registro.registrosMovilidad.descripcionIngExt}"/> 
-                                                                    <p:message for="desExtra" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>  
-                                                                 <div class="col-sm-12 col-md-4 col-lg-3">
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                    <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{registrosMovilidad.guardarEdicion()}" 
-                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
-                                                                                     update="@form"  process="@form" />
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-3 col-lg-3">
-                                                                </div>  
-                                                            </div>
+                        <!-- Modal para editar registro seleccionado -->
+                        <p:dialog id="modalEdicion" 
+                                  widgetVar="modalEdicion" 
+                                  width="1200" 
+                                  height="auto"  
+                                  closeOnEscape="true" 
+                                  visible="#{registrosMovilidad.dto.forzarAperturaDialogo}"
+                                  showEffect="fade" 
+                                  hideEffect="fade" 
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Editar registro" 
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">
+
+                            <o:form id="frmModalEdicion" enctype="multipart/form-data"> 
+                                <p:outputPanel>
+                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                        <div class="col-md-12">
+                                            <div class="box box-widget widget-user-2">
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                            <p:outputLabel for="clave" value="Clave"/>                                
+                                                            <p:inputText id="clave" class="form-control" disabled="true" value="#{registrosMovilidad.dto.registro.registrosMovilidad.registroMovilidad}"/>
+                                                            <p:message for="clave" display="tooltip" />
+                                                            <hr/>
                                                         </div>
-                                                        <hr/>
+                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                            <p:outputLabel for="progMov" value="Programa de Movilidad"/>
+                                                            <p:inputText id="progMov" class="form-control" disabled="true" value="#{registrosMovilidad.dto.registro.registrosMovilidad.programaMovilidad.nombre}"/>
+                                                            <p:message for="progMov" display="tooltip" />
+                                                            <hr/>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                            <p:outputLabel value="Tipo de Participante" for="tipoPart"/>
+                                                            <p:inputText id="tipoPart" disabled="true" class="form-control" value="#{registrosMovilidad.dto.registro.registrosMovilidad.tipoParticipante}"/>
+                                                            <p:message for="tipoPart" display="tooltip" />
+                                                            <hr/>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                            <p:outputLabel for="tipoMov" value="Tipo de Movilidad"/>
+                                                            <p:inputText id="tipoMov" class="form-control" disabled="true" value="#{registrosMovilidad.dto.registro.registrosMovilidad.tipoMovilidad}"/>
+                                                            <p:message for="tipoMov" display="tooltip" />
+                                                            <hr/>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                            <p:outputLabel for="participacion" value="Participante"/>
+                                                            <p:inputText id="participacion" class="form-control" placeholder="Participante" size="250" value="#{registrosMovilidad.dto.registro.registrosMovilidad.participante}"/> 
+                                                            <p:message for="participacion" display="tooltip" />
+                                                            <hr/>
+                                                        </div>  
+                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                            <p:outputLabel for="instOrg" value="Institución u Organización"/>
+                                                            <p:inputText id="instOrg" class="form-control" placeholder="Institución u Organización" size="150" value="#{registrosMovilidad.dto.registro.registrosMovilidad.institucionOrganizacion}"/> 
+                                                            <p:message for="instOrg" display="tooltip" />
+                                                            <hr/>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                            <p:outputLabel for="proyecto" value="Proyecto"/>
+                                                            <p:inputText id="proyecto" class="form-control" placeholder="Proyecto" size="50" value="#{registrosMovilidad.dto.registro.registrosMovilidad.proyecto}"/> 
+                                                            <p:message for="proyecto" display="tooltip" />
+                                                            <hr/>
+                                                        </div>  
+                                                        <div class="col-sm-12 col-md-12 col-lg-12">
+                                                            <p:outputLabel for="descripcion" value="Descripción"/>
+                                                            <p:inputTextarea id="descripcion" class="form-control" placeholder="Descripción" maxlength="250" value="#{registrosMovilidad.dto.registro.registrosMovilidad.descripcion}"/> 
+                                                            <p:message for="descripcion" display="tooltip" />
+                                                            <hr/>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                            <p:outputLabel for="presEst" value="Presupuesto Estatal"/>
+                                                            <p:inputNumber id="presEst" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.presEst}"/> 
+                                                            <p:message for="presEst" display="tooltip" />
+                                                            <hr/>
+                                                        </div>  
+                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                            <p:outputLabel for="presFed" value="Presupuesto Federal"/>
+                                                            <p:inputNumber id="presFed" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.presFed}"/> 
+                                                            <p:message for="presFed" display="tooltip" />
+                                                            <hr/>
+                                                        </div>  
+                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                            <p:outputLabel for="capDer" value="Captación de Derechos"/>
+                                                            <p:inputNumber id="capDer" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.capDer}"/> 
+                                                            <p:message for="capDer" display="tooltip" />
+                                                            <hr/>
+                                                        </div>  
+                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                            <p:outputLabel for="ingProp" value="Ingresos Propios"/>
+                                                            <p:inputNumber id="ingProp" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.ingPropios}"/> 
+                                                            <p:message for="ingProp" display="tooltip" />
+                                                            <hr/>
+                                                        </div>  
+                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                            <p:outputLabel for="ingExtra" value="Ingresos Extraordinarios"/>
+                                                            <p:inputNumber id="ingExtra" class="form-control" style="border: none;" size="35" decimalPlaces="2" decimalSeparator="." value="#{registrosMovilidad.dto.registro.registrosMovilidad.ingExtra}"/> 
+                                                            <p:message for="ingExtra" display="tooltip" />
+                                                            <hr/>
+                                                        </div>  
+                                                        <div class="col-sm-12 col-md-12 col-lg-9">
+                                                            <p:outputLabel for="desExtra" value="Descripción Extraordinarios"/>
+                                                            <p:inputText id="desExtra" class="form-control" placeholder="Descripción Extraordinarios" maxlength="255" value="#{registrosMovilidad.dto.registro.registrosMovilidad.descripcionIngExt}"/> 
+                                                            <p:message for="desExtra" display="tooltip" />
+                                                            <hr/>
+                                                        </div>  
+                                                        <div class="col-sm-12 col-md-4 col-lg-3">
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                                            <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{registrosMovilidad.guardarEdicion()}" 
+                                                                             icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
+                                                                             update="@form"  process="@form" />
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-3 col-lg-3">
+                                                        </div>  
                                                     </div>
                                                 </div>
+                                                <hr/>
                                             </div>
-                                        </p:outputPanel>
-                                    </o:form>
-                    </p:dialog>
+                                        </div>
+                                    </div>
+                                </p:outputPanel>
+                            </o:form>
+                        </p:dialog>
+                    </div>
                 </div>
             </div>
-        </div>
         </c:if>
     </ui:define>
 </ui:composition>

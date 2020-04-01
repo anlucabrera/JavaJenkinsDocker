@@ -374,11 +374,12 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
     }
 
     @Override
-    public List<ListaDtoReprobacion> getRegistroReprobacion() {
+    public List<ListaDtoReprobacion> getRegistroReprobacion(Short ejercicio) {
         List<DesercionReprobacionMaterias> q = new ArrayList<>();
-        q = f.getEntityManager().createQuery("SELECT v FROM DesercionReprobacionMaterias v", DesercionReprobacionMaterias.class)
-        .getResultList();
-     
+        q = f.getEntityManager().createQuery("SELECT v FROM DesercionReprobacionMaterias v INNER JOIN v.registros r INNER JOIN r.eventoRegistro er WHERE er.ejercicioFiscal.ejercicioFiscal = :ejercicioFiscal", DesercionReprobacionMaterias.class)
+                .setParameter("ejercicioFiscal", ejercicio)
+                .getResultList();
+
         if (q.isEmpty() || q == null) {
             return null;
         } else {

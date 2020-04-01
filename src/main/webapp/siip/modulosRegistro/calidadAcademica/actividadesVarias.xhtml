@@ -17,9 +17,9 @@
         <h:outputScript library="js" name="dialogs.js" />
         <h:outputScript library="js" name="calendario.js"/>
         <!-- Inicio estilos par proceso electoral -->
-            <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
-                <h:outputStylesheet library="css" name="procesoElectoral.css" />
-            </c:if>
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <h:outputStylesheet library="css" name="procesoElectoral.css" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
@@ -80,19 +80,24 @@
                                     </c:if>
                                 </f:facet>
                                 <f:facet name="right">
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <div class="btn-group">
                                         <p:commandButton value="Cargar Archivo de Excel" 
                                                          icon="fa fa-file-excel-o" 
                                                          onclick="PF('modalCargaArchivo').show()" 
                                                          class="btn btn-primary btn-sm"/>
                                     </div>
-                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <c:if test="#{controladorArchivoActividadVaria.etapa eq etapa.CARGAR}">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="actividadesVarias?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
-                                        <p:spacer width="3" />
                                     </c:if>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" global="false" action="#{controladorPlantillasCA.descargarPlantillaActVar()}" target="_blank" title="Descargar Plantilla Actividades Varias"><i class="fa fa-download" /></p:commandLink>
-                                    <p:spacer width="3" />
+                                    <c:if test="#{actividadesVarias.dto.anioConsulta ne null}" >
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteActividadesVarias(actividadesVarias.dto.anioConsulta,actividadesVarias.dto.area.area)}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                    </c:if>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
                                 </f:facet>
                             </p:toolbar>
@@ -208,7 +213,7 @@
                                         <p:column>
                                             <h:outputText value="#{actVar.personalidades}"/>
                                         </p:column>
-                                        
+
                                         <f:facet name="footer">
                                             En el mes de: #{actividadesVarias.dto.mesConsulta} hay un total de: #{fn:length(actividadesVarias.dto.lstActividadesVarias)} registros de Actividades Varías.
                                         </f:facet>
@@ -524,7 +529,7 @@
                             </h:form>
                         </div>
                     </div>
-                    
+
                     <p:dialog id="modalEdicionActividadVaria" 
                               widgetVar="modalEdicionActividadVaria" 
                               width="700" 
@@ -547,14 +552,14 @@
                                 <div class="col-sm-12 col-md-12">
                                     <p:outputLabel value="Edición de la actividad varia: #{actividadesVarias.dto.registro.actividadVaria.nombre}"/>
                                 </div>
-                                
+
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px">
                                     <p:outputLabel id="mensaje" value="#{actividadesVarias.dto.mensaje}"/>
                                     <br></br>
                                 </div>
-                                
+
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
-                                
+
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 20px;">
                                     <div class="ui-material">
                                         <p:inputText id="iptNombreActividad"
@@ -681,7 +686,7 @@
                                                    min="0" max="1000" 
                                                    styleClass="campo2Partes"
                                                    placeholder="15 *"
-                                        />
+                                                   />
                                         <p:message for="iptTotalHombres" />
                                         <p:outputLabel value="Total Hombres: " for="iptTotalHombres" />
                                     </div>
@@ -696,7 +701,7 @@
                                                    min="0" max="1000"
                                                    styleClass="campo2Partes"
                                                    placeholder="15 *"
-                                        />
+                                                   />
                                         <p:message for="iptTotalMujeres" />
                                         <p:outputLabel value="Total Mujeres: " for="iptTotalMujeres" />
                                     </div>
@@ -735,7 +740,7 @@
                             </div>
                         </h:form>
                     </p:dialog>
-                    
+
                 </div>
 
                 <p:dialog widgetVar="modalCargaArchivo" 
