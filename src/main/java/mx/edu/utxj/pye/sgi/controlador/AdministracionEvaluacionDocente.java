@@ -9,11 +9,9 @@ import mx.edu.utxj.pye.sgi.dto.dtoEstudianteMateria;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import mx.edu.utxj.pye.sgi.ejb.EJBAdimEstudianteBase;
 import mx.edu.utxj.pye.sgi.ejb.EJBEvaluacionDocenteMateria;
+import mx.edu.utxj.pye.sgi.ejb.EjbEvaluacionDocente2;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados2;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.ch.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -48,10 +46,12 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
     @Getter @Setter PeriodosEscolares periodoEvalucaion;
     @Getter @Setter Personal persona;
     @Getter @Setter int totalEstudiantes,totalCompletos,totalIncompletos,totalNoAcceso,totalEstudiantesPE, totalCompletosPE,totalIncompletosPE,totalNoAccesoPE;
+    @Getter @Setter int tipoEvaluacion;
     @Getter @Setter double porcentaje, porcentajePE;
 
     @EJB EJBAdimEstudianteBase ejbAdimEstudianteBase;
     @EJB  EJBEvaluacionDocenteMateria ejbEvaluacionDocenteMateria;
+    @EJB EjbEvaluacionDocente2 ejbEvaluacionDocente2;
     @EJB EjbPersonal ejbPersonal;
 
     @Inject
@@ -68,6 +68,7 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
  cargado = true;
         setVistaControlador(ControlEscolarVistaControlador.SEGUIMIENTO_EV_DOCENTE);
         getUltimaEvaluacionActiva();
+        getTipoEvaluacion();
         getPeriodoEvaluacion();
         getPersonal();
 
@@ -79,6 +80,15 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
             evaluacion = resEvaluacion.getValor();
         }
         else {mostrarMensajeResultadoEJB(resEvaluacion);}
+    }
+    //
+    public void  getTipoEvaluacion(){
+        try{
+            ResultadoEJB<Integer> restTipoEv = ejbEvaluacionDocente2.getTipoEvaluacion();
+            if(restTipoEv.getCorrecto()==true){ tipoEvaluacion = restTipoEv.getValor();
+            }else { mostrarMensajeResultadoEJB(restTipoEv); }
+        }
+        catch (Exception e){mostrarExcepcion(e);}
     }
     //Obtiene el periodo de la evaluacion
     public void getPeriodoEvaluacion(){
@@ -115,36 +125,77 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
             ResultadoEJB<List<dtoEstudianteMateria>> resMaterias = ejbEvaluacionDocenteMateria.getMateriasbyEstudiante(e,evaluacion);
             if(resMaterias.getCorrecto()==true){
                 listaMaterias = resMaterias.getValor();
-                //Obtiene la lista de resultados por matricula y evaluacion
-                //ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> resResultadosEvaluacion = ejbEvaluacionDocenteMateria.getListResultadosDocenteMateriabyMatricula(evaluacion,Integer.parseInt(e.getMatricula()));
-                ResultadoEJB<List<EvaluacionDocentesMateriaResultados2>> resResultadosEvaluacion = ejbEvaluacionDocenteMateria.getListaResultadosMateria2byMatricula(evaluacion,Integer.parseInt(e.getMatricula()));
-                //List<EvaluacionDocentesMateriaResultados> listTotalResuldos = resResultadosEvaluacion.getValor();
-                List<EvaluacionDocentesMateriaResultados2> listTotalResuldos = resResultadosEvaluacion.getValor();
-                if(resResultadosEvaluacion.getCorrecto()==true){
-                    //Se filtran los resultados encontrados, para obtener solo los resultados completos
-                    List<EvaluacionDocentesMateriaResultados2> listResultadosCompletos= resResultadosEvaluacion.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
-                    //List<EvaluacionDocentesMateriaResultados> listResultadosCompletos= resResultadosEvaluacion.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
-                    // System.out.println("TOTAL DE RESULTADOS COMPLETOS "+ listResultadosCompletos.size());
-                    int totalaEvaluar = listaMaterias.size();
-                    int totalResultadosCompletos = listResultadosCompletos.size();
-                    // Comprueba si ha terminado la evaluacion a docente
-                    if(totalResultadosCompletos < totalaEvaluar){
-                        //Si la los registros de resultados completos es menor a la total de la que debe evaluar, la evaluacion esta incompleta y se agrega a la lista de incompletos
-                        listIncompletos.add(e);
-                        //System.out.println("Ev incompleta");
-                    }if(totalResultadosCompletos == totalaEvaluar){
-                        //Si los registros de resultados completos del estudiante es igual al los que debe evaluar, entonces la evaluacion esta finalizada, y se agrega a la lista de completos
-                        listCompletos.add(e);
-                        // System.out.println("Ev completa");
-                    }
+                //Se verifica el tipo de evaluacion para cargar los resultados correcpondientes
+                if(tipoEvaluacion==1){
+                    getResultadosTipo1(e,listaMaterias);
                 }
-                //TODO: Si no existen registros se agrega a la lista de estudiantes que no han ingresado al sistema
-                else {listNoAcceso.add(e); totalNoAcceso++;
-                    //System.out.println("Ev no accedio");
+                else if(tipoEvaluacion==2){
+                    getResultadosTipo2(e,listaMaterias);
                 }
+
             }
             else {mostrarMensajeResultadoEJB(resMaterias);}
         });
+    }
+    public void getResultadosTipo1(dtoEstudiantesEvalauciones estudiante,List<dtoEstudianteMateria> materias){
+        try{
+            //Obtiene la lista de resultados por matricula y evaluacion(tipo 1 = evaluacion docente noraml)
+            //ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> resResultadosEvaluacion = ejbEvaluacionDocenteMateria.getListResultadosDocenteMateriabyMatricula(evaluacion,Integer.parseInt(e.getMatricula()));
+            ResultadoEJB<List<EvaluacionDocentesMateriaResultados2>> resResultadosEvaluacion = ejbEvaluacionDocenteMateria.getListaResultadosMateria2byMatricula(evaluacion,Integer.parseInt(estudiante.getMatricula()));
+            //List<EvaluacionDocentesMateriaResultados> listTotalResuldos = resResultadosEvaluacion.getValor();
+            List<EvaluacionDocentesMateriaResultados2> listTotalResuldos = resResultadosEvaluacion.getValor();
+            if(resResultadosEvaluacion.getCorrecto()==true){
+                //Se filtran los resultados encontrados, para obtener solo los resultados completos
+                List<EvaluacionDocentesMateriaResultados2> listResultadosCompletos= resResultadosEvaluacion.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
+                //List<EvaluacionDocentesMateriaResultados> listResultadosCompletos= resResultadosEvaluacion.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
+                // System.out.println("TOTAL DE RESULTADOS COMPLETOS "+ listResultadosCompletos.size());
+                int totalaEvaluar = materias.size();
+                int totalResultadosCompletos = listResultadosCompletos.size();
+                // Comprueba si ha terminado la evaluacion a docente
+                if(totalResultadosCompletos < totalaEvaluar){
+                    //Si la los registros de resultados completos es menor a la total de la que debe evaluar, la evaluacion esta incompleta y se agrega a la lista de incompletos
+                    listIncompletos.add(estudiante);
+                    //System.out.println("Ev incompleta");
+                }if(totalResultadosCompletos == totalaEvaluar){
+                    //Si los registros de resultados completos del estudiante es igual al los que debe evaluar, entonces la evaluacion esta finalizada, y se agrega a la lista de completos
+                    listCompletos.add(estudiante);
+                    // System.out.println("Ev completa");
+                }
+            }
+            //TODO: Si no existen registros se agrega a la lista de estudiantes que no han ingresado al sistema
+            else {listNoAcceso.add(estudiante); totalNoAcceso++;
+                //System.out.println("Ev no accedio");
+            }
+        }catch (Exception e){ mostrarExcepcion(e); }
+    }
+    public void getResultadosTipo2(dtoEstudiantesEvalauciones estudiante,List<dtoEstudianteMateria> materias){
+        try{
+            //Obtien la lista de resultados (evaluacion tipo 3 = evaluacion al desempeño docente por contingencia de salud)
+            ResultadoEJB<List<EvaluacionDocentesMateriaResultados3>> resResultados = ejbEvaluacionDocente2.getListaResultadosMateriabyMatricula(evaluacion,Integer.parseInt(estudiante.getMatricula()));
+            List<EvaluacionDocentesMateriaResultados3> listTotalResuldos = resResultados.getValor();
+            if(resResultados.getCorrecto()==true){
+                //Se filtran los resultados encontrados, para obtener solo los resultados completos
+                List<EvaluacionDocentesMateriaResultados3> listResultadosCompletos= resResultados.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
+                //List<EvaluacionDocentesMateriaResultados> listResultadosCompletos= resResultadosEvaluacion.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
+                // System.out.println("TOTAL DE RESULTADOS COMPLETOS "+ listResultadosCompletos.size());
+                int totalaEvaluar = materias.size();
+                int totalResultadosCompletos = listResultadosCompletos.size();
+                // Comprueba si ha terminado la evaluacion a docente
+                if(totalResultadosCompletos < totalaEvaluar){
+                    //Si la los registros de resultados completos es menor a la total de la que debe evaluar, la evaluacion esta incompleta y se agrega a la lista de incompletos
+                    listIncompletos.add(estudiante);
+                    //System.out.println("Ev incompleta");
+                }if(totalResultadosCompletos == totalaEvaluar){
+                    //Si los registros de resultados completos del estudiante es igual al los que debe evaluar, entonces la evaluacion esta finalizada, y se agrega a la lista de completos
+                    listCompletos.add(estudiante);
+                    // System.out.println("Ev completa");
+                }
+            }
+            //TODO: Si no existen registros se agrega a la lista de estudiantes que no han ingresado al sistema
+            else {listNoAcceso.add(estudiante); totalNoAcceso++;
+                //System.out.println("Ev no accedio");
+            }
+        }catch (Exception e){mostrarExcepcion(e);}
     }
     //TODO: Genera el avance de la evaluacion
     public void generarAvance(){

@@ -45,13 +45,6 @@ public class EjbEvaluacionDocente2 {
     public ResultadoEJB<Evaluaciones> getEvDocenteActiva() {
         try{
             Evaluaciones evaluacion = new Evaluaciones();
-            //TODO: Descomentar lo de evaluacion activa
-            evaluacion = em.createQuery("select e from Evaluaciones e where  e.evaluacion =42",Evaluaciones.class)
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
-            ;/*
-
             evaluacion = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
                     .setParameter("tipo", "Docente materia")
                     .setParameter("fecha", new Date())
@@ -59,8 +52,6 @@ public class EjbEvaluacionDocente2 {
                     .findFirst()
                     .orElse(null)
             ;
-            */
-
             if(evaluacion==null){return ResultadoEJB.crearErroneo(2,evaluacion,"La evaluacion no se encontro");}
             else {return  ResultadoEJB.crearCorrecto(evaluacion,"Evaluacion encontrada");}
         }catch (Exception e){
@@ -308,6 +299,35 @@ public class EjbEvaluacionDocente2 {
 
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener los resultados (EJBEvaluacionDocenteMteria.getResultadobyEvaluadorEvaluado)", e, null);
+        }
+    }
+
+    /**
+     * Obtiene los resultados por evaluacion y evaluador
+     * @param evaluacion Evaluacion activa tipo 2 (doesempaño docente por contingencia)
+     * @param matricula Matricula del estudiante
+     * @return Resultado del proceso (Lista de resultados por evaluador)
+     */
+    public ResultadoEJB<List<EvaluacionDocentesMateriaResultados3>> getListaResultadosMateriabyMatricula(Evaluaciones evaluacion, int matricula){
+        try{
+            List<EvaluacionDocentesMateriaResultados3> resultados = new ArrayList<>();
+            if(evaluacion==null){return ResultadoEJB.crearErroneo(2,resultados,"La evaluación no debe ser nula");}
+            if(matricula ==0){return ResultadoEJB.crearErroneo(3,resultados,"La matricula no debe ser nula");}
+            //Busca los resultados por la evaluacion y la matricula
+            resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados3 e where e.evaluacionDocentesMateriaResultados3PK.evaluacion=:evaluacion and e.evaluacionDocentesMateriaResultados3PK.evaluador =:evaluador",EvaluacionDocentesMateriaResultados3.class)
+            .setParameter("evaluacion",evaluacion.getEvaluacion())
+            .setParameter("evaluador",matricula)
+            .getResultList()
+            ;
+            if(resultados.isEmpty() || resultados ==null){
+                return ResultadoEJB.crearErroneo(4,resultados,"No se encontraron resultados");
+            }
+            else {
+                return ResultadoEJB.crearCorrecto(resultados,"Resultados encontrados");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener los resultados (EJBEvaluacionDocente2.getListaResultadosMateriabyMatricula)", e, null);
+
         }
     }
 
