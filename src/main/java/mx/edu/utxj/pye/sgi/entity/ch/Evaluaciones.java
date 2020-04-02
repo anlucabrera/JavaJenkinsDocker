@@ -42,12 +42,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Evaluaciones.findByTipo", query = "SELECT e FROM Evaluaciones e WHERE e.tipo = :tipo")})
 public class Evaluaciones implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "evaluacion")
-    private Integer evaluacion;
     @Basic(optional = false)
     @NotNull
     @Column(name = "periodo")
@@ -67,6 +61,14 @@ public class Evaluaciones implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "tipo")
     private String tipo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionDocentesMateriaResultados3> evaluacionDocentesMateriaResultados3List;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "evaluacion")
+    private Integer evaluacion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EvaluacionConocimientoCodigoEticaResultados> evaluacionConocimientoCodigoEticaResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
@@ -121,13 +123,6 @@ public class Evaluaciones implements Serializable {
         this.evaluacion = evaluacion;
     }
 
-    public int getPeriodo() {
-        return periodo;
-    }
-
-    public void setPeriodo(int periodo) {
-        this.periodo = periodo;
-    }
 
     public Date getFechaInicio() {
         return fechaInicio;
@@ -145,13 +140,6 @@ public class Evaluaciones implements Serializable {
         this.fechaFin = fechaFin;
     }
 
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
 
     @XmlTransient
     public List<EvaluacionConocimientoCodigoEticaResultados> getEvaluacionConocimientoCodigoEticaResultadosList() {
@@ -311,6 +299,30 @@ public class Evaluaciones implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones[ evaluacion=" + evaluacion + " ]";
+    }
+
+    public int getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(int periodo) {
+        this.periodo = periodo;
+    }
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    @XmlTransient
+    public List<EvaluacionDocentesMateriaResultados3> getEvaluacionDocentesMateriaResultados3List() {
+        return evaluacionDocentesMateriaResultados3List;
+    }
+
+    public void setEvaluacionDocentesMateriaResultados3List(List<EvaluacionDocentesMateriaResultados3> evaluacionDocentesMateriaResultados3List) {
+        this.evaluacionDocentesMateriaResultados3List = evaluacionDocentesMateriaResultados3List;
     }
     
 }

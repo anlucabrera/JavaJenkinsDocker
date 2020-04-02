@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados2;
+import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados3;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 
 /**
@@ -15,6 +16,7 @@ public class dtoEstudianteMateria {
     @Getter @Setter Personal docenteImparte;
     @Getter @Setter EvaluacionDocentesMateriaResultados resultados;
     @Getter @Setter EvaluacionDocentesMateriaResultados2 resultados2;
+    @Getter @Setter EvaluacionDocentesMateriaResultados3 resultadosTipo2;
 
     public dtoEstudianteMateria(String claveMateria, String nombreMateria, Personal docenteImparte) {
         this.claveMateria = claveMateria;

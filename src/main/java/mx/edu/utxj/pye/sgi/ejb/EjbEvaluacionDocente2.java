@@ -5,6 +5,7 @@ import edu.mx.utxj.pye.seut.util.preguntas.Abierta;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.*;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -29,6 +30,7 @@ public class EjbEvaluacionDocente2 {
     private EntityManager em;
     private EntityManager em2;
     @EJB EJBAdimEstudianteBase estudianteBase;
+    @EJB EjbPropiedades ep;
 
     @PostConstruct
     public void init(){
@@ -43,8 +45,13 @@ public class EjbEvaluacionDocente2 {
     public ResultadoEJB<Evaluaciones> getEvDocenteActiva() {
         try{
             Evaluaciones evaluacion = new Evaluaciones();
+            //TODO: Descomentar lo de evaluacion activa
+            evaluacion = em.createQuery("select e from Evaluaciones e where  e.evaluacion =42",Evaluaciones.class)
+            .getResultStream()
+            .findFirst()
+            .orElse(null)
+            ;/*
 
-            // Ahorita solo es de prueba, pero se debe cambiar a que busque por rango de fecha, para que tome la evaluacion actual
             evaluacion = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
                     .setParameter("tipo", "Docente materia")
                     .setParameter("fecha", new Date())
@@ -52,6 +59,7 @@ public class EjbEvaluacionDocente2 {
                     .findFirst()
                     .orElse(null)
             ;
+            */
 
             if(evaluacion==null){return ResultadoEJB.crearErroneo(2,evaluacion,"La evaluacion no se encontro");}
             else {return  ResultadoEJB.crearCorrecto(evaluacion,"Evaluacion encontrada");}
@@ -104,6 +112,24 @@ public class EjbEvaluacionDocente2 {
     }
 
     /**
+     * Define el tipo de evaluación a docente que se va realizar
+     * Modificar en confirguaracion propiedades en prontuario (tipoEvaluacionDocente) el tipo de evaluación que se va a realizar
+     * return 1 = Evaluacion a docente
+     * return 2 = Evaluación a docente (aulas virtuales)- Contingencia de salud
+     *
+     * @return
+     */
+    public ResultadoEJB<Integer> getTipoEvaluacion(){
+        try{
+            Integer tipoEvaluacion ;
+            tipoEvaluacion=ep.leerPropiedadEntera("tipoEvaluacionDocente").orElse(0);
+            return ResultadoEJB.crearCorrecto(tipoEvaluacion,"Tipo de evaluación");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener el tipo de evaluación docente. (EJBEvaluacionDocenteMteria.getTipoEvaluacion)", e, null);
+        }
+    }
+
+    /**
      * Posibles respuestas
      * @return
      */
@@ -118,7 +144,8 @@ public class EjbEvaluacionDocente2 {
     }
 
     /**
-     * Apartados
+     * Apartados para evaluación a docente por materia
+     * Evaluación tipo 1
      * @return
      */
     public List<Apartado> getApartados() {
@@ -156,7 +183,47 @@ public class EjbEvaluacionDocente2 {
         return l;
     }
     /**
-     * Busca los resultados de la evaluacion a docente por evaluador, evaluado y evaluacion
+     * Apartados para evaluación docente modificada  por la contigencia de salud y el uso de aulas virtuales
+     * Evaluación tipo 2
+     * @return
+     */
+    public List<Apartado> getApartadosContingencia() {
+        List<Apartado> l = new SerializableArrayList<>();
+        Apartado a1 = new Apartado(1F, "ASISTENCIA", new SerializableArrayList<>());
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 1.0f, "¿Te brindó asesorías para fortalecer los contenidos que se te dificultan de la materia?", ""));
+        Apartado a2 = new Apartado(2F, "PROGRAMA", new SerializableArrayList<>());
+        a2.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 2.0f, "¿Explica al inicio del cuatrimestre la estructura de la materia, como: los objetivos, contenidos, metodología, evaluación y bibliografía?", ""));
+        Apartado a3 = new Apartado(3F, "METODOLOGÍA", new SerializableArrayList<>());
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 3.0f, "¿Explica con claridad los conceptos de cada tema?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 4.0f, "¿Las instrucciones definidas en el curso en Aula Virtual fueron claras?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 5.0f, "¿Te motivó para que participaras objetiva y activamente en el desarrollo de tus actividades?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 6.0f, "¿Generó un clima de confianza en el que se pueden plantear distintas dudas?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 7.0f, "¿Consigue en ti, motivación e interés en la materia?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 8.0f, "¿Se dirige con un lenguaje que propio y respetuoso?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 9.0f, "¿Te brindó alternativas de entrega de trabajos, en caso de presentar algún inconveniente con el Aula Virtual?", ""));
+        Apartado a4 = new Apartado(4F, "EVALUACIÓN", new SerializableArrayList<>());
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 10.0f, "¿Acepta revisar la calificación en caso de posibles errores de evaluación?", ""));
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 11.0f, "¿El docente te dio acompañamiento y retroalimentación de las actividades que generó en el aula virtual?", ""));
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 12.0f, "¿Evaluó el conocimiento del saber y saber hacer a través de un examen, ejercicio práctico u otra herramienta? ", ""));
+        Apartado a5 = new Apartado(5F, "RECURSOS EDUCACIONALES", new SerializableArrayList<>());
+        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 13.0f, "Durante el desarrollo de las actividades en el Aula Virtual ¿El docente te proporcionó algún recurso extra o puentes de comunicación para resolver dudas?", ""));
+        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 14.0f, "Durante la ejecución de actividades en Aula Virtual ¿Resolvió tus dudas a tiempo para entregar tus actividades?", ""));
+        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 15.0f, "¿Cumplió los horarios que se presentan en el Aula Virtual para encuentros virtuales y aclarar de dudas?", ""));
+        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 16.0f, "¿Te motivó al uso de aplicaciones tecnológicas o diversos recursos de consulta para reforzar tus conocimientos o comprender mejor los temas?", ""));
+        Apartado a6 = new Apartado(7F, "PROYECCION SOCIAL", new SerializableArrayList<>());
+        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 17.0f, "Antes de la contingencia ¿Te involucró para conservar la disciplina, orden y limpieza en la Institución?", ""));
+        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 18.0f, "Antes de la contingencia ¿Promovió el cuidado de los recursos naturales dentro y fuera de la Institución?", ""));
+        l.add(a1);
+        l.add(a2);
+        l.add(a3);
+        l.add(a4);
+        l.add(a5);
+        l.add(a6);
+        return l;
+
+    }
+    /**
+     * Busca los resultados de la evaluacion a docente (tipo 1) por evaluador, evaluado y evaluacion
      * @param evaluador Estudiante evaluador
      * @param evaluado Docente - materia evaluado
      * @param evaluacion Evaluacion activa
@@ -199,6 +266,51 @@ public class EjbEvaluacionDocente2 {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener los resultados (EJBEvaluacionDocenteMteria.getResultadobyEvaluadorEvaluado)", e, null);
         }
     }
+    /**
+     * Busca los resultados de la evaluacion a docente (tipo 2) por evaluador, evaluado y evaluacion
+     * @param evaluador Estudiante evaluador
+     * @param evaluado Docente - materia evaluado
+     * @param evaluacion Evaluacion activa
+     * @return
+     */
+
+    public ResultadoEJB<EvaluacionDocentesMateriaResultados3> getResultadosTipo2byEvaluadorEvaluado(dtoEstudiantesEvalauciones evaluador, dtoEstudianteMateria evaluado, Evaluaciones evaluacion){
+        try {
+            EvaluacionDocentesMateriaResultados3 resultados = new EvaluacionDocentesMateriaResultados3();
+            if(evaluador ==null){return  ResultadoEJB.crearErroneo(2,resultados,"El evaluador no debe ser nulo");}
+            if(evaluado ==null){return ResultadoEJB.crearErroneo(3,resultados,"El evaluador no debe ser nulo");}
+            if(evaluacion==null){return ResultadoEJB.crearErroneo(4,resultados,"La evaluación no debe ser nula");}
+            resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados3 e where e.evaluacionDocentesMateriaResultados3PK.evaluador=:evaluador and e.evaluacionDocentesMateriaResultados3PK.evaluado=:evaluado and e.evaluacionDocentesMateriaResultados3PK.cveMateria=:cveMateria and e.evaluacionDocentesMateriaResultados3PK.evaluacion=:evaluacion",EvaluacionDocentesMateriaResultados3.class)
+                    .setParameter("evaluador",Integer.parseInt(evaluador.getMatricula()))
+                    .setParameter("evaluado",evaluado.getDocenteImparte().getClave())
+                    .setParameter("cveMateria",evaluado.getClaveMateria())
+                    .setParameter("evaluacion",evaluacion.getEvaluacion())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+            ;
+            if(resultados ==null){
+                //No existen resultados, entonces los crea
+                EvaluacionDocentesMateriaResultados3PK pk = new EvaluacionDocentesMateriaResultados3PK();
+                pk.setEvaluacion(evaluacion.getEvaluacion());
+                pk.setEvaluador(Integer.parseInt(evaluador.getMatricula()));
+                pk.setEvaluado(evaluado.getDocenteImparte().getClave());
+                pk.setCveMateria(evaluado.getClaveMateria());
+                EvaluacionDocentesMateriaResultados3 resultados1 = new EvaluacionDocentesMateriaResultados3();
+                resultados1.setEvaluacionDocentesMateriaResultados3PK(pk);
+                em.persist(resultados1);
+                resultados = resultados1;
+                return ResultadoEJB.crearCorrecto(resultados,"Se crearon los resultados");
+            }else {
+                //Existen resultados ...
+                return ResultadoEJB.crearCorrecto(resultados,"Resultados");
+            }
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener los resultados (EJBEvaluacionDocenteMteria.getResultadobyEvaluadorEvaluado)", e, null);
+        }
+    }
+
     /**
      * Identifica en que base de datos esta registrado el estudiante, y respecto a eso obtiene una lista de materias
      * @param estudiante dtoEstudiante
@@ -294,7 +406,7 @@ public class EjbEvaluacionDocente2 {
             ;
             if(cargaAcademica==null || cargaAcademica.isEmpty()){return ResultadoEJB.crearErroneo(4,listMaterias,"No se econtro carga academica"); }
             else {
-                //Se reoorre la lista de carga acedemica para llenar las materias del estudiante
+                //Se recorre la lista de carga acedemica para llenar las materias del estudiante
                 cargaAcademica.stream().forEach(c->{
                     dtoEstudianteMateria materia = new dtoEstudianteMateria();
                     //Se busca al docente que imparte la materia
@@ -313,7 +425,7 @@ public class EjbEvaluacionDocente2 {
     }
 
     /**
-     * Actualiza respuesta por pregunta
+     * Actualiza respuesta por pregunta (Evaluación docente tipo 1)
      * @param resultados Resultados
      * @param pregunta Numero de pregunta
      * @param valor Valor ingresado
@@ -372,6 +484,77 @@ public class EjbEvaluacionDocente2 {
                     break;
                 case "r17":
                     resultados.setR17(Short.parseShort(valor));
+                    break;
+            }
+            return ResultadoEJB.crearCorrecto(resultados,"Resultados actualizados");
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar los resultados (EJBEvaluacionDocenteMteria.actualizaRespuestaPorPregunta2)", e, null);
+        }
+    }
+    /**
+     * Actualiza respuesta por pregunta (Evaluación docente tipo 2)
+     * @param resultados Resultados
+     * @param pregunta Numero de pregunta
+     * @param valor Valor ingresado
+     * @return
+     */
+    public ResultadoEJB<EvaluacionDocentesMateriaResultados3> actualizaRespuestaPorPregunta3(EvaluacionDocentesMateriaResultados3 resultados, String pregunta, String valor){
+        try{
+            switch (pregunta.toString()) {
+                case "r1":
+                    resultados.setR1(Short.parseShort(valor));
+                    break;
+                case "r2":
+                    resultados.setR2(Short.parseShort(valor));
+                    break;
+                case "r3":
+                    resultados.setR3(Short.parseShort(valor));
+                    break;
+                case "r4":
+                    resultados.setR4(Short.parseShort(valor));
+                    break;
+                case "r5":
+                    resultados.setR5(Short.parseShort(valor));
+                    break;
+                case "r6":
+                    resultados.setR6(Short.parseShort(valor));
+                    break;
+                case "r7":
+                    resultados.setR7(Short.parseShort(valor));
+                    break;
+                case "r8":
+                    resultados.setR8(Short.parseShort(valor));
+                    break;
+                case "r9":
+                    resultados.setR9(Short.parseShort(valor));
+                    break;
+                case "r10":
+                    resultados.setR10(Short.parseShort(valor));
+                    break;
+                case "r11":
+                    resultados.setR11(Short.parseShort(valor));
+                    break;
+                case "r12":
+                    resultados.setR12(Short.parseShort(valor));
+                    break;
+                case "r13":
+                    resultados.setR13(Short.parseShort(valor));
+                    break;
+                case "r14":
+                    resultados.setR14(Short.parseShort(valor));
+                    break;
+                case "r15":
+                    resultados.setR15(Short.parseShort(valor));
+                    break;
+                case "r16":
+                    resultados.setR16(Short.parseShort(valor));
+                    break;
+                case "r17":
+                    resultados.setR17(Short.parseShort(valor));
+                    break;
+                case "r18":
+                    resultados.setR18(Short.parseShort(valor));
                     break;
             }
             return ResultadoEJB.crearCorrecto(resultados,"Resultados actualizados");
@@ -439,6 +622,73 @@ public class EjbEvaluacionDocente2 {
     }
 
     /**
+     * Obtiene respuesta por pregunta de la evaluacion docente tipo 2
+     * @param resultado
+     * @param pregunta
+     * @return
+     */
+    public String obtenerRespuestaPorPregunta2(EvaluacionDocentesMateriaResultados3 resultado, Float pregunta) {
+        String res = null;
+        switch (pregunta.toString()) {
+            case "1.0":
+                res = resultado.getR1() != null ? resultado.getR1().toString() : null;
+                break;
+            case "2.0":
+                res = resultado.getR2() != null ? resultado.getR2().toString() : null;
+                break;
+            case "3.0":
+                res = resultado.getR3() != null ? resultado.getR3().toString() : null;
+                break;
+            case "4.0":
+                res = resultado.getR4() != null ? resultado.getR4().toString() : null;
+                break;
+            case "5.0":
+                res = resultado.getR5() != null ? resultado.getR5().toString() : null;
+                break;
+            case "6.0":
+                res = resultado.getR6() != null ? resultado.getR6().toString() : null;
+                break;
+            case "7.0":
+                res = resultado.getR7() != null ? resultado.getR7().toString() : null;
+                break;
+            case "8.0":
+                res = resultado.getR8() != null ? resultado.getR8().toString() : null;
+                break;
+            case "9.0":
+                res = resultado.getR9() != null ? resultado.getR9().toString() : null;
+                break;
+            case "10.0":
+                res = resultado.getR10() != null ? resultado.getR10().toString() : null;
+                break;
+            case "11.0":
+                res = resultado.getR11() != null ? resultado.getR11().toString() : null;
+                break;
+            case "12.0":
+                res = resultado.getR12() != null ? resultado.getR12().toString() : null;
+                break;
+            case "13.0":
+                res = resultado.getR13() != null ? resultado.getR13().toString() : null;
+                break;
+            case "14.0":
+                res = resultado.getR14() != null ? resultado.getR14().toString() : null;
+                break;
+            case "15.0":
+                res = resultado.getR15() != null ? resultado.getR15().toString() : null;
+                break;
+            case "16.0":
+                res = resultado.getR16() != null ? resultado.getR16().toString() : null;
+                break;
+            case "17.0":
+                res = resultado.getR17() != null ? resultado.getR17().toString() : null;
+                break;
+            case "18.0":
+                res = resultado.getR18() != null ? resultado.getR18().toString() : null;
+                break;
+        }
+        return res;
+    }
+
+    /**
      * Comprueba si los ha teminado de evaluar al docente
      * @param resultado
      */
@@ -458,6 +708,28 @@ public class EjbEvaluacionDocente2 {
         resultado.setPromedio(suma / cantidad);
         em.merge(resultado);
     }
+    /**
+     * Comprueba si los ha teminado de evaluar al docente
+     * Evaluación docente tipo 2
+     * @param resultado
+     */
+    public void comprobarResultado2(EvaluacionDocentesMateriaResultados3 resultado) {
+        boolean completo = true;
+        Double suma = 0D;
+        Double cantidad = (double) (17);
+        for (Integer i = 1; i <= 17; i++) {
+            if (obtenerRespuestaPorPregunta2(resultado, (float) i) == null) {
+                completo = false;
+            } else {
+                suma += Double.parseDouble(obtenerRespuestaPorPregunta2(resultado, (float) i));
+            }
+        }
+        resultado.setCompleto(completo);
+        resultado.setIncompleto(!completo);
+        resultado.setPromedio(suma / cantidad);
+        em.merge(resultado);
+    }
+
 
 
 
