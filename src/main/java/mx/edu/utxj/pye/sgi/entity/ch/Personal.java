@@ -57,6 +57,9 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Personal implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<EvaluacionDocentesMateriaResultados3> evaluacionDocentesMateriaResultados3List;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
     private List<EvaluacionDocentesMateriaResultados2> evaluacionDocentesMateriaResultados2List;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
@@ -913,6 +916,15 @@ public class Personal implements Serializable {
 
     public void setEvaluacionDocentesMateriaResultados2List(List<EvaluacionDocentesMateriaResultados2> evaluacionDocentesMateriaResultados2List) {
         this.evaluacionDocentesMateriaResultados2List = evaluacionDocentesMateriaResultados2List;
+    }
+
+    @XmlTransient
+    public List<EvaluacionDocentesMateriaResultados3> getEvaluacionDocentesMateriaResultados3List() {
+        return evaluacionDocentesMateriaResultados3List;
+    }
+
+    public void setEvaluacionDocentesMateriaResultados3List(List<EvaluacionDocentesMateriaResultados3> evaluacionDocentesMateriaResultados3List) {
+        this.evaluacionDocentesMateriaResultados3List = evaluacionDocentesMateriaResultados3List;
     }
     
 }
