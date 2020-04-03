@@ -324,5 +324,5 @@ public class Evaluaciones implements Serializable {
     public void setEvaluacionDocentesMateriaResultados3List(List<EvaluacionDocentesMateriaResultados3> evaluacionDocentesMateriaResultados3List) {
         this.evaluacionDocentesMateriaResultados3List = evaluacionDocentesMateriaResultados3List;
     }
-    
+
 }
