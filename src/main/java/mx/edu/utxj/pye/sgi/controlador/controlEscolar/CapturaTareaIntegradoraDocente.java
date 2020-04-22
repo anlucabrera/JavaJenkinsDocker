@@ -61,13 +61,21 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
     @PostConstruct
     public void init(){
         try{
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.CapturaTareaIntegradoraDocente.init(A)");
             setVistaControlador(ControlEscolarVistaControlador.CAPTURA_TAREA_INTEGRADORA);
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.CapturaTareaIntegradoraDocente.init(B)");
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejbCapturaCalificaciones.validarDocente(logon.getPersonal().getClave());
-            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
+        System.out.println("resAcceso = " + resAcceso);
+//        if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
+System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.CapturaTareaIntegradoraDocente.init(C)");
+        ResultadoEJB<Boolean> resVerificarCargasExistentes = ejbCapturaCalificaciones.verificarCargasExistentes(resAcceso.getValor().getEntity());
+        System.out.println("resVerificarCargasExistentes = " + resVerificarCargasExistentes);
+//        if(!resAcceso.getCorrecto()){mostrarMensajeResultadoEJB(resAcceso);return;}
 
-            ResultadoEJB<Boolean> resVerificarCargasExistentes = ejbCapturaCalificaciones.verificarCargasExistentes(resAcceso.getValor().getEntity());
-            rol = new CapturaTareaIntegradoraRolDocente(resAcceso.getValor());
-            tieneAcceso = rol.tieneAcceso(rol.getDocenteLogueado()) && resVerificarCargasExistentes.getValor();
+        rol = new CapturaTareaIntegradoraRolDocente(resAcceso.getValor());
+
+        tieneAcceso = rol.tieneAcceso(rol.getDocenteLogueado()) || resVerificarCargasExistentes.getValor();
+        System.out.println("tieneAcceso = " + tieneAcceso);
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
             if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu

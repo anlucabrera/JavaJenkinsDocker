@@ -32,6 +32,7 @@ import mx.edu.utxj.pye.sgi.saiiut.ejb.EjbLogin;
 import mx.edu.utxj.pye.sgi.saiiut.entity.ListaUsuarioClaveNomina;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Usuarios;
 import mx.edu.utxj.pye.sgi.util.permisosUsuarios;
+import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 
 /**
@@ -55,8 +56,7 @@ public class LogonMB extends AdminSession implements Serializable {
     @Getter @Setter private String currentUser;
     @Getter @Setter private String email;
     @Getter @Setter private String password;
-    @Getter @Setter private Boolean acceso;
-    @Getter @Setter private Boolean accesoSaiiut;
+    @Getter @Setter private Boolean acceso=true;
     @Getter @Setter private boolean remember;
       
     @Getter    @Setter    private Bitacoraacceso nuevaBitacoraacceso;
@@ -90,7 +90,7 @@ public class LogonMB extends AdminSession implements Serializable {
         usuario
     */   
     public void login() throws IOException {
-////        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()");
+//        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()");
         Login estudiante19 = ejbLogin.autenticar19(email, password);
         if ("estudioEgresad@s".equals(email) && password.equals("248163264")) {
             currentUser = email;
@@ -113,12 +113,12 @@ public class LogonMB extends AdminSession implements Serializable {
             Faces.redirect("index.xhtml");
         }else {
             usuarioTipo = ejbLogin.getTipoUsuario(email);
-//           // System.out.println("Usario tipo --->" +usuarioTipo);
+           // System.out.println("Usario tipo --->" +usuarioTipo);
             if(estudiante19 == null && usuarioTipo.equals(UsuarioTipo.ESTUDIANTE19)) {
                 addDetailMessage("La contraseña ingresada es incorrecta.");
                 try{
                     Login usuario19PorLogin = ejbLogin.getUsuario19PorLogin(email);
-//                    if(usuario19PorLogin != null) System.out.println("Encrypted.decrypt(res.getPassword()) = " + Encrypted.decrypt(Encrypted.KEY, Encrypted.IV, usuario19PorLogin.getPassword()));
+                    if(usuario19PorLogin != null) System.out.println("Encrypted.decrypt(res.getPassword()) = " + Encrypted.decrypt(Encrypted.KEY, Encrypted.IV, usuario19PorLogin.getPassword()));
                 }catch (Exception e){e.printStackTrace();}
                 Faces.getExternalContext().getFlash().setKeepMessages(true);
                 Faces.redirect("login.xhtml");
@@ -126,74 +126,68 @@ public class LogonMB extends AdminSession implements Serializable {
             }
 
             usuarioTipo = ejbLogin.getTipoUsuario(email);
-            Boolean accesoConcedido = Boolean.FALSE;
-            if (autenticarPorSaiiut()) {
-                accesoSaiiut = Boolean.TRUE;
-                accesoConcedido = Boolean.TRUE;
-            } else if (autenticarPorShiro()) {
-                accesoSaiiut = Boolean.FALSE;
-                accesoConcedido = Boolean.TRUE;
-            }
-//            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()"+accesoConcedido);
-            if (accesoConcedido) {
-                addDetailMessage("Bienvenido");
-                Faces.getExternalContext().getFlash().setKeepMessages(true);
-                Faces.redirect("index.xhtml");
-            } else {
-                addDetailMessage("No fue posible conectar con su cuenta, en caso de a ver actualizado recientemente su contraseña intente ingresar con su contraseña anterior, si el problema persiste favor de comunicarse con el departamento de Desarrollo de Software al correo: sistemas@utxicotepec.edu.mx");
+            Usuarios res = ejbLogin.getUsuarioPorLogin(email);
+            Usuarios usuario = ejbLogin.autenticar(email, password);
+
+//            User resShiro = ejbLogin.getUsuarioPorLoginShiro(email);
+//            User usuarioShiro = ejbLogin.autenticarShiro(email, password);
+
+//            if (resShiro == null) {
+            if (res == null) {
+                addDetailMessage("El usuario ingresado no existe.");
                 Faces.getExternalContext().getFlash().setKeepMessages(true);
                 Faces.redirect("login.xhtml");
-            }
-
-        }
-////        System.out.println("usuarioTipo2 = " + usuarioTipo);
-    }
-
-    public Boolean autenticarPorSaiiut() {
-//        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut(1)");
-        Usuarios res = ejbLogin.getUsuarioPorLogin(email);
-//        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut(2)"+res);
-        Usuarios usuario = ejbLogin.autenticar(email, password);
-//        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut(3)"+usuario);
-        Boolean accedio = Boolean.FALSE;
-        acceso = Boolean.FALSE;
-        if (res != null) {
-//            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut()");
-            if (usuario != null) {
-//                System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut()");
-                currentUser = usuario.getLoginUsuario();
-                usuarioAutenticado = usuario;
-                listaUsuarioClaveNomina = ejbLogin.getListaUsuarioClaveNomina(currentUser);
-                if ((usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) && (listaUsuarioClaveNomina != null)) {
-//                    System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.autenticarPorSaiiut()");
-                    personal = ejbLogin.buscaPersona(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
-                    accedio = Boolean.TRUE;
-                    acceso = Boolean.TRUE;;
+            } else {
+//                if (usuarioShiro != null) {
+                if (usuario != null) {
+                    currentUser = usuario.getLoginUsuario();
+//                    currentUser = usuarioShiro.getUsername();
+                    usuarioAutenticado = usuario;
+//                    usuarioAutenticadoShiro = usuarioShiro;
+//                    usuarioTipo = UsuarioTipo.TRABAJADOR;
+                    listaUsuarioClaveNomina = ejbLogin.getListaUsuarioClaveNomina(currentUser);
+//                    listaUsuarioClaveNominaShiro = usuarioAutenticadoShiro;
+//                    acceso = true;
+                    if (usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) {
+                        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(listaUsuarioClaveNomina)" + listaUsuarioClaveNomina);
+                        if (listaUsuarioClaveNomina == null) {
+                            addDetailMessage("El usuario ingresado no existe.");
+                            Faces.getExternalContext().getFlash().setKeepMessages(true);
+                            Faces.redirect("login.xhtml");
+                            acceso = false;
+                        } else {
+//                        personal = (Personal) f.find(Integer.parseInt(usuarioAutenticadoShiro.getClaveNomina()));
+                            personal = ejbLogin.buscaPersona(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
+                            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(personal)" + personal);
+                            if (personal.getStatus().equals('B')) {
+                                System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(B)");
+                                acceso = Boolean.FALSE;
+                                addDetailMessage("El usuario ingresado no existe.");
+                                Faces.getExternalContext().getFlash().setKeepMessages(true);
+                                Faces.redirect("login.xhtml");
+                            }else{                                
+                                acceso = Boolean.TRUE;
+                            }
+                            listaUsuarioClaveNomina.getNumeroNomina();
+                            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()"+listaUsuarioClaveNomina.getNumeroNomina());
+//                    agregaBitacora();
+//                    getPermisosAcceso();
+                        }
+                    }
+//                    System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login() tipo: " + usuarioTipo);
+//                    addDetailMessage("Bienvenido <b>" + usuario.getPersonas().getNombre() + "</b>");
+                    addDetailMessage("Bienvenido");
+                    Faces.getExternalContext().getFlash().setKeepMessages(true);
+                    Faces.redirect("index.xhtml");
+                } else {                    
+                    addDetailMessage("La contraseña ingresada es incorrecta.");
+                    Faces.getExternalContext().getFlash().setKeepMessages(true);
+                    Faces.redirect("login.xhtml");
+                    
                 }
             }
         }
-        return accedio;
-    }
-
-    public Boolean autenticarPorShiro() {
-        User resShiro = ejbLogin.getUsuarioPorLoginShiro(email);
-        User usuarioShiro = ejbLogin.autenticarShiro(email, password);
-        Boolean accedio = Boolean.FALSE;
-        acceso = Boolean.FALSE;
-        if (resShiro != null) {
-            if (usuarioShiro != null) {
-                currentUser = usuarioShiro.getUsername();
-                usuarioAutenticadoShiro = usuarioShiro;
-                usuarioTipo = UsuarioTipo.TRABAJADOR;
-                listaUsuarioClaveNominaShiro = usuarioAutenticadoShiro;
-                if ((usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) && (listaUsuarioClaveNominaShiro != null)) {
-                    personal = ejbLogin.buscaPersona(Integer.parseInt(usuarioAutenticadoShiro.getClaveNomina()));
-                    accedio = Boolean.TRUE;
-                    acceso = Boolean.TRUE;;
-                }
-            }
-        }
-        return accedio;
+//        System.out.println("usuarioTipo2 = " + usuarioTipo);
     }
 
     public void getMenuCategorias() {
