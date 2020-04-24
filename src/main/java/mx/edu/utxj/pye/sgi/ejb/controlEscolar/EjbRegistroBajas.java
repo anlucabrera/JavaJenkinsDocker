@@ -32,6 +32,7 @@ import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.StoredProcedureQuery;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConcentradoBajas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaReprobada;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
@@ -42,6 +43,8 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroBajaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoValidacionesBaja;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
+import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausaCategoria;
+import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausaCategoriaPK;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
 import net.sf.jxls.transformer.XLSTransformer;
@@ -1185,6 +1188,178 @@ public class EjbRegistroBajas {
             return ResultadoEJB.crearCorrecto(listaMateriasReprobadas, "Lista de materias reprobadas por periodo escolar.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias reprobadas por periodo escolar. (EjbRegistroBajas.obtenerMateriasReprobadas)", e, null);
+        }
+    }
+    
+    /* MÓDULO CONCENTRADO DE BAJAS POR CATEGORÍA, TIPO DE BAJA Y CAUSA DE BAJA */
+    
+     /**
+     * Permite obtener la lista de ciclos escolares en los que se han registrado bajas
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<CiclosEscolares>> getCiclosBajas(){
+        try{
+            List<PeriodosEscolares> periodosBaja = getPeriodosBajas().getValor();
+            List<CiclosEscolares> listaCiclos = new ArrayList<>();
+            
+            periodosBaja.forEach(periodoBaja -> {
+                PeriodosEscolares periodo = em.find(PeriodosEscolares.class, periodoBaja.getPeriodo());
+                listaCiclos.add(periodo.getCiclo());
+            });
+            
+            List<CiclosEscolares> listaCiclosDistintos = listaCiclos.stream()
+                    .distinct()
+                    .sorted(Comparator.comparingInt(CiclosEscolares::getCiclo).reversed())
+                    .collect(Collectors.toList());
+            
+//            List<String> listaCiclosEscolares = new ArrayList<>();
+//            listaCiclosDistintos.forEach(ciclo -> {
+//                String anioInicio ="", anioFin="";
+//                DateTimeFormatter formatterAnio = DateTimeFormatter.ofPattern("yyyy");
+//           
+//                LocalDate inicio = convertirDateALocalDate(ciclo.getInicio());
+//                LocalDate fin = convertirDateALocalDate(ciclo.getFin());
+//                anioInicio = inicio.format(formatterAnio);
+//                anioFin = fin.format(formatterAnio);
+//                String cicloEscolar = anioInicio.concat("-").concat(anioFin);
+//                listaCiclosEscolares.add(cicloEscolar);
+//            });
+             
+            return ResultadoEJB.crearCorrecto(listaCiclosDistintos, "Lista de ciclos escolares en los que se han registrado bajas.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de cilos en los que se han registrado bajas. (EjbRegistroBajas.getCiclosBajas)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de periodos escolares de ciclo seleccionado
+     * @param cicloEscolar
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<PeriodosEscolares>> obtenerPeriodosCicloBajas(CiclosEscolares cicloEscolar){
+         try{
+            
+            List<PeriodosEscolares> listaPeriodos = em.createQuery("SELECT p FROM PeriodosEscolares p WHERE p.ciclo =:ciclo ORDER BY p.periodo DESC",  PeriodosEscolares.class)
+                    .setParameter("ciclo", cicloEscolar)
+                    .getResultList();
+          
+            List<PeriodosEscolares> listaPeriodosDistintos = listaPeriodos.stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+             
+            return ResultadoEJB.crearCorrecto(listaPeriodosDistintos, "Lista de periodo escolares del ciclo seleccionado en los que se han registrado bajas.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos del ciclo seleccionado en los que se han registrado bajas. (EjbRegistroBajas.getPeriodosCicloBajas)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de concentrado de bajas por categoría: académicos, económicos, personales o individuales.
+     * @param periodo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoConcentradoBajas>> generarConcentradoBajasPorCategoria(PeriodosEscolares periodo){
+         try{
+            List<Baja> bajas = em.createQuery("SELECT b FROM Baja b WHERE b.periodoEscolar =:periodo ORDER BY b.fechaBaja DESC", Baja.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .getResultList();
+            
+            List<DtoConcentradoBajas> listaDtoConcentradoBajasCat = new ArrayList<>();
+            
+            bajas.forEach(baja -> {
+                PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, baja.getPeriodoEscolar());
+                String anioInicio ="", anioFin="";
+                DateTimeFormatter formatterAnio = DateTimeFormatter.ofPattern("yyyy");
+           
+                LocalDate inicio = convertirDateALocalDate(periodoEscolar.getCiclo().getInicio());
+                LocalDate fin = convertirDateALocalDate(periodoEscolar.getCiclo().getFin());
+                anioInicio = inicio.format(formatterAnio);
+                anioFin = fin.format(formatterAnio);
+                String cicloEscolar = anioInicio.concat("-").concat(anioFin);
+                
+                BajasCausaCategoria bajaCategoria = em.createQuery("SELECT b FROM BajasCausaCategoria b WHERE b.bajasCausa.cveCausa=:causa", BajasCausaCategoria.class)
+                    .setParameter("causa", baja.getCausaBaja())
+                    .getResultStream().findFirst().orElse(null);
+                
+                DtoConcentradoBajas dtoConcentradoBajas = new DtoConcentradoBajas(periodo, cicloEscolar, bajaCategoria.getBajasCausaCategoriaPK().getCategoria(), 1);
+                listaDtoConcentradoBajasCat.add(dtoConcentradoBajas);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaDtoConcentradoBajasCat, "Lista de bajas registradas por categoria en el periodo escolar seleccionado");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de bajas registradas por categoria. (EjbRegistroBajas.generarConcentradoBajasPorCategoria)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de concentrado de bajas por tipo: definitiva y temporal.
+     * @param periodo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoConcentradoBajas>> generarConcentradoBajasPorTipo(PeriodosEscolares periodo){
+         try{
+            List<Baja> bajas = em.createQuery("SELECT b FROM Baja b WHERE b.periodoEscolar =:periodo ORDER BY b.fechaBaja DESC", Baja.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .getResultList();
+            
+            List<DtoConcentradoBajas> listaDtoConcentradoBajasCat = new ArrayList<>();
+            
+            bajas.forEach(baja -> {
+                PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, baja.getPeriodoEscolar());
+                String anioInicio ="", anioFin="";
+                DateTimeFormatter formatterAnio = DateTimeFormatter.ofPattern("yyyy");
+           
+                LocalDate inicio = convertirDateALocalDate(periodoEscolar.getCiclo().getInicio());
+                LocalDate fin = convertirDateALocalDate(periodoEscolar.getCiclo().getFin());
+                anioInicio = inicio.format(formatterAnio);
+                anioFin = fin.format(formatterAnio);
+                String cicloEscolar = anioInicio.concat("-").concat(anioFin);
+                
+                BajasTipo bajaCategoria = em.find(BajasTipo.class, baja.getTipoBaja());
+                
+                DtoConcentradoBajas dtoConcentradoBajas = new DtoConcentradoBajas(periodo, cicloEscolar, bajaCategoria.getDescripcion(), 1);
+                listaDtoConcentradoBajasCat.add(dtoConcentradoBajas);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaDtoConcentradoBajasCat, "Lista de bajas registradas por tipo en el periodo escolar seleccionado");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de bajas registradas por tipo. (EjbRegistroBajas.generarConcentradoBajasPorTipo)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de concentrado de bajas por causa
+     * @param periodo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoConcentradoBajas>> generarConcentradoBajasPorCausa(PeriodosEscolares periodo){
+         try{
+            List<Baja> bajas = em.createQuery("SELECT b FROM Baja b WHERE b.periodoEscolar =:periodo ORDER BY b.fechaBaja DESC", Baja.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .getResultList();
+            
+            List<DtoConcentradoBajas> listaDtoConcentradoBajasCat = new ArrayList<>();
+            
+            bajas.forEach(baja -> {
+                PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, baja.getPeriodoEscolar());
+                String anioInicio ="", anioFin="";
+                DateTimeFormatter formatterAnio = DateTimeFormatter.ofPattern("yyyy");
+           
+                LocalDate inicio = convertirDateALocalDate(periodoEscolar.getCiclo().getInicio());
+                LocalDate fin = convertirDateALocalDate(periodoEscolar.getCiclo().getFin());
+                anioInicio = inicio.format(formatterAnio);
+                anioFin = fin.format(formatterAnio);
+                String cicloEscolar = anioInicio.concat("-").concat(anioFin);
+                
+                BajasCausa bajaCategoria = em.find(BajasCausa.class, baja.getCausaBaja());
+                
+                DtoConcentradoBajas dtoConcentradoBajas = new DtoConcentradoBajas(periodo, cicloEscolar, bajaCategoria.getCausa(), 1);
+                listaDtoConcentradoBajasCat.add(dtoConcentradoBajas);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaDtoConcentradoBajasCat, "Lista de bajas registradas por causa en el periodo escolar seleccionado");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de bajas registradas por causa. (EjbRegistroBajas.generarConcentradoBajasPorCausa)", e, null);
         }
     }
 }

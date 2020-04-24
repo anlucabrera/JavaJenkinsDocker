@@ -85,6 +85,7 @@ public class ControlEscolarMenu implements Desarrollable, Desplegable {
         get = Faces.evaluateExpressionGet("#{plantillaPlanAccionTutorialPsicopedagogia.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{registroNotificacionesGeneral.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{registroAsesoriaEstudianteGeneral.tieneAcceso}");if(get) return true;
+        get = Faces.evaluateExpressionGet("#{concentradoBajasAreasVarias.tieneAcceso}");if(get) return true;
         return false;
     }
 }

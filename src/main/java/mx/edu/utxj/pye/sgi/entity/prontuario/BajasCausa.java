@@ -47,6 +47,8 @@ public class BajasCausa implements Serializable {
     private String causa;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "causaBaja")
     private List<DesercionPorEstudiante> desercionPorEstudianteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bajasCausa")
+    private List<BajasCausaCategoria> bajasCausaCategoriaList;
 
     public BajasCausa() {
     }
@@ -84,7 +86,16 @@ public class BajasCausa implements Serializable {
     public void setDesercionPorEstudianteList(List<DesercionPorEstudiante> desercionPorEstudianteList) {
         this.desercionPorEstudianteList = desercionPorEstudianteList;
     }
+    
+    @XmlTransient
+    public List<BajasCausaCategoria> getBajasCausaCategoriaList() {
+        return bajasCausaCategoriaList;
+    }
 
+    public void setBajasCausaCategoriaList(List<BajasCausaCategoria> bajasCausaCategoriaList) {
+        this.bajasCausaCategoriaList = bajasCausaCategoriaList;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
