@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.ConcentradoBajasRolVarios;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConcentradoBajas;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroBajas;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -174,5 +176,59 @@ public class ConcentradoBajasAreasVarias extends ViewScopedRol implements Desarr
         rol.setBajasTipDefinitiva(rol.getListaConcentradoPorTipo().stream().filter(f-> f.getCategoriaConcentrado().equals("Definitiva")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
         rol.setBajasTipTemporal(rol.getListaConcentradoPorTipo().stream().filter(f-> f.getCategoriaConcentrado().equals("Temporal")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
     
+        rol.setBajasAbandonoEst(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Abandono de Estadía")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasFalRegEsc(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Faltas al Reglamento Escolar")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasCompCarrera(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Intensidad de la Carrera")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasProbAcad(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Problemas Académicos")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasReprobacion(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Reprobación")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasDistanciaUTXJ(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Distancia de la UT")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasProbEcon(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Problemas Económicos")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasCambCarrera(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Cambio de Carrera")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasCambCiudad(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Cambio de Ciudad")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasCambDom(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Cambio de Domicilio")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasCambUni(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Cambio de Universidad")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasCambUT(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Cambio de UT")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasDefuncion(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Defunción")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasSinCausaCon(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Deserción sin Causa Conocida")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasEmbarazo(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Embarazo")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasInasistencia(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Inasistencia")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasIncompHorario(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Incompatibilidad de Horario")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasIncumExp(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Incumplimiento de Expectativas")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasIntDist(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Interes Distintos")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasMotivosPer(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Motivos Personales")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasOrientacionVoc(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Orientación Vocacional")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasProbSalud(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Problemas de Salud")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasProbTrab(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Problemas de Trabajo")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        rol.setBajasProbFam(rol.getListaConcentradoPorCausa().stream().filter(f-> f.getCategoriaConcentrado().equals("Problemas Familiares")).mapToInt(DtoConcentradoBajas::getNumeroBajas).sum());
+        
+    }
+    
+     /**
+     * Permite que al cambiar o seleccionar un periodo escolar se pueda actualizar la lista de bajas por periodo
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarCiclo(ValueChangeEvent e){
+        if(e.getNewValue() instanceof CiclosEscolares){
+            CiclosEscolares ciclo = (CiclosEscolares)e.getNewValue();
+            rol.setCiclo(ciclo);
+            periodosBajasRegistradas();
+            Ajax.update("frm");
+        }else mostrarMensaje("");
+    }
+    
+    /**
+     * Permite que al cambiar o seleccionar un programa educativo se pueda actualizar la lista de bajas por programa educativo
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarPeriodo(ValueChangeEvent e){
+        if(e.getNewValue() instanceof   PeriodosEscolares){
+            PeriodosEscolares periodo = (PeriodosEscolares)e.getNewValue();
+            rol.setPeriodo(periodo);
+            listaBajasPeriodoCategoria();
+            listaBajasPeriodoTipo();
+            listaBajasPeriodoCausa();
+            calcularTotales();
+            Ajax.update("frm");
+        }else mostrarMensaje("");
     }
 }

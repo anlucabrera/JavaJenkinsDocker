@@ -22,7 +22,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Concentrado de Bajas por Categoría del Periodo Escolar y Programa Educativo
+        Concentrado de Bajas por Categoría, Tipo de Baja y Causas de Baja por Ciclo y Periodo Escolar
     </ui:define>
 
     <ui:define name="description">
@@ -36,11 +36,11 @@
     </ui:define>
 
     <ui:define name="body">
-        <c:if test="#{reporteBajasServiciosEscolares.cargado}">
+        <c:if test="#{concentradoBajasAreasVarias.cargado}">
         <adm:breadcrumb title="Concentrado de Bajas por Categoría"/>
         <div class="contenedor">
-            <c:if test="#{reporteBajasServiciosEscolares.tieneAcceso}">
-                <c:if test="#{reporteBajasServiciosEscolares.rol.periodos ne null}">
+            <c:if test="#{concentradoBajasAreasVarias.tieneAcceso}">
+                <c:if test="#{concentradoBajasAreasVarias.rol.periodos ne null}">
                 <!-- zona de importación de enums -->
                 <h:form id="frm" prependId="false" class="form-inline">
                     <div class="box box-primary">
@@ -48,7 +48,7 @@
                             <div id="main-buttons" class="hidden-sm hidden-xs">
                                 <p:toolbar id="tb">
                                     <f:facet name="left">
-                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(reporteBajasServiciosEscolares.rol.periodoActivo)}" />
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(concentradoBajasAreasVarias.rol.periodoActivo)}" />
                                         <p:spacer width="5" />
 
                                     </f:facet>
@@ -61,9 +61,9 @@
                                                 title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
                                                 class="fa fa-question"/>
                                         </p:commandLink>
-                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reporteBajasServiciosEscolares.descargarReportePeriodo()}" 
+                                       <!-- <p:commandLink class="btn btn-info btn-sm" ajax="false" action="# {concentradoBajasAreasVarias.descargarReportePeriodo()}" 
                                                        target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" />
-                                        </p:commandLink>
+                                        </p:commandLink> -->
                                     </f:facet>
                                 </p:toolbar>
                             </div>
@@ -74,184 +74,220 @@
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="periodo" value="#{reporteBajasServiciosEscolares.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{reporteBajasServiciosEscolares.cambiarPeriodo}">
-                                                    <f:selectItems value="#{reporteBajasServiciosEscolares.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                <p:selectOneMenu id="ciclo" value="#{concentradoBajasAreasVarias.rol.ciclo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{concentradoBajasAreasVarias.cambiarCiclo}">
+                                                    <f:selectItems value="#{concentradoBajasAreasVarias.rol.ciclos}" var="ciclo" itemValue="#{periodo}" itemLabel="#{caster.cicloToString(ciclo)}" />
                                                     <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Ciclo" for="ciclo"/>
+                                                <p:message for="ciclo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{concentradoBajasAreasVarias.rol.periodo}" converter="entityConverter" valueChangeListener="#{concentradoBajasAreasVarias.cambiarPeriodo}">
+                                                    <f:selectItems value="#{concentradoBajasAreasVarias.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax update="@this" process="@this" />
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Periodo" for="periodo"/>
                                                 <p:message for="periodo" />
                                             </div>
                                         </div>
-                                        <div class="#{casilla2}">
-                                            <div class="ui-material">
-                                                <p:selectOneMenu id="programa" value="#{reporteBajasServiciosEscolares.rol.programaEducativo}" converter="entityConverter" valueChangeListener="#{reporteBajasServiciosEscolares.cambiarProgramaEducativo}">
-                                                    <f:selectItems value="#{reporteBajasServiciosEscolares.rol.programasEducativos}" var="programa" itemValue="#{programa}" itemLabel="#{programa.nombre}" />
-                                                    <p:ajax update="@this" process="@this" />
-                                                    <p:autoUpdate />
-                                                </p:selectOneMenu>
-                                                <p:outputLabel value="Programa" for="programa"/>
-                                                <p:message for="programa" />
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="row">
-                                            <center>
-                                                <p:remoteCommand name="actualizar" update="@form:tbListaRegistroBajas" />
-                                                <p:dataTable id="tbListaRegistroBajas" var="baja" value="#{reporteBajasServiciosEscolares.rol.bajasProgramaEducativo}"
-                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
-                                                             tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" 
-                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
-                                                    <f:facet name="header">
-                                                        Bajas registradas de #{reporteBajasServiciosEscolares.rol.programaEducativo.nombre}
-                                                    </f:facet>
-                                                    <p:columnGroup type="header">
-                                                        <p:row class="success">
-                                                            <p:column rowspan="2" headerText="Opciones" style="width: 120px;"/>
-                                                            <p:column rowspan="2" headerText="Clave" style="width: 80px;"/>
-                                                            <p:column colspan="2" headerText="Validación" style="width: 400px;"/>
-                                                            <p:column rowspan="2" headerText="Fecha de Baja" style="width: 100px;"/>
-                                                            <p:column rowspan="2" headerText="Grupo" style="width: 150px;"/>
-                                                            <p:column rowspan="2" headerText="Matricula" style="width: 80px;"/> 
-                                                            <p:column rowspan="2" headerText="Nombre" style="width: 250px;"/>
-                                                            <p:column rowspan="2" headerText="Género" style="width: 80px;"/>
-                                                            <p:column rowspan="2" headerText="Situación" style="width: 120px;"/>
-                                                            <p:column rowspan="2" headerText="Tipo de Baja" style="width: 120px;"/>
-                                                            <p:column rowspan="2" headerText="Causa Baja" style="width: 150px;"/>
-                                                            <p:column rowspan="2" headerText="Acciones tomadas por el tutor" style="width: 300px;"/>
-                                                            <p:column rowspan="2" headerText="Dictamen Psicopedagogía" style="width: 300px;"/>
-                                                            <p:column rowspan="2" headerText="Personal registró" style="width: 300px;"/>
-                                                        </p:row>
-                                                        <p:row>
-                                                            <p:column headerText="Baja" style="width: 300px;"/>
-                                                            <p:column headerText="Psicopedagogía" style="width: 100px;"/>
-                                                        </p:row>
-                                                    </p:columnGroup>
-                                                    <c:set var="statusBaja" value="#{reporteBajasServiciosEscolares.consultarStatus(baja)}" />
-                                                    <c:set var="baja" value="#{baja}"/>
-                                                    <c:set var="registro" value="#{baja.dtoRegistroBaja.registroBaja}"/>
-                                                    <p:column>
-                                                        <center>
-                                                        <div class="btn-group">
-                                                            <p:commandButton actionListener="#{reporteBajasServiciosEscolares.buscarMateriasReprobadas(registro)}"
-                                                            class="btn btn-sm btn-warning" 
-                                                            icon="fa fa-search"
-                                                            title="#{baja.dtoRegistroBaja.causaBaja.cveCausa ne 3?'Sin materias reprobadas':'Consultar materias reprobadas'}" disabled="#{baja.dtoRegistroBaja.causaBaja.cveCausa ne 3}"/>
-                                                            <p:commandButton actionListener="#{reporteBajasServiciosEscolares.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
-                                                                                  class="btn btn-sm btn-primary" 
-                                                                                  icon="fa fa-file-text-o"
-                                                                                  title="Generar Formato de Baja"  disabled="#{baja.dtoRegistroBaja.registroBaja.idBajas eq null}"/>
-                                                            <p:commandButton title="Eliminar baja" class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{reporteBajasServiciosEscolares.eliminarRegistroBaja(registro)}">
-                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
-                                                            </p:commandButton>
-                                                        </div>
-                                                        </center>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                        <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.idBajas}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                        <h:outputText value="#{statusBaja.fechaValidacionBaja} - #{statusBaja.areaValidacionBaja}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                        <h:outputText value="#{statusBaja.fechaValidacionPsic}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                        <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.fechaBaja}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                                    </p:column>
-                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{baja.dtoEstudiante.estudiante.grupo.grado}° #{baja.dtoEstudiante.estudiante.grupo.literal} #{baja.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                        <h:outputText value="#{baja.dtoEstudiante.estudiante.matricula}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;"> 
-                                                        <h:outputText value="#{baja.dtoEstudiante.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" />
-                                                    </p:column>
-                                                    <p:column style="text-align: center;"> 
-                                                        <h:outputText value="#{baja.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" />
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                        <h:outputText value="#{baja.dtoRegistroBaja.tipoBaja.descripcion}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                        <h:outputText value="#{baja.dtoRegistroBaja.causaBaja.causa}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                         <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.accionesTutor}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.dictamenPsicopedagogia}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                         <h:outputText value="#{baja.dtoRegistroBaja.personalRegistro.nombre} - #{baja.dtoRegistroBaja.personalRegistro.clave}"/>
-                                                    </p:column>
-                                                </p:dataTable>
-                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                                </p:confirmDialog> 
-                                            </center>
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <p:panelGrid id="bajasCategoria" style="margin-top:20px">
+                                                <f:facet name="header">
+                                                    <p:row>
+                                                        <p:column colspan="3">Bajas por Categoría</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column style="text-align: center;">Académicos</p:column>
+                                                        <p:column style="text-align: center;">Económicos</p:column>
+                                                        <p:column style="text-align: center;">Personales o Individuales</p:column>
+                                                    </p:row>
+                                                </f:facet>
+
+                                                <p:row>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasCatAcademicos}</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasCatEconomicos}</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasCatPersonales}</p:column>
+                                                </p:row>
+
+                                                <f:facet name="footer">
+                                                    <p:row>
+                                                        <p:column  colspan="3" style="text-align: right">
+                                                            Total: #{concentradoBajasAreasVarias.rol.listaConcentradoPorCategoria.size()}
+                                                        </p:column>
+                                                    </p:row>
+                                                </f:facet>
+                                            </p:panelGrid>
+                                        </div>
+                                        
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <p:panelGrid id="bajasTipo" style="margin-top:20px">
+                                                <f:facet name="header">
+                                                    <p:row>
+                                                        <p:column colspan="2">Tipo de Baja</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column style="text-align: center; width: 200px;">Definitivas</p:column>
+                                                        <p:column style="text-align: center; width: 200px;">Temporales</p:column>
+                                                    </p:row>
+                                                </f:facet>
+
+                                                <p:row>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasTipDefinitiva}</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasTipTemporal}</p:column>
+                                                </p:row>
+
+                                                <f:facet name="footer">
+                                                    <p:row>
+                                                        <p:column  colspan="2" style="text-align: right">
+                                                            Total: #{concentradoBajasAreasVarias.rol.listaConcentradoPorTipo.size()}
+                                                        </p:column>
+                                                    </p:row>
+                                                </f:facet>
+                                            </p:panelGrid>
+                                        </div>
+                                        
+                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                            <p:panelGrid id="bajasCausa" style="margin-top:20px">
+                                                <f:facet name="header">
+                                                    <p:row>
+                                                        <p:column colspan="3">Causas de Baja</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column style="text-align: center; width: 200px;">Categoría</p:column>
+                                                        <p:column style="text-align: center; width: 350px;">Causa</p:column>
+                                                        <p:column style="text-align: center; width: 100px;">Bajas</p:column>
+                                                    </p:row>
+                                                </f:facet>
+
+                                                <p:row>
+                                                    <p:column rowspan="5" style="font-weight: bold; text-align: center;">Académicos</p:column>
+                                                    <p:column>Abandono de Estadía</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasAbandonoEst}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Faltas al Reglamento Escolar</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasFalRegEsc}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Complejidad de la Carrera</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasCompCarrera}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Problemas Académicos</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasProbAcad}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Reprobación</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasReprobacion}</p:column>
+                                                </p:row>
+                                                
+                                                <p:row>
+                                                    <p:column rowspan="2" style="font-weight: bold; text-align: center;">Económicos</p:column>
+                                                    <p:column>Distancia de la UTXJ</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasDistanciaUTXJ}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Problemas Económicos</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasProbEcon}</p:column>
+                                                </p:row>
+                                                
+                                                <p:row>
+                                                    <p:column rowspan="17" style="font-weight: bold; text-align: center;">Personales o Individuales</p:column>
+                                                    <p:column>Cambio de Carrera</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasCambCarrera}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Cambio de Ciudad</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasCambCiudad}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Cambio de Domicilio</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasCambDom}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Cambio de Universidad</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasCambUni}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Cambio de U.T.</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasCambUT}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Defunción</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasDefuncion}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Deserción sin Causa Conocida</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasSinCausaCon}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Embarazo</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasEmbarazo}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Inasistencias</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasInasistencia}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Incompatibilidad de Horario</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasIncompHorario}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Incumplimiento de Expectativas</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasIncumExp}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Interes Distintos</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasIntDist}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Motivos Personales</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasMotivosPer}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Orientación Vocacional</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasOrientacionVoc}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Problemas de Salud</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasProbSalud}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Problemas de Trabajo</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasProbTrab}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column>Problemas Familiares</p:column>
+                                                    <p:column style="text-align: center;">#{concentradoBajasAreasVarias.rol.bajasProbFam}</p:column>
+                                                </p:row>
+                                                
+                                                <f:facet name="footer">
+                                                    <p:row>
+                                                        <p:column  colspan="3" style="text-align: right">
+                                                            Total: #{concentradoBajasAreasVarias.rol.listaConcentradoPorCausa.size()}
+                                                        </p:column>
+                                                    </p:row>
+                                                </f:facet>
+
+                                            </p:panelGrid>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </h:form>
-                     <!-- Modal Materias Reprobadas -->
-                    <p:dialog id="modalMateriasReprobadas" 
-                              widgetVar="modalMateriasReprobadas" 
-                              width="700" 
-                              height="auto"  
-                              closeOnEscape="true" 
-                              visible="#{reporteBajasServiciosEscolares.rol.forzarAperturaDialogo}"
-                              showEffect="fade" 
-                              hideEffect="fade" 
-                              modal="true" 
-                              draggable="true" 
-                              header="Materias Reprobadas" 
-                              onHide="actualizar();"
-                              styleClass="panel panel-primary" 
-                              responsive="true" 
-                              resizable="false" 
-                              maximizable="false">
-                        
-                        <h:form id="frmModalMateriasReprobadas" >
-                            <p:dataTable id="tblModalMatRep" value="#{reporteBajasServiciosEscolares.rol.listaMateriasReprobadas}" var="materiaReprobada"
-                                                 emptyMessage="No se han registrado materias reprobadas" tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
-                                                 paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
-                                                 >
-                                       <p:columnGroup type="header">
-                                            <p:row>
-                                                <p:column headerText="Opciones"  width="80" />
-                                                <p:column headerText="Clave Materia"  width="80" />
-                                                <p:column headerText="Materia"  width="100" />
-                                                <p:column headerText="Docente"  width="100" />
-                                            </p:row>
-                                        </p:columnGroup>
-                                        <c:set var="registroMatRep" value="#{materiaReprobada.bajaReprobacion}"/>
-                                        <p:column style="text-align: center;">
-                                            <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{reporteBajasServiciosEscolares.eliminarRegistroMateriaReprobada(registroMatRep)}" title="Eliminar registro.">
-                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
-                                            </p:commandButton>
-                                        </p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{materiaReprobada.bajaReprobacion.cargaAcademica.idPlanMateria.claveMateria}" /></p:column>
-                                        <p:column style="text-align: center;"><h:outputText value="#{materiaReprobada.bajaReprobacion.cargaAcademica.idPlanMateria.idMateria.nombre}" /></p:column>
-                                        <p:column style="text-align: justify;"><h:outputText value="#{materiaReprobada.personal.nombre}" /></p:column>
-                                        <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Total de materias reprobadas: #{fn:length(reporteBajasServiciosEscolares.rol.listaMateriasReprobadas)}.</span>
-                                        </f:facet>
-                                    </p:dataTable>
-                        </h:form>
-                    </p:dialog>
-                <c:if test="#{!empty reporteBajasServiciosEscolares.alertas || true}">
+                <c:if test="#{!empty concentradoBajasAreasVarias.alertas || true}">
                     <div class="box box-info">
                         <div class="box-header">
                             <ui:include src="/includes/alertas.xhtml">
-                                <ui:param name="alertas" value="#{reporteBajasServiciosEscolares.alertas}"></ui:param>
+                                <ui:param name="alertas" value="#{concentradoBajasAreasVarias.alertas}"></ui:param>
                             </ui:include>
                         </div>
                     </div>
@@ -264,7 +300,7 @@
                         <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para reporte de bajas</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
-                                <c:forEach items="#{reporteBajasServiciosEscolares.rol.instrucciones}" var="instruccion">
+                                <c:forEach items="#{concentradoBajasAreasVarias.rol.instrucciones}" var="instruccion">
                                     <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
                                 </c:forEach>
                             </ul>
@@ -273,7 +309,7 @@
                     </div>
                 </p:dialog>
                 </c:if>
-                <c:if test="#{reporteBajasServiciosEscolares.rol.periodos eq null}">
+                <c:if test="#{concentradoBajasAreasVarias.rol.ciclos eq null}">
                     <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
                         <h:panelGrid columns="2" cellpadding="10">
                             <h:outputText value="Actualmente no hay bajas registradas."/>
@@ -282,7 +318,7 @@
                     </p:panel>
                 </c:if>
             </c:if>
-            <c:if test="#{!reporteBajasServiciosEscolares.tieneAcceso}">
+            <c:if test="#{!concentradoBajasAreasVarias.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
                         <h:outputText value="El acceso solo está autorizado a personal de servicios escolares."/>
