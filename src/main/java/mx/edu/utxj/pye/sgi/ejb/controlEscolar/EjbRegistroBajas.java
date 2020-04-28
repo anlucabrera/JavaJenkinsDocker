@@ -1194,6 +1194,29 @@ public class EjbRegistroBajas {
     /* MÓDULO CONCENTRADO DE BAJAS POR CATEGORÍA, TIPO DE BAJA Y CAUSA DE BAJA */
     
      /**
+     * Permite validar si el usuario autenticado es personal adscrito al departamento de servicios escolares
+     * @param clave Número de nómina del usuario autenticado
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarSEPsic(Integer clave){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            if (p.getPersonal().getAreaOperativa() == 10) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalAreaOperativa").orElse(10)));
+            }
+            else if (p.getPersonal().getAreaOperativa() == 18) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalPsicopedagogia").orElse(18)));
+            }
+            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal de servicios escolares.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbRegistroBajas.validarSEPsic)", e, null);
+        }
+    }
+    
+     /**
      * Permite obtener la lista de ciclos escolares en los que se han registrado bajas
      * @return Resultado del proceso
      */
@@ -1238,9 +1261,12 @@ public class EjbRegistroBajas {
      */
     public ResultadoEJB<List<PeriodosEscolares>> obtenerPeriodosCicloBajas(CiclosEscolares cicloEscolar){
          try{
+             
+            PeriodosEscolares periodoActivo = getPeriodoActual();
             
-            List<PeriodosEscolares> listaPeriodos = em.createQuery("SELECT p FROM PeriodosEscolares p WHERE p.ciclo =:ciclo ORDER BY p.periodo DESC",  PeriodosEscolares.class)
+            List<PeriodosEscolares> listaPeriodos = em.createQuery("SELECT p FROM PeriodosEscolares p WHERE p.ciclo =:ciclo AND p.periodo <=:periodoAct ORDER BY p.periodo DESC",  PeriodosEscolares.class)
                     .setParameter("ciclo", cicloEscolar)
+                    .setParameter("periodoAct", periodoActivo.getPeriodo())
                     .getResultList();
           
             List<PeriodosEscolares> listaPeriodosDistintos = listaPeriodos.stream()

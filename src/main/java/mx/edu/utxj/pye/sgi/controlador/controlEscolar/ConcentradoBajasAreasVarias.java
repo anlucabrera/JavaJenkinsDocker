@@ -64,9 +64,9 @@ public class ConcentradoBajasAreasVarias extends ViewScopedRol implements Desarr
     cargado = true;
         try{
             setVistaControlador(ControlEscolarVistaControlador.CONCENTRADO_BAJAS);
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarServiciosEscolares(logonMB.getPersonal().getClave());//validar si es personal de servicios escolares
+            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarSEPsic(logonMB.getPersonal().getClave());//validar si es personal de servicios escolares
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
-
+            
             Filter<PersonalActivo> filtro = resAcceso.getValor();//se obtiene el filtro resultado de la validación
             PersonalActivo personal = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
             rol = new ConcentradoBajasRolVarios(filtro, personal);
