@@ -690,7 +690,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71)or (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) or (controladorEmpleado.nuevoOBJListaPersonal.clave eq 518 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 394 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
+                        <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 23)or (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) or (controladorEmpleado.nuevoOBJListaPersonal.clave eq 518 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 394 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30)}">
                             <li class="treeview">
                                 <a href="#">
                                     <i class="fa fa-file-o"></i> <span>Estadía</span>
@@ -719,7 +719,7 @@
                                             <span>4. Carta de aceptación</span>
                                         </p:link>
                                     </li>
-                                    <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71) or (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
+                                    <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 23) or (controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 30 or controladorEmpleado.nuevoOBJListaPersonal.categoriaOficial eq 32 ) or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
                                         <li>
                                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/5_Seguimiento_Estadia_Tecnica_2020.xls">
                                                 <span>5. Seguimiento de la estadía</span>
@@ -749,7 +749,7 @@
                                 </ul>
                             </li>
                         </c:if>
-                        <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71) or (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 18 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 227)}">
+                        <c:if test="#{(controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 23) or (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 18 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 227)}">
                             <li class="treeview">
                                 <a href="#">
                                     <i class="fa fa-file-text-o"></i> <span>Tutorías y Asesorías</span>
@@ -838,6 +838,16 @@
                                             <span>Propuesto 10°</span>
                                         </p:link>
                                     </li>
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/PAT3roMay-Ago2020.docx">
+                                            <span>3o mayo-agosto</span>
+                                        </p:link>
+                                    </li>
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/Plan_Accion_Tutorial/PAT9roMay-Ago2020.docx">
+                                            <span>9o mayo-agosto</span>
+                                        </p:link>
+                                    </li>
                                 </ul>
                             </li>
                             <li class="treeview">
@@ -849,27 +859,27 @@
                                 </a>
                                 <ul class="treeview-menu" style="display: none;">
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/1_Distribucion_de_ Horas.xlsx">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/PlaSegAca/1_Distribucion_de_ Horas.xlsx">
                                             <span>1. Distribución de Horas</span>
                                         </p:link>
                                     </li>
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/2_Horario_de_grupo.xlsx">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/PlaSegAca/2_Horario_de_grupo.xlsx">
                                             <span>2. Horario de grupo</span>
                                         </p:link>
                                     </li>
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/3_Carga_Horaria.xlsx">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/PlaSegAca/3_Carga_Horaria.xlsx">
                                             <span>3. Carga Horaria</span>
                                         </p:link>
                                     </li>
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/4_Matriz_de_espacios.xlsx">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/PlaSegAca/4_Matriz_de_espacios.xlsx">
                                             <span>4. Matríz de espacios</span>
                                         </p:link>
                                     </li>
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/Tutorias_y_Asesorias/5_Relacion_de_Practicas.xlsx">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/PlaSegAca/5_Relacion_de_Practicas.xlsx">
                                             <span>5. Relación de Practicas</span>
                                         </p:link>
                                     </li>
@@ -877,7 +887,7 @@
                             </li>
                         </c:if>
                         <c:if test="#{
-                              (controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71) 
+                              (controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 8 or controladorEmpleado.nuevaAreasUniversidadLogeado.categoria.categoria eq 9 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 71 or controladorEmpleado.nuevaAreasUniversidadLogeado.area eq 23) 
                                   or (controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 5 or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9
                                   or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 16
                                   or controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 21
