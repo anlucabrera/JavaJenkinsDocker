@@ -64,8 +64,9 @@ public class EvaluacionTutorEstudiante extends ViewScopedRol {
             ResultadoEJB<dtoEstudiantesEvalauciones> resEstudiante = ejbEstudianteBase.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
             if(resEstudiante.getCorrecto()==true){
                 //Los estudiantes de 7mo y 11vo ya no responden la evaluacion así que se les niega el acceso
-                if(resEstudiante.getValor().getGrado()!= 6 || resEstudiante.getValor().getGrado() !=11){
-                    estudiante = resEstudiante.getValor();
+                if(resEstudiante.getValor().getGrado()== 6 || resEstudiante.getValor().getGrado() ==11){
+                    cargada=false;
+                }else {estudiante = resEstudiante.getValor();
                     //El estudiante se encuentra en alguna de las dos bases (Sauiit o Control escolar)
                     //Busca los resultados del estudiante que se encontro, si no existen, se crean
                     ResultadoEJB<EvaluacionTutoresResultados2>  resResultados = ejbEvaluacionTutor2.getResultadosEvaluacionTutorEstudiante(evaluacion, resEstudiante.getValor());
@@ -82,9 +83,7 @@ public class EvaluacionTutorEstudiante extends ViewScopedRol {
                         tutorEstudiante = resEstudiante.getValor().getTutor();
                         comprobar();
 
-                    }else {mostrarMensajeResultadoEJB(resResultados);}
-
-                }else {cargada= false;}
+                    }else {mostrarMensajeResultadoEJB(resResultados);}}
 
             }else {mostrarMensajeResultadoEJB(resEstudiante);}
         }else {cargada= false;}

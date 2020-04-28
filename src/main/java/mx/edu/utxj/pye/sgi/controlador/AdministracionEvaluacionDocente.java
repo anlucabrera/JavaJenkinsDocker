@@ -162,7 +162,7 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
                     // System.out.println("Ev completa");
                 }
             }
-            //TODO: Si no existen registros se agrega a la lista de estudiantes que no han ingresado al sistema
+            //Si no existen registros se agrega a la lista de estudiantes que no han ingresado al sistema
             else {listNoAcceso.add(estudiante); totalNoAcceso++;
                 //System.out.println("Ev no accedio");
             }
@@ -191,22 +191,22 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
                     // System.out.println("Ev completa");
                 }
             }
-            //TODO: Si no existen registros se agrega a la lista de estudiantes que no han ingresado al sistema
+            //Si no existen registros se agrega a la lista de estudiantes que no han ingresado al sistema
             else {listNoAcceso.add(estudiante); totalNoAcceso++;
                 //System.out.println("Ev no accedio");
             }
         }catch (Exception e){mostrarExcepcion(e);}
     }
-    //TODO: Genera el avance de la evaluacion
+    //Genera el avance de la evaluacion
     public void generarAvance(){
         listAvance = new ArrayList<>();
         totalCompletos = listCompletos.size();
         totalIncompletos= listIncompletos.size();
         Double dte = new Double(totalEstudiantes);
         Double dc= new Double(totalCompletos);
-        //TODO: General el porcentaje de avance
+        //General el porcentaje de avance
         porcentaje = (dc * 100) / dte;
-        // TODO: LO AGREGA AL DTO Y DESPUES A LA LISTA
+        // LO AGREGA AL DTO Y DESPUES A LA LISTA
         dtoAvanceEvaluaciones dto = new dtoAvanceEvaluaciones();
         dto.setTotalEstudiantes(totalEstudiantes);
         dto.setTotalCompletos(totalCompletos);
@@ -246,38 +246,38 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
             //System.out.println("Lista total por PE"+listAvancePE.size());
         }else{mostrarMensajeResultadoEJB(resPE);}
     }
-    //TODO:Seguimiento para el tutor
+    //Seguimiento para el tutor
     public void seguimientoTutor(){
-        //TODO:Obtiene la lista general de estudiantes(Sauiit y CE)
+        //:Obtiene la lista general de estudiantes(Sauiit y CE)
         getEstudiantesActivosbyPeriodo();
-        //TODO:Filtra la lista general de estudiantes a sólo sus estudiantes tutorados y se quita a estudiantes de 6to y 11avo
+        //Filtra la lista general de estudiantes a sólo sus estudiantes tutorados
         listEstudiantesFiltrados = listEstudiantesGeneral.stream()
                 .filter(e-> persona.getClave().equals(e.getClaveTutor()))
                 .filter(e->e.getGrado()!=6 & e.getGrado()!=11 )
                 .collect(Collectors.toList());
-        //TODO:Cuenta el total de estudiantes a su cargo
+        //Cuenta el total de estudiantes a su cargo
         totalEstudiantes = listEstudiantesFiltrados.size();
         generarListasSeguimiento(listEstudiantesFiltrados);
         generarAvance();
     }
-    //TODO:Seguiento para el Director
+    //Seguiento para el Director
     public void seguimientoDirector(){
-        //TODO:Obtiene la lista general de estudiantes(Sauiit y CE)
+        //Obtiene la lista general de estudiantes(Sauiit y CE)
         getEstudiantesActivosbyPeriodo();
-        //TODO:Filtra la lista general de estudiantes a sólo sus estudiantes a cargo, sacando de la lista 6to y 11vo
+        //Filtra la lista general de estudiantes a sólo sus estudiantes a cargo
         listEstudiantesFiltrados = listEstudiantesGeneral.stream()
                 .filter(e-> persona.getClave().equals(e.getClaveDirector()))
                 .filter(e->e.getGrado()!=6 & e.getGrado()!=11 )
                 .collect(Collectors.toList());
-        //TODO:Cuenta el total de estudiantes a su cargo
+        //Cuenta el total de estudiantes a su cargo
         totalEstudiantes = listEstudiantesFiltrados.size();
         generarListasSeguimiento(listEstudiantesFiltrados);
         generarAvance();
 
     }
-    //TODO: Seguimiento para Secretaría Académica
+    //Seguimiento para Secretaría Académica
     public void seguimientoSE(){
-        //TODO:Obtiene la lista general de los estudiantes sauiit y CE sacando de la lista a estudiantes de 6to y 11vo
+        //Obtiene la lista general de los estudiantes sauiit y CE sacando de la lista a estudiantes de 6to y 11vo
         getEstudiantesActivosbyPeriodo();
         listEstudiantesFiltrados = listEstudiantesGeneral;
         listEstudiantesFiltrados = listEstudiantesGeneral.stream()

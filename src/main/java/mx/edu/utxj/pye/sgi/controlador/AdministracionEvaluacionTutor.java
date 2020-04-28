@@ -206,7 +206,10 @@ public void seguimientoTutor(){
             getEstudiantesActivosbyPeriodo();
             //Obtiene la lista de estudiantes tutorados por el personal logeado!
             listEstudiantesFiltrados =new ArrayList<>();
-            listEstudiantesFiltrados= listGeneral.stream().filter(e-> persona.getClave().equals(e.getClaveTutor())).collect(Collectors.toList());
+            listEstudiantesFiltrados = listGeneral.stream()
+                .filter(e->e.getGrado()!=6 & e.getGrado()!=11 )
+                    .filter(e-> persona.getClave().equals(e.getClaveTutor()))
+                .collect(Collectors.toList());
             totalEstudiantes = listEstudiantesFiltrados.size();
             //System.out.println( "Total estudiantes " + totalEstudiantes);
             //Genera las listas completas e incompletas
@@ -224,7 +227,10 @@ public void seguimientoTutor(){
             getEstudiantesActivosbyPeriodo();
             //Obtiene la lista general de estudiantes bajo su dirección
             listEstudiantesFiltrados = new ArrayList<>();
-            listEstudiantesFiltrados = listGeneral.stream().filter(e->persona.getClave().equals(e.getClaveDirector())).collect(Collectors.toList());
+            listEstudiantesFiltrados = listGeneral.stream()
+                    .filter(e->e.getGrado()!=6 & e.getGrado()!=11 )
+                    .filter(e->persona.getClave().equals(e.getClaveDirector()))
+                    .collect(Collectors.toList());
             //Genera las listas
             totalEstudiantes = listEstudiantesFiltrados.size();
             generalListas(listEstudiantesFiltrados);
@@ -241,7 +247,10 @@ public void seguimientoTutor(){
             getEstudiantesActivosbyPeriodo();
             //Obtiene la lista general de estudiantes activos
             listEstudiantesFiltrados = new ArrayList<>();
-            listEstudiantesFiltrados = listGeneral;
+            listEstudiantesFiltrados = listGeneral.stream()
+                    .filter(e->e.getGrado()!=6 & e.getGrado()!=11)
+                    .collect(Collectors.toList());
+            ;
             totalEstudiantes = listEstudiantesFiltrados.size();
             generalListas(listEstudiantesFiltrados);
             generarAvaance();
