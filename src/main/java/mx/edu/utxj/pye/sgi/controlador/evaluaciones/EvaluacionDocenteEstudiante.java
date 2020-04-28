@@ -226,7 +226,7 @@ public class EvaluacionDocenteEstudiante extends ViewScopedRol {
             // System.out.println("Valoooor"+resultados.getR1());
             ejbEvaluacionDocente2.comprobarResultado2(resultados);
             getResultadosTipo2();
-            System.out.println("Id que recibe -> "+ id.getId() + " valor ->" + valor);
+            //System.out.println("Id que recibe -> "+ id.getId() + " valor ->" + valor);
         }
     }
     public void  getdocenteEvaluando(dtoEstudianteMateria evaluando){
