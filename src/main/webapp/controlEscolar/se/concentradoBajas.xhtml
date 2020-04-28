@@ -22,7 +22,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Concentrado de Bajas por Categoría, Tipo de Baja y Causas de Baja por Ciclo y Periodo Escolar
+        Concentrado de Bajas por categoría, tipo y causas 
     </ui:define>
 
     <ui:define name="description">
@@ -37,7 +37,7 @@
 
     <ui:define name="body">
         <c:if test="#{concentradoBajasAreasVarias.cargado}">
-        <adm:breadcrumb title="Concentrado de Bajas por Categoría"/>
+        <adm:breadcrumb title="Concentrado de Bajas por categoría, tipo y causas"/>
         <div class="contenedor">
             <c:if test="#{concentradoBajasAreasVarias.tieneAcceso}">
                 <c:if test="#{concentradoBajasAreasVarias.rol.periodos ne null}">
