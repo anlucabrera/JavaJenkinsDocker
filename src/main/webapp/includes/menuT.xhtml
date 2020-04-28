@@ -215,27 +215,8 @@
                             </li>
                         </c:if>
 
-                        <c:if test="#{controlEscolarMenu.tieneElementos()}">
-                            <li class="treeview">
-                                <a href="#">
-                                    <i class="fa fa-check-square-o"></i> <span>Seguimiento Evaluaciones</span>
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu" style="display: none;">
-                                    <c:if test="#{administracionEvaluacionAmbiental.mostrarEnDesarrollo(request) and administracionEvaluacionAmbiental.tieneAcceso}">
-                                        <li>
-                                            <p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEvaluacionAmbiental.xhtml">
-                                                <i class="fa fa-list-ol"></i><span>Seguimiento Evaluación Ambiental</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span>
-                                            </p:link>
-                                        </li>
-                                    </c:if>
-                                </ul>
-                            </li>
-                        </c:if>
                         <!-- Segumiento de Evaluciones  a Tutor y Evaluacion a Docente-->
-                        <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.tutorCe or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
+                        <c:if test="#{controlEscolarMenu.tieneElementos() or administracionEncuesta.dto.esServEst or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.tutorCe or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
                             <li class="treeview">
                                 <a href="#">
                                     <i class="fa fa-check-square-o"></i> <span>Seguimiento Evaluaciones</span>
@@ -246,6 +227,13 @@
                                 <ul class="treeview-menu" style="display: none;">
                                     <c:if test="#{administracionEncuesta.dto.ETutorActiva }"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionEvaluacionTutor.xhtml"><i class="fa fa-list-ol"></i><span>Evalución a Tutor</span></p:link></li></c:if>
                                     <c:if test="#{administracionEncuesta.dto.EDocenteActiva and !administracionEncuesta.dto.esPsicopedagogia}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionEvaluacionDocente.xhtml"><i class="fa fa-list-ol"></i><span>Evalución a Docente</span></p:link></li></c:if>
+                                    <c:if test="#{administracionEvaluacionAmbiental.mostrarEnDesarrollo(request) and administracionEvaluacionAmbiental.tieneAcceso}">
+                                        <li>
+                                            <p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEvaluacionAmbiental.xhtml">
+                                                <i class="fa fa-list-ol"></i><span>Seguimiento Evaluación Ambiental</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span>
+                                            </p:link>
+                                        </li>
+                                    </c:if>
                                 </ul>
                             </li>
                         </c:if>
