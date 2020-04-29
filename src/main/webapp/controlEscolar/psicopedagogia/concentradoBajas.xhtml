@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Concentrado de Bajas por Categoría, Tipo de Baja y Causas de Baja por Ciclo y Periodo Escolar
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{concentradoBajasAreasVarias.cargado}">
+        <adm:breadcrumb title="Concentrado de Bajas por Categoría"/>
+        <div class="contenedor">
+            <c:if test="#{concentradoBajasAreasVarias.tieneAcceso}">
+                <c:if test="#{concentradoBajasAreasVarias.rol.periodos ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(concentradoBajasAreasVarias.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                       <!-- <p:commandLink class="btn btn-info btn-sm" ajax="false" action="# {concentradoBajasAreasVarias.descargarReportePeriodo()}" 
+                                                       target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" />
+                                        </p:commandLink> -->
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="ciclo" value="#{concentradoBajasAreasVarias.rol.ciclo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{concentradoBajasAreasVarias.cambiarCiclo}">
+                                                    <f:selectItems value="#{concentradoBajasAreasVarias.rol.ciclos}" var="ciclo" itemValue="#{periodo}" itemLabel="#{caster.cicloEscolarToString(ciclo)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Ciclo" for="ciclo"/>
+                                                <p:message for="ciclo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{concentradoBajasAreasVarias.rol.periodo}" converter="entityConverter" valueChangeListener="#{concentradoBajasAreasVarias.cambiarPeriodo}">
+                                                    <f:selectItems value="#{concentradoBajasAreasVarias.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <p:panelGrid id="bajasCategoria" style="margin-top:20px;">
+                                                <f:facet name="header">
+                                                    <p:row>
+                                                        <p:column colspan="3" style="background-color: #3c8dbc; color: #fff; border:1px solid #000000;">Bajas por Categoría</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column style="text-align: center; background-color: #3c8dbc; color: #fff; border:1px solid #000000;">Académicos</p:column>
+                                                        <p:column style="text-align: center; background-color: #3c8dbc; color: #fff; border:1px solid #000000;">Económicos</p:column>
+                                                        <p:column style="text-align: center; background-color: #3c8dbc; color: #fff; border:1px solid #000000;">Personales o Individuales</p:column>
+                                                    </p:row>
+                                                </f:facet>
+
+                                                <p:row>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasCatAcademicos}</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasCatEconomicos}</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasCatPersonales}</p:column>
+                                                </p:row>
+
+                                                <f:facet name="footer">
+                                                    <p:row>
+                                                        <p:column  colspan="3" style="text-align: right; border:1px solid #000000;">
+                                                            Total: #{concentradoBajasAreasVarias.rol.listaConcentradoPorCategoria.size()}
+                                                        </p:column>
+                                                    </p:row>
+                                                </f:facet>
+                                            </p:panelGrid>
+                                        </div>
+                                        
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <p:panelGrid id="bajasTipo" style="margin-top:20px">
+                                                <f:facet name="header">
+                                                    <p:row>
+                                                        <p:column colspan="2" style="background-color: #3c8dbc; color: #fff; border:1px solid #000000;">Tipo de Baja</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column style="text-align: center; width: 200px; background-color: #3c8dbc; color: #fff; border:1px solid #000000;">Definitivas</p:column>
+                                                        <p:column style="text-align: center; width: 200px; background-color: #3c8dbc; color: #fff; border:1px solid #000000;">Temporales</p:column>
+                                                    </p:row>
+                                                </f:facet>
+
+                                                <p:row>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasTipDefinitiva}</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasTipTemporal}</p:column>
+                                                </p:row>
+
+                                                <f:facet name="footer">
+                                                    <p:row>
+                                                        <p:column  colspan="2" style="text-align: right; border:1px solid #000000;">
+                                                            Total: #{concentradoBajasAreasVarias.rol.listaConcentradoPorTipo.size()}
+                                                        </p:column>
+                                                    </p:row>
+                                                </f:facet>
+                                            </p:panelGrid>
+                                        </div>
+                                        
+                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                            <p:panelGrid id="bajasCausa" style="margin-top:20px">
+                                                <f:facet name="header">
+                                                    <p:row>
+                                                        <p:column colspan="3" style="background-color: #3c8dbc; color: #fff; border:1px solid #000000;">Causas de Baja</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column style="text-align: center; width: 200px; background-color: #3c8dbc; color: #fff; border:1px solid #000000;">Categoría</p:column>
+                                                        <p:column style="text-align: center; width: 350px; background-color: #3c8dbc; color: #fff; border:1px solid #000000;">Causa</p:column>
+                                                        <p:column style="text-align: center; width: 100px; background-color: #3c8dbc; color: #fff; border:1px solid #000000;">Bajas</p:column>
+                                                    </p:row>
+                                                </f:facet>
+
+                                                <p:row>
+                                                    <p:column rowspan="5" style="font-weight: bold; text-align: center; border:1px solid #000000;">Académicos</p:column>
+                                                    <p:column style="border:1px solid #000000;">Abandono de Estadía</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasAbandonoEst}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Faltas al Reglamento Escolar</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasFalRegEsc}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Complejidad de la Carrera</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasCompCarrera}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Problemas Académicos</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasProbAcad}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Reprobación</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasReprobacion}</p:column>
+                                                </p:row>
+                                                
+                                                <p:row>
+                                                    <p:column rowspan="2" style="font-weight: bold; text-align: center; border:1px solid #000000;">Económicos</p:column>
+                                                    <p:column style="border:1px solid #000000;">Distancia de la UTXJ</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasDistanciaUTXJ}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Problemas Económicos</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasProbEcon}</p:column>
+                                                </p:row>
+                                                
+                                                <p:row>
+                                                    <p:column rowspan="17" style="font-weight: bold; text-align: center; border:1px solid #000000;">Personales o Individuales</p:column>
+                                                    <p:column style="border:1px solid #000000;">Cambio de Carrera</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasCambCarrera}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Cambio de Ciudad</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasCambCiudad}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Cambio de Domicilio</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasCambDom}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Cambio de Universidad</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasCambUni}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Cambio de U.T.</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasCambUT}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Defunción</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasDefuncion}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Deserción sin Causa Conocida</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasSinCausaCon}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Embarazo</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasEmbarazo}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Inasistencias</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasInasistencia}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Incompatibilidad de Horario</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasIncompHorario}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Incumplimiento de Expectativas</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasIncumExp}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Interes Distintos</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasIntDist}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Motivos Personales</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasMotivosPer}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Orientación Vocacional</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasOrientacionVoc}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Problemas de Salud</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasProbSalud}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Problemas de Trabajo</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasProbTrab}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="border:1px solid #000000;">Problemas Familiares</p:column>
+                                                    <p:column style="text-align: center; border:1px solid #000000;">#{concentradoBajasAreasVarias.rol.bajasProbFam}</p:column>
+                                                </p:row>
+                                                
+                                                <f:facet name="footer">
+                                                    <p:row>
+                                                        <p:column  colspan="3" style="text-align: right; border:1px solid #000000;">
+                                                            Total: #{concentradoBajasAreasVarias.rol.listaConcentradoPorCausa.size()}
+                                                        </p:column>
+                                                    </p:row>
+                                                </f:facet>
+
+                                            </p:panelGrid>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty concentradoBajasAreasVarias.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{concentradoBajasAreasVarias.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para reporte de bajas</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{concentradoBajasAreasVarias.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{concentradoBajasAreasVarias.rol.ciclos eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay bajas registradas."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!concentradoBajasAreasVarias.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal de servicios escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>
