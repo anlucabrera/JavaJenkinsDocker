@@ -762,21 +762,23 @@ public class EjbRegistroBajas {
      */
     public ResultadoEJB<List<PeriodosEscolares>> getPeriodosBajas(){
         try{
-            List<PeriodosEscolares> listaPeriodos = new ArrayList<>();
-            
-            List<Baja> periodosBaja = em.createQuery("SELECT b FROM Baja b ORDER BY b.periodoEscolar DESC",  Baja.class)
-                    .getResultList();
-          
-            periodosBaja.forEach(periodoBaja -> {
-                PeriodosEscolares periodo = em.find(PeriodosEscolares.class, periodoBaja.getPeriodoEscolar());
-                listaPeriodos.add(periodo);
-            });
-            
-             List<PeriodosEscolares> listaPeriodosDistintos = listaPeriodos.stream()
+           
+            List<Integer> claves = em.createQuery("SELECT b FROM Baja b ORDER BY b.periodoEscolar DESC", Baja.class)
+                    .getResultStream()
+                    .map(a -> a.getPeriodoEscolar())
                     .distinct()
                     .collect(Collectors.toList());
+            
+            List<PeriodosEscolares> periodos = new ArrayList<>();
+            
+            if (!claves.isEmpty()) {
+                periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class)
+                        .setParameter("periodos", claves)
+                        .getResultStream()
+                        .collect(Collectors.toList());
+            } 
              
-            return ResultadoEJB.crearCorrecto(listaPeriodosDistintos, "Lista de periodo escolares en los que se han registrado bajas.");
+            return ResultadoEJB.crearCorrecto(periodos, "Lista de periodo escolares en los que se han registrado bajas.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos en los que se han registrado bajas. (EjbRegistroBajas.getPeriodosBajas)", e, null);
         }
