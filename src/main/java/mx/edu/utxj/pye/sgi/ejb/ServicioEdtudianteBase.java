@@ -321,7 +321,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
             List<AlumnosEvaluacionTutor> listAlumnosSauiit= new ArrayList<>();
             List<dtoEstudiantesEvalauciones> listDtoEstudiantesSauiit = new ArrayList<>();
             //Busca a los estudiantes activos
-            listAlumnosSauiit = fs.getEntityManager().createQuery("SELECT a FROM AlumnosEvaluacionTutor a",AlumnosEvaluacionTutor.class)
+            listAlumnosSauiit = em.createQuery("SELECT a FROM AlumnosEvaluacionTutor a",AlumnosEvaluacionTutor.class)
                     .getResultList()
                     ;
              //System.out.println("Lista de vista --->" + listAlumnosSauiit.size());
@@ -499,7 +499,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
         try {
           //  System.out.println("Clave persona " + clavePersona);
             Personal personal = new Personal();
-            ListaUsuarioClaveNomina personalS =  fs.getEntityManager().createQuery("SELECT l FROM ListaUsuarioClaveNomina l WHERE l.cvePersona=:clave", ListaUsuarioClaveNomina.class)
+            ListaUsuarioClaveNomina personalS =  em.createQuery("SELECT l FROM ListaUsuarioClaveNomina l WHERE l.cvePersona=:clave", ListaUsuarioClaveNomina.class)
                     .setParameter("clave", clavePersona)
                     .getResultStream()
                     .findFirst()

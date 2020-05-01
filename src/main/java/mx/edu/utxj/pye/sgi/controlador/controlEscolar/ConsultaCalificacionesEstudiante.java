@@ -104,7 +104,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
 
         ResultadoEJB<List<DtoUnidadConfiguracion>> resConfiguraciones = ejbCapturaCalificaciones.getConfiguraciones(dtoCargaAcademica);
         if(!resConfiguraciones.getCorrecto()){
-            mostrarMensaje("No se detectaron configuraciones de unidades en la materia de la carga académica seleccionada. " + resConfiguraciones.getMensaje());
+            //mostrarMensaje("No se detectaron configuraciones de unidades en la materia de la carga académica seleccionada. " + resConfiguraciones.getMensaje());
             return Collections.EMPTY_LIST;
         }
         rol.getDtoUnidadConfiguracionesMap().put(dtoCargaAcademica, resConfiguraciones.getValor());
@@ -199,14 +199,15 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
     public BigDecimal obtenerPromedioAcumulado(){
         BigDecimal promedio;
         BigDecimal totalRegistro = new BigDecimal(rol.getEstudiante().getInscripciones().size());
+        if(totalRegistro == BigDecimal.ZERO)return BigDecimal.ZERO;
         BigDecimal suma;
         List<BigDecimal> promedios = new ArrayList<>();
         rol.getEstudiante().getInscripciones().forEach(estudiante -> {
             promedios.add(getPromedioCuatrimestral(estudiante.getInscripcion()));
         });
         suma = promedios.stream().map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add);
-        promedio = suma.divide(totalRegistro).setScale(2, RoundingMode.HALF_UP);
-        return promedio;
+        promedio = suma.divide(totalRegistro, 8, RoundingMode.HALF_UP);
+        return promedio.setScale(2, RoundingMode.CEILING);
     }
 
     public void cambiarPeriodo(){

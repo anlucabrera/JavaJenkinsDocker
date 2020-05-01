@@ -84,7 +84,7 @@ public class ViewScopedRol implements Controlable {
             Messages.addGlobal(severity, mensaje);
         }else {
             if (e != null) {
-                String mensaje = "Ocurrió un error: " + e.getCause() != null ? e.getCause().getMessage() : e.getMessage() == null ? " Objeto nulo. " : e.getMessage();
+                String mensaje = "Ocurrió un error:  Objeto nulo. ";
                 ultimoMensaje = construirMensaje(severity, mensaje);
                 Messages.addGlobal(severity, mensaje);
             }

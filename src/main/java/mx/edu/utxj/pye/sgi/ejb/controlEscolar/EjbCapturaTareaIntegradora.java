@@ -127,10 +127,13 @@ public class EjbCapturaTareaIntegradora {
                 calificacionPromedio.setEstudiante(estudiante);
                 calificacionPromedio.setValor(promedio.doubleValue());
                 calificacionPromedio.setFechaActualizacion(new Date());
-                em.persist(calificacionPromedio);
+                calificacionPromedio.setTipo("Oficial");
+//                em.persist(calificacionPromedio);
+                f.create(calificacionPromedio);
             }else{
                 calificacionPromedio.setValor(promedio.doubleValue());
-                em.merge(calificacionPromedio);
+//                em.merge(calificacionPromedio);
+                f.edit(calificacionPromedio);
             }
 
             em.flush();

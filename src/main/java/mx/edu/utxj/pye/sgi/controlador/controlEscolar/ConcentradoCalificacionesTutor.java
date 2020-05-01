@@ -135,6 +135,7 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
             creareporte();
             rol.setFechaInpresion(new Date());
         } catch (Exception e) {
+            e.printStackTrace();
             mostrarExcepcion(e);
         }
     }
@@ -201,6 +202,7 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
         if(rejb.getValor().isEmpty())return;
         academicas = rejb.getValor().stream().filter(a -> Objects.equals(a.getGrupo().getIdGrupo(), rol.getGrupoSelec().getIdGrupo())).collect(Collectors.toList());
         DtoCargaAcademica dca = academicas.get(0);
+        if(dca.getCargaAcademica().getUnidadMateriaConfiguracionList().isEmpty())return;
         UnidadMateriaConfiguracion umc = dca.getCargaAcademica().getUnidadMateriaConfiguracionList().get(0);
         ResultadoEJB<DtoUnidadConfiguracion> ducB = packer.packUnidadConfiguracion(umc, dca);
         ResultadoEJB<DtoGrupoEstudiante> resGrupo = packer.packGrupoEstudiante(dca, ducB.getValor());

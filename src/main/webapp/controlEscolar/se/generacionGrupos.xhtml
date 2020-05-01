@@ -195,7 +195,7 @@
                                                                         <p:selectOneMenu id="sistema2" value="#{generacionGruposServiciosEscolares.rol.grupo.idSistema}" converter="entidadCEConverter"
                                                                                          required="true" requiredMessage="Debe seleccionar el sistema para dicho grupo">
                                                                             <f:selectItem itemValue="#{null}"/>
-                                                                            <f:selectItems var="sistema" value="#{FichaAdmision.listaSistema}" itemLabel="#{sistema.nombre}"
+                                                                            <f:selectItems var="sistema" value="#{reincorporacionServiciosEscolares.rol.sistemas}" itemLabel="#{sistema.nombre}"
                                                                                            itemValue="#{sistema}"/>
                                                                             <p:ajax update="@this" process="@this"/>
                                                                         </p:selectOneMenu>
