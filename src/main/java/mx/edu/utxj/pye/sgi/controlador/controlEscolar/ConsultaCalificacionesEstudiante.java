@@ -197,17 +197,20 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
     }
 
     public BigDecimal obtenerPromedioAcumulado(){
+        try{
         BigDecimal promedio;
         BigDecimal totalRegistro = new BigDecimal(rol.getEstudiante().getInscripciones().size());
-        if(totalRegistro == BigDecimal.ZERO)return BigDecimal.ZERO;
         BigDecimal suma;
         List<BigDecimal> promedios = new ArrayList<>();
         rol.getEstudiante().getInscripciones().forEach(estudiante -> {
             promedios.add(getPromedioCuatrimestral(estudiante.getInscripcion()));
         });
         suma = promedios.stream().map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add);
-        promedio = suma.divide(totalRegistro, 8, RoundingMode.HALF_UP);
-        return promedio.setScale(2, RoundingMode.CEILING);
+        promedio = suma.divide(totalRegistro,8 ,RoundingMode.HALF_UP);
+        return promedio;
+        }catch(Exception e){
+           return BigDecimal.ZERO;
+        }
     }
 
     public void cambiarPeriodo(){
