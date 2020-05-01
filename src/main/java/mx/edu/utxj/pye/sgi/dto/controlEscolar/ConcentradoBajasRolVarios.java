@@ -104,7 +104,7 @@ public class ConcentradoBajasRolVarios extends AbstractRol{
         super(filtro);
         this.personal = personal;
     }
-
+   
     public void setPersonal(PersonalActivo personal) {
         this.personal = personal;
     }
