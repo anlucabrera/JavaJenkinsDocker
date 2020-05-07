@@ -86,7 +86,7 @@ public class CuadroMandoIntegralArea implements Serializable {
     public void init() {
  if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
  cargado = true;
-        numeroMes = fechaActual.getMonth();
+        numeroMes = controladorEmpleado.getProcesopoa().getEvaluacion().getEvaluacionPOA()-1;
         ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa2();
         
         switch (numeroMes) {
