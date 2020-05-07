@@ -97,7 +97,7 @@ public class EjbReinscripcionExtemporaneaSE {
         try{
             EventoEscolar eventoEscolar = new EventoEscolar();
             //Se busca el ultimo evento de tipo Reinscripcion
-            eventoEscolar = em.createQuery("select e from EventoEscolar  e where e.tipo=:tipo order by e.periodo",EventoEscolar.class)
+            eventoEscolar = em.createQuery("select e from EventoEscolar  e where e.tipo=:tipo order by e.periodo desc",EventoEscolar.class)
             .setParameter("tipo","Reinscripción_autonóma")
             .getResultStream()
             .findFirst()
@@ -120,11 +120,12 @@ public class EjbReinscripcionExtemporaneaSE {
     public ResultadoEJB<List<Estudiante>> getEstudiantesReinscritos(EventoEscolar eventoEscolar){
         try {
             List<Estudiante> listEstudiantesInscritos = new ArrayList<>();
-            listEstudiantesInscritos = em.createQuery("select e from Estudiante e where e.tipoEstudiante.idTipoEstudiante=:tipo and e.periodo=:periodo and e.tipoRegistro =:tipoR or e.tipoRegistro=:tipoR2",Estudiante.class)
+            listEstudiantesInscritos = em.createQuery("select e from Estudiante e where e.tipoEstudiante.idTipoEstudiante=:tipo and e.periodo=:periodo",Estudiante.class)
                 .setParameter("tipo",1)
                 .setParameter("periodo",eventoEscolar.getPeriodo())
-                    .setParameter("tipoR","Reinscripcion Autónoma")
+                    /*.setParameter("tipoR","Reinscripcion Autónoma")
                     .setParameter("tipoR2", "Reinscripcion")
+                    */
                 .getResultList()
             ;
             if(listEstudiantesInscritos==null || listEstudiantesInscritos.isEmpty()){return ResultadoEJB.crearErroneo(4,listEstudiantesInscritos,"No se encontraron estudiantes inscritos en el periodo programado.");}

@@ -27,7 +27,7 @@ public class ReinscripcionExtemporaneaRolSE extends AbstractRol {
     //Ultimo eveento escolar de tipo reinscripcion
     @Getter EventoEscolar eventoEscolar;
     //Lista de estudiantes
-    @Getter List<DtoEstudianteReinscripcion> listEstudiantesReinscritos, listEstudiantesNoReinscritos;
+    @Getter List<DtoEstudianteReinscripcion> listEstudiantesReinscritos, listEstudiantesNoReinscritos,filter;
     @Getter List<DtoMatariaPromedio> promediosMateriasSelec ;
 
     @Getter List<Estudiante> listEstudiantesPeriodoAnterior;
@@ -60,5 +60,9 @@ public class ReinscripcionExtemporaneaRolSE extends AbstractRol {
 
     public void setPromediosMateriasSelec(List<DtoMatariaPromedio> promediosMateriasSelec) {
         this.promediosMateriasSelec = promediosMateriasSelec;
+    }
+
+    public void setFilter(List<DtoEstudianteReinscripcion> filter) {
+        this.filter = filter;
     }
 }

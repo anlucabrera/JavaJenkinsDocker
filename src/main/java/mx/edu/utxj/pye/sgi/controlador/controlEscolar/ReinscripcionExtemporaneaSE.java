@@ -99,10 +99,14 @@ public class ReinscripcionExtemporaneaSE extends ViewScopedRol implements Desarr
         try{
             //Obtiene Estudiantes Reinscritos
             getEstudiantesReinscritos();
+           // System.out.println("Estudiantes reinscritos ->" + rol.getListEstudiantesReinscritos().size());
             //Obtiene Estudiantes No Reisncritos
             getEstudiantesNoReinscritos();
+           // System.out.println("Estudiantes NO reinscritos ->" + rol.getListEstudiantesNoReinscritos().size());
             //Obtiene estudiantes regulares del periodo anterior
             getEstudiantesByPeriodoAnterior();
+            //System.out.println("Estudiantes reinscritos periodo anterior ->" + rol.getListEstudiantesPeriodoAnterior().size());
+
         }catch (Exception e){
             mostrarExcepcion(e);
         }
@@ -171,7 +175,10 @@ public class ReinscripcionExtemporaneaSE extends ViewScopedRol implements Desarr
         try{
             if(estudianteReinscripcion==null){return;}
             ResultadoEJB<Estudiante> resReinscibir = ejbReinscripcionExtemporaneaSE.reinscribirEstudiante(estudianteReinscripcion,rol.getEventoEscolar(),rol.getServiciosEscolares());
-            if(resReinscibir.getCorrecto()==true){mostrarMensajeResultadoEJB(resReinscibir);}
+            if(resReinscibir.getCorrecto()==true){
+                mostrarMensajeResultadoEJB(resReinscibir);
+                actualizarInfo();
+            }
             else {mostrarMensajeResultadoEJB(resReinscibir);}
 
         }catch (Exception e){
