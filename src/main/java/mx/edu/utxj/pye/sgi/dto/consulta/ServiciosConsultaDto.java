@@ -53,7 +53,7 @@ public class ServiciosConsultaDto extends AbstractRol {
     public void setEvaluaciones(List<Evaluaciones> evaluaciones) {
         this.evaluaciones = evaluaciones;
         if(evaluaciones != null){
-            if(!evaluaciones.isEmpty()) evaluacionSeleccionada = evaluaciones.get(1);
+            if(!evaluaciones.isEmpty()) evaluacionSeleccionada = evaluaciones.get(0);
         }
     }
 

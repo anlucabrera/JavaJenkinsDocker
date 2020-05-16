@@ -113,6 +113,16 @@ public class Caster {
                 .toString();
     }
 
+    public String clavePeriodoToCicloString(Integer periodo){
+        try {
+            PeriodosEscolares periodosEscolares = em.find(PeriodosEscolares.class, periodo);
+            CiclosEscolares ciclo = periodosEscolares.getCiclo();
+            return cicloEscolarToString(ciclo);
+        }catch (Exception e){
+            return "Error";
+        }
+    }
+
     public String periodoToStringAnio(PeriodosEscolares periodo){
         return (new StringBuilder())
                 .append(periodo.getMesInicio().getMes())
