@@ -97,7 +97,7 @@
                                         <div class="#{casilla}">
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="evaluacion" value="#{serviciosConsulta.dto.evaluacionSeleccionada}" converter="entityConverter" styleClass="form-control" >
-                                                    <f:selectItems value="#{serviciosConsulta.dto.evaluaciones}" var="evaluacion" itemValue="#{evaluacion}" itemLabel="#{caster.clavePeriodoToString(evaluacion.periodo)}" />
+                                                    <f:selectItems value="#{serviciosConsulta.dto.evaluaciones}" var="evaluacion" itemValue="#{evaluacion}" itemLabel="#{caster.clavePeriodoToCicloString(evaluacion.periodo)}" />
                                                     <p:ajax process="@this" update="@this contenedor programa" listener="#{serviciosConsulta.cambiarEvaluacion}" />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Evaluación" for="evaluacion"/>

@@ -171,7 +171,7 @@ public class EjbSatisfaccionServiciosConsulta {
     public ResultadoEJB<List<Evaluaciones>> buscarEvaluaciones(){
         try{
             //
-            List<Evaluaciones> evaluaciones = em.createQuery("select e from Evaluaciones e where e.tipo=:tipo order by e.periodo desc", Evaluaciones.class)
+            List<Evaluaciones> evaluaciones = em.createQuery("select e from Evaluaciones e where e.tipo=:tipo and not (current_date between e.fechaInicio and e.fechaFin) order by e.periodo desc", Evaluaciones.class)
                     .setParameter("tipo", EvaluacionesTipo.SERVICIOS.getLabel())
                     .getResultList();
 
