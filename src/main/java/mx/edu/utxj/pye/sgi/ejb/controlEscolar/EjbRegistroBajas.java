@@ -190,7 +190,7 @@ public class EjbRegistroBajas {
      */
     public ResultadoEJB<List<BajasCausa>> getCausasBaja(){
         try{
-            List<BajasCausa> bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc ORDER BY bc.causa ASC", BajasCausa.class)
+            List<BajasCausa> bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.cveCausa NOT IN (14,17,20) ORDER BY bc.causa ASC", BajasCausa.class)
                     .getResultList();
             
             return ResultadoEJB.crearCorrecto(bajasCausas, "Lista de causas de baja para realizar el registro de baja.");

@@ -149,7 +149,7 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
             PersonalActivo docente = (PersonalActivo)e.getNewValue();
             rol.setDocente(docente);
             final ResultadoEJB<List<DtoCargaAcademica>> res = ejb.getCargaAcademicaPorDocente(rol.getDocente());
-            if(!res.getCorrecto()) {
+            if(!res.getCorrecto() || res.getValor().isEmpty()) {
                 mostrarMensajeResultadoEJB(res);
                 return;
             }
