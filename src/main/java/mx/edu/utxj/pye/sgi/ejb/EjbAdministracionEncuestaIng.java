@@ -117,7 +117,7 @@ public class EjbAdministracionEncuestaIng {
                 .setParameter("nombre", "periodoEncuestaSatisfaccionING")
                 .getResultStream().findFirst().orElse(null)).getValor();
         String grado4 = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
-                .setParameter("nombre", "grado4")
+                .setParameter("nombre", "grado1")
                 .getResultStream().findFirst().orElse(null)).getValor();
         List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> dtoAlumnosEncuesta;
         dtoAlumnosEncuesta = em2.createQuery("select a from Alumnos as a " +

@@ -202,20 +202,23 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
         table.addCell(leyenda[0]);
 
 
+        if(calificaciones.size() > 10 && calificaciones.size() <= 14){
+            tableFirma.setSpacingBefore(200);
+        }
         if(calificaciones.size() > 15 && calificaciones.size() <= 20){
-            tableFirma.setSpacingBefore(180);
+            tableFirma.setSpacingBefore(170);
         }
         if(calificaciones.size() >= 21 && calificaciones.size() <= 25){
-            tableFirma.setSpacingBefore(140);
+            tableFirma.setSpacingBefore(130);
         }
         if(calificaciones.size() >= 26 && calificaciones.size() <= 30){
-            tableFirma.setSpacingBefore(50);
+            tableFirma.setSpacingBefore(45);
         }
         if(calificaciones.size() >= 31 && calificaciones.size() <= 35){
-            tableFirma.setSpacingBefore(50);
+            tableFirma.setSpacingBefore(45);
         }
         if(calificaciones.size() >= 32 && calificaciones.size() <= 40){
-            tableFirma.setSpacingBefore(50);
+            tableFirma.setSpacingBefore(45);
         }
 
         tableFirma.setWidthPercentage(60);

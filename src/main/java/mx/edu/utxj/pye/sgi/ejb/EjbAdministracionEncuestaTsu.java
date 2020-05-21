@@ -8,19 +8,25 @@ package mx.edu.utxj.pye.sgi.ejb;
 import mx.edu.utxj.pye.sgi.dto.DtoAlumnosEncuesta;
 import mx.edu.utxj.pye.sgi.dto.ListaDatosAvanceEncuestaServicio;
 import mx.edu.utxj.pye.sgi.dto.ListadoGraficaEncuestaServicios;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsu;
+import mx.edu.utxj.pye.sgi.entity.prontuario.VariablesProntuario;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaSatisfaccionEgresadosTsu;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -38,10 +44,20 @@ public class EjbAdministracionEncuestaTsu {
     @EJB private Facade2 f2;
     @EJB private EjbAdministracionEncuestaServicios ejbAES;
 
+    private EntityManager em;
+    private EntityManager em2;
+
+    @PostConstruct
+    public  void init(){
+        em = f.getEntityManager(); em2 = f2.getEntityManager();
+    }
 
     public Evaluaciones evaluacionEstadiaPeridoActual() {
+        String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "periodoEncuestaSatisfaccionTSU")
+                .getResultStream().findFirst().orElse(null)).getValor();
         List<Evaluaciones> e = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones as e where e.periodo = :periodo and e.tipo = :tipo", Evaluaciones.class)
-                .setParameter("periodo", 51)
+                .setParameter("periodo", Integer.parseInt(periodoEscolar))
                 .setParameter("tipo", "Satisfacción de egresados de TSU")
                 .getResultStream().collect(Collectors.toList());
         if (e.isEmpty()) {
@@ -67,11 +83,54 @@ public class EjbAdministracionEncuestaTsu {
         }
     }
 
+
+    public ResultadoEJB<List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral>> obtenerAlumnosNoAccedieron() {
+        String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "periodoEncuestaSatisfaccionTSU")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        String grado2 = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado2")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> dtoAlumnosEncuesta = new ArrayList<>();
+        dtoAlumnosEncuesta = em2.createQuery("select a from Alumnos as a " +
+                "where (a.cveStatus = :estatus or a.cveStatus = :estatus2) " +
+                "and a.grupos.gruposPK.cvePeriodo = :periodo " +
+                "and a.gradoActual = :grado2", Alumnos.class)
+                .setParameter("estatus", 1)
+                .setParameter("estatus2", 6)
+                .setParameter("periodo", Integer.parseInt(periodoEscolar))
+                .setParameter("grado2", Short.parseShort(grado2))
+                .getResultStream().map(alumnos -> ejbAES.packEstudiantesEncuesta(alumnos)).filter(ResultadoEJB::getCorrecto).map(ResultadoEJB::getValor).collect(Collectors.toList());
+        return ResultadoEJB.crearCorrecto(dtoAlumnosEncuesta, "Se empaqueto con éxito.");
+    }
+
+    public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> obtenerResultadosXDirector(String cveDirector) {
+        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> dtoAlumnosEncuestaDirector = obtenerAlumnosNoAccedieron().getValor()
+                .stream()
+                .filter(alumno -> alumno.getDtoDirector().getCvePersona() == Integer.parseInt(cveDirector)).collect(Collectors.toList());
+        if(dtoAlumnosEncuestaDirector.isEmpty()){
+            return new ArrayList<>();
+        }else{
+            return dtoAlumnosEncuestaDirector;
+        }
+    }
+
+    public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> obtenerResultadosXTutor(Integer cveMaestro) {
+        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> dtoAlumnosEncuestaTutor = obtenerAlumnosNoAccedieron().getValor()
+                .stream()
+                .filter(alumno -> alumno.getTutor().getPersonasPK().getCvePersona() == cveMaestro).collect(Collectors.toList());
+        if(dtoAlumnosEncuestaTutor.isEmpty()){
+            return new ArrayList<>();
+        }else{
+            return dtoAlumnosEncuestaTutor;
+        }
+    }
+
     public List<ListaDatosAvanceEncuestaServicio.AvanceEncuestaServiciosPorGrupo> avanceEncuestaServiciosPorGrupoTutor(){
         List<ListaDatosAvanceEncuestaServicio.AvanceEncuestaServiciosPorGrupo> aespg = new ArrayList<>();
         List<DtoAlumnosEncuesta> dtoAE = new ArrayList<>();
         Comparador<ResultadosEncuestaSatisfaccionTsu> comparador = new ComparadorEncuestaSatisfaccionEgresadosTsu();
-        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> ae1 = ejbAES.obtenerAlumnosNoAccedieron().getValor();
+        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> ae1 = obtenerAlumnosNoAccedieron().getValor();
         ae1.forEach(x -> {
             ResultadosEncuestaSatisfaccionTsu est = getResultadoEncPorEvaluador(Integer.parseInt(x.getAlumnos().getMatricula()));
             if(est != null){
@@ -120,7 +179,7 @@ public class EjbAdministracionEncuestaTsu {
     public List<ListaDatosAvanceEncuestaServicio> obtenerListaDatosAvanceEncuestaSatisfaccion(){
         List<ListaDatosAvanceEncuestaServicio> ldaes = new ArrayList<>();
         List<ListadoGraficaEncuestaServicios> lges = new ArrayList<>();
-        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> ae = ejbAES.obtenerAlumnosNoAccedieron().getValor();
+        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> ae = obtenerAlumnosNoAccedieron().getValor();
         ae.stream().filter(a -> a.getGrado().equals(Short.parseShort("6"))).forEach(x -> {
             try {
                 ResultadosEncuestaSatisfaccionTsu listaCompleta = getResultadoEncPorEvaluador(Integer.parseInt(x.getAlumnos().getMatricula()));

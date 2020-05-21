@@ -4,6 +4,7 @@ import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
@@ -17,9 +18,11 @@ import mx.edu.utxj.pye.sgi.funcional.ComparadorEncuestaServicios;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.model.SelectItem;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.io.Serializable;
 import java.util.*;
@@ -30,14 +33,34 @@ public class EjbEncuestaServicios implements Serializable {
     @EJB Facade f;
     @EJB Facade2 f2;
     @Getter @Setter private Integer periodo;
+    private EntityManager em;
+    private EntityManager em2;
+
+    @PostConstruct
+    public  void init(){
+        em = f.getEntityManager();em2 = f2.getEntityManager();
+    }
 
     /**
      * Metodo que ayuda a encontrar la evaluacion activa, detro de la tabla Evaluaciones
      * donde especifica el tipo de encuesta a aplicar y la fecha, comparando la fecha actual
      * con la fecha de apertura y la fecha de cierre, para así encontrar la encuesta.
      */
+    public Evaluaciones getEvaluacionActivaAnterior() {
+        TypedQuery<Evaluaciones> q = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND e.periodo = :periodo ORDER BY e.evaluacion desc", Evaluaciones.class);
+        q.setParameter("tipo", "Servicios");
+        q.setParameter("periodo", 53);
+
+        List<Evaluaciones> l = q.getResultList();
+        if(l.isEmpty()){
+            return new Evaluaciones();
+        }else{
+            return l.get(0);
+        }
+    }
+
     public Evaluaciones getEvaluacionActiva() {
-        TypedQuery<Evaluaciones> q = f.getEntityManager().createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class);
+        TypedQuery<Evaluaciones> q = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class);
         q.setParameter("tipo", "Servicios");
         q.setParameter("fecha", new Date());
 
@@ -46,6 +69,25 @@ public class EjbEncuestaServicios implements Serializable {
             return new Evaluaciones();
         }else{
             return l.get(0);
+        }
+    }
+
+    public ResultadoEJB<Evaluaciones> verificarEvaluacion(){
+        try{
+            //verificar apertura del evento
+            Evaluaciones eventoEscolar = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
+                    .setParameter("tipo", "Servicios")
+                    .setParameter("fecha", new Date())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            if(eventoEscolar == null){
+                return ResultadoEJB.crearErroneo(2,eventoEscolar, "No existe evento aperturado del tipo solicitado.");// .crearCorrecto(map.entrySet().iterator().next(), "Evento aperturado.");
+            }else{
+                return ResultadoEJB.crearCorrecto(eventoEscolar, "Evento aperturado.");
+            }
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para generacion de grupos (EjbGeneracionGrupos.).", e, Evaluaciones.class);
         }
     }
 
@@ -593,6 +635,9 @@ public class EjbEncuestaServicios implements Serializable {
         String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
                 .setParameter("nombre", "periodoEncuestaServicios")
                 .getResultStream().findFirst().orElse(null)).getValor();
+        String periodoEscolarActual = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "periodoEncuestaServiciosActual")
+                .getResultStream().findFirst().orElse(null)).getValor();
         String grado1 = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
                 .setParameter("nombre", "grado1")
                 .getResultStream().findFirst().orElse(null)).getValor();
@@ -610,13 +655,14 @@ public class EjbEncuestaServicios implements Serializable {
                         + "WHERE a.matricula=:matricula AND "
                         + "a.cveStatus = :estatus AND "
                         + "(a.gradoActual = :grado1 or a.gradoActual = :grado2 or a.gradoActual = :grado3 or a.gradoActual = :grado4) AND "
-                        + "a.grupos.gruposPK.cvePeriodo = :periodo", Alumnos.class)
+                        + "(a.grupos.gruposPK.cvePeriodo = :periodo or a.grupos.gruposPK.cvePeriodo = :periodo2)", Alumnos.class)
                 .setParameter("estatus", 1)
                 .setParameter("grado1", Short.parseShort(grado1))
                 .setParameter("grado2", Short.parseShort(grado2))
                 .setParameter("grado3", Short.parseShort(grado3))
                 .setParameter("grado4", Short.parseShort(grado4))
                 .setParameter("periodo", Integer.parseInt(periodoEscolar))
+                .setParameter("periodo2", Integer.parseInt(periodoEscolarActual))
                 .setParameter("matricula", matricula).getResultStream().findFirst().orElse(null);
     }
 

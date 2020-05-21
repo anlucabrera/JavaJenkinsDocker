@@ -97,6 +97,8 @@ public enum ControlEscolarVistaControlador {
 
     EVALUACION_DESEMPENIO_AMBIENTAL("/encuestas/evaluacionDesempenioAmbiental.xhtml", EvaluacionDesempenioAmbiental.class),
 
+    ENCUESTA_SERVICIOS("/encuestas/Estudiantes/servicios.xhtml", EncuestaServiciosEstudiante19.class),
+
     REGISTRO_NOTIFICACIONES("/controlEscolar/registro_notificaciones.xhtml", RegistroNotificacionesGeneral.class),
 
     REGISTRO_ASESORIAS_GENERAL("/controlEscolar/registro_asesorias_general.xhtml", RegistroAsesoriaEstudianteGeneral.class),

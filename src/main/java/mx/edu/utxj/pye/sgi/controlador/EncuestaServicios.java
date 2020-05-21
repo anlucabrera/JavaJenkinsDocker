@@ -35,12 +35,19 @@ public class EncuestaServicios implements Serializable {
             dto.respuestas = new HashMap<>();
             dto.respuestasPosibles = ejbES.getRespuestasPosibles();
             dto.evaluacion = ejbES.getEvaluacionActiva();
-            if (dto.evaluacion != null) {
+            dto.evaluacionAnterior = ejbES.getEvaluacionActivaAnterior();
+            if (dto.evaluacion != null || dto.evaluacionAnterior != null) {
                 dto.evaluador = logonMB.getCurrentUser();
                 dto.alumno = ejbES.obtenerAlumnos(dto.evaluador);
                 dto.evaluadorr=Integer.parseInt(dto.evaluador);
                 if (dto.alumno != null) {
-                    dto.resultado = ejbES.getResultado(dto.evaluacion, dto.evaluadorr, dto.respuestas);
+                    Integer periodo = dto.alumno.getGrupos().getGruposPK().getCvePeriodo();
+                    if(periodo.equals(dto.evaluacionAnterior.getPeriodo())){
+                        dto.resultado = ejbES.getResultado(dto.evaluacionAnterior, dto.evaluadorr, dto.respuestas);
+                    }
+                    if(periodo.equals(dto.evaluacion.getPeriodo())){
+                        dto.resultado = ejbES.getResultado(dto.evaluacion, dto.evaluadorr, dto.respuestas);
+                    }
                     if (dto.resultado != null) {
                         dto.apartados = ejbES.getApartados();
                         dto.finalizado = ejbES.actualizarResultado(dto.resultado);

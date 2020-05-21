@@ -1,9 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.faces.model.SelectItem;
@@ -16,6 +13,7 @@ import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsu;
 import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsuPK;
+import mx.edu.utxj.pye.sgi.entity.prontuario.VariablesProntuario;
 import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
@@ -159,5 +157,24 @@ public class EjbSatisfaccionEgresadosTsu {
         TypedQuery<ResultadosEncuestaSatisfaccionTsu> q = em.createQuery("select r from ResultadosEncuestaSatisfaccionTsu r ", ResultadosEncuestaSatisfaccionTsu.class);
         List<ResultadosEncuestaSatisfaccionTsu> pr = q.getResultList();
         return pr;
+    }
+
+    public Alumnos obtenerAlumnos(String matricula) {
+        String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "periodoEncuestaSatisfaccionTSU")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        String grado2 = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado2")
+                .getResultStream().findFirst().orElse(null)).getValor();
+        return f2.getEntityManager()
+                .createQuery("SELECT a from Alumnos a "
+                        + "WHERE a.matricula=:matricula AND "
+                        + "a.cveStatus = :estatus AND "
+                        + "(a.gradoActual = :grado2) AND "
+                        + "a.grupos.gruposPK.cvePeriodo = :periodo", Alumnos.class)
+                .setParameter("estatus", 1)
+                .setParameter("grado2", Short.parseShort(grado2))
+                .setParameter("periodo", Integer.parseInt(periodoEscolar))
+                .setParameter("matricula", matricula).getResultStream().findFirst().orElse(null);
     }
 }

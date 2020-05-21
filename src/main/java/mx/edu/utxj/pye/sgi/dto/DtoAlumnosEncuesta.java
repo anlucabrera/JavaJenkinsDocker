@@ -27,8 +27,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @ToString
 public class DtoAlumnosEncuesta {
-    @Getter
-    @Setter
+    @Getter @Setter
     @NotNull private String matricula;
     @Getter
     @Setter
@@ -142,12 +141,8 @@ public class DtoAlumnosEncuesta {
     @AllArgsConstructor
     @ToString
     public static class DtoDirectores{
-        @Getter
-        @Setter
-        private String nombre;
-        @Getter
-        @Setter
-        private String siglas;
+        @Getter @Setter private String nombre;
+        @Getter @Setter private String siglas;
         @Getter
         @Setter
         private Integer claveDirector;
@@ -164,5 +159,18 @@ public class DtoAlumnosEncuesta {
         @Getter @Setter private String nombreCompleto;
         @Getter @Setter private String areaOprogramaEducativo;
     }
-    
+
+
+    @RequiredArgsConstructor @AllArgsConstructor @ToString
+    public static class DtoAlumnosEncuestaSaiiutyCE{
+        @Getter @Setter private Integer matricula;
+        @Getter @Setter private String nombre;
+        @Getter @Setter private Short grado;
+        @Getter @Setter private String siglas;
+        @Getter @Setter private String grupo;
+        @Getter @Setter private String tutor;
+        @Getter @Setter private Integer cveMaestro;
+        @Getter @Setter private Integer cveDirector;
+
+    }
 }

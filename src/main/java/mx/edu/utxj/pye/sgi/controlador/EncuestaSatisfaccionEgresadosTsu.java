@@ -42,7 +42,6 @@ public class EncuestaSatisfaccionEgresadosTsu implements Serializable {
     @Getter @Setter private DtoEvaluaciones dto = new DtoEvaluaciones();
 
     @EJB private EjbSatisfaccionEgresadosTsu ejb;
-    @EJB private EjbEncuestaServicios ejbES;
     @Inject LogonMB logonMB;
     
     @PostConstruct
@@ -54,9 +53,7 @@ public class EncuestaSatisfaccionEgresadosTsu implements Serializable {
             dto.evaluacion = ejb.getEvaluacionActiva();
             if (dto.evaluacion != null) {
                 dto.evaluador = logonMB.getCurrentUser();
-                dto.alumno=ejbES.obtenerAlumnos(dto.evaluador);
-                if (dto.alumno.getGrupos().getGrado()==6) {
-                    dto.estSexto=true;
+                dto.alumno=ejb.obtenerAlumnos(dto.evaluador);
                     dto.evaluadorr = Integer.parseInt(dto.evaluador);
                     if (dto.alumno != null) {
                         dto.resultadoREST = ejb.getResultado(dto.evaluacion, dto.evaluadorr, dto.respuestas);
@@ -66,10 +63,6 @@ public class EncuestaSatisfaccionEgresadosTsu implements Serializable {
                             dto.cargada = true;
                         }
                     }
-                }else{
-                    dto.estSexto=false;
-                }
-
             }
         } catch (Exception e) {
             dto.cargada = false;

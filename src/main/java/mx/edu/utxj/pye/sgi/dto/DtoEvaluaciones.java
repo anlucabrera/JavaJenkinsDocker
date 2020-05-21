@@ -6,8 +6,12 @@
 package mx.edu.utxj.pye.sgi.dto;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.entity.ch.*;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.*;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.ViewEstudianteAsesorAcademico;
@@ -23,7 +27,15 @@ import java.util.Map;
  * @author Planeacion
  */
 public class DtoEvaluaciones implements Serializable{
-    
+
+    @Getter @Setter @NonNull protected NivelRol nivelRol = NivelRol.OPERATIVO;
+    @Getter @Setter @NonNull private DtoEstudiante estudiante;
+
+    public Boolean tieneAcceso(DtoEstudiante estudiante, UsuarioTipo usuarioTipo){
+        if(estudiante == null) return false;
+        if(!usuarioTipo.equals(UsuarioTipo.ESTUDIANTE19)) return false;
+        return true;
+    }
     /////////////////////////General wrappers\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     @Getter @Setter public Boolean cargada, finalizado, estSexto, estOnceavo ,esDeIyE,director, tutor, tutorCe,esSecretario, planeacion,esPsicopedagogia, ESActiva, ESTsuActiva, ESIngActiva, ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2, eCEActiva;
     @Getter @Setter public Short grado;
@@ -32,7 +44,7 @@ public class DtoEvaluaciones implements Serializable{
     @Getter @Setter public Long total,total2;
     //////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     ////////////////////////General entity's\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    @Getter @Setter public Evaluaciones evaluacion;
+    @Getter @Setter public Evaluaciones evaluacion, evaluacionAnterior;
     @Getter @Setter public Alumnos alumno;
     //////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     ///////////////////////Maps and lists generals\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -42,10 +54,12 @@ public class DtoEvaluaciones implements Serializable{
     //////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     
     @Getter @Setter public EncuestaServiciosResultados resultado;
+    @Getter @Setter public ResultadoEJB<EncuestaServiciosResultados> resultadoEJB;
     @Getter @Setter public ResultadosEncuestaSatisfaccionTsu resultadoREST;
     @Getter @Setter public EncuestaSatisfaccionEgresadosIng resultadoESEI;
     @Getter @Setter public List<ListadoEvaluacionEgresados> listaEvaCompleta, listaEvaIncompleta, listaEvaNA, listaFiltrado;
     @Getter @Setter public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> alumnosEncuesta = new ArrayList<>();
+    @Getter @Setter public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE> alumnosEncuestaUnion = new ArrayList<>();
     @Getter @Setter public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar> alumnosEncuestaCE = new ArrayList<>();
     @Getter @Setter public List<ListaDatosAvanceEncuestaServicio> dtoLDAES, dtoLDAES1, dtoLDAES2, dtoLDAES3;
     @Getter @Setter public List<ViewEstudianteAsesorAcademico> alumnosEncuestas;
