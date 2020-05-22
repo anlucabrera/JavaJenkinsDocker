@@ -76,6 +76,7 @@ public class EstudioEgresados implements Serializable {
     @PostConstruct
     public void init() {
         validaReporte();
+       // System.out.println("Evaluacion ->" + evaluacion);
         cargada = false;
         selectItemCarreras = ejb.selectItemsProgramasEducativos();
         listaGeneraciones = ejb.getGeneraciones();
@@ -129,8 +130,13 @@ public class EstudioEgresados implements Serializable {
 //            }
 
         } else if (logonMB.getUsuarioTipo() == UsuarioTipo.TRABAJADOR) {
-            if (logonMB.getPersonal().getCategoriaOperativa().getCategoria() == 19) {
-                Messages.addGlobalInfo("Bienvenido a la administración de egresados...");
+            if (logonMB.getPersonal().getCategoriaOperativa().getCategoria() == 19 || logonMB.getPersonal().getClave()==394) {
+                validaReporte();
+                if(evaluacion!=null){cargada=true;
+                Messages.addGlobalInfo("Bienvenido a la administración de egresados...");}
+                else{
+                    cargada=false;
+                }
             }
         } else {
             Messages.addGlobalWarn("Usted no deberia estar en este apartado, es solo para estudiantes");
@@ -216,9 +222,11 @@ public class EstudioEgresados implements Serializable {
     public void validaReporte() {
         Evaluaciones evaluacion1 = new Evaluaciones();
         evaluacion1 = ejb.geteEvaluacionActiva();
+       // System.out.println("Evaluacion en reporte " + evaluacion1);
         if(evaluacion1==null){
         evaluacion1 = ejb.getLastEvaluacion();
         }
+        evaluacion = evaluacion1;
 
         listaResultadosReporte = new ArrayList<>();
         listaResultadosReporte.clear();
