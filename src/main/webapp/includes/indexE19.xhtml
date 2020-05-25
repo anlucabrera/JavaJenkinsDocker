@@ -123,24 +123,23 @@
                                 </div>
                             </c:if>
                             <c:if test="#{encuestaServiciosEstudiante19.tieneAcceso}">
-                                <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-xs-12'}" />
-                                <div class="#{claseResumen}" style="height: 100px;">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
-                                        <div class="inner" style="cursor: pointer;" onclick="encuestaServicios();">
-                                            <h3>
-                                                <h:outputLabel value="Encuesta"></h:outputLabel>
-                                                <sup style="font-size: 20px"></sup>
-                                            </h3>
-                                            <p:spacer height="25"/>
-                                            <p>Servicios</p>
+                                        <div class="inner" style="cursor: pointer;">
+                                            <p:link outcome="encuestas/Estudiantes/servicios">
+                                                <h3>
+                                                    <h:outputLabel value="#{encuestaServiciosEstudiante19.rol.completo?'Terminada':'Pendiente'}" style="cursor: pointer; color: #ffffff"/>
+                                                    <sup style="font-size: 20px"></sup>
+                                                </h3>
+                                                <p style="color: #ffffff">Satisfacción de servicios<br/></p>
+                                            </p:link>
                                         </div>
                                         <div class="icon">
-                                            <i class="fa fa-check-square"></i>
+                                            <i class="fa fa-tty"></i>
                                         </div>
                                         <p:link outcome="encuestas/Estudiantes/servicios"  class="small-box-footer">
-                                            Ingresar <i class="fa fa-arrow-circle-right"></i>
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
                                         </p:link>
-                                        <h:form><p:remoteCommand name="encuestaServicios" action="encuestas/Estudiantes/servicios" /></h:form>
                                     </div>
                                 </div>
                             </c:if>
@@ -150,7 +149,7 @@
                                     <div class="small-box bg-blue">
                                         <div class="inner" style="cursor: pointer;" onclick="tutores();">
                                             <h3>
-                                                <h:outputLabel value="#{evaluacionTutorEstudiante.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="tutores();" />
+                                                <h:outputLabel value="#{evaluacionTutorEstudiante.finaizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="tutores();" />
                                                 <sup style="font-size: 20px"></sup>
                                             </h3>
                                             <p>Evaluación al tutor<br/></p>

@@ -161,22 +161,22 @@
                     <h:form id="frm1" prependId="false" class="form-inline">
                         <div class="box box-primary">
                             <div class="box-header with-border">
-                                <div id="main-buttons1" class="hidden-sm hidden-xs" >
+                                <div id="main-buttons1">
                                     <p:outputPanel>
                                         <p:autoUpdate/>
                                         <p:toolbar id="tb1">
                                             <f:facet name="left">
-                                                <h4>
+                                                <h4 class="hidden-xs hidden-xs">
                                         <span class="label label-default"><i class="fa fa-info-circle" />
                                             Escala de valores de satisfacción: Muy Bien = MB, Bien = B, Regular = R, Mal = M y Pésimo = P; o bien No Aplica NA=0.
                                         </span>
                                                 </h4>
                                             </f:facet>
                                             <f:facet name="right">
-                                                <c:if test="#{encuestaServiciosEstudiante19.rol.finalizado}">
+                                                <c:if test="#{encuestaServiciosEstudiante19.finalizado}">
                                                     <h4><span class="label aceptado"><i class="fa fa-check" />Ha finalizado el cuestionario.</span></h4>
                                                 </c:if>
-                                                <c:if test="#{!encuestaServiciosEstudiante19.rol.finalizado}">
+                                                <c:if test="#{!encuestaServiciosEstudiante19.finalizado}">
                                                     <h4><span class="label denegado"><i class="fa fa-close" />Debe responder todas las preguntas.</span></h4>
                                                 </c:if>
                                             </f:facet>
@@ -185,7 +185,7 @@
                                     </p:outputPanel>
                                 </div>
                                 <div class="box box-solid">
-                                    <div class="box-header">
+                                    <div class="box-header hidden-xs hidden-sm">
                                         <div class="well well-md">
                                             <p style="text-align: justify; font-size: larger;">
                                                 El siguiente cuestionario tiene como finalidad medir el grado de satisfacción que tienes, con relación a los Servicios de Apoyo de los Estudiantes que te ofrece la universidad. Entendiendo estos servicios como aquellas acciones que van encaminadas a favorecer tu desarrollo integral.  La información que nos proporciones es de carácter estrictamente confidencial.

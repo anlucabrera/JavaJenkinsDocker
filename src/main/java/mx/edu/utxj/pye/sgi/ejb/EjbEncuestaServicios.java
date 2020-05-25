@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
@@ -89,6 +90,21 @@ public class EjbEncuestaServicios implements Serializable {
         }catch (Exception e){
             return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para generacion de grupos (EjbGeneracionGrupos.).", e, Evaluaciones.class);
         }
+    }
+
+    public ResultadoEJB<Boolean> verificarEvaluacionCOmpleta(Evaluaciones evaluacion, DtoEstudiante dtoEstudiante){
+        EncuestaServiciosResultados esr = em.createQuery("select e from EncuestaServiciosResultados as e " +
+                "where e.encuestaServiciosResultadosPK.evaluacion = :evaluacion and e.encuestaServiciosResultadosPK.evaluador = :dtoEstudiante", EncuestaServiciosResultados.class)
+                .setParameter("evaluacion", evaluacion.getEvaluacion())
+                .setParameter("dtoEstudiante", dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula())
+                .getResultStream().findFirst().orElse(new EncuestaServiciosResultados());
+        Comparador<EncuestaServiciosResultados> comparador = new ComparadorEncuestaServicios();
+        if(comparador.isCompleto(esr)){
+            return ResultadoEJB.crearCorrecto(Boolean.TRUE,"La evaluacion esta completa");
+        }else {
+            return ResultadoEJB.crearErroneo(1, Boolean.FALSE,"La encuesta no ha sido finalzada");
+        }
+
     }
 
     /**

@@ -37,7 +37,7 @@ public class DtoEvaluaciones implements Serializable{
         return true;
     }
     /////////////////////////General wrappers\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    @Getter @Setter public Boolean cargada, finalizado, estSexto, estOnceavo ,esDeIyE,director, tutor, tutorCe,esSecretario, planeacion,esPsicopedagogia, ESActiva, ESTsuActiva, ESIngActiva, ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2, eCEActiva;
+    @Getter @Setter public Boolean completo, cargada, finalizado, estSexto, estOnceavo ,esDeIyE,director, tutor, tutorCe,esSecretario, planeacion,esPsicopedagogia, ESActiva, ESTsuActiva, ESIngActiva, ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2, eCEActiva;
     @Getter @Setter public Short grado;
     @Getter @Setter public String evaluador, valor, cveDirector, nombreCompletoTutor;
     @Getter @Setter public Integer evaluadorr,cveTrabajador,usuarioNomina;

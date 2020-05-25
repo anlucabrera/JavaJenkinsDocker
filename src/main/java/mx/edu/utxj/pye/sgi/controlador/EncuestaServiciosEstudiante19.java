@@ -76,6 +76,8 @@ public class EncuestaServiciosEstudiante19 extends ViewScopedRol implements Desa
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
             ResultadoEJB<Evaluaciones> resEvento = ejb.verificarEvaluacion();
             if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
+            ResultadoEJB<Boolean> resultadoEJB = ejb.verificarEvaluacionCOmpleta(resEvento.getValor(), rol.getEstudiante());
+            rol.setCompleto(resultadoEJB.getValor());
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
             if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
