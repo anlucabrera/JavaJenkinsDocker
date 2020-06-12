@@ -199,7 +199,7 @@ public class FichaAdmision implements Serializable, Guardable{
                     }
                 }
             }else{
-                Messages.addGlobalError("El documento es incorrecto !");
+                Messages.addGlobalError("El documento es incorrecto!");
             }
         }else{
             Messages.addGlobalError("Es necesario seleccionar un archivo !");
