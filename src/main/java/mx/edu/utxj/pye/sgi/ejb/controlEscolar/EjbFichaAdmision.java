@@ -15,9 +15,12 @@ import javax.servlet.http.Part;
 import java.io.IOException;
 import java.util.List;
 
+import mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReinscripcionAutonomaEstudiante;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
+import mx.edu.utxj.pye.sgi.entity.pye2.*;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 /**
  *
@@ -26,6 +29,18 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 @Local
 public interface EjbFichaAdmision {
 
+    /**
+     * Verifica que el usuario autenticado sea de tipo aspirante
+     * @param tipoUsuarioAu
+     * @return
+     */
+    public ResultadoEJB<Boolean> verficaAcceso(UsuarioTipo tipoUsuarioAu);
+
+    /**
+     * Verifica que haya un evento aperturado para el registro de fichas de admision
+     * @return
+     */
+    public ResultadoEJB<EventoEscolar> verificaEvento();
     /**
      * Método que guarda los datos personales de una persona
      * @param persona parámetro que envía  el usuario al registrar persona
@@ -190,4 +205,33 @@ public interface EjbFichaAdmision {
     */
     public void generaFichaAdmin(Persona persona,DatosAcademicos academicos,Domicilio domicilio,Aspirante aspirante,MedioComunicacion medioComunicacion,String uso) throws IOException, DocumentException;
 
+    ///////////////// CARGA DE DATOS ////////////
+
+    /**
+     * Obtiene una lista de paises
+     * @return Resulltado del proceso (Lista de paises)
+     */
+    public  ResultadoEJB<List<Pais>> getPaises ();
+
+    /**
+     * Obtiene una lista de países por país
+     * @param pais Pais seleccionado
+     * @return Resultado del proceso (Lista de estados)
+     */
+    public ResultadoEJB<List<Estado>> getEstadosbyPais(Pais pais);
+
+
+    /**
+     * Obitiene una lista de municipios por estado
+     * @param estado Estado seleccionado
+     * @return Resultado del proceso (Lista de Municipios)
+     */
+    public ResultadoEJB<List<Municipio>> getMunicipiosbyEstado(Estado estado);
+
+    /**
+     * Obtiene una lista de localidades por municipio
+     * @param municipio Municipio seleccionado
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Localidad>> getLocalidadByMunicipio(Municipio municipio);
 }

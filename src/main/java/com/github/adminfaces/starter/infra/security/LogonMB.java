@@ -103,7 +103,7 @@ public class LogonMB extends AdminSession implements Serializable {
             usuarioTipo = UsuarioTipo.ASPIRANTE;
             addDetailMessage("Bienvenido y bienvenida <b>" + "Aspirante" + "</b>");
             Faces.getExternalContext().getFlash().setKeepMessages(true);
-            Faces.redirect("controlEscolar/fichaAdmision.xhtml");
+            Faces.redirect("controlEscolar/aspirante/registroFichaAspirante.xhtml");
         }else if(estudiante19 != null){
             currentUser = email;
             usuarioTipo = UsuarioTipo.ESTUDIANTE19;// ejbLogin.getTipoUsuario(email);

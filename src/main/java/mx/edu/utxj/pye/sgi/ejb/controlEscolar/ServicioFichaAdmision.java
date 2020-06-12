@@ -15,8 +15,13 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+
+import com.sun.org.apache.regexp.internal.RE;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
-import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
+import mx.edu.utxj.pye.sgi.entity.pye2.*;
+import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import nl.lcs.qrscan.core.QrPdf;
@@ -48,8 +53,6 @@ import javax.servlet.http.HttpServletResponse;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
-import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
 
@@ -63,6 +66,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @EJB FacadeCE facadeCE;
     @EJB EjbPersonal ejbPersonal;
+    @EJB EjbEventoEscolar ejbEventoEscolar;
     @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
 //    @EJB Facade2 f;
     private EntityManager em;
@@ -71,7 +75,30 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     public void init() {
         em = facadeCE.getEntityManager();
     }
-    
+
+
+
+    @Override
+    public ResultadoEJB<Boolean> verficaAcceso(UsuarioTipo tipoUsuarioAu) {
+       try{
+           if(tipoUsuarioAu==null){return ResultadoEJB.crearErroneo(2,new Boolean(false),"El tipo de usuario no debe ser nulo"); }
+           if(tipoUsuarioAu.getLabel().equals(UsuarioTipo.ASPIRANTE)){return ResultadoEJB.crearCorrecto(true,"Verificado como aspirante");}
+           else {return ResultadoEJB.crearErroneo(3,new Boolean(false),"El usuario autenticado no es Aspirante");}
+
+       }catch (Exception e){
+           return ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para el registro de fichas de admision (EjbFichaAdmision.verificaEvento).", e,Boolean.class);
+       }
+    }
+
+    @Override
+    public ResultadoEJB<EventoEscolar> verificaEvento() {
+       try{
+           return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.REGISTRO_FICHAS_ADMISION);
+       }catch (Exception e){
+           return ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para el registro de fichas de admision (EjbFichaAdmision.verificaEvento).", e, EventoEscolar.class);
+       }
+    }
+
     @Override
     public void GuardaPersona(Persona persona) {
         em.persist(persona);
@@ -238,7 +265,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @Override
     public Aspirante buscaAspiranteByClave(Integer id) {
-        return  em.createQuery("SELECT a FROM Aspirante a WHERE a.idPersona.idpersona = :idP",Aspirante.class)
+        return  em.createQuery("SELECT a FROM Aspirante a WHERE a.idPersona.idpersona = :idP order by a.idAspirante desc ",Aspirante.class)
                 .setParameter("idP",id)
                 .getResultList().stream().findFirst().orElse(null);
     }
@@ -539,6 +566,71 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    @Override
+    public ResultadoEJB<List<Pais>> getPaises() {
+       try{
+           List<Pais> paises = new ArrayList<>();
+           paises = em.createQuery("select p from Pais p ",Pais.class)
+           .getResultList()
+           ;
+           if(paises ==null){return ResultadoEJB.crearErroneo(2,paises,"No se encontraron los países");}
+           else {return ResultadoEJB.crearCorrecto(paises,"Lista de países");}
+
+       }catch (Exception e){
+           return ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para el registro de fichas de admision (EjbFichaAdmision.verificaEvento).", e, null);
+       }
+    }
+
+    @Override
+    public ResultadoEJB<List<Estado>> getEstadosbyPais(Pais pais) {
+        try{
+            List<Estado> estados = new ArrayList<>();
+            if(pais==null){return ResultadoEJB.crearErroneo(2,estados,"El país no debe ser nulo");}
+            estados = em.createQuery("select e from Estado e where e.idpais.idpais=:idPais",Estado.class)
+            .setParameter("idPais",pais.getIdpais())
+            .getResultList()
+            ;
+            if(estados ==null){return ResultadoEJB.crearErroneo(3,estados,"No se encontraron estados");}
+            else {return ResultadoEJB.crearCorrecto(estados,"Lista de estados");}
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obetener la lista de estados por país(EjbFichaAdmision.getEstadosbyPais).", e, null);
+        }
+    }
+
+    @Override
+    public ResultadoEJB<List<Municipio>> getMunicipiosbyEstado(Estado estado) {
+        try{
+            List<Municipio> municipios = new ArrayList<>();
+            if(estado ==null){return ResultadoEJB.crearErroneo( 2,municipios,"El estado no debe ser nulo");}
+            municipios = em.createQuery("select m from Municipio m where m.municipioPK.claveEstado=:claveEstado",Municipio.class)
+            .setParameter("claveEstado",estado.getIdestado())
+            .getResultList()
+            ;
+            if(municipios ==null){return ResultadoEJB.crearErroneo(4,municipios,"No se encontraron municipios");}
+            else {return ResultadoEJB.crearCorrecto(municipios,"Lista de municipios");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obetener la lista de municipios por estado(EjbFichaAdmision.getMunicipiosbyEstado).", e, null);
+        }
+    }
+
+    @Override
+    public ResultadoEJB<List<Localidad>> getLocalidadByMunicipio(Municipio municipio) {
+        try{
+            List<Localidad> localidades = new ArrayList<>();
+            if(municipio ==null){return ResultadoEJB.crearErroneo(2,localidades,"El municipio no debe ser nulo");}
+            localidades = em.createQuery("select l from Localidad  l where  l.localidadPK.claveEstado=:claveEstado and l.localidadPK.claveMunicipio=:claveMunicipio",Localidad.class)
+            .setParameter("claveEstado", municipio.getMunicipioPK().getClaveEstado())
+            .setParameter("claveMunicipio",municipio.getMunicipioPK().getClaveMunicipio())
+            .getResultList()
+            ;
+            if(localidades ==null){return ResultadoEJB.crearErroneo(3,localidades,"No se encontraron localidades");}
+            else {return ResultadoEJB.crearCorrecto(localidades,"Lista de localidades");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obetener la lista de localidades por municipio(EjbFichaAdmision.getLocalidadByMunicipio).", e, null);
         }
     }
 }
