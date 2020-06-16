@@ -196,10 +196,6 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                         getAsentamientoDom();
                         getMunicipioProc();
                         getAsentamientosProc();
-                        rol.setTab1(true);
-                        rol.setTab2(false);
-                        rol.setTab3(false);
-                        rol.setTab4(false);
                         rol.setTab5(false);
                         rol.setStep(4);
                     }
@@ -217,19 +213,10 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                         //System.out.println("Tutor en busqueda->" + rol.getTutor());
                         getMunicipiosTutor();
                         getAsentamientoTutor();
-                        rol.setTab1(true);
-                        rol.setTab2(false);
-                        rol.setTab3(false);
-                        rol.setTab4(false);
-                        rol.setTab5(false);
                         rol.setTab6(false);
                         rol.setStep(5);
 
                     }else {
-                        rol.setTab1(true);
-                        rol.setTab2(false);
-                        rol.setTab3(false);
-                        rol.setTab4(false);
                         rol.setTab5(false);
                         rol.setStep(4);
                     }
@@ -242,21 +229,15 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                         getIemesByLocalidad();
                         getPEpObyAreaA();
                         getPEsObyAreaA();
-                        rol.setTab1(true);
-                        rol.setTab2(false);
-                        rol.setTab3(false);
-                        rol.setTab4(false);
-                        rol.setTab5(false);
-                        rol.setTab6(false);
-                        rol.setTab7(false);
-                        rol.setStep(6);
+                        if(rol.getAspirante().getAspirante().getEstatus()==true){rol.setTab6(true); rol.setTab7(false);
+                            rol.setStep(6);}
+                        else {
+                            rol.setTab7(false);
+                            rol.setStep(6);
+                        }
+
                     }
                     else {
-                        rol.setTab1(true);
-                        rol.setTab2(false);
-                        rol.setTab3(false);
-                        rol.setTab4(false);
-                        rol.setTab5(false);
                         rol.setTab6(false);
                         rol.setStep(5);
                     }
@@ -267,32 +248,13 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                         comprabarEncuesta(rol.getEncuesta().getEncuestaAspirante());
                         if(rol.getEncuesta().getEcontrado()==true){
                             if(rol.getFinalizado()==true){
-                                rol.setTab1(true);
-                                rol.setTab2(false);
-                                rol.setTab3(false);
-                                rol.setTab4(false);
-                                rol.setTab5(false);
-                                rol.setTab6(false);
-                                rol.setTab7(false);
                                 rol.setTab8(false);
                                 rol.setStep(7);
                             }else {
-                                rol.setTab1(true);
-                                rol.setTab2(false);
-                                rol.setTab3(false);
-                                rol.setTab4(false);
-                                rol.setTab5(false);
-                                rol.setTab6(false);
                                 rol.setTab7(false);
                                 rol.setStep(6);
                             }
                         }else {
-                            rol.setTab1(true);
-                            rol.setTab2(false);
-                            rol.setTab3(false);
-                            rol.setTab4(false);
-                            rol.setTab5(false);
-                            rol.setTab6(false);
                             rol.setTab7(false);
                             rol.setStep(6);
                         }
@@ -570,7 +532,11 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
      */
     public void downloadFichaAdmin() throws IOException, DocumentException {
         try{
-            ejbRegistroFicha.generaFichaAdmin(rol.getPersonaD().getPersona(),rol.getDacademicos().getAcademicos(),rol.getDdomicilios().getDomicilio(),rol.getAspirante().getAspirante(),rol.getComunicacion(),"Alumno");
+            ResultadoEJB<Boolean> resFicha = ejbRegistroFicha.generarFicha(rol.getPersonaD().getPersona(),rol.getDacademicos().getAcademicos(),rol.getDdomicilios().getDomicilio(),rol.getAspirante().getAspirante(),rol.getPersonaD().getMedioComunicacion(),"Alumno");
+            if(resFicha.getCorrecto()==true){
+                mostrarMensajeResultadoEJB(resFicha);
+            }
+            else {mostrarMensajeResultadoEJB(resFicha);}
         }catch (Exception e){mostrarExcepcion(e);}
 
     }
