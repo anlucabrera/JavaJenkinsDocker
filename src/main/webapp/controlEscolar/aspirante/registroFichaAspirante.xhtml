@@ -81,9 +81,7 @@
                                                 <div class="form-group">
                                                     <div class="col-sm-12 col-md-15 col-lg-12">
                                                         <p:outputLabel for="curpRegistrada" style="font-size: large" value="Ingresa tu CURP" />
-                                                        <p:inputText id="curpRegistrada" class="form-control" placeholder="CURP" size="45" value="#{registroFichaAdmisionAspirante.rol.personaD.persona.curp}" required="true" requiredMessage="Debe de Ingresar su CURP">
-                                                            <p:ajax process="@this"/>
-                                                        </p:inputText>
+                                                        <p:inputText id="curpRegistrada" class="form-control" placeholder="CURP" size="45" value="#{registroFichaAdmisionAspirante.rol.personaD.persona.curp}" required="true" requiredMessage="Debe de Ingresar su CURP"/>
                                                         <p:message for="curpRegistrada"/>
                                                         <hr/>
                                                     </div>
@@ -755,6 +753,9 @@
                                                                             <p:message for="asentamientoR"><p:autoUpdate/></p:message>
                                                                         </div>
                                                                     </div>
+                                                                </div>
+                                                                <br/><br/>
+                                                                <div class="row">
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
                                                                             <p:inputText id="tiempoR" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.tiempoResidencia}"><p:ajax/></p:inputText>
@@ -852,6 +853,9 @@
                                                                             <p:message for="asentamientoP"><p:autoUpdate/></p:message>
                                                                         </div>
                                                                     </div>
+                                                                </div>
+                                                                <br/><br/>
+                                                                <div class="row">
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
                                                                             <p:inputText id="vivesCon" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.vivesCon}"><p:ajax/></p:inputText>
@@ -981,13 +985,6 @@
                                                                             <p:message for="asentamientoT"><p:autoUpdate/></p:message>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="#{casilla5}">
-                                                                        <div class="ui-material">
-                                                                            <p:inputMask mask="(999)999-9999" id="numTelTutor" class="form-control" placeholder="(999)-999-9999" value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.noTelefono}"/>
-                                                                            <p:outputLabel for="numTelTutor" value="Número de teléfono*"/>
-                                                                            <p:message for="numTelTutor"><p:autoUpdate/></p:message>
-                                                                        </div>
-                                                                    </div>
                                                                 </div>
                                                                 <br/><br/>
                                                                 <div class="row">
@@ -996,6 +993,13 @@
                                                                             <p:inputText id="pare" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.parentesco}"/>
                                                                             <p:outputLabel for="pare" value="Parentezco*"/>
                                                                             <p:message for="pare"><p:autoUpdate/></p:message>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="#{casilla5}">
+                                                                        <div class="ui-material">
+                                                                            <p:inputMask mask="(999)999-9999" id="numTelTutor" class="form-control" placeholder="(999)-999-9999" value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.noTelefono}"/>
+                                                                            <p:outputLabel for="numTelTutor" value="Número de teléfono*"/>
+                                                                            <p:message for="numTelTutor"><p:autoUpdate/></p:message>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1272,8 +1276,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-sm-12 col-md-2"/>
-                                                    <div class="col-sm-12 col-md-4">
+                                                    <div class="#{panel}">
                                                         <div class="box box-warning">
                                                             <div class="box-header panel-heading with-border">
                                                                 <div class="pull-left"><i class="fa fa-graduation-cap"></i></div>
@@ -1342,7 +1345,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-sm-12 col-md-4">
+                                                    <div class="#{panel}">
                                                         <div class="box box-danger">
                                                             <div class="box-header panel-heading with-border">
                                                                 <div class="pull-left"><i class="fa fa-graduation-cap"></i></div>

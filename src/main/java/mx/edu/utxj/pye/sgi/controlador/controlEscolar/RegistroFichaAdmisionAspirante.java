@@ -532,7 +532,11 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
      */
     public void downloadFichaAdmin() throws IOException, DocumentException {
         try{
-            ejbRegistroFicha.generaFichaAdmin(rol.getPersonaD().getPersona(),rol.getDacademicos().getAcademicos(),rol.getDdomicilios().getDomicilio(),rol.getAspirante().getAspirante(),rol.getComunicacion(),"Alumno");
+            ResultadoEJB<Boolean> resFicha = ejbRegistroFicha.generarFicha(rol.getPersonaD().getPersona(),rol.getDacademicos().getAcademicos(),rol.getDdomicilios().getDomicilio(),rol.getAspirante().getAspirante(),rol.getPersonaD().getMedioComunicacion(),"Alumno");
+            if(resFicha.getCorrecto()==true){
+                mostrarMensajeResultadoEJB(resFicha);
+            }
+            else {mostrarMensajeResultadoEJB(resFicha);}
         }catch (Exception e){mostrarExcepcion(e);}
 
     }
