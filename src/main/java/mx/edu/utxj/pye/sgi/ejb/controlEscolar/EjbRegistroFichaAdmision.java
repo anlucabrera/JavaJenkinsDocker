@@ -23,6 +23,7 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
+import org.apache.xmlbeans.impl.regex.REUtil;
 import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect;
 
@@ -36,6 +37,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.sax.SAXSource;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -539,21 +541,30 @@ public class EjbRegistroFichaAdmision {
      * @throws IOException
      * @throws DocumentException
      */
-    public void generaFichaAdmin(Persona persona, DatosAcademicos academicos,Domicilio domicilio,Aspirante aspirante,MedioComunicacion medioComunicacion, String uso) throws IOException, DocumentException {
+    public ResultadoEJB<Boolean> generarFicha(@NonNull Persona persona, @NonNull DatosAcademicos academicos,@NonNull Domicilio domicilio,@NonNull Aspirante aspirante,@NonNull MedioComunicacion medioComunicacion, @NonNull String uso) throws IOException, DocumentException {
+        if(persona==null){return ResultadoEJB.crearErroneo(2,Boolean.FALSE,"La persona no debe ser nula");}
+        if(academicos==null){return ResultadoEJB.crearErroneo(3,Boolean.FALSE,"Los datos académicos no deben ser nulos");}
+        if(medioComunicacion==null){return  ResultadoEJB.crearErroneo(4,Boolean.FALSE,"Los datos de medio de comunicación no deben ser nulos");}
+        if(domicilio==null){return ResultadoEJB.crearErroneo(5,Boolean.FALSE,"Los datos del domicilio no deben ser nulos");}
+        if(aspirante==null){return ResultadoEJB.crearErroneo(6,Boolean.FALSE,"El aspirante no debe ser nulo");}
+        if(uso==null){return ResultadoEJB.crearErroneo(7,Boolean.FALSE,"El uso no debe ser nulo");}
         String ruta = "C://archivos//plantillas//formato_ficha_admision.pdf";
         FacesContext facesContext = FacesContext.getCurrentInstance();
         SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
 
         Generos generos = new Generos();
-        generos = em.find(Generos.class, persona.getGenero());
+        generos = em.createQuery("select g from Generos g where g.genero=:genero",Generos.class).setParameter("genero",persona.getGenero()).getResultStream().findFirst().orElse(null);
+        if(generos==null){return ResultadoEJB.crearErroneo(8,Boolean.FALSE,"Error al obtener el genero");}
         Iems iems = new Iems();
-        iems = em.find(Iems.class,academicos.getInstitucionAcademica());
+        iems = em.createQuery("select  i from Iems i where i.iems=:iems",Iems.class).setParameter("iems",academicos.getInstitucionAcademica()).getResultStream().findFirst().orElse(null);
+        if(iems==null){return ResultadoEJB.crearErroneo(9,Boolean.FALSE,"Error al obtener el Iems");}
         Asentamiento asentamiento = new Asentamiento();
         asentamiento = em.createQuery("SELECT a FROM Asentamiento a WHERE a.asentamientoPK.asentamiento = :idA AND a.asentamientoPK.municipio = :idMun AND a.asentamientoPK.estado = :idEst", Asentamiento.class)
                 .setParameter("idA", domicilio.getIdAsentamiento())
                 .setParameter("idMun", domicilio.getIdMunicipio())
                 .setParameter("idEst", domicilio.getIdEstado())
-                .getSingleResult();
+                .getResultStream().findFirst().orElse(null);
+        if(asentamiento==null){return ResultadoEJB.crearErroneo(10, Boolean.FALSE,"Error al obtener el asentamiento");}
 
         InputStream is = new FileInputStream(ruta);
         PdfReader pdfReader = new PdfReader(is,null);
@@ -661,7 +672,9 @@ public class EjbRegistroFichaAdmision {
 
             String identificador = "Registro de Ficha de Admisión 2020 UTXJ";
             String asunto = "Registro Exitoso";
+            System.out.println(medioComunicacion.getEmail());
             if(medioComunicacion.getEmail() != null){
+                System.out.println("Correo "+ medioComunicacion.getEmail());
                 try {
                     DataSource source = new ByteArrayDataSource(baos.toByteArray(), "application/pdf");
                     EnvioCorreos.EnviarCorreoArchivos(correoEnvia, claveCorreo,identificador,asunto,persona.getMedioComunicacion().getEmail(),mensaje,source,String.valueOf(aspirante.getFolioAspirante()));
@@ -670,6 +683,7 @@ public class EjbRegistroFichaAdmision {
                 }
             }
         }
+        return ResultadoEJB.crearCorrecto(Boolean.TRUE,"Ficha de admisión creada correctamente");
     }
 
 
