@@ -59,9 +59,9 @@ public class PlanAccionTutorialPlantilla implements Serializable {
     @Column(name = "sugerencias")
     private String sugerencias;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoriaPlantilla")
-    private List<FuncionesTutorPlantilla> funcionesTutorPlantillaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoriaPlantilla")
     private List<SesionesGrupalesTutoriasPlantilla> sesionesGrupalesTutoriasPlantillaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoriaPlantilla")
+    private List<FuncionesTutorPlantilla> funcionesTutorPlantillaList;
 
     public PlanAccionTutorialPlantilla() {
     }
@@ -110,21 +110,21 @@ public class PlanAccionTutorialPlantilla implements Serializable {
     }
 
     @XmlTransient
-    public List<FuncionesTutorPlantilla> getFuncionesTutorPlantillaList() {
-        return funcionesTutorPlantillaList;
-    }
-
-    public void setFuncionesTutorPlantillaList(List<FuncionesTutorPlantilla> funcionesTutorPlantillaList) {
-        this.funcionesTutorPlantillaList = funcionesTutorPlantillaList;
-    }
-
-    @XmlTransient
     public List<SesionesGrupalesTutoriasPlantilla> getSesionesGrupalesTutoriasPlantillaList() {
         return sesionesGrupalesTutoriasPlantillaList;
     }
 
     public void setSesionesGrupalesTutoriasPlantillaList(List<SesionesGrupalesTutoriasPlantilla> sesionesGrupalesTutoriasPlantillaList) {
         this.sesionesGrupalesTutoriasPlantillaList = sesionesGrupalesTutoriasPlantillaList;
+    }
+
+    @XmlTransient
+    public List<FuncionesTutorPlantilla> getFuncionesTutorPlantillaList() {
+        return funcionesTutorPlantillaList;
+    }
+
+    public void setFuncionesTutorPlantillaList(List<FuncionesTutorPlantilla> funcionesTutorPlantillaList) {
+        this.funcionesTutorPlantillaList = funcionesTutorPlantillaList;
     }
 
     @Override

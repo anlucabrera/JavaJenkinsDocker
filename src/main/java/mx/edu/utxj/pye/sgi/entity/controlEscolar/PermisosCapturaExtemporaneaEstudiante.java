@@ -40,7 +40,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "PermisosCapturaExtemporaneaEstudiante.findByFechaInicio", query = "SELECT p FROM PermisosCapturaExtemporaneaEstudiante p WHERE p.fechaInicio = :fechaInicio")
     , @NamedQuery(name = "PermisosCapturaExtemporaneaEstudiante.findByFechaFin", query = "SELECT p FROM PermisosCapturaExtemporaneaEstudiante p WHERE p.fechaFin = :fechaFin")
     , @NamedQuery(name = "PermisosCapturaExtemporaneaEstudiante.findByPersonalGrabaPermiso", query = "SELECT p FROM PermisosCapturaExtemporaneaEstudiante p WHERE p.personalGrabaPermiso = :personalGrabaPermiso")
-    , @NamedQuery(name = "PermisosCapturaExtemporaneaEstudiante.findByFechaGrabaPermiso", query = "SELECT p FROM PermisosCapturaExtemporaneaEstudiante p WHERE p.fechaGrabaPermiso = :fechaGrabaPermiso")})
+    , @NamedQuery(name = "PermisosCapturaExtemporaneaEstudiante.findByFechaGrabaPermiso", query = "SELECT p FROM PermisosCapturaExtemporaneaEstudiante p WHERE p.fechaGrabaPermiso = :fechaGrabaPermiso")
+    , @NamedQuery(name = "PermisosCapturaExtemporaneaEstudiante.findByTipoApertura", query = "SELECT p FROM PermisosCapturaExtemporaneaEstudiante p WHERE p.tipoApertura = :tipoApertura")
+    , @NamedQuery(name = "PermisosCapturaExtemporaneaEstudiante.findByValidada", query = "SELECT p FROM PermisosCapturaExtemporaneaEstudiante p WHERE p.validada = :validada")})
 public class PermisosCapturaExtemporaneaEstudiante implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -86,12 +88,12 @@ public class PermisosCapturaExtemporaneaEstudiante implements Serializable {
     @NotNull
     @Column(name = "validada")
     private int validada;
-    @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
-    @ManyToOne(optional = false)
-    private Estudiante estudiante;
     @JoinColumn(name = "id_grupo", referencedColumnName = "id_grupo")
     @ManyToOne(optional = false)
     private Grupo idGrupo;
+    @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
+    @ManyToOne(optional = false)
+    private Estudiante estudiante;
     @JoinColumn(name = "justificacion_permiso", referencedColumnName = "justificacion")
     @ManyToOne(optional = false)
     private JustificacionPermisosExtemporaneos justificacionPermiso;
@@ -109,15 +111,13 @@ public class PermisosCapturaExtemporaneaEstudiante implements Serializable {
         this.permisoEstudiante = permisoEstudiante;
     }
 
-    public PermisosCapturaExtemporaneaEstudiante(Integer permisoEstudiante, int periodo, int docente, String tipoEvaluacion, Date fechaInicio, Date fechaFin, int personalGrabaPermiso, Date fechaGrabaPermiso) {
+    public PermisosCapturaExtemporaneaEstudiante(Integer permisoEstudiante, int periodo, int docente, String tipoEvaluacion, Date fechaInicio, Date fechaFin, String tipoApertura, int validada) {
         this.permisoEstudiante = permisoEstudiante;
         this.periodo = periodo;
         this.docente = docente;
         this.tipoEvaluacion = tipoEvaluacion;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
-        this.personalGrabaPermiso = personalGrabaPermiso;
-        this.fechaGrabaPermiso = fechaGrabaPermiso;
         this.tipoApertura = tipoApertura;
         this.validada = validada;
     }
@@ -170,11 +170,11 @@ public class PermisosCapturaExtemporaneaEstudiante implements Serializable {
         this.fechaFin = fechaFin;
     }
 
-    public int getPersonalGrabaPermiso() {
+    public Integer getPersonalGrabaPermiso() {
         return personalGrabaPermiso;
     }
 
-    public void setPersonalGrabaPermiso(int personalGrabaPermiso) {
+    public void setPersonalGrabaPermiso(Integer personalGrabaPermiso) {
         this.personalGrabaPermiso = personalGrabaPermiso;
     }
 
@@ -185,7 +185,7 @@ public class PermisosCapturaExtemporaneaEstudiante implements Serializable {
     public void setFechaGrabaPermiso(Date fechaGrabaPermiso) {
         this.fechaGrabaPermiso = fechaGrabaPermiso;
     }
-         
+
     public String getTipoApertura() {
         return tipoApertura;
     }
@@ -201,14 +201,6 @@ public class PermisosCapturaExtemporaneaEstudiante implements Serializable {
     public void setValidada(int validada) {
         this.validada = validada;
     }
-    
-    public Estudiante getEstudiante() {
-        return estudiante;
-    }
-
-    public void setEstudiante(Estudiante estudiante) {
-        this.estudiante = estudiante;
-    }
 
     public Grupo getIdGrupo() {
         return idGrupo;
@@ -216,6 +208,14 @@ public class PermisosCapturaExtemporaneaEstudiante implements Serializable {
 
     public void setIdGrupo(Grupo idGrupo) {
         this.idGrupo = idGrupo;
+    }
+
+    public Estudiante getEstudiante() {
+        return estudiante;
+    }
+
+    public void setEstudiante(Estudiante estudiante) {
+        this.estudiante = estudiante;
     }
 
     public JustificacionPermisosExtemporaneos getJustificacionPermiso() {
@@ -266,5 +266,5 @@ public class PermisosCapturaExtemporaneaEstudiante implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.PermisosCapturaExtemporaneaEstudiante[ permisoEstudiante=" + permisoEstudiante + " ]";
     }
-   
+    
 }

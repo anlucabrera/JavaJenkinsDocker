@@ -367,4 +367,49 @@ public class ServicioCarga implements EjbCarga {
         addCarpetaRelativa(rutaRelativa);
         return rutaRelativa;
     }
+
+    @Override
+    public String subirDocumentoAspirante(Part file, String tipoDoc, File rutaRelativa) {
+        //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subirDocExpTit(): " + rutaRelativa);
+        try {
+            byte[] content = Utils.toByteArray(file.getInputStream());
+            File carpeta = new File("C:/archivos/documentosAspirantes/".concat(rutaRelativa.toString()));
+            addCarpetaRelativa(carpeta.toString());
+            nombreArchivo = file.getSubmittedFileName();
+            //extrae la extension y el nombre de archivo por separado
+            String tipo = file.getContentType();
+                if ("image/jpg".equals(tipo) || "image/jpeg".equals(tipo)) {
+                    extension = ".jpg";
+                }
+                else if("image/png".equals(tipo)){
+                    extension = ".png";
+                }
+                if("application/pdf".equals(tipo)){
+                    extension = ".pdf";
+                }
+            Pattern p = Pattern.compile("[^A-Za-z0-9-_.() ]+");
+            Matcher m = p.matcher(nombreArchivo);
+            StringBuffer sb = new StringBuffer();
+            valida = m.find();
+            while (valida) {
+                m.appendReplacement(sb, "");
+                valida = m.find();
+            }
+            m.appendTail(sb);
+            nombreArchivo = sb.toString();
+                for (int i = 1; i <= 10; i++) {
+                    int numero = (int) Math.round(Math.random() * 35);
+                    aleatorio = aleatorio + abecedario[numero];
+                }
+                String name = carpeta.toString().concat(File.separator).concat(tipoDoc).concat("_").concat(extension);
+                FileOutputStream fos = new FileOutputStream(name);
+                FileCopyUtils.copy(content, fos);
+                aleatorio = ""; 
+//                System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subirDocExpTit(fin)");
+                return name;
+        } catch (IOException ex) {
+            Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);
+            return "Error: No se pudo leer el archivo";
+        }
+    }
 }

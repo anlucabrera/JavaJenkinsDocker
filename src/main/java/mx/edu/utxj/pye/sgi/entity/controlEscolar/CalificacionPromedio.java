@@ -34,7 +34,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "CalificacionPromedio.findByCarga", query = "SELECT c FROM CalificacionPromedio c WHERE c.calificacionPromedioPK.carga = :carga")
     , @NamedQuery(name = "CalificacionPromedio.findByIdEstudiante", query = "SELECT c FROM CalificacionPromedio c WHERE c.calificacionPromedioPK.idEstudiante = :idEstudiante")
     , @NamedQuery(name = "CalificacionPromedio.findByValor", query = "SELECT c FROM CalificacionPromedio c WHERE c.valor = :valor")
-    , @NamedQuery(name = "CalificacionPromedio.findByFechaActualizacion", query = "SELECT c FROM CalificacionPromedio c WHERE c.fechaActualizacion = :fechaActualizacion")})
+    , @NamedQuery(name = "CalificacionPromedio.findByFechaActualizacion", query = "SELECT c FROM CalificacionPromedio c WHERE c.fechaActualizacion = :fechaActualizacion")
+    , @NamedQuery(name = "CalificacionPromedio.findByTipo", query = "SELECT c FROM CalificacionPromedio c WHERE c.tipo = :tipo")})
 public class CalificacionPromedio implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -103,6 +104,14 @@ public class CalificacionPromedio implements Serializable {
         this.fechaActualizacion = fechaActualizacion;
     }
 
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
     public CargaAcademica getCargaAcademica() {
         return cargaAcademica;
     }
@@ -142,14 +151,6 @@ public class CalificacionPromedio implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedio[ calificacionPromedioPK=" + calificacionPromedioPK + " ]";
-    }
-    
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
     }
     
 }

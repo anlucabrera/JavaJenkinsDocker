@@ -14,15 +14,21 @@
         </li>
         <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.ASPIRANTE}">
             <li>
-                <p:link href="#{request.contextPath}/controlEscolar/aspirante/registroFichaAspirante.xhtml">
+<!--                <p:link href="# {request.contextPath}/controlEscolar/aspirante/registroFichaAspirante.xhtml">
                     <i class="fa fa-graduation-cap"></i>
                     <span>Registro Ficha Admisión</span>
-                </p:link>
+                </p:link>-->
             </li>
             <li>
                 <p:link href="#{request.contextPath}/controlEscolar/estatusFicha.xhtml">
                     <i class="fa fa-check-circle"></i>
                     <span>Estatus Ficha de Admisión</span>
+                </p:link>
+            </li>
+             <li>
+                <p:link href="#{request.contextPath}/controlEscolar/aspirante/cargaDocumentos.xhtml">
+                    <i class="fa fa-upload"></i>
+                    <span>Cargar Documentos Aspirante</span>
                 </p:link>
             </li>
         </c:if>

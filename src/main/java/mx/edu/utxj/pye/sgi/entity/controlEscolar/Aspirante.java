@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "aspirante", catalog = "control_escolar", schema = "")
@@ -45,14 +45,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Aspirante.findByFechaRegistro", query = "SELECT a FROM Aspirante a WHERE a.fechaRegistro = :fechaRegistro")})
 public class Aspirante implements Serializable {
 
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "estatus")
-    private boolean estatus;
-    @Size(max = 15)
-    @Column(name = "folioCeneval")
-    private String folioCeneval;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,18 +53,27 @@ public class Aspirante implements Serializable {
     private Integer idAspirante;
     @Column(name = "folio_aspirante")
     private Integer folioAspirante;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "estatus")
+    private boolean estatus;
+    @Size(max = 15)
+    @Column(name = "folioCeneval")
+    private String folioCeneval;
     @Column(name = "fechaRegistro")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRegistro;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private DatosAcademicos datosAcademicos;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
+    private List<DocumentoAspiranteProceso> documentoAspiranteProcesoList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private DocumentoAspirante documentoAspirante;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante")
     private EncuestaAspirante encuestaAspirante;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private DatosFamiliares datosFamiliares;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
+    @OneToMany(mappedBy = "aspirante")
     private List<Estudiante> estudianteList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
     private Domicilio domicilio;
@@ -114,6 +115,21 @@ public class Aspirante implements Serializable {
         this.folioAspirante = folioAspirante;
     }
 
+    public boolean getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(boolean estatus) {
+        this.estatus = estatus;
+    }
+
+    public String getFolioCeneval() {
+        return folioCeneval;
+    }
+
+    public void setFolioCeneval(String folioCeneval) {
+        this.folioCeneval = folioCeneval;
+    }
 
     public Date getFechaRegistro() {
         return fechaRegistro;
@@ -129,6 +145,15 @@ public class Aspirante implements Serializable {
 
     public void setDatosAcademicos(DatosAcademicos datosAcademicos) {
         this.datosAcademicos = datosAcademicos;
+    }
+
+    @XmlTransient
+    public List<DocumentoAspiranteProceso> getDocumentoAspiranteProcesoList() {
+        return documentoAspiranteProcesoList;
+    }
+
+    public void setDocumentoAspiranteProcesoList(List<DocumentoAspiranteProceso> documentoAspiranteProcesoList) {
+        this.documentoAspiranteProcesoList = documentoAspiranteProcesoList;
     }
 
     public DocumentoAspirante getDocumentoAspirante() {
@@ -219,22 +244,6 @@ public class Aspirante implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante[ idAspirante=" + idAspirante + " ]";
-    }
-
-    public boolean getEstatus() {
-        return estatus;
-    }
-
-    public void setEstatus(boolean estatus) {
-        this.estatus = estatus;
-    }
-
-    public String getFolioCeneval() {
-        return folioCeneval;
-    }
-
-    public void setFolioCeneval(String folioCeneval) {
-        this.folioCeneval = folioCeneval;
     }
     
 }

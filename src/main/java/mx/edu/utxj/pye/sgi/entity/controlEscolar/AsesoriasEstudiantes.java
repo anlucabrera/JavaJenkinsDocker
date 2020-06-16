@@ -84,7 +84,7 @@ public class AsesoriasEstudiantes implements Serializable {
     @NotNull
     @Column(name = "evento_registro")
     private int eventoRegistro;
-    @JoinTable(name = "control_escolar.participantes_asesorias_estudiantes", joinColumns = {
+    @JoinTable(name = "participantes_asesorias_estudiantes", joinColumns = {
         @JoinColumn(name = "asesoria_estudiante", referencedColumnName = "asesoria_estudiante")}, inverseJoinColumns = {
         @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")})
     @ManyToMany

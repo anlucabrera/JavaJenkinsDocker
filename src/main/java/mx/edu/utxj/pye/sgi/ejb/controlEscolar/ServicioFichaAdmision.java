@@ -387,27 +387,27 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
 
         DocumentoAspirante documentoAspirante = new DocumentoAspirante();
-        if(aspirante.getDocumentoAspirante() == null){
-            documentoAspirante.setAspirante(aspirante.getIdAspirante());
-            documentoAspirante.setEvidenciaCurp(aspirante.getIdPersona().getUrlCurp());
-            if(tipoRequisito.equals("ActaNacimiento")){
-                documentoAspirante.setEvidenciaActaNacimiento(rutaRelativa);
-            }
-            if(tipoRequisito.equals("HistorialAcademico")){
-                documentoAspirante.setEvidenciaHistorialAcademico(rutaRelativa);
-            }
-            em.persist(documentoAspirante);
-        }else{
-            documentoAspirante = aspirante.getDocumentoAspirante();
-            if(tipoRequisito.equals("ActaNacimiento")){
-                documentoAspirante.setEvidenciaActaNacimiento(rutaRelativa);
-            }
-            if(tipoRequisito.equals("HistorialAcademico")){
-                documentoAspirante.setEvidenciaHistorialAcademico(rutaRelativa);
-            }
-            em.merge(documentoAspirante);
-            facadeCE.flush();
-        }
+//        if(aspirante.getDocumentoAspirante() == null){
+//            documentoAspirante.setAspirante(aspirante.getIdAspirante());
+//            documentoAspirante.setEvidenciaCurp(aspirante.getIdPersona().getUrlCurp());
+//            if(tipoRequisito.equals("ActaNacimiento")){
+//                documentoAspirante.setEvidenciaActaNacimiento(rutaRelativa);
+//            }
+//            if(tipoRequisito.equals("HistorialAcademico")){
+//                documentoAspirante.setEvidenciaHistorialAcademico(rutaRelativa);
+//            }
+//            em.persist(documentoAspirante);
+//        }else{
+//            documentoAspirante = aspirante.getDocumentoAspirante();
+//            if(tipoRequisito.equals("ActaNacimiento")){
+//                documentoAspirante.setEvidenciaActaNacimiento(rutaRelativa);
+//            }
+//            if(tipoRequisito.equals("HistorialAcademico")){
+//                documentoAspirante.setEvidenciaHistorialAcademico(rutaRelativa);
+//            }
+//            em.merge(documentoAspirante);
+//            facadeCE.flush();
+//        }
 
         
         return documentoAspirante;

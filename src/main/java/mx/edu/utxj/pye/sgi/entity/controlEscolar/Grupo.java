@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "grupo", catalog = "control_escolar", schema = "")
@@ -87,6 +87,8 @@ public class Grupo implements Serializable {
     @JoinColumn(name = "id_turno", referencedColumnName = "id_turno")
     @ManyToOne
     private Turno idTurno;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idGrupo")
+    private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cveGrupo")
     private List<CargaAcademica> cargaAcademicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
@@ -95,8 +97,6 @@ public class Grupo implements Serializable {
     private List<Tutoria> tutoriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idGrupo")
     private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idGrupo")
-    private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
 
     public Grupo() {
     }
@@ -212,6 +212,15 @@ public class Grupo implements Serializable {
     }
 
     @XmlTransient
+    public List<PermisosCapturaExtemporaneaEstudiante> getPermisosCapturaExtemporaneaEstudianteList() {
+        return permisosCapturaExtemporaneaEstudianteList;
+    }
+
+    public void setPermisosCapturaExtemporaneaEstudianteList(List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList) {
+        this.permisosCapturaExtemporaneaEstudianteList = permisosCapturaExtemporaneaEstudianteList;
+    }
+
+    @XmlTransient
     public List<CargaAcademica> getCargaAcademicaList() {
         return cargaAcademicaList;
     }
@@ -246,16 +255,7 @@ public class Grupo implements Serializable {
     public void setPermisosCapturaExtemporaneaGrupalList(List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList) {
         this.permisosCapturaExtemporaneaGrupalList = permisosCapturaExtemporaneaGrupalList;
     }
-    
-    @XmlTransient
-    public List<PermisosCapturaExtemporaneaEstudiante> getPermisosCapturaExtemporaneaEstudianteList() {
-        return permisosCapturaExtemporaneaEstudianteList;
-    }
 
-    public void setPermisosCapturaExtemporaneaEstudianteList(List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList) {
-        this.permisosCapturaExtemporaneaEstudianteList = permisosCapturaExtemporaneaEstudianteList;
-    }
-    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -280,5 +280,5 @@ public class Grupo implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo[ idGrupo=" + idGrupo + " ]";
     }
-   
+    
 }

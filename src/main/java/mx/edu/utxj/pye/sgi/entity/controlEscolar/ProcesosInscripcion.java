@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "procesos_inscripcion", catalog = "control_escolar", schema = "")
@@ -175,5 +175,5 @@ public class ProcesosInscripcion implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion[ idProcesosInscripcion=" + idProcesosInscripcion + " ]";
     }
-
+    
 }

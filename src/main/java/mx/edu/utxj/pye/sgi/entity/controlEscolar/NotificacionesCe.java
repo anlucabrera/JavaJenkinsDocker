@@ -100,12 +100,12 @@ public class NotificacionesCe implements Serializable {
     @Column(name = "fecha_registro")
     @Temporal(TemporalType.DATE)
     private Date fechaRegistro;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificacionesCe")
-    private List<NotificacionesAreas> notificacionesAreasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificacion")
     private List<NotificacionesEnlaces> notificacionesEnlacesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificacion")
     private List<NotificacionesCeImagenes> notificacionesCeImagenesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificacionesCe")
+    private List<NotificacionesAreas> notificacionesAreasList;
 
     public NotificacionesCe() {
     }
@@ -216,15 +216,6 @@ public class NotificacionesCe implements Serializable {
     }
 
     @XmlTransient
-    public List<NotificacionesAreas> getNotificacionesAreasList() {
-        return notificacionesAreasList;
-    }
-
-    public void setNotificacionesAreasList(List<NotificacionesAreas> notificacionesAreasList) {
-        this.notificacionesAreasList = notificacionesAreasList;
-    }
-
-    @XmlTransient
     public List<NotificacionesEnlaces> getNotificacionesEnlacesList() {
         return notificacionesEnlacesList;
     }
@@ -240,6 +231,15 @@ public class NotificacionesCe implements Serializable {
 
     public void setNotificacionesCeImagenesList(List<NotificacionesCeImagenes> notificacionesCeImagenesList) {
         this.notificacionesCeImagenesList = notificacionesCeImagenesList;
+    }
+
+    @XmlTransient
+    public List<NotificacionesAreas> getNotificacionesAreasList() {
+        return notificacionesAreasList;
+    }
+
+    public void setNotificacionesAreasList(List<NotificacionesAreas> notificacionesAreasList) {
+        this.notificacionesAreasList = notificacionesAreasList;
     }
 
     @Override

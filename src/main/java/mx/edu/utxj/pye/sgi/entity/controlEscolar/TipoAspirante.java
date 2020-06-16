@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
@@ -26,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "tipo_aspirante", catalog = "control_escolar", schema = "")
@@ -37,18 +36,17 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "TipoAspirante.findByDescripcion", query = "SELECT t FROM TipoAspirante t WHERE t.descripcion = :descripcion")})
 public class TipoAspirante implements Serializable {
 
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
-    @Column(name = "descripcion")
-    private String descripcion;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id_tipo_aspirante")
     private Short idTipoAspirante;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "descripcion")
+    private String descripcion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoAspirante")
     private List<Aspirante> aspiranteList;
 
@@ -72,6 +70,13 @@ public class TipoAspirante implements Serializable {
         this.idTipoAspirante = idTipoAspirante;
     }
 
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
     @XmlTransient
     public List<Aspirante> getAspiranteList() {
@@ -105,14 +110,6 @@ public class TipoAspirante implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoAspirante[ idTipoAspirante=" + idTipoAspirante + " ]";
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
     }
     
 }
