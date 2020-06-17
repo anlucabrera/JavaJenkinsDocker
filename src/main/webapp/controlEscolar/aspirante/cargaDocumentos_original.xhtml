@@ -32,7 +32,7 @@
         </p:panel>
         <p:panel id="informacion" header="Carga documentos admisión e inscripción" class="hidden-xs hidden-sm" styleClass="box box-primary">
             <section class="content">
-                <h:form enctype="multipart/form-data">
+                <h:form>
                     <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                         <div class="col-md-12">
                             <div class="box box-widget widget-user-2">
@@ -111,7 +111,7 @@
                                             <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoAspiranteProceso.validado}" /></p:column>
                                             <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
                                             <p:column style="text-align: center;">
-                                                <o:inputFile id="file" value="#{cargaDocumentosAspirante.file2}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG o documentos PDF." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." />
+                                                <o:inputFile id="file" value="#{cargaDocumentosAspirante.file}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG o documentos PDF." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." />
                                                 <br/>
                                                 <h:message id="messageForFile" for="file" />
                                                 <br/>

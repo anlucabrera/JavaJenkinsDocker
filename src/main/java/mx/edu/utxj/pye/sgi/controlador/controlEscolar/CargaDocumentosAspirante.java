@@ -33,6 +33,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
@@ -56,6 +57,7 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
     @Inject UtilidadesCH utilidadesCH;
     @Getter Boolean tieneAcceso = false;
     @Getter @Setter CargaDocumentosRolAspirante rol;
+    @Getter @Setter Part file2;
 //    
 //    @Getter @Setter private String curp;
 //    @Getter @Setter private Integer folioAdmision;
@@ -119,7 +121,6 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
             rol.setValidacionCurpFolio(true);
             mostrarDocumentos();
             }
-            System.err.println("validarCurpFolio - rolValor " + rol.getValidacionCurpFolio());
         }else mostrarMensajeResultadoEJB(res);  
        
     }
@@ -128,7 +129,6 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
         ResultadoEJB<List<DtoDocumentoAspirante>> res = ejb.getDocumentoAspirante(rol.getAspirante());
         if(res.getCorrecto()){
             rol.setListaDocumentoAspirante(res.getValor());
-            System.err.println("mostrarDocumentos - listaDocumentos " + rol.getListaDocumentoAspirante());
         }else mostrarMensajeResultadoEJB(res);  
        
     }
@@ -142,17 +142,23 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
     }
     
     public void subirDocumento(DtoDocumentoAspirante docsExp) {
+        System.err.println("subirDocumento - documento " + docsExp.getDocumentoProceso().getDocumento().getDescripcion());
+        System.err.println("subirDocumento - file2 " + file2);
         try {
             DocumentoAspiranteProceso nuevoDocumento = new DocumentoAspiranteProceso();
 
             nuevoDocumento.setAspirante(rol.getAspirante());
+            System.err.println("subirDoc - aspirante " + rol.getAspirante().getIdPersona());
             nuevoDocumento.setDocumento(docsExp.getDocumentoProceso().getDocumento());
-            nuevoDocumento.setRuta(utilidadesCH.agregarDocumentoAspirante(rol.getFile(), rol.getAspirante(), docsExp));
+            System.err.println("subirDoc - documento " + docsExp.getDocumentoProceso().getDocumento());
+            nuevoDocumento.setRuta(utilidadesCH.agregarDocumentoAspirante(file2, rol.getAspirante(), docsExp));
+            System.err.println("subirDoc - ruta " + utilidadesCH.agregarDocumentoAspirante(file2, rol.getAspirante(), docsExp));
             nuevoDocumento.setFechaCarga(new Date());
+            System.err.println("subirDoc - fechaCarga " + new Date());
+            nuevoDocumento.setObservaciones("Sin observaciones");
+            nuevoDocumento.setValidado(false);
             nuevoDocumento.setFechaValidacion(null);
             nuevoDocumento = ejb.guardarDocumentoAspirante(nuevoDocumento).getValor();
-            
-            Ajax.update("frmDocsExp");
             
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());

@@ -401,7 +401,7 @@ public class ServicioCarga implements EjbCarga {
                     int numero = (int) Math.round(Math.random() * 35);
                     aleatorio = aleatorio + abecedario[numero];
                 }
-                String name = carpeta.toString().concat(File.separator).concat(tipoDoc).concat("_").concat(extension);
+                String name = carpeta.toString().concat(File.separator).concat(tipoDoc).concat(extension);
                 FileOutputStream fos = new FileOutputStream(name);
                 FileCopyUtils.copy(content, fos);
                 aleatorio = ""; 

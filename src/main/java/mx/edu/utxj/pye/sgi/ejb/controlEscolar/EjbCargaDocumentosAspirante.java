@@ -132,12 +132,13 @@ public class EjbCargaDocumentosAspirante {
 //        System.out.println("docente = [" + docente + "], periodo = [" + periodo + "]");
         try{
             //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
-            List<DtoDocumentoAspirante> listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso = :proceso", DocumentoProceso.class)
+            List<DtoDocumentoAspirante> listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso =:proceso", DocumentoProceso.class)
                     .setParameter("proceso", "Inscripción")
                     .getResultStream()
                     .map(doc -> pack(doc, aspirante).getValor())
                     .filter(dto -> dto != null)
                     .collect(Collectors.toList());
+            
             return ResultadoEJB.crearCorrecto(listaDocumentos, "Lista de documentos por aspirante.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de documentos por aspirante. (EjbCargaDocumentosAspirante.getDocumentoAspirante)", e, null);
@@ -151,7 +152,6 @@ public class EjbCargaDocumentosAspirante {
      * @return Dto del documento empaquetado
      */
     public ResultadoEJB<DtoDocumentoAspirante> pack(DocumentoProceso documentoProceso, Aspirante aspirante){
-//        System.out.println("cargaAcademica = " + cargaAcademica);
         try{
             if(documentoProceso == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar un documento nulo.", DtoDocumentoAspirante.class);
             if(documentoProceso.getDocumentoProceso()== null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar un documento con clave nula.", DtoDocumentoAspirante.class);
@@ -161,24 +161,26 @@ public class EjbCargaDocumentosAspirante {
 
             DocumentoAspiranteProceso documentoAspirante = em.createQuery("SELECT d FROM DocumentoAspiranteProceso d WHERE d.aspirante =:aspirante AND d.documento =:documento", DocumentoAspiranteProceso.class)
                     .setParameter("aspirante", aspirante)
-                    .setParameter("documento", documentoProcesoBD)
+                    .setParameter("documento", documentoProcesoBD.getDocumento())
                     .getResultStream()
                     .findFirst()
-                    .orElse(null);
+                    .orElse(new DocumentoAspiranteProceso());
             
             PeriodosEscolares periodoEscolarBD = em.find(PeriodosEscolares.class, aspirante.getIdProcesoInscripcion().getIdPeriodo());
             String periodoInscripcion = periodoEscolarBD.getMesInicio().getAbreviacion().concat("-").concat(periodoEscolarBD.getMesFin().getAbreviacion()).concat(Integer.toString(periodoEscolarBD.getAnio()));
             
-            DtoDocumentoAspirante dto = new DtoDocumentoAspirante(documentoProcesoBD, documentoAspirante, periodoInscripcion);
-
-            return ResultadoEJB.crearCorrecto(dto, "Carga académica empaquetada.");
+            DtoDocumentoAspirante dto = new DtoDocumentoAspirante();
+            dto.setDocumentoAspiranteProceso(documentoAspirante);
+            dto.setDocumentoProceso(documentoProcesoBD);
+            dto.setPeriodoInscripcion(periodoInscripcion);
+            return ResultadoEJB.crearCorrecto(dto, "Documento empaquetado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el documento (EjbCargaDocumentosAspirante. pack).", e, DtoDocumentoAspirante.class);
         }
     }
     
     public ResultadoEJB<DocumentoAspiranteProceso> guardarDocumentoAspirante(DocumentoAspiranteProceso documentoAspiranteProceso){
-//        System.out.println("docente = [" + docente + "], periodo = [" + periodo + "]");
+        System.out.println("guardarDocumentoAspirante - documento" + documentoAspiranteProceso.getDocumento().getDocumento());
         try{
             em.persist(documentoAspiranteProceso);
             em.flush();

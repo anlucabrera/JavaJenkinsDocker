@@ -22,7 +22,12 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
 public class DtoDocumentoAspirante implements Serializable{
     
     @Getter @Setter @NonNull DocumentoProceso documentoProceso;
-    @Getter @Setter @NonNull DocumentoAspiranteProceso documentoAspiranteProceso;
+    @Getter @Setter DocumentoAspiranteProceso documentoAspiranteProceso;
     @Getter @Setter @NonNull String periodoInscripcion;
+
+    public DtoDocumentoAspirante() {
+    }
+
+    
     
 }
