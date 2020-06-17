@@ -11,7 +11,7 @@
 
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
-        
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
         <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
@@ -35,8 +35,9 @@
                          <h:form id="frmDocsAsp">
                                         <p:remoteCommand name="actualizarListaDocs" update="@form:tblDocsExp" />
                                         <p:dataTable id="tblDocsExp" emptyMessage="Sin datos en el periodo seleccionado." value="#{cargaDocumentosAspirante.rol.listaDocumentoAspirante}" var="docsExp"
-                                                     resizeMode="expand"
-                                                     tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                     resizeMode="expand" tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                     tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" 
+                                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                             <p:columnGroup type="header">
                                                 <p:row>
                                                     <p:column headerText="Opciones" width="120"/>
@@ -48,17 +49,18 @@
                                                     <p:column headerText="Fecha de Validación" width="100" />
                                                 </p:row>
                                             </p:columnGroup>
+                                            <c:set var="existeDoc" value="#{cargaArchivosControlador.consultarExisteDocumento(docsExp.documentoProceso.documento)}" />
                                             <p:column style="text-align: center;">
                                                 <div class="btn-group">
-<!--                                                    <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="# {controladorArchTit.eliminarDocumento(docsExp)}" onsuccess="actualizarListaDocs();" title="Eliminar documento." disabled="# {!empty status}">
-                                                        <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento # {caster.rutaToArchivoNombre(docsExp.ruta)}?" icon="ui-icon-alert" />
+                                                    <p:commandButton icon="fa fa-upload" onclick="PF('modalCargaArchivo').show()" class="btn btn-sm #{existeDoc?'btn-info':'btn-danger'}" actionListener="#{cargaArchivosControlador.editarDocumento(docsExp)}" disabled="#{existeDoc}"/>
+                                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{cargaArchivosControlador.descargarDocumento(docsExp)}" target="_blank" title="Descargar documento." disabled="#{!existeDoc}"><i class="fa fa-download" /></p:commandLink>
+                                                    <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{cargaArchivosControlador.eliminarDocumento(docsExp)}" onsuccess="actualizarListaDocs();" title="Eliminar documento." disabled="#{!existeDoc}">
+                                                        <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento #{caster.rutaToArchivoNombre(docsExp.documentoAspiranteProceso.ruta)}?" icon="ui-icon-alert"/>
                                                     </p:commandButton>
                                                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                                                         <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
                                                         <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
                                                     </p:confirmDialog> 
-                                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="# {controladorArchTit.descargarDocumento(docsExp)}" target="_blank" title="Descargar documento."><i class="fa fa-download" /></p:commandLink>-->
-                                                <p:commandButton icon="fa fa-upload" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm" actionListener="#{cargaArchivosControlador.editarDocumento(docsExp)}"/>
                                                 </div>
                                             </p:column>
                                             <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.documento.descripcion}" /></p:column>

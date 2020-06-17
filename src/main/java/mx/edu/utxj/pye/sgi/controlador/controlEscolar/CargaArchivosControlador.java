@@ -5,6 +5,8 @@
  */
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.logging.Level;
@@ -21,8 +23,11 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import org.omnifaces.cdi.ViewScoped;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCargaDocumentosAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
+import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
 /**
@@ -71,11 +76,30 @@ public class CargaArchivosControlador implements Serializable{
             nuevoDocumento.setValidado(false);
             nuevoDocumento.setFechaValidacion(null);
             nuevoDocumento = ejbCargaDocumentosAspirante.guardarDocumentoAspirante(nuevoDocumento).getValor();
+            cargaDocumentosAspirante.mostrarDocumentos(aspirante);
             
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(CargaArchivosControlador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
+    public void eliminarDocumento(DtoDocumentoAspirante docsExp){
+        Boolean eliminado = ejbCargaDocumentosAspirante.eliminarDocumentoAspirante(docsExp.getDocumentoAspiranteProceso()).getValor();
+        if(eliminado){ 
+            Messages.addGlobalInfo("El documento se eliminó correctamente.");
+            DocumentoAspiranteProceso nuevoDocumento = new DocumentoAspiranteProceso();
+            cargaDocumentosAspirante.mostrarDocumentos(aspirante);
+        }else Messages.addGlobalError("El documento no ha podido eliminarse.");
+    }
+    
+    public void descargarDocumento(DtoDocumentoAspirante docsExp) throws IOException{
+        File f = new File(docsExp.getDocumentoAspiranteProceso().getRuta());
+        Faces.sendFile(f, false);
+    }
+    
+    public Boolean consultarExisteDocumento(Documento documento){
+        return ejbCargaDocumentosAspirante.consultarDocumento(documento, aspirante).getValor();
+    }
+   
 }

@@ -38,6 +38,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -118,25 +119,25 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
         if(res.getCorrecto()){
             rol.setAspirante(res.getValor());
             if(res.getValor()==null){
-            rol.setValidacionCurpFolio(false);
-            addDetailMessage("Por favor verifica tus datos");
-            Faces.getExternalContext().getFlash().setKeepMessages(true);
+                rol.setValidacionCurpFolio(false);
+                addDetailMessage("Por favor verifica tus datos");
+                Faces.getExternalContext().getFlash().setKeepMessages(true);
             }else{
-            rol.setValidacionCurpFolio(true);
-            addDetailMessage("Se han validado los datos correctamente");
-            Faces.getExternalContext().getFlash().setKeepMessages(true);
-            Faces.redirect("controlEscolar/aspirante/cargaDocumentos.xhtml");
-            mostrarDocumentos(rol.getAspirante());
+                rol.setValidacionCurpFolio(true);
+                addDetailMessage("Se han validado los datos correctamente");
+                Faces.getExternalContext().getFlash().setKeepMessages(true);
+                Faces.redirect("controlEscolar/aspirante/cargaDocumentos.xhtml");
+                mostrarDocumentos(rol.getAspirante());
             }
         }else mostrarMensajeResultadoEJB(res);  
        
     }
     
     public void mostrarDocumentos(Aspirante aspirante){
-        System.err.println("mostrarDocumentos - aspirante " + aspirante);
         ResultadoEJB<List<DtoDocumentoAspirante>> res = ejb.getDocumentoAspirante(aspirante);
         if(res.getCorrecto()){
             rol.setListaDocumentoAspirante(res.getValor());
+            Ajax.update("frmDocsAsp");
         }else mostrarMensajeResultadoEJB(res);  
        
     }

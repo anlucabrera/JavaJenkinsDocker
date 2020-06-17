@@ -23,9 +23,12 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import java.util.*;
 import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
+import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 
 
 /**
@@ -188,6 +191,48 @@ public class EjbCargaDocumentosAspirante {
             return ResultadoEJB.crearCorrecto(documentoAspiranteProceso, "Se guardó correctamente el documento.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo guardar el documento. (EjbCargaDocumentosAspirante.guardarDocumentoAspirante)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Boolean> eliminarDocumentoAspirante(DocumentoAspiranteProceso documentoAspiranteProceso){
+        try{
+            Integer id = documentoAspiranteProceso.getDocumentoAspirante();
+            ServicioArchivos.eliminarArchivo(documentoAspiranteProceso.getRuta());
+            
+             Integer delete = em.createQuery("DELETE FROM DocumentoAspiranteProceso d WHERE d.documentoAspirante =:documento", DocumentoAspiranteProceso.class)
+                .setParameter("documento", documentoAspiranteProceso.getDocumentoAspirante())
+                .executeUpdate();
+            
+            return ResultadoEJB.crearCorrecto(em.find(DocumentoAspiranteProceso.class, id)==null, "Se eliminó correctamente el documento.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el documento. (EjbCargaDocumentosAspirante.eliminarDocumentoAspirante)", e, null);
+        }
+    }
+    
+    /**
+     * Permite verificar si existen coinciden los datos ingresados (curp y folio de admsión)
+     * @param documento
+     * @param aspirante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Boolean> consultarDocumento(Documento documento, Aspirante aspirante){
+        try{
+            DocumentoAspiranteProceso documentoAspiranteProceso = em.createQuery("SELECT d FROM DocumentoAspiranteProceso d WHERE d.aspirante =:aspirante AND d.documento =:documento", DocumentoAspiranteProceso.class)
+                    .setParameter("aspirante", aspirante)
+                    .setParameter("documento", documento)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            
+            Boolean valor;
+            if (documentoAspiranteProceso == null) {
+                valor = false;
+            } else {
+                valor= true; 
+            }
+            return ResultadoEJB.crearCorrecto(valor, "Se ha realizado correctamente la consulta.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se realizó correctamente la consulta del documento. (EjbCargaDocumentosAspirante.consultarDocumento)", e, null);
         }
     }
     
