@@ -29,10 +29,12 @@ import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.enterprise.context.SessionScoped;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
@@ -41,6 +43,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.funcional.Guardable;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
+import org.omnifaces.util.Faces;
 
 
 
@@ -48,7 +51,7 @@ import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
  * La selección del grupo, docente y del periodo deben ser directos de un control de entrada
  */
 @Named
-@ViewScoped
+@SessionScoped
 public class CargaDocumentosAspirante extends ViewScopedRol implements Desarrollable{
 
     @EJB EjbCargaDocumentosAspirante ejb;
@@ -57,7 +60,6 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
     @Inject UtilidadesCH utilidadesCH;
     @Getter Boolean tieneAcceso = false;
     @Getter @Setter CargaDocumentosRolAspirante rol;
-    @Getter @Setter Part file2;
 //    
 //    @Getter @Setter private String curp;
 //    @Getter @Setter private Integer folioAdmision;
@@ -117,16 +119,22 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
             rol.setAspirante(res.getValor());
             if(res.getValor()==null){
             rol.setValidacionCurpFolio(false);
+            addDetailMessage("Por favor verifica tus datos");
+            Faces.getExternalContext().getFlash().setKeepMessages(true);
             }else{
             rol.setValidacionCurpFolio(true);
-            mostrarDocumentos();
+            addDetailMessage("Se han validado los datos correctamente");
+            Faces.getExternalContext().getFlash().setKeepMessages(true);
+            Faces.redirect("controlEscolar/aspirante/cargaDocumentos.xhtml");
+            mostrarDocumentos(rol.getAspirante());
             }
         }else mostrarMensajeResultadoEJB(res);  
        
     }
     
-    public void mostrarDocumentos(){
-        ResultadoEJB<List<DtoDocumentoAspirante>> res = ejb.getDocumentoAspirante(rol.getAspirante());
+    public void mostrarDocumentos(Aspirante aspirante){
+        System.err.println("mostrarDocumentos - aspirante " + aspirante);
+        ResultadoEJB<List<DtoDocumentoAspirante>> res = ejb.getDocumentoAspirante(aspirante);
         if(res.getCorrecto()){
             rol.setListaDocumentoAspirante(res.getValor());
         }else mostrarMensajeResultadoEJB(res);  
@@ -140,30 +148,5 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
 //        map.entrySet().forEach(System.out::println);
         return mostrar(request, map.containsValue(valor));
     }
-    
-    public void subirDocumento(DtoDocumentoAspirante docsExp) {
-        System.err.println("subirDocumento - documento " + docsExp.getDocumentoProceso().getDocumento().getDescripcion());
-        System.err.println("subirDocumento - file2 " + file2);
-        try {
-            DocumentoAspiranteProceso nuevoDocumento = new DocumentoAspiranteProceso();
-
-            nuevoDocumento.setAspirante(rol.getAspirante());
-            System.err.println("subirDoc - aspirante " + rol.getAspirante().getIdPersona());
-            nuevoDocumento.setDocumento(docsExp.getDocumentoProceso().getDocumento());
-            System.err.println("subirDoc - documento " + docsExp.getDocumentoProceso().getDocumento());
-            nuevoDocumento.setRuta(utilidadesCH.agregarDocumentoAspirante(file2, rol.getAspirante(), docsExp));
-            System.err.println("subirDoc - ruta " + utilidadesCH.agregarDocumentoAspirante(file2, rol.getAspirante(), docsExp));
-            nuevoDocumento.setFechaCarga(new Date());
-            System.err.println("subirDoc - fechaCarga " + new Date());
-            nuevoDocumento.setObservaciones("Sin observaciones");
-            nuevoDocumento.setValidado(false);
-            nuevoDocumento.setFechaValidacion(null);
-            nuevoDocumento = ejb.guardarDocumentoAspirante(nuevoDocumento).getValor();
-            
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(CargaDocumentosAspirante.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
+   
 }

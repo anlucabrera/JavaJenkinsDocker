@@ -129,7 +129,7 @@ public class EjbCargaDocumentosAspirante {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<DtoDocumentoAspirante>> getDocumentoAspirante(Aspirante aspirante){
-//        System.out.println("docente = [" + docente + "], periodo = [" + periodo + "]");
+        System.out.println("getDocumentoAspirante - aspirante " + aspirante);
         try{
             //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
             List<DtoDocumentoAspirante> listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso =:proceso", DocumentoProceso.class)
@@ -167,12 +167,12 @@ public class EjbCargaDocumentosAspirante {
                     .orElse(new DocumentoAspiranteProceso());
             
             PeriodosEscolares periodoEscolarBD = em.find(PeriodosEscolares.class, aspirante.getIdProcesoInscripcion().getIdPeriodo());
-            String periodoInscripcion = periodoEscolarBD.getMesInicio().getAbreviacion().concat("-").concat(periodoEscolarBD.getMesFin().getAbreviacion()).concat(Integer.toString(periodoEscolarBD.getAnio()));
+            String anioInscripcion = Integer.toString(periodoEscolarBD.getAnio());
             
             DtoDocumentoAspirante dto = new DtoDocumentoAspirante();
             dto.setDocumentoAspiranteProceso(documentoAspirante);
             dto.setDocumentoProceso(documentoProcesoBD);
-            dto.setPeriodoInscripcion(periodoInscripcion);
+            dto.setAnioInscripcion(anioInscripcion);
             return ResultadoEJB.crearCorrecto(dto, "Documento empaquetado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el documento (EjbCargaDocumentosAspirante. pack).", e, DtoDocumentoAspirante.class);

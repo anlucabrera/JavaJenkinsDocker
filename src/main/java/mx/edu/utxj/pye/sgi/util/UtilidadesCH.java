@@ -239,7 +239,7 @@ public class UtilidadesCH implements Serializable {
             return null;
         }
         
-        ruta = carga.subirDocumentoAspirante(file, docsExp.getDocumentoProceso().getDocumento().getNomenclatura(), new File(docsExp.getPeriodoInscripcion().concat(File.separator).concat(Integer.toString(aspirante.getFolioAspirante())).concat(File.separator).concat(docsExp.getDocumentoProceso().getProceso())));
+        ruta = carga.subirDocumentoAspirante(file, docsExp.getDocumentoProceso().getDocumento().getNomenclatura(), new File(docsExp.getAnioInscripcion().concat(File.separator).concat(Integer.toString(aspirante.getFolioAspirante())).concat(File.separator).concat(docsExp.getDocumentoProceso().getProceso())));
         
         if (!"Error: No se pudo leer el archivo".equals(ruta)) {
             Messages.addGlobalInfo("El documento se ha guardado correctamente.");

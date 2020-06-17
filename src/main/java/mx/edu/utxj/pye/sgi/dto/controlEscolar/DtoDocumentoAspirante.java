@@ -23,7 +23,7 @@ public class DtoDocumentoAspirante implements Serializable{
     
     @Getter @Setter @NonNull DocumentoProceso documentoProceso;
     @Getter @Setter DocumentoAspiranteProceso documentoAspiranteProceso;
-    @Getter @Setter @NonNull String periodoInscripcion;
+    @Getter @Setter @NonNull String anioInscripcion;
 
     public DtoDocumentoAspirante() {
     }

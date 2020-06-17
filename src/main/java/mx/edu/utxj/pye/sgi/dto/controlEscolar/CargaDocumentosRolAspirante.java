@@ -35,7 +35,6 @@ public class CargaDocumentosRolAspirante {
     @Getter         @Setter     private     Boolean validacionCurpFolio;
     @Getter         @Setter     private     Aspirante aspirante;
     @Getter         @Setter     private     List<DtoDocumentoAspirante> listaDocumentoAspirante;
-    @Getter         @Setter     private     Part file;
     
     public void setEventoEscolar(EventoEscolar eventoEscolar) {
         this.eventoEscolar = eventoEscolar;
