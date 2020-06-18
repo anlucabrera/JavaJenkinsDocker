@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
@@ -44,6 +45,7 @@ public class CargaArchivosControlador implements Serializable{
     // Variable para documentos  
     @Getter private Aspirante aspirante;
     @Getter private DtoDocumentoAspirante dtoDocumentoAspirante;
+    @Getter private List<DtoDocumentoAspirante> lista;
     @Getter @Setter private Part file;
     @Inject UtilidadesCH utilidadesCH;
     @Inject CargaDocumentosAspirante cargaDocumentosAspirante;
@@ -57,13 +59,8 @@ public class CargaArchivosControlador implements Serializable{
     
     public void editarDocumento(DtoDocumentoAspirante registro) {
         dtoDocumentoAspirante = registro;
-//        nuevaActFormInt = dto.getRegistro().getActividadesFormacionIntegral();
-//        Ajax.update("modalCargaArchivo");
-//        Ajax.oncomplete("skin();");
-//        setForzarAperturaDialogo(Boolean.TRUE);
-//        forzarAperturaEdicionDialogo();
     }
-     
+    
     public void subirDocumento() {
         try {
             DocumentoAspiranteProceso nuevoDocumento = new DocumentoAspiranteProceso();
@@ -87,9 +84,10 @@ public class CargaArchivosControlador implements Serializable{
     public void eliminarDocumento(DtoDocumentoAspirante docsExp){
         Boolean eliminado = ejbCargaDocumentosAspirante.eliminarDocumentoAspirante(docsExp.getDocumentoAspiranteProceso()).getValor();
         if(eliminado){ 
-            Messages.addGlobalInfo("El documento se eliminó correctamente.");
-            DocumentoAspiranteProceso nuevoDocumento = new DocumentoAspiranteProceso();
+            System.err.println("eliminarDocumento - aspirante " + aspirante);
             cargaDocumentosAspirante.mostrarDocumentos(aspirante);
+            Ajax.update("frmDocsAsp");
+            Messages.addGlobalInfo("El documento se eliminó correctamente.");
         }else Messages.addGlobalError("El documento no ha podido eliminarse.");
     }
     

@@ -61,6 +61,7 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
     @Inject UtilidadesCH utilidadesCH;
     @Getter Boolean tieneAcceso = false;
     @Getter @Setter CargaDocumentosRolAspirante rol;
+    @Getter @Setter CargaArchivosControlador cargaArchivosControlador;
 //    
 //    @Getter @Setter private String curp;
 //    @Getter @Setter private Integer folioAdmision;

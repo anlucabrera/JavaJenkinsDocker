@@ -30,7 +30,7 @@
                 Esta página está disponible solo para pantallas superiores a 1024px.
             </h1>
         </p:panel>
-        <p:panel id="informacion" header="Carga documentos admisión e inscripción" class="hidden-xs hidden-sm" styleClass="box box-primary">
+        <p:panel id="informacion" class="hidden-xs hidden-sm" styleClass="box box-primary">
             <section class="content">
                          <h:form id="frmDocsAsp">
                                         <p:remoteCommand name="actualizarListaDocs" update="@form:tblDocsExp" />
@@ -40,13 +40,14 @@
                                                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                             <p:columnGroup type="header">
                                                 <p:row>
-                                                    <p:column headerText="Opciones" width="120"/>
+                                                    <p:column headerText="Opciones" width="150"/>
                                                     <p:column headerText="Documento" width="200" />
-                                                    <p:column headerText="Obligatorio" width="150" />
-                                                    <p:column headerText="Fecha de Carga" width="100" />
-                                                    <p:column headerText="Observaciones" width="200" />
-                                                    <p:column headerText="Validado" width="80" />
-                                                    <p:column headerText="Fecha de Validación" width="100" />
+                                                    <p:column headerText="Especificaciones" width="300" />
+                                                    <p:column headerText="Obligatorio" width="100" />
+                                                    <p:column headerText="Fecha Carga" width="100" />
+                                                    <p:column headerText="Observaciones" width="300" />
+                                                    <p:column headerText="Validado" width="100" />
+                                                    <p:column headerText="Fecha Validación" width="100" />
                                                 </p:row>
                                             </p:columnGroup>
                                             <c:set var="existeDoc" value="#{cargaArchivosControlador.consultarExisteDocumento(docsExp.documentoProceso.documento)}" />
@@ -64,10 +65,11 @@
                                                 </div>
                                             </p:column>
                                             <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.documento.descripcion}" /></p:column>
-                                            <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.obligatorio}" /></p:column>
+                                            <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.documento.especificaciones}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoProceso.obligatorio?'Si':'No'}" /></p:column>
                                             <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
                                             <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoAspiranteProceso.observaciones}" /></p:column>
-                                            <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoAspiranteProceso.validado}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.validado?'Si':'No'}" /></p:column>
                                             <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
                                             
                                         </p:dataTable>
