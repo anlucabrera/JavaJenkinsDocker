@@ -30,6 +30,8 @@ import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 
 
 
@@ -98,6 +100,12 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
             Ajax.update("frmDocsAsp");
             Messages.addGlobalInfo("El documento se eliminó correctamente.");
         }else Messages.addGlobalError("El documento no ha podido eliminarse.");
+    }
+    
+    public void onCellEdit(CellEditEvent event) {
+        DataTable dataTable = (DataTable) event.getSource();
+        DtoDocumentoAspirante registroNew = (DtoDocumentoAspirante) dataTable.getRowData();
+        ejbCargaDocumentosAspirante.guardarObservacionesDocumento(registroNew);
     }
     
 }

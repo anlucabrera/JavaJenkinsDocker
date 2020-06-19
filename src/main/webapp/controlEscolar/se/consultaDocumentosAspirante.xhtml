@@ -35,7 +35,7 @@
                          <h:form id="frmDocsAsp">
                                         <p:remoteCommand name="actualizarListaDocs" update="@form:tblDocsExp" />
                                         <p:dataTable id="tblDocsExp" emptyMessage="Sin datos en el periodo seleccionado." value="#{consultaDocumentosAspiranteEscolares.listaDocumentoAspirantes}" var="docsExp"
-                                                     resizeMode="expand" tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                     resizeMode="expand" tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" editable="true" editMode="cell"
                                                      tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" 
                                                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                             <p:columnGroup type="header">
@@ -50,6 +50,7 @@
                                                     <p:column headerText="Fecha Validación" width="100" />
                                                 </p:row>
                                             </p:columnGroup>
+                                            <p:ajax event="cellEdit" listener="#{consultaDocumentosAspiranteEscolares.onCellEdit}"/>
                                             <c:set var="existeDoc" value="#{consultaDocumentosAspiranteEscolares.consultarExisteDocumento(docsExp.documentoProceso.documento)}" />
                                             <p:column style="text-align: center;">
                                                 <div class="btn-group">
@@ -68,7 +69,12 @@
                                             <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.documento.especificaciones}" /></p:column>
                                             <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoProceso.obligatorio?'Si':'No'}" /></p:column>
                                             <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
-                                            <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoAspiranteProceso.observaciones}" /></p:column>
+                                            <p:column style="text-align: justify;">
+                                                <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{docsExp.documentoAspiranteProceso.observaciones}"/></f:facet>
+                                                             <f:facet name="input"><h:inputText value="#{docsExp.documentoAspiranteProceso.observaciones}" disabled="#{!existeDoc}"/></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
                                             <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.validado?'Si':'No'}" /></p:column>
                                             <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
                                             

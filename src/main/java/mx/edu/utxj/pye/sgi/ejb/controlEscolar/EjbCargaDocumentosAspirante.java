@@ -235,4 +235,9 @@ public class EjbCargaDocumentosAspirante {
         }
     }
     
+    public void guardarObservacionesDocumento(DtoDocumentoAspirante dtoDocumentoAspirante) {
+            em.merge(dtoDocumentoAspirante.getDocumentoAspiranteProceso());
+            em.flush();
+    }
+    
 }

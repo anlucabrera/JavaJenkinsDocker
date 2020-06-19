@@ -94,7 +94,7 @@
                                                                 <div class="col-sm-3 col-md-3 col-lg-3">
                                                                     <p:outputLabel style="font-size: large;text-align: right;" value="Ver Documentos" />
                                                                     <br/>
-                                                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" actionListener="#{consultaDocumentosAspiranteEscolares.mostrarDocumentos(asp)}" action="/controlEscolar/se/consultaDocumentosAspirante?faces-redirect=true" target="_blank" title="Consultar documentos." ><i class="fa fa-search" /></p:commandLink>
+                                                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" actionListener="#{consultaDocumentosAspiranteEscolares.mostrarDocumentos(asp)}" action="/controlEscolar/se/consultaDocumentosAspirante?faces-redirect=true" target="_blank" title="Consultar documentos." disabled="#{asp == null}"><i class="fa fa-search" /></p:commandLink>
                                                                 </div>
                                                             </div>
                                                         </div>
