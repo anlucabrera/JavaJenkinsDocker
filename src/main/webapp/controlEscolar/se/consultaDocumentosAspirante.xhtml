@@ -42,12 +42,12 @@
                                                 <p:row>
                                                     <p:column headerText="Opciones" width="150"/>
                                                     <p:column headerText="Documento" width="200" />
-                                                    <p:column headerText="Especificaciones" width="300" />
+                                                    <p:column headerText="Especificaciones" width="350" />
                                                     <p:column headerText="Obligatorio" width="100" />
-                                                    <p:column headerText="Fecha Carga" width="100" />
-                                                    <p:column headerText="Observaciones" width="300" />
+                                                    <p:column headerText="Fecha Carga" width="120" />
+                                                    <p:column headerText="Observaciones" width="350" />
                                                     <p:column headerText="Validado" width="100" />
-                                                    <p:column headerText="Fecha Validación" width="100" />
+                                                    <p:column headerText="Fecha Validación" width="120" />
                                                 </p:row>
                                             </p:columnGroup>
                                             <p:ajax event="cellEdit" listener="#{consultaDocumentosAspiranteEscolares.onCellEdit}"/>
@@ -77,7 +77,7 @@
                                             </p:column>
                                             <p:column style="text-align: center;">
                                                 <p:commandButton actionListener="#{consultaDocumentosAspiranteEscolares.validarDocumento(docsExp)}"
-                                                            class="btn btn-sm #{!docsExp.documentoAspiranteProceso.validado?'btn-info':'btn-danger'}" icon="#{!docsExp.documentoAspiranteProceso.validado?'fa fa-close':'fa fa-check'}"
+                                                            class="btn btn-sm #{!docsExp.documentoAspiranteProceso.validado?'btn-danger':'btn-info'}" icon="#{!docsExp.documentoAspiranteProceso.validado?'fa fa-close':'fa fa-check'}"
                                                             title="#{!docsExp.documentoAspiranteProceso.validado?'Invalidar documento.':'Validar documento.'}" />
                                             </p:column>
                                             <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>

@@ -135,7 +135,6 @@ public class EjbCargaDocumentosAspirante {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<DtoDocumentoAspirante>> getDocumentoAspirante(Aspirante aspirante){
-        System.err.println("getDocumentoAspirante - aspirante " + aspirante);
         try{
             //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
             List<DtoDocumentoAspirante> listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso =:proceso", DocumentoProceso.class)
@@ -196,21 +195,6 @@ public class EjbCargaDocumentosAspirante {
         }
     }
     
-    public ResultadoEJB<Boolean> eliminarDocumentoAspirante(DocumentoAspiranteProceso documentoAspiranteProceso){
-        try{
-            Integer id = documentoAspiranteProceso.getDocumentoAspirante();
-            ServicioArchivos.eliminarArchivo(documentoAspiranteProceso.getRuta());
-            
-             Integer delete = em.createQuery("DELETE FROM DocumentoAspiranteProceso d WHERE d.documentoAspirante =:documento", DocumentoAspiranteProceso.class)
-                .setParameter("documento", documentoAspiranteProceso.getDocumentoAspirante())
-                .executeUpdate();
-            
-            return ResultadoEJB.crearCorrecto(em.find(DocumentoAspiranteProceso.class, id)==null, "Se eliminó correctamente el documento.");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el documento. (EjbCargaDocumentosAspirante.eliminarDocumentoAspirante)", e, null);
-        }
-    }
-    
     /**
      * Permite verificar si existen coinciden los datos ingresados (curp y folio de admsión)
      * @param documento
@@ -246,15 +230,14 @@ public class EjbCargaDocumentosAspirante {
     public void validarDocumento(DocumentoAspiranteProceso documentoAspiranteProceso) throws Throwable {
         Date fechaActual = new Date();
         DocumentoAspiranteProceso docAsp = em.find(DocumentoAspiranteProceso.class, documentoAspiranteProceso.getDocumentoAspirante());
-        docAsp.setFechaValidacion(fechaActual);
-        em.merge(docAsp);
-        
+                
         if (docAsp.getValidado()) {
 
             TypedQuery<DocumentoAspiranteProceso> q1 = em.createQuery("UPDATE DocumentoAspiranteProceso d SET d.validado = false WHERE d.documentoAspirante = :documentoAspirante", DocumentoAspiranteProceso.class);
             q1.setParameter("documentoAspirante", docAsp.getDocumentoAspirante());
             q1.executeUpdate();
             addDetailMessage("Se invalidó el documento seleccionado");
+            docAsp.setFechaValidacion(null);
             
         } else {
 
@@ -262,7 +245,27 @@ public class EjbCargaDocumentosAspirante {
             q.setParameter("documentoAspirante", docAsp.getDocumentoAspirante());
             q.executeUpdate();
             addDetailMessage("Se validó correctamente el documento seleccionado");
+            docAsp.setFechaValidacion(fechaActual);
+        }
+        
+        em.merge(docAsp);
+    }
+    
+    public ResultadoEJB<Integer> eliminarDocumentoAspirante(DocumentoAspiranteProceso documentoAspiranteProceso){
+        try{
+            if(documentoAspiranteProceso.getDocumentoAspirante() == null) return ResultadoEJB.crearErroneo(2, "La clave del permiso no puede ser nula.", Integer.TYPE);
 
+            Integer id = documentoAspiranteProceso.getDocumentoAspirante();
+            ServicioArchivos.eliminarArchivo(documentoAspiranteProceso.getRuta());
+            
+            Integer delete = em.createQuery("DELETE FROM DocumentoAspiranteProceso d WHERE d.documentoAspirante =:documento", DocumentoAspiranteProceso.class)
+                .setParameter("documento", id)
+                .executeUpdate();
+
+            System.err.println("eliminarDocumentoAsp - delete " + delete);
+            return ResultadoEJB.crearCorrecto(delete, "El documento se eliminó correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el documento correctamente. (EjbCargaDocumentosAspirante.eliminarDocumentoAsp)", e, null);
         }
     }
     

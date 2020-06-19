@@ -20,6 +20,7 @@ import javax.inject.Named;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import org.omnifaces.cdi.ViewScoped;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCargaDocumentosAspirante;
@@ -82,12 +83,13 @@ public class CargaArchivosControlador implements Serializable{
     }
     
     public void eliminarDocumento(DtoDocumentoAspirante docsExp){
-        Boolean eliminado = ejbCargaDocumentosAspirante.eliminarDocumentoAspirante(docsExp.getDocumentoAspiranteProceso()).getValor();
-        if(eliminado){ 
-            System.err.println("eliminarDocumento - aspirante " + aspirante);
+        ResultadoEJB<Integer> resEliminar =  ejbCargaDocumentosAspirante.eliminarDocumentoAspirante(docsExp.getDocumentoAspiranteProceso());
+        if(resEliminar.getCorrecto()){
+        if(resEliminar.getValor() == 1){ 
             cargaDocumentosAspirante.mostrarDocumentos(aspirante);
             Ajax.update("frmDocsAsp");
             Messages.addGlobalInfo("El documento se eliminó correctamente.");
+        }else Messages.addGlobalError("El documento no ha podido eliminarse.");
         }else Messages.addGlobalError("El documento no ha podido eliminarse.");
     }
     

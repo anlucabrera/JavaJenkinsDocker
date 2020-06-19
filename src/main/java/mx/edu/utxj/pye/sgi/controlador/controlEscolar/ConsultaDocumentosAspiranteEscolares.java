@@ -94,14 +94,16 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
     }
     
     public void eliminarDocumento(DtoDocumentoAspirante docsExp){
-        Boolean eliminado = ejbCargaDocumentosAspirante.eliminarDocumentoAspirante(docsExp.getDocumentoAspiranteProceso()).getValor();
-        if(eliminado){ 
+        ResultadoEJB<Integer> resEliminar =  ejbCargaDocumentosAspirante.eliminarDocumentoAspirante(docsExp.getDocumentoAspiranteProceso());
+        if(resEliminar.getCorrecto()){
+        if(resEliminar.getValor() == 1){ 
             mostrarDocumentos(aspiranteB);
             Ajax.update("frmDocsAsp");
             Messages.addGlobalInfo("El documento se eliminó correctamente.");
         }else Messages.addGlobalError("El documento no ha podido eliminarse.");
+        }else Messages.addGlobalError("El documento no ha podido eliminarse.");
     }
-    
+ 
     public void onCellEdit(CellEditEvent event) {
         DataTable dataTable = (DataTable) event.getSource();
         DtoDocumentoAspirante registroNew = (DtoDocumentoAspirante) dataTable.getRowData();
