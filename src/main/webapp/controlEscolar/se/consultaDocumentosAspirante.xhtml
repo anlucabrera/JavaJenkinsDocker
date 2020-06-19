@@ -108,7 +108,7 @@
                                              title="#{!docsExp.documentoAspiranteProceso.validado?'Invalidar documento.':'Validar documento.'}" />
                         </p:column>
                         <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
-
+                            
                     </p:dataTable>
                 </h:form>
             </section>
@@ -134,7 +134,7 @@
                                 Cargando archivo espere por favor.<br />
                             </p:blockUI>
                         </center>
-                    </p:dialog>
+            </p:dialog>
         </p:panel>
     </ui:define>
 </ui:composition>
