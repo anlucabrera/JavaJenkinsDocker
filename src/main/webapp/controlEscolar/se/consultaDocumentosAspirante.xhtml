@@ -75,7 +75,11 @@
                                                              <f:facet name="input"><h:inputText value="#{docsExp.documentoAspiranteProceso.observaciones}" disabled="#{!existeDoc}"/></f:facet>
                                                 </p:cellEditor>
                                             </p:column>
-                                            <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.validado?'Si':'No'}" /></p:column>
+                                            <p:column style="text-align: center;">
+                                                <p:commandButton actionListener="#{consultaDocumentosAspiranteEscolares.validarDocumento(docsExp)}"
+                                                            class="btn btn-sm #{!docsExp.documentoAspiranteProceso.validado?'btn-info':'btn-danger'}" icon="#{!docsExp.documentoAspiranteProceso.validado?'fa fa-close':'fa fa-check'}"
+                                                            title="#{!docsExp.documentoAspiranteProceso.validado?'Invalidar documento.':'Validar documento.'}" />
+                                            </p:column>
                                             <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
                                             
                                         </p:dataTable>

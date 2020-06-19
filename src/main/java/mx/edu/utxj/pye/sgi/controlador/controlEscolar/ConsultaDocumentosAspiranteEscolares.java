@@ -108,4 +108,16 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
         ejbCargaDocumentosAspirante.guardarObservacionesDocumento(registroNew);
     }
     
+    public void validarDocumento(DtoDocumentoAspirante docsExp) {
+        try {
+            ejbCargaDocumentosAspirante.validarDocumento(docsExp.getDocumentoAspiranteProceso());
+            mostrarDocumentos(aspiranteB);
+            Ajax.update("frmDocsAsp");
+            Messages.addGlobalInfo("La información se ha actualizado de manera correcta");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ConsultaDocumentosAspiranteEscolares.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
 }

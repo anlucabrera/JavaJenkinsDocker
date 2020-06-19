@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -23,11 +24,13 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
+import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 
 
@@ -238,6 +241,29 @@ public class EjbCargaDocumentosAspirante {
     public void guardarObservacionesDocumento(DtoDocumentoAspirante dtoDocumentoAspirante) {
             em.merge(dtoDocumentoAspirante.getDocumentoAspiranteProceso());
             em.flush();
+    }
+    
+    public void validarDocumento(DocumentoAspiranteProceso documentoAspiranteProceso) throws Throwable {
+        Date fechaActual = new Date();
+        DocumentoAspiranteProceso docAsp = em.find(DocumentoAspiranteProceso.class, documentoAspiranteProceso.getDocumentoAspirante());
+        docAsp.setFechaValidacion(fechaActual);
+        em.merge(docAsp);
+        
+        if (docAsp.getValidado()) {
+
+            TypedQuery<DocumentoAspiranteProceso> q1 = em.createQuery("UPDATE DocumentoAspiranteProceso d SET d.validado = false WHERE d.documentoAspirante = :documentoAspirante", DocumentoAspiranteProceso.class);
+            q1.setParameter("documentoAspirante", docAsp.getDocumentoAspirante());
+            q1.executeUpdate();
+            addDetailMessage("Se invalidó el documento seleccionado");
+            
+        } else {
+
+            TypedQuery<DocumentoAspiranteProceso> q = em.createQuery("UPDATE DocumentoAspiranteProceso d SET d.validado = true WHERE d.documentoAspirante = :documentoAspirante", DocumentoAspiranteProceso.class);
+            q.setParameter("documentoAspirante", docAsp.getDocumentoAspirante());
+            q.executeUpdate();
+            addDetailMessage("Se validó correctamente el documento seleccionado");
+
+        }
     }
     
 }
