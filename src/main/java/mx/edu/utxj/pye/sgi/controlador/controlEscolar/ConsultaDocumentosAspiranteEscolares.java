@@ -8,11 +8,16 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
@@ -20,8 +25,11 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCargaDocumentosAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
+import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
+import org.omnifaces.util.Messages;
 
 
 
@@ -37,8 +45,11 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
     private static final long serialVersionUID = 8523173138860959204L;
     
     @Getter @Setter private Aspirante aspiranteB;
+    @Getter private DtoDocumentoAspirante dtoDocumentoAspirante;
     @Getter @Setter private List<DtoDocumentoAspirante> listaDocumentoAspirantes;
     @EJB private EjbCargaDocumentosAspirante ejbCargaDocumentosAspirante;
+    @Getter @Setter private Part file;
+    @Inject UtilidadesCH utilidadesCH;
     
     public void mostrarDocumentos(Aspirante aspirante){
        aspiranteB = aspirante;
@@ -54,6 +65,39 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
     
     public Boolean consultarExisteDocumento(Documento documento){
         return ejbCargaDocumentosAspirante.consultarDocumento(documento, aspiranteB).getValor();
+    }
+    
+    public void editarDocumento(DtoDocumentoAspirante registro) {
+        dtoDocumentoAspirante = registro;
+    }
+    
+    public void subirDocumento() {
+        try {
+            DocumentoAspiranteProceso nuevoDocumento = new DocumentoAspiranteProceso();
+
+            nuevoDocumento.setAspirante(aspiranteB);
+            nuevoDocumento.setDocumento(dtoDocumentoAspirante.getDocumentoProceso().getDocumento());
+            nuevoDocumento.setRuta(utilidadesCH.agregarDocumentoAspirante(file, aspiranteB, dtoDocumentoAspirante));
+            nuevoDocumento.setFechaCarga(new Date());
+            nuevoDocumento.setObservaciones("Sin observaciones");
+            nuevoDocumento.setValidado(false);
+            nuevoDocumento.setFechaValidacion(null);
+            nuevoDocumento = ejbCargaDocumentosAspirante.guardarDocumentoAspirante(nuevoDocumento).getValor();
+            mostrarDocumentos(aspiranteB);
+            
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ConsultaDocumentosAspiranteEscolares.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void eliminarDocumento(DtoDocumentoAspirante docsExp){
+        Boolean eliminado = ejbCargaDocumentosAspirante.eliminarDocumentoAspirante(docsExp.getDocumentoAspiranteProceso()).getValor();
+        if(eliminado){ 
+            mostrarDocumentos(aspiranteB);
+            Ajax.update("frmDocsAsp");
+            Messages.addGlobalInfo("El documento se eliminó correctamente.");
+        }else Messages.addGlobalError("El documento no ha podido eliminarse.");
     }
     
 }
