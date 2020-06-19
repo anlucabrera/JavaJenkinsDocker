@@ -17,7 +17,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Carga documentos admisión e inscripción
+        Carga documentos para admisión e inscripción
     </ui:define>
     
     <ui:define name="description">
@@ -36,10 +36,11 @@
                                         <p:remoteCommand name="actualizarListaDocs" update="@form:tblDocsExp" />
                                         <p:dataTable id="tblDocsExp" emptyMessage="Sin datos en el periodo seleccionado." value="#{cargaDocumentosAspirante.rol.listaDocumentoAspirante}" var="docsExp"
                                                      resizeMode="expand" tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
-                                                     tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" 
+                                                     tableStyle="vertical-align: middle;" paginator="true" rows="15" rowsPerPageTemplate="15,30,45,60,75" 
                                                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                             <p:columnGroup type="header">
                                                 <p:row>
+                                                    <p:column headerText="Proceso" width="100"/>
                                                     <p:column headerText="Opciones" width="150"/>
                                                     <p:column headerText="Documento" width="200" />
                                                     <p:column headerText="Especificaciones" width="350" />
@@ -51,6 +52,7 @@
                                                 </p:row>
                                             </p:columnGroup>
                                             <c:set var="existeDoc" value="#{cargaArchivosControlador.consultarExisteDocumento(docsExp.documentoProceso.documento)}" />
+                                            <p:column style="text-align: center;" groupRow="true"><h:outputText value="#{docsExp.documentoProceso.proceso}" /></p:column>
                                             <p:column style="text-align: center;">
                                                 <div class="btn-group">
                                                     <p:commandButton icon="fa fa-upload" onclick="PF('modalCargaArchivo').show()" class="btn btn-sm #{existeDoc?'btn-info':'btn-danger'}" actionListener="#{cargaArchivosControlador.editarDocumento(docsExp)}" disabled="#{existeDoc}"/>

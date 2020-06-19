@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import java.io.Serializable;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class DtoDocumentoAspirante implements Serializable{
     @Getter @Setter @NonNull String anioInscripcion;
 
     public DtoDocumentoAspirante() {
-    }
+    } 
 
     
     

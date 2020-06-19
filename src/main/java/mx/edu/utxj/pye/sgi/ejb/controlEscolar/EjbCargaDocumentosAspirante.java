@@ -136,9 +136,11 @@ public class EjbCargaDocumentosAspirante {
      */
     public ResultadoEJB<List<DtoDocumentoAspirante>> getDocumentoAspirante(Aspirante aspirante){
         try{
+            List<String> procesos = Arrays.asList("Admision", "Inscripcion");
+            
             //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
-            List<DtoDocumentoAspirante> listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso =:proceso", DocumentoProceso.class)
-                    .setParameter("proceso", "Inscripción")
+            List<DtoDocumentoAspirante> listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso IN :procesos ORDER BY d.proceso, d.documento.descripcion", DocumentoProceso.class)
+                    .setParameter("procesos", procesos)
                     .getResultStream()
                     .map(doc -> pack(doc, aspirante).getValor())
                     .filter(dto -> dto != null)

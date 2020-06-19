@@ -17,7 +17,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Consulta de Documentos Aspirante
+        Consultar documentos registrados por el aspirante
     </ui:define>
     
     <ui:define name="description">
@@ -36,10 +36,11 @@
                                         <p:remoteCommand name="actualizarListaDocs" update="@form:tblDocsExp" />
                                         <p:dataTable id="tblDocsExp" emptyMessage="Sin datos en el periodo seleccionado." value="#{consultaDocumentosAspiranteEscolares.listaDocumentoAspirantes}" var="docsExp"
                                                      resizeMode="expand" tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" editable="true" editMode="cell"
-                                                     tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" 
+                                                     tableStyle="vertical-align: middle;" paginator="true" rows="15" rowsPerPageTemplate="15,30,45,60,75" 
                                                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                             <p:columnGroup type="header">
                                                 <p:row>
+                                                    <p:column headerText="Proceso" width="100"/>
                                                     <p:column headerText="Opciones" width="150"/>
                                                     <p:column headerText="Documento" width="200" />
                                                     <p:column headerText="Especificaciones" width="350" />
@@ -52,6 +53,7 @@
                                             </p:columnGroup>
                                             <p:ajax event="cellEdit" listener="#{consultaDocumentosAspiranteEscolares.onCellEdit}"/>
                                             <c:set var="existeDoc" value="#{consultaDocumentosAspiranteEscolares.consultarExisteDocumento(docsExp.documentoProceso.documento)}" />
+                                            <p:column style="text-align: center;" groupRow="true"><h:outputText value="#{docsExp.documentoProceso.proceso}" /></p:column>
                                             <p:column style="text-align: center;">
                                                 <div class="btn-group">
                                                     <p:commandButton icon="fa fa-upload" onclick="PF('modalCargaArchivo').show()" class="btn btn-sm #{existeDoc?'btn-info':'btn-danger'}" actionListener="#{consultaDocumentosAspiranteEscolares.editarDocumento(docsExp)}" disabled="#{existeDoc}"/>
