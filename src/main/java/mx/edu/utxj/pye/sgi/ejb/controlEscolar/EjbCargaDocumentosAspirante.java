@@ -132,6 +132,7 @@ public class EjbCargaDocumentosAspirante {
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<DtoDocumentoAspirante>> getDocumentoAspirante(Aspirante aspirante){
+        System.err.println("getDocumentoAspirante - aspirante " + aspirante);
         try{
             //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
             List<DtoDocumentoAspirante> listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso =:proceso", DocumentoProceso.class)

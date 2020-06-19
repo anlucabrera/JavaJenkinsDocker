@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Consulta de Documentos Aspirante
+    </ui:define>
+    
+    <ui:define name="description">
+        
+    </ui:define>
+
+    <ui:define name="body">
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm" styleClass="box box-primary">
+            <section class="content">
+                         <h:form id="frmDocsAsp">
+                                        <p:remoteCommand name="actualizarListaDocs" update="@form:tblDocsExp" />
+                                        <p:dataTable id="tblDocsExp" emptyMessage="Sin datos en el periodo seleccionado." value="#{consultaDocumentosAspiranteEscolares.listaDocumentoAspirantes}" var="docsExp"
+                                                     resizeMode="expand" tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                     tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" 
+                                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column headerText="Opciones" width="150"/>
+                                                    <p:column headerText="Documento" width="200" />
+                                                    <p:column headerText="Especificaciones" width="300" />
+                                                    <p:column headerText="Obligatorio" width="100" />
+                                                    <p:column headerText="Fecha Carga" width="100" />
+                                                    <p:column headerText="Observaciones" width="300" />
+                                                    <p:column headerText="Validado" width="100" />
+                                                    <p:column headerText="Fecha Validación" width="100" />
+                                                </p:row>
+                                            </p:columnGroup>
+                                            <c:set var="existeDoc" value="#{consultaDocumentosAspiranteEscolares.consultarExisteDocumento(docsExp.documentoProceso.documento)}" />
+                                            <p:column style="text-align: center;">
+                                                <div class="btn-group">
+                                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{consultaDocumentosAspiranteEscolares.descargarDocumento(docsExp)}" target="_blank" title="Descargar documento." disabled="#{!existeDoc}"><i class="fa fa-download" /></p:commandLink>
+                                                </div>
+                                            </p:column>
+                                            <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.documento.descripcion}" /></p:column>
+                                            <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.documento.especificaciones}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoProceso.obligatorio?'Si':'No'}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
+                                            <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoAspiranteProceso.observaciones}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.validado?'Si':'No'}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                            
+                                        </p:dataTable>
+                         </h:form>
+            </section>
+        </p:panel>
+    </ui:define>
+</ui:composition>
