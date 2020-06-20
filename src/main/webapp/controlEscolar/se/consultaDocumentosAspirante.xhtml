@@ -105,7 +105,7 @@
                         <p:column style="text-align: center;">
                             <p:commandButton actionListener="#{consultaDocumentosAspiranteEscolares.validarDocumento(docsExp)}"
                                              class="btn btn-sm #{!docsExp.documentoAspiranteProceso.validado?'btn-danger':'btn-info'}" icon="#{!docsExp.documentoAspiranteProceso.validado?'fa fa-close':'fa fa-check'}"
-                                             title="#{!docsExp.documentoAspiranteProceso.validado?'Invalidar documento.':'Validar documento.'}" />
+                                             title="#{!docsExp.documentoAspiranteProceso.validado?'Validar documento.':'Invalidar documento.'}" />
                         </p:column>
                         <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
                             
