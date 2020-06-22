@@ -50,12 +50,14 @@ public class CargaArchivosControlador implements Serializable{
     @Getter @Setter private Part file;
     @Inject UtilidadesCH utilidadesCH;
     @Inject CargaDocumentosAspirante cargaDocumentosAspirante;
+    @Getter private Documento documento;
     
     @EJB private EjbCargaDocumentosAspirante ejbCargaDocumentosAspirante;
     
     @PostConstruct
     public void init() {
         aspirante = cargaDocumentosAspirante.getRol().getAspirante();
+        documento = cargaDocumentosAspirante.getRol().getDocumentoSeleccionado();
     }
     
     public void editarDocumento(DtoDocumentoAspirante registro) {
@@ -100,6 +102,29 @@ public class CargaArchivosControlador implements Serializable{
     
     public Boolean consultarExisteDocumento(Documento documento){
         return ejbCargaDocumentosAspirante.consultarDocumento(documento, aspirante).getValor();
+    }
+    
+    public void subirDocumentoPendiente() {
+        System.err.println("subirDocumentoPendiente - aspirante " + aspirante.getFolioAspirante());
+        System.err.println("subirDocumentoPendiente - documento " + documento.getDescripcion());
+        System.err.println("subirDocumentoPendiente - file " + file);
+        try {
+            DocumentoAspiranteProceso nuevoDocumento = new DocumentoAspiranteProceso();
+
+            nuevoDocumento.setAspirante(aspirante);
+            nuevoDocumento.setDocumento(documento);
+            nuevoDocumento.setRuta(utilidadesCH.agregarDocumentoPendienteAspirante(file, aspirante, documento));
+            nuevoDocumento.setFechaCarga(new Date());
+            nuevoDocumento.setObservaciones("Sin observaciones");
+            nuevoDocumento.setValidado(false);
+            nuevoDocumento.setFechaValidacion(null);
+            nuevoDocumento = ejbCargaDocumentosAspirante.guardarDocumentoAspirante(nuevoDocumento).getValor();
+            cargaDocumentosAspirante.mostrarDocumentos(aspirante);
+            
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(CargaArchivosControlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
    
 }

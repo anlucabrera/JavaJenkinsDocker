@@ -14,7 +14,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
-import javax.servlet.http.Part;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 
 /**
  *
@@ -27,14 +27,17 @@ public class CargaDocumentosRolAspirante {
     /**
      * Representa al evento escolar de registro de fichas
      */
-    @Getter         @NonNull    private     EventoEscolar eventoEscolar;
-    @Getter         @NonNull    private     ProcesosInscripcion procesosInscripcion;
+    @Getter @NonNull private  EventoEscolar eventoEscolar;
+    @Getter @NonNull private  ProcesosInscripcion procesosInscripcion;
     /////////////////////////////////////////////////////
-    @Getter         @Setter     private     String curp;
-    @Getter         @Setter     private     Integer folioAdmision;
-    @Getter         @Setter     private     Boolean validacionCurpFolio;
-    @Getter         @Setter     private     Aspirante aspirante;
-    @Getter         @Setter     private     List<DtoDocumentoAspirante> listaDocumentoAspirante;
+    @Getter @Setter  private  String curp;
+    @Getter @Setter  private  Integer folioAdmision;
+    @Getter @Setter  private  Boolean validacionCurpFolio;
+    @Getter @Setter  private  Aspirante aspirante;
+    @Getter @Setter  private  List<DtoDocumentoAspirante> listaDocumentoAspirante;
+    
+    @Getter @Setter  private  List<Documento> listaDocumentos;
+    @Getter @Setter  private  Documento documentoSeleccionado;
     
     public void setEventoEscolar(EventoEscolar eventoEscolar) {
         this.eventoEscolar = eventoEscolar;
@@ -45,6 +48,5 @@ public class CargaDocumentosRolAspirante {
     public void setProcesosInscripcion(ProcesosInscripcion procesosInscripcion) {
         this.procesosInscripcion = procesosInscripcion;
     }
-    
     
 }

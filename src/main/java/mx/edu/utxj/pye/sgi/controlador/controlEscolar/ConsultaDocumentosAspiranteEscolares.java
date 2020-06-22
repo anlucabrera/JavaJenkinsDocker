@@ -108,18 +108,16 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
         DataTable dataTable = (DataTable) event.getSource();
         DtoDocumentoAspirante registroNew = (DtoDocumentoAspirante) dataTable.getRowData();
         ejbCargaDocumentosAspirante.guardarObservacionesDocumento(registroNew);
+        Messages.addGlobalInfo("Las observaciones se han guardado correctamente.");
     }
     
     public void validarDocumento(DtoDocumentoAspirante docsExp) {
-        try {
-            ejbCargaDocumentosAspirante.validarDocumento(docsExp.getDocumentoAspiranteProceso());
+        ResultadoEJB<DocumentoAspiranteProceso> res =   ejbCargaDocumentosAspirante.validarDocumento(docsExp.getDocumentoAspiranteProceso());
+        if(res.getCorrecto()){
             mostrarDocumentos(aspiranteB);
             Ajax.update("frmDocsAsp");
-            Messages.addGlobalInfo("La información se ha actualizado de manera correcta");
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ConsultaDocumentosAspiranteEscolares.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            Messages.addGlobalInfo("El documento se ha validado o invalidado correctamente.");
+        }else Messages.addGlobalError("El documento no se pudo validar o invalidar.");
     }
     
 }

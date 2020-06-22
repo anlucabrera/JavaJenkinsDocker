@@ -17,7 +17,6 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -29,8 +28,6 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.entity.titulacion.DocumentosExpediente;
-import mx.edu.utxj.pye.sgi.entity.titulacion.ExpedientesTitulacion;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 
 
@@ -53,9 +50,12 @@ public class EjbCargaDocumentosAspirante {
         em = f.getEntityManager();
     }
     
+    
+    /* MÉTODOS UTILIZADOS PARA EL MÓDULO DE ASPIRANTES */
+    
+    
     /**
      * Verifica que el usuario autenticado sea de tipo aspirante
-     *
      * @param tipoUsuarioAu
      * @return
      */
@@ -76,7 +76,7 @@ public class EjbCargaDocumentosAspirante {
     }
 
     /**
-     * Verifica que haya un evento aperturado para el registro de fichas de admision
+     * Verifica que haya un evento aperturado para el registro de fichas de admision ya que la carga de documento está relacionado con el
      *
      * @return
      */
@@ -107,7 +107,7 @@ public class EjbCargaDocumentosAspirante {
     }
     
     /**
-     * Permite verificar si existen coinciden los datos ingresados (curp y folio de admsión)
+     * Permite verificar si existen coinciden los datos ingresados (curp y folio de admisión)
      * @param curp
      * @param folioAdmision
      * @param procesosInscripcion
@@ -186,6 +186,11 @@ public class EjbCargaDocumentosAspirante {
         }
     }
     
+     /**
+     * Permite guardar el documento del aspirante en la base de datos
+     * @param documentoAspiranteProceso
+     * @return Resultado del proceso
+     */
     public ResultadoEJB<DocumentoAspiranteProceso> guardarDocumentoAspirante(DocumentoAspiranteProceso documentoAspiranteProceso){
         try{
             em.persist(documentoAspiranteProceso);
@@ -198,7 +203,7 @@ public class EjbCargaDocumentosAspirante {
     }
     
     /**
-     * Permite verificar si existen coinciden los datos ingresados (curp y folio de admsión)
+     * Permite consultar si el documento ha sido registrado por el aspirante
      * @param documento
      * @param aspirante
      * @return Resultado del proceso
@@ -224,35 +229,70 @@ public class EjbCargaDocumentosAspirante {
         }
     }
     
+     /* MÉTODOS UTILIZADOS PARA EL MÓDULO DE SERVICIOS ESCOLARES */   
+    
+     /**
+     * Permite guardar las observaciones del documento correspondiente
+     * @param dtoDocumentoAspirante
+     * @return Resultado del proceso
+     */
+//    public ResultadoEJB<DocumentoAspiranteProceso> guardarObservacionesDocumento(DtoDocumentoAspirante dtoDocumentoAspirante) {
+//           try {
+//            em.merge(dtoDocumentoAspirante.getDocumentoAspiranteProceso());
+//            em.flush();
+//
+//            return ResultadoEJB.crearCorrecto(dtoDocumentoAspirante.getDocumentoAspiranteProceso(), "Se guardaron las observaciones del documento.");
+//        } catch (Exception e) {
+//            return ResultadoEJB.crearErroneo(1, "No se pudo guardarar las observaciones del documento. (EjbCargaDocumentosAspirante.guardarObservacionesDocumento)", e, null);
+//        }
+//    }
+    
     public void guardarObservacionesDocumento(DtoDocumentoAspirante dtoDocumentoAspirante) {
             em.merge(dtoDocumentoAspirante.getDocumentoAspiranteProceso());
             em.flush();
     }
     
-    public void validarDocumento(DocumentoAspiranteProceso documentoAspiranteProceso) throws Throwable {
-        Date fechaActual = new Date();
-        DocumentoAspiranteProceso docAsp = em.find(DocumentoAspiranteProceso.class, documentoAspiranteProceso.getDocumentoAspirante());
-                
-        if (docAsp.getValidado()) {
-
-            TypedQuery<DocumentoAspiranteProceso> q1 = em.createQuery("UPDATE DocumentoAspiranteProceso d SET d.validado = false WHERE d.documentoAspirante = :documentoAspirante", DocumentoAspiranteProceso.class);
-            q1.setParameter("documentoAspirante", docAsp.getDocumentoAspirante());
-            q1.executeUpdate();
-            addDetailMessage("Se invalidó el documento seleccionado");
-            docAsp.setFechaValidacion(null);
-            
-        } else {
-
-            TypedQuery<DocumentoAspiranteProceso> q = em.createQuery("UPDATE DocumentoAspiranteProceso d SET d.validado = true WHERE d.documentoAspirante = :documentoAspirante", DocumentoAspiranteProceso.class);
-            q.setParameter("documentoAspirante", docAsp.getDocumentoAspirante());
-            q.executeUpdate();
-            addDetailMessage("Se validó correctamente el documento seleccionado");
-            docAsp.setFechaValidacion(fechaActual);
-        }
+     /**
+     * Permite validar o invalidar un documento del expediente del aspirante
+     * @param documentoAspiranteProceso
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DocumentoAspiranteProceso> validarDocumento(DocumentoAspiranteProceso documentoAspiranteProceso) {
         
-        em.merge(docAsp);
+        try{
+            Date fechaActual = new Date();
+            DocumentoAspiranteProceso docAsp = em.find(DocumentoAspiranteProceso.class, documentoAspiranteProceso.getDocumentoAspirante());
+
+            if (docAsp.getValidado()) {
+
+                TypedQuery<DocumentoAspiranteProceso> q1 = em.createQuery("UPDATE DocumentoAspiranteProceso d SET d.validado = false WHERE d.documentoAspirante = :documentoAspirante", DocumentoAspiranteProceso.class);
+                q1.setParameter("documentoAspirante", docAsp.getDocumentoAspirante());
+                q1.executeUpdate();
+                addDetailMessage("Se invalidó el documento seleccionado");
+                docAsp.setFechaValidacion(null);
+
+            } else {
+
+                TypedQuery<DocumentoAspiranteProceso> q = em.createQuery("UPDATE DocumentoAspiranteProceso d SET d.validado = true WHERE d.documentoAspirante = :documentoAspirante", DocumentoAspiranteProceso.class);
+                q.setParameter("documentoAspirante", docAsp.getDocumentoAspirante());
+                q.executeUpdate();
+                addDetailMessage("Se validó correctamente el documento seleccionado");
+                docAsp.setFechaValidacion(fechaActual);
+            }
+
+            em.merge(docAsp);
+            
+            return ResultadoEJB.crearCorrecto(docAsp, "Se guardó correctamente el documento.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo guardar el documento. (EjbCargaDocumentosAspirante.guardarDocumentoAspirante)", e, null);
+        }
     }
     
+     /**
+     * Permite eliminar un documento del expediente del aspirante
+     * @param documentoAspiranteProceso
+     * @return Resultado del proceso
+     */
     public ResultadoEJB<Integer> eliminarDocumentoAspirante(DocumentoAspiranteProceso documentoAspiranteProceso){
         try{
             if(documentoAspiranteProceso.getDocumentoAspirante() == null) return ResultadoEJB.crearErroneo(2, "La clave del permiso no puede ser nula.", Integer.TYPE);
@@ -264,11 +304,49 @@ public class EjbCargaDocumentosAspirante {
                 .setParameter("documento", id)
                 .executeUpdate();
 
-            System.err.println("eliminarDocumentoAsp - delete " + delete);
             return ResultadoEJB.crearCorrecto(delete, "El documento se eliminó correctamente.");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el documento correctamente. (EjbCargaDocumentosAspirante.eliminarDocumentoAsp)", e, null);
         }
     }
+    
+    /**
+     * Permite obtener la lista de documento que no ha cargado el aspirante
+     * @param aspirante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Documento>> getDocumentosPendientesAspirante(Aspirante aspirante){
+        try{
+            List<String> procesos = Arrays.asList("Admision", "Inscripcion");
+            
+            //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
+            List<DocumentoProceso> documentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso IN :procesos", DocumentoProceso.class)
+                    .setParameter("procesos", procesos)
+                    .getResultList();
+            
+            List<Documento> listaDocumentosPendientes = Arrays.asList();
+            
+            documentos.forEach(l -> {
+                    Documento documento = em.find(Documento.class, l.getDocumento().getDocumento());
+                    DocumentoAspiranteProceso documentosAspirante = em.createQuery("SELECT da FROM DocumentoAspiranteProceso da WHERE da.aspirante =:aspirante AND da.documento =:documento", DocumentoAspiranteProceso.class)
+                            .setParameter("documento", documento)
+                            .setParameter("aspirante", aspirante)
+                            .getSingleResult();
+                    
+                    System.err.println("getDocumentosPendientesAspirante - documento " + documento.getDescripcion() + " valorConsulta " + documentosAspirante);
+                    
+                    if(documentosAspirante == null){
+                        listaDocumentosPendientes.add(documento);
+                    }
+
+            });
+             System.err.println("getDocumentosPendientesAspirante - lista " + listaDocumentosPendientes.size());
+            
+            return ResultadoEJB.crearCorrecto(listaDocumentosPendientes, "Lista de documentos por aspirante.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de documentos por aspirante. (EjbCargaDocumentosAspirante.getDocumentoAspirante)", e, null);
+        }
+    }
+    
     
 }

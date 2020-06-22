@@ -76,7 +76,6 @@
                                 <p:column headerText="Fecha Validación" width="120" />
                             </p:row>
                         </p:columnGroup>
-                        <p:ajax event="cellEdit" listener="#{consultaDocumentosAspiranteEscolares.onCellEdit}"/>
                         <c:set var="existeDoc" value="#{consultaDocumentosAspiranteEscolares.consultarExisteDocumento(docsExp.documentoProceso.documento)}" />
                         <p:column style="text-align: center;" groupRow="true"><h:outputText value="#{docsExp.documentoProceso.proceso}" /></p:column>
                         <p:column style="text-align: center;">
@@ -96,6 +95,7 @@
                         <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.documento.especificaciones}" /></p:column>
                         <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoProceso.obligatorio?'Si':'No'}" /></p:column>
                         <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
+                        <p:ajax event="cellEdit" listener="#{consultaDocumentosAspiranteEscolares.onCellEdit}"/>
                         <p:column style="text-align: justify;">
                             <p:cellEditor>
                                 <f:facet name="output"><h:outputText value="#{docsExp.documentoAspiranteProceso.observaciones}"/></f:facet>

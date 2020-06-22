@@ -16,7 +16,6 @@ import com.itextpdf.text.pdf.PdfStamper;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 
-import com.sun.org.apache.regexp.internal.RE;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.pye2.*;
@@ -387,27 +386,27 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
 
         DocumentoAspirante documentoAspirante = new DocumentoAspirante();
-//        if(aspirante.getDocumentoAspirante() == null){
-//            documentoAspirante.setAspirante(aspirante.getIdAspirante());
-//            documentoAspirante.setEvidenciaCurp(aspirante.getIdPersona().getUrlCurp());
-//            if(tipoRequisito.equals("ActaNacimiento")){
-//                documentoAspirante.setEvidenciaActaNacimiento(rutaRelativa);
-//            }
-//            if(tipoRequisito.equals("HistorialAcademico")){
-//                documentoAspirante.setEvidenciaHistorialAcademico(rutaRelativa);
-//            }
-//            em.persist(documentoAspirante);
-//        }else{
-//            documentoAspirante = aspirante.getDocumentoAspirante();
-//            if(tipoRequisito.equals("ActaNacimiento")){
-//                documentoAspirante.setEvidenciaActaNacimiento(rutaRelativa);
-//            }
-//            if(tipoRequisito.equals("HistorialAcademico")){
-//                documentoAspirante.setEvidenciaHistorialAcademico(rutaRelativa);
-//            }
-//            em.merge(documentoAspirante);
-//            facadeCE.flush();
-//        }
+        if(aspirante.getDocumentoAspirante() == null){
+            documentoAspirante.setAspirante(aspirante.getIdAspirante());
+            documentoAspirante.setEvidenciaCurp(aspirante.getIdPersona().getUrlCurp());
+            if(tipoRequisito.equals("ActaNacimiento")){
+                documentoAspirante.setEvidenciaActaNacimiento(rutaRelativa);
+            }
+            if(tipoRequisito.equals("HistorialAcademico")){
+                documentoAspirante.setEvidenciaHistorialAcademico(rutaRelativa);
+            }
+            em.persist(documentoAspirante);
+        }else{
+            documentoAspirante = aspirante.getDocumentoAspirante();
+            if(tipoRequisito.equals("ActaNacimiento")){
+                documentoAspirante.setEvidenciaActaNacimiento(rutaRelativa);
+            }
+            if(tipoRequisito.equals("HistorialAcademico")){
+                documentoAspirante.setEvidenciaHistorialAcademico(rutaRelativa);
+            }
+            em.merge(documentoAspirante);
+            facadeCE.flush();
+        }
 
         
         return documentoAspirante;

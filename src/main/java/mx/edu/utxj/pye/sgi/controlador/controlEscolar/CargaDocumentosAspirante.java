@@ -1,21 +1,16 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
-import com.github.adminfaces.starter.infra.model.Filter;
-import java.util.Collections;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
-import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.CargaDocumentosRolAspirante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCargaDocumentosAspirante;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
-import org.omnifaces.cdi.ViewScoped;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -25,24 +20,16 @@ import java.util.List;
 import java.util.Map;
 import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.util.Ajax;
-import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
-import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-import mx.edu.utxj.pye.sgi.funcional.Guardable;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Faces;
 
@@ -139,10 +126,26 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
         if(res.getCorrecto()){
             rol.setListaDocumentoAspirante(res.getValor());
             Ajax.update("frmDocsAsp");
+//            listarDocumentosPendientes(aspirante);
         }else mostrarMensajeResultadoEJB(res);  
        
     }
-
+    
+     public void listarDocumentosPendientes(Aspirante aspirante){
+        ResultadoEJB<List<Documento>> res = ejb.getDocumentosPendientesAspirante(aspirante);
+        if(res.getCorrecto()){
+            rol.setListaDocumentos(res.getValor());
+            rol.setDocumentoSeleccionado(rol.getListaDocumentos().get(0));
+            Ajax.update("frmDocExp");
+        }else mostrarMensajeResultadoEJB(res);  
+       
+    }
+   
+    public void cambiarDocumento(ValueChangeEvent e){
+       rol.setDocumentoSeleccionado((Documento)e.getNewValue());
+       Ajax.update("frmDocExp");
+    }
+    
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
         String valor = "carga documentos aspirante";
