@@ -95,7 +95,7 @@
                         <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.documento.especificaciones}" /></p:column>
                         <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoProceso.obligatorio?'Si':'No'}" /></p:column>
                         <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
-                        <p:ajax event="cellEdit" listener="#{consultaDocumentosAspiranteEscolares.onCellEdit}"/>
+                        <p:ajax event="cellEdit" listener="#{consultaDocumentosAspiranteEscolares.onCellEditObservaciones}" update="@form:tblDocsExp"/>
                         <p:column style="text-align: justify;">
                             <p:cellEditor>
                                 <f:facet name="output"><h:outputText value="#{docsExp.documentoAspiranteProceso.observaciones}"/></f:facet>

@@ -119,5 +119,5 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
             Messages.addGlobalInfo("El documento se ha validado o invalidado correctamente.");
         }else Messages.addGlobalError("El documento no se pudo validar o invalidar.");
     }
-    
+ 
 }
