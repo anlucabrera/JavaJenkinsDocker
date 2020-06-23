@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "permisos_captura_extemporanea_grupal", catalog = "control_escolar", schema = "")
@@ -40,7 +40,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByFechaInicio", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.fechaInicio = :fechaInicio")
     , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByFechaFin", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.fechaFin = :fechaFin")
     , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByPersonalGrabaPermiso", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.personalGrabaPermiso = :personalGrabaPermiso")
-    , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByFechaGrabaPermiso", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.fechaGrabaPermiso = :fechaGrabaPermiso")})
+    , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByFechaGrabaPermiso", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.fechaGrabaPermiso = :fechaGrabaPermiso")
+    , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByTipoApertura", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.tipoApertura = :tipoApertura")
+    , @NamedQuery(name = "PermisosCapturaExtemporaneaGrupal.findByValidada", query = "SELECT p FROM PermisosCapturaExtemporaneaGrupal p WHERE p.validada = :validada")})
 public class PermisosCapturaExtemporaneaGrupal implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -106,15 +108,13 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
         this.permisoGrupal = permisoGrupal;
     }
 
-    public PermisosCapturaExtemporaneaGrupal(Integer permisoGrupal, int periodo, int docente, String tipoEvaluacion, Date fechaInicio, Date fechaFin, int personalGrabaPermiso, Date fechaGrabaPermiso, String tipoApertura, int validada) {
+    public PermisosCapturaExtemporaneaGrupal(Integer permisoGrupal, int periodo, int docente, String tipoEvaluacion, Date fechaInicio, Date fechaFin, String tipoApertura, int validada) {
         this.permisoGrupal = permisoGrupal;
         this.periodo = periodo;
         this.docente = docente;
         this.tipoEvaluacion = tipoEvaluacion;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
-        this.personalGrabaPermiso = personalGrabaPermiso;
-        this.fechaGrabaPermiso = fechaGrabaPermiso;
         this.tipoApertura = tipoApertura;
         this.validada = validada;
     }
@@ -167,11 +167,11 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
         this.fechaFin = fechaFin;
     }
 
-    public int getPersonalGrabaPermiso() {
+    public Integer getPersonalGrabaPermiso() {
         return personalGrabaPermiso;
     }
 
-    public void setPersonalGrabaPermiso(int personalGrabaPermiso) {
+    public void setPersonalGrabaPermiso(Integer personalGrabaPermiso) {
         this.personalGrabaPermiso = personalGrabaPermiso;
     }
 
@@ -182,7 +182,7 @@ public class PermisosCapturaExtemporaneaGrupal implements Serializable {
     public void setFechaGrabaPermiso(Date fechaGrabaPermiso) {
         this.fechaGrabaPermiso = fechaGrabaPermiso;
     }
-    
+
     public String getTipoApertura() {
         return tipoApertura;
     }

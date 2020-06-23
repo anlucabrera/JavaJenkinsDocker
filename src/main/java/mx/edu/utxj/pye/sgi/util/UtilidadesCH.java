@@ -12,12 +12,15 @@ import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.controladores.ch.CvEducacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 
 @Named
 @ViewScoped
@@ -230,4 +233,40 @@ public class UtilidadesCH implements Serializable {
             return "";
         }
     }
+    
+     public String agregarDocumentoAspirante(Part file, Aspirante aspirante, DtoDocumentoAspirante docsExp) {
+        String ruta = "";
+        if (file == null) {
+            return null;
+        }
+        
+        ruta = carga.subirDocumentoAspirante(file, docsExp.getDocumentoProceso().getDocumento().getNomenclatura(), new File(docsExp.getAnioInscripcion().concat(File.separator).concat(Integer.toString(aspirante.getFolioAspirante())).concat(File.separator).concat(docsExp.getDocumentoProceso().getProceso())));
+        
+        if (!"Error: No se pudo leer el archivo".equals(ruta)) {
+            Messages.addGlobalInfo("El documento se ha guardado correctamente.");
+            return ruta;
+        } else {
+            Messages.addGlobalInfo("El documento no se ha podido guardar.");
+            return "";
+        }
+    }
+     
+    public String agregarDocumentoPendienteAspirante(Part file, Aspirante aspirante, Documento documento) {
+        String ruta = "";
+        if (file == null) {
+            return null;
+        }
+        String anio="2020";
+        
+        ruta = carga.subirDocumentoAspirante(file, documento.getNomenclatura(), new File(anio.concat(File.separator).concat(Integer.toString(aspirante.getFolioAspirante())).concat(File.separator).concat("Inscripcion")));
+        
+        if (!"Error: No se pudo leer el archivo".equals(ruta)) {
+            Messages.addGlobalInfo("El documento se ha guardado correctamente.");
+            return ruta;
+        } else {
+            Messages.addGlobalInfo("El documento no se ha podido guardar.");
+            return "";
+        }
+    }
+     
 }

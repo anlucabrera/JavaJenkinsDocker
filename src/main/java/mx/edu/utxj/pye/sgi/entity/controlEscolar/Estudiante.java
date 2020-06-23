@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "estudiante", catalog = "control_escolar", schema = "")
@@ -78,7 +78,7 @@ public class Estudiante implements Serializable {
     private Integer trabajadorInscribe;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 51)
     @Column(name = "tipo_registro")
     private String tipoRegistro;
     @ManyToMany(mappedBy = "estudianteList")
@@ -87,6 +87,8 @@ public class Estudiante implements Serializable {
     private List<AsesoriasEstudiantes> asesoriasEstudiantesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
     private List<Calificacion> calificacionList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
     @OneToMany(mappedBy = "estudiante")
     private List<Asistenciasacademicas> asistenciasacademicasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
@@ -126,8 +128,6 @@ public class Estudiante implements Serializable {
     private List<TutoriasGrupales> tutoriasGrupalesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<ParticipantesTutoria> participantesTutoriaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
-    private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
 
     public Estudiante() {
     }
@@ -234,6 +234,15 @@ public class Estudiante implements Serializable {
 
     public void setCalificacionList(List<Calificacion> calificacionList) {
         this.calificacionList = calificacionList;
+    }
+
+    @XmlTransient
+    public List<PermisosCapturaExtemporaneaEstudiante> getPermisosCapturaExtemporaneaEstudianteList() {
+        return permisosCapturaExtemporaneaEstudianteList;
+    }
+
+    public void setPermisosCapturaExtemporaneaEstudianteList(List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList) {
+        this.permisosCapturaExtemporaneaEstudianteList = permisosCapturaExtemporaneaEstudianteList;
     }
 
     @XmlTransient
@@ -394,15 +403,6 @@ public class Estudiante implements Serializable {
         this.participantesTutoriaList = participantesTutoriaList;
     }
 
-    @XmlTransient
-    public List<PermisosCapturaExtemporaneaEstudiante> getPermisosCapturaExtemporaneaEstudianteList() {
-        return permisosCapturaExtemporaneaEstudianteList;
-    }
-
-    public void setPermisosCapturaExtemporaneaEstudianteList(List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList) {
-        this.permisosCapturaExtemporaneaEstudianteList = permisosCapturaExtemporaneaEstudianteList;
-    }
-    
     @Override
     public int hashCode() {
         int hash = 0;

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Consultar documentos registrados por el aspirante
+    </ui:define>
+    
+    <ui:define name="description">
+        
+    </ui:define>
+
+    <ui:define name="body">
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm" styleClass="box box-primary">
+            <section class="content">
+                <br/>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-6">
+                        <strong>Nombre</strong>
+                        <p class="text-muted">
+                           #{consultaDocumentosAspiranteEscolares.aspiranteB.idPersona.nombre} #{consultaDocumentosAspiranteEscolares.aspiranteB.idPersona.apellidoPaterno} #{consultaDocumentosAspiranteEscolares.aspiranteB.idPersona.apellidoMaterno}
+                        </p>
+                        <hr/>
+                    </div>
+
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <strong>CURP</strong>
+                        <p class="text-muted">
+                           #{consultaDocumentosAspiranteEscolares.aspiranteB.idPersona.curp}
+                        </p>
+                        <hr/>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-lg-3">
+                        <strong>Folio de Aspirante</strong>
+                        <p class="text-muted">
+                            #{consultaDocumentosAspiranteEscolares.aspiranteB.folioAspirante}
+                        </p>
+                        <hr/>
+                    </div>
+                </div>
+                <h:form id="frmDocsAsp">
+                    <p:remoteCommand name="actualizarListaDocs" update="@form:tblDocsExp" />
+                    <p:dataTable id="tblDocsExp" emptyMessage="Sin datos en el periodo seleccionado." value="#{consultaDocumentosAspiranteEscolares.listaDocumentoAspirantes}" var="docsExp"
+                                 resizeMode="expand" tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" editable="true" editMode="cell"
+                                 tableStyle="vertical-align: middle;" paginator="true" rows="15" rowsPerPageTemplate="15,30,45,60,75" 
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                        <p:columnGroup type="header">
+                            <p:row>
+                                <p:column headerText="Proceso" width="100"/>
+                                <p:column headerText="Opciones" width="150"/>
+                                <p:column headerText="Documento" width="200" />
+                                <p:column headerText="Especificaciones" width="350" />
+                                <p:column headerText="Obligatorio" width="100" />
+                                <p:column headerText="Fecha Carga" width="120" />
+                                <p:column headerText="Observaciones" width="350" />
+                                <p:column headerText="Validado" width="100" />
+                                <p:column headerText="Fecha Validación" width="120" />
+                            </p:row>
+                        </p:columnGroup>
+                        <c:set var="existeDoc" value="#{consultaDocumentosAspiranteEscolares.consultarExisteDocumento(docsExp.documentoProceso.documento)}" />
+                        <p:column style="text-align: center;" groupRow="true"><h:outputText value="#{docsExp.documentoProceso.proceso}" /></p:column>
+                        <p:column style="text-align: center;">
+                            <div class="btn-group">
+                                <p:commandButton icon="fa fa-upload" onclick="PF('modalCargaArchivo').show()" class="btn btn-sm #{existeDoc?'btn-info':'btn-danger'}" actionListener="#{consultaDocumentosAspiranteEscolares.editarDocumento(docsExp)}" disabled="#{existeDoc}"/>
+                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{consultaDocumentosAspiranteEscolares.descargarDocumento(docsExp)}" target="_blank" title="Descargar documento." disabled="#{!existeDoc}"><i class="fa fa-download" /></p:commandLink>
+                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{consultaDocumentosAspiranteEscolares.eliminarDocumento(docsExp)}" onsuccess="actualizarListaDocs();" title="Eliminar documento." disabled="#{!existeDoc}">
+                                    <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento #{caster.rutaToArchivoNombre(docsExp.documentoAspiranteProceso.ruta)}?" icon="ui-icon-alert"/>
+                                </p:commandButton>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                                </p:confirmDialog> 
+                            </div>
+                        </p:column>
+                        <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.documento.descripcion}" /></p:column>
+                        <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.documento.especificaciones}" /></p:column>
+                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoProceso.obligatorio?'Si':'No'}" /></p:column>
+                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
+                        <p:ajax event="cellEdit" listener="#{consultaDocumentosAspiranteEscolares.onCellEdit}"/>
+                        <p:column style="text-align: justify;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{docsExp.documentoAspiranteProceso.observaciones}"/></f:facet>
+                                <f:facet name="input"><h:inputText value="#{docsExp.documentoAspiranteProceso.observaciones}" disabled="#{!existeDoc}"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="text-align: center;">
+                            <p:commandButton actionListener="#{consultaDocumentosAspiranteEscolares.validarDocumento(docsExp)}"
+                                             class="btn btn-sm #{!docsExp.documentoAspiranteProceso.validado?'btn-danger':'btn-info'}" icon="#{!docsExp.documentoAspiranteProceso.validado?'fa fa-close':'fa fa-check'}"
+                                             title="#{!docsExp.documentoAspiranteProceso.validado?'Validar documento.':'Invalidar documento.'}" />
+                        </p:column>
+                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                            
+                    </p:dataTable>
+                </h:form>
+            </section>
+            <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                        <center>
+                            <h:form id="formularioContenedor" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <o:inputFile id="file" value="#{consultaDocumentosAspiranteEscolares.file}" 
+                                                     accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG o documentos PDF." 
+                                                     maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." 
+                                                     required="true" requiredMessage="Debe elegir un archivo." >
+                                        </o:inputFile>
+                                        <p:messages for="file" ><p:autoUpdate/></p:messages>
+                                    </div>
+                                    <p:separator />
+                                    <div class="col-md-12">
+                                        <h:commandButton id="btnuploadFile" value="Subir archivo" class="btn btn-primary" action="#{consultaDocumentosAspiranteEscolares.subirDocumento()}" />
+                                    </div>
+                                </div>
+                            </h:form>
+                            <p:blockUI block="formularioContenedor" widgetVar="bloqueoCargaFile" trigger="formularioContenedor:btnuploadFile">
+                                Cargando archivo espere por favor.<br />
+                            </p:blockUI>
+                        </center>
+            </p:dialog>
+        </p:panel>
+    </ui:define>
+</ui:composition>

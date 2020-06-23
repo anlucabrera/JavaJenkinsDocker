@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "calificacion_nivelacion", catalog = "control_escolar", schema = "")
@@ -39,15 +39,15 @@ public class CalificacionNivelacion implements Serializable {
     @NotNull
     @Column(name = "valor")
     private double valor;
-    @JoinColumn(name = "indicador", referencedColumnName = "indicador")
-    @ManyToOne(optional = false)
-    private Indicador indicador;
     @JoinColumn(name = "carga", referencedColumnName = "carga", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private CargaAcademica cargaAcademica;
     @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Estudiante estudiante;
+    @JoinColumn(name = "indicador", referencedColumnName = "indicador")
+    @ManyToOne(optional = false)
+    private Indicador indicador;
 
     public CalificacionNivelacion() {
     }
@@ -81,14 +81,6 @@ public class CalificacionNivelacion implements Serializable {
         this.valor = valor;
     }
 
-    public Indicador getIndicador() {
-        return indicador;
-    }
-
-    public void setIndicador(Indicador indicador) {
-        this.indicador = indicador;
-    }
-
     public CargaAcademica getCargaAcademica() {
         return cargaAcademica;
     }
@@ -103,6 +95,14 @@ public class CalificacionNivelacion implements Serializable {
 
     public void setEstudiante(Estudiante estudiante) {
         this.estudiante = estudiante;
+    }
+
+    public Indicador getIndicador() {
+        return indicador;
+    }
+
+    public void setIndicador(Indicador indicador) {
+        this.indicador = indicador;
     }
 
     @Override
