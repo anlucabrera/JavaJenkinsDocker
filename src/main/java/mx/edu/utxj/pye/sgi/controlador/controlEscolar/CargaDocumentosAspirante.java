@@ -24,6 +24,7 @@ import org.omnifaces.util.Ajax;
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
+import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
@@ -126,13 +127,14 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
         if(res.getCorrecto()){
             rol.setListaDocumentoAspirante(res.getValor());
             Ajax.update("frmDocsAsp");
-//            listarDocumentosPendientes(aspirante);
+            rol.setListaDocumentosPendientes(rol.getListaDocumentoAspirante().stream().filter(x-> x.getDocumentoAspiranteProceso().getDocumentoAspirante()==null).collect(Collectors.toList()));
+            listarDocumentosPendientes();
         }else mostrarMensajeResultadoEJB(res);  
        
     }
     
-     public void listarDocumentosPendientes(Aspirante aspirante){
-        ResultadoEJB<List<Documento>> res = ejb.getDocumentosPendientesAspirante(aspirante);
+     public void listarDocumentosPendientes(){
+        ResultadoEJB<List<Documento>> res = ejb.getDocumentosPendientesAspirante(rol.getListaDocumentosPendientes());
         if(res.getCorrecto()){
             rol.setListaDocumentos(res.getValor());
             rol.setDocumentoSeleccionado(rol.getListaDocumentos().get(0));

@@ -13,6 +13,7 @@
         <ui:param name="renderBreadCrumb" value="false"/>
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
         <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        <h:outputScript library="js" name="dialogs.js"/>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -81,6 +82,8 @@
                         <p:column style="text-align: center;">
                             <div class="btn-group">
                                 <p:commandButton icon="fa fa-upload" onclick="PF('modalCargaArchivo').show()" class="btn btn-sm #{existeDoc?'btn-info':'btn-danger'}" actionListener="#{consultaDocumentosAspiranteEscolares.editarDocumento(docsExp)}" disabled="#{existeDoc}"/>
+                                <p:commandButton actionListener="#{consultaDocumentosAspiranteEscolares.editarObservaciones(docsExp)}" class="btn btn-sm btn-warning" 
+                                                icon="fa fa-edit" title="Editar observaciones" disabled="#{!existeDoc}"/>
                                 <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{consultaDocumentosAspiranteEscolares.descargarDocumento(docsExp)}" target="_blank" title="Descargar documento." disabled="#{!existeDoc}"><i class="fa fa-download" /></p:commandLink>
                                 <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{consultaDocumentosAspiranteEscolares.eliminarDocumento(docsExp)}" onsuccess="actualizarListaDocs();" title="Eliminar documento." disabled="#{!existeDoc}">
                                     <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento #{caster.rutaToArchivoNombre(docsExp.documentoAspiranteProceso.ruta)}?" icon="ui-icon-alert"/>
@@ -95,13 +98,12 @@
                         <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.documento.especificaciones}" /></p:column>
                         <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoProceso.obligatorio?'Si':'No'}" /></p:column>
                         <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoAspiranteProceso.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
-                        <p:ajax event="cellEdit" listener="#{consultaDocumentosAspiranteEscolares.onCellEdit}"/>
-                        <p:column style="text-align: justify;">
-                            <p:cellEditor>
-                                <f:facet name="output"><h:outputText value="#{docsExp.documentoAspiranteProceso.observaciones}"/></f:facet>
-                                <f:facet name="input"><h:inputText value="#{docsExp.documentoAspiranteProceso.observaciones}" disabled="#{!existeDoc}"/></f:facet>
-                            </p:cellEditor>
-                        </p:column>
+<!--                        <p:ajax event="cellEdit" listener="# {consultaDocumentosAspiranteEscolares.onCellEdit}" update="@form:tblDocsExp"/>-->
+                        <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoAspiranteProceso.observaciones}"/></p:column>
+<!--                        <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="# {docsExp.documentoAspiranteProceso.observaciones}"/></f:facet>
+                                <f:facet name="input"><h:inputText value="# {docsExp.documentoAspiranteProceso.observaciones}" disabled="# {!existeDoc}"/></f:facet>
+                            </p:cellEditor>-->
                         <p:column style="text-align: center;">
                             <p:commandButton actionListener="#{consultaDocumentosAspiranteEscolares.validarDocumento(docsExp)}"
                                              class="btn btn-sm #{!docsExp.documentoAspiranteProceso.validado?'btn-danger':'btn-info'}" icon="#{!docsExp.documentoAspiranteProceso.validado?'fa fa-close':'fa fa-check'}"
@@ -135,6 +137,52 @@
                             </p:blockUI>
                         </center>
             </p:dialog>
+             <!--  Modal Editar Observaciones -->
+             <p:dialog id="modalEditarObservaciones" 
+                       widgetVar="modalEditarObservaciones" 
+                       width="700" 
+                       height="auto"  
+                       closeOnEscape="true" 
+                       visible="#{consultaDocumentosAspiranteEscolares.forzarAperturaDialogo}"
+                       showEffect="fade" 
+                       hideEffect="fade" 
+                       modal="true" 
+                       draggable="true" 
+                       header="Editar observaciones" 
+                       onHide="actualizarListaDocs();"
+                       styleClass="panel panel-primary" 
+                       responsive="true" 
+                       resizable="false" 
+                       maximizable="false">
+
+                 <h:form id="frmModalEditarObservaciones" >
+                     <div class="col-sm-12 col-md-12 col-lg-12">
+                         <br/>
+                     </div>
+                     <div class="col-sm-12 col-md-12 col-lg-12">
+                         <div class="ui-material">
+                             <p:outputLabel value="Observaciones del documento" for="observacionesDocumento" style="font-weight: bold; font-size: 14px;"/>
+                             <p:inputTextarea id="observacionesDocumento" onkeyup="contarCaracteresObservaciones()" value="#{consultaDocumentosAspiranteEscolares.observaciones}" maxlength="500" style="width: 650px;"/>
+                             <p:message for="observacionesDocumento" />
+                         </div>
+                     </div>
+                     <div class="col-sm-12 col-md-12 col-lg-12">
+                         <center><p:outputLabel value="Caracteres restantes:" style="font-weight: normal;"/><p:inputText id="txtCaracteresRestantes" value="500" disabled="true" style="background-color: white; border-color: white; color:red;"/></center>
+                     </div>
+                     <div class="col-sm-12 col-md-12 col-lg-12">
+                         <br/>
+                         <br/>
+                     </div>
+                     <div class="col-sm-12 col-md-12 col-lg-12">
+                         <center>
+                             <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{consultaDocumentosAspiranteEscolares.guardarObservaciones()}" icon="fa fa-pencil-square-o" class="btn-primary" onclick="PF('bloqueoCargaFile').show();PF('modalEditarObservaciones').hide()"/>
+                         </center> 
+                     </div>
+                 </h:form>
+                 <p:blockUI block="frmModalEditarObservaciones" widgetVar="bloqueoCargaFile">
+                     Cargando espere por favor.<br />
+                 </p:blockUI>
+             </p:dialog>
         </p:panel>
     </ui:define>
 </ui:composition>

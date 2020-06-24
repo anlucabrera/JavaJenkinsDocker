@@ -236,21 +236,23 @@ public class EjbCargaDocumentosAspirante {
      * @param dtoDocumentoAspirante
      * @return Resultado del proceso
      */
-//    public ResultadoEJB<DocumentoAspiranteProceso> guardarObservacionesDocumento(DtoDocumentoAspirante dtoDocumentoAspirante) {
-//           try {
+    public ResultadoEJB<DocumentoAspiranteProceso> guardarObservacionesDocumento(DtoDocumentoAspirante dtoDocumentoAspirante) {
+        try {
+            
+            DocumentoAspiranteProceso documentoAspiranteProceso = dtoDocumentoAspirante.getDocumentoAspiranteProceso();
+            documentoAspiranteProceso.setObservaciones(dtoDocumentoAspirante.getDocumentoAspiranteProceso().getObservaciones());
+            em.merge(documentoAspiranteProceso);
+
+            return ResultadoEJB.crearCorrecto(documentoAspiranteProceso, "Se guardaron las observaciones del documento.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo guardarar las observaciones del documento. (EjbCargaDocumentosAspirante.guardarObservacionesDocumento)", e, null);
+        }
+    }
+    
+//    public void guardarObservacionesDocumento(DtoDocumentoAspirante dtoDocumentoAspirante) {
 //            em.merge(dtoDocumentoAspirante.getDocumentoAspiranteProceso());
 //            em.flush();
-//
-//            return ResultadoEJB.crearCorrecto(dtoDocumentoAspirante.getDocumentoAspiranteProceso(), "Se guardaron las observaciones del documento.");
-//        } catch (Exception e) {
-//            return ResultadoEJB.crearErroneo(1, "No se pudo guardarar las observaciones del documento. (EjbCargaDocumentosAspirante.guardarObservacionesDocumento)", e, null);
-//        }
 //    }
-    
-    public void guardarObservacionesDocumento(DtoDocumentoAspirante dtoDocumentoAspirante) {
-            em.merge(dtoDocumentoAspirante.getDocumentoAspiranteProceso());
-            em.flush();
-    }
     
      /**
      * Permite validar o invalidar un documento del expediente del aspirante
@@ -311,42 +313,61 @@ public class EjbCargaDocumentosAspirante {
     }
     
     /**
-     * Permite obtener la lista de documento que no ha cargado el aspirante
-     * @param aspirante
+     * Permite obtener la lista de documentos que no ha cargado el aspirante
+     * @param listaDocumentosPendientes
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Documento>> getDocumentosPendientesAspirante(Aspirante aspirante){
+    public ResultadoEJB<List<Documento>> getDocumentosPendientesAspirante(List<DtoDocumentoAspirante> listaDocumentosPendientes){
         try{
-            List<String> procesos = Arrays.asList("Admision", "Inscripcion");
+ 
+             List<DocumentoProceso> listaDocumentosProceso = listaDocumentosPendientes.stream().map(DtoDocumentoAspirante::getDocumentoProceso).collect(Collectors.toList());
+             
+             List<Documento> listaDocumentos = listaDocumentosProceso.stream().map(DocumentoProceso::getDocumento).collect(Collectors.toList());
             
-            //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
-            List<DocumentoProceso> documentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso IN :procesos", DocumentoProceso.class)
-                    .setParameter("procesos", procesos)
-                    .getResultList();
-            
-            List<Documento> listaDocumentosPendientes = Arrays.asList();
-            
-            documentos.forEach(l -> {
-                    Documento documento = em.find(Documento.class, l.getDocumento().getDocumento());
-                    DocumentoAspiranteProceso documentosAspirante = em.createQuery("SELECT da FROM DocumentoAspiranteProceso da WHERE da.aspirante =:aspirante AND da.documento =:documento", DocumentoAspiranteProceso.class)
-                            .setParameter("documento", documento)
-                            .setParameter("aspirante", aspirante)
-                            .getSingleResult();
-                    
-                    System.err.println("getDocumentosPendientesAspirante - documento " + documento.getDescripcion() + " valorConsulta " + documentosAspirante);
-                    
-                    if(documentosAspirante == null){
-                        listaDocumentosPendientes.add(documento);
-                    }
-
-            });
-             System.err.println("getDocumentosPendientesAspirante - lista " + listaDocumentosPendientes.size());
-            
-            return ResultadoEJB.crearCorrecto(listaDocumentosPendientes, "Lista de documentos por aspirante.");
+            return ResultadoEJB.crearCorrecto(listaDocumentos, "Lista de documentos por aspirante.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de documentos por aspirante. (EjbCargaDocumentosAspirante.getDocumentoAspirante)", e, null);
         }
     }
     
+     /**
+     * Permite buscar la información del proceso relacionada al documento
+     * @param documento
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DocumentoProceso> buscarInformacionProceso(Documento documento) {
+        try {
+            
+            DocumentoProceso documentoProceso = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.documento =:documento", DocumentoProceso.class)
+                    .setParameter("documento", documento)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+
+            return ResultadoEJB.crearCorrecto(documentoProceso, "Se realizó la búsqueda de la información del proceso correctamente.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de la información del proceso correctamente. (EjbCargaDocumentosAspirante.buscarInformacionProceso)", e, null);
+        }
+    }
+    
+     /**
+     * Permite guardar o actualizar observaciones del documento 
+     * @param dtoDocumentoAspirante 
+     * @param observaciones 
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DocumentoAspiranteProceso> actualizarObservaciones(DtoDocumentoAspirante dtoDocumentoAspirante, String observaciones){
+        try{
+            
+            DocumentoAspiranteProceso documentoAspiranteProceso = em.find(DocumentoAspiranteProceso.class, dtoDocumentoAspirante.getDocumentoAspiranteProceso().getDocumentoAspirante());
+            documentoAspiranteProceso.setObservaciones(observaciones);
+            em.merge(documentoAspiranteProceso);
+            em.flush();
+           
+            return ResultadoEJB.crearCorrecto(documentoAspiranteProceso, "Las observaciones se ha registrado o actualizado correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo guardado o actualizar las observaciones. (EjbCargaDocumentosAspirante.actualizarObservaciones)", e, null);
+        }
+    }
     
 }

@@ -22,3 +22,7 @@ function contarCaracteresDictamen(){
 function contarCaracteresAcciones(){
         document.getElementById('frmModalTramitarBaja:txtCaracteresRestantes').value = 500 - document.getElementById('frmModalTramitarBaja:accionesTutor').value.length;
 }
+
+function contarCaracteresObservaciones(){
+	document.getElementById('frmModalEditarObservaciones:txtCaracteresRestantes').value = 500 - document.getElementById('frmModalEditarObservaciones:observacionesDocumento').value.length;
+}

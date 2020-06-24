@@ -21,6 +21,7 @@ import org.primefaces.event.RowEditEvent;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
 
 @Named
 @ViewScoped
@@ -251,14 +252,14 @@ public class UtilidadesCH implements Serializable {
         }
     }
      
-    public String agregarDocumentoPendienteAspirante(Part file, Aspirante aspirante, Documento documento) {
+    public String agregarDocumentoPendienteAspirante(Part file, Aspirante aspirante, Documento documento, DocumentoProceso documentoProceso) {
         String ruta = "";
         if (file == null) {
             return null;
         }
         String anio="2020";
         
-        ruta = carga.subirDocumentoAspirante(file, documento.getNomenclatura(), new File(anio.concat(File.separator).concat(Integer.toString(aspirante.getFolioAspirante())).concat(File.separator).concat("Inscripcion")));
+        ruta = carga.subirDocumentoAspirante(file, documento.getNomenclatura(), new File(anio.concat(File.separator).concat(Integer.toString(aspirante.getFolioAspirante())).concat(File.separator).concat(documentoProceso.getProceso())));
         
         if (!"Error: No se pudo leer el archivo".equals(ruta)) {
             Messages.addGlobalInfo("El documento se ha guardado correctamente.");

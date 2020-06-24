@@ -36,6 +36,7 @@ public class CargaDocumentosRolAspirante {
     @Getter @Setter  private  Aspirante aspirante;
     @Getter @Setter  private  List<DtoDocumentoAspirante> listaDocumentoAspirante;
     
+    @Getter @Setter  private  List<DtoDocumentoAspirante> listaDocumentosPendientes;
     @Getter @Setter  private  List<Documento> listaDocumentos;
     @Getter @Setter  private  Documento documentoSeleccionado;
     

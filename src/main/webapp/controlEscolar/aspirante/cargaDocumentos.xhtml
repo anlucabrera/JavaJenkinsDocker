@@ -25,11 +25,11 @@
     </ui:define>
 
     <ui:define name="body">
-        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
-<!--            <section class="contentMovil">
-                <h3>
-                    Si estás utilizando móvil, sube tus documentos en el siguiente recuadro. Selecciona el documento que deseas subir, en la parte inferior podrás visualizar las especifiaciones que debe tener el documento. Posteriormente
-                    dar clic en el botón de seleccionar archivo, busca el archivo a subir y lo seleccionas, una vez esto das clic en el botón subir.
+        <p:panel id="errort" header="Carga de Documentos Móvil" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <section class="contentMovil">
+                <h3 style="text-align: justify;">
+                    Selecciona el documento que deseas subir de la lista de opciones, en la tabla ubicada en la parte inferior podrás visualizar las especificaciones que debe tener el documento. Posteriormente
+                    dar clic en el botón de "Seleccionar archivo", busca y selecciona el archivo a subir, una vez hecho esto das clic en el botón subir para guardar el documento.
                     Lee atentamente las notas importantes que se encuentran después de la tabla de documentos.
                 </h3>
                 <br/>
@@ -40,29 +40,29 @@
                             <p:autoUpdate/>
                             <p:outputLabel value="Documento" for="documento" />
                             <p:spacer width="3" />
-                            <p:selectOneMenu id="documento" converter="entityConverter"
-                                             value="# {cargaDocumentosAspirante.rol.documentoSeleccionado}"
+                            <p:selectOneMenu id="documento" converter="entityConverter" valueChangeListener="#{cargaDocumentosAspirante.cambiarDocumento}"
+                                             value="#{cargaDocumentosAspirante.rol.documentoSeleccionado}"
                                              class="form-control" style="padding-top: 0px;">
-                                <f:selectItems value="# {cargaDocumentosAspirante.rol.listaDocumentos}" var="documento" itemValue="# {documento}" itemLabel="# {documento.descripcion}" itemDescription="# {documento.descripcion}" />
+                                <f:selectItems value="#{cargaDocumentosAspirante.rol.listaDocumentos}" var="documento" itemValue="#{documento}" itemLabel="#{documento.descripcion}" itemDescription="#{documento.descripcion}" />
                                 <p:ajax process="@this" update="@(form)" />
                             </p:selectOneMenu>
-                            <p:outputLabel value="Especificaciones:" for="especificaciones" />
+<!--                            <p:outputLabel value="Especificaciones:" for="especificaciones" />
                             <p:spacer width="3" />
-                            <h:outputText id="especificaciones" value="# {documento.especificaciones}"/>
+                            <h:outputText id="especificaciones" value="# {documento.especificaciones}"/>-->
                         </p:outputPanel>
                         <br/>
-                        <center><o:inputFile id="fileC" value="# {cargaArchivosControlador.file}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="# {caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son # {caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." />
+                        <center><o:inputFile id="fileC" value="#{cargaArchivosControlador.file}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." />
                             <br/>
                             <h:message id="messageForFileC" for="fileC" />
                             <br/>
-                            <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="# {cargaArchivosControlador.subirDocumentoPendiente}" />
+                            <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cargaArchivosControlador.subirDocumentoPendiente}" />
                         </center>
                         <br/>
                         <br/>
                     </div>
                     </o:form>
                 </div>
-            </section>-->
+            </section>
         </p:panel>
         <p:panel id="informacion" class="hidden-xs hidden-sm" styleClass="box box-primary">
             <section class="content">
