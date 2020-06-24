@@ -124,11 +124,7 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
             Messages.addGlobalInfo("El documento se ha validado o invalidado correctamente.");
         }else Messages.addGlobalError("El documento no se pudo validar o invalidar.");
     }
-    
-    /**
-     * Permite editar dictamen de baja del estudiante seleccionado
-     * @param registro Registro de la baja
-     */
+   
     public void editarObservaciones(DtoDocumentoAspirante registro){
         dtoDocumentoAspirante = registro;
         observaciones = registro.getDocumentoAspiranteProceso().getObservaciones();
@@ -144,10 +140,7 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
             setForzarAperturaDialogo(Boolean.FALSE);
         }
     }
-     
-     /**
-     * Permite guardar el dictamen realizado por el área de psicopedagogía de la baja seleccionada
-     */
+    
     public void guardarObservaciones(){
         ResultadoEJB<DocumentoAspiranteProceso> res = ejbCargaDocumentosAspirante.actualizarObservaciones(dtoDocumentoAspirante, observaciones);
         if(res.getCorrecto()){

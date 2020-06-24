@@ -351,9 +351,9 @@ public class EjbCargaDocumentosAspirante {
     }
     
      /**
-     * Permite guardar o actualizar el dictamen 
-     * @param baja Registro de baja del estudiante que se va a actualizar
-     * @param dictamen Dictamen realizado
+     * Permite guardar o actualizar observaciones del documento 
+     * @param dtoDocumentoAspirante 
+     * @param observaciones 
      * @return Resultado del proceso
      */
     public ResultadoEJB<DocumentoAspiranteProceso> actualizarObservaciones(DtoDocumentoAspirante dtoDocumentoAspirante, String observaciones){
