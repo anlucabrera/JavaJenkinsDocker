@@ -350,4 +350,24 @@ public class EjbCargaDocumentosAspirante {
         }
     }
     
+     /**
+     * Permite guardar o actualizar el dictamen 
+     * @param baja Registro de baja del estudiante que se va a actualizar
+     * @param dictamen Dictamen realizado
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DocumentoAspiranteProceso> actualizarObservaciones(DtoDocumentoAspirante dtoDocumentoAspirante, String observaciones){
+        try{
+            
+            DocumentoAspiranteProceso documentoAspiranteProceso = em.find(DocumentoAspiranteProceso.class, dtoDocumentoAspirante.getDocumentoAspiranteProceso().getDocumentoAspirante());
+            documentoAspiranteProceso.setObservaciones(observaciones);
+            em.merge(documentoAspiranteProceso);
+            em.flush();
+           
+            return ResultadoEJB.crearCorrecto(documentoAspiranteProceso, "Las observaciones se ha registrado o actualizado correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo guardado o actualizar las observaciones. (EjbCargaDocumentosAspirante.actualizarObservaciones)", e, null);
+        }
+    }
+    
 }

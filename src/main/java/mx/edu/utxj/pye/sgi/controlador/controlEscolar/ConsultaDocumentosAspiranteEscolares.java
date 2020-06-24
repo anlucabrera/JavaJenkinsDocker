@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.Part;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
@@ -50,12 +51,16 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
     @Getter private DtoDocumentoAspirante dtoDocumentoAspirante;
     @Getter @Setter private List<DtoDocumentoAspirante> listaDocumentoAspirantes;
     @EJB private EjbCargaDocumentosAspirante ejbCargaDocumentosAspirante;
+    @Getter @Setter @NonNull private Boolean forzarAperturaDialogo;
+    @Getter @Setter private String observaciones;
+    
     @Getter @Setter private Part file;
     @Inject UtilidadesCH utilidadesCH;
     
     public void mostrarDocumentos(Aspirante aspirante){
        aspiranteB = aspirante;
        listaDocumentoAspirantes = ejbCargaDocumentosAspirante.getDocumentoAspirante(aspirante).getValor();
+       setForzarAperturaDialogo(Boolean.FALSE); 
        Ajax.update("frmDocsAsp");
         
     }
@@ -119,5 +124,37 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
             Messages.addGlobalInfo("El documento se ha validado o invalidado correctamente.");
         }else Messages.addGlobalError("El documento no se pudo validar o invalidar.");
     }
+    
+    /**
+     * Permite editar dictamen de baja del estudiante seleccionado
+     * @param registro Registro de la baja
+     */
+    public void editarObservaciones(DtoDocumentoAspirante registro){
+        dtoDocumentoAspirante = registro;
+        observaciones = registro.getDocumentoAspiranteProceso().getObservaciones();
+        Ajax.update("frmModalEditarObservaciones");
+        Ajax.oncomplete("skin();");
+        setForzarAperturaDialogo(Boolean.TRUE);
+        forzarAperturaDialogoEditarObservaciones();
+    }
+    
+     public void forzarAperturaDialogoEditarObservaciones(){
+        if(getForzarAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEditarObservaciones').show();");
+            setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+     
+     /**
+     * Permite guardar el dictamen realizado por el área de psicopedagogía de la baja seleccionada
+     */
+    public void guardarObservaciones(){
+        ResultadoEJB<DocumentoAspiranteProceso> res = ejbCargaDocumentosAspirante.actualizarObservaciones(dtoDocumentoAspirante, observaciones);
+        if(res.getCorrecto()){
+             mostrarDocumentos(aspiranteB);
+             Ajax.update("frmDocsAsp");
+             Messages.addGlobalInfo("Las observaciones se han guardado correctamente.");
+        }else Messages.addGlobalError("No se registraron las observaciones.");
+    } 
  
 }
