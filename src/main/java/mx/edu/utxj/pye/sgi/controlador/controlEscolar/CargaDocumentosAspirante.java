@@ -128,10 +128,7 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
             rol.setListaDocumentoAspirante(res.getValor());
             Ajax.update("frmDocsAsp");
             rol.setListaDocumentosPendientes(rol.getListaDocumentoAspirante().stream().filter(x-> x.getDocumentoAspiranteProceso().getDocumentoAspirante()==null).collect(Collectors.toList()));
-            System.err.println("mostrarDocumentos - lista documentos " + rol.getListaDocumentosPendientes().size());
             listarDocumentosPendientes();
-//            rol.setDocumentoSeleccionado(rol.getListaDocumentos().get(0));
-//            System.err.println("mostrarDocumentos - documento " + rol.getDocumentoSeleccionado().getDocumentoAspiranteProceso().getDocumento().getDescripcion());
         }else mostrarMensajeResultadoEJB(res);  
        
     }
@@ -148,7 +145,6 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
    
     public void cambiarDocumento(ValueChangeEvent e){
        rol.setDocumentoSeleccionado((Documento)e.getNewValue());
-       System.err.println("cambiarDocumento - documento " + rol.getDocumentoSeleccionado().getDescripcion());
        Ajax.update("frmDocExp");
     }
     

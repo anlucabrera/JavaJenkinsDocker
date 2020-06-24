@@ -313,26 +313,16 @@ public class EjbCargaDocumentosAspirante {
     }
     
     /**
-     * Permite obtener la lista de documento que no ha cargado el aspirante
+     * Permite obtener la lista de documentos que no ha cargado el aspirante
      * @param listaDocumentosPendientes
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<Documento>> getDocumentosPendientesAspirante(List<DtoDocumentoAspirante> listaDocumentosPendientes){
         try{
-            
-            System.err.println("getDocumentosPendientesAspirante - lista DocsAsp " + listaDocumentosPendientes.size());
-            
-//            List<Documento> listaDocumentos = Arrays.asList();
-            
-            //calcular el total de horas frente a grupo asignadas
+ 
              List<DocumentoProceso> listaDocumentosProceso = listaDocumentosPendientes.stream().map(DtoDocumentoAspirante::getDocumentoProceso).collect(Collectors.toList());
              
              List<Documento> listaDocumentos = listaDocumentosProceso.stream().map(DocumentoProceso::getDocumento).collect(Collectors.toList());
-            
-//            listaDocumentosPendientes.forEach(docP -> {
-//                    listaDocumentos.add(docP.getDocumentoProceso().getDocumento());
-//            });
-             System.err.println("getDocumentosPendientesAspirante - lista " + listaDocumentos.size());
             
             return ResultadoEJB.crearCorrecto(listaDocumentos, "Lista de documentos por aspirante.");
         }catch (Exception e){
@@ -340,5 +330,24 @@ public class EjbCargaDocumentosAspirante {
         }
     }
     
+     /**
+     * Permite buscar la información del proceso relacionada al documento
+     * @param documento
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DocumentoProceso> buscarInformacionProceso(Documento documento) {
+        try {
+            
+            DocumentoProceso documentoProceso = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.documento =:documento", DocumentoProceso.class)
+                    .setParameter("documento", documento)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+
+            return ResultadoEJB.crearCorrecto(documentoProceso, "Se realizó la búsqueda de la información del proceso correctamente.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de la información del proceso correctamente. (EjbCargaDocumentosAspirante.buscarInformacionProceso)", e, null);
+        }
+    }
     
 }

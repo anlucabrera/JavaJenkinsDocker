@@ -27,6 +27,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCargaDocumentosAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
@@ -51,13 +52,21 @@ public class CargaArchivosControlador implements Serializable{
     @Inject UtilidadesCH utilidadesCH;
     @Inject CargaDocumentosAspirante cargaDocumentosAspirante;
     @Getter private Documento documento;
+    @Getter private DocumentoProceso documentoProceso;
     
     @EJB private EjbCargaDocumentosAspirante ejbCargaDocumentosAspirante;
     
     @PostConstruct
     public void init() {
         aspirante = cargaDocumentosAspirante.getRol().getAspirante();
+    }
+    
+    public void cambiarDocumentoSeleccionado (){
         documento = cargaDocumentosAspirante.getRol().getDocumentoSeleccionado();
+    }
+    
+    public void buscarInformacionProceso (){
+        documentoProceso = ejbCargaDocumentosAspirante.buscarInformacionProceso(documento).getValor();
     }
     
     public void editarDocumento(DtoDocumentoAspirante registro) {
@@ -66,6 +75,8 @@ public class CargaArchivosControlador implements Serializable{
     
     public void subirDocumento() {
         try {
+            cambiarDocumentoSeleccionado();
+            
             DocumentoAspiranteProceso nuevoDocumento = new DocumentoAspiranteProceso();
 
             nuevoDocumento.setAspirante(aspirante);
@@ -105,15 +116,15 @@ public class CargaArchivosControlador implements Serializable{
     }
     
     public void subirDocumentoPendiente() {
-        System.err.println("subirDocumentoPendiente - aspirante " + aspirante.getFolioAspirante());
-        System.err.println("subirDocumentoPendiente - documento " + documento.getDescripcion());
-        System.err.println("subirDocumentoPendiente - file " + file);
         try {
+            cambiarDocumentoSeleccionado();
+            buscarInformacionProceso();
+            
             DocumentoAspiranteProceso nuevoDocumento = new DocumentoAspiranteProceso();
 
             nuevoDocumento.setAspirante(aspirante);
             nuevoDocumento.setDocumento(documento);
-            nuevoDocumento.setRuta(utilidadesCH.agregarDocumentoPendienteAspirante(file, aspirante, documento));
+            nuevoDocumento.setRuta(utilidadesCH.agregarDocumentoPendienteAspirante(file, aspirante, documento, documentoProceso));
             nuevoDocumento.setFechaCarga(new Date());
             nuevoDocumento.setObservaciones("Sin observaciones");
             nuevoDocumento.setValidado(false);
