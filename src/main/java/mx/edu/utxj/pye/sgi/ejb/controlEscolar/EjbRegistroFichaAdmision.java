@@ -235,7 +235,6 @@ public class EjbRegistroFichaAdmision {
             rr.setProcesosInscripcion(rejb.getValor());
             rr.getAspirante().setTipoAspirante(new TipoAspirante());
             rr.getAspirante().setTipoAspirante(rr.getTipo());
-            rr.getAspirante().setEstatus(Boolean.TRUE);
             switch (rr.getOperacion()) {
                 case PERSISTIR:
                     rr.getAspirante().setIdPersona(new Persona());
@@ -243,6 +242,7 @@ public class EjbRegistroFichaAdmision {
                     rr.getAspirante().setIdPersona(pr);
                     rr.getAspirante().setIdProcesoInscripcion(rr.getProcesosInscripcion());
                     rr.getAspirante().setFechaRegistro(new Date());
+                    rr.getAspirante().setEstatus(false);
                     em.persist(rr.getAspirante());
                     f.setEntityClass(Aspirante.class);
                     f.flush();
@@ -863,9 +863,9 @@ public class EjbRegistroFichaAdmision {
             ;
             if(aspirante1 ==null){
                 DtoAspirante.AspiranteR nuevoAspirante = new DtoAspirante.AspiranteR(new Aspirante(),new TipoAspirante(),procesosInscripcion,Operacion.PERSISTIR,false);
-                return ResultadoEJB.crearErroneo(5,nuevoAspirante,"No se encontro a algún aspirante registrado");}
+                return ResultadoEJB.crearCorrecto(nuevoAspirante,"No se encontro aspirante");}
             else {
-                DtoAspirante.AspiranteR nuevoAspirante = new DtoAspirante.AspiranteR(new Aspirante(),new TipoAspirante(),procesosInscripcion,Operacion.ACTUALIZAR,false);
+                DtoAspirante.AspiranteR nuevoAspirante = new DtoAspirante.AspiranteR(new Aspirante(),new TipoAspirante(),procesosInscripcion,Operacion.ACTUALIZAR,true);
                 nuevoAspirante.setAspirante(aspirante1);
                 nuevoAspirante.setProcesosInscripcion(procesosInscripcion);
                 nuevoAspirante.setTipo(aspirante1.getTipoAspirante());
