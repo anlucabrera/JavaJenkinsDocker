@@ -299,7 +299,7 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                     }else {
                         //  mostrarMensajeResultadoEJB(resEncuesta);
                     }
-                }else {rol.setAspirante(resAspirante.getValor());}
+                }else {saveAspirante();}
             }else {
                 ResultadoEJB<List<Estado>> resEstadosO = ejbRegistroFicha.getEstadosbyPais(rol.getPersonaD().getPaisOr());
                 rol.setEstadosOr(resEstadosO.getValor());
@@ -414,7 +414,7 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             }else {mostrarMensajeResultadoEJB(resSaveDm);}
             ResultadoEJB<DtoAspirante.PersonaR> resMC = ejbRegistroFicha.operacionesMedioC(rol.getPersonaD());
             if(resMC.getCorrecto()==true){
-                saveAspirante();
+                //saveAspirante();
                 rol.setTab4(false);
                 rol.setStep(3);
                 mostrarMensajeResultadoEJB(resMC);
@@ -538,6 +538,8 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             if(resFolio.getCorrecto()==true){
                 rol.setFolioAspirante(resFolio.getValor());
                 rol.getAspirante().getAspirante().setFolioAspirante(rol.getFolioAspirante());
+                rol.getAspirante().getAspirante().setEstatus(false);
+                rol.getAspirante().setOperacion(Operacion.ACTUALIZAR);
                 ResultadoEJB<DtoAspirante.AspiranteR> resActuaA = ejbRegistroFicha.operacionesAspiranteR(rol.getAspirante(),rol.getPersonaD().getPersona());
                 if(resActuaA.getCorrecto()==true){
                     rol.setTab1(true);
@@ -570,7 +572,11 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
      */
     public void downloadFichaAdmin() throws IOException, DocumentException {
         try{
-            ejbRegistroFicha.generaFichaAdmin(rol.getPersonaD().getPersona(),rol.getDacademicos().getAcademicos(),rol.getDdomicilios().getDomicilio(),rol.getAspirante().getAspirante(),rol.getComunicacion(),"Alumno");
+            ResultadoEJB<Boolean> resFicha = ejbRegistroFicha.generarFicha(rol.getPersonaD().getPersona(),rol.getDacademicos().getAcademicos(),rol.getDdomicilios().getDomicilio(),rol.getAspirante().getAspirante(),rol.getPersonaD().getMedioComunicacion(),"Alumno");
+            if(resFicha.getCorrecto()==true){
+                mostrarMensajeResultadoEJB(resFicha);
+            }
+            else {mostrarMensajeResultadoEJB(resFicha);}
         }catch (Exception e){mostrarExcepcion(e);}
 
     }
