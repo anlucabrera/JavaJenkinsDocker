@@ -105,8 +105,9 @@ public class EjbRegistroFichaAdmision {
     public ResultadoEJB<ProcesosInscripcion> getProcesosInscripcionActivo() {
         try {
             ProcesosInscripcion procesosInscripcion = new ProcesosInscripcion();
-            procesosInscripcion = em.createQuery("select p from ProcesosInscripcion p where :fecha between p.fechaInicio and p.fechaFin", ProcesosInscripcion.class)
+            procesosInscripcion = em.createQuery("select p from ProcesosInscripcion p where :fecha between p.fechaInicio and p.fechaFin and p.activoNi=:tipo", ProcesosInscripcion.class)
                     .setParameter("fecha", new Date())
+                    .setParameter("tipo",true)
                     .getResultStream()
                     .findFirst()
                     .orElse(null)
@@ -866,7 +867,7 @@ public class EjbRegistroFichaAdmision {
                 DtoAspirante.AspiranteR nuevoAspirante = new DtoAspirante.AspiranteR(new Aspirante(),new TipoAspirante(),procesosInscripcion,Operacion.PERSISTIR,false);
                 return ResultadoEJB.crearErroneo(5,nuevoAspirante,"No se encontro a algún aspirante registrado");}
             else {
-                DtoAspirante.AspiranteR nuevoAspirante = new DtoAspirante.AspiranteR(new Aspirante(),new TipoAspirante(),procesosInscripcion,Operacion.PERSISTIR,false);
+                DtoAspirante.AspiranteR nuevoAspirante = new DtoAspirante.AspiranteR(new Aspirante(),new TipoAspirante(),procesosInscripcion,Operacion.ACTUALIZAR,false);
                 nuevoAspirante.setAspirante(aspirante1);
                 nuevoAspirante.setProcesosInscripcion(procesosInscripcion);
                 nuevoAspirante.setTipo(aspirante1.getTipoAspirante());
