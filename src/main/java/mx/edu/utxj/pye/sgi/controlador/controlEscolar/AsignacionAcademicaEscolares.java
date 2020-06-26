@@ -101,15 +101,11 @@ public class AsignacionAcademicaEscolares extends ViewScopedRol implements Desar
             rol.setNivelRol(NivelRol.OPERATIVO);
 //            rol.setSoloLectura(true);
 
-            System.err.println("init - getPeriodoActual " + ejb.getPeriodoActual().getPeriodo());
             rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
-            System.err.println("init - periodoActivo " + rol.getPeriodoActivo());
 
             rol.setEventoActivo(resEvento.getValor());
-            System.err.println("init - evento " + rol.getEventoActivo().getEvento());
 
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
-            System.err.println("init - resPeriodos " + ejb.getPeriodosDescendentes().getValor().size());
 //            System.out.println("resPeriodos = " + resPeriodos);
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
