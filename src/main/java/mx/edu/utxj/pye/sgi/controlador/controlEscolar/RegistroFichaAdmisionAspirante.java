@@ -148,7 +148,9 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                 ResultadoEJB<DtoAspirante.PersonaR> resPer= ejbRegistroFicha.getPersonaR(rol.getPersonaD().getPersona());
                 if(resPer.getCorrecto()==true){
                     rol.setPersonaD(resPer.getValor());
-                    getRegistro();
+                    ResultadoEJB<DtoAspirante.PersonaR> resPersona2 =  ejbRegistroFicha.getPersonaR(resPersona.getValor());
+                    if(resPersona2.getCorrecto()==true){    rol.setPersonaD(resPersona2.getValor());getRegistro();}
+                    else {mostrarMensajeResultadoEJB(resPer);}
                 }else { mostrarMensajeResultadoEJB(resPer);}
             }
             else {mostrarMensajeResultadoEJB(resPersona);}
@@ -158,6 +160,9 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
     public void getRegistro(){
         try{
             if(rol.getPersonaD().getEcontrado()==true){
+                bloqTabs();
+                rol.setTab2(false);
+                rol.setTab3(false);
                 ResultadoEJB<List<Estado>> resEstadosO = ejbRegistroFicha.getEstadosbyPais(rol.getPersonaD().getPaisOr());
                 rol.setEstadosOr(resEstadosO.getValor());
                 ResultadoEJB<List<Municipio>> resMunicipiosO = ejbRegistroFicha.getMunicipiosbyClaveEstado(rol.getPersonaD().getPersona().getEstado());
@@ -165,103 +170,101 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                 rol.getPersonaD().getPersona().setMunicipio(rol.getPersonaD().getPersona().getMunicipio());
                 ResultadoEJB<List<Localidad>> resLocalidades = ejbRegistroFicha.getLocalidadByMunicipio(rol.getPersonaD().getPersona().getEstado(),rol.getPersonaD().getPersona().getMunicipio());
                 if(resLocalidades.getCorrecto()==true){rol.setLocalidadsOr(resLocalidades.getValor());}
-                //Se busca datos medicos
+                //Se busca datos medicos y medio de comunicación
                 ResultadoEJB<DtoAspirante.MedicosR> resDM = ejbRegistroFicha.getDatosMedicosbyPersona(rol.getPersonaD());
-                if(resDM.getCorrecto()==true){
+                ResultadoEJB<MedioComunicacion>resMedC = ejbRegistroFicha.getMedioCbyPersona(rol.getPersonaD().getPersona());
+                if(resDM.getCorrecto() ==true & resMedC.getCorrecto()==true){
                     rol.setDmedico(resDM.getValor());
+                    rol.getPersonaD().setMedioComunicacion(resMedC.getValor());
                     rol.setTab1(true);
-                    rol.setTab2(false);
-                    rol.setTab3(false);
                     rol.setTab4(false);
                     rol.setStep(3);
+                    //Se busca Aspirante
+                    ResultadoEJB<DtoAspirante.AspiranteR> resAspirante = ejbRegistroFicha.getAspirantebyPersona(rol.getAspirante(),rol.getPersonaD().getPersona(),rol.getProcesosInscripcion());
+                    if(resAspirante.getCorrecto()==true){
+                        //Se verifica que haya entontrado al aspirante
+                        if(resAspirante.getValor().getEcontrado()==false){saveAspirante();}
+                        else {rol.setAspirante(resAspirante.getValor());}
+                        //Se buscan datos de domicilio
+                        ResultadoEJB<DtoAspirante.DomicilioR> resDomicilio = ejbRegistroFicha.getDomiciliobyAspirante(rol.getAspirante());
+                        if(resDomicilio.getCorrecto()==true){
+                            //System.out.println("Municipio" + resDomicilio.getValor().getDomicilio().getIdMunicipio());
+                            rol.setDdomicilios(resDomicilio.getValor());
+                            getMunicipiosResi();
+                            getAsentamientoDom();
+                            getMunicipioProc();
+                            getAsentamientosProc();
+                            rol.setTab1(true);
+                            rol.setTab5(false);
+                            rol.setStep(4);
+                            //Busca datos familiares
+                            ResultadoEJB<DtoAspirante.FamiliaresR> resDatosFamiliares = ejbRegistroFicha.getFamiliaresR(rol.getAspirante().getAspirante());
+                            if(resDatosFamiliares.getCorrecto()==true){
+                                rol.setDfamiliares(resDatosFamiliares.getValor());
+                                rol.setTutor(resDatosFamiliares.getValor().getTutorR());
+                                //System.out.println("Tutor en busqueda->" + rol.getTutor());
+                                getMunicipiosTutor();
+                                getAsentamientoTutor();
+                                rol.setTab6(false);
+                                rol.setStep(5);
+                                ///Busca datos académicos
+                                ResultadoEJB<DtoAspirante.AcademicosR> resDAcademicos = ejbRegistroFicha.getAcademicos(rol.getAspirante().getAspirante());
+                                if(resDAcademicos.getCorrecto()){
+                                    rol.setDacademicos(resDAcademicos.getValor());
+                                    getMunicipiosIems();
+                                    getLocalidadIems();
+                                    getIemesByLocalidad();
+                                    getPEpObyAreaA();
+                                    getPEsObyAreaA();
+                                    rol.setTab7(false);
+                                    rol.setStep(6);
+                                    // Busca resultados de la encuesta del aspirante
+                                    ResultadoEJB<DtoAspirante.EncuestaR> resEncuesta = ejbRegistroFicha.getEncuesta(rol.getAspirante().getAspirante());
+                                    if(resEncuesta.getCorrecto()==true){
+                                        rol.setEncuesta(resEncuesta.getValor());
+                                        comprabarEncuesta(rol.getEncuesta().getEncuestaAspirante());
+                                        if(rol.getEncuesta().getEcontrado()==true){
+                                            if(rol.getFinalizado()==true){
+                                                rol.setTab8(false);
+                                                rol.setStep(7);
+                                            }else {
+                                                rol.setTab7(false);
+                                                rol.setStep(6);
+                                            }
+                                        }else {
+                                            rol.setTab7(false);
+                                            rol.setStep(6);
+                                        }
+                                    }else {
+                                        //  mostrarMensajeResultadoEJB(resEncuesta);
+                                    }
+
+                                }
+                                else {
+                                    rol.setTab6(false);
+                                    rol.setStep(5);
+                                }
+                            }else {
+                                rol.setTab5(false);
+                                rol.setStep(4);
+                            }
+                        }
+                        else {
+                            rol.setDdomicilios(new DtoAspirante.DomicilioR(new Domicilio(),false,Operacion.PERSISTIR,false));
+                            rol.setTab1(true);
+                            rol.setTab3(false);
+                            rol.setStep(3);
+                        }
+                    }else {mostrarMensajeResultadoEJB(resAspirante);}
+
                 }
                 else {
                     rol.setDmedico(new DtoAspirante.MedicosR(new DatosMedicos(),new TipoSangre(), new TipoDiscapacidad(), Operacion.PERSISTIR,false));
                     rol.setTab1(true);
-                    rol.setTab2(false);
                     rol.setTab3(false);
-                    rol.setStep(1);
+                    rol.setStep(2);
                 }
-                //Se busca Aspirante
-                ResultadoEJB<DtoAspirante.AspiranteR> resAspirante = ejbRegistroFicha.getAspirantebyPersona(rol.getAspirante(),rol.getPersonaD().getPersona(),rol.getProcesosInscripcion());
-                if(resAspirante.getCorrecto()==true){
-                    //Hay un aspirante registrado de esa persona y en el proceso de inscripcion activo
-                    rol.setAspirante(resAspirante.getValor());
-                    //Se buscan datos de domicilio
-                    ResultadoEJB<DtoAspirante.DomicilioR> resDomicilio = ejbRegistroFicha.getDomiciliobyAspirante(rol.getAspirante());
-                    if(resDomicilio.getCorrecto()==true){
-                        //System.out.println("Municipio" + resDomicilio.getValor().getDomicilio().getIdMunicipio());
-                        rol.setDdomicilios(resDomicilio.getValor());
-                        getMunicipiosResi();
-                        getAsentamientoDom();
-                        getMunicipioProc();
-                        getAsentamientosProc();
-                        rol.setTab5(false);
-                        rol.setStep(4);
-                    }
-                    else {
-                        rol.setDdomicilios(new DtoAspirante.DomicilioR(new Domicilio(),false,Operacion.PERSISTIR,false));
-                        rol.setTab1(true);
-                        rol.setTab2(false);
-                        rol.setTab3(false);
-                    }
-                    //Busca datos familiares
-                    ResultadoEJB<DtoAspirante.FamiliaresR> resDatosFamiliares = ejbRegistroFicha.getFamiliaresR(rol.getAspirante().getAspirante());
-                    if(resDatosFamiliares.getCorrecto()==true){
-                        rol.setDfamiliares(resDatosFamiliares.getValor());
-                        rol.setTutor(resDatosFamiliares.getValor().getTutorR());
-                        //System.out.println("Tutor en busqueda->" + rol.getTutor());
-                        getMunicipiosTutor();
-                        getAsentamientoTutor();
-                        rol.setTab6(false);
-                        rol.setStep(5);
 
-                    }else {
-                        rol.setTab5(false);
-                        rol.setStep(4);
-                    }
-                    ///Busca datos académicos
-                    ResultadoEJB<DtoAspirante.AcademicosR> resDAcademicos = ejbRegistroFicha.getAcademicos(rol.getAspirante().getAspirante());
-                    if(resDAcademicos.getCorrecto()){
-                        rol.setDacademicos(resDAcademicos.getValor());
-                        getMunicipiosIems();
-                        getLocalidadIems();
-                        getIemesByLocalidad();
-                        getPEpObyAreaA();
-                        getPEsObyAreaA();
-                        if(rol.getAspirante().getAspirante().getEstatus()==true){rol.setTab6(true); rol.setTab7(false);
-                            rol.setStep(6);}
-                        else {
-                            rol.setTab7(false);
-                            rol.setStep(6);
-                        }
-
-                    }
-                    else {
-                        rol.setTab6(false);
-                        rol.setStep(5);
-                    }
-                    // Busca resultados de la encuesta del aspirante
-                    ResultadoEJB<DtoAspirante.EncuestaR> resEncuesta = ejbRegistroFicha.getEncuesta(rol.getAspirante().getAspirante());
-                    if(resEncuesta.getCorrecto()==true){
-                        rol.setEncuesta(resEncuesta.getValor());
-                        comprabarEncuesta(rol.getEncuesta().getEncuestaAspirante());
-                        if(rol.getEncuesta().getEcontrado()==true){
-                            if(rol.getFinalizado()==true){
-                                rol.setTab8(false);
-                                rol.setStep(7);
-                            }else {
-                                rol.setTab7(false);
-                                rol.setStep(6);
-                            }
-                        }else {
-                            rol.setTab7(false);
-                            rol.setStep(6);
-                        }
-                    }else {
-                        //  mostrarMensajeResultadoEJB(resEncuesta);
-                    }
-                }else {saveAspirante();}
             }else {
                 ResultadoEJB<List<Estado>> resEstadosO = ejbRegistroFicha.getEstadosbyPais(rol.getPersonaD().getPaisOr());
                 rol.setEstadosOr(resEstadosO.getValor());
@@ -400,6 +403,7 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             rol.setAspirante(dtoAspirante);
             ResultadoEJB<DtoAspirante.AspiranteR> resAspirante = ejbRegistroFicha.operacionesAspiranteR(rol.getAspirante(),rol.getPersonaD().getPersona());
             if(resAspirante.getCorrecto()==true){
+                rol.setAspirante(resAspirante.getValor());
                 mostrarMensajeResultadoEJB(resAspirante);
             }else {mostrarMensajeResultadoEJB(resAspirante);}
         }catch (Exception e){
