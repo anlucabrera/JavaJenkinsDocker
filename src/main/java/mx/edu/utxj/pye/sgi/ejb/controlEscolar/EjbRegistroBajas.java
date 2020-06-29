@@ -184,21 +184,20 @@ public class EjbRegistroBajas {
     }
     
     
-      /**
+    /**
      * Permite obtener la lista de causas de baja para registrar la baja
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<BajasCausa>> getCausasBaja(){
-        try{
-            List<BajasCausa> bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.cveCausa NOT IN (14,17,20) ORDER BY bc.causa ASC", BajasCausa.class)
+    public ResultadoEJB<List<BajasCausa>> getCausasBaja() {
+        try {
+            List<BajasCausa> bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc ORDER BY bc.causa ASC", BajasCausa.class)
                     .getResultList();
-            
             return ResultadoEJB.crearCorrecto(bajasCausas, "Lista de causas de baja para realizar el registro de baja.");
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de causas de baja para el registro de baja. (EjbRegistroBajas.getCausasBaja)", e, null);
         }
     }
-    
+
      /**
      * Permite obtener el rango de fechas dependiendo del periodo escolar activo
      * @param periodoEscolar Periodo Escolar activ
