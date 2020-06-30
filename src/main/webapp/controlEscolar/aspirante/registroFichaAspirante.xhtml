@@ -694,13 +694,13 @@
                                                                 <div class="row">
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="calleRes" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.calle}"/>
+                                                                            <p:inputText id="calleRes" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.calle}" required="true" requiredMessage="Debes ingresar la calle"/>
                                                                             <p:outputLabel for="calleRes" value="Calle*"/>
                                                                         </div>
                                                                     </div>
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="numRes" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.numero}"/>
+                                                                            <p:inputText id="numRes" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.numero}" required="true" requiredMessage="Debes ingresar el número"/>
                                                                             <p:outputLabel for="numRes" value="Número*"/>
                                                                         </div>
                                                                     </div>
@@ -758,7 +758,7 @@
                                                                 <div class="row">
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="tiempoR" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.tiempoResidencia}"><p:ajax/></p:inputText>
+                                                                            <p:inputText id="tiempoR" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.tiempoResidencia}" required="true" requiredMessage="Debes ingresar el tiempo de residencia"><p:ajax/></p:inputText>
                                                                             <p:outputLabel for="tiempoR" value="Tiempo de residencia*"/>
                                                                         </div>
                                                                     </div>
@@ -794,13 +794,13 @@
                                                                 <div class="row">
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="calleProc" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.calleProcedencia}"/>
+                                                                            <p:inputText id="calleProc" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.calleProcedencia}" required="true" requiredMessage="Debes ingresar la calle"/>
                                                                             <p:outputLabel for="calleProc" value="Calle*"/>
                                                                         </div>
                                                                     </div>
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="numPr" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.numeroProcedencia}"/>
+                                                                            <p:inputText id="numPr" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.numeroProcedencia}" required="true" requiredMessage="Debes ingresar el número"/>
                                                                             <p:outputLabel for="numPr" value="Número*"/>
                                                                         </div>
                                                                     </div>
@@ -858,7 +858,7 @@
                                                                 <div class="row">
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="vivesCon" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.vivesCon}"><p:ajax/></p:inputText>
+                                                                            <p:inputText id="vivesCon" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.vivesCon}" required="true" requiredMessage="Campo requerido"><p:ajax/></p:inputText>
                                                                             <p:outputLabel for="vivesCon" value="Vives con*"/>
                                                                         </div>
                                                                     </div>
@@ -903,21 +903,21 @@
                                                                 <div class="row">
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="nombreT" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.nombre}"/>
+                                                                            <p:inputText id="nombreT" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.nombre}" required="true" requiredMessage="Nombre del tutor requerido"/>
                                                                             <p:outputLabel for="nombreT" value="Nombre*"/>
                                                                             <p:message for="nombreT"><p:autoUpdate/></p:message>
                                                                         </div>
                                                                     </div>
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="apTutor" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.apellidoPaterno}"/>
+                                                                            <p:inputText id="apTutor" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.apellidoPaterno}" required="true" requiredMessage="Apellido requerido"/>
                                                                             <p:outputLabel for="apTutor" value="Apellido Paterno*"/>
                                                                             <p:message for="apTutor"><p:autoUpdate/></p:message>
                                                                         </div>
                                                                     </div>
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="amTutor" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.apellidoMaterno}"/>
+                                                                            <p:inputText id="amTutor" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.apellidoMaterno}" required="true" requiredMessage="Apellido materno requerido"/>
                                                                             <p:outputLabel for="amTutor" value="Apellido Paterno*"/>
                                                                             <p:message for="amTutor"><p:autoUpdate/></p:message>
                                                                         </div>
@@ -927,14 +927,14 @@
                                                                 <div class="row">
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="calleTu" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.calle}"/>
+                                                                            <p:inputText id="calleTu" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.calle}" required="true" requiredMessage="Calle requerida"/>
                                                                             <p:outputLabel for="calleTu" value="Calle*"/>
                                                                             <p:message for="calleTu"><p:autoUpdate/></p:message>
                                                                         </div>
                                                                     </div>
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="numT" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.numero}"/>
+                                                                            <p:inputText id="numT" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.numero}" required="true" requiredMessage="Número requerido"/>
                                                                             <p:outputLabel for="numT" value="Número*"/>
                                                                             <p:message for="numT"><p:autoUpdate/></p:message>
                                                                         </div>
@@ -990,14 +990,14 @@
                                                                 <div class="row">
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="pare" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.parentesco}"/>
+                                                                            <p:inputText id="pare" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.parentesco}" required="true" requiredMessage="Debes ingresar el parentezco"/>
                                                                             <p:outputLabel for="pare" value="Parentezco*"/>
                                                                             <p:message for="pare"><p:autoUpdate/></p:message>
                                                                         </div>
                                                                     </div>
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputMask mask="(999)999-9999" id="numTelTutor" class="form-control" placeholder="(999)-999-9999" value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.noTelefono}"/>
+                                                                            <p:inputMask mask="(999)999-9999" id="numTelTutor" class="form-control" placeholder="(999)-999-9999" value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.noTelefono}" required="true" requiredMessage="Campo requerido"/>
                                                                             <p:outputLabel for="numTelTutor" value="Número de teléfono*"/>
                                                                             <p:message for="numTelTutor"><p:autoUpdate/></p:message>
                                                                         </div>
@@ -1021,7 +1021,7 @@
                                                                     <div class="row">
                                                                         <div class="#{casilla5}">
                                                                             <div class="ui-material">
-                                                                                <p:inputText id="nomPadre" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.datosFamiliares.nombrePadre}"/>
+                                                                                <p:inputText id="nomPadre" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.datosFamiliares.nombrePadre}" required="true" requiredMessage="Campo requerido"/>
                                                                                 <p:outputLabel for="nomPadre" value="Nombre completo*"/>
                                                                                 <p:message for="nomPadre"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -1064,7 +1064,7 @@
                                                                     <div class="row">
                                                                         <div class="#{casilla5}">
                                                                             <div class="ui-material">
-                                                                                <p:inputMask mask="(999)999-9999" id="numTelPadre" class="form-control" placeholder="(999)-999-9999" value="#{registroFichaAdmisionAspirante.rol.dfamiliares.datosFamiliares.telefonoPadre}"/>
+                                                                                <p:inputMask mask="(999)999-9999" id="numTelPadre" class="form-control" placeholder="(999)-999-9999" value="#{registroFichaAdmisionAspirante.rol.dfamiliares.datosFamiliares.telefonoPadre}" required="true" requiredMessage="Campo requerido"/>
                                                                                 <p:outputLabel for="numTelPadre" value="Número de teléfono*"/>
                                                                                 <p:message for="numTelPadre"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -1092,7 +1092,7 @@
                                                                     <div class="row">
                                                                         <div class="#{casilla5}">
                                                                             <div class="ui-material">
-                                                                                <p:inputText id="nomMadre" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.datosFamiliares.nombreMadre}"/>
+                                                                                <p:inputText id="nomMadre" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.datosFamiliares.nombreMadre}" required="true" requiredMessage="Campo requerido"/>
                                                                                 <p:outputLabel for="nomMadre" value="Nombre completo*"/>
                                                                                 <p:message for="nomMadre"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -1136,7 +1136,7 @@
                                                                     <div class="row">
                                                                         <div class="#{casilla5}">
                                                                             <div class="ui-material">
-                                                                                <p:inputMask mask="(999)999-9999" id="numTelMadre" class="form-control" placeholder="(999)-999-9999" value="#{registroFichaAdmisionAspirante.rol.dfamiliares.datosFamiliares.telefonoMadre}"/>
+                                                                                <p:inputMask mask="(999)999-9999" id="numTelMadre" class="form-control" placeholder="(999)-999-9999" value="#{registroFichaAdmisionAspirante.rol.dfamiliares.datosFamiliares.telefonoMadre}" required="true" requiredMessage="Campo requerido"/>
                                                                                 <p:outputLabel for="numTelMadre" value="Número de teléfono*"/>
                                                                                 <p:message for="numTelMadre"><p:autoUpdate/></p:message>
                                                                             </div>
