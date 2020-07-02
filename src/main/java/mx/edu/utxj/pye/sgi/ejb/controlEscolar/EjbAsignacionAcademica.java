@@ -30,6 +30,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.persistence.StoredProcedureQuery;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.AsignacionAcademicaRolEscolares;
 
 @Stateless(name = "EjbAsignacionAcademica")
 public class EjbAsignacionAcademica {
@@ -62,7 +64,7 @@ public class EjbAsignacionAcademica {
     public ResultadoEJB<Filter<PersonalActivo>> validarEncargadoDireccion(Integer clave){
         return ejbValidacionRol.validarEncargadoDireccion(clave);
     }
-
+    
     /**
      * Permite verificar si hay un periodo abierto para asignación docente
      * @param director Director que va a realizar asignación académica, permite funcionar como filtro en caso se un permiso especifico a su area o a su clave
@@ -579,6 +581,132 @@ public class EjbAsignacionAcademica {
             else return ResultadoEJB.crearCorrecto(planEstudioMateria, "Relación de materia con plan de estudios identificada.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo identificar a la entidad de la relación entre plan de estudios y materias (EjbAsignacionAcademica.getPlanEstudioMateria).", e, PlanEstudioMateria.class);
+        }
+    }
+    
+    
+    /**
+     * Permite crear el filtro para validar si el usuario autenticado es personal de servicios escolares
+     * @param clave Número de nómina del usuario autenticado
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarServiciosEscolares(Integer clave) {
+        try {
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalAreaOperativa").orElse(10)));
+            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal de servicios escolares.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbReincorporacion.validarServiciosEscolares)", e, null);
+        }
+    }
+
+     /**
+     * Permite obtener la lista de programas educativos que tienen planes de estudio vigentes, los programas deben ordenarse por
+     * área, nivel y nombre y los grupos por grado y letra
+     * @param periodo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Map<AreasUniversidad, List<Grupo>>> getProgramasActivosEscolares(PeriodosEscolares periodo){
+        try{
+            //Map<AreasUniversidad, List<Grupo>> programasMap = Collections.EMPTY_MAP;
+            // buscar lista de programas educativos con plan de estudios vigentes y despues mapear cada programa con su lista de grupos
+            Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
+//            System.out.println("programaEducativoCategoria = " + programaEducativoCategoria);
+            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.categoria.categoria=:categoria and a.vigente = '1' and a.nivelEducativo.nivel = :nivel order by a.nombre", AreasUniversidad.class)
+                    .setParameter("categoria", programaEducativoCategoria)
+                    .setParameter("nivel", "TSU")
+                    .getResultList();
+//            System.out.println("programas = " + programas);
+            Map<AreasUniversidad, List<Grupo>> programasMap = programas.stream()
+                    .collect(Collectors.toMap(programa -> programa, programa -> generarGrupos(programa, periodo)));
+//            System.out.println("programasMap = " + programasMap);
+            return ResultadoEJB.crearCorrecto(programasMap, "Mapa de programas y grupos");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo mapear los programas y sus grupos. (EjbAsignacionAcademica.getProgramasActivosEscolares)", e, null);
+        }
+    }
+    
+     /**
+     * Permite detectar una lista de mensajes de posibles errores en la asignación docente, como es el caso de superar las horas máximas frente a grupo de acuerdo a si es PTC o PA el docente o si se han asignado
+     * mas de una materia al mismo docente en un grupo detemrinado
+     * @param rol DTO de la capa de sincronización con los datos seleccionados por el usuario
+     * @return Lista de mensajes encontrados.
+     */
+    public ResultadoEJB<List<DtoAlerta>> identificarMensajesEscolares(AsignacionAcademicaRolEscolares rol){
+        try{
+//            System.out.println("(rol.getPeriodo().getPeriodo().equals(rol.getEventoActivo().getPeriodo()) && rol.getPrograma() != null && rol.getGrupo() != null) = " + (rol.getPeriodo().getPeriodo().equals(rol.getEventoActivo().getPeriodo()) && rol.getPrograma() != null && rol.getGrupo() != null));
+//            System.out.println("rol.getPeriodo().getPeriodo().equals(rol.getEventoActivo().getPeriodo()) = " + (rol.getPeriodo().getPeriodo().equals(rol.getEventoActivo().getPeriodo())));
+//            System.out.println("rol.getPrograma() = " + rol.getPrograma());
+//            System.out.println("rol.getGrupo() = " + rol.getGrupo());
+            if(rol.getPeriodo().getPeriodo().equals(rol.getEventoActivo().getPeriodo()) && rol.getPrograma() != null && rol.getGrupo() != null){
+                final Short asignacionPTCCategoriaOficial = (short)ep.leerPropiedadEntera("asignacionPTCCategoriaOficial").orElse(32);
+                final Short asignacionPACategoriaOficial = (short)ep.leerPropiedadEntera("asignacionPACategoriaOficial").orElse(30);
+                final Integer asignacionPAHorasClaseMaximo = ep.leerPropiedadEntera("asignacionPAHorasClaseMaximo").orElse(30);
+                final Integer asignacionPTCHorasClaseMaximo = ep.leerPropiedadEntera("asignacionPTCHorasClaseMaximo").orElse(22);
+                final List<DtoAlerta> mensajes = new ArrayList<>();
+
+                ResultadoEJB<List<DtoMateria>> resMaterias = getMaterias(rol.getPrograma(), rol.getGrupo(), rol.getPeriodo(), rol.getPeriodoActivo());
+//                System.out.println("resMaterias = " + resMaterias);
+                if(resMaterias.getCorrecto()){
+                    List<PersonalActivo> docentes = resMaterias.getValor().stream()
+                            .filter(dtoMateria -> dtoMateria.getDtoCargaAcademica() != null)
+                            .map(DtoMateria::getDtoCargaAcademica)
+                            .map(DtoCargaAcademica::getDocente)
+                            .distinct()
+                            .collect(Collectors.toList());
+
+                    docentes.forEach(docente -> {
+//                        System.out.println("docente = " + docente.getPersonal().getNombre());
+                        ResultadoEJB<List<DtoCargaAcademica>> resCargaAcademicaPorDocente = getCargaAcademicaPorDocente(docente, rol.getPeriodo());
+//                        System.out.println("resCargaAcademicaPorDocente = " + resCargaAcademicaPorDocente);
+                        ResultadoEJB<Integer> resTotalHorasFrenteAGrupo = getTotalHorasFrenteAGrupo(resCargaAcademicaPorDocente.getCorrecto()?resCargaAcademicaPorDocente.getValor():Collections.EMPTY_LIST);
+//                        System.out.println("resTotalHorasFrenteAGrupo = " + resTotalHorasFrenteAGrupo);
+                        Integer totalHorasFrenteAGrupo = resTotalHorasFrenteAGrupo.getCorrecto()?resTotalHorasFrenteAGrupo.getValor():0;
+                        if(docente.getPersonal().getCategoriaOficial().getCategoria().equals(asignacionPTCCategoriaOficial)){
+//                            System.out.println("asignacionPTCCategoriaOficial = " + asignacionPTCCategoriaOficial);
+                            if(totalHorasFrenteAGrupo > asignacionPTCHorasClaseMaximo) mensajes.add(new DtoAlerta(String.format("El PTC %s tiene %s horas frente a grupo y el máximo permitido es %s horas.", docente.getPersonal().getNombre(), String.valueOf(totalHorasFrenteAGrupo), String.valueOf(asignacionPTCHorasClaseMaximo)), AlertaTipo.SUGERENCIA));
+                        }else if(docente.getPersonal().getCategoriaOficial().getCategoria().equals(asignacionPACategoriaOficial)){
+//                            System.out.println("asignacionPACategoriaOficial = " + asignacionPACategoriaOficial);
+                            if(totalHorasFrenteAGrupo > asignacionPAHorasClaseMaximo) mensajes.add(new DtoAlerta(String.format("El PA %s tiene %s horas frente a grupo y el máximo permitido es %s horas.", docente.getPersonal().getNombre(), String.valueOf(totalHorasFrenteAGrupo), String.valueOf(asignacionPAHorasClaseMaximo)), AlertaTipo.SUGERENCIA));
+                        }
+                        long count = rol.getMateriasPorGrupo().stream()
+                                .filter(dtoMateria -> dtoMateria.getDtoCargaAcademica() != null)
+                                .map(DtoMateria::getDtoCargaAcademica)
+                                .map(DtoCargaAcademica::getDocente)
+                                .filter(docente1 -> docente1.equals(docente))
+                                .count();
+//                    System.out.println("docente = " + docente);
+//                    System.out.println("count = " + count);
+
+                        if(count > 1l) mensajes.add(new DtoAlerta(String.format("El docente %s tiene mas de una materia asignada en el grupo %s", docente.getPersonal().getNombre(), String.valueOf(rol.getGrupo().getGrado()).concat(rol.getGrupo().getLiteral().toString())), AlertaTipo.SUGERENCIA));
+                    });
+                }
+                return ResultadoEJB.crearCorrecto(mensajes, "Lista de mensajes");
+            }else{
+                return ResultadoEJB.crearCorrecto(Collections.EMPTY_LIST, "Sin mensajes");
+            }
+        }catch (Exception e){
+//            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudieron identificar mensajes de asignación (EjbAsignacionAcademica.identificarMensajes).", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener el periodo actual
+     * @return Resultado del proceso
+     */
+    public PeriodosEscolares getPeriodoActual() {
+
+        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
+        List<PeriodosEscolares> l = spq.getResultList();
+
+        if (l == null || l.isEmpty()) {
+            return new PeriodosEscolares();
+        } else {
+            return l.get(0);
         }
     }
 }

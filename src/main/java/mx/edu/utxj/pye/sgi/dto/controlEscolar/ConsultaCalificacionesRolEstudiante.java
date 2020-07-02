@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -17,6 +18,7 @@ public class ConsultaCalificacionesRolEstudiante{
     @Getter @Setter @NonNull protected NivelRol nivelRol = NivelRol.CONSULTA;
     @Getter protected List<String> instrucciones = new ArrayList<>();
     @Getter @NonNull private DtoEstudiante estudiante;
+    @Getter @Setter @NonNull private Estudiante estudianteCE;
     @Getter @NonNull private PeriodosEscolares periodoActivo;
     @Getter @NonNull private List<PeriodosEscolares> periodosEscolares;
     @Getter @NonNull private List<DtoCalificacionEstudiante.MapUnidadesTematicas> mapUnidadesTematicas = new ArrayList<>();

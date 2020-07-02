@@ -10,6 +10,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbConsultaCalificacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DefaultStreamedContent;
@@ -108,6 +109,7 @@ public class GeneracionKardex implements Serializable{
 
         String carrera1 = ejb.obtenerProgramaEducativo(estudiante.getInscripcionActiva().getInscripcion().getCarrera()).getValor().getNombre();
         String carrera2 = ejb.obtenerProgramaEducativo(estudiante.getInscripcionActiva().getInscripcion().getCarrera()).getValor().getNombre();
+        Estudiante estudianteCE = estudiante.getInscripciones().get(estudiante.getInscripciones().size() - 1).getInscripcion();
         texto1 = new Paragraph(9);
         texto1.setSpacingAfter(10);
         texto2 = new Paragraph(9);
@@ -126,7 +128,7 @@ public class GeneracionKardex implements Serializable{
         texto1.add(new Paragraph(", cursó las siguientes asignaturas correspondientes a la carrera de: ", fontNormal));
         texto1.add(new Paragraph("Técnico Superior Universtiario en ".concat(carrera1), fontBolder));
         texto1.add(new Paragraph("y actualmente se encuentra cursando el ", fontNormal));
-        texto1.add(new Paragraph(String.valueOf(estudiante.getInscripcionActiva().getInscripcion().getGrupo().getGrado()).concat(" "), fontBolder));
+        texto1.add(new Paragraph(String.valueOf(estudianteCE.getGrupo().getGrado()).concat(" "), fontBolder));
         texto1.add(new Paragraph("cuatrimestre.", fontNormal));
         Phrase parrafo = new Phrase(texto1);
         texto2.add(new Paragraph("A petición del interesado y para los fines legales, que a él (ella) convengan, se expide la presente en Xicotepec de Juárez, Puebla, el "
@@ -169,7 +171,7 @@ public class GeneracionKardex implements Serializable{
                     cuatrimestre.setHorizontalAlignment(Element.ALIGN_CENTER);
                     table3.addCell(cuatrimestre);
                      List<BigDecimal> listaPromedios1 = new ArrayList<>();
-                    ejb.obtenerCargasAcademicas(estudiante1.getInscripcion()).getValor().stream().filter(grado -> grado.getGrupo().getGrado() == 1).forEach(dtoCargaAcademica -> {
+                    controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 1).forEach(dtoCargaAcademica -> {
                         BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor())
                                 .setScale(2, RoundingMode.HALF_UP);
                         BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor())
@@ -206,7 +208,7 @@ public class GeneracionKardex implements Serializable{
                     cuatrimestre.setHorizontalAlignment(Element.ALIGN_CENTER);
                     table.addCell(cuatrimestre);
                      List<BigDecimal> listaPromedios2 = new ArrayList<>();
-                    ejb.obtenerCargasAcademicas(estudiante1.getInscripcion()).getValor().stream().filter(grado -> grado.getGrupo().getGrado() == 2).forEach(dtoCargaAcademica -> {
+                    controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 2).forEach(dtoCargaAcademica -> {
                         BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor())
                                 .setScale(2, RoundingMode.HALF_UP);
                         BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor())

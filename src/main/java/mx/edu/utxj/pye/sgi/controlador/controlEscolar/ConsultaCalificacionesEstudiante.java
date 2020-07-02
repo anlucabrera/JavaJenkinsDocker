@@ -70,6 +70,8 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
                         //.stream()
                         //.filter(dtoInscripcion -> dtoInscripcion.getInscripcion().getPeriodo() == ejb.getPeriodoActual().getPeriodo())
                         //.collect(Collectors.toList())
+                rol.setEstudianteCE(rol.getInscripciones().get(rol.getInscripciones().size() - 1).getInscripcion());
+
 
                 rol.setPeriodosEscolares(ejb.obtenerListaPeriodosEscolares().getValor());
             }else{
@@ -89,13 +91,14 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         });
         rol.setMapUnidadesTematicas(new ArrayList<>(new HashSet<>(map)));
         rol.getMapUnidadesTematicas().sort(Comparator.comparingInt(DtoCalificacionEstudiante.MapUnidadesTematicas::getNoUnidad));
+        if(rol.getMapUnidadesTematicas().isEmpty())return new ArrayList<>();
         return rol.getMapUnidadesTematicas();
     }
 
     public List<DtoCargaAcademica> getCargasAcademicas(Estudiante estudiante){
         ResultadoEJB<List<DtoCargaAcademica>> resCargas = ejb.obtenerCargasAcademicas(estudiante);
-        if(!resCargas.getCorrecto()) mostrarMensajeResultadoEJB(resCargas);
-        else rol.setCargasEstudiante(resCargas.getValor());
+        rol.setCargasEstudiante(resCargas.getValor());
+        if(rol.getCargasEstudiante().isEmpty()) return new ArrayList<>();
         return rol.getCargasEstudiante();
     }
 
