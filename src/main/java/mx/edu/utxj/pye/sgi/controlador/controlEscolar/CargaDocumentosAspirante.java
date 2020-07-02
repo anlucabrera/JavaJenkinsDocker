@@ -112,12 +112,12 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
                 addDetailMessage("Por favor verifica tus datos");
                 Faces.getExternalContext().getFlash().setKeepMessages(true);
             }else{
-                rol.setValidacionCurpFolio(true);
-                addDetailMessage("Se han validado los datos correctamente");
-                Faces.getExternalContext().getFlash().setKeepMessages(true);
-                Faces.redirect("controlEscolar/aspirante/cargaDocumentos.xhtml");
-                mostrarDocumentos(rol.getAspirante());
-            }
+                    rol.setValidacionCurpFolio(true);
+                    addDetailMessage("Se han validado los datos correctamente");
+                    Faces.getExternalContext().getFlash().setKeepMessages(true);
+                    Faces.redirect("controlEscolar/aspirante/cargaDocumentos.xhtml");
+                    mostrarDocumentos(rol.getAspirante());
+                }
         }else mostrarMensajeResultadoEJB(res);  
        
     }
