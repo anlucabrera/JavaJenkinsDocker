@@ -193,9 +193,6 @@ public class EjbRegistroBajas {
             
             List<BajasCausa> bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.cveCausa NOT IN (5,11,21,23,24) ORDER BY bc.causa ASC", BajasCausa.class)
                     .getResultList();
-            
-              List<BajasCausa> bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.cveCausa NOT IN (24) ORDER BY bc.causa ASC", BajasCausa.class)
-                    .getResultList();
               
             return ResultadoEJB.crearCorrecto(bajasCausas, "Lista de causas de baja para realizar el registro de baja.");
         }catch (Exception e){
