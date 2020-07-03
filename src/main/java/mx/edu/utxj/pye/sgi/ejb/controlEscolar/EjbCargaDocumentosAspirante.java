@@ -27,6 +27,8 @@ import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 
@@ -126,6 +128,40 @@ public class EjbCargaDocumentosAspirante {
             return ResultadoEJB.crearCorrecto(aspirante, "Lista de configuración de la unidad materia seleccionada.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración de la materia del docente. (EjbCargaDocumentosAspirante.validarCurpFolio)", e, null);
+        }
+    }
+    
+     public ResultadoEJB<Estudiante> getInscripcion(Aspirante aspirante) {
+        try {
+            Estudiante estudiante = em.createQuery("select e from Estudiante e where e.aspirante.idAspirante =:aspirante", Estudiante.class)
+                    .setParameter("aspirante", aspirante.getIdAspirante())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            if (estudiante == null) {
+                return ResultadoEJB.crearErroneo(2, estudiante, "No se encontro inscripción");
+            } else {
+                return ResultadoEJB.crearCorrecto(estudiante, "Inscripción activa");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar el proceso de inscripcion activo(EjbCargaDocumentosAspirante.getInscripcion).", e, null);
+        }
+    }
+     
+    public ResultadoEJB<AreasUniversidad> getProgramaEducativo(Estudiante estudiante) {
+        try {
+            AreasUniversidad programa = em.createQuery("select a from AreasUniversidad a where a.area =:area", AreasUniversidad.class)
+                    .setParameter("area", estudiante.getGrupo().getIdPe())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            if (programa == null) {
+                return ResultadoEJB.crearErroneo(2, programa, "No se encontro programa educativo");
+            } else {
+                return ResultadoEJB.crearCorrecto(programa, "programa educativo");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar el proceso de inscripcion activo(EjbCargaDocumentosAspirante.getProgramaEducativo).", e, null);
         }
     }
     

@@ -24,15 +24,23 @@ import org.omnifaces.util.Ajax;
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import mx.edu.utxj.pye.sgi.util.Encrypted;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Faces;
+import org.omnifaces.util.Messages;
 
 
 
@@ -50,6 +58,7 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
     @Getter Boolean tieneAcceso = false;
     @Getter @Setter CargaDocumentosRolAspirante rol;
     @Getter @Setter CargaArchivosControlador cargaArchivosControlador;
+    @Getter @Setter  private Login login = new Login();
 //    
 //    @Getter @Setter private String curp;
 //    @Getter @Setter private Integer folioAdmision;
@@ -117,9 +126,34 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
                     Faces.getExternalContext().getFlash().setKeepMessages(true);
                     Faces.redirect("controlEscolar/aspirante/cargaDocumentos.xhtml");
                     mostrarDocumentos(rol.getAspirante());
+                    verificarInscripcion(rol.getAspirante());
                 }
         }else mostrarMensajeResultadoEJB(res);  
        
+    }
+    
+    public void verificarInscripcion(Aspirante aspirante){
+        ResultadoEJB<Estudiante> res = ejb.getInscripcion(aspirante);
+        if(res.getCorrecto()){
+            rol.setEstudiante(res.getValor());
+            ResultadoEJB<AreasUniversidad> res1 = ejb.getProgramaEducativo(rol.getEstudiante());
+                if(res1.getCorrecto()){
+                    rol.setProgramaEducativo(res1.getValor());
+                    obtenerLogin(aspirante);
+                }else mostrarMensajeResultadoEJB(res1);  
+            Ajax.update("frmInscripcion");
+        }else mostrarMensajeResultadoEJB(res);  
+       
+    }
+    
+    public void obtenerLogin(Aspirante aspirante) {
+        try {
+            login=rol.getAspirante().getIdPersona().getLogin();
+            login.setPassword(Encrypted.decrypt(Encrypted.KEY,Encrypted.IV,login.getPassword()));        
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(CargaDocumentosAspirante.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void mostrarDocumentos(Aspirante aspirante){

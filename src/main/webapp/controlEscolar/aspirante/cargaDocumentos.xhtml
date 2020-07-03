@@ -75,7 +75,6 @@
                          </p>
                          <hr/>
                      </div>
-
                      <div class="col-sm-12 col-md-12 col-lg-3">
                          <strong>CURP</strong>
                          <p class="text-muted">
@@ -90,6 +89,37 @@
                          </p>
                          <hr/>
                      </div>
+                     <c:if test="#{cargaDocumentosAspirante.rol.estudiante ne null}">
+                     <h4 style="text-align: center; color: red;">¡Ya te encuentras inscrito!</h4>
+                     <div class="col-sm-12 col-md-12 col-lg-3">
+                         <strong>Matricula</strong>
+                         <p class="text-muted">
+                            #{cargaDocumentosAspirante.rol.estudiante.matricula}
+                         </p>
+                         <hr/>
+                     </div>
+                     <div class="col-sm-12 col-md-12 col-lg-3">
+                         <strong>Grupo</strong>
+                         <p class="text-muted">
+                           #{cargaDocumentosAspirante.rol.estudiante.grupo.grado}° #{cargaDocumentosAspirante.rol.estudiante.grupo.literal} #{cargaDocumentosAspirante.rol.estudiante.grupo.idSistema.nombre} de #{cargaDocumentosAspirante.rol.programaEducativo.nombre}
+                         </p>
+                         <hr/>
+                     </div>
+                     <div class="col-sm-12 col-md-12 col-lg-3">
+                         <strong>Usuario</strong>
+                         <p class="text-muted">
+                           #{cargaDocumentosAspirante.login.usuario}
+                         </p>
+                         <hr/>
+                     </div>
+                     <div class="col-sm-12 col-md-12 col-lg-3">
+                         <strong>Contraseña</strong>
+                         <p class="text-muted">
+                           #{cargaDocumentosAspirante.login.password}
+                         </p>
+                         <hr/>
+                     </div>
+                     </c:if>
                  </div>
                  <h:form id="frmDocsAsp">
                      <p:remoteCommand name="actualizarListaDocs" update="@form:tblDocsExp" />
