@@ -50,19 +50,13 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Persona.findByUrlCurp", query = "SELECT p FROM Persona p WHERE p.urlCurp = :urlCurp")})
 public class Persona implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "idpersona")
-    private Integer idpersona;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 150)
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)
-    @NotNull
+    @NotNull()
     @Size(min = 1, max = 150)
     @Column(name = "apellido_paterno")
     private String apellidoPaterno;
@@ -90,15 +84,21 @@ public class Persona implements Serializable {
     @NotNull
     @Column(name = "genero")
     private short genero;
+    @Size(max = 400)
+    @Column(name = "urlCurp")
+    private String urlCurp;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "idpersona")
+    private Integer idpersona;
     @Column(name = "estado")
     private Integer estado;
     @Column(name = "municipio")
     private Integer municipio;
     @Column(name = "localidad")
     private Integer localidad;
-    @Size(max = 400)
-    @Column(name = "urlCurp")
-    private String urlCurp;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona")
     private DatosMedicos datosMedicos;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1")

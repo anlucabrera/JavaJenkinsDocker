@@ -20,6 +20,7 @@ public enum EventoEscolarTipo {
     FUSION_GRUPOS("Fusión_de_grupos"),
     CAPTURA_TAREA_INTEGRADORA("Captura_tarea_integradora"),
     CAPTURA_TAREA_INTEGRADORA_EXTERMPORANEA("Captura_tarea_integradora_extemporánea"),
-    REGISTRO_FICHAS_ADMISION("Registro_fichas_admision");
+    REGISTRO_FICHAS_ADMISION("Registro_fichas_admision"),
+    REGISTRO_CITAS("Registro_citas");
     @Getter @NonNull private final String label;
 }
