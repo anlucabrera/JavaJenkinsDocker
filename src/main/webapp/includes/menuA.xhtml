@@ -25,7 +25,8 @@
                     <span>Estatus Ficha de Admisión</span>
                 </p:link>
             </li>
-             <li>
+            <c:if test="#{agendaCitaInscripcionAspirante.mostrarEnDesarrollo(request) and agendaCitaInscripcionAspirante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/aspirante/agendaCita.xhtml"><i class="fa fa-calendar-check-o"></i><span>Agenda tu cita</span><span class="pull-right-container"></span></p:link></li></c:if>
+            <li>
 <!--                <p:link href="# {request.contextPath}/controlEscolar/aspirante/validarDatos.xhtml">
                     <i class="fa fa-upload"></i>
                     <span>Cargar Documentos Aspirante</span>
