@@ -27,6 +27,8 @@ import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 
@@ -129,6 +131,40 @@ public class EjbCargaDocumentosAspirante {
         }
     }
     
+     public ResultadoEJB<Estudiante> getInscripcion(Aspirante aspirante) {
+        try {
+            Estudiante estudiante = em.createQuery("select e from Estudiante e where e.aspirante.idAspirante =:aspirante", Estudiante.class)
+                    .setParameter("aspirante", aspirante.getIdAspirante())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            if (estudiante == null) {
+                return ResultadoEJB.crearErroneo(2, estudiante, "No se encontro inscripción");
+            } else {
+                return ResultadoEJB.crearCorrecto(estudiante, "Inscripción activa");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar el proceso de inscripcion activo(EjbCargaDocumentosAspirante.getInscripcion).", e, null);
+        }
+    }
+     
+    public ResultadoEJB<AreasUniversidad> getProgramaEducativo(Estudiante estudiante) {
+        try {
+            AreasUniversidad programa = em.createQuery("select a from AreasUniversidad a where a.area =:area", AreasUniversidad.class)
+                    .setParameter("area", estudiante.getGrupo().getIdPe())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            if (programa == null) {
+                return ResultadoEJB.crearErroneo(2, programa, "No se encontro programa educativo");
+            } else {
+                return ResultadoEJB.crearCorrecto(programa, "programa educativo");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar el proceso de inscripcion activo(EjbCargaDocumentosAspirante.getProgramaEducativo).", e, null);
+        }
+    }
+    
      /**
      * Permite obtener la lista de documento que debe cargar el aspirante
      * @param aspirante
@@ -136,16 +172,31 @@ public class EjbCargaDocumentosAspirante {
      */
     public ResultadoEJB<List<DtoDocumentoAspirante>> getDocumentoAspirante(Aspirante aspirante){
         try{
-            List<String> procesos = Arrays.asList("Admision", "Inscripcion");
+            List<DtoDocumentoAspirante> listaDocumentos = new ArrayList<>();
             
-            //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
-            List<DtoDocumentoAspirante> listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso IN :procesos ORDER BY d.proceso, d.documento.descripcion", DocumentoProceso.class)
+            if(aspirante.getEstatus())
+            {
+                List<String> procesos = Arrays.asList("Inscripcion");
+                listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso IN :procesos AND d.documento.activo =:valor ORDER BY d.proceso, d.documentoProceso", DocumentoProceso.class)
                     .setParameter("procesos", procesos)
+                    .setParameter("valor", true)
                     .getResultStream()
                     .map(doc -> pack(doc, aspirante).getValor())
                     .filter(dto -> dto != null)
                     .collect(Collectors.toList());
             
+            }else{
+            
+                List<String> procesos = Arrays.asList("Admision", "Inscripcion");
+                listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso IN :procesos AND d.documento.activo =:valor ORDER BY d.proceso, d.documentoProceso", DocumentoProceso.class)
+                    .setParameter("procesos", procesos)
+                    .setParameter("valor", true)
+                    .getResultStream()
+                    .map(doc -> pack(doc, aspirante).getValor())
+                    .filter(dto -> dto != null)
+                    .collect(Collectors.toList());
+            
+            }
             return ResultadoEJB.crearCorrecto(listaDocumentos, "Lista de documentos por aspirante.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de documentos por aspirante. (EjbCargaDocumentosAspirante.getDocumentoAspirante)", e, null);
