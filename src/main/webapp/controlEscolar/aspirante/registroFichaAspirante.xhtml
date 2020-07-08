@@ -694,13 +694,13 @@
                                                                 <div class="row">
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="calleRes" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.calle}"/>
+                                                                            <p:inputText id="calleRes" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.calle}" required="true" requiredMessage="Campo requerido"/>
                                                                             <p:outputLabel for="calleRes" value="Calle*"/>
                                                                         </div>
                                                                     </div>
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="numRes" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.numero}"/>
+                                                                            <p:inputText id="numRes" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.numero}" required="true" requiredMessage="Campo requerido"/>
                                                                             <p:outputLabel for="numRes" value="Número*"/>
                                                                         </div>
                                                                     </div>
@@ -731,8 +731,7 @@
                                                                             >
                                                                                 <f:selectItem itemValue="#{null}"/>
                                                                                 <f:selectItems value="#{registroFichaAdmisionAspirante.rol.municipiosDo}" var="municipio" itemValue="#{municipio.municipioPK.claveMunicipio}" itemLabel="#{municipio.nombre}"/>
-                                                                                <p:ajax process="@this"
-                                                                                        listener="#{registroFichaAdmisionAspirante.getAsentamientoDom}"
+                                                                                <p:ajax listener="#{registroFichaAdmisionAspirante.getAsentamientoDom}"
                                                                                         update="asentamientoR"/>
                                                                             </p:selectOneMenu>
                                                                             <p:outputLabel for="municipioRe" value="Municipio*"/>
@@ -758,7 +757,7 @@
                                                                 <div class="row">
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="tiempoR" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.tiempoResidencia}"><p:ajax/></p:inputText>
+                                                                            <p:inputText id="tiempoR" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.tiempoResidencia}" required="true" requiredMessage="Campo requerido"></p:inputText>
                                                                             <p:outputLabel for="tiempoR" value="Tiempo de residencia*"/>
                                                                         </div>
                                                                     </div>
@@ -770,7 +769,7 @@
                                                                             <p:outputLabel for="mD" value="¿Deseas utilizar la dirección de residencia como de procedencia?"/>
                                                                             <br/>
                                                                             <p:selectBooleanButton id="mD" value="#{registroFichaAdmisionAspirante.rol.ddomicilios.igualD}" onLabel="Si" offLabel="No"  onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" >
-                                                                                <p:ajax listener="#{registroFichaAdmisionAspirante.usarDireccionResidencia()}" update=":tbv:frmDomicilio" process="@this,tiempoR,calleRes,numRes"/>
+                                                                                <p:ajax listener="#{registroFichaAdmisionAspirante.usarDireccionResidencia()}" update=":tbv:frmDomicilio" process="@this"/>
                                                                             </p:selectBooleanButton>
                                                                         </div>
                                                                     </div>
@@ -794,13 +793,13 @@
                                                                 <div class="row">
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="calleProc" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.calleProcedencia}"/>
+                                                                            <p:inputText id="calleProc" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.calleProcedencia}" required="true" requiredMessage="Debes ingresar la calle"/>
                                                                             <p:outputLabel for="calleProc" value="Calle*"/>
                                                                         </div>
                                                                     </div>
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="numPr" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.numeroProcedencia}"/>
+                                                                            <p:inputText id="numPr" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.numeroProcedencia}" required="true" requiredMessage="Campo requerido"/>
                                                                             <p:outputLabel for="numPr" value="Número*"/>
                                                                         </div>
                                                                     </div>
@@ -858,7 +857,7 @@
                                                                 <div class="row">
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
-                                                                            <p:inputText id="vivesCon" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.vivesCon}"><p:ajax/></p:inputText>
+                                                                            <p:inputText id="vivesCon" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.ddomicilios.domicilio.vivesCon}" required="true" requiredMessage="Campo requerido"></p:inputText>
                                                                             <p:outputLabel for="vivesCon" value="Vives con*"/>
                                                                         </div>
                                                                     </div>

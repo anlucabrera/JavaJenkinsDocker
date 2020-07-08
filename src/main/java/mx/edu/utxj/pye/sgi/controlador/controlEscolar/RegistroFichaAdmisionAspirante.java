@@ -690,7 +690,7 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
      */
     public void  getAsentamientosProc(){
         try{
-            ResultadoEJB<List<Asentamiento>> resAsentamiento= ejbRegistroFicha.getAsentamientosbyMunicipio(rol.getDdomicilios().getDomicilio().getEstadoProcedencia(),rol.getDdomicilios().getDomicilio().getIdMunicipio());
+            ResultadoEJB<List<Asentamiento>> resAsentamiento= ejbRegistroFicha.getAsentamientosbyMunicipio(rol.getDdomicilios().getDomicilio().getEstadoProcedencia(),rol.getDdomicilios().getDomicilio().getMunicipioProcedencia());
             if(resAsentamiento.getCorrecto()==true){rol.setAsentamientosPo(resAsentamiento.getValor());}
             else {mostrarMensajeResultadoEJB(resAsentamiento);}
         }catch (Exception e){mostrarExcepcion(e);}
