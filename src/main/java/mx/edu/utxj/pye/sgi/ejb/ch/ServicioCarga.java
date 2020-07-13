@@ -373,7 +373,7 @@ public class ServicioCarga implements EjbCarga {
         //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subirDocExpTit(): " + rutaRelativa);
         try {
             byte[] content = Utils.toByteArray(file.getInputStream());
-            File carpeta = new File("C:/archivos/aspirantes/".concat(rutaRelativa.toString()));
+            File carpeta = new File("D:/archivos/aspirantes/".concat(rutaRelativa.toString()));
             addCarpetaRelativa(carpeta.toString());
             nombreArchivo = file.getSubmittedFileName();
             //extrae la extension y el nombre de archivo por separado
