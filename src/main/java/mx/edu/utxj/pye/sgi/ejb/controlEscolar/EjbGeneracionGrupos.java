@@ -191,7 +191,7 @@ public class EjbGeneracionGrupos {
     public ResultadoEJB<Generaciones> obtenerGeneraciones(){
         try {
             Generaciones g = em.createQuery("select g from Generaciones as g where :anio between g.inicio and g.fin order by g.generacion desc", Generaciones.class)
-                    .setParameter("anio", 2019).getResultStream().findFirst().orElse(null);
+                    .setParameter("anio", 2020).getResultStream().findFirst().orElse(null);
             return ResultadoEJB.crearCorrecto(g, "Generaciones encontradas con éxito");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se encontraron areas para este periodo. (EjbGeneracionGrupos.obtenerAreasUniversidad())", e, null);
