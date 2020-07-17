@@ -491,7 +491,7 @@ public class AreaPoaEvaluacion implements Serializable {
                 ejbEvidenciasPoa.agregarEvidenciases(evidencias, actividadesPoaEditando);
                 for (Part file : files) {
 
-                    ruta = carga.subir(file, new File("2019".concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat("EVALUACION_POA").concat(File.separator)));
+                    ruta = carga.subir(file, new File(String.valueOf(pOAUtilidades.obtenerAnioRegistro(ejercicioFiscal).getAnio()).concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat("EVALUACION_POA").concat(File.separator)));
 
                     if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                         String name = Servlets.getSubmittedFileName(file);
