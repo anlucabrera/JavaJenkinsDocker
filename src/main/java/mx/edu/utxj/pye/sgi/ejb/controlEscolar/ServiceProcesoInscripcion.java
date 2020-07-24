@@ -9,12 +9,18 @@ import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.*;
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupo;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
+import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Grupos;
 import mx.edu.utxj.pye.sgi.util.Encrypted;
 
 import javax.ejb.EJB;
@@ -40,10 +46,9 @@ import javax.persistence.EntityManager;
 @Stateless
 public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
 
-    @EJB
-    FacadeCE facadeCE;
+    @EJB FacadeCE facadeCE;
 
-    @EJB    EjbEventoEscolar ejbEventoEscolar;
+    @EJB   EjbEventoEscolar ejbEventoEscolar;
     private EntityManager em;
 
     @PostConstruct
@@ -89,6 +94,90 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 .getResultList().stream().findFirst().orElse(null);
     }
 
+    @Override
+    public ResultadoEJB<Estudiante> saveEstudiante(@NonNull Estudiante estudiante, @NonNull Boolean opcionIn, @NonNull DtoGrupo grupo, @NonNull Documentosentregadosestudiante documentos, @NonNull Operacion operacion,@NonNull EventoEscolar eventoEscolar) {
+        try{
+            if(estudiante==null){return ResultadoEJB.crearErroneo(2,new Estudiante(),"El estudiante no debe ser nulo");}
+            if(opcionIn==null){return ResultadoEJB.crearErroneo(3,new Estudiante(),"La opci+on de inscripcón no debe ser nulo");}
+            if(grupo==null){return ResultadoEJB.crearErroneo(4,new Estudiante(),"El grupo no debe ser nulo");}
+            if(documentos==null){return ResultadoEJB.crearErroneo(5,new Estudiante(),"Los documentos no deben ser nulos");}
+            switch (operacion){
+                case PERSISTIR:
+                    if(grupo.getLleno()==false){
+                       // System.out.println("No esta lleno");
+                        int matricula = 0;
+                        String folio = "";
+                        TipoEstudiante tipoEstudiante = new TipoEstudiante((short)1, "Regular", true);
+                        //Se crea el Login
+                        Login login = new Login();
+                        String contrasena="";
+                        int generador;
+                        for(int i=0;i<6;i++){
+                            generador = (int)(Math.random()*10);
+                            contrasena+= generador;
+                        }
+                        //Asignar Matricula
+                        String anyo2 = new SimpleDateFormat("yy").format(new Date());
+                        folio = anyo2.concat("0000");
+                        TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(e.matricula) FROM Estudiante e WHERE e.periodo = :idPeriodo")
+                                .setParameter("idPeriodo", eventoEscolar.getPeriodo());
+
+                        if(v.getSingleResult() == 0){
+                            matricula = Integer.valueOf(folio);
+                        }else{
+                            matricula = v.getSingleResult() + 1;
+                        }
+                        //Guarda estudiante
+                        estudiante.setGrupo(grupo.getGrupo());
+                        estudiante.setCarrera(grupo.getGrupo().getIdPe());
+                        estudiante.setMatricula(matricula);
+                        estudiante.setTipoEstudiante(tipoEstudiante);
+                        estudiante.setOpcionIncripcion(opcionIn);
+                        estudiante.setTipoRegistro("Inscripción");
+                        em.persist(estudiante);
+                        facadeCE.flush();
+                        login.setActivo(true);
+                        login.setModificado(false);
+                        login.setUsuario(String.valueOf(matricula));
+                        login.setPassword(encriptaPassword(contrasena));
+                        login.setPersona(estudiante.getAspirante().getIdPersona().getIdpersona());
+                        em.persist(login);
+                        facadeCE.flush();
+                        documentos.setEstudiante(estudiante.getIdEstudiante());
+                        em.persist(documentos);
+                        facadeCE.flush();
+                        return ResultadoEJB.crearCorrecto(estudiante,"Estudiante inscrito con éxito");
+                    }else {
+                        return ResultadoEJB.crearErroneo(6,new Estudiante(),"El grupo seleccionado está lleno. Seleccione otro.");
+                    }
+
+                case ACTUALIZAR:
+                    if (grupo.getLleno()==false){
+                        TipoEstudiante tipoEstudiante = new TipoEstudiante((short)1, "Regular", true);
+                        //Guarda estudiante
+                        estudiante.setGrupo(grupo.getGrupo());
+                        estudiante.setCarrera(grupo.getGrupo().getIdPe());
+                        estudiante.setTipoEstudiante(tipoEstudiante);
+                        estudiante.setOpcionIncripcion(opcionIn);
+                        em.merge(estudiante);
+                        facadeCE.flush();
+                        documentos.setEstudiante(estudiante.getIdEstudiante());
+                        if(documentos.getEstudiante() == null){
+                            em.persist(documentos);
+                        }else{
+                            em.merge(documentos);
+                        }
+                        return ResultadoEJB.crearCorrecto(estudiante,"Estudiante actualizado");
+                    }else {
+                        return ResultadoEJB.crearErroneo(7,new Estudiante(),"El grupo seleccionado está lleno. Seleccione otro.");
+                    }
+            }
+            return ResultadoEJB.crearCorrecto(estudiante,"Estudiante inscrito");
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "Error al inscribir al estudiante(EJBProcesoInscripcion.saveEstudiante).", e, null);
+
+        }
+    }
     @Override
     public Estudiante guardaEstudiante(Estudiante estudiante, Documentosentregadosestudiante documentosentregadosestudiante, Boolean opcionIns) {
         List<Grupo> grupos = new ArrayList<>();
@@ -429,4 +518,152 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar de inscripciones (EJBProcesoInscripcion.).", e, EventoEscolar.class);
         }
     }
+
+    /**
+     * Busca los grupos por programa educativo y sistema
+     * @param eventoEscolar Evento escolar activo para inscripcion
+     * @param pe Programa educativo
+     * @param sistema Sistema escolar
+     * @return Resultado del proceso
+     */
+
+    @Override
+    public ResultadoEJB<List<Grupo>> getGruposbyPe(@NonNull EventoEscolar eventoEscolar, @NonNull AreasUniversidad pe, @NonNull Sistema sistema) {
+        try{
+            List<Grupo> grupos = new ArrayList<>();
+            if(eventoEscolar==null){return ResultadoEJB.crearErroneo(2,grupos,"El evento no debe ser nulo");}
+            if(pe==null){ return  ResultadoEJB.crearErroneo(3,grupos,"El programa educativo no debe ser nulo");}
+            if(sistema==null){ return ResultadoEJB.crearErroneo(4,grupos,"El sistema no debe ser nulo");}
+            grupos = em.createQuery("select g from Grupo g where g.periodo=:periodo and g.idPe=:pe and g.idSistema.idSistema=:sistema", Grupo.class)
+                .setParameter("periodo", eventoEscolar.getPeriodo())
+                .setParameter("pe",pe.getArea())
+                .setParameter("sistema",sistema.getIdSistema())
+                .getResultList()
+            ;
+            if(grupos==null || grupos.isEmpty()){ return ResultadoEJB.crearErroneo(5,grupos,"No existen grupos creados para el programa educativo");}
+            else { return  ResultadoEJB.crearCorrecto(grupos,"Lista de grupos");}
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "Error al obtener los grupos por programa educativo(EJBProcesoInscripcion.getGruposbyPe).", e, null);
+
+        }
+    }
+
+    /**
+     * Obtiene estudiantes regulares
+     * @param grupo Grupo
+     * @return Resultado del proceso
+     */
+    @Override
+    public ResultadoEJB<List<Estudiante>> getEstudiantesbyGrupo(@NonNull Grupo grupo) {
+        try{
+            List<Estudiante> estudiantes= new ArrayList<>();
+            if (grupo == null) { return ResultadoEJB.crearErroneo(2,estudiantes,"El grupo dno debe ser nulo");}
+            estudiantes = em.createQuery("select e from Estudiante  e where e.grupo.idGrupo=:grupo and e.tipoEstudiante.idTipoEstudiante=1",Estudiante.class)
+            .setParameter("grupo",grupo.getIdGrupo())
+            .getResultList()
+            ;
+            if(estudiantes==null || estudiantes.isEmpty()){return ResultadoEJB.crearErroneo(3, estudiantes,"No existen estudiantes en ese grupo");}
+            else { return ResultadoEJB.crearCorrecto(estudiantes,"Exiten estudiantes en el grupo"); }
+        }catch (Exception e ){return  ResultadoEJB.crearErroneo(1, "Error al obtener los estudiantes por grupo(EJBProcesoInscripcion.getGruposbyPe).", e, null); }
+
+    }
+
+    /**
+     * Empaqueta al grupo
+     * @param grupo Grupo
+     * @return Resultado del  proceso
+     */
+    @Override
+    public ResultadoEJB<DtoGrupo> packGrupo(@NonNull Grupo grupo) {
+        try{
+            DtoGrupo dtoGrupo = new DtoGrupo();
+            if(grupo==null){ return ResultadoEJB.crearErroneo(2,dtoGrupo,"El grupo no debe ser nulo");}
+            dtoGrupo.setGrupo(grupo);
+            // Obtiene el programa educativo del grupo
+            AreasUniversidad pe =buscaAreaByClave(grupo.getIdPe());
+            //Obtiene al tutor del grupo
+            if(grupo.getTutor()!=null){
+                ResultadoEJB<Personal> resTutor = getTutor(grupo.getTutor());
+                if(resTutor.getCorrecto()){
+                    dtoGrupo.setNombreTutor(resTutor.getValor().getNombre());
+                    dtoGrupo.setTutor(resTutor.getValor());
+                }else {return ResultadoEJB.crearErroneo(4,dtoGrupo,"Error al obtener al tutor del grupo");}
+            }else {dtoGrupo.setNombreTutor("Sin asignar"); dtoGrupo.setTutor(new Personal());}
+            //Obtiene la lista de estudiantes en ese grupo
+            dtoGrupo.setCapMax(grupo.getCapMaxima());
+            ResultadoEJB<List<Estudiante>> resEstudiantes= getEstudiantesbyGrupo(grupo);
+            if(resEstudiantes.getCorrecto()==true){
+                dtoGrupo.setEstudiantes(resEstudiantes.getValor());
+                dtoGrupo.setTotalGrupo(resEstudiantes.getValor().size());
+                dtoGrupo.setCapDispo(grupo.getCapMaxima()-dtoGrupo.getTotalGrupo());
+            }else{
+                //No hay estudiantes en ese grupo
+                dtoGrupo.setEstudiantes(new ArrayList<>());
+                dtoGrupo.setTotalGrupo(resEstudiantes.getValor().size());
+                dtoGrupo.setCapDispo(grupo.getCapMaxima()- dtoGrupo.getTotalGrupo());
+            }
+            //Comprueba si el grupo ya está lleno
+            if(dtoGrupo.getTotalGrupo()==grupo.getCapMaxima()){ dtoGrupo.setLleno(true);
+            }else {dtoGrupo.setLleno(false);}
+            return ResultadoEJB.crearCorrecto(dtoGrupo,"Grupo empaquetado");
+        }catch (Exception e){ return  ResultadoEJB.crearErroneo(1, "Error al empaquetar al grupo(EJBProcesoInscripcion.packGrupo).", e, null); }
+
+    }
+
+    /**
+     * Obtiene los possibes grupos por programa educativo y los empaqueta
+     * @param eventoEscolar evento activo para inscripción
+     * @param aspirante Aspirante validado
+     * @param pe Programa educativo
+     * @param datosAcademicos datos académicos del aspirante
+     * @return Resultado del proceso (Lista de posibles grupos )
+     */
+    @Override
+    public ResultadoEJB<List<DtoGrupo>> getGruposbyOpcion(@NonNull EventoEscolar eventoEscolar,@NonNull Aspirante aspirante,@NonNull AreasUniversidad pe,@NonNull DatosAcademicos datosAcademicos) {
+       try{
+           List<DtoGrupo> grupos= new ArrayList<>();
+           if(eventoEscolar==null){return ResultadoEJB.crearErroneo(2,grupos,"El evento no debe ser nulo");}
+           if(aspirante==null){return ResultadoEJB.crearErroneo(3,grupos,"El aspirante no debe ser nulo");}
+           if(pe==null){return ResultadoEJB.crearErroneo(4,grupos,"Los datos académicos no deben ser nulos"); }
+           //Se obtienen grupos de la primera opción
+           ResultadoEJB<List<Grupo>> resGruposPO = getGruposbyPe(eventoEscolar,pe,datosAcademicos.getSistemaPrimeraOpcion());
+           if(resGruposPO.getCorrecto()==true){
+               //Se recorren los grupos para poder empaquetarlos
+               resGruposPO.getValor().forEach(g->{
+                   //Se empaquetan los grupos
+                   ResultadoEJB<DtoGrupo> resPack= packGrupo(g);
+                   if(resPack.getCorrecto()==true){
+                       grupos.add(resPack.getValor());
+                   }
+               });
+               return ResultadoEJB.crearCorrecto(grupos,"Opcion de grupos");
+           }else {return ResultadoEJB.crearErroneo(5,grupos,"No existen grupos creados del programa "+ pe.getNombre());}
+       }catch (Exception e){return  ResultadoEJB.crearErroneo(1, "Error al obtener los posibles grupos(EJBProcesoInscripcion.getGruposbyPe).", e, null);}
+    }
+
+    /**
+     * Obtiene al tutor del grupo
+     * @param clave Clave del personal
+     * @return Resultado del proceso
+     */
+    @Override
+    public ResultadoEJB<Personal> getTutor(@NonNull Integer clave) {
+        try{
+            if(clave==null){ return ResultadoEJB.crearErroneo(2,new Personal(),"La clave del tutor no debe ser nula");}
+            Personal tutor = new Personal();
+            tutor =em.createQuery("select p from Personal p where p.clave=:clave",Personal.class)
+                    .setParameter("clave", clave)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+            ;
+            if(tutor ==null){ return ResultadoEJB.crearErroneo(3,tutor,"No tiene tutor asignado");}
+            else {return ResultadoEJB.crearCorrecto(tutor,"Tutor de grupo");}
+        }catch (Exception e){return  ResultadoEJB.crearErroneo(1, "Error al obtener al tutor de grupo(EJBProcesoInscripcion.getTutor).", e, null);}
+    }
+
+
+
+
+
 }

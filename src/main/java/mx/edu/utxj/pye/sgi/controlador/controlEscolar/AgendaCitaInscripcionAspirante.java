@@ -55,7 +55,7 @@ public class AgendaCitaInscripcionAspirante extends ViewScopedRol implements Des
         if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
         ResultadoEJB<ProcesosInscripcion> resProceso= ejbCita.getProcesosInscripcionActivo();
         if(resProceso.getCorrecto()==true){rol.setProcesosInscripcion(resProceso.getValor());}
-        else {tieneAcceso=false;rol.setTieneAcceso(tieneAcceso);}
+        else {tieneAcceso=false;rol.setTieneAcceso(tieneAcceso);return;}
         ResultadoEJB<EventoEscolar> resEvento = ejbCita.verificaEvento();
         mostrarMensajeResultadoEJB(resAcceso);
         if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú

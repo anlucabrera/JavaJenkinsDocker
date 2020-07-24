@@ -599,9 +599,9 @@
                                                                 </div>
                                                                 <div class="col-sm-3 col-md-3 col-lg-3">
                                                                     <p:outputLabel for="tipoS" style="font-size: large" value="Tipo Sangre*"/>
-                                                                    <p:selectOneMenu id="tipoS" required="true" value="#{procesoInscripcion.personaValido.datosMedicos.cveTipoSangre}" converter="entidadCEConverter" requiredMessage="Es nesesario que ingrese su tipo de sangre">
+                                                                    <p:selectOneMenu id="tipoS" required="true" value="#{procesoInscripcion.personaValido.datosMedicos.cveTipoSangre}" converter="entityConverter" requiredMessage="Es nesesario que ingrese su tipo de sangre">
                                                                         <f:selectItem itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{FichaAdmision.listaTipoSangre}"/>
+                                                                        <f:selectItems value="#{procesoInscripcion.rol.tipoSangreList}" var="tipoS" itemValue="#{tipoS}" itemLabel="#{tipoS.nombre}"/>
                                                                     </p:selectOneMenu>
                                                                     <p:message for="tipoS"><p:autoUpdate/></p:message>
                                                                 </div>
@@ -621,15 +621,50 @@
                                                                     <p:outputLabel for="sistemaO" style="font-size: large;text-align: right;" value="Sistema Opcional" />
                                                                     <p:inputText id="sistemaO" class="form-control" value="#{procesoInscripcion.aspiranteValido.datosAcademicos.sistemaSegundaOpcion.nombre}" readonly="true"/>
                                                                 </div>
-                                                                <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                    <p:outputLabel for="prgP" style="font-size: large;text-align: right;" value="Selecciona Opción de Inscripción" />
-                                                                    <p:selectOneRadio id="prgP" layout="responsive" columns="2" value="#{procesoInscripcion.opcionIncripcion}">
+                                                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                    <p:outputLabel for="prgP"  style="font-size: large;text-align: right;" value="Selecciona Opción de Inscripción" />
+                                                                    <p:selectOneRadio id="prgP" layout="responsive" columns="2" value="#{procesoInscripcion.opcionIncripcion}" required="true" requiredMessage="Es necesario seleccionar la opción">
                                                                         <f:selectItem itemValue="#{true}" itemLabel="Primera Opción"/>
                                                                         <f:selectItem itemValue="#{false}" itemLabel="Segunda Opción"/>
+                                                                        <p:ajax event="change" listener="#{procesoInscripcion.getPosiblesGrupos()}" process="@this" update="tabw1:frmInscripcion:tablaGrupos"/>
                                                                     </p:selectOneRadio>
+                                                                    <c:set var="opc" value="#{procesoInscripcion.opcionIncripcion}"/>
+                                                                    <p:message for="prgP"><p:autoUpdate/></p:message>
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                        <label class="col-sm-12 control-label"><h3 style="text-align: center">Grupo</h3></label>
+                                                                        <p:dataTable id="tablaGrupos" var="grupo" value="#{procesoInscripcion.rol.posiblesGrupos}" selection="#{procesoInscripcion.rol.grupoSeleccionado}" rowKey="#{grupo.grupo.idGrupo}" emptyMessage="No existen grupos creados para está opción">
+                                                                            <f:facet name="header">
+                                                                                Posibles grupos
+                                                                            </f:facet>
+                                                                            <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                                                                            <p:column headerText="Grado" style="width: 30px">
+                                                                                <h:outputText value="#{grupo.grupo.grado}" />
+                                                                            </p:column>
+                                                                            <p:column headerText="Grupo" style="width: 30px">
+                                                                                <h:outputText value="#{grupo.grupo.literal}" />
+                                                                            </p:column>
+                                                                            <p:column headerText="Cupo Máximo" style="width: 30px">
+                                                                                <h:outputText value="#{grupo.capMax}" />
+                                                                            </p:column>
+                                                                            <p:column headerText="Inscritos" style="width: 30px">
+                                                                                <h:outputText value="#{grupo.totalGrupo}" />
+                                                                            </p:column>
+                                                                            <p:column headerText="Lugares disponibles" style="width: 40px">
+                                                                                <h:outputText value="#{grupo.capDispo}" />
+                                                                            </p:column>
+                                                                            <p:column headerText="Tutor" style="width: 90px">
+                                                                                <h:outputText value="#{grupo.nombreTutor}" />
+                                                                            </p:column>
+                                                                        </p:dataTable>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         <div class="row">
                                                             <div class="form-group">
                                                                 <label class="col-sm-12 control-label"><h3 style="text-align: center">Datos de Inscripción</h3></label>
@@ -700,7 +735,7 @@
                                                                 <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                     <p:commandButton id="btnGuardaGrupos" value="Inscribir Estudiante" icon="fa fa-floppy-o"
-                                                                                     class="btn-primary btn-block col-md-3" process="@form" update="@form,:tabw1:frmListaEstudiantes" actionListener="#{procesoInscripcion.guardarEstudiante()}" disabled="#{(procesoInscripcion.aspiranteValido.estatus == false)}"/>
+                                                                                     class="btn-primary btn-block col-md-3" process="@form" update="@form,:tabw1:frmListaEstudiantes" actionListener="#{procesoInscripcion.saveEstudiante()}"  disabled="#{(procesoInscripcion.aspiranteValido.estatus == false)}"/>
                                                                     <p:commandButton id="btnClean" value="Limpiar" icon="fa fa-trash"
                                                                                      class="btn-primary btn-block col-md-3" process="@form" update="@form" actionListener="#{procesoInscripcion.clearDatos()}" disabled="#{(procesoInscripcion.aspiranteValido.estatus == false)}"/>
                                                                 </div>

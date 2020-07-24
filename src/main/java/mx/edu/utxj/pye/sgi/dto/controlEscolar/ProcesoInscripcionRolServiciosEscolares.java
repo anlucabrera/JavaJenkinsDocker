@@ -6,9 +6,12 @@ import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
+import java.util.List;
 import java.util.Objects;
 
 public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
@@ -23,6 +26,11 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
     @Getter @NonNull private PeriodosEscolares periodo;
     @Getter @NonNull private Integer periodoActivo, periodoAct;
     @Getter @NonNull private AreasUniversidad programa;
+
+    @Getter @NonNull private List<TipoSangre> tipoSangreList; //Lista de tipo de sangre
+    @Getter @NonNull private  List<DtoGrupo> posiblesGrupos;// Grupos posibles
+    @Getter @NonNull private DtoGrupo grupoSeleccionado; //Grupo seleccionado
+    @Getter @NonNull private  AreasUniversidad pePo,peSo; //Programas educativos del aspirante validado
 
      public ProcesoInscripcionRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad programa) {
         super(filtro);
@@ -56,5 +64,24 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
 
     public void setPeriodoAct(Integer periodoAct) {
         this.periodoAct = periodoAct;
+    }
+
+    public void setTipoSangreList(List<TipoSangre> tipoSangreList) {
+        this.tipoSangreList = tipoSangreList;
+    }
+    public void setGrupoSeleccionado(DtoGrupo grupoSeleccionado) {
+        this.grupoSeleccionado = grupoSeleccionado;
+    }
+
+    public void setPePo(AreasUniversidad pePo) {
+        this.pePo = pePo;
+    }
+
+    public void setPeSo(AreasUniversidad peSo) {
+        this.peSo = peSo;
+    }
+
+    public void setPosiblesGrupos(List<DtoGrupo> posiblesGrupos) {
+        this.posiblesGrupos = posiblesGrupos;
     }
 }
