@@ -5,12 +5,17 @@
  */
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupo;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
+import mx.edu.utxj.pye.sgi.enums.Operacion;
 
 import javax.ejb.Local;
+import javax.persistence.NamedStoredProcedureQueries;
 import java.util.List;
 
 /**
@@ -32,6 +37,13 @@ public interface EjbProcesoInscripcion {
     public List<Estudiante> listaEstudiantesXPeriodo(Integer perido);
     public void actualizaEstudiante(Estudiante estudiante);
     public Iems buscaIemsByClave(Integer id);
+    ///////////////////////////Nuevos ///////////////////////
     public ResultadoEJB<EventoEscolar> verificarEventoIncipcion();
     public ResultadoEJB<EventoEscolar> verificarEventoRegistroFichas();
+    public  ResultadoEJB<Personal> getTutor (@NonNull Integer clave);
+    public ResultadoEJB<List<Grupo>> getGruposbyPe(@NonNull EventoEscolar eventoEscolar, @NonNull AreasUniversidad pe, @NonNull Sistema sistema);
+    public ResultadoEJB<List<Estudiante>> getEstudiantesbyGrupo(@NonNull Grupo grupo);
+    public  ResultadoEJB<DtoGrupo> packGrupo(@NonNull Grupo grupo);
+    public ResultadoEJB<List<DtoGrupo>> getGruposbyOpcion(@NonNull EventoEscolar eventoEscolar,@NonNull Aspirante aspirante,@NonNull AreasUniversidad pe,@NonNull DatosAcademicos datosAcademicos);
+    public ResultadoEJB<Estudiante> saveEstudiante(@NonNull Estudiante estudiante, @NonNull Boolean opcionIn, @NonNull DtoGrupo grupo, @NonNull Documentosentregadosestudiante documentos, @NonNull Operacion operacion, @NonNull EventoEscolar eventoEscolar);
 }

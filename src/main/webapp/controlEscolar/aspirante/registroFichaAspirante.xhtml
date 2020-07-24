@@ -769,7 +769,7 @@
                                                                             <p:outputLabel for="mD" value="¿Deseas utilizar la dirección de residencia como de procedencia?"/>
                                                                             <br/>
                                                                             <p:selectBooleanButton id="mD" value="#{registroFichaAdmisionAspirante.rol.ddomicilios.igualD}" onLabel="Si" offLabel="No"  onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" >
-                                                                                <p:ajax listener="#{registroFichaAdmisionAspirante.usarDireccionResidencia()}" update=":tbv:frmDomicilio" process="@this"/>
+                                                                                <p:ajax listener="#{registroFichaAdmisionAspirante.usarDireccionResidencia()}" update="@form" process="@this,tiempoR,calleRes,numRes"/>
                                                                             </p:selectBooleanButton>
                                                                         </div>
                                                                     </div>
@@ -917,7 +917,7 @@
                                                                     <div class="#{casilla5}">
                                                                         <div class="ui-material">
                                                                             <p:inputText id="amTutor" class="form-control"  value="#{registroFichaAdmisionAspirante.rol.dfamiliares.tutorR.tutorFamiliar.apellidoMaterno}"/>
-                                                                            <p:outputLabel for="amTutor" value="Apellido Paterno*"/>
+                                                                            <p:outputLabel for="amTutor" value="Apellido Materno*"/>
                                                                             <p:message for="amTutor"><p:autoUpdate/></p:message>
                                                                         </div>
                                                                     </div>

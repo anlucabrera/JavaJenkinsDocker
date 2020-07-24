@@ -709,10 +709,11 @@ public class EjbRegistroFichaAdmision {
                 return ResultadoEJB.crearErroneo(2, rr, "La curp no debe ser nula");
             }
             //System.out.println("2");
-            if (persona.getEstado() > 32) {
+            /*if (persona.getEstado() > 32) {
                 //System.out.println("E");
                 return ResultadoEJB.crearErroneo(5, rr, "Usted es nacido en el extranjero, favor de dirigirse al Departamento de servicios escolares");
-            } else {
+            }
+            */else {
                 //System.out.println("3" +persona.getEstado()+ " " + persona.getCurp());
                 ResultadoEJB<Persona> resPersona = getPersonabyCurp(persona.getCurp());
                 ResultadoEJB<Pais> resPaisO = getPaisOrigenByEstado(persona.getEstado());

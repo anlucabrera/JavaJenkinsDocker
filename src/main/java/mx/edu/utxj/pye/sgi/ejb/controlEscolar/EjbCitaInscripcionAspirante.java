@@ -120,8 +120,7 @@ public class EjbCitaInscripcionAspirante {
             if(procesosInscripcionActivo==null){return ResultadoEJB.crearErroneo(2,new TramitesEscolares(),"El proceso de inscripción no debe ser nulo"); }
             TramitesEscolares tramitesEscolares = new TramitesEscolares();
             //Verifica tramite aperturado
-            tramitesEscolares = em.createQuery("select t from TramitesEscolares t where :fecha between t.fechaInicio and t.fechaFin and t.tipoTramite=:tipoT and t.periodo=:periodo and T.tipoPersona=:tipoPer", TramitesEscolares.class)
-                    .setParameter("fecha", new Date())
+            tramitesEscolares = em.createQuery("select t from TramitesEscolares t where t.tipoTramite=:tipoT and t.periodo=:periodo and T.tipoPersona=:tipoPer", TramitesEscolares.class)
                     .setParameter("tipoT", TramiteEscolar.INSCRIPCION.getLabel())
                     .setParameter("periodo",procesosInscripcionActivo.getIdPeriodo())
                     .setParameter("tipoPer",TipoPersonaTramite.ASPIRANTE.getLabel())

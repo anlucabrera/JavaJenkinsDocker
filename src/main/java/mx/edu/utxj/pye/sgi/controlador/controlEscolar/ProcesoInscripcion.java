@@ -2,11 +2,14 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.itextpdf.text.DocumentException;
+import com.sun.mail.imap.ResyncData;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupo;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ProcesoInscripcionRolServiciosEscolares;
 import mx.edu.utxj.pye.sgi.dto.dtoAlumnoFinanzas;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.*;
@@ -17,6 +20,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Vistapagosprimercuatrimestre;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
+import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
@@ -68,6 +72,7 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
     @Getter Boolean tieneAcceso = false;
 
     @EJB EjbFichaAdmision ejbFichaAdmision;
+    @EJB EjbRegistroFichaAdmision ejbRegistroFichaAdmision2;
     @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
     @EJB EjbSelectItemCE ejbSelectItemCE;
     @EJB EjbAreasLogeo ejbAreasLogeo;
@@ -125,6 +130,7 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
             ////////////
             listaPe = ejbSelectItemCE.itemPEAll();
             listaAreasUniversidad = ejbAreasLogeo.listaProgramasEducativos();
+            getTipoSangre();
             if(rol.getEventoIncripcion()!=null){ listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(rol.getEventoIncripcion().getPeriodo());}
         }catch (Exception e){
             mostrarExcepcion(e);
@@ -148,6 +154,15 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
              mostrarExcepcion(e);
              return false;
          }
+    }
+    //Obtiene la lista de tipo de sangre
+    public void getTipoSangre(){
+        try{
+            ResultadoEJB<List<TipoSangre>> resSangre= ejbRegistroFichaAdmision2.getTiposSangre();
+            if(resSangre.getCorrecto()==true){
+             rol.setTipoSangreList(resSangre.getValor());
+            }else {mostrarMensajeResultadoEJB(resSangre);}
+        }catch (Exception e){mostrarExcepcion(e);}
     }
     
     public void buscarFichaAdmision(){
@@ -224,6 +239,7 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
                 opcionIncripcion = estudiante.getOpcionIncripcion();
                 documentosentregadosestudiante = estudiante.getDocumentosentregadosestudiante();
                 carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short) estudiante.getCarrera()).getNombre();
+                getPosiblesGrupos();
             }else{
                 estudiante = new Estudiante();
             }
@@ -237,11 +253,65 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
             folioFichaInscripcion = null;
         }
     }
+    public void getPosiblesGrupos(){
+    try{
+        if(aspiranteValido!=null){
+            if(opcionIncripcion==true){
+                //Obtiene el pe opcion
+                rol.setPePo(ejbProcesoInscripcion.buscaAreaByClave(aspiranteValido.getDatosAcademicos().getPrimeraOpcion()));
+                rol.setPeSo(ejbProcesoInscripcion.buscaAreaByClave(aspiranteValido.getDatosAcademicos().getSegundaOpcion()));
+                //Se obtienen los posibles grupos de la primera opcion del aspirante
+                ResultadoEJB<List<DtoGrupo>> resGrupoPo= ejbProcesoInscripcion.getGruposbyOpcion(rol.getEventoIncripcion(),aspiranteValido,rol.getPePo(),aspiranteValido.getDatosAcademicos());
+                if(resGrupoPo.getCorrecto()==true){
+                    //System.out.println("Genero grupo primera opcion");
+                    rol.setPosiblesGrupos(resGrupoPo.getValor());
+                   // System.out.println(rol.getPosiblesGrupos().size()+" Grupo-->"+ rol.getPosiblesGrupos().get(1).getGrupo().getGrado());
+                }else {mostrarMensajeResultadoEJB(resGrupoPo);}
+            }else if(opcionIncripcion==false){
+                //Se obtienen los posibles grupos de la segunda opción
+                ResultadoEJB<List<DtoGrupo>> resGruposSo= ejbProcesoInscripcion.getGruposbyOpcion(rol.getEventoIncripcion(),aspiranteValido,rol.getPeSo(),aspiranteValido.getDatosAcademicos());
+                if(resGruposSo.getCorrecto()==true){
+                   // System.out.println("Genero grupo segunda opcion");
+                    rol.setPosiblesGrupos(resGruposSo.getValor());
+                }else {mostrarMensajeResultadoEJB(resGruposSo);}
+
+            }else {
+                Messages.addGlobalError("Es necesario seleccionar la opción de inscripción del aspirante");
+            }
+
+        }
+
+    }catch (Exception e){ mostrarExcepcion(e);}
+
+    }
     
     public String nombrePE(Short idpe){
         return ejbProcesoInscripcion.buscaAreaByClave(idpe).getNombre();
     }
     
+    public void saveEstudiante(){
+        try{
+            if(estudiante.getIdEstudiante()==null){
+                estudiante.setAspirante(aspiranteValido);
+                estudiante.setPeriodo(rol.getEventoIncripcion().getPeriodo());
+                estudiante.setFechaAlta(new Date());
+                estudiante.setTrabajadorInscribe(login.getPersonal().getClave());
+                //Guarda estudiante
+                ResultadoEJB<Estudiante> resEstudiante=ejbProcesoInscripcion.saveEstudiante(estudiante,opcionIncripcion,rol.getGrupoSeleccionado(),documentosentregadosestudiante, Operacion.PERSISTIR,rol.getEventoIncripcion());
+                if(resEstudiante.getCorrecto()==true){
+                    mostrarMensajeResultadoEJB(resEstudiante);
+                }else {mostrarMensajeResultadoEJB(resEstudiante);}
+            }
+            else {
+                //Actualiza estudiante
+                ResultadoEJB<Estudiante> resEstudiante=ejbProcesoInscripcion.saveEstudiante(estudiante,opcionIncripcion,rol.getGrupoSeleccionado(),documentosentregadosestudiante, Operacion.ACTUALIZAR,rol.getEventoIncripcion());
+                if(resEstudiante.getCorrecto()==true){
+                    mostrarMensajeResultadoEJB(resEstudiante);
+                }else {mostrarMensajeResultadoEJB(resEstudiante);}
+                getPosiblesGrupos();
+            }
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
     public void guardarEstudiante(){
         Integer noGruposPO = 0;
       
@@ -346,7 +416,7 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
     public static Integer gruposElegibles(List<Grupo> grupos){
         List<Grupo> listaGrupos = new ArrayList<>();
         grupos.forEach((Grupo g) ->{
-            System.out.println("tamaño de la lista"+g.getEstudianteList().size()+", capacidadMaxima"+g.getCapMaxima());
+            //System.out.println("tamaño de la lista"+g.getEstudianteList().size()+", capacidadMaxima"+g.getCapMaxima());
             if(g.getEstudianteList().size() != g.getCapMaxima()){
                 listaGrupos.add(g);
             }
@@ -359,12 +429,12 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
         estudianteInscrito = new Estudiante();
         dtoAlumnoFinanzas = new dtoAlumnoFinanzas();
         estudianteInscrito = ejbProcesoInscripcion.findByIdAspirante(aspiranteValido.getIdAspirante());
-        System.out.println("Estudiante que se encontro por id Aspirtante" + estudianteInscrito);
+        //System.out.println("Estudiante que se encontro por id Aspirtante" + estudianteInscrito);
         dtoAlumnoFinanzas.setPeriodo(estudianteInscrito.getPeriodo());
         dtoAlumnoFinanzas.setMatricula(estudianteInscrito.getMatricula());
         dtoAlumnoFinanzas.setCurp(estudiante.getAspirante().getIdPersona().getCurp());
         dtoAlumnoFinanzas.setEstudianteCE(estudianteInscrito);
-        System.out.println("dto"+ dtoAlumnoFinanzas);
+        //System.out.println("dto"+ dtoAlumnoFinanzas);
         ResultadoEJB<Vistapagosprimercuatrimestre> resActualizaPago= ejbFinanzas.saveCambios(dtoAlumnoFinanzas);
         if(resActualizaPago.getCorrecto()!=true){mostrarMensajeResultadoEJB(resActualizaPago);}
         else {mostrarMensajeResultadoEJB(resActualizaPago);}
