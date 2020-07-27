@@ -178,6 +178,24 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
 
         }
     }
+
+    @Override
+    public ResultadoEJB<Documentosentregadosestudiante> getDocEstudiante(@NonNull Estudiante estudiante) {
+       try{
+           if(estudiante==null){return ResultadoEJB.crearErroneo(2,new Documentosentregadosestudiante(),"El estudiante no debe ser nulo");}
+           Documentosentregadosestudiante documentos = new Documentosentregadosestudiante();
+           documentos = em.createQuery("select d from Documentosentregadosestudiante  d where d.estudiante=:id",Documentosentregadosestudiante.class)
+            .setParameter("id",estudiante.getIdEstudiante())
+           .getResultStream()
+           .findFirst()
+           .orElse(null)
+           ;
+           if(documentos==null){return  ResultadoEJB.crearErroneo(3,documentos,"No se encontraron documentos del estudiante");}
+           else {return ResultadoEJB.crearCorrecto(documentos,"Documentos encontrados");}
+       }catch ( Exception e) {
+           return ResultadoEJB.crearErroneo(1, "Error al obtener los documentos del estudiante(EJBProcesoInscripcion.saveEstudiante).", e, null); }
+    }
+
     @Override
     public Estudiante guardaEstudiante(Estudiante estudiante, Documentosentregadosestudiante documentosentregadosestudiante, Boolean opcionIns) {
         List<Grupo> grupos = new ArrayList<>();

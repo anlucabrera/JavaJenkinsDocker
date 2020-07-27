@@ -723,7 +723,7 @@
                                                                     <p:commandButton id="imprimeComprobanteIns" value="Comprobante de Inscripción" icon="fa fa-print" class="btn-primary btn-block col-md-3" onclick="target='_blank'"
                                                                                      process="@form" update="@form" actionListener="#{procesoInscripcion.imprimirComprobateIns()}" ajax="false" disabled="#{(procesoInscripcion.estudiante.idEstudiante == null)}"/>
                                                                     <p:commandButton id="imprimeCartaCompromiso" value="Carta compromiso" icon="fa fa-print" class="btn-primary btn-block col-md-3" onclick="target='_blank'"
-                                                                                     process="@form" update="@form" actionListener="#{procesoInscripcion.imprimirCartaCompromiso()}" ajax="false" disabled="#{!(procesoInscripcion.estudiante.documentosentregadosestudiante.actaNacimiento == false or procesoInscripcion.estudiante.documentosentregadosestudiante.certificadoIems == false)}"/>
+                                                                                     process="@form" update="@form" actionListener="#{procesoInscripcion.imprimirCartaCompromiso()}" ajax="false" disabled="#{procesoInscripcion.rol.cartaCom}"/>
 
                                                                     <span/>
                                                                 </p:panelGrid>

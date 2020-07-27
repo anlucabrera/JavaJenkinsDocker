@@ -231,30 +231,29 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
         if(aspiranteValido != null){
             ResultadoEJB<Vistapagosprimercuatrimestre> resVerficaPago= ejbFinanzas.getRegistroByCurp(aspiranteValido.getIdPersona().getCurp());
             if(resVerficaPago.getCorrecto()==true){
-                if(documentosentregadosestudiante ==null){
-                    documentosentregadosestudiante= new Documentosentregadosestudiante();
-                    documentosentregadosestudiante.setPagoColegiatura(true);
-                }
-                else {
-                    documentosentregadosestudiante.setPagoColegiatura(true);}}
+                mostrarMensajeResultadoEJB(resVerficaPago);
+            }
             else {
-                if(documentosentregadosestudiante==null){
-                    documentosentregadosestudiante = new Documentosentregadosestudiante();
-                    documentosentregadosestudiante.setPagoColegiatura(false);
-                } else {documentosentregadosestudiante.setPagoColegiatura(false);}
                 mostrarMensajeResultadoEJB(resVerficaPago);}
             estudiante = ejbProcesoInscripcion.findByIdAspirante(aspiranteValido.getIdAspirante());
             if(estudiante != null){
                 opcionIncripcion = estudiante.getOpcionIncripcion();
-                if(documentosentregadosestudiante!=null){
-                    documentosentregadosestudiante = estudiante.getDocumentosentregadosestudiante();
-                }else {documentosentregadosestudiante = new Documentosentregadosestudiante();documentosentregadosestudiante.setEstudiante(estudiante.getIdEstudiante());}
                 carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short) estudiante.getCarrera()).getNombre();
                 getPosiblesGrupos();
+                ResultadoEJB<DtoGrupo> resGrupo = ejbProcesoInscripcion.packGrupo(estudiante.getGrupo());
+                if(resGrupo.getCorrecto()==true){rol.setGrupoSeleccionado(resGrupo.getValor());}
+                else {mostrarMensajeResultadoEJB(resGrupo);}
+                ResultadoEJB<Documentosentregadosestudiante> resDoc = ejbProcesoInscripcion.getDocEstudiante(estudiante);
+                if(resDoc.getCorrecto()==true){documentosentregadosestudiante = resDoc.getValor();
+                   // System.out.println("Documentos estudiante" + documentosentregadosestudiante);
+                    if(documentosentregadosestudiante.getCertificadoIems()==false || documentosentregadosestudiante.getActaNacimiento()==false){
+                        rol.setCartaCom(false);
+                    }else {rol.setCartaCom(true);}
+                }
+                else {mostrarMensajeResultadoEJB(resDoc);}
             }else{
                 estudiante = new Estudiante();
             }
-            
             personaValido = aspiranteValido.getIdPersona();
             nombreCarreraPO = ejbProcesoInscripcion.buscaAreaByClave(aspiranteValido.getDatosAcademicos().getPrimeraOpcion()).getNombre();
             nombreCarreraSO = ejbProcesoInscripcion.buscaAreaByClave(aspiranteValido.getDatosAcademicos().getSegundaOpcion()).getNombre();
@@ -307,20 +306,28 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
                 estudiante.setPeriodo(rol.getEventoIncripcion().getPeriodo());
                 estudiante.setFechaAlta(new Date());
                 estudiante.setTrabajadorInscribe(login.getPersonal().getClave());
-                if(documentosentregadosestudiante ==null){
-                    Messages.addGlobalError("Debe seleccionar al menos un documento entregado");
-                }
-                else {
-                    //Guarda estudiante
-                    ResultadoEJB<Estudiante> resEstudiante=ejbProcesoInscripcion.saveEstudiante(estudiante,opcionIncripcion,rol.getGrupoSeleccionado(),documentosentregadosestudiante, Operacion.PERSISTIR,rol.getEventoIncripcion());
-                    if(resEstudiante.getCorrecto()==true){
-                        mostrarMensajeResultadoEJB(resEstudiante);
-                    }else {mostrarMensajeResultadoEJB(resEstudiante);}
-                }
+                //Guarda estudiante
+                ResultadoEJB<Estudiante> resEstudiante=ejbProcesoInscripcion.saveEstudiante(estudiante,opcionIncripcion,rol.getGrupoSeleccionado(),documentosentregadosestudiante, Operacion.PERSISTIR,rol.getEventoIncripcion());
+                if(resEstudiante.getCorrecto()==true){
+                    estudiante = resEstudiante.getValor();
+                    ResultadoEJB<Documentosentregadosestudiante> resDoc= ejbProcesoInscripcion.getDocEstudiante(estudiante);
+                    if(resDoc.getCorrecto()==true){
+                        documentosentregadosestudiante = resDoc.getValor();
+                       // System.out.println("Docuementos iNS ->" +documentosentregadosestudiante);
+                        if(documentosentregadosestudiante.getActaNacimiento()==false || documentosentregadosestudiante.getCertificadoIems()==false){
+                            rol.setCartaCom(false);
+                        }else {rol.setCartaCom(true);}
+                    }else {mostrarMensajeResultadoEJB(resDoc);}
+                    carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short) estudiante.getCarrera()).getNombre();
+                    mostrarMensajeResultadoEJB(resEstudiante);
+                }else {mostrarMensajeResultadoEJB(resEstudiante);}
             }
             else {
                 //Actualiza estudiante
                 //Empaqueta el grupo
+                ResultadoEJB<Documentosentregadosestudiante> resDoc = ejbProcesoInscripcion.getDocEstudiante(estudiante);
+                if(resDoc.getCorrecto()==true){documentosentregadosestudiante= resDoc.getValor();}
+                else {mostrarMensajeResultadoEJB(resDoc);}
                 ResultadoEJB<DtoGrupo> resGrupoPack= ejbProcesoInscripcion.packGrupo(estudiante.getGrupo());
                 if(resGrupoPack.getCorrecto()==true){
                     rol.setGrupoSeleccionado(resGrupoPack.getValor());
@@ -330,7 +337,9 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
                     }else {mostrarMensajeResultadoEJB(resEstudiante);}
                     getPosiblesGrupos();
                 }else {mostrarMensajeResultadoEJB(resGrupoPack);}
+                carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short) estudiante.getCarrera()).getNombre();
             }
+            listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(rol.getEventoIncripcion().getPeriodo());
         }catch (Exception e){mostrarExcepcion(e);}
     }
     public void guardarEstudiante(){
@@ -395,6 +404,7 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
         estudiante = new Estudiante();
         folioFichaInscripcion = null;
         opcionIncripcion = null;
+        documentosentregadosestudiante =new Documentosentregadosestudiante();
     }
     
     public void imprimirComprobateIns(){
