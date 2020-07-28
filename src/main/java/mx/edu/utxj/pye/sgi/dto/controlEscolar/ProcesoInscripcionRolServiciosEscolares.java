@@ -31,8 +31,9 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
     @Getter @NonNull private  List<DtoGrupo> posiblesGrupos;// Grupos posibles
     @Getter @NonNull private DtoGrupo grupoSeleccionado; //Grupo seleccionado
     @Getter @NonNull private  AreasUniversidad pePo,peSo; //Programas educativos del aspirante validado
+    @Getter @NonNull private Boolean cartaCom=true;
 
-     public ProcesoInscripcionRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad programa) {
+    public ProcesoInscripcionRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad programa) {
         super(filtro);
         this.serviciosEscolares = serviciosEscolares;
         this.programa = programa;
@@ -83,5 +84,9 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
 
     public void setPosiblesGrupos(List<DtoGrupo> posiblesGrupos) {
         this.posiblesGrupos = posiblesGrupos;
+    }
+
+    public void setCartaCom(Boolean cartaCom) {
+        this.cartaCom = cartaCom;
     }
 }

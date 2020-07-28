@@ -104,7 +104,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             switch (operacion){
                 case PERSISTIR:
                     if(grupo.getLleno()==false){
-                       // System.out.println("No esta lleno");
+                        // System.out.println("No esta lleno");
                         int matricula = 0;
                         String folio = "";
                         TipoEstudiante tipoEstudiante = new TipoEstudiante((short)1, "Regular", true);
@@ -146,6 +146,10 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                         documentos.setEstudiante(estudiante.getIdEstudiante());
                         em.persist(documentos);
                         facadeCE.flush();
+                        em.merge(estudiante.getAspirante().getDatosAcademicos());
+                        facadeCE.flush();
+                        em.merge(estudiante.getAspirante().getIdPersona().getDatosMedicos());
+                        facadeCE.flush();
                         return ResultadoEJB.crearCorrecto(estudiante,"Estudiante inscrito con éxito");
                     }else {
                         return ResultadoEJB.crearErroneo(6,new Estudiante(),"El grupo seleccionado está lleno. Seleccione otro.");
@@ -167,6 +171,10 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                         }else{
                             em.merge(documentos);
                         }
+                        em.merge(estudiante.getAspirante().getDatosAcademicos());
+                        facadeCE.flush();
+                        em.merge(estudiante.getAspirante().getIdPersona().getDatosMedicos());
+                        facadeCE.flush();
                         return ResultadoEJB.crearCorrecto(estudiante,"Estudiante actualizado");
                     }else {
                         return ResultadoEJB.crearErroneo(7,new Estudiante(),"El grupo seleccionado está lleno. Seleccione otro.");
@@ -178,6 +186,24 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
 
         }
     }
+
+    @Override
+    public ResultadoEJB<Documentosentregadosestudiante> getDocEstudiante(@NonNull Estudiante estudiante) {
+        try{
+            if(estudiante==null){return ResultadoEJB.crearErroneo(2,new Documentosentregadosestudiante(),"El estudiante no debe ser nulo");}
+            Documentosentregadosestudiante documentos = new Documentosentregadosestudiante();
+            documentos = em.createQuery("select d from Documentosentregadosestudiante  d where d.estudiante=:id",Documentosentregadosestudiante.class)
+                    .setParameter("id",estudiante.getIdEstudiante())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+            ;
+            if(documentos==null){return  ResultadoEJB.crearErroneo(3,documentos,"No se encontraron documentos del estudiante");}
+            else {return ResultadoEJB.crearCorrecto(documentos,"Documentos encontrados");}
+        }catch ( Exception e) {
+            return ResultadoEJB.crearErroneo(1, "Error al obtener los documentos del estudiante(EJBProcesoInscripcion.saveEstudiante).", e, null); }
+    }
+
     @Override
     public Estudiante guardaEstudiante(Estudiante estudiante, Documentosentregadosestudiante documentosentregadosestudiante, Boolean opcionIns) {
         List<Grupo> grupos = new ArrayList<>();
@@ -188,7 +214,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
         TipoEstudiante tipoEstudiante = new TipoEstudiante((short)1, "Regular", true);
         Short cve_pe = 0;
         Short cve_sistema = 0;
-        
+
         if(estudiante.getIdEstudiante() == null){
             try {
                 Login login = new Login();
@@ -198,7 +224,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                     generador = (int)(Math.random()*10);
                     contrasena+= generador;
                 }
-                
+
                 if(opcionIns == true){
                     cve_pe = estudiante.getAspirante().getDatosAcademicos().getPrimeraOpcion();
                     cve_sistema = estudiante.getAspirante().getDatosAcademicos().getSistemaPrimeraOpcion().getIdSistema();
@@ -215,10 +241,10 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 //Asignar Matricula
                 String anyo2 = new SimpleDateFormat("yy").format(new Date());
                 folio = anyo2.concat("0000");
-                
+
                 TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(e.matricula) FROM Estudiante e WHERE e.periodo = :idPeriodo")
                         .setParameter("idPeriodo", estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo());
-                
+
                 if(v.getSingleResult() == 0){
                     matriculaUtilizable = Integer.valueOf(folio);
                 }else{
@@ -257,15 +283,15 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                     cve_sistema = estudiante.getAspirante().getDatosAcademicos().getSistemaSegundaOpcion().getIdSistema();
                 }
                 grupos = listaGruposXPeriodoByCarrera((short) estudiante.getAspirante().getIdProcesoInscripcion().getIdPeriodo(), cve_pe,cve_sistema,1);
-               
+
                 grupos.forEach(g ->{
                     if(g.getEstudianteList().size() != g.getCapMaxima()){
                         gruposElegibles.add(g);
                     }
                 });
-                
-                //Elige grupos aleatorio   
-                int numero = (int) (Math.random() * gruposElegibles.size()); 
+
+                //Elige grupos aleatorio
+                int numero = (int) (Math.random() * gruposElegibles.size());
                 gps = gruposElegibles.get(numero);
                 //Guarda estudiante
                 estudiante.setGrupo(gps);
@@ -279,7 +305,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                     em.persist(documentosentregadosestudiante);
                 }else{
                     em.merge(documentosentregadosestudiante);
-                } 
+                }
             }else{
                 estudiante.setCarrera(gps.getIdPe());
                 estudiante.setOpcionIncripcion(opcionIns);
@@ -294,7 +320,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 }
             }
         }
-        
+
         return estudiante;
     }
 
@@ -303,7 +329,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
         return em.createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante = :idAspirante", Estudiante.class)
                 .setParameter("idAspirante", idAspirante)
                 .getResultList().stream().findFirst().orElse(null);
-               
+
     }
 
     @Override
@@ -318,12 +344,12 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             login = em.createQuery("SELECT l FROM Login l WHERE l.persona = :idPer", Login.class)
                     .setParameter("idPer", estudiante.getAspirante().getIdPersona().getIdpersona())
                     .getResultList().stream().findFirst().orElse(null);
-                    
+
             InputStream is = new FileInputStream(ruta);
             PdfReader pdfReader = new PdfReader(is,null);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PdfStamper pdfStamper = new PdfStamper(pdfReader, baos);
-            
+
             BarcodePDF417 pdfcodigo = new BarcodePDF417();
             pdfcodigo.setText(String.valueOf(estudiante.getMatricula()));
             Image img = pdfcodigo.getImage();
@@ -331,7 +357,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             img.scalePercent(200, 100 * pdfcodigo.getYHeight());
             PdfContentByte  content = pdfStamper.getOverContent(pdfReader.getNumberOfPages());
             content.addImage(img);
-            
+
             AcroFields fields = pdfStamper.getAcroFields();
             AreasUniversidad areasUniversidad = new AreasUniversidad();
             Grupo grupo = new Grupo();
@@ -339,7 +365,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             areasUniversidad = buscaAreaByClave((short) estudiante.getCarrera());
             String nombreCarrera = areasUniversidad.getNombre();
             String siglas = areasUniversidad.getSiglas();
-            
+
             fields.setField("txtAP", estudiante.getAspirante().getIdPersona().getApellidoPaterno());
             fields.setField("txtAM", estudiante.getAspirante().getIdPersona().getApellidoMaterno());
             fields.setField("txtNombre", estudiante.getAspirante().getIdPersona().getNombre());
@@ -359,9 +385,9 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             fields.setField("txtValCURP", documentosentregadosestudiante.getCurp()== true ? "Entregado" : "No Entregado");
             fields.setField("txtValPC", documentosentregadosestudiante.getPagoColegiatura()== true ? "Entregado" : "No Entregado");
             fields.setField("txtValTS", documentosentregadosestudiante.getTipoSangre() == true ? "Entregado" : "No Entregado");
-            
+
             pdfStamper.close();
-            
+
             Object response = facesContext.getExternalContext().getResponse();
             if (response instanceof HttpServletResponse) {
                 HttpServletResponse hsr = (HttpServletResponse) response;
@@ -378,7 +404,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 }
                 facesContext.responseComplete();
             }
-           
+
         } catch (BadElementException ex) {
             Logger.getLogger(ServiceProcesoInscripcion.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FileNotFoundException ex) {
@@ -400,27 +426,27 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             AreasUniversidad areasUniversidad = new AreasUniversidad();
             areasUniversidad = buscaAreaByClave((short) estudiante.getCarrera());
             String nombreCarrera = areasUniversidad.getNombre();
-            
+
             InputStream is = new FileInputStream(ruta);
             PdfReader pdfReader = new PdfReader(is,null);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PdfStamper pdfStamper = new PdfStamper(pdfReader, baos);
-            
+
             AcroFields fields = pdfStamper.getAcroFields();
             fields.setField("txtNombreCC", estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+ estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+ estudiante.getAspirante().getIdPersona().getNombre());
             fields.setField("txtMatriculaCC", String.valueOf(estudiante.getMatricula()));
             fields.setField("txtCarreraCC", nombreCarrera);
-            
+
             if(estudiante.getDocumentosentregadosestudiante().getActaNacimiento() == false){
                 fields.setField("txtActaCC", "Acta de Nacimiento (Original)");
             }
-            
+
             if(estudiante.getDocumentosentregadosestudiante().getCertificadoIems() == false){
                 fields.setField("txtCertCC", "Certificado de Bachillerato (Original)");
             }
-            
+
             pdfStamper.close();
-            
+
             Object response = facesContext.getExternalContext().getResponse();
             if (response instanceof HttpServletResponse) {
                 HttpServletResponse hsr = (HttpServletResponse) response;
@@ -445,11 +471,11 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
     @Override
     public List<Grupo> listaGruposXPeriodoByCarrera(Short periodo, Short carrera, Short sistema, Integer grado) {
         return em.createQuery("SELECT g FROM Grupo g WHERE g.grado = :grado AND g.idPe = :cvePe AND g.idSistema.idSistema = :idSistema AND g.periodo = :idPeriodo", Grupo.class)
-                    .setParameter("grado", 1)
-                    .setParameter("cvePe", carrera)
-                    .setParameter("idSistema", sistema)
-                    .setParameter("idPeriodo", periodo)
-                    .getResultList();
+                .setParameter("grado", 1)
+                .setParameter("cvePe", carrera)
+                .setParameter("idSistema", sistema)
+                .setParameter("idPeriodo", periodo)
+                .getResultList();
     }
 
     @Override
@@ -458,22 +484,22 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                 .setParameter("idPeriodo", perido)
                 .getResultList();
     }
-    
+
     public static String encriptaPassword(String password) throws Exception{
         String contraseñaEncriptada = "";
-        String key = "92AE31A79FEEB2A3"; 
+        String key = "92AE31A79FEEB2A3";
         String iv = "0123456789ABCDEF";
         contraseñaEncriptada = Encrypted.encrypt(key, iv, password);
-        
+
         return contraseñaEncriptada;
     }
-    
+
     public static String desencriptaPassword(String password) throws Exception{
         String contraseñaDesencriptada = "";
-        String key = "92AE31A79FEEB2A3"; 
+        String key = "92AE31A79FEEB2A3";
         String iv = "0123456789ABCDEF";
         contraseñaDesencriptada = Encrypted.decrypt(key, iv, password);
-        
+
         return contraseñaDesencriptada;
     }
 
@@ -503,7 +529,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             return ResultadoEJB.crearCorrecto(eventoEscolar,"Evento");
 
             */
-           return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.INSCRIPCIONES);
+            return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.INSCRIPCIONES);
         }catch (Exception e){
             return  ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar de inscripciones (EJBProcesoInscripcion.).", e, EventoEscolar.class);
         }
@@ -535,10 +561,10 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             if(pe==null){ return  ResultadoEJB.crearErroneo(3,grupos,"El programa educativo no debe ser nulo");}
             if(sistema==null){ return ResultadoEJB.crearErroneo(4,grupos,"El sistema no debe ser nulo");}
             grupos = em.createQuery("select g from Grupo g where g.periodo=:periodo and g.idPe=:pe and g.idSistema.idSistema=:sistema", Grupo.class)
-                .setParameter("periodo", eventoEscolar.getPeriodo())
-                .setParameter("pe",pe.getArea())
-                .setParameter("sistema",sistema.getIdSistema())
-                .getResultList()
+                    .setParameter("periodo", eventoEscolar.getPeriodo())
+                    .setParameter("pe",pe.getArea())
+                    .setParameter("sistema",sistema.getIdSistema())
+                    .getResultList()
             ;
             if(grupos==null || grupos.isEmpty()){ return ResultadoEJB.crearErroneo(5,grupos,"No existen grupos creados para el programa educativo");}
             else { return  ResultadoEJB.crearCorrecto(grupos,"Lista de grupos");}
@@ -559,8 +585,8 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             List<Estudiante> estudiantes= new ArrayList<>();
             if (grupo == null) { return ResultadoEJB.crearErroneo(2,estudiantes,"El grupo dno debe ser nulo");}
             estudiantes = em.createQuery("select e from Estudiante  e where e.grupo.idGrupo=:grupo and e.tipoEstudiante.idTipoEstudiante=1",Estudiante.class)
-            .setParameter("grupo",grupo.getIdGrupo())
-            .getResultList()
+                    .setParameter("grupo",grupo.getIdGrupo())
+                    .getResultList()
             ;
             if(estudiantes==null || estudiantes.isEmpty()){return ResultadoEJB.crearErroneo(3, estudiantes,"No existen estudiantes en ese grupo");}
             else { return ResultadoEJB.crearCorrecto(estudiantes,"Exiten estudiantes en el grupo"); }
@@ -620,25 +646,25 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
      */
     @Override
     public ResultadoEJB<List<DtoGrupo>> getGruposbyOpcion(@NonNull EventoEscolar eventoEscolar,@NonNull Aspirante aspirante,@NonNull AreasUniversidad pe,@NonNull DatosAcademicos datosAcademicos) {
-       try{
-           List<DtoGrupo> grupos= new ArrayList<>();
-           if(eventoEscolar==null){return ResultadoEJB.crearErroneo(2,grupos,"El evento no debe ser nulo");}
-           if(aspirante==null){return ResultadoEJB.crearErroneo(3,grupos,"El aspirante no debe ser nulo");}
-           if(pe==null){return ResultadoEJB.crearErroneo(4,grupos,"Los datos académicos no deben ser nulos"); }
-           //Se obtienen grupos de la primera opción
-           ResultadoEJB<List<Grupo>> resGruposPO = getGruposbyPe(eventoEscolar,pe,datosAcademicos.getSistemaPrimeraOpcion());
-           if(resGruposPO.getCorrecto()==true){
-               //Se recorren los grupos para poder empaquetarlos
-               resGruposPO.getValor().forEach(g->{
-                   //Se empaquetan los grupos
-                   ResultadoEJB<DtoGrupo> resPack= packGrupo(g);
-                   if(resPack.getCorrecto()==true){
-                       grupos.add(resPack.getValor());
-                   }
-               });
-               return ResultadoEJB.crearCorrecto(grupos,"Opcion de grupos");
-           }else {return ResultadoEJB.crearErroneo(5,grupos,"No existen grupos creados del programa "+ pe.getNombre());}
-       }catch (Exception e){return  ResultadoEJB.crearErroneo(1, "Error al obtener los posibles grupos(EJBProcesoInscripcion.getGruposbyPe).", e, null);}
+        try{
+            List<DtoGrupo> grupos= new ArrayList<>();
+            if(eventoEscolar==null){return ResultadoEJB.crearErroneo(2,grupos,"El evento no debe ser nulo");}
+            if(aspirante==null){return ResultadoEJB.crearErroneo(3,grupos,"El aspirante no debe ser nulo");}
+            if(pe==null){return ResultadoEJB.crearErroneo(4,grupos,"Los datos académicos no deben ser nulos"); }
+            //Se obtienen grupos de la primera opción
+            ResultadoEJB<List<Grupo>> resGruposPO = getGruposbyPe(eventoEscolar,pe,datosAcademicos.getSistemaPrimeraOpcion());
+            if(resGruposPO.getCorrecto()==true){
+                //Se recorren los grupos para poder empaquetarlos
+                resGruposPO.getValor().forEach(g->{
+                    //Se empaquetan los grupos
+                    ResultadoEJB<DtoGrupo> resPack= packGrupo(g);
+                    if(resPack.getCorrecto()==true){
+                        grupos.add(resPack.getValor());
+                    }
+                });
+                return ResultadoEJB.crearCorrecto(grupos,"Opcion de grupos");
+            }else {return ResultadoEJB.crearErroneo(5,grupos,"No existen grupos creados del programa "+ pe.getNombre());}
+        }catch (Exception e){return  ResultadoEJB.crearErroneo(1, "Error al obtener los posibles grupos(EJBProcesoInscripcion.getGruposbyPe).", e, null);}
     }
 
     /**
