@@ -267,10 +267,13 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
 
                 }
                 else {
-                    rol.setDmedico(new DtoAspirante.MedicosR(new DatosMedicos(),new TipoSangre(), new TipoDiscapacidad(), Operacion.PERSISTIR,false));
+                    //System.out.println("No hay medio");
+                    //rol.setDmedico(new DtoAspirante.MedicosR(new DatosMedicos(),new TipoSangre(), new TipoDiscapacidad(), Operacion.PERSISTIR,false));
                     rol.setTab1(true);
+                    rol.setTab2(false);
                     rol.setTab3(false);
                     rol.setStep(2);
+                   // System.out.println("Paso -> " + rol.getStep() + "Tab " + rol.getTab3());
                 }
 
             }else {
@@ -433,7 +436,9 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
         try{
             ResultadoEJB<DtoAspirante.PersonaR> resPersona = ejbRegistroFicha.operacionesPersonaR(rol.getPersonaD());
             if(resPersona.getCorrecto()){
-                comprobarPaso();
+                rol.setPersonaD(resPersona.getValor());
+                getRegistro();
+                // comprobarPaso();
                 mostrarMensajeResultadoEJB(resPersona);
             }
             else {mostrarMensajeResultadoEJB(resPersona);}
@@ -444,19 +449,20 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
      */
     public void  saveDatosMedicosyComunicacion(){
         try {
+            System.out.println("Medios comunicacion " + rol.getPersonaD().getMedioComunicacion().getEmail());
+            ResultadoEJB<DtoAspirante.PersonaR> resMC = ejbRegistroFicha.operacionesMedioC(rol.getPersonaD());
             //Datos medicos
             ResultadoEJB<DtoAspirante.MedicosR> resSaveDm = ejbRegistroFicha.operacionesDatosMedicos(rol.getDmedico(),rol.getPersonaD());
-            if(resSaveDm.getCorrecto() ==true){
-               comprobarPaso();
-                mostrarMensajeResultadoEJB(resSaveDm);
-            }else {mostrarMensajeResultadoEJB(resSaveDm);}
-            ResultadoEJB<DtoAspirante.PersonaR> resMC = ejbRegistroFicha.operacionesMedioC(rol.getPersonaD());
-            if(resMC.getCorrecto()==true){
+            if(resMC.getCorrecto()==true & resSaveDm.getCorrecto()==true){
                 //saveAspirante();
-                comprobarPaso();
+                rol.getPersonaD().setMedioComunicacion(resMC.getValor().getMedioComunicacion());
+                rol.setDmedico(resSaveDm.getValor());
                 mostrarMensajeResultadoEJB(resMC);
-            }else { mostrarMensajeResultadoEJB(resMC);}
-
+                mostrarMensajeResultadoEJB(resSaveDm);
+                getRegistro();
+            }else { mostrarMensajeResultadoEJB(resMC);
+            mostrarMensajeResultadoEJB(resSaveDm);
+            }
         }catch (Exception e){mostrarExcepcion(e);}
     }
     /*
@@ -491,7 +497,8 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             ResultadoEJB<DtoAspirante.DomicilioR> resDom = ejbRegistroFicha.operacionesDomicilioR(rol.getDdomicilios(),rol.getAspirante().getAspirante());
             if(resDom.getCorrecto()==true){
                 rol.setDdomicilios(resDom.getValor());
-                comprobarPaso();
+                getRegistro();
+                //comprobarPaso();
                 mostrarMensajeResultadoEJB(resDom);
             }else {mostrarMensajeResultadoEJB(resDom);}
         }catch (Exception e){mostrarExcepcion(e);}
@@ -508,7 +515,8 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                 ResultadoEJB<DtoAspirante.FamiliaresR> resDatosF = ejbRegistroFicha.operacionesFamiliares(rol.getDfamiliares(),rol.getAspirante().getAspirante());
                 if(resDatosF.getCorrecto()==true){
                     rol.setDfamiliares(resDatosF.getValor());
-                   comprobarPaso();
+                    getRegistro();
+                    //comprobarPaso();
                     mostrarMensajeResultadoEJB(resDatosF);}
             }else {mostrarMensajeResultadoEJB(resTutor);}
         }catch (Exception e){
@@ -523,7 +531,8 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             ResultadoEJB<DtoAspirante.AcademicosR> resDtoA= ejbRegistroFicha.operacionesAcademicos(rol.getDacademicos(),rol.getAspirante().getAspirante());
             if(resDtoA.getCorrecto()){
                 rol.setDacademicos(resDtoA.getValor());
-                comprobarPaso();
+                getRegistro();
+                //comprobarPaso();
                 mostrarMensajeResultadoEJB(resDtoA);
             }
             else {mostrarMensajeResultadoEJB(resDtoA);}
@@ -579,17 +588,21 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                     rol.getAspirante().setOperacion(Operacion.ACTUALIZAR);
                     ResultadoEJB<DtoAspirante.AspiranteR> resActuaA = ejbRegistroFicha.operacionesAspiranteR(rol.getAspirante(),rol.getPersonaD().getPersona());
                     if(resActuaA.getCorrecto()==true){
-                       comprobarPaso();
+                        rol.setAspirante(resActuaA.getValor());
+                        getRegistro();
+                        //comprobarPaso();
                     }
                 }else {
                     mostrarMensajeResultadoEJB(resFolio);
                 }
             }
-            comprobarPaso();
+            getRegistro();
+            //comprobarPaso();
 
 
         }else {
-            comprobarPaso();
+            getRegistro();
+            //comprobarPaso();
         }
     }
     /*
