@@ -23,6 +23,7 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.xmlbeans.impl.regex.REUtil;
 import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect;
@@ -141,11 +142,14 @@ public class EjbRegistroFichaAdmision {
                     f.setEntityClass(Persona.class);
                     f.flush();
                     rr.setOperacionGeneral(Operacion.ACTUALIZAR);
+                    rr.setEcontrado(true);
                     break;
                 case ACTUALIZAR:
                     em.merge(rr.getPersona());
                     f.setEntityClass(Persona.class);
                     f.flush();
+                    rr.setOperacionMC(Operacion.ACTUALIZAR);
+                    rr.setEcontrado(true);
                     break;
             }
             return ResultadoEJB.crearCorrecto(rr, "Datos guardados");
@@ -174,6 +178,7 @@ public class EjbRegistroFichaAdmision {
                     f.setEntityClass(MedioComunicacion.class);
                     f.flush();
                     rr.setOperacionMC(Operacion.ACTUALIZAR);
+                    rr.setEcontrado(true);
                     break;
                 case ACTUALIZAR:
                     em.merge(rr.getMedioComunicacion());
@@ -781,7 +786,7 @@ public class EjbRegistroFichaAdmision {
                     .orElse(null)
             ;
             if (persona == null) {
-                return ResultadoEJB.crearErroneo(3, persona, "No existe la persona con el CURP colicitado");
+                return ResultadoEJB.crearErroneo(3, persona, "No existe la persona con el CURP solicitado");
             } else {
 
                 return ResultadoEJB.crearCorrecto(persona, "Persona encontrada");

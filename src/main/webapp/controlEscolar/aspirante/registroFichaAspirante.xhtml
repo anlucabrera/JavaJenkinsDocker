@@ -380,7 +380,7 @@
                                                             <div class="#{casilla5}">
                                                                 <c:if test="#{registroFichaAdmisionAspirante.rol.personaD.econtrado==false}">
                                                                     <p:commandButton id="bt-destroySR" value="Guarda Información" styleClass="btn-primary btn-block col-md-3"
-                                                                                     actionListener="#{registroFichaAdmisionAspirante.savePersona()}" icon="fa fa-pencil-square-o" update="@form,:tbv, :frmStep, :frmPwd" process="@form"  oncomplete="#{registroFichaAdmisionAspirante.getPersonaByCurp()}"
+                                                                                     actionListener="#{registroFichaAdmisionAspirante.savePersona()}" icon="fa fa-pencil-square-o" update="@form,:tbv, :frmStep, :frmPwd" process="@this"  oncomplete="#{registroFichaAdmisionAspirante.getPersonaByCurp()}"
                                                                                      onsuccess="PF('modalPwd').show();"
 
                                                                     >
@@ -390,7 +390,7 @@
                                                                 </c:if>
                                                                 <c:if test="#{registroFichaAdmisionAspirante.rol.personaD.econtrado==true}">
                                                                     <p:commandButton id="btnActualizar" value="Actualizar información" styleClass="btn-primary btn-block col-md-3"
-                                                                                     actionListener="#{registroFichaAdmisionAspirante.savePersona()}" icon="fa fa-pencil-square-o" update="@form,:tbv, :frmStep, :frmPwd" process="@form"  oncomplete="#{registroFichaAdmisionAspirante.getPersonaByCurp()}"
+                                                                                     actionListener="#{registroFichaAdmisionAspirante.savePersona()}" icon="fa fa-pencil-square-o" update="@form,:tbv, :frmStep, :frmPwd" process="@this"  oncomplete="#{registroFichaAdmisionAspirante.getPersonaByCurp()}"
                                                                                      onsuccess="PF('modalPwd').show();"
 
                                                                     >
