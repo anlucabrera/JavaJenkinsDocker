@@ -249,14 +249,6 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         if(rol.getCarga()== null) return;
         Integer valPorSer = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSer());
         switch (valPorSer) {
-            case 0:
-                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSer = ejb.guardarIndicadoresSer(rol.getListaCriteriosSer(), rol.getDtoConfUniMat());
-                if (resGuardarSer.getCorrecto()) {
-                    mostrarMensajeResultadoEJB(resGuardarSer);
-                } else {
-                    mostrarMensajeResultadoEJB(resGuardarSer);
-                }
-                break;
             case 1:
                 Messages.addGlobalWarn("Criterios SER: La suma de los porcentajes por indicador es mayor a 100%.");
                 break;
@@ -269,14 +261,6 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         }
         Integer valPorSaber = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSaber());
         switch (valPorSaber) {
-            case 0:
-                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSaber = ejb.guardarIndicadoresSaber(rol.getListaCriteriosSaber(), rol.getDtoConfUniMat());
-                if (resGuardarSaber.getCorrecto()) {
-                    mostrarMensajeResultadoEJB(resGuardarSaber);
-                } else {
-                    mostrarMensajeResultadoEJB(resGuardarSaber);
-                }
-                break;
             case 1:
                 Messages.addGlobalWarn("Criterios SABER: La suma de los porcentajes por indicador es mayor a 100%.");
                 break;
@@ -289,14 +273,6 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         }
         Integer valPorSabHac = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSaberHacer());
         switch (valPorSabHac) {
-            case 0:
-                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSabHac = ejb.guardarIndicadoresSaberHacer(rol.getListaCriteriosSaberHacer(), rol.getDtoConfUniMat());
-                if (resGuardarSabHac.getCorrecto()) {
-                    mostrarMensajeResultadoEJB(resGuardarSabHac);
-                } else {
-                    mostrarMensajeResultadoEJB(resGuardarSabHac);
-                }
-                break;
             case 1:
                 Messages.addGlobalWarn("Criterios SABER - HACER: La suma de los porcentajes por indicador es mayor a 100%.");
                 break;
@@ -307,10 +283,33 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
 
                 break;
         }
-        listarIndicadoresSer();
-        listarIndicadoresSaber();
-        listarIndicadoresSaberHacer();
-        Ajax.update("frm");
+        
+        if(valPorSer == 0 && valPorSaber == 0 && valPorSabHac ==0)
+        {
+            ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSer = ejb.guardarIndicadoresSer(rol.getListaCriteriosSer(), rol.getDtoConfUniMat());
+            if (resGuardarSer.getCorrecto()) {
+                mostrarMensajeResultadoEJB(resGuardarSer);
+                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSaber = ejb.guardarIndicadoresSaber(rol.getListaCriteriosSaber(), rol.getDtoConfUniMat());
+                if (resGuardarSaber.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(resGuardarSaber);
+                    ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSabHac = ejb.guardarIndicadoresSaberHacer(rol.getListaCriteriosSaberHacer(), rol.getDtoConfUniMat());
+                    if (resGuardarSabHac.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(resGuardarSabHac);
+                    listarIndicadoresSer();
+                    listarIndicadoresSaber();
+                    listarIndicadoresSaberHacer();
+                    Ajax.update("frm");
+                    } else {
+                    mostrarMensajeResultadoEJB(resGuardarSabHac);
+                    }
+                } else {
+                    mostrarMensajeResultadoEJB(resGuardarSaber);
+                }
+            } else {
+                mostrarMensajeResultadoEJB(resGuardarSer);
+            }
+        
+        }
     }
     
      public void validarAsignacionUnidad(ValueChangeEvent event){
@@ -368,14 +367,6 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         
         Integer valPorSer = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSer());
         switch (valPorSer) {
-            case 0:
-                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSer = ejb.guardarIndicadoresSerMasiva(rol.getListaCriteriosSer(), rol.getListaUnidadMateriaConfiguracion());
-                if (resGuardarSer.getCorrecto()) {
-                    mostrarMensajeResultadoEJB(resGuardarSer);
-                } else {
-                    mostrarMensajeResultadoEJB(resGuardarSer);
-                }
-                break;
             case 1:
                 Messages.addGlobalWarn("Criterios SER: La suma de los porcentajes por indicador es mayor a 100%.");
                 break;
@@ -388,14 +379,6 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         }
         Integer valPorSaber = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSaber());
         switch (valPorSaber) {
-            case 0:
-                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSaber = ejb.guardarIndicadoresSaberMasiva(rol.getListaCriteriosSaber(), rol.getListaUnidadMateriaConfiguracion());
-                if (resGuardarSaber.getCorrecto()) {
-                    mostrarMensajeResultadoEJB(resGuardarSaber);
-                } else {
-                    mostrarMensajeResultadoEJB(resGuardarSaber);
-                }
-                break;
             case 1:
                 Messages.addGlobalWarn("Criterios SABER: La suma de los porcentajes por indicador es mayor a 100%.");
                 break;
@@ -408,14 +391,6 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         }
         Integer valPorSabHac = ejb.validarSumaPorcentajesIndicadores(rol.getListaCriteriosSaberHacer());
         switch (valPorSabHac) {
-            case 0:
-                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSabHac = ejb.guardarIndicadoresSaberHacerMasiva(rol.getListaCriteriosSaberHacer(), rol.getListaUnidadMateriaConfiguracion());
-                if (resGuardarSabHac.getCorrecto()) {
-                    mostrarMensajeResultadoEJB(resGuardarSabHac);
-                } else {
-                    mostrarMensajeResultadoEJB(resGuardarSabHac);
-                }
-                break;
             case 1:
                 Messages.addGlobalWarn("Criterios SABER - HACER: La suma de los porcentajes por indicador es mayor a 100%.");
                 break;
@@ -426,10 +401,34 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
 
                 break;
         }
-        listarIndicadoresSer();
-        listarIndicadoresSaber();
-        listarIndicadoresSaberHacer();
-        Ajax.update("frm");
+        
+        if(valPorSer == 0 && valPorSaber == 0 && valPorSabHac ==0)
+        {
+            ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSer = ejb.guardarIndicadoresSerMasiva(rol.getListaCriteriosSer(), rol.getListaUnidadMateriaConfiguracion());
+            if (resGuardarSer.getCorrecto()) {
+                mostrarMensajeResultadoEJB(resGuardarSer);
+                ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSaber = ejb.guardarIndicadoresSaberMasiva(rol.getListaCriteriosSaber(), rol.getListaUnidadMateriaConfiguracion());
+                if (resGuardarSaber.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(resGuardarSaber);
+                    ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> resGuardarSabHac = ejb.guardarIndicadoresSaberHacerMasiva(rol.getListaCriteriosSaberHacer(), rol.getListaUnidadMateriaConfiguracion());
+                    if (resGuardarSabHac.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(resGuardarSabHac);
+                    listarIndicadoresSer();
+                    listarIndicadoresSaber();
+                    listarIndicadoresSaberHacer();
+                    Ajax.update("frm");
+                    existeAsignacion();
+                    } else {
+                    mostrarMensajeResultadoEJB(resGuardarSabHac);
+                    }
+                } else {
+                    mostrarMensajeResultadoEJB(resGuardarSaber);
+                }
+            } else {
+                mostrarMensajeResultadoEJB(resGuardarSer);
+            }
+        
+        }
     }
     public void cambiarOpcionAsignacion(ValueChangeEvent event){
         rol.setOpcAsignacion((String)event.getNewValue());
