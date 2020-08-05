@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
@@ -32,6 +30,14 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
     @Getter @NonNull private DtoGrupo grupoSeleccionado; //Grupo seleccionado
     @Getter @NonNull private  AreasUniversidad pePo,peSo; //Programas educativos del aspirante validado
     @Getter @NonNull private Boolean cartaCom=true;
+//////////// Para modificacion de estudiante inscrito
+    @Getter @NonNull private Estudiante estudianteSeleccionado; //Representa a un estudiante seleccionado en la tabla de estudiantes inscritos
+    @Getter  @NonNull private List<AreasUniversidad> areasAcademicasE, peE;
+    @Getter @NonNull private List<DtoGrupo> gruposPosiblesE;
+    @Getter @NonNull private  DtoGrupo grupoSelecEs;
+    @Getter @NonNull private  AreasUniversidad areaAEstudiante, peEstudiante;
+    @Getter @NonNull private Sistema sistemaSeleccionado;
+    @Getter @NonNull private  List<Sistema> sistemas;
 
     public ProcesoInscripcionRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad programa) {
         super(filtro);
@@ -88,5 +94,41 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
 
     public void setCartaCom(Boolean cartaCom) {
         this.cartaCom = cartaCom;
+    }
+
+    public void setEstudianteSeleccionado(Estudiante estudianteSeleccionado) {
+        this.estudianteSeleccionado = estudianteSeleccionado;
+    }
+
+    public void setAreasAcademicasE(List<AreasUniversidad> areasAcademicasE) {
+        this.areasAcademicasE = areasAcademicasE;
+    }
+
+    public void setPeE(List<AreasUniversidad> peE) {
+        this.peE = peE;
+    }
+
+    public void setGruposPosiblesE(List<DtoGrupo> gruposPosiblesE) {
+        this.gruposPosiblesE = gruposPosiblesE;
+    }
+
+    public void setGrupoSelecEs(DtoGrupo grupoSelecEs) {
+        this.grupoSelecEs = grupoSelecEs;
+    }
+
+    public void setAreaAEstudiante(AreasUniversidad areaAEstudiante) {
+        this.areaAEstudiante = areaAEstudiante;
+    }
+
+    public void setPeEstudiante(AreasUniversidad peEstudiante) {
+        this.peEstudiante = peEstudiante;
+    }
+
+    public void setSistemaSeleccionado(Sistema sistemaSeleccionado) {
+        this.sistemaSeleccionado = sistemaSeleccionado;
+    }
+
+    public void setSistemas(List<Sistema> sistemas) {
+        this.sistemas = sistemas;
     }
 }

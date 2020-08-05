@@ -136,13 +136,6 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                         estudiante.setTipoRegistro("Inscripción");
                         em.persist(estudiante);
                         facadeCE.flush();
-                        login.setActivo(true);
-                        login.setModificado(false);
-                        login.setUsuario(String.valueOf(matricula));
-                        login.setPassword(encriptaPassword(contrasena));
-                        login.setPersona(estudiante.getAspirante().getIdPersona().getIdpersona());
-                        em.persist(login);
-                        facadeCE.flush();
                         documentos.setEstudiante(estudiante.getIdEstudiante());
                         em.persist(documentos);
                         facadeCE.flush();
@@ -150,13 +143,35 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                         facadeCE.flush();
                         em.merge(estudiante.getAspirante().getIdPersona().getDatosMedicos());
                         facadeCE.flush();
+
+                        login.setPersona(estudiante.getAspirante().getIdPersona().getIdpersona());
+                        ResultadoEJB<Login> resLogin = getLoginbyPersona(estudiante.getAspirante().getIdPersona());
+                        if(resLogin.getCorrecto()==true) {
+                            login.setActivo(true);
+                            login.setModificado(false);
+                            login.setUsuario(String.valueOf(matricula));
+                            login.setPassword(encriptaPassword(contrasena));
+                            login.setPersona(resLogin.getValor().getPersona());
+                            em.merge(login);
+                            facadeCE.flush();
+                        }else {
+                            login.setActivo(true);
+                            login.setModificado(false);
+                            login.setUsuario(String.valueOf(matricula));
+                            login.setPassword(encriptaPassword(contrasena));
+                            login.setPersona(estudiante.getAspirante().getIdPersona().getIdpersona());
+                            em.persist(login);
+                            facadeCE.flush();
+                        }
                         return ResultadoEJB.crearCorrecto(estudiante,"Estudiante inscrito con éxito");
                     }else {
                         return ResultadoEJB.crearErroneo(6,new Estudiante(),"El grupo seleccionado está lleno. Seleccione otro.");
                     }
 
                 case ACTUALIZAR:
-                    if (grupo.getLleno()==false){
+                    if(estudiante.getGrupo().getIdGrupo()==grupo.getGrupo().getIdGrupo()){
+                        //Actualiza sin cambiar de grupo
+                        //Actualiza cambiando el grupo
                         TipoEstudiante tipoEstudiante = new TipoEstudiante((short)1, "Regular", true);
                         //Guarda estudiante
                         estudiante.setGrupo(grupo.getGrupo());
@@ -177,8 +192,32 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                         facadeCE.flush();
                         return ResultadoEJB.crearCorrecto(estudiante,"Estudiante actualizado");
                     }else {
-                        return ResultadoEJB.crearErroneo(7,new Estudiante(),"El grupo seleccionado está lleno. Seleccione otro.");
+                        if (grupo.getLleno()==false){
+                            //Actualiza cambiando el grupo
+                            TipoEstudiante tipoEstudiante = new TipoEstudiante((short)1, "Regular", true);
+                            //Guarda estudiante
+                            estudiante.setGrupo(grupo.getGrupo());
+                            estudiante.setCarrera(grupo.getGrupo().getIdPe());
+                            estudiante.setTipoEstudiante(tipoEstudiante);
+                            estudiante.setOpcionIncripcion(opcionIn);
+                            em.merge(estudiante);
+                            facadeCE.flush();
+                            documentos.setEstudiante(estudiante.getIdEstudiante());
+                            if(documentos.getEstudiante() == null){
+                                em.persist(documentos);
+                            }else{
+                                em.merge(documentos);
+                            }
+                            em.merge(estudiante.getAspirante().getDatosAcademicos());
+                            facadeCE.flush();
+                            em.merge(estudiante.getAspirante().getIdPersona().getDatosMedicos());
+                            facadeCE.flush();
+                            return ResultadoEJB.crearCorrecto(estudiante,"Estudiante actualizado");
+                        }else {
+                            return ResultadoEJB.crearErroneo(7,new Estudiante(),"El grupo seleccionado está lleno. Seleccione otro.");
+                        }
                     }
+
             }
             return ResultadoEJB.crearCorrecto(estudiante,"Estudiante inscrito");
         }catch (Exception e){
@@ -202,6 +241,27 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             else {return ResultadoEJB.crearCorrecto(documentos,"Documentos encontrados");}
         }catch ( Exception e) {
             return ResultadoEJB.crearErroneo(1, "Error al obtener los documentos del estudiante(EJBProcesoInscripcion.saveEstudiante).", e, null); }
+    }
+
+    /**
+     * Obtiene login por persona
+     * @param persona
+     * @return Resultado del proceso
+     */
+    @Override
+    public ResultadoEJB<Login> getLoginbyPersona(@NonNull Persona persona) {
+        try{
+            if(persona==null){return ResultadoEJB.crearErroneo(2,new Login(),"La persona no debe ser nulo");}
+            Login login = new Login();
+            login = em.createQuery("select l from Login l where l.persona=:persona",Login.class)
+            .setParameter("persona",persona.getIdpersona())
+            .getResultStream()
+            .findFirst()
+            .orElse(null)
+            ;
+            if(login ==null){return ResultadoEJB.crearErroneo(3,login,"La persona no tiene datos de logueo");}
+            else {return ResultadoEJB.crearCorrecto(login,"La persona ya cuenta con datos de logueo");}
+        }catch (Exception e){return ResultadoEJB.crearErroneo(1, "Error al obtener los documentos del estudiante(EJBProcesoInscripcion.saveEstudiante).", e, null); }
     }
 
     @Override

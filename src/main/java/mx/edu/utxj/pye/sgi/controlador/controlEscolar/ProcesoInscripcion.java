@@ -33,10 +33,8 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
@@ -404,6 +402,46 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
         listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(procesosInscripcion.getIdPeriodo());
 //        actualizaPago();
     }
+    public void  getSelectEstudiante(@NonNull Estudiante estudiante){
+        try{
+            rol.setEstudianteSeleccionado(estudiante);
+            //System.out.println("Estudiante seleccionado ->" + rol.getEstudianteSeleccionado());
+            rol.setPeEstudiante(ejbFichaAdmision.buscaPEByClave(rol.getEstudianteSeleccionado().getCarrera()));
+            rol.setAreaAEstudiante(ejbFichaAdmision.buscaPEByClave(rol.getPeEstudiante().getAreaSuperior()));
+            rol.setSistemaSeleccionado(rol.getEstudianteSeleccionado().getGrupo().getIdSistema());
+            //Lista de sistemas
+            ResultadoEJB<List<Sistema>> resSistemas= ejbRegistroFichaAdmision2.getSistemas();
+            if(resSistemas.getCorrecto()==true){rol.setSistemas(resSistemas.getValor());}
+            else {mostrarMensajeResultadoEJB(resSistemas);}
+            //Areas academicas y pe
+            ResultadoEJB<List<AreasUniversidad>>resAreas = ejbRegistroFichaAdmision2.getAreasAcademicas();
+            if(resAreas.getCorrecto()==true){ rol.setAreasAcademicasE(resAreas.getValor()); }
+            else {mostrarMensajeResultadoEJB(resAreas);}
+            //Lista de programas educativos x area inscrita
+            ResultadoEJB<List<AreasUniversidad>> resPe = ejbRegistroFichaAdmision2.getProgramasE();
+            if(resPe.getCorrecto()==true){
+                rol.setPeE(resPe.getValor().stream().filter(t -> Objects.equals(t.getAreaSuperior(), rol.getAreaAEstudiante().getArea())).collect(Collectors.toList()));
+            }else {mostrarMensajeResultadoEJB(resPe);}
+            //Obtiene el grupo
+            ResultadoEJB<DtoGrupo> resGrupo = ejbProcesoInscripcion.packGrupo(rol.getEstudianteSeleccionado().getGrupo());
+            if(resGrupo.getCorrecto()==true){rol.setGrupoSelecEs(resGrupo.getValor());}
+            else {mostrarMensajeResultadoEJB(resGrupo);}
+            //Lista de grupos posibles
+            ResultadoEJB<List<Grupo>> resGruposbyPe = ejbProcesoInscripcion.getGruposbyPe(rol.getEventoIncripcion(),rol.getPeEstudiante(),rol.getSistemaSeleccionado());
+            if(resGruposbyPe.getCorrecto()==true){
+                List<DtoGrupo> grupos= new ArrayList<>();
+                //Se recorren los grupos para poder empaquetarlos
+                resGruposbyPe.getValor().forEach(g->{
+                    //Se empaquetan los grupos
+                    ResultadoEJB<DtoGrupo> resPack= ejbProcesoInscripcion.packGrupo(g);
+                    if(resPack.getCorrecto()==true){
+                        grupos.add(resPack.getValor());
+                    }
+                });
+                rol.setGruposPosiblesE(grupos);
+            }else {mostrarMensajeResultadoEJB(resGruposbyPe);}
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
 
     public void clearDatos(){
         init();
@@ -440,16 +478,64 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
     }
 
     public void selectPE(){
-        listaPEInsc = ejbSelectItemCE.itemProgramEducativoPorArea(this.areaIncripcion);
+        try{
+            //Lista de programas educativos x area inscrita
+            ResultadoEJB<List<AreasUniversidad>> resPe = ejbRegistroFichaAdmision2.getProgramasE();
+            if(resPe.getCorrecto()==true){
+                rol.setPeE(resPe.getValor().stream().filter(t -> Objects.equals(t.getAreaSuperior(), rol.getAreaAEstudiante().getArea())).collect(Collectors.toList()));
+                rol.setPeEstudiante(rol.getPeE().get(1));
+                //Lista de grupos posibles
+                ResultadoEJB<List<Grupo>> resGruposbyPe = ejbProcesoInscripcion.getGruposbyPe(rol.getEventoIncripcion(),rol.getPeEstudiante(),rol.getSistemaSeleccionado());
+                if(resGruposbyPe.getCorrecto()==true){
+                    List<DtoGrupo> grupos= new ArrayList<>();
+                    //Se recorren los grupos para poder empaquetarlos
+                    resGruposbyPe.getValor().forEach(g->{
+                        //Se empaquetan los grupos
+                        ResultadoEJB<DtoGrupo> resPack= ejbProcesoInscripcion.packGrupo(g);
+                        if(resPack.getCorrecto()==true){
+                            grupos.add(resPack.getValor());
+                        }
+                    });
+                    rol.setGruposPosiblesE(grupos);
+                    rol.setGrupoSelecEs(grupos.get(1));
+                }else {mostrarMensajeResultadoEJB(resGruposbyPe);}
+            }else {mostrarMensajeResultadoEJB(resPe);}
+
+        }catch (Exception e){mostrarExcepcion(e);}
     }
 
     public void selectGrupo(){
-        listaGrupos = ejbToolAcademicas.listaByPeriodoCarrera((short) estudiante.getCarrera(), procesosInscripcion.getIdPeriodo());
+        try{
+            //Lista de grupos posibles
+            ResultadoEJB<List<Grupo>> resGruposbyPe = ejbProcesoInscripcion.getGruposbyPe(rol.getEventoIncripcion(),rol.getPeEstudiante(),rol.getSistemaSeleccionado());
+            if(resGruposbyPe.getCorrecto()==true){
+                List<DtoGrupo> grupos= new ArrayList<>();
+                //Se recorren los grupos para poder empaquetarlos
+                resGruposbyPe.getValor().forEach(g->{
+                    //Se empaquetan los grupos
+                    ResultadoEJB<DtoGrupo> resPack= ejbProcesoInscripcion.packGrupo(g);
+                    if(resPack.getCorrecto()==true){
+                        grupos.add(resPack.getValor());
+                    }
+                });
+                rol.setGruposPosiblesE(grupos);
+            }else {mostrarMensajeResultadoEJB(resGruposbyPe);}
+        }catch (Exception e){mostrarExcepcion(e);}
     }
 
     public void cambiaCarrera(){
-        ejbProcesoInscripcion.actualizaEstudiante(estudiante);
-        listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(procesosInscripcion.getIdPeriodo());
+        try{
+            rol.getEstudianteSeleccionado().setGrupo(rol.getGrupoSelecEs().getGrupo());
+            rol.getEstudianteSeleccionado().setCarrera(rol.getPeEstudiante().getArea());
+            ResultadoEJB<Estudiante> resAc= ejbProcesoInscripcion.saveEstudiante(rol.getEstudianteSeleccionado(),rol.getEstudianteSeleccionado().getOpcionIncripcion(),rol.getGrupoSelecEs(),rol.getEstudianteSeleccionado().getDocumentosentregadosestudiante(),Operacion.ACTUALIZAR,rol.getEventoIncripcion());
+            if(resAc.getCorrecto()==true){
+                rol.setEstudianteSeleccionado(resAc.getValor());
+                listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(rol.getEventoIncripcion().getPeriodo());
+                mostrarMensajeResultadoEJB(resAc);
+            }else {mostrarMensajeResultadoEJB(resAc);}
+
+        }catch (Exception e){mostrarExcepcion(e);}
+
     }
 
     public static Integer gruposElegibles(List<Grupo> grupos){

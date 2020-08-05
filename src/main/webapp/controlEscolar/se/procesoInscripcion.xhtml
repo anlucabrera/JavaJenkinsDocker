@@ -781,7 +781,7 @@
                                             <h:outputText value="#{estudiantes.grupo.grado}"/>
                                         </p:column>
                                         <p:column style="text-align: center;">
-                                            <p:commandButton id="btn" icon="fa fa-refresh" alt="Cambio de Carrera" styleClass="btn-primary" style="width: 30%;" onclick="PF('dglCambioCarrera').show();" actionListener="#{procesoInscripcion.estudiante(estudiantes)}" update=":tabw1:frmCambioCarrera"/>
+                                            <p:commandButton id="btn" icon="fa fa-refresh" alt="Cambio de Carrera" styleClass="btn-primary" style="width: 30%;" onclick="PF('dglCambioCarrera').show();" actionListener="#{procesoInscripcion.getSelectEstudiante(estudiantes)}" update=":tabw1:frmCambioCarrera"/>
                                         </p:column>
                                     </p:dataTable>
                                 </h:form>
@@ -793,33 +793,39 @@
                                 <p:panelGrid columns="2" cellpadding="5" layout="grid" styleClass="no-border ui-fluid">
                                     <f:facet name="header">Carreras ficha de admisión</f:facet>
 
-                                    <p:outputLabel for="nombre" value="Nombre"/>
-                                    <p:outputLabel id="nombre" value="#{procesoInscripcion.estudiante.aspirante.idPersona.apellidoPaterno} #{procesoInscripcion.estudiante.aspirante.idPersona.apellidoMaterno} #{procesoInscripcion.estudiante.aspirante.idPersona.nombre}"/>
+                                    <p:outputLabel for="nombreE" value="Nombre"/>
+                                    <p:outputLabel id="nombreE" value="#{procesoInscripcion.rol.estudianteSeleccionado.aspirante.idPersona.apellidoPaterno} #{procesoInscripcion.rol.estudianteSeleccionado.aspirante.idPersona.apellidoMaterno} #{procesoInscripcion.rol.estudianteSeleccionado.aspirante.idPersona.nombre}"/>
 
-                                    <p:outputLabel for="folio" value="Folio Ficha"/>
-                                    <p:outputLabel id="folio" value="#{procesoInscripcion.estudiante.aspirante.folioAspirante}"/>
+                                    <p:outputLabel for="folioE" value="Folio Ficha"/>
+                                    <p:outputLabel id="folioE" value="#{procesoInscripcion.rol.estudianteSeleccionado.aspirante.folioAspirante}"/>
 
-                                    <p:outputLabel for="matricula" value="Matrícula"/>
-                                    <p:outputLabel id="matricula" value="#{procesoInscripcion.estudiante.matricula}"/>
+                                    <p:outputLabel for="matriculaE" value="Matrícula"/>
+                                    <p:outputLabel id="matriculaE" value="#{procesoInscripcion.rol.estudianteSeleccionado.matricula}"/>
 
                                     <p:outputLabel for="areaInscrito" value="Área Academica Inscripción"/>
-                                    <p:selectOneMenu id="areaInscrito" value="#{procesoInscripcion.areaIncripcion}" class="form-control" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción">
+                                    <p:selectOneMenu id="areaInscrito" value="#{procesoInscripcion.rol.areaAEstudiante}" class="form-control" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción" converter="entityConverter">
                                         <f:selectItem itemValue="#{null}"/>
-                                        <f:selectItems value="#{fichaAdm.listaAreasSO}"/>
-                                        <p:ajax listener="#{procesoInscripcion.selectPE()}" update="peInscrito,grupo"/>
+                                        <f:selectItems value="#{procesoInscripcion.rol.areasAcademicasE}" var="area" itemValue="#{area}" itemLabel="#{area.nombre}"/>
+                                        <p:ajax listener="#{procesoInscripcion.selectPE()}" update="peInscrito,grupoE,sisInscrito"/>
                                     </p:selectOneMenu>
 
                                     <p:outputLabel for="peInscrito" value="Programa Educativo Inscripción"/>
-                                    <p:selectOneMenu id="peInscrito" required="true" class="form-control" value="#{procesoInscripcion.estudiante.carrera}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
+                                    <p:selectOneMenu id="peInscrito" required="true" class="form-control" value="#{procesoInscripcion.rol.peEstudiante}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción" converter="entityConverter">
                                         <f:selectItem itemValue="#{null}"/>
-                                        <f:selectItems value="#{procesoInscripcion.listaPEInsc}"/>
-                                        <p:ajax listener="#{procesoInscripcion.selectGrupo()}" update="grupo"/>
+                                        <f:selectItems value="#{procesoInscripcion.rol.peE}" var="pe" itemValue="#{pe}" itemLabel="#{pe.nombre}"/>
+                                        <p:ajax listener="#{procesoInscripcion.selectGrupo()}" update="grupoE,sisInscrito"/>
+                                    </p:selectOneMenu>
+                                    <p:outputLabel for="sisInscrito" value="Sistema Inscrito"/>
+                                    <p:selectOneMenu id="sisInscrito" required="true" class="form-control" value="#{procesoInscripcion.rol.sistemaSeleccionado}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción" converter="entityConverter">
+                                        <f:selectItem itemValue="#{null}"/>
+                                        <f:selectItems value="#{procesoInscripcion.rol.sistemas}" var="sis" itemValue="#{sis}" itemLabel="#{sis.nombre}" itemDisabled="#{(sistema.idSistema == 2 and procesoInscripcion.rol.peEstudiante.area == 25)or(sistema.idSistema==2 and procesoInscripcion.rol.peEstudiante.area==28)}"/>
+                                        <p:ajax listener="#{procesoInscripcion.selectGrupo()}" update="grupoE"/>
                                     </p:selectOneMenu>
 
-                                    <p:outputLabel for="grupo" value="Grupo"/>
-                                    <p:selectOneMenu id="grupo" required="true" class="form-control" value="#{procesoInscripcion.estudiante.grupo}" converter="entidadCEConverter" requiredMessage="Debe de indicar el grupo del/la estudiante">
+                                    <p:outputLabel for="grupoE" value="Grupo"/>
+                                    <p:selectOneMenu id="grupoE" required="true" class="form-control" value="#{procesoInscripcion.rol.grupoSelecEs}" converter="entityConverter" requiredMessage="Debe de indicar el grupo del/la estudiante">
                                         <f:selectItem itemValue="#{null}"/>
-                                        <f:selectItems value="#{procesoInscripcion.listaGrupos}" var="g" itemLabel="#{g.literal}-#{g.idSistema.nombre}" itemValue="#{g}"/>
+                                        <f:selectItems value="#{procesoInscripcion.rol.gruposPosiblesE}" var="g" itemLabel="#{g.grupo.literal}- #{g.pe.siglas} - #{g.totalGrupo} de #{g.capMax}" itemValue="#{g}"/>
                                     </p:selectOneMenu>
 
                                     <f:facet name="footer">
