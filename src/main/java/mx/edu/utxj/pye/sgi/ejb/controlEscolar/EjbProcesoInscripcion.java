@@ -47,4 +47,5 @@ public interface EjbProcesoInscripcion {
     public ResultadoEJB<List<DtoGrupo>> getGruposbyOpcion(@NonNull EventoEscolar eventoEscolar,@NonNull Aspirante aspirante,@NonNull AreasUniversidad pe,@NonNull DatosAcademicos datosAcademicos);
     public ResultadoEJB<Estudiante> saveEstudiante(@NonNull Estudiante estudiante, @NonNull Boolean opcionIn, @NonNull DtoGrupo grupo, @NonNull Documentosentregadosestudiante documentos, @NonNull Operacion operacion, @NonNull EventoEscolar eventoEscolar);
     public ResultadoEJB<Documentosentregadosestudiante> getDocEstudiante (@NonNull Estudiante estudiante);
+    public ResultadoEJB<Login> getLoginbyPersona(@NonNull Persona persona);
 }
