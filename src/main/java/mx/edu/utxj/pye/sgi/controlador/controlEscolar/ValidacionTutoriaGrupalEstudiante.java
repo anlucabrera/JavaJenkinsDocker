@@ -63,7 +63,7 @@ public class ValidacionTutoriaGrupalEstudiante extends ViewScopedRol implements 
     
     @PostConstruct
     public void init(){
-//        try {
+        try {
             if(logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19)){
                 setVistaControlador(ControlEscolarVistaControlador.TUTORIAS_GRUPALES_ESTUDIANTE);
                 ResultadoEJB<Estudiante> resAcceso = ejb.validarEstudiante(logonMB.getCurrentUser());
@@ -84,7 +84,7 @@ public class ValidacionTutoriaGrupalEstudiante extends ViewScopedRol implements 
                 rol.setPeriodosConTutoriasGrupales(resPeriodos.getValor());
                 initFiltros();
             }
-//        } catch (Exception e) {mostrarExcepcion(e);}
+        } catch (Exception e) {mostrarExcepcion(e);}
     }
     
     /*********************************************** Inicializadores *********************************************************/
