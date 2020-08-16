@@ -73,7 +73,7 @@
     </ui:define>
 
     <ui:define name="body">
-        <c:if test="#{administracionEncuesta.cargado}">
+        <c:if test="#{administracionEvaluacionTutor.cargado}">
         <div id="main-buttons"  >
             <p:toolbar id="tb">
                 <f:facet name="left">
@@ -84,7 +84,7 @@
             <p:sticky target="tb" />
         </div>
         <p:tabView id="tabView">
-            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.tutorCe or administracionEncuesta.dto.esPsicopedagogia}">
+            <c:if test="#{administracionEvaluacionTutor.tutor or administracionEvaluacionTutor.director or administracionEvaluacionTutor.sa or administracionEvaluacionTutor.psicopedagogia or administracionEvaluacionTutor.serEs }">
                 <p:tab id="completos" title="Estudiantes con evaluación completa">
                     <h:form id="fr1">
                         <p:outputPanel>
@@ -128,9 +128,9 @@
                                         <p:commandButton actionListener="#{administracionEvaluacionTutor.seguimientoDirector()}" value="Actualizar información" icon="fa fa-refresh"
                                                          class="btn btn-primary" update="tabView:fr1:tblEvaTutorTer tabView:fr2:tblResEvTutorIncom tabView:fr3:tblResEvTutorNoIngreso tabView:fr45:avanceEvaTutor " process="@form"/>
                                     </c:if>
-                                    <c:if test="#{administracionEncuesta.dto.tutor or administracionEncuesta.dto.tutorCe}">
+                                    <c:if test="#{administracionEvaluacionTutor.tutor}">
                                         <p:commandButton actionListener="#{administracionEvaluacionTutor.seguimientoTutor()}" value="Actualizar información" icon="fa fa-refresh"
-                                                         class="btn btn-primary" update="tabView:fr1:tblEvaTutorTer tabView:fr2:tblResEvTutorIncom tabView:fr3:tblResEvTutorNoIngreso tabView:fr45:avanceEvaTutor" process="@form"/>
+                                                         class="btn btn-primary" update="tabView:fr1:tblEvaTutorTer tabView:fr2:tblResEvTutorIncom tabView:fr3:tblResEvTutorNoIngreso " process="@form"/>
                                     </c:if>
                                     <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
                                         <p:commandButton actionListener="#{administracionEvaluacionTutor.seguimientoSE()}" value="Actualizar información" icon="fa fa-refresh"
@@ -227,6 +227,8 @@
                     </h:form>
 
                 </p:tab>
+
+
 
 
             </c:if>
@@ -337,6 +339,6 @@
                 </p:tab>
             </c:if>
         </p:tabView>
-            </c:if>
+        </c:if>
     </ui:define>
 </ui:composition>

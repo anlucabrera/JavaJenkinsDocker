@@ -238,7 +238,8 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                 //Existe registro en la tabla Matricula Periodos escolares
                 //Se envia al dto el registro del estudiante
                 estudiante.setMatriculaPeriodosEscolares(resRegistro.getValor());
-                //Se busca la clave del estudiante (Estudiantes claves)
+
+                /*//Se busca la clave del estudiante (Estudiantes claves)
                 EstudiantesClaves clave = new EstudiantesClaves();
                 clave= em.createQuery("select e from EstudiantesClaves e where e.registro=:registro",EstudiantesClaves.class)
                 .setParameter("registro",estudiante.getMatriculaPeriodosEscolares().getRegistro())
@@ -250,11 +251,10 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                 if(clave==null){
                     //El estudiante no esta registrado en la tabla de claves
                     return ResultadoEJB.crearErroneo(4,estudiante,"El estudiante no esta registrado en la tabla de Claves Estudiantes");
-                }else {
+                }
+                else {*/
                     //El estudiante esta registrado en la tabla
                     //Se busca en que base esta (Saiiut o Control escolar)
-                    estudiante.setEstudiantesClaves(clave);
-                    estudiante.setClaveEstudiante(clave.getClave());
                     ResultadoEJB<dtoEstudiantesEvalauciones> resSaiiut =  getEstudianteSaiiut(estudiante.getMatriculaPeriodosEscolares());
                     if(resSaiiut.getCorrecto()==true){
                         //System.out.println("Esta en Saiiut" + resSaiiut.getValor());
@@ -303,7 +303,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                             //No esta en niguna base
                             return ResultadoEJB.crearErroneo(5,estudiante,"No se encontro al estudiante en ninguna base");}
                     }
-                }
+                //}
             }else {
                 //No existe registro del estudiante
                 return ResultadoEJB.crearErroneo(4,estudiante,"No existe regirstro del estudiante en la tabla");
@@ -321,9 +321,10 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
             List<AlumnosEvaluacionTutor> listAlumnosSauiit= new ArrayList<>();
             List<dtoEstudiantesEvalauciones> listDtoEstudiantesSauiit = new ArrayList<>();
             //Busca a los estudiantes activos
-            listAlumnosSauiit = em.createQuery("SELECT a FROM AlumnosEvaluacionTutor a",AlumnosEvaluacionTutor.class)
+            listAlumnosSauiit = em2.createQuery("SELECT a FROM AlumnosEvaluacionTutor a",AlumnosEvaluacionTutor.class)
                     .getResultList()
                     ;
+            System.out.println("Lista Saiiut" + listAlumnosSauiit.size());
              //System.out.println("Lista de vista --->" + listAlumnosSauiit.size());
             if(listAlumnosSauiit.isEmpty() || listAlumnosSauiit== null){return ResultadoEJB.crearErroneo(2,listDtoEstudiantesSauiit , "La lista de Estudiantes en Sauiit es nula");}
             else{
@@ -334,9 +335,16 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                     //System.out.println("1");
                     dtoEstudiante.setEstudianteSaiiut(x);
                     // como la clave de Tutor y del Director es clave persona, obtengo la clave de Nomina de ambos.
-                    Personal tutor = getClaveNominabyClavePersona(x.getCveMaestro()).getValor();
-                    Personal director= getClaveNominabyClavePersona(Integer.parseInt(x.getCveDirector())).getValor();
-                    //System.out.println("Director -> " +director.getClave());
+                   if(x.getCveMaestro()==null){
+                       dtoEstudiante.setNombreTutor("Sin asignar");
+                       //System.out.println("No tiene tutot");
+                   }else {  Personal tutor = getClaveNominabyClavePersona(x.getCveMaestro()).getValor();
+                       dtoEstudiante.setTutor(tutor);
+                       dtoEstudiante.setNombreTutor(tutor.getNombre());
+                       //.out.println("Tutor->" + tutor);
+                   }
+                   Personal director= getClaveNominabyClavePersona(Integer.parseInt(x.getCveDirector())).getValor();
+                   // System.out.println("Director -> " +director.getClave());
                     //Busca el numero de registro del estudiante por matricula
                    MatriculaPeriodosEscolares estudianteR = f.getEntityManager().createQuery("SELECT m FROM MatriculaPeriodosEscolares m WHERE m.matricula=:matricula AND m.periodo=:periodo", MatriculaPeriodosEscolares.class)
                                     .setParameter("matricula", x.getMatricula())
@@ -344,19 +352,21 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                                     .getResultStream()
                                     .findFirst()
                                     .orElse(null);
+                    //System.out.println("Registro " + estudianteR);
                     //System.out.println("ServicioEdtudianteBase.getEstudiantesSauiit " + estudianteR);
                    //Busca la clave del Estudiante por numero de registro
-                    EstudiantesClaves estudianteC = f.getEntityManager().createQuery("SELECT e FROM EstudiantesClaves e WHERE e.registro=:registro", EstudiantesClaves.class)
+                    /*EstudiantesClaves estudianteC = f.getEntityManager().createQuery("SELECT e FROM EstudiantesClaves e WHERE e.registro=:registro", EstudiantesClaves.class)
                             .setParameter("registro", estudianteR.getRegistro())
                             .getResultStream()
                             .findFirst()
                             .orElse(null)
                             ;
+                            */
                    // System.out.println("ServicioEdtudianteBase.getEstudiantesSauiit 2" + estudianteC);
                     //Llena el dto con los datos obtenidos
                     dtoEstudiante.setMatricula(x.getMatricula());
-                    dtoEstudiante.setRegistro(estudianteR.getRegistro());
-                    dtoEstudiante.setClaveEstudiante(estudianteC.getClave());
+                    //dtoEstudiante.setRegistro(estudianteR.getRegistro());
+                    //dtoEstudiante.setClaveEstudiante(estudianteC.getClave());
                     dtoEstudiante.setNombreCEstudiante(x.getNombre() + " " + x.getApellidoPat() + " " + x.getApellidoMat());
                     dtoEstudiante.setGrado(x.getGrado());
                     dtoEstudiante.setGrupo(x.getIdGrupo());
@@ -365,8 +375,9 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                     dtoEstudiante.setClaveDirector(director.getClave());
                     //TODO: Agrega el dto a la lista
                     listDtoEstudiantesSauiit.add(dtoEstudiante);
+                    //System.out.println("DTo s->"+ dtoEstudiante);
                 });
-                //System.out.println("Lista total--> " + listDtoEstudiantesSauiit.size());
+                System.out.println("Lista total--> " + listDtoEstudiantesSauiit.size());
             }
             if(listDtoEstudiantesSauiit.isEmpty()||listDtoEstudiantesSauiit ==null){return ResultadoEJB.crearErroneo(3, listDtoEstudiantesSauiit, "No se pudo hacer el llenado de la lista de estudiantes en sauiit.");}
             else{return ResultadoEJB.crearCorrecto(listDtoEstudiantesSauiit,"Lista de Estudiantes activos en sauiit creada correctamente");}
@@ -394,6 +405,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
         else {
             //Se recorre la lista para obetener sus datos
             estudiantesCE.forEach(e->{
+                System.out.println("Estudiante--------->" + e);
                 dtoEstudiantesEvalauciones dtoEstudiante = new dtoEstudiantesEvalauciones();
                 dtoEstudiante.setEstudianteCE(e);
                 dtoEstudiante.setMatricula(Integer.toString(e.getMatricula()));
@@ -403,13 +415,16 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                 dtoEstudiante.setGrado(e.getGrupo().getGrado());
                 dtoEstudiante.setGrupo(e.getGrupo().getLiteral().toString());
                 //Busco al tutor
-                ResultadoEJB<Personal> tutor= getPersonalbyClave(e.getGrupo().getTutor());
-                if(tutor.getCorrecto()==true){
-                    //Se envia al tutor  y sus datos
-                    dtoEstudiante.setTutor(tutor.getValor());
-                    dtoEstudiante.setNombreTutor(tutor.getValor().getNombre());
-                    dtoEstudiante.setClaveTutor(tutor.getValor().getClave());
-                }
+                if(e.getGrupo().getTutor()!=null){
+                    ResultadoEJB<Personal> tutor= getPersonalbyClave(e.getGrupo().getTutor());
+                    if(tutor.getCorrecto()==true){
+                        //Se envia al tutor  y sus datos
+                        dtoEstudiante.setTutor(tutor.getValor());
+                        dtoEstudiante.setNombreTutor(tutor.getValor().getNombre());
+                        dtoEstudiante.setClaveTutor(tutor.getValor().getClave());
+                    }
+                }else {
+                    dtoEstudiante.setNombreTutor("Sin asignar");}
                 //Busco el area a la que está inscrito
                 ResultadoEJB<AreasUniversidad> areas = getAreabyClave(e.getCarrera());
                 if(areas.getCorrecto()==true){
@@ -438,18 +453,19 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                 }
                // System.out.println("Registro CE --->" +estudianteR);
                 //TODO:Busca la clave del Estudiante por numero de registro
-                EstudiantesClaves estudianteC = f.getEntityManager().createQuery("SELECT e FROM EstudiantesClaves e WHERE e.registro=:registro", EstudiantesClaves.class)
+               /* EstudiantesClaves estudianteC = f.getEntityManager().createQuery("SELECT e FROM EstudiantesClaves e WHERE e.registro=:registro", EstudiantesClaves.class)
                         .setParameter("registro", estudianteR.getRegistro())
                         .getResultStream()
                         .findFirst()
                         .orElse(null)
                         ;
+                        */
                 //System.out.println("Clave --->" +estudianteC);
-                if(estudianteC !=null){
+                /*if(estudianteC !=null){
                     dtoEstudiante.setEstudiantesClaves(estudianteC);
                     dtoEstudiante.setClaveEstudiante(estudianteC.getClave());
-                }
-               // System.out.println("Estudiante Control Escolar --->" + dtoEstudiante);
+                }*/
+               System.out.println("Estudiante Control Escolar --->" + dtoEstudiante);
                 listEstudiantesCE.add(dtoEstudiante);
             });
             return ResultadoEJB.crearCorrecto(listEstudiantesCE ,"Lista de estudiantes CE");
@@ -465,7 +481,6 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
             List<dtoEstudiantesEvalauciones> listTotalEstudiantes = new ArrayList<>();
             if(periodoEvaluacion==null) {
                 return ResultadoEJB.crearErroneo(3, listTotalEstudiantes, "El periodo de la evaluación no debe ser nulo");
-
             }else{
                 //System.out.println("Periodo que recibe en ejb del administracion de alumnos" + periodoEvaluacion.getPeriodo());
                 List<dtoEstudiantesEvalauciones> listEstudiantesSauiit = new ArrayList<>();
@@ -480,6 +495,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                 //Agrega ambas listas a la lista total de estudiantes
                 listTotalEstudiantes.addAll(listEstudiantesCE);
                 listTotalEstudiantes.addAll(listEstudiantesSauiit);
+               // System.out.println("Lista total " + listTotalEstudiantes.size());
                 //System.out.println("Se añadio a la lista general!" + listTotalEstudiantes.size());
                 if (listTotalEstudiantes.isEmpty()) {
                     return ResultadoEJB.crearErroneo(3, listTotalEstudiantes, "La lista total esta vacia!");
@@ -489,7 +505,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                 }
             }
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la busqueda yllenado  (EjbAdmminEstudianteBase-->getTotalEstudiantes)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la busqueda y llenado  (EjbAdmminEstudianteBase-->getTotalEstudiantes)", e, null);
         }
 
     }
@@ -499,7 +515,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
         try {
           //  System.out.println("Clave persona " + clavePersona);
             Personal personal = new Personal();
-            ListaUsuarioClaveNomina personalS =  em.createQuery("SELECT l FROM ListaUsuarioClaveNomina l WHERE l.cvePersona=:clave", ListaUsuarioClaveNomina.class)
+            ListaUsuarioClaveNomina personalS =  em2.createQuery("SELECT l FROM ListaUsuarioClaveNomina l WHERE l.cvePersona=:clave", ListaUsuarioClaveNomina.class)
                     .setParameter("clave", clavePersona)
                     .getResultStream()
                     .findFirst()

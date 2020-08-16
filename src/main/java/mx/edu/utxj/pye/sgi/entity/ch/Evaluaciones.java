@@ -58,9 +58,13 @@ public class Evaluaciones implements Serializable {
     private Date fechaFin;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
+    @Size(min = 1, max = 49)
     @Column(name = "tipo")
     private String tipo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionDocentesMateriaResultados4> evaluacionDocentesMateriaResultados4List;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionTutoresResultados3> evaluacionTutoresResultados3List;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EvaluacionDocentesMateriaResultados3> evaluacionDocentesMateriaResultados3List;
     private static final long serialVersionUID = 1L;
@@ -301,6 +305,16 @@ public class Evaluaciones implements Serializable {
         return "mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones[ evaluacion=" + evaluacion + " ]";
     }
 
+
+    @XmlTransient
+    public List<EvaluacionDocentesMateriaResultados3> getEvaluacionDocentesMateriaResultados3List() {
+        return evaluacionDocentesMateriaResultados3List;
+    }
+
+    public void setEvaluacionDocentesMateriaResultados3List(List<EvaluacionDocentesMateriaResultados3> evaluacionDocentesMateriaResultados3List) {
+        this.evaluacionDocentesMateriaResultados3List = evaluacionDocentesMateriaResultados3List;
+    }
+
     public int getPeriodo() {
         return periodo;
     }
@@ -317,12 +331,21 @@ public class Evaluaciones implements Serializable {
     }
 
     @XmlTransient
-    public List<EvaluacionDocentesMateriaResultados3> getEvaluacionDocentesMateriaResultados3List() {
-        return evaluacionDocentesMateriaResultados3List;
+    public List<EvaluacionDocentesMateriaResultados4> getEvaluacionDocentesMateriaResultados4List() {
+        return evaluacionDocentesMateriaResultados4List;
     }
 
-    public void setEvaluacionDocentesMateriaResultados3List(List<EvaluacionDocentesMateriaResultados3> evaluacionDocentesMateriaResultados3List) {
-        this.evaluacionDocentesMateriaResultados3List = evaluacionDocentesMateriaResultados3List;
+    public void setEvaluacionDocentesMateriaResultados4List(List<EvaluacionDocentesMateriaResultados4> evaluacionDocentesMateriaResultados4List) {
+        this.evaluacionDocentesMateriaResultados4List = evaluacionDocentesMateriaResultados4List;
+    }
+
+    @XmlTransient
+    public List<EvaluacionTutoresResultados3> getEvaluacionTutoresResultados3List() {
+        return evaluacionTutoresResultados3List;
+    }
+
+    public void setEvaluacionTutoresResultados3List(List<EvaluacionTutoresResultados3> evaluacionTutoresResultados3List) {
+        this.evaluacionTutoresResultados3List = evaluacionTutoresResultados3List;
     }
 
 }

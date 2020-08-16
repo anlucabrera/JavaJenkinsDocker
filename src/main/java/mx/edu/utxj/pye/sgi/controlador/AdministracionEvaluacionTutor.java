@@ -15,16 +15,22 @@ import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.EJBAdimEstudianteBase;
+import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuesta;
 import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEvTutor;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.*;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
+import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionTutor;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.dto.dtoAvanceEvaluaciones;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionTutor2;
+import mx.edu.utxj.pye.sgi.funcional.ComparadorEvaluacionTutor3;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Grupos;
+import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
 
 
@@ -38,7 +44,7 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
  * Modificacion por nueva evaluacion 10/03/2020
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class AdministracionEvaluacionTutor extends ViewScopedRol implements Serializable {
     @Getter @Setter List<dtoEstudiantesEvalauciones> listGeneral,listEstudiantesFiltrados,listCompleto, listIncompletos, listNoIngreso, listFilter;
     @Getter @Setter List<EvaluacionTutoresResultados> listResultados;
@@ -56,14 +62,14 @@ public class AdministracionEvaluacionTutor extends ViewScopedRol implements Seri
     @Getter @Setter List<dtoAvanceEvaluaciones> dtoEvance;
     @Getter @Setter List<dtoAvanceEvaluaciones> listAvance, listAvancePE, listAvanceFIlter;
     @Getter @Setter List<ProgramasEducativos> listPE;
-
-
+    @Getter @Setter boolean director,tutor,psicopedagogia,sa,serEs;
     @EJB private EjbAdministracionEvTutor ejbAdmminEvTutor;
     @EJB private EjbPersonal ejbPersonal;
     @EJB private EJBAdimEstudianteBase ejbAdimEstudianteBase;
+    @EJB private EjbAdministracionEncuesta ejbAdmin;
 
     @Inject private LogonMB logonMB;
-
+    @Inject private AdministracionEncuesta adm;
 
 @Getter private Boolean cargado = false;
 
@@ -77,6 +83,24 @@ public class AdministracionEvaluacionTutor extends ViewScopedRol implements Seri
         getPersona();
         getEvaluacionTutorActiva();
         getPeriodoEvaluacion();
+      //  System.out.println("Periodo" + periodoEvaluacion);
+        comprubaAcceso();
+    }
+    public void comprubaAcceso(){
+        try{
+            //System.out.println("---- com");
+            List<Grupos> tutorS = ejbAdmin.estTutordeGrupo(logonMB.getListaUsuarioClaveNomina().getCvePersona());
+            if(!tutorS.isEmpty()){ tutor =true; }
+            Grupo tutorCe = ejbAdmin.esTutorCE(logonMB.getPersonal().getClave());if(tutorCe!=null){ tutor=true; }
+            List<Personal> secA = ejbAdmin.esSecretarioAcademico(1, Short.parseShort("2"), Short.parseShort("38"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+            if(!secA.isEmpty()){ sa=true; }
+            List<Personal> directorA= ejbAdmin.esDirectorDeCarrera(2, 2, 18,48, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+            if(!directorA.isEmpty()){ director=true; }
+            List<Personal> psico= ejbAdmin.esPsicopedagogia(Short.parseShort("18"),  Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+            if(!psico.isEmpty()){ psicopedagogia=true; }
+            if(logonMB.getPersonal().getAreaOperativa() == 11 && logonMB.getPersonal().getAreaSuperior() == 2){ serEs=true; }
+
+        }catch (Exception e){mostrarExcepcion( e);}
     }
 
     public void getPersona(){
@@ -123,35 +147,70 @@ public void generalListas(List<dtoEstudiantesEvalauciones> estudiantes){
         listCompleto = new ArrayList<>();
         listIncompletos = new ArrayList<>();
         listNoIngreso = new ArrayList<>();
-        estudiantes.forEach(e->{
-           // ResultadoEJB<EvaluacionTutoresResultados> res = ejbAdmminEvTutor.getResultadoEvaluacionByEstudiante(e); --> Esta es la version anterior de la evaluación
-            ResultadoEJB<EvaluacionTutoresResultados2> res = ejbAdmminEvTutor.getResultadosEvByEstudiante(e,evaluacion);
+        //Comprueba el tipo de avaluacion para cargar datos
+        if(evaluacion.getTipo().equals(EvaluacionesTipo.TUTOR.getLabel())){
+           // System.out.println("Tipo 1");
+            //Se cargan los datos de la evaluacion Tutor
+            estudiantes.forEach(e->{
+                // ResultadoEJB<EvaluacionTutoresResultados> res = ejbAdmminEvTutor.getResultadoEvaluacionByEstudiante(e); --> Esta es la version anterior de la evaluación
+                ResultadoEJB<EvaluacionTutoresResultados2> res = ejbAdmminEvTutor.getResultadosEvByEstudiante(e,evaluacion);
 
-            if(res.getCorrecto()==true){
-                //EvaluacionTutoresResultados resultado = new EvaluacionTutoresResultados();
-                EvaluacionTutoresResultados2 resultado = new EvaluacionTutoresResultados2();
-                resultado = res.getValor();
-               //System.out.println("Resultados encontrados" + resultado);
-                //Comparador<EvaluacionTutoresResultados> comparador = new ComparadorEvaluacionTutor();
-                Comparador<EvaluacionTutoresResultados2> comparador = new ComparadorEvaluacionTutor2();
-                boolean finalizado = comparador.isCompleto(resultado);
-                if(resultado!=null){
-                    if(finalizado){
-                        listCompleto.add(e);
-                        totalCompletos = totalCompletos +1;
+                if(res.getCorrecto()==true){
+                    //EvaluacionTutoresResultados resultado = new EvaluacionTutoresResultados();
+                    EvaluacionTutoresResultados2 resultado = new EvaluacionTutoresResultados2();
+                    resultado = res.getValor();
+                    //System.out.println("Resultados encontrados" + resultado);
+                    //Comparador<EvaluacionTutoresResultados> comparador = new ComparadorEvaluacionTutor();
+                    Comparador<EvaluacionTutoresResultados2> comparador = new ComparadorEvaluacionTutor2();
+                    boolean finalizado = comparador.isCompleto(resultado);
+                    if(resultado!=null){
+                        if(finalizado){
+                            listCompleto.add(e);
+                            totalCompletos = totalCompletos +1;
+                        }
+                        if(!finalizado){
+                            listIncompletos.add(e);
+                            totalIncompletos = totalIncompletos +1;
+                        }
                     }
-                    if(!finalizado){
-                        listIncompletos.add(e);
-                        totalIncompletos = totalIncompletos +1;
-                    }
+                }else{
+                    listNoIngreso.add(e);
+                    totalNoAcceso = totalNoAcceso +1;
                 }
-            }else{
-                listNoIngreso.add(e);
-                totalNoAcceso = totalNoAcceso +1;
-            }
 
-        });
+            });
+        }else if (evaluacion.getTipo().equals(EvaluacionesTipo.TUTOR_2.getLabel())){
+            //System.out.println("Tipo 2");
+            //Carga los resultados de la evelaucion Tutor (Cuestionario 2)
+            estudiantes.forEach(e->{
+                // ResultadoEJB<EvaluacionTutoresResultados> res = ejbAdmminEvTutor.getResultadoEvaluacionByEstudiante(e); --> Esta es la version anterior de la evaluación
+                ResultadoEJB<EvaluacionTutoresResultados3> res = ejbAdmminEvTutor.getResultados2EvByEstudiante(e,evaluacion);
 
+                if(res.getCorrecto()==true){
+                    //EvaluacionTutoresResultados resultado = new EvaluacionTutoresResultados();
+                    EvaluacionTutoresResultados3 resultado = new EvaluacionTutoresResultados3();
+                    resultado = res.getValor();
+                    //System.out.println("Resultados encontrados" + resultado);
+                    //Comparador<EvaluacionTutoresResultados> comparador = new ComparadorEvaluacionTutor();
+                    Comparador<EvaluacionTutoresResultados3> comparador = new ComparadorEvaluacionTutor3();
+                    boolean finalizado = comparador.isCompleto(resultado);
+                    if(resultado!=null){
+                        if(finalizado){
+                            listCompleto.add(e);
+                            totalCompletos = totalCompletos +1;
+                        }
+                        if(!finalizado){
+                            listIncompletos.add(e);
+                            totalIncompletos = totalIncompletos +1;
+                        }
+                    }
+                }else{
+                    listNoIngreso.add(e);
+                    totalNoAcceso = totalNoAcceso +1;
+                }
+
+            });
+        }
         }
 
     //Hace calculos de avance de la evalaucion
@@ -213,6 +272,7 @@ public void seguimientoTutor(){
             totalEstudiantes = listEstudiantesFiltrados.size();
             //System.out.println( "Total estudiantes " + totalEstudiantes);
             //Genera las listas completas e incompletas
+        //System.out.println("Estudiantes Tutor -->" + listEstudiantesFiltrados.size());
             generalListas(listEstudiantesFiltrados);
             generarAvaance();
 

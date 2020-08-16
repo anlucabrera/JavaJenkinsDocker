@@ -62,4 +62,6 @@ public interface EjbAdministracionEvTutor {
      *
      */
     public ResultadoEJB<EvaluacionTutoresResultados2> getResultadosEvByEstudiante (dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion);
+
+    public ResultadoEJB<EvaluacionTutoresResultados3> getResultados2EvByEstudiante (dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion);
 }
