@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 /**
@@ -84,9 +85,9 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
     //
     public void  getTipoEvaluacion(){
         try{
-            ResultadoEJB<Integer> restTipoEv = ejbEvaluacionDocente2.getTipoEvaluacion();
-            if(restTipoEv.getCorrecto()==true){ tipoEvaluacion = restTipoEv.getValor();
-            }else { mostrarMensajeResultadoEJB(restTipoEv); }
+            if(evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE.getLabel())){tipoEvaluacion=1;}
+            else if(evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_2.getLabel())){tipoEvaluacion=2;}
+            else if(evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_3.getLabel())){tipoEvaluacion=3;}
         }
         catch (Exception e){mostrarExcepcion(e);}
     }
@@ -132,6 +133,9 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
                 else if(tipoEvaluacion==2){
                     getResultadosTipo2(e,listaMaterias);
                 }
+                else if(tipoEvaluacion==3){
+                    getResultadosTipo3(e,listaMaterias);
+                }
 
             }
             else {mostrarMensajeResultadoEJB(resMaterias);}
@@ -176,6 +180,35 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
             if(resResultados.getCorrecto()==true){
                 //Se filtran los resultados encontrados, para obtener solo los resultados completos
                 List<EvaluacionDocentesMateriaResultados3> listResultadosCompletos= resResultados.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
+                //List<EvaluacionDocentesMateriaResultados> listResultadosCompletos= resResultadosEvaluacion.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
+                // System.out.println("TOTAL DE RESULTADOS COMPLETOS "+ listResultadosCompletos.size());
+                int totalaEvaluar = materias.size();
+                int totalResultadosCompletos = listResultadosCompletos.size();
+                // Comprueba si ha terminado la evaluacion a docente
+                if(totalResultadosCompletos < totalaEvaluar){
+                    //Si la los registros de resultados completos es menor a la total de la que debe evaluar, la evaluacion esta incompleta y se agrega a la lista de incompletos
+                    listIncompletos.add(estudiante);
+                    //System.out.println("Ev incompleta");
+                }if(totalResultadosCompletos == totalaEvaluar){
+                    //Si los registros de resultados completos del estudiante es igual al los que debe evaluar, entonces la evaluacion esta finalizada, y se agrega a la lista de completos
+                    listCompletos.add(estudiante);
+                    // System.out.println("Ev completa");
+                }
+            }
+            //Si no existen registros se agrega a la lista de estudiantes que no han ingresado al sistema
+            else {listNoAcceso.add(estudiante); totalNoAcceso++;
+                //System.out.println("Ev no accedio");
+            }
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
+    public void getResultadosTipo3(dtoEstudiantesEvalauciones estudiante,List<dtoEstudianteMateria> materias){
+        try{
+            //Obtien la lista de resultados (evaluacion tipo 3 = evaluacion al desempeño docente por contingencia de salud)
+            ResultadoEJB<List<EvaluacionDocentesMateriaResultados4>> resResultados = ejbEvaluacionDocente2.getListaResultados4MateriabyMatricula(evaluacion,Integer.parseInt(estudiante.getMatricula()));
+            List<EvaluacionDocentesMateriaResultados4> listTotalResuldos = resResultados.getValor();
+            if(resResultados.getCorrecto()==true){
+                //Se filtran los resultados encontrados, para obtener solo los resultados completos
+                List<EvaluacionDocentesMateriaResultados4> listResultadosCompletos= resResultados.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
                 //List<EvaluacionDocentesMateriaResultados> listResultadosCompletos= resResultadosEvaluacion.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
                 // System.out.println("TOTAL DE RESULTADOS COMPLETOS "+ listResultadosCompletos.size());
                 int totalaEvaluar = materias.size();

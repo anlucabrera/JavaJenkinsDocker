@@ -41,7 +41,9 @@ public class EjbCuestionarioPsicopedagogico {
      */
     public ResultadoEJB<Estudiante> validaEstudiante(Integer matricula){
         try{
-            Estudiante e = em.createQuery("select e from Estudiante as e where e.matricula = :matricula", Estudiante.class).setParameter("matricula", matricula)
+            Estudiante e = em.createQuery("select e from Estudiante as e where e.matricula = :matricula and e.tipoEstudiante=:tipo and e.grupo.grado=:grado", Estudiante.class).setParameter("matricula", matricula)
+                    .setParameter("tipo",1)
+                    .setParameter("grado",1)
                     .getResultStream().findFirst().orElse(new Estudiante());
             return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante.");
         }catch (Exception e){
@@ -118,23 +120,34 @@ public class EjbCuestionarioPsicopedagogico {
         try{
             CuestionarioPsicopedagogicoResultados resultados = new CuestionarioPsicopedagogicoResultados();
             if(estudiante ==null){return  ResultadoEJB.crearErroneo(2,resultados,"El estudiante no debe ser nulo");}
-            //TODO: Busca resultados
-            resultados = em.createQuery("select c from CuestionarioPsicopedagogicoResultados c where c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante=:idEstudiante order by c.cuestionarioPsicopedagogicoResultadosPK.evaluacion",CuestionarioPsicopedagogicoResultados.class)
-                    .setParameter("idEstudiante",estudiante.getIdEstudiante())
+            Estudiante estudiante1 = em.createQuery("select e from Estudiante e where e.matricula=:matricula and e.grupo.grado=:grado",Estudiante.class)
+                    .setParameter("matricula", estudiante.getMatricula())
+                    .setParameter("grado",1)
                     .getResultStream()
                     .findFirst()
                     .orElse(null)
-            ;
-            //TODO: Si no se encuentran resultados el estudiante, se da aviso al personal examinador que el estudiante no ha respondido el cuestionario
-            if(resultados==null){return ResultadoEJB.crearErroneo(5,resultados,"El estudiante con matricula "+estudiante.getMatricula() +" no ha respondido el cuestionario");}
-            //TODO: Se revisa que los resultados ya hayan sido terminados
-            else if(resultados.getCompleto()==true){
+                    ;
+            if(estudiante1!=null){
+                //TODO: Busca resultados
+                resultados = em.createQuery("select c from CuestionarioPsicopedagogicoResultados c where c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante=:idEstudiante order by c.cuestionarioPsicopedagogicoResultadosPK.evaluacion",CuestionarioPsicopedagogicoResultados.class)
+                        .setParameter("idEstudiante",estudiante1.getIdEstudiante())
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null)
+                ;
+                //TODO: Si no se encuentran resultados el estudiante, se da aviso al personal examinador que el estudiante no ha respondido el cuestionario
+                if(resultados==null){return ResultadoEJB.crearErroneo(5,resultados,"El estudiante con matricula "+estudiante.getMatricula() +" no ha respondido el cuestionario");}
+                //TODO: Se revisa que los resultados ya hayan sido terminados
+                else if(resultados.getCompleto()==true){
                     //TODO: Se agrega la clave del persona
                     resultados.setClave(examinador.getClave());
                     resultados.setReviso(false);
                     em.merge(resultados);
                     return ResultadoEJB.crearCorrecto(resultados,"Se ha agregado a personal examinador");
-            }else {return ResultadoEJB.crearCorrecto(resultados,"Resultados encontrados");}
+                }else {return ResultadoEJB.crearCorrecto(resultados,"Resultados encontrados");}
+            }
+            else {return ResultadoEJB.crearErroneo(3,resultados,"No encontro registro del estudiante en 1 er cuatrimestre");}
+
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener los resultados(Personal). (EjbCuestionarioPsicopedagogico.getResultadosCuestionarioPersonal)", e, null);
         }

@@ -19,6 +19,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import mx.edu.utxj.pye.sgi.entity.ch.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 /**
@@ -53,8 +54,9 @@ public class ServicioAdministracionEvTutor  implements EjbAdministracionEvTutor 
     public ResultadoEJB<Evaluaciones> getUltimaEvTutorActiva() {
         //Obtiene la ultima evaluacion a tutor activa
         try {
-            Evaluaciones evaluacion = f.getEntityManager().createQuery("select e from Evaluaciones e where e.tipo=:tipo order by  e.evaluacion DESC ",Evaluaciones.class)
-                    .setParameter("tipo","Tutor")
+            Evaluaciones evaluacion = f.getEntityManager().createQuery("select e from Evaluaciones e where e.tipo=:tipo or e.tipo=:tipo2 order by  e.evaluacion DESC ",Evaluaciones.class)
+                    .setParameter("tipo",EvaluacionesTipo.TUTOR.getLabel())
+                    .setParameter("tipo2",EvaluacionesTipo.TUTOR_2.getLabel())
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
@@ -159,5 +161,33 @@ public class ServicioAdministracionEvTutor  implements EjbAdministracionEvTutor 
       }catch (Exception e){
           return ResultadoEJB.crearErroneo(1, "Ocurrio un error en EJBAdministracionEvTutor(getResultadosEvByEstudiante)", e, null);
       }
+    }
+
+    /**
+     * Obtiene los resultados por estudiante
+     * Evaluacion Tutor (Cuestionario 2)
+     * @param estudiante dtoEstudiante
+     * @param evaluacion Ultima evaluacion activa
+     * @return Resultado del proceso
+     */
+    @Override
+    public ResultadoEJB<EvaluacionTutoresResultados3> getResultados2EvByEstudiante(dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion) {
+        try{
+            if(estudiante ==null){return ResultadoEJB.crearErroneo(2,new EvaluacionTutoresResultados3(),"El estudiante no debe ser nulo");}
+            if( evaluacion ==null){return ResultadoEJB.crearErroneo(3,new EvaluacionTutoresResultados3(),"La evaluación no debe ser nula");}
+            // System.out.println("Matricula que recibe " + estudiante.getMatricula());
+            EvaluacionTutoresResultados3 resultados = new EvaluacionTutoresResultados3();
+            resultados = f.getEntityManager().createQuery("select e from EvaluacionTutoresResultados3  e where  e.evaluacionTutoresResultados3PK.evaluador=:evaluador and e.evaluacionTutoresResultados3PK.evaluacion=:evaluacion",EvaluacionTutoresResultados3.class)
+                    .setParameter("evaluador",Integer.parseInt(estudiante.getMatricula()))
+                    .setParameter("evaluacion",evaluacion.getEvaluacion())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            //System.out.println("Resultados -> "  +resultados);
+            if(resultados!=null){return ResultadoEJB.crearCorrecto(resultados,"Se encontro un resultado del estudiante");}
+            else {return ResultadoEJB.crearErroneo(4,resultados,"No se econtraron resultados");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Ocurrio un error en EJBAdministracionEvTutor(getResultadosEvByEstudiante)", e, null);
+        }
     }
 }

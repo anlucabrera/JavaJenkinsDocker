@@ -19,8 +19,12 @@ public enum EvaluacionesTipo {//Tutor, Control interno, Docente, Satisfacción d
     CUESTIONARIO_PSICOPEDAGOGICO(7, "Cuestionario Psicopedagógico"),
     EVALUACION_ETICA(8, "Evaluación ética"),
     EVALUACION_AMBIENTAL(9, "Evaluación ambiental"),
-    CONDICIONES_ESTUDIO(10, "Condiciones estudio");
-
+    CONDICIONES_ESTUDIO(10, "Condiciones estudio"),
+    TUTOR(11,"Tutor"),
+    TUTOR_2(12,"Tutor (Cuestionario 2)"),
+    DOCENTE(13,"Docente materia"),
+    DOCENTE_2(14,"Docente materia (Cuestionario 2 por contingencia)"),
+    DOCENTE_3(15,"Docente materia (Cuestionario 3 por contingencia)");
     @Getter @NonNull private final Integer numero;
     @Getter @NonNull private final String label;
 }
