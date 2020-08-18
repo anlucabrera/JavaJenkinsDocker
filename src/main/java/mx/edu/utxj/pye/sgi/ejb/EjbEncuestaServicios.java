@@ -83,7 +83,7 @@ public class EjbEncuestaServicios implements Serializable {
                     .findFirst()
                     .orElse(null);
             if(eventoEscolar == null){
-                return ResultadoEJB.crearErroneo(2,eventoEscolar, "No existe evento aperturado del tipo solicitado.");// .crearCorrecto(map.entrySet().iterator().next(), "Evento aperturado.");
+                return ResultadoEJB.crearErroneo(2,new Evaluaciones(), "No existe evento aperturado del tipo solicitado.");// .crearCorrecto(map.entrySet().iterator().next(), "Evento aperturado.");
             }else{
                 return ResultadoEJB.crearCorrecto(eventoEscolar, "Evento aperturado.");
             }

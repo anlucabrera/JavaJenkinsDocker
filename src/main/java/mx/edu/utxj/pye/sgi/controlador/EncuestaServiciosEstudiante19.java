@@ -76,6 +76,22 @@ public class EncuestaServiciosEstudiante19 extends ViewScopedRol implements Desa
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
             ResultadoEJB<Evaluaciones> resEvento = ejb.verificarEvaluacion();
             if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
+
+            String mensajeParametros = null;
+                    
+            if(resEvento.getValor() == null) mensajeParametros = "No se detectó evaluación";
+            if(resEvento.getValor().getEvaluacion() == null) mensajeParametros = "No se detectó clave de evaluación";
+            if(rol.getEstudiante() == null) mensajeParametros = "No se detectó paquete de estudiante";
+            if(rol.getEstudiante().getInscripcionActiva() == null) mensajeParametros = "No se detectó inscripción activa en paquete de estudiante";
+            if(rol.getEstudiante().getInscripcionActiva().getInscripcion() == null) mensajeParametros = "No se detectó empaquetado de inscripción en inscripción activa en paquete de estudiante";
+            if(rol.getEstudiante().getInscripcionActiva().getInscripcion().getMatricula() == 0) mensajeParametros = "No se detectó matricula en empaquetado de inscripción en inscripción activa en paquete de estudiante";
+            
+            if(mensajeParametros != null){
+                cargado = false;
+                System.out.println("EncuestaServiciosEstudiante19.init: Error: ".concat(mensajeParametros));
+                return;
+            }
+            
             ResultadoEJB<Boolean> resultadoEJB = ejb.verificarEvaluacionCOmpleta(resEvento.getValor(), rol.getEstudiante());
             rol.setCompleto(resultadoEJB.getValor());
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
