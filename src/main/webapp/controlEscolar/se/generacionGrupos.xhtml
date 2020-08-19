@@ -122,7 +122,7 @@
                                                                     <div class="ui-material">
                                                                         <p:selectOneMenu id="periodo" value="#{generacionGruposServiciosEscolares.rol.periodoAct}">
                                                                             <f:selectItem itemValue="#{null}"/>
-                                                                            <f:selectItems value="#{generacionGruposServiciosEscolares.rol.periodos}"/>
+                                                                            <f:selectItems value="#{generacionGruposServiciosEscolares.obtenerPeriodos()}"/>
                                                                             <p:ajax update=":frmTabla" process="@this" listener="#{generacionGruposServiciosEscolares.obtenerGrupos()}"/>
                                                                         </p:selectOneMenu>
                                                                         <p:outputLabel for="periodo" value="Periodo"/>
@@ -132,9 +132,9 @@
                                                                 <div class="#{casilla4}">
                                                                     <div class="ui-material">
                                                                         <p:selectOneMenu id="pe" class="form-control" style="width: 100%;" requiredMessage="Debe seleccionar el programa educativo"
-                                                                                         value="#{generacionGruposServiciosEscolares.rol.grupo.idPe}" required="true">
+                                                                                         value="#{generacionGruposServiciosEscolares.rol.idPE}" required="true">
                                                                             <f:selectItem itemValue="#{null}"/>
-                                                                            <f:selectItems var="pe" value="#{generacionGruposServiciosEscolares.rol.areasUniversidades}"
+                                                                            <f:selectItems var="pe" value="#{generacionGruposServiciosEscolares.obtenerAreasUniversidad()}"
                                                                                            itemLabel="#{pe.nombre}" itemValue="#{pe.area}"/>
                                                                             <p:ajax listener="#{generacionGruposServiciosEscolares.obtenerPlanesEstudioPorPE()}" process="@this"
                                                                                     update="planEstudio"/>
@@ -159,26 +159,20 @@
                                                                 </div>
                                                                 <div class="#{casilla4}">
                                                                     <div class="ui-material">
-                                                                        <p:selectOneMenu id="cuatrimestre" value="#{generacionGruposServiciosEscolares.rol.grupo.grado}" required="true"
+                                                                        <p:selectOneMenu id="cuatrimestre" value="#{generacionGruposServiciosEscolares.rol.grado}" required="true"
                                                                             requiredMessage="Debe seleccionar el cuatrimestre a registrar">
                                                                             <f:selectItem itemValue="#{null}"/>
-                                                                            <c:if test="#{generacionGruposServiciosEscolares.rol.periodo.mesInicio.numero eq 9}">
                                                                                 <f:selectItem itemValue="1" itemLabel="1"/>
-                                                                                <f:selectItem itemValue="4" itemLabel="4"/>
-                                                                                <f:selectItem itemValue="7" itemLabel="7"/>
-                                                                                <f:selectItem itemValue="10" itemLabel="10"/>
-                                                                            </c:if>
-                                                                            <c:if test="#{generacionGruposServiciosEscolares.rol.periodo.mesInicio.numero eq 1}">
                                                                                 <f:selectItem itemValue="2" itemLabel="2"/>
-                                                                                <f:selectItem itemValue="5" itemLabel="5"/>
-                                                                                <f:selectItem itemValue="8" itemLabel="8"/>
-                                                                                <f:selectItem itemValue="11" itemLabel="11"/>
-                                                                            </c:if>
-                                                                            <c:if test="#{generacionGruposServiciosEscolares.rol.periodo.mesInicio.numero eq 5}">
                                                                                 <f:selectItem itemValue="3" itemLabel="3"/>
+                                                                                <f:selectItem itemValue="4" itemLabel="4"/>
+                                                                                <f:selectItem itemValue="5" itemLabel="5"/>
                                                                                 <f:selectItem itemValue="6" itemLabel="6"/>
+                                                                                <f:selectItem itemValue="7" itemLabel="7"/>
+                                                                                <f:selectItem itemValue="8" itemLabel="8"/>
                                                                                 <f:selectItem itemValue="9" itemLabel="9"/>
-                                                                            </c:if>
+                                                                                <f:selectItem itemValue="10" itemLabel="10"/>
+                                                                                <f:selectItem itemValue="11" itemLabel="11"/>
                                                                             <p:ajax process="@this" update="@this"/>
                                                                         </p:selectOneMenu>
                                                                         <p:outputLabel for="cuatrimestre" value="Cuatrimestre"/>
@@ -192,14 +186,27 @@
                                                                     <div class="ui-material">
                                                                         <p:outputLabel for="sistema2" value="Sistema"
                                                                                        style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/>
-                                                                        <p:selectOneMenu id="sistema2" value="#{generacionGruposServiciosEscolares.rol.grupo.idSistema}" converter="entidadCEConverter"
-                                                                                         required="true" requiredMessage="Debe seleccionar el sistema para dicho grupo">
+                                                                        <p:selectOneMenu id="sistema2" value="#{generacionGruposServiciosEscolares.rol.idSistema}">
                                                                             <f:selectItem itemValue="#{null}"/>
-                                                                            <f:selectItems var="sistema" value="#{reincorporacionServiciosEscolares.rol.sistemas}" itemLabel="#{sistema.nombre}"
-                                                                                           itemValue="#{sistema}"/>
+                                                                            <f:selectItems var="sistema" value="#{generacionGruposServiciosEscolares.obtenerSistema()}" itemLabel="#{sistema.nombre}"
+                                                                                           itemValue="#{sistema.idSistema}"/>
                                                                             <p:ajax update="@this" process="@this"/>
                                                                         </p:selectOneMenu>
                                                                         <p:message for="sistema2"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:outputLabel for="generacion" value="Generación"
+                                                                                       style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/>
+                                                                        <p:selectOneMenu id="generacion" value="#{generacionGruposServiciosEscolares.rol.generacion}">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems var="genracion" value="#{generacionGruposServiciosEscolares.obtenerListaGeneraciones()}" 
+                                                                                           itemLabel="#{genracion.inicio} - #{genracion.fin}"
+                                                                                           itemValue="#{genracion.generacion}"/>
+                                                                            <p:ajax update="@this" process="@this"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:message for="generacion"/>
                                                                     </div>
                                                                 </div>
                                                                 <div class="#{casilla4}">
@@ -252,7 +259,7 @@
                                                                          tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                          tableStyle="vertical-align: middle;" editMode="cell">
                                                                 <p:headerRow>
-                                                                    <p:column colspan="6" style="background-color: #00b5ad;">
+                                                                    <p:column colspan="7" style="background-color: #00b5ad;">
                                                                         <h:outputText value="#{procesoInscripcion.nombrePE(grupo.idPe)}" />
                                                                     </p:column>
                                                                 </p:headerRow>
@@ -267,7 +274,10 @@
                                                                 </p:column>
                                                                 <p:column headerText="Grupo" style="width: 120px;text-align: center;">
                                                                     <h:outputText value="#{grupo.literal}"/>
-                                                                </p:column>
+                                                                </p:column>   
+                                                                <p:column headerText="Generación" style="width: 120px;text-align: center;">
+                                                                    <h:outputText value="#{grupo.generacion}"/>
+                                                                </p:column> 
                                                                 <p:column headerText="Sistema" style="width: 120px;text-align: center;">
                                                                     <p:cellEditor>
                                                                         <f:facet name="output"><h:outputText value="#{grupo.idSistema.nombre}" /></f:facet>
