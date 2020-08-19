@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "asistenciasacademicas", catalog = "control_escolar", schema = "")
@@ -43,13 +44,13 @@ public class Asistenciasacademicas implements Serializable {
     @Column(name = "tipoAsistenciaA")
     private String tipoAsistenciaA;
     @JoinColumn(name = "asistencia", referencedColumnName = "asistencia")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Asistencias asistencia;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Estudiante estudiante;
     @JoinColumn(name = "cargaAcademica", referencedColumnName = "carga")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private CargaAcademica cargaAcademica;
 
     public Asistenciasacademicas() {

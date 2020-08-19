@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "escolaridad", catalog = "control_escolar", schema = "")
@@ -47,9 +48,9 @@ public class Escolaridad implements Serializable {
     @Size(min = 1, max = 90)
     @Column(name = "descripcion")
     private String descripcion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadMadre")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadMadre", fetch = FetchType.LAZY)
     private List<DatosFamiliares> datosFamiliaresList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadPadre")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadPadre", fetch = FetchType.LAZY)
     private List<DatosFamiliares> datosFamiliaresList1;
 
     public Escolaridad() {

@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -19,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Planeacion
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "evaluacion_estadia_resultados", catalog = "capital_humano", schema = "")
@@ -180,10 +181,10 @@ public class EvaluacionEstadiaResultados implements Serializable {
     @Column(name = "r48")
     private Short r48;
     @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Evaluaciones evaluaciones;
     @JoinColumn(name = "evaluado", referencedColumnName = "clave", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Personal personal;
 
     public EvaluacionEstadiaResultados() {

@@ -12,7 +12,7 @@ import java.util.List;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;

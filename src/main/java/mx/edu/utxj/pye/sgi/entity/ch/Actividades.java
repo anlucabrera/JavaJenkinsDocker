@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,6 +38,12 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Actividades.findByNombre", query = "SELECT a FROM Actividades a WHERE a.nombre = :nombre")})
 public class Actividades implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "actividad")
+    private Short actividad;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 3)
@@ -47,16 +54,9 @@ public class Actividades implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "nombre")
     private String nombre;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "actividad")
-    private Short actividad;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "actividad")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "actividad", fetch = FetchType.LAZY)
     private List<Personal> personalList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "actividad")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "actividad", fetch = FetchType.LAZY)
     private List<PersonalBitacora> personalBitacoraList;
 
     public Actividades() {
@@ -80,6 +80,21 @@ public class Actividades implements Serializable {
         this.actividad = actividad;
     }
 
+    public String getAbreviacion() {
+        return abreviacion;
+    }
+
+    public void setAbreviacion(String abreviacion) {
+        this.abreviacion = abreviacion;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
     @XmlTransient
     public List<Personal> getPersonalList() {
@@ -122,22 +137,6 @@ public class Actividades implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Actividades[ actividad=" + actividad + " ]";
-    }
-
-    public String getAbreviacion() {
-        return abreviacion;
-    }
-
-    public void setAbreviacion(String abreviacion) {
-        this.abreviacion = abreviacion;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
     
 }

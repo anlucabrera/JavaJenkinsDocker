@@ -17,8 +17,8 @@ import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalDesempenioEvaluacion;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonalDesempenioEvaluacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 

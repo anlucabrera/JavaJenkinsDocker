@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "procesos_inscripcion", catalog = "control_escolar", schema = "")
@@ -43,6 +44,12 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "ProcesosInscripcion.findByIdPeriodo", query = "SELECT p FROM ProcesosInscripcion p WHERE p.idPeriodo = :idPeriodo")})
 public class ProcesosInscripcion implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id_procesos_inscripcion")
+    private Integer idProcesosInscripcion;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecha_inicio")
@@ -53,24 +60,17 @@ public class ProcesosInscripcion implements Serializable {
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.DATE)
     private Date fechaFin;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "id_periodo")
-    private int idPeriodo;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id_procesos_inscripcion")
-    private Integer idProcesosInscripcion;
     @Column(name = "activo_ni")
     private Boolean activoNi;
     @Column(name = "activo_ing")
     private Boolean activoIng;
     @Column(name = "activo_re")
     private Boolean activoRe;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProcesoInscripcion")
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "id_periodo")
+    private int idPeriodo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProcesoInscripcion", fetch = FetchType.LAZY)
     private List<Aspirante> aspiranteList;
 
     public ProcesosInscripcion() {

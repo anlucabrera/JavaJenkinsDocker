@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "unidad_materia", catalog = "control_escolar", schema = "")
@@ -75,14 +76,14 @@ public class UnidadMateria implements Serializable {
     @NotNull
     @Column(name = "integradora")
     private boolean integradora;
-    @OneToMany(mappedBy = "idUnidadMateria")
+    @OneToMany(mappedBy = "idUnidadMateria", fetch = FetchType.LAZY)
     private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
     @JoinColumn(name = "id_materia", referencedColumnName = "id_materia")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Materia idMateria;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUnidadMateria")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUnidadMateria", fetch = FetchType.LAZY)
     private List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList;
-    @OneToMany(mappedBy = "idUnidadMateria")
+    @OneToMany(mappedBy = "idUnidadMateria", fetch = FetchType.LAZY)
     private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
 
     public UnidadMateria() {

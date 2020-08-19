@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "tutor_familiar", catalog = "control_escolar", schema = "")
@@ -96,7 +97,7 @@ public class TutorFamiliar implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "parentesco")
     private String parentesco;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tutor")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tutor", fetch = FetchType.LAZY)
     private List<DatosFamiliares> datosFamiliaresList;
 
     public TutorFamiliar() {

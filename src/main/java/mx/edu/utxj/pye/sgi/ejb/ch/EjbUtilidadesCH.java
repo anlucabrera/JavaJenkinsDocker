@@ -9,7 +9,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;

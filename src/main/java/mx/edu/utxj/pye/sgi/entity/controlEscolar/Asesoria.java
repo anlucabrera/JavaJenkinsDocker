@@ -11,6 +11,7 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "asesoria", catalog = "control_escolar", schema = "")
@@ -83,10 +84,10 @@ public class Asesoria implements Serializable {
     @JoinTable(name = "control_escolar.participantes_asesoria", joinColumns = {
         @JoinColumn(name = "asesoria", referencedColumnName = "id_asesoria")}, inverseJoinColumns = {
         @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")})
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Estudiante> estudianteList;
     @JoinColumn(name = "configuracion", referencedColumnName = "configuracion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private UnidadMateriaConfiguracion configuracion;
 
     public Asesoria() {

@@ -19,7 +19,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.ch.Categoriasespecificasfunciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Comentariosfunciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Funciones;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;

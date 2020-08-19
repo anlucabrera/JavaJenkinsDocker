@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "funciones", catalog = "capital_humano", schema = "")
@@ -60,13 +61,13 @@ public class Funciones implements Serializable {
     @Size(min = 1, max = 15)
     @Column(name = "tipo")
     private String tipo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idFuncion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idFuncion", fetch = FetchType.LAZY)
     private List<Comentariosfunciones> comentariosfuncionesList;
     @JoinColumn(name = "categoria_espesifica", referencedColumnName = "categoriaEspecifica")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Categoriasespecificasfunciones categoriaEspesifica;
     @JoinColumn(name = "categoria_operativa", referencedColumnName = "categoria")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private PersonalCategorias categoriaOperativa;
 
     public Funciones() {

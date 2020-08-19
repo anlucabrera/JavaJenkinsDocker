@@ -9,16 +9,18 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Planeacion
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "evaluacion_tutores_resultados", catalog = "capital_humano", schema = "")
@@ -58,17 +60,18 @@ public class EvaluacionTutoresResultados implements Serializable {
     private Short r7;
     @Column(name = "r8")
     private Short r8;
+    @Size(max = 1500)
     @Column(name = "r9")
     private String r9;
     @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Evaluaciones evaluaciones;
-    @JoinColumn(name = "evaluador", referencedColumnName = "clave", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private EstudiantesClaves estudiantesClaves;
     @JoinColumn(name = "evaluado", referencedColumnName = "clave", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Personal personal;
+    @JoinColumn(name = "evaluador", referencedColumnName = "clave", insertable = false, updatable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private EstudiantesClaves estudiantesClaves;
 
     public EvaluacionTutoresResultados() {
     }
@@ -169,20 +172,20 @@ public class EvaluacionTutoresResultados implements Serializable {
         this.evaluaciones = evaluaciones;
     }
 
-    public EstudiantesClaves getEstudiantesClaves() {
-        return estudiantesClaves;
-    }
-
-    public void setEstudiantesClaves(EstudiantesClaves estudiantesClaves) {
-        this.estudiantesClaves = estudiantesClaves;
-    }
-
     public Personal getPersonal() {
         return personal;
     }
 
     public void setPersonal(Personal personal) {
         this.personal = personal;
+    }
+
+    public EstudiantesClaves getEstudiantesClaves() {
+        return estudiantesClaves;
+    }
+
+    public void setEstudiantesClaves(EstudiantesClaves estudiantesClaves) {
+        this.estudiantesClaves = estudiantesClaves;
     }
 
     @Override

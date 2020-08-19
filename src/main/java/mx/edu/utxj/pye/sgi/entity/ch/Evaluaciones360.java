@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "evaluaciones_360", catalog = "capital_humano", schema = "")
@@ -60,7 +61,7 @@ public class Evaluaciones360 implements Serializable {
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.DATE)
     private Date fechaFin;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones360")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones360", fetch = FetchType.LAZY)
     private List<Evaluaciones360Resultados> evaluaciones360ResultadosList;
 
     public Evaluaciones360() {

@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "tarea_integradora", catalog = "control_escolar", schema = "")
@@ -64,9 +65,9 @@ public class TareaIntegradora implements Serializable {
     @Column(name = "porcentaje")
     private double porcentaje;
     @JoinColumn(name = "carga", referencedColumnName = "carga")
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private CargaAcademica carga;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tareaIntegradora")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tareaIntegradora", fetch = FetchType.LAZY)
     private List<TareaIntegradoraPromedio> tareaIntegradoraPromedioList;
 
     public TareaIntegradora() {

@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "notificaciones_ce", catalog = "control_escolar", schema = "")
@@ -100,11 +101,11 @@ public class NotificacionesCe implements Serializable {
     @Column(name = "fecha_registro")
     @Temporal(TemporalType.DATE)
     private Date fechaRegistro;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificacion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificacion", fetch = FetchType.LAZY)
     private List<NotificacionesEnlaces> notificacionesEnlacesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificacion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificacion", fetch = FetchType.LAZY)
     private List<NotificacionesCeImagenes> notificacionesCeImagenesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificacionesCe")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "notificacionesCe", fetch = FetchType.LAZY)
     private List<NotificacionesAreas> notificacionesAreasList;
 
     public NotificacionesCe() {

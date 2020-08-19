@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -45,7 +46,7 @@ public class EstudiantesClaves implements Serializable {
     private Integer registro;
     @Column(name = "id_estudiante")
     private Integer idEstudiante;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiantesClaves")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiantesClaves", fetch = FetchType.LAZY)
     private List<EvaluacionTutoresResultados> evaluacionTutoresResultadosList;
 
     public EstudiantesClaves() {

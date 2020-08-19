@@ -36,7 +36,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Innovaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.Investigaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Lenguas;

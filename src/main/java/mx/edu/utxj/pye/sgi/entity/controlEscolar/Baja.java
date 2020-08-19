@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "baja", catalog = "control_escolar", schema = "")
@@ -103,9 +104,9 @@ public class Baja implements Serializable {
     @Column(name = "validada")
     private int validada;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Estudiante estudiante;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroBaja")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroBaja", fetch = FetchType.LAZY)
     private List<BajaReprobacion> bajaReprobacionList;
 
     public Baja() {

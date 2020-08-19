@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "datos_medicos", catalog = "control_escolar", schema = "")
@@ -78,13 +79,13 @@ public class DatosMedicos implements Serializable {
     @Column(name = "nss")
     private String nss;
     @JoinColumn(name = "cve_persona", referencedColumnName = "idpersona", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Persona persona;
     @JoinColumn(name = "cve_discapacidad", referencedColumnName = "id_tipo_discapacidad")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TipoDiscapacidad cveDiscapacidad;
     @JoinColumn(name = "cve_tipo_sangre", referencedColumnName = "id_tipo_sangre")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TipoSangre cveTipoSangre;
 
     public DatosMedicos() {

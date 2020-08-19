@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -93,7 +94,7 @@ public class Procesopoa implements Serializable {
     @Column(name = "activaEtapa2")
     private Boolean activaEtapa2;
     @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacionPOA")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Calendarioevaluacionpoa evaluacion;
 
     public Procesopoa() {

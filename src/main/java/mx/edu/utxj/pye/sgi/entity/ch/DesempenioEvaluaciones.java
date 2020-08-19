@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -60,7 +61,7 @@ public class DesempenioEvaluaciones implements Serializable {
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.DATE)
     private Date fechaFin;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "desempenioEvaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "desempenioEvaluaciones", fetch = FetchType.LAZY)
     private List<DesempenioEvaluacionResultados> desempenioEvaluacionResultadosList;
 
     public DesempenioEvaluaciones() {

@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -24,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Planeacion
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "evaluacion_desempenio_ambiental_utxj", catalog = "capital_humano", schema = "")
@@ -161,7 +162,7 @@ public class EvaluacionDesempenioAmbientalUtxj implements Serializable {
     @Column(name = "r11")
     private String r111;
     @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Evaluaciones evaluaciones;
 
     public EvaluacionDesempenioAmbientalUtxj() {

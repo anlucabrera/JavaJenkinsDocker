@@ -9,21 +9,25 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author Planeacion
+ * @author Desarrollo
  */
 @Embeddable
 public class EvaluacionTutoresResultadosPK implements Serializable {
 
     @Basic(optional = false)
+    @NotNull
     @Column(name = "evaluacion")
     private int evaluacion;
     @Basic(optional = false)
+    @NotNull
     @Column(name = "evaluador")
     private int evaluador;
     @Basic(optional = false)
+    @NotNull
     @Column(name = "evaluado")
     private int evaluado;
 

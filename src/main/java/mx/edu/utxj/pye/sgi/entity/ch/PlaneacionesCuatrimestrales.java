@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author jonny
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "planeaciones_cuatrimestrales", catalog = "capital_humano", schema = "")
@@ -167,13 +168,13 @@ public class PlaneacionesCuatrimestrales implements Serializable {
     @NotNull
     @Column(name = "total")
     private short total;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planeacionesCuatrimestrales")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planeacionesCuatrimestrales", fetch = FetchType.LAZY)
     private List<Atividadesvariasplaneacionescuatrimestrales> atividadesvariasplaneacionescuatrimestralesList;
     @JoinColumn(name = "director", referencedColumnName = "clave")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Personal director;
     @JoinColumn(name = "docente", referencedColumnName = "clave")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Personal docente;
 
     public PlaneacionesCuatrimestrales() {

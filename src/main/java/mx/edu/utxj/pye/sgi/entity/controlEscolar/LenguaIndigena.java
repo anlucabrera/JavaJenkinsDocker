@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "lengua_indigena", catalog = "control_escolar", schema = "")
@@ -46,7 +47,7 @@ public class LenguaIndigena implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(mappedBy = "r2tipoLenguaIndigena")
+    @OneToMany(mappedBy = "r2tipoLenguaIndigena", fetch = FetchType.LAZY)
     private List<EncuestaAspirante> encuestaAspiranteList;
 
     public LenguaIndigena() {

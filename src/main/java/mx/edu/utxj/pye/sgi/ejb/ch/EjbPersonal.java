@@ -7,7 +7,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.ContactoEmergencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.shiro.User;
 

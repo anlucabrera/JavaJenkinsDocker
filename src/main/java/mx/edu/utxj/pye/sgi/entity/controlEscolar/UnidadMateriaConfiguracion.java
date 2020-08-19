@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "unidad_materia_configuracion", catalog = "control_escolar", schema = "")
@@ -66,23 +67,23 @@ public class UnidadMateriaConfiguracion implements Serializable {
     @NotNull
     @Column(name = "porcentaje")
     private double porcentaje;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion", fetch = FetchType.LAZY)
     private List<UnidadMateriaConfiguracionCriterio> unidadMateriaConfiguracionCriterioList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion", fetch = FetchType.LAZY)
     private UnidadMateriaValidacion unidadMateriaValidacion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion", fetch = FetchType.LAZY)
     private List<UnidadMateriaComentario> unidadMateriaComentarioList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion", fetch = FetchType.LAZY)
     private List<Asesoria> asesoriaList;
-    @OneToMany(mappedBy = "configuracion")
+    @OneToMany(mappedBy = "configuracion", fetch = FetchType.LAZY)
     private List<CasoCritico> casoCriticoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion", fetch = FetchType.LAZY)
     private List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList;
     @JoinColumn(name = "carga", referencedColumnName = "carga")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CargaAcademica carga;
     @JoinColumn(name = "id_unidad_materia", referencedColumnName = "id_unidad_materia")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private UnidadMateria idUnidadMateria;
 
     public UnidadMateriaConfiguracion() {

@@ -12,8 +12,8 @@ import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Habilidades;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonalEvaluacion360;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 /**

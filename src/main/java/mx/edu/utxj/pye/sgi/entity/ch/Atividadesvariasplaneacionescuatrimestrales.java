@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -40,10 +41,10 @@ public class Atividadesvariasplaneacionescuatrimestrales implements Serializable
     @Column(name = "horasAsignadas")
     private int horasAsignadas;
     @JoinColumn(name = "actividad", referencedColumnName = "actividad", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Actividadesvarias actividadesvarias;
     @JoinColumn(name = "planeacion", referencedColumnName = "planeacion", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PlaneacionesCuatrimestrales planeacionesCuatrimestrales;
 
     public Atividadesvariasplaneacionescuatrimestrales() {

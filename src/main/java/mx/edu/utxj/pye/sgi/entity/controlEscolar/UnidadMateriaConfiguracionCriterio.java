@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -20,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "unidad_materia_configuracion_criterio", catalog = "control_escolar", schema = "")
@@ -40,10 +41,10 @@ public class UnidadMateriaConfiguracionCriterio implements Serializable {
     @Column(name = "porcentaje")
     private double porcentaje;
     @JoinColumn(name = "criterio", referencedColumnName = "criterio", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Criterio criterio1;
     @JoinColumn(name = "configuracion", referencedColumnName = "configuracion", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private UnidadMateriaConfiguracion unidadMateriaConfiguracion;
 
     public UnidadMateriaConfiguracionCriterio() {

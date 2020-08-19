@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.ejb;
 import java.util.List;
 import javax.ejb.Local;
 
+import mx.edu.utxj.pye.sgi.entity.ch.view.*;
 import mx.edu.utxj.pye.sgi.entity.ch.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;

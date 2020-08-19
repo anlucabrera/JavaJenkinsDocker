@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "materia", catalog = "control_escolar", schema = "")
@@ -54,12 +55,12 @@ public class Materia implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMateria")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMateria", fetch = FetchType.LAZY)
     private List<UnidadMateria> unidadMateriaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMateria")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMateria", fetch = FetchType.LAZY)
     private List<PlanEstudioMateria> planEstudioMateriaList;
     @JoinColumn(name = "id_area_conocimiento", referencedColumnName = "id_area_conocimiento")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private AreaConocimiento idAreaConocimiento;
 
     public Materia() {

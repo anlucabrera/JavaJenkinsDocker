@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -21,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "evaluaciones_premios_resultados", catalog = "capital_humano", schema = "")
@@ -39,17 +40,17 @@ public class EvaluacionesPremiosResultados implements Serializable {
     protected EvaluacionesPremiosResultadosPK evaluacionesPremiosResultadosPK;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 24)
     @Column(name = "tipo")
     private String tipo;
     @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Evaluaciones evaluaciones;
     @JoinColumn(name = "evaluado", referencedColumnName = "clave", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Personal personal;
     @JoinColumn(name = "evaluador", referencedColumnName = "clave", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Personal personal1;
 
     public EvaluacionesPremiosResultados() {

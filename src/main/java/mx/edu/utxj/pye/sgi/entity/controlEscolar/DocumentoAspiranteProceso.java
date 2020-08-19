@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "documento_aspirante_proceso", catalog = "control_escolar", schema = "")
@@ -69,12 +70,12 @@ public class DocumentoAspiranteProceso implements Serializable {
     @Column(name = "fecha_validacion")
     @Temporal(TemporalType.DATE)
     private Date fechaValidacion;
-    @JoinColumn(name = "documento", referencedColumnName = "documento")
-    @ManyToOne(optional = false)
-    private Documento documento;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Aspirante aspirante;
+    @JoinColumn(name = "documento", referencedColumnName = "documento")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Documento documento;
 
     public DocumentoAspiranteProceso() {
     }
@@ -83,13 +84,12 @@ public class DocumentoAspiranteProceso implements Serializable {
         this.documentoAspirante = documentoAspirante;
     }
 
-    public DocumentoAspiranteProceso(Integer documentoAspirante, String ruta, Date fechaCarga, String observaciones, boolean validado, Date fechaValidacion) {
+    public DocumentoAspiranteProceso(Integer documentoAspirante, String ruta, Date fechaCarga, String observaciones, boolean validado) {
         this.documentoAspirante = documentoAspirante;
         this.ruta = ruta;
         this.fechaCarga = fechaCarga;
         this.observaciones = observaciones;
         this.validado = validado;
-        this.fechaValidacion = fechaValidacion;
     }
 
     public Integer getDocumentoAspirante() {
@@ -140,20 +140,20 @@ public class DocumentoAspiranteProceso implements Serializable {
         this.fechaValidacion = fechaValidacion;
     }
 
-    public Documento getDocumento() {
-        return documento;
-    }
-
-    public void setDocumento(Documento documento) {
-        this.documento = documento;
-    }
-
     public Aspirante getAspirante() {
         return aspirante;
     }
 
     public void setAspirante(Aspirante aspirante) {
         this.aspirante = aspirante;
+    }
+
+    public Documento getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(Documento documento) {
+        this.documento = documento;
     }
 
     @Override

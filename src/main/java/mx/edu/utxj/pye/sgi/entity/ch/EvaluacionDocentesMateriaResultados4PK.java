@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Embeddable
 public class EvaluacionDocentesMateriaResultados4PK implements Serializable {

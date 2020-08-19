@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "datos_familiares", catalog = "control_escolar", schema = "")
@@ -59,22 +60,22 @@ public class DatosFamiliares implements Serializable {
     @Column(name = "telefono_madre")
     private String telefonoMadre;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Aspirante aspirante1;
     @JoinColumn(name = "escolaridad_madre", referencedColumnName = "id_escolaridad")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Escolaridad escolaridadMadre;
     @JoinColumn(name = "escolaridad_padre", referencedColumnName = "id_escolaridad")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Escolaridad escolaridadPadre;
     @JoinColumn(name = "ocupacion_madre", referencedColumnName = "id_ocupacion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Ocupacion ocupacionMadre;
     @JoinColumn(name = "ocupacion_padre", referencedColumnName = "id_ocupacion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Ocupacion ocupacionPadre;
     @JoinColumn(name = "tutor", referencedColumnName = "id_tutor_familiar")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TutorFamiliar tutor;
 
     public DatosFamiliares() {

@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "aspirante", catalog = "control_escolar", schema = "")
@@ -45,16 +46,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Aspirante.findByFechaRegistro", query = "SELECT a FROM Aspirante a WHERE a.fechaRegistro = :fechaRegistro")})
 public class Aspirante implements Serializable {
 
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "estatus")
-    private boolean estatus;
-    @Size(max = 15)
-    @Column(name = "folioCeneval")
-    private String folioCeneval;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
-    private List<CitasAspirantes> citasAspirantesList;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,31 +54,40 @@ public class Aspirante implements Serializable {
     private Integer idAspirante;
     @Column(name = "folio_aspirante")
     private Integer folioAspirante;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "estatus")
+    private boolean estatus;
+    @Size(max = 15)
+    @Column(name = "folioCeneval")
+    private String folioCeneval;
     @Column(name = "fechaRegistro")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRegistro;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
     private DatosAcademicos datosAcademicos;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante", fetch = FetchType.LAZY)
     private List<DocumentoAspiranteProceso> documentoAspiranteProcesoList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
     private DocumentoAspirante documentoAspirante;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante", fetch = FetchType.LAZY)
     private EncuestaAspirante encuestaAspirante;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
     private DatosFamiliares datosFamiliares;
-    @OneToMany(mappedBy = "aspirante")
+    @OneToMany(mappedBy = "aspirante", fetch = FetchType.LAZY)
     private List<Estudiante> estudianteList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
     private Domicilio domicilio;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante", fetch = FetchType.LAZY)
+    private List<CitasAspirantes> citasAspirantesList;
     @JoinColumn(name = "id_persona", referencedColumnName = "idpersona")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Persona idPersona;
     @JoinColumn(name = "id_proceso_inscripcion", referencedColumnName = "id_procesos_inscripcion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProcesosInscripcion idProcesoInscripcion;
     @JoinColumn(name = "tipo_aspirante", referencedColumnName = "id_tipo_aspirante")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TipoAspirante tipoAspirante;
 
     public Aspirante() {
@@ -118,6 +118,21 @@ public class Aspirante implements Serializable {
         this.folioAspirante = folioAspirante;
     }
 
+    public boolean getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(boolean estatus) {
+        this.estatus = estatus;
+    }
+
+    public String getFolioCeneval() {
+        return folioCeneval;
+    }
+
+    public void setFolioCeneval(String folioCeneval) {
+        this.folioCeneval = folioCeneval;
+    }
 
     public Date getFechaRegistro() {
         return fechaRegistro;
@@ -185,6 +200,15 @@ public class Aspirante implements Serializable {
         this.domicilio = domicilio;
     }
 
+    @XmlTransient
+    public List<CitasAspirantes> getCitasAspirantesList() {
+        return citasAspirantesList;
+    }
+
+    public void setCitasAspirantesList(List<CitasAspirantes> citasAspirantesList) {
+        this.citasAspirantesList = citasAspirantesList;
+    }
+
     public Persona getIdPersona() {
         return idPersona;
     }
@@ -232,31 +256,6 @@ public class Aspirante implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante[ idAspirante=" + idAspirante + " ]";
-    }
-
-    public boolean getEstatus() {
-        return estatus;
-    }
-
-    public void setEstatus(boolean estatus) {
-        this.estatus = estatus;
-    }
-
-    public String getFolioCeneval() {
-        return folioCeneval;
-    }
-
-    public void setFolioCeneval(String folioCeneval) {
-        this.folioCeneval = folioCeneval;
-    }
-
-    @XmlTransient
-    public List<CitasAspirantes> getCitasAspirantesList() {
-        return citasAspirantesList;
-    }
-
-    public void setCitasAspirantesList(List<CitasAspirantes> citasAspirantesList) {
-        this.citasAspirantesList = citasAspirantesList;
     }
     
 }

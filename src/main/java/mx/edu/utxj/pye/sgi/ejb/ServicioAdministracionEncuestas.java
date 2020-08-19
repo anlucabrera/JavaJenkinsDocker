@@ -13,6 +13,7 @@ import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 
+import mx.edu.utxj.pye.sgi.entity.ch.view.*;
 import mx.edu.utxj.pye.sgi.entity.ch.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionTutoresResultados;
