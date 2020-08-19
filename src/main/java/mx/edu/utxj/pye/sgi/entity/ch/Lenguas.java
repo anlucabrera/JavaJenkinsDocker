@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "lenguas", catalog = "capital_humano", schema = "")
@@ -76,7 +77,7 @@ public class Lenguas implements Serializable {
     @Column(name = "estatus")
     private String estatus;
     @JoinColumn(name = "clave_personal", referencedColumnName = "clave")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Personal clavePersonal;
 
     public Lenguas() {

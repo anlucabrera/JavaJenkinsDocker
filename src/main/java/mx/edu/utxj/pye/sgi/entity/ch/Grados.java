@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "grados", catalog = "capital_humano", schema = "")
@@ -36,23 +37,22 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Grados.findByNombre", query = "SELECT g FROM Grados g WHERE g.nombre = :nombre")})
 public class Grados implements Serializable {
 
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
-    @Column(name = "nombre")
-    private String nombre;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "grado")
     private Short grado;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "nivelEscolaridad")
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
+    @Column(name = "nombre")
+    private String nombre;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "nivelEscolaridad", fetch = FetchType.LAZY)
     private List<FormacionAcademica> formacionAcademicaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grado")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grado", fetch = FetchType.LAZY)
     private List<Personal> personalList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grado")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grado", fetch = FetchType.LAZY)
     private List<PersonalBitacora> personalBitacoraList;
 
     public Grados() {
@@ -75,6 +75,13 @@ public class Grados implements Serializable {
         this.grado = grado;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
     @XmlTransient
     public List<FormacionAcademica> getFormacionAcademicaList() {
@@ -126,14 +133,6 @@ public class Grados implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Grados[ grado=" + grado + " ]";
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
     
 }

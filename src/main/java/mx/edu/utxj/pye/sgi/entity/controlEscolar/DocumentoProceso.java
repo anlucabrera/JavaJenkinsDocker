@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "documento_proceso", catalog = "control_escolar", schema = "")
@@ -43,7 +44,7 @@ public class DocumentoProceso implements Serializable {
     private Integer documentoProceso;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 11)
+    @Size(min = 1, max = 16)
     @Column(name = "proceso")
     private String proceso;
     @Basic(optional = false)
@@ -51,7 +52,7 @@ public class DocumentoProceso implements Serializable {
     @Column(name = "obligatorio")
     private boolean obligatorio;
     @JoinColumn(name = "documento", referencedColumnName = "documento")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Documento documento;
 
     public DocumentoProceso() {

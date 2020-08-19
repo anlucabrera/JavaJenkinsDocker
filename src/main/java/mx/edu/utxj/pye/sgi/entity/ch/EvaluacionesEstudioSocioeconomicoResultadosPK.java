@@ -5,15 +5,15 @@
  */
 package mx.edu.utxj.pye.sgi.entity.ch;
 
+import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Embeddable
 public class EvaluacionesEstudioSocioeconomicoResultadosPK implements Serializable {

@@ -3,7 +3,7 @@ package mx.edu.utxj.pye.sgi.controladores.poa;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.pye2.*;
 
 import javax.annotation.ManagedBean;

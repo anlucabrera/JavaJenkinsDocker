@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "personal_bitacora", catalog = "capital_humano", schema = "")
@@ -150,25 +151,25 @@ public class PersonalBitacora implements Serializable {
     @Column(name = "correo_electronico2")
     private String correoElectronico2;
     @JoinColumn(name = "categoria_360", referencedColumnName = "categoria")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private PersonalCategorias categoria360;
     @JoinColumn(name = "categoria_especifica", referencedColumnName = "categoriaEspecifica")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Categoriasespecificasfunciones categoriaEspecifica;
     @JoinColumn(name = "actividad", referencedColumnName = "actividad")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Actividades actividad;
     @JoinColumn(name = "categoria_operativa", referencedColumnName = "categoria")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PersonalCategorias categoriaOperativa;
     @JoinColumn(name = "categoria_oficial", referencedColumnName = "categoria")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PersonalCategorias categoriaOficial;
     @JoinColumn(name = "genero", referencedColumnName = "genero")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Generos genero;
     @JoinColumn(name = "grado", referencedColumnName = "grado")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Grados grado;
 
     public PersonalBitacora() {

@@ -9,9 +9,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -67,7 +67,7 @@ public class Calendarioevaluacionpoa implements Serializable {
     @NotNull
     @Column(name = "justificacion")
     private boolean justificacion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluacion")
+    @OneToMany(mappedBy = "evaluacion", fetch = FetchType.LAZY)
     private List<Procesopoa> procesopoaList;
 
     public Calendarioevaluacionpoa() {
@@ -158,5 +158,5 @@ public class Calendarioevaluacionpoa implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa[ evaluacionPOA=" + evaluacionPOA + " ]";
     }
-
+    
 }

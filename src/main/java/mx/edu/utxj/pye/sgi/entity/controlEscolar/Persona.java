@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "persona", catalog = "control_escolar", schema = "")
@@ -50,13 +51,19 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Persona.findByUrlCurp", query = "SELECT p FROM Persona p WHERE p.urlCurp = :urlCurp")})
 public class Persona implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "idpersona")
+    private Integer idpersona;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 150)
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)
-    @NotNull()
+    @NotNull
     @Size(min = 1, max = 150)
     @Column(name = "apellido_paterno")
     private String apellidoPaterno;
@@ -84,28 +91,22 @@ public class Persona implements Serializable {
     @NotNull
     @Column(name = "genero")
     private short genero;
-    @Size(max = 400)
-    @Column(name = "urlCurp")
-    private String urlCurp;
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "idpersona")
-    private Integer idpersona;
     @Column(name = "estado")
     private Integer estado;
     @Column(name = "municipio")
     private Integer municipio;
     @Column(name = "localidad")
     private Integer localidad;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona")
+    @Size(max = 400)
+    @Column(name = "urlCurp")
+    private String urlCurp;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona", fetch = FetchType.LAZY)
     private DatosMedicos datosMedicos;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1", fetch = FetchType.LAZY)
     private MedioComunicacion medioComunicacion;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1", fetch = FetchType.LAZY)
     private Login login;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersona")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersona", fetch = FetchType.LAZY)
     private List<Aspirante> aspiranteList;
 
     public Persona() {

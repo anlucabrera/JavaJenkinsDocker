@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,7 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "estudiante", catalog = "control_escolar", schema = "")
@@ -81,52 +82,54 @@ public class Estudiante implements Serializable {
     @Size(min = 1, max = 51)
     @Column(name = "tipo_registro")
     private String tipoRegistro;
-    @ManyToMany(mappedBy = "estudianteList")
+    @ManyToMany(mappedBy = "control_escolar.estudianteList", fetch = FetchType.LAZY)
     private List<Asesoria> asesoriaList;
-    @ManyToMany(mappedBy = "estudianteList")
+    @ManyToMany(mappedBy = "control_escolar.estudianteList", fetch = FetchType.LAZY)
     private List<AsesoriasEstudiantes> asesoriasEstudiantesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante", fetch = FetchType.LAZY)
     private List<Calificacion> calificacionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
-    @OneToMany(mappedBy = "estudiante")
+    @OneToMany(mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<Asistenciasacademicas> asistenciasacademicasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<PrestamosDocumentos> prestamosDocumentosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<Baja> bajaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<CalificacionNivelacion> calificacionNivelacionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante1")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante1", fetch = FetchType.LAZY)
     private List<ParticipantesTutoriaGrupal> participantesTutoriaGrupalList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<UnidadMateriaComentario> unidadMateriaComentarioList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1", fetch = FetchType.LAZY)
     private Documentosentregadosestudiante documentosentregadosestudiante;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<CalificacionPromedio> calificacionPromedioList;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Aspirante aspirante;
     @JoinColumn(name = "tipo_estudiante", referencedColumnName = "id_tipo_estudiante")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TipoEstudiante tipoEstudiante;
     @JoinColumn(name = "grupo", referencedColumnName = "id_grupo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Grupo grupo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<CuestionarioPsicopedagogicoResultados> cuestionarioPsicopedagogicoResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<DocumentoEstudiante> documentoEstudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<TareaIntegradoraPromedio> tareaIntegradoraPromedioList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante", fetch = FetchType.LAZY)
     private List<CasoCritico> casoCriticoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<TutoriasIndividuales> tutoriasIndividualesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jefeGrupo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jefeGrupo", fetch = FetchType.LAZY)
     private List<TutoriasGrupales> tutoriasGrupalesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "matricula", fetch = FetchType.LAZY)
+    private ExpedienteTitulacion expedienteTitulacion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<ParticipantesTutoria> participantesTutoriaList;
 
     public Estudiante() {
@@ -392,6 +395,14 @@ public class Estudiante implements Serializable {
 
     public void setTutoriasGrupalesList(List<TutoriasGrupales> tutoriasGrupalesList) {
         this.tutoriasGrupalesList = tutoriasGrupalesList;
+    }
+
+    public ExpedienteTitulacion getExpedienteTitulacion() {
+        return expedienteTitulacion;
+    }
+
+    public void setExpedienteTitulacion(ExpedienteTitulacion expedienteTitulacion) {
+        this.expedienteTitulacion = expedienteTitulacion;
     }
 
     @XmlTransient

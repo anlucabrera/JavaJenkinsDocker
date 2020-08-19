@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -21,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author PLANEACION
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "informacion_adicional_personal", catalog = "capital_humano", schema = "")
@@ -31,18 +32,18 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByClave", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.clave = :clave")
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByLugarProcedencia", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.lugarProcedencia = :lugarProcedencia")
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByDireccion", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.direccion = :direccion")
-    , @NamedQuery(name = "InformacionAdicionalPersonal.findByEvidenciaDomicilio", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.evidenciaDomicilio = :evidenciaDomicilio")
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByEdad", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.edad = :edad")
-    , @NamedQuery(name = "InformacionAdicionalPersonal.findByEvidenciaIne", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.evidenciaIne = :evidenciaIne")
-    , @NamedQuery(name = "InformacionAdicionalPersonal.findByEvidenciaActa", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.evidenciaActa = :evidenciaActa")
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByCurp", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.curp = :curp")
-    , @NamedQuery(name = "InformacionAdicionalPersonal.findByEvidenciaCurp", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.evidenciaCurp = :evidenciaCurp")
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByRfc", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.rfc = :rfc")
-    , @NamedQuery(name = "InformacionAdicionalPersonal.findByEvidenciaRfc", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.evidenciaRfc = :evidenciaRfc")
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByNumTelMovil", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.numTelMovil = :numTelMovil")
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByNumTelFijo", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.numTelFijo = :numTelFijo")
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByEstadoCivil", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.estadoCivil = :estadoCivil")
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByTipoSangre", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.tipoSangre = :tipoSangre")
+    , @NamedQuery(name = "InformacionAdicionalPersonal.findByEvidenciaRfc", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.evidenciaRfc = :evidenciaRfc")
+    , @NamedQuery(name = "InformacionAdicionalPersonal.findByEvidenciaCurp", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.evidenciaCurp = :evidenciaCurp")
+    , @NamedQuery(name = "InformacionAdicionalPersonal.findByEvidenciaActa", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.evidenciaActa = :evidenciaActa")
+    , @NamedQuery(name = "InformacionAdicionalPersonal.findByEvidenciaIne", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.evidenciaIne = :evidenciaIne")
+    , @NamedQuery(name = "InformacionAdicionalPersonal.findByEvidenciaDomicilio", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.evidenciaDomicilio = :evidenciaDomicilio")
     , @NamedQuery(name = "InformacionAdicionalPersonal.findByAutorizacion", query = "SELECT i FROM InformacionAdicionalPersonal i WHERE i.autorizacion = :autorizacion")})
 public class InformacionAdicionalPersonal implements Serializable {
 
@@ -58,29 +59,14 @@ public class InformacionAdicionalPersonal implements Serializable {
     @Size(max = 300)
     @Column(name = "direccion")
     private String direccion;
-    @Size(max = 255)
-    @Column(name = "evidencia_domicilio")
-    private String evidenciaDomicilio;
     @Column(name = "edad")
     private Integer edad;
-    @Size(max = 255)
-    @Column(name = "evidencia_ine")
-    private String evidenciaIne;
-    @Size(max = 255)
-    @Column(name = "evidencia_acta")
-    private String evidenciaActa;
     @Size(max = 18)
     @Column(name = "curp")
     private String curp;
-    @Size(max = 255)
-    @Column(name = "evidencia_curp")
-    private String evidenciaCurp;
     @Size(max = 13)
     @Column(name = "rfc")
     private String rfc;
-    @Size(max = 255)
-    @Column(name = "evidencia_rfc")
-    private String evidenciaRfc;
     @Size(max = 20)
     @Column(name = "num_tel_movil")
     private String numTelMovil;
@@ -93,12 +79,27 @@ public class InformacionAdicionalPersonal implements Serializable {
     @Size(max = 10)
     @Column(name = "tipo_sangre")
     private String tipoSangre;
+    @Size(max = 255)
+    @Column(name = "evidencia_rfc")
+    private String evidenciaRfc;
+    @Size(max = 255)
+    @Column(name = "evidencia_curp")
+    private String evidenciaCurp;
+    @Size(max = 255)
+    @Column(name = "evidencia_acta")
+    private String evidenciaActa;
+    @Size(max = 255)
+    @Column(name = "evidencia_ine")
+    private String evidenciaIne;
+    @Size(max = 255)
+    @Column(name = "evidencia_domicilio")
+    private String evidenciaDomicilio;
     @Basic(optional = false)
     @NotNull
     @Column(name = "autorizacion")
     private boolean autorizacion;
     @JoinColumn(name = "clave", referencedColumnName = "clave", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Personal personal;
 
     public InformacionAdicionalPersonal() {
@@ -137,36 +138,12 @@ public class InformacionAdicionalPersonal implements Serializable {
         this.direccion = direccion;
     }
 
-    public String getEvidenciaDomicilio() {
-        return evidenciaDomicilio;
-    }
-
-    public void setEvidenciaDomicilio(String evidenciaDomicilio) {
-        this.evidenciaDomicilio = evidenciaDomicilio;
-    }
-
     public Integer getEdad() {
         return edad;
     }
 
     public void setEdad(Integer edad) {
         this.edad = edad;
-    }
-
-    public String getEvidenciaIne() {
-        return evidenciaIne;
-    }
-
-    public void setEvidenciaIne(String evidenciaIne) {
-        this.evidenciaIne = evidenciaIne;
-    }
-
-    public String getEvidenciaActa() {
-        return evidenciaActa;
-    }
-
-    public void setEvidenciaActa(String evidenciaActa) {
-        this.evidenciaActa = evidenciaActa;
     }
 
     public String getCurp() {
@@ -177,28 +154,12 @@ public class InformacionAdicionalPersonal implements Serializable {
         this.curp = curp;
     }
 
-    public String getEvidenciaCurp() {
-        return evidenciaCurp;
-    }
-
-    public void setEvidenciaCurp(String evidenciaCurp) {
-        this.evidenciaCurp = evidenciaCurp;
-    }
-
     public String getRfc() {
         return rfc;
     }
 
     public void setRfc(String rfc) {
         this.rfc = rfc;
-    }
-
-    public String getEvidenciaRfc() {
-        return evidenciaRfc;
-    }
-
-    public void setEvidenciaRfc(String evidenciaRfc) {
-        this.evidenciaRfc = evidenciaRfc;
     }
 
     public String getNumTelMovil() {
@@ -231,6 +192,46 @@ public class InformacionAdicionalPersonal implements Serializable {
 
     public void setTipoSangre(String tipoSangre) {
         this.tipoSangre = tipoSangre;
+    }
+
+    public String getEvidenciaRfc() {
+        return evidenciaRfc;
+    }
+
+    public void setEvidenciaRfc(String evidenciaRfc) {
+        this.evidenciaRfc = evidenciaRfc;
+    }
+
+    public String getEvidenciaCurp() {
+        return evidenciaCurp;
+    }
+
+    public void setEvidenciaCurp(String evidenciaCurp) {
+        this.evidenciaCurp = evidenciaCurp;
+    }
+
+    public String getEvidenciaActa() {
+        return evidenciaActa;
+    }
+
+    public void setEvidenciaActa(String evidenciaActa) {
+        this.evidenciaActa = evidenciaActa;
+    }
+
+    public String getEvidenciaIne() {
+        return evidenciaIne;
+    }
+
+    public void setEvidenciaIne(String evidenciaIne) {
+        this.evidenciaIne = evidenciaIne;
+    }
+
+    public String getEvidenciaDomicilio() {
+        return evidenciaDomicilio;
+    }
+
+    public void setEvidenciaDomicilio(String evidenciaDomicilio) {
+        this.evidenciaDomicilio = evidenciaDomicilio;
     }
 
     public boolean getAutorizacion() {

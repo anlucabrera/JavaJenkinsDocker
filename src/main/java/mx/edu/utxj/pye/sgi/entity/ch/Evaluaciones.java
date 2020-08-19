@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "evaluaciones", catalog = "capital_humano", schema = "")
@@ -42,6 +43,12 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Evaluaciones.findByTipo", query = "SELECT e FROM Evaluaciones e WHERE e.tipo = :tipo")})
 public class Evaluaciones implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "evaluacion")
+    private Integer evaluacion;
     @Basic(optional = false)
     @NotNull
     @Column(name = "periodo")
@@ -61,47 +68,41 @@ public class Evaluaciones implements Serializable {
     @Size(min = 1, max = 49)
     @Column(name = "tipo")
     private String tipo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
-    private List<EvaluacionDocentesMateriaResultados4> evaluacionDocentesMateriaResultados4List;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
-    private List<EvaluacionTutoresResultados3> evaluacionTutoresResultados3List;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
-    private List<EvaluacionDocentesMateriaResultados3> evaluacionDocentesMateriaResultados3List;
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "evaluacion")
-    private Integer evaluacion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EvaluacionConocimientoCodigoEticaResultados> evaluacionConocimientoCodigoEticaResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EvaluacionTutoresResultados2> evaluacionTutoresResultados2List;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
+    private List<EvaluacionTutoresResultados3> evaluacionTutoresResultados3List;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EncuestaSatisfaccionEgresadosIng> encuestaSatisfaccionEgresadosIngList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EncuestaCondicionesEstudio> encuestaCondicionesEstudioList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EvaluacionTutoresResultados> evaluacionTutoresResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EvaluacionesClimaLaboralResultados> evaluacionesClimaLaboralResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EvaluacionDocentesMateriaResultados> evaluacionDocentesMateriaResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EvaluacionesControlInternoResultados> evaluacionesControlInternoResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EvaluacionesEstudioSocioeconomicoResultados> evaluacionesEstudioSocioeconomicoResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EncuestaServiciosResultados> encuestaServiciosResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EvaluacionesPremiosResultados> evaluacionesPremiosResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EvaluacionEstadiaResultados> evaluacionEstadiaResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
-    private List<EvaluacionTutoresResultados> evaluacionesTutoresResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
+    private List<EvaluacionesTutoresResultados> evaluacionesTutoresResultadosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
+    private List<EvaluacionDocentesMateriaResultados3> evaluacionDocentesMateriaResultados3List;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
+    private List<EvaluacionDocentesMateriaResultados4> evaluacionDocentesMateriaResultados4List;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EvaluacionDocentesMateriaResultados2> evaluacionDocentesMateriaResultados2List;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EvaluacionDesempenioAmbientalUtxj> evaluacionDesempenioAmbientalUtxjList;
 
     public Evaluaciones() {
@@ -127,6 +128,13 @@ public class Evaluaciones implements Serializable {
         this.evaluacion = evaluacion;
     }
 
+    public int getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(int periodo) {
+        this.periodo = periodo;
+    }
 
     public Date getFechaInicio() {
         return fechaInicio;
@@ -144,6 +152,13 @@ public class Evaluaciones implements Serializable {
         this.fechaFin = fechaFin;
     }
 
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
 
     @XmlTransient
     public List<EvaluacionConocimientoCodigoEticaResultados> getEvaluacionConocimientoCodigoEticaResultadosList() {
@@ -161,6 +176,15 @@ public class Evaluaciones implements Serializable {
 
     public void setEvaluacionTutoresResultados2List(List<EvaluacionTutoresResultados2> evaluacionTutoresResultados2List) {
         this.evaluacionTutoresResultados2List = evaluacionTutoresResultados2List;
+    }
+
+    @XmlTransient
+    public List<EvaluacionTutoresResultados3> getEvaluacionTutoresResultados3List() {
+        return evaluacionTutoresResultados3List;
+    }
+
+    public void setEvaluacionTutoresResultados3List(List<EvaluacionTutoresResultados3> evaluacionTutoresResultados3List) {
+        this.evaluacionTutoresResultados3List = evaluacionTutoresResultados3List;
     }
 
     @XmlTransient
@@ -254,12 +278,30 @@ public class Evaluaciones implements Serializable {
     }
 
     @XmlTransient
-    public List<EvaluacionTutoresResultados> getEvaluacionesTutoresResultadosList() {
+    public List<EvaluacionesTutoresResultados> getEvaluacionesTutoresResultadosList() {
         return evaluacionesTutoresResultadosList;
     }
 
-    public void setEvaluacionesTutoresResultadosList(List<EvaluacionTutoresResultados> evaluacionesTutoresResultadosList) {
+    public void setEvaluacionesTutoresResultadosList(List<EvaluacionesTutoresResultados> evaluacionesTutoresResultadosList) {
         this.evaluacionesTutoresResultadosList = evaluacionesTutoresResultadosList;
+    }
+
+    @XmlTransient
+    public List<EvaluacionDocentesMateriaResultados3> getEvaluacionDocentesMateriaResultados3List() {
+        return evaluacionDocentesMateriaResultados3List;
+    }
+
+    public void setEvaluacionDocentesMateriaResultados3List(List<EvaluacionDocentesMateriaResultados3> evaluacionDocentesMateriaResultados3List) {
+        this.evaluacionDocentesMateriaResultados3List = evaluacionDocentesMateriaResultados3List;
+    }
+
+    @XmlTransient
+    public List<EvaluacionDocentesMateriaResultados4> getEvaluacionDocentesMateriaResultados4List() {
+        return evaluacionDocentesMateriaResultados4List;
+    }
+
+    public void setEvaluacionDocentesMateriaResultados4List(List<EvaluacionDocentesMateriaResultados4> evaluacionDocentesMateriaResultados4List) {
+        this.evaluacionDocentesMateriaResultados4List = evaluacionDocentesMateriaResultados4List;
     }
 
     @XmlTransient
@@ -304,48 +346,5 @@ public class Evaluaciones implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones[ evaluacion=" + evaluacion + " ]";
     }
-
-
-    @XmlTransient
-    public List<EvaluacionDocentesMateriaResultados3> getEvaluacionDocentesMateriaResultados3List() {
-        return evaluacionDocentesMateriaResultados3List;
-    }
-
-    public void setEvaluacionDocentesMateriaResultados3List(List<EvaluacionDocentesMateriaResultados3> evaluacionDocentesMateriaResultados3List) {
-        this.evaluacionDocentesMateriaResultados3List = evaluacionDocentesMateriaResultados3List;
-    }
-
-    public int getPeriodo() {
-        return periodo;
-    }
-
-    public void setPeriodo(int periodo) {
-        this.periodo = periodo;
-    }
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    @XmlTransient
-    public List<EvaluacionDocentesMateriaResultados4> getEvaluacionDocentesMateriaResultados4List() {
-        return evaluacionDocentesMateriaResultados4List;
-    }
-
-    public void setEvaluacionDocentesMateriaResultados4List(List<EvaluacionDocentesMateriaResultados4> evaluacionDocentesMateriaResultados4List) {
-        this.evaluacionDocentesMateriaResultados4List = evaluacionDocentesMateriaResultados4List;
-    }
-
-    @XmlTransient
-    public List<EvaluacionTutoresResultados3> getEvaluacionTutoresResultados3List() {
-        return evaluacionTutoresResultados3List;
-    }
-
-    public void setEvaluacionTutoresResultados3List(List<EvaluacionTutoresResultados3> evaluacionTutoresResultados3List) {
-        this.evaluacionTutoresResultados3List = evaluacionTutoresResultados3List;
-    }
-
+    
 }

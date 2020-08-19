@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -62,12 +63,12 @@ public class EvaluacionConocimientoCodigoEticaResultados implements Serializable
     private Short r9;
     @Column(name = "r10")
     private Short r10;
-    @JoinColumn(name = "evaluador", referencedColumnName = "clave", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private Personal personal;
     @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Evaluaciones evaluaciones;
+    @JoinColumn(name = "evaluador", referencedColumnName = "clave", insertable = false, updatable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Personal personal;
 
     public EvaluacionConocimientoCodigoEticaResultados() {
     }
@@ -168,20 +169,20 @@ public class EvaluacionConocimientoCodigoEticaResultados implements Serializable
         this.r10 = r10;
     }
 
-    public Personal getPersonal() {
-        return personal;
-    }
-
-    public void setPersonal(Personal personal) {
-        this.personal = personal;
-    }
-
     public Evaluaciones getEvaluaciones() {
         return evaluaciones;
     }
 
     public void setEvaluaciones(Evaluaciones evaluaciones) {
         this.evaluaciones = evaluaciones;
+    }
+
+    public Personal getPersonal() {
+        return personal;
+    }
+
+    public void setPersonal(Personal personal) {
+        this.personal = personal;
     }
 
     @Override

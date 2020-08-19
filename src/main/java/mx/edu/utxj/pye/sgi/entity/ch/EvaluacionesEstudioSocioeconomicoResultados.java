@@ -5,14 +5,22 @@
  */
 package mx.edu.utxj.pye.sgi.entity.ch;
 
-import javax.persistence.*;
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "evaluaciones_estudio_socioeconomico_resultados", catalog = "capital_humano", schema = "")
@@ -59,7 +67,7 @@ public class EvaluacionesEstudioSocioeconomicoResultados implements Serializable
     @Size(max = 3)
     @Column(name = "r4_padres_enfermedad_terminal")
     private String r4PadresEnfermedadTerminal;
-    @Size(max = 28)
+    @Size(max = 100)
     @Column(name = "r4a_padres_enfermedad_terminal_cual")
     private String r4aPadresEnfermedadTerminalCual;
     @Size(max = 500)
@@ -80,7 +88,7 @@ public class EvaluacionesEstudioSocioeconomicoResultados implements Serializable
     @Size(max = 3)
     @Column(name = "r8_deficiencia_fisica_mental")
     private String r8DeficienciaFisicaMental;
-    @Size(max = 52)
+    @Size(max = 100)
     @Column(name = "r8a_deficiencia_fisica_mental_cual")
     private String r8aDeficienciaFisicaMentalCual;
     @Size(max = 500)
@@ -91,14 +99,14 @@ public class EvaluacionesEstudioSocioeconomicoResultados implements Serializable
     private String r9DependenciaEconomicaPadres;
     @Column(name = "r10_ingreso_mensual_padres")
     private Double r10IngresoMensualPadres;
-    @Size(max = 50)
+    @Size(max = 100)
     @Column(name = "r11_escolaridad_maxima_padre")
     private String r11EscolaridadMaximaPadre;
-    @Size(max = 50)
+    @Size(max = 100)
     @Column(name = "r12_escolaridad_maxima_madre")
     private String r12EscolaridadMaximaMadre;
     @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Evaluaciones evaluaciones;
 
     public EvaluacionesEstudioSocioeconomicoResultados() {

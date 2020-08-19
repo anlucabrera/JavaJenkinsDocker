@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -117,18 +118,18 @@ public class Cursos implements Serializable {
     @Size(min = 1, max = 20)
     @Column(name = "mes")
     private String mes;
-    @JoinTable(name = "cursos_cursosevidencia", joinColumns = {
+    @JoinTable(name = "capital_humano.cursos_cursosevidencia", joinColumns = {
         @JoinColumn(name = "curso", referencedColumnName = "curso")}, inverseJoinColumns = {
         @JoinColumn(name = "evidencia", referencedColumnName = "evidencia")})
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<CursosEvidencia> cursosEvidenciaList;
     @JoinColumn(name = "modalidad", referencedColumnName = "modalidad")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CursosModalidad modalidad;
     @JoinColumn(name = "tipo", referencedColumnName = "tipo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CursosTipo tipo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "curso")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "curso", fetch = FetchType.LAZY)
     private List<CursosPersonal> cursosPersonalList;
 
     public Cursos() {

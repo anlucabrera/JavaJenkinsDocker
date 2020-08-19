@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.siip.controller.ca;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;

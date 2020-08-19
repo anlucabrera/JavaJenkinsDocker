@@ -7,7 +7,7 @@ package mx.edu.utxj.pye.sgi.facade;
 
 import java.util.List;
 import javax.ejb.Local;
-import mx.edu.utxj.pye.sgi.entity.ch.PersonalCapacitadoCursos;
+import mx.edu.utxj.pye.sgi.entity.ch.view.PersonalCapacitadoCursos;
 
 /**
  *

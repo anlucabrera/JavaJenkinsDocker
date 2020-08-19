@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -18,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "eventos_areas", catalog = "capital_humano", schema = "")
@@ -26,17 +27,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "EventosAreas.findAll", query = "SELECT e FROM EventosAreas e")
     , @NamedQuery(name = "EventosAreas.findByEvento", query = "SELECT e FROM EventosAreas e WHERE e.eventosAreasPK.evento = :evento")
-    , @NamedQuery(name = "EventosAreas.findByAreaOperativa", query = "SELECT e FROM EventosAreas e WHERE e.eventosAreasPK.areaOperativa = :areaOperativa")})
+    , @NamedQuery(name = "EventosAreas.findByAreaOperativa", query = "SELECT e FROM EventosAreas e WHERE e.eventosAreasPK.areaOperativa = :areaOperativa")
+    , @NamedQuery(name = "EventosAreas.findByDiasExtra", query = "SELECT e FROM EventosAreas e WHERE e.diasExtra = :diasExtra")})
 public class EventosAreas implements Serializable {
-
-    @Column(name = "diasExtra")
-    private Integer diasExtra;
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected EventosAreasPK eventosAreasPK;
+    @Column(name = "diasExtra")
+    private Integer diasExtra;
     @JoinColumn(name = "evento", referencedColumnName = "evento", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Eventos eventos;
 
     public EventosAreas() {
@@ -56,6 +57,14 @@ public class EventosAreas implements Serializable {
 
     public void setEventosAreasPK(EventosAreasPK eventosAreasPK) {
         this.eventosAreasPK = eventosAreasPK;
+    }
+
+    public Integer getDiasExtra() {
+        return diasExtra;
+    }
+
+    public void setDiasExtra(Integer diasExtra) {
+        this.diasExtra = diasExtra;
     }
 
     public Eventos getEventos() {
@@ -89,14 +98,6 @@ public class EventosAreas implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.EventosAreas[ eventosAreasPK=" + eventosAreasPK + " ]";
-    }
-
-    public Integer getDiasExtra() {
-        return diasExtra;
-    }
-
-    public void setDiasExtra(Integer diasExtra) {
-        this.diasExtra = diasExtra;
     }
     
 }

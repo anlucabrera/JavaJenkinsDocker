@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -52,7 +53,7 @@ public class CursosEvidencia implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "mime")
     private String mime;
-    @ManyToMany(mappedBy = "cursosEvidenciaList")
+    @ManyToMany(mappedBy = "capital_humano.cursosEvidenciaList", fetch = FetchType.LAZY)
     private List<Cursos> cursosList;
 
     public CursosEvidencia() {

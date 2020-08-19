@@ -1,16 +1,12 @@
 package mx.edu.utxj.pye.sgi.ejb;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.faces.model.SelectItem;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
@@ -20,11 +16,10 @@ import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360ResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Habilidades;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360Promedios;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonalEvaluacion360Reporte;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonalEvaluacion360;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonalEvaluacion360Promedios;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonalEvaluacion360Reporte;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 /**

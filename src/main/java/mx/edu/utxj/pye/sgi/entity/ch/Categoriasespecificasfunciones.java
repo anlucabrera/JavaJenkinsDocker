@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,6 +37,12 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Categoriasespecificasfunciones.findByArea", query = "SELECT c FROM Categoriasespecificasfunciones c WHERE c.area = :area")})
 public class Categoriasespecificasfunciones implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "categoriaEspecifica")
+    private Short categoriaEspecifica;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -45,18 +52,11 @@ public class Categoriasespecificasfunciones implements Serializable {
     @NotNull
     @Column(name = "area")
     private int area;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "categoriaEspecifica")
-    private Short categoriaEspecifica;
-    @OneToMany(mappedBy = "categoriaEspecifica")
+    @OneToMany(mappedBy = "categoriaEspecifica", fetch = FetchType.LAZY)
     private List<Personal> personalList;
-    @OneToMany(mappedBy = "categoriaEspecifica")
+    @OneToMany(mappedBy = "categoriaEspecifica", fetch = FetchType.LAZY)
     private List<PersonalBitacora> personalBitacoraList;
-    @OneToMany(mappedBy = "categoriaEspesifica")
+    @OneToMany(mappedBy = "categoriaEspesifica", fetch = FetchType.LAZY)
     private List<Funciones> funcionesList;
 
     public Categoriasespecificasfunciones() {
@@ -80,6 +80,21 @@ public class Categoriasespecificasfunciones implements Serializable {
         this.categoriaEspecifica = categoriaEspecifica;
     }
 
+    public String getNombreCategoria() {
+        return nombreCategoria;
+    }
+
+    public void setNombreCategoria(String nombreCategoria) {
+        this.nombreCategoria = nombreCategoria;
+    }
+
+    public int getArea() {
+        return area;
+    }
+
+    public void setArea(int area) {
+        this.area = area;
+    }
 
     @XmlTransient
     public List<Personal> getPersonalList() {
@@ -131,22 +146,6 @@ public class Categoriasespecificasfunciones implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Categoriasespecificasfunciones[ categoriaEspecifica=" + categoriaEspecifica + " ]";
-    }
-
-    public String getNombreCategoria() {
-        return nombreCategoria;
-    }
-
-    public void setNombreCategoria(String nombreCategoria) {
-        this.nombreCategoria = nombreCategoria;
-    }
-
-    public int getArea() {
-        return area;
-    }
-
-    public void setArea(int area) {
-        this.area = area;
     }
     
 }

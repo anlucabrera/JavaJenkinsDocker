@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "eventos", catalog = "capital_humano", schema = "")
@@ -76,14 +77,14 @@ public class Eventos implements Serializable {
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.DATE)
     private Date fechaFin;
-    @JoinTable(name = "eventos_personal", joinColumns = {
+    @JoinTable(name = "capital_humano.eventos_personal", joinColumns = {
         @JoinColumn(name = "evento", referencedColumnName = "evento")}, inverseJoinColumns = {
         @JoinColumn(name = "clave", referencedColumnName = "clave")})
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Personal> personalList;
-    @ManyToMany(mappedBy = "eventosList")
+    @ManyToMany(mappedBy = "capital_humano.eventosList", fetch = FetchType.LAZY)
     private List<PersonalCategorias> personalCategoriasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventos")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventos", fetch = FetchType.LAZY)
     private List<EventosAreas> eventosAreasList;
 
     public Eventos() {

@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "permisos_captura_extemporanea_estudiante", catalog = "control_escolar", schema = "")
@@ -89,19 +90,19 @@ public class PermisosCapturaExtemporaneaEstudiante implements Serializable {
     @Column(name = "validada")
     private int validada;
     @JoinColumn(name = "id_grupo", referencedColumnName = "id_grupo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Grupo idGrupo;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Estudiante estudiante;
     @JoinColumn(name = "justificacion_permiso", referencedColumnName = "justificacion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JustificacionPermisosExtemporaneos justificacionPermiso;
     @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PlanEstudioMateria idPlanMateria;
     @JoinColumn(name = "id_unidad_materia", referencedColumnName = "id_unidad_materia")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private UnidadMateria idUnidadMateria;
 
     public PermisosCapturaExtemporaneaEstudiante() {

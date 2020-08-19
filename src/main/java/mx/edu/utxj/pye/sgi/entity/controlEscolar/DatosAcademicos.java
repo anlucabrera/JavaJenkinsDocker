@@ -6,9 +6,11 @@
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -16,12 +18,14 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "datos_academicos", catalog = "control_escolar", schema = "")
@@ -32,7 +36,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "DatosAcademicos.findByPrimeraOpcion", query = "SELECT d FROM DatosAcademicos d WHERE d.primeraOpcion = :primeraOpcion")
     , @NamedQuery(name = "DatosAcademicos.findBySegundaOpcion", query = "SELECT d FROM DatosAcademicos d WHERE d.segundaOpcion = :segundaOpcion")
     , @NamedQuery(name = "DatosAcademicos.findByPromedio", query = "SELECT d FROM DatosAcademicos d WHERE d.promedio = :promedio")
-    , @NamedQuery(name = "DatosAcademicos.findByInstitucionAcademica", query = "SELECT d FROM DatosAcademicos d WHERE d.institucionAcademica = :institucionAcademica")})
+    , @NamedQuery(name = "DatosAcademicos.findByInstitucionAcademica", query = "SELECT d FROM DatosAcademicos d WHERE d.institucionAcademica = :institucionAcademica")
+    , @NamedQuery(name = "DatosAcademicos.findByFechaTerminacion", query = "SELECT d FROM DatosAcademicos d WHERE d.fechaTerminacion = :fechaTerminacion")})
 public class DatosAcademicos implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -57,17 +62,20 @@ public class DatosAcademicos implements Serializable {
     @NotNull
     @Column(name = "institucion_academica")
     private int institucionAcademica;
+    @Column(name = "fecha_terminacion")
+    @Temporal(TemporalType.DATE)
+    private Date fechaTerminacion;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Aspirante aspirante1;
     @JoinColumn(name = "especialidad_iems", referencedColumnName = "id_especialidad_centro")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EspecialidadCentro especialidadIems;
     @JoinColumn(name = "sistema_primera_opcion", referencedColumnName = "id_sistema")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Sistema sistemaPrimeraOpcion;
     @JoinColumn(name = "sistema_segunda_opcion", referencedColumnName = "id_sistema")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Sistema sistemaSegundaOpcion;
 
     public DatosAcademicos() {
@@ -123,6 +131,14 @@ public class DatosAcademicos implements Serializable {
 
     public void setInstitucionAcademica(int institucionAcademica) {
         this.institucionAcademica = institucionAcademica;
+    }
+
+    public Date getFechaTerminacion() {
+        return fechaTerminacion;
+    }
+
+    public void setFechaTerminacion(Date fechaTerminacion) {
+        this.fechaTerminacion = fechaTerminacion;
     }
 
     public Aspirante getAspirante1() {

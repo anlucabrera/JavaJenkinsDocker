@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -60,10 +61,10 @@ public class Comentariosfunciones implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaHoraC;
     @JoinColumn(name = "id_personal", referencedColumnName = "clave")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Personal idPersonal;
     @JoinColumn(name = "id_Funcion", referencedColumnName = "funcion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Funciones idFuncion;
 
     public Comentariosfunciones() {

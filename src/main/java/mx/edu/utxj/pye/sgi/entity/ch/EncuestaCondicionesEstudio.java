@@ -3,20 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package mx.edu.utxj.pye.sgi.entity.ch;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -39,20 +37,17 @@ public class EncuestaCondicionesEstudio implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected EncuestaCondicionesEstudioPK encuestaCondicionesEstudioPK;
-    @Basic(optional = false)
-    @Size(min = 1, max = 50)
+    @Size(max = 50)
     @Column(name = "r1")
     private String r1;
-    @Basic(optional = false)
-    @Size(min = 1, max = 50)
+    @Size(max = 50)
     @Column(name = "r2")
     private String r2;
-    @Basic(optional = false)
-    @Size(min = 1, max = 50)
+    @Size(max = 50)
     @Column(name = "r3")
     private String r3;
     @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Evaluaciones evaluaciones;
 
     public EncuestaCondicionesEstudio() {
@@ -60,13 +55,6 @@ public class EncuestaCondicionesEstudio implements Serializable {
 
     public EncuestaCondicionesEstudio(EncuestaCondicionesEstudioPK encuestaCondicionesEstudioPK) {
         this.encuestaCondicionesEstudioPK = encuestaCondicionesEstudioPK;
-    }
-
-    public EncuestaCondicionesEstudio(EncuestaCondicionesEstudioPK encuestaCondicionesEstudioPK, String r1, String r2, String r3) {
-        this.encuestaCondicionesEstudioPK = encuestaCondicionesEstudioPK;
-        this.r1 = r1;
-        this.r2 = r2;
-        this.r3 = r3;
     }
 
     public EncuestaCondicionesEstudio(int evaluacion, int evaluador) {
@@ -137,5 +125,5 @@ public class EncuestaCondicionesEstudio implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.EncuestaCondicionesEstudio[ encuestaCondicionesEstudioPK=" + encuestaCondicionesEstudioPK + " ]";
     }
-
+    
 }

@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -108,13 +109,13 @@ public class Capacitacionespersonal implements Serializable {
     @Column(name = "categoria_capacitacion")
     private String categoriaCapacitacion;
     @JoinColumn(name = "modalidad", referencedColumnName = "modalidad")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CursosModalidad modalidad;
     @JoinColumn(name = "tipo", referencedColumnName = "tipo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CursosTipo tipo;
     @JoinColumn(name = "clave_personal", referencedColumnName = "clave")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Personal clavePersonal;
 
     public Capacitacionespersonal() {

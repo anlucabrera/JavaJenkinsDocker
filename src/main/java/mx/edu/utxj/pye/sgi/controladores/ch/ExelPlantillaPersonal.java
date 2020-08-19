@@ -22,7 +22,7 @@ import javax.inject.Named;
 import org.omnifaces.cdi.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.entity.ch.ListaPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.apache.poi.ss.usermodel.Cell;

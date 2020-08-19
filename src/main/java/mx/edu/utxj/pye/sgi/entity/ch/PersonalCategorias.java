@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "personal_categorias", catalog = "capital_humano", schema = "")
@@ -40,6 +41,12 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "PersonalCategorias.findByTipo", query = "SELECT p FROM PersonalCategorias p WHERE p.tipo = :tipo")})
 public class PersonalCategorias implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "categoria")
+    private Short categoria;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -50,40 +57,33 @@ public class PersonalCategorias implements Serializable {
     @Size(min = 1, max = 19)
     @Column(name = "tipo")
     private String tipo;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "categoria")
-    private Short categoria;
-    @JoinTable(name = "categorias_habilidades", joinColumns = {
+    @JoinTable(name = "capital_humano.categorias_habilidades", joinColumns = {
         @JoinColumn(name = "categoria", referencedColumnName = "categoria")}, inverseJoinColumns = {
         @JoinColumn(name = "habilidad", referencedColumnName = "habilidad")})
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Habilidades> habilidadesList;
-    @JoinTable(name = "eventos_categorias", joinColumns = {
+    @JoinTable(name = "capital_humano.eventos_categorias", joinColumns = {
         @JoinColumn(name = "categoria_operativa", referencedColumnName = "categoria")}, inverseJoinColumns = {
         @JoinColumn(name = "evento", referencedColumnName = "evento")})
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Eventos> eventosList;
-    @OneToMany(mappedBy = "categoria360")
+    @OneToMany(mappedBy = "categoria360", fetch = FetchType.LAZY)
     private List<Personal> personalList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOperativa")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOperativa", fetch = FetchType.LAZY)
     private List<Personal> personalList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOficial")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOficial", fetch = FetchType.LAZY)
     private List<Personal> personalList2;
-    @OneToMany(mappedBy = "categoria360")
+    @OneToMany(mappedBy = "categoria360", fetch = FetchType.LAZY)
     private List<PersonalBitacora> personalBitacoraList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOperativa")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOperativa", fetch = FetchType.LAZY)
     private List<PersonalBitacora> personalBitacoraList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOficial")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoriaOficial", fetch = FetchType.LAZY)
     private List<PersonalBitacora> personalBitacoraList2;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoria")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoria", fetch = FetchType.LAZY)
     private List<Evaluaciones360Resultados> evaluaciones360ResultadosList;
-    @OneToMany(mappedBy = "categoria")
+    @OneToMany(mappedBy = "categoria", fetch = FetchType.LAZY)
     private List<Permisos> permisosList;
-    @OneToMany(mappedBy = "categoriaOperativa")
+    @OneToMany(mappedBy = "categoriaOperativa", fetch = FetchType.LAZY)
     private List<Funciones> funcionesList;
 
     public PersonalCategorias() {
@@ -107,6 +107,21 @@ public class PersonalCategorias implements Serializable {
         this.categoria = categoria;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
 
     @XmlTransient
     public List<Habilidades> getHabilidadesList() {
@@ -230,22 +245,6 @@ public class PersonalCategorias implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias[ categoria=" + categoria + " ]";
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
     }
     
 }

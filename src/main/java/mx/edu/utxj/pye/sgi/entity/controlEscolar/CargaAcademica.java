@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "carga_academica", catalog = "control_escolar", schema = "")
@@ -51,28 +52,28 @@ public class CargaAcademica implements Serializable {
     private int docente;
     @Column(name = "horas_semana")
     private Integer horasSemana;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "carga")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "carga", fetch = FetchType.LAZY)
     private TareaIntegradora tareaIntegradora;
-    @OneToMany(mappedBy = "cargaAcademica")
+    @OneToMany(mappedBy = "cargaAcademica", fetch = FetchType.LAZY)
     private List<Asistenciasacademicas> asistenciasacademicasList;
     @JoinColumn(name = "cve_grupo", referencedColumnName = "id_grupo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Grupo cveGrupo;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EventoEscolar evento;
     @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PlanEstudioMateria idPlanMateria;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica", fetch = FetchType.LAZY)
     private List<CalificacionNivelacion> calificacionNivelacionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica", fetch = FetchType.LAZY)
     private List<CalificacionPromedio> calificacionPromedioList;
-    @OneToMany(mappedBy = "carga")
+    @OneToMany(mappedBy = "carga", fetch = FetchType.LAZY)
     private List<CasoCritico> casoCriticoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga", fetch = FetchType.LAZY)
     private List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica", fetch = FetchType.LAZY)
     private List<BajaReprobacion> bajaReprobacionList;
 
     public CargaAcademica() {
