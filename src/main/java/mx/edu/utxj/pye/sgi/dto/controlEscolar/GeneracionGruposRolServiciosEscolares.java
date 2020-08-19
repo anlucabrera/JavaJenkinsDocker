@@ -17,6 +17,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import javax.faces.model.SelectItem;
 import java.util.List;
 import java.util.Objects;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
 
 public class GeneracionGruposRolServiciosEscolares extends AbstractRol{
     /**
@@ -61,8 +62,18 @@ public class GeneracionGruposRolServiciosEscolares extends AbstractRol{
     @Getter @Setter private Generaciones generaciones;
 
     @Getter @Setter private List<DtoConteoGrupos> listaSugerencia;
+    
+    @Getter @Setter private List<Sistema> sistemas;
 
     @Getter @Setter private Boolean botonActivo;
+    
+    @Getter @Setter private Short idPE, generacion;
+    
+    @Getter @Setter private Integer idSistema;
+    
+    @Getter @Setter private Integer grado;
+    
+    @Getter @Setter private List<Generaciones> listaGeneraciones;
 
     public GeneracionGruposRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad programa) {
         super(filtro);

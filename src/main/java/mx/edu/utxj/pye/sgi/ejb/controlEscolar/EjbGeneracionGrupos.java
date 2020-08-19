@@ -114,7 +114,7 @@ public class EjbGeneracionGrupos {
         }
     }
 
-    public ResultadoEJB<Grupo> guardarGrupo(Grupo grupo, Integer periodoActivo, Integer noGrupos, Integer capaMax, PlanEstudio planEstudio, Generaciones generacion, Operacion operacion){
+    public ResultadoEJB<Grupo> guardarGrupo(Grupo grupo, Integer periodoActivo, Integer noGrupos, Integer capaMax, Sistema sistema, PlanEstudio planEstudio, Generaciones generacion, Operacion operacion){
         try{
             if(grupo == null) return ResultadoEJB.crearErroneo(2, "El grupo no puede ser nulo.", Grupo.class);
             if(periodoActivo == null) return ResultadoEJB.crearErroneo(3, "El periodo no puede ser nulo.", Grupo.class);
@@ -134,6 +134,7 @@ public class EjbGeneracionGrupos {
                             g.setPeriodo(periodoActivo);
                             g.setLiteral((abecedario[i++ ]));
                             g.setCapMaxima(capaMax);
+                            g.setIdSistema(sistema);
                             g.setPlan(planEstudio);
                             g.setGeneracion(generacion.getGeneracion());
                             em.persist(g);
@@ -202,7 +203,7 @@ public class EjbGeneracionGrupos {
         try {
             if (!rol.getGrupos().isEmpty()) {
                 final List<DtoAlerta> mensajes = new ArrayList<>();
-                List<Grupo> g = em.createQuery("select g from Grupo as g group by g.grado, g.literal, g.idPe having count(g.literal)>1",Grupo.class)
+                List<Grupo> g = em.createQuery("select g from Grupo as g group by g.grado, g.literal, g.idPe, g.generacion having count(g.literal)>1",Grupo.class)
                         .getResultStream().collect(Collectors.toList());
                 g.stream().forEach(x -> {
                     mensajes.add(new DtoAlerta(String.format("Existe un duplicado del grupo %s, en el programa educativo %s. Realizar las acciones correspondientes.",
@@ -274,6 +275,44 @@ public class EjbGeneracionGrupos {
         PeriodosEscolares pe = em.createQuery("select p from PeriodosEscolares as p where p.periodo = :periodo", PeriodosEscolares.class)
                 .setParameter("periodo", periodo).getResultStream().findFirst().orElse(null);
         return ResultadoEJB.crearCorrecto(pe, "Periodo activo");
+    }
+    
+    public ResultadoEJB<List<Sistema>> obtenerSistemas(){
+        try {
+            List<Sistema> si = em.createQuery("SELECT s FROM Sistema s", Sistema.class).getResultStream().collect(Collectors.toList());
+            return ResultadoEJB.crearCorrecto(si, "Sistemas encontradas con éxito");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se encontraron areas para este periodo. (EjbGeneracionGrupos.obtenerSistemas())", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Sistema> obtenerSistema(Integer id){
+        try {
+            Sistema g = em.createQuery("select s from Sistema as s where s.idSistema = :id", Sistema.class)
+                    .setParameter("id", id).getResultStream().findFirst().orElse(null);
+            return ResultadoEJB.crearCorrecto(g, "Generaciones encontradas con éxito");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se encontraron areas para este periodo. (EjbGeneracionGrupos.obtenerSistema())", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<Generaciones>> obtenerListaGeneraciones(){
+        try {
+            List<Generaciones> generaciones = em.createQuery("SELECT g FROM Generaciones g ORDER BY g.generacion desc", Generaciones.class).getResultStream().collect(Collectors.toList());
+            return ResultadoEJB.crearCorrecto(generaciones, "Sistemas encontradas con éxito");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se encontraron areas para este periodo. (EjbGeneracionGrupos.obtenerListaGeneraciones())", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Generaciones> obtenerGeneracion(Short generacion){
+        try {
+            Generaciones g = em.createQuery("select g from Generaciones as g where g.generacion = :id", Generaciones.class)
+                    .setParameter("id", generacion).getResultStream().findFirst().orElse(null);
+            return ResultadoEJB.crearCorrecto(g, "Generaciones encontradas con éxito");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se encontraron areas para este periodo. (EjbGeneracionGrupos.obtenerGeneracion())", e, null);
+        }
     }
 
 }
