@@ -53,7 +53,7 @@ public class CursosEvidencia implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "mime")
     private String mime;
-    @ManyToMany(mappedBy = "capital_humano.cursosEvidenciaList", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "cursosEvidenciaList", fetch = FetchType.LAZY)
     private List<Cursos> cursosList;
 
     public CursosEvidencia() {

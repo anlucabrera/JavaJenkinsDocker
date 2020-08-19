@@ -143,7 +143,7 @@ public class Personal implements Serializable {
     @Size(max = 200)
     @Column(name = "correo_electronico2")
     private String correoElectronico2;
-    @ManyToMany(mappedBy = "capital_humano.personalList", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "personalList", fetch = FetchType.LAZY)
     private List<Eventos> eventosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal", fetch = FetchType.LAZY)
     private List<Docencias> docenciasList;

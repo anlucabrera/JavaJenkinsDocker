@@ -47,7 +47,7 @@ public class Habilidades implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "nombre")
     private String nombre;
-    @ManyToMany(mappedBy = "capital_humano.habilidadesList", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "habilidadesList", fetch = FetchType.LAZY)
     private List<PersonalCategorias> personalCategoriasList;
 
     public Habilidades() {

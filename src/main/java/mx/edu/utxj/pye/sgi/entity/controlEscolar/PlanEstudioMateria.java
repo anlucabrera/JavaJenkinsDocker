@@ -54,7 +54,7 @@ public class PlanEstudioMateria implements Serializable {
     @NotNull
     @Column(name = "grado")
     private int grado;
-    @ManyToMany(mappedBy = "control_escolar.planEstudioMateriaList", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "planEstudioMateriaList", fetch = FetchType.LAZY)
     private List<Competencia> competenciaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
     private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;

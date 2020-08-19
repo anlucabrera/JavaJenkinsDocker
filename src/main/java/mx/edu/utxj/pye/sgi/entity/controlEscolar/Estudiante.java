@@ -82,9 +82,9 @@ public class Estudiante implements Serializable {
     @Size(min = 1, max = 51)
     @Column(name = "tipo_registro")
     private String tipoRegistro;
-    @ManyToMany(mappedBy = "control_escolar.estudianteList", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "estudianteList", fetch = FetchType.LAZY)
     private List<Asesoria> asesoriaList;
-    @ManyToMany(mappedBy = "control_escolar.estudianteList", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "estudianteList", fetch = FetchType.LAZY)
     private List<AsesoriasEstudiantes> asesoriasEstudiantesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante", fetch = FetchType.LAZY)
     private List<Calificacion> calificacionList;

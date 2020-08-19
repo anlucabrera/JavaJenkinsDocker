@@ -82,7 +82,7 @@ public class Eventos implements Serializable {
         @JoinColumn(name = "clave", referencedColumnName = "clave")})
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Personal> personalList;
-    @ManyToMany(mappedBy = "capital_humano.eventosList", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "eventosList", fetch = FetchType.LAZY)
     private List<PersonalCategorias> personalCategoriasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventos", fetch = FetchType.LAZY)
     private List<EventosAreas> eventosAreasList;
