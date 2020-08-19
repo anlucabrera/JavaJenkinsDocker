@@ -125,9 +125,9 @@ public class EjbCargaDocumentosAspirante {
                     .findFirst()
                     .orElse(null);
             
-            return ResultadoEJB.crearCorrecto(aspirante, "Lista de configuración de la unidad materia seleccionada.");
+            return ResultadoEJB.crearCorrecto(aspirante, "La curp y el folio de admisión se han validado correctamente.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración de la materia del docente. (EjbCargaDocumentosAspirante.validarCurpFolio)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo validar la curp y el folio de admisión. (EjbCargaDocumentosAspirante.validarCurpFolio)", e, null);
         }
     }
     
@@ -139,12 +139,12 @@ public class EjbCargaDocumentosAspirante {
                     .findFirst()
                     .orElse(null);
             if (estudiante == null) {
-                return ResultadoEJB.crearErroneo(2, estudiante, "No se encontro inscripción");
+                return ResultadoEJB.crearErroneo(2, estudiante, "No se encontró inscripción");
             } else {
                 return ResultadoEJB.crearCorrecto(estudiante, "Inscripción activa");
             }
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo verificar el proceso de inscripcion activo(EjbCargaDocumentosAspirante.getInscripcion).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar el proceso de inscripción activo(EjbCargaDocumentosAspirante.getInscripcion).", e, null);
         }
     }
      
@@ -156,12 +156,12 @@ public class EjbCargaDocumentosAspirante {
                     .findFirst()
                     .orElse(null);
             if (programa == null) {
-                return ResultadoEJB.crearErroneo(2, programa, "No se encontro programa educativo");
+                return ResultadoEJB.crearErroneo(2, programa, "No se encontró programa educativo");
             } else {
-                return ResultadoEJB.crearCorrecto(programa, "programa educativo");
+                return ResultadoEJB.crearCorrecto(programa, "Se encontró el programa educativo");
             }
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo verificar el proceso de inscripcion activo(EjbCargaDocumentosAspirante.getProgramaEducativo).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo consultar el programa educativo(EjbCargaDocumentosAspirante.getProgramaEducativo).", e, null);
         }
     }
     
@@ -296,7 +296,7 @@ public class EjbCargaDocumentosAspirante {
 
             return ResultadoEJB.crearCorrecto(documentoAspiranteProceso, "Se guardaron las observaciones del documento.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo guardarar las observaciones del documento. (EjbCargaDocumentosAspirante.guardarObservacionesDocumento)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo guardar las observaciones del documento. (EjbCargaDocumentosAspirante.guardarObservacionesDocumento)", e, null);
         }
     }
     
@@ -417,7 +417,7 @@ public class EjbCargaDocumentosAspirante {
            
             return ResultadoEJB.crearCorrecto(documentoAspiranteProceso, "Las observaciones se ha registrado o actualizado correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo guardado o actualizar las observaciones. (EjbCargaDocumentosAspirante.actualizarObservaciones)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo guardar o actualizar las observaciones. (EjbCargaDocumentosAspirante.actualizarObservaciones)", e, null);
         }
     }
     

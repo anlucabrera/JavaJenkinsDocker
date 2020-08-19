@@ -99,8 +99,10 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
         rol.setEventoEscolar(resEvento.getValor());
         // Se busca un proceso de inscripción activo
         ResultadoEJB<ProcesosInscripcion> resProcesoI = ejb.getProcesosInscripcionActivo();
-        if(resProcesoI.getCorrecto()==true){rol.setProcesosInscripcion(resProcesoI.getValor());}
-        else {tieneAcceso=false;}
+        if(resProcesoI.getCorrecto()){
+            if(resProcesoI.getValor() != null){rol.setProcesosInscripcion(resProcesoI.getValor());}
+            else{ tieneAcceso=false;}
+        } else { tieneAcceso=false; }
         // ----------------------------------------------------------------------------------------------------------------------------------------------------------
         if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
         if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
@@ -112,24 +114,28 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
     }
 
     public void validarCurpFolio(){
+       try{
        if(rol.getCurp()== null || rol.getFolioAdmision() == null) return;
-        ResultadoEJB<Aspirante> res = ejb.validarCurpFolio(rol.getCurp(), rol.getFolioAdmision(), rol.getProcesosInscripcion());
-        if(res.getCorrecto()){
+            ResultadoEJB<Aspirante> res = ejb.validarCurpFolio(rol.getCurp(), rol.getFolioAdmision(), rol.getProcesosInscripcion());
+            if(res.getCorrecto()){
             rol.setAspirante(res.getValor());
-            if(res.getValor()==null){
-                rol.setValidacionCurpFolio(false);
-                addDetailMessage("Por favor verifica tus datos");
-                Faces.getExternalContext().getFlash().setKeepMessages(true);
-            }else{
-                    rol.setValidacionCurpFolio(true);
-                    addDetailMessage("Se han validado los datos correctamente");
-                    Faces.getExternalContext().getFlash().setKeepMessages(true);
-                    Faces.redirect("controlEscolar/aspirante/cargaDocumentos.xhtml");
-                    mostrarDocumentos(rol.getAspirante());
-                    verificarInscripcion(rol.getAspirante());
-                }
-        }else mostrarMensajeResultadoEJB(res);  
-       
+                if(rol.getAspirante()==null){
+                 rol.setValidacionCurpFolio(false);
+                 addDetailMessage("Por favor verifica tus datos");
+                 Faces.getExternalContext().getFlash().setKeepMessages(true);
+                }else{
+                 rol.setValidacionCurpFolio(true);
+                 addDetailMessage("Se han validado los datos correctamente");
+                 Faces.getExternalContext().getFlash().setKeepMessages(true);
+                 Faces.redirect("controlEscolar/aspirante/cargaDocumentos.xhtml");
+                 mostrarDocumentos(rol.getAspirante());
+                 verificarInscripcion(rol.getAspirante());
+             }
+            } else mostrarMensajeResultadoEJB(res);  
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(CargaDocumentosAspirante.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void verificarInscripcion(Aspirante aspirante){
