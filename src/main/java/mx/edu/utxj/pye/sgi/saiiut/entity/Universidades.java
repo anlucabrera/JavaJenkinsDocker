@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -79,7 +80,7 @@ public class Universidades implements Serializable {
     @Size(max = 4)
     @Column(name = "cve2_inst_DGP")
     private String cve2instDGP;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "universidades")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "universidades", fetch = FetchType.LAZY)
     private List<Puestos> puestosList;
 
     public Universidades() {

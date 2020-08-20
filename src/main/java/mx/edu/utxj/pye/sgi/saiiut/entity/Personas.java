@@ -13,6 +13,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -105,7 +106,7 @@ public class Personas implements Serializable {
     private Integer cveLocalidadNacimiento;
     @Column(name = "fam_cancer")
     private Boolean famCancer;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "personas")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "personas", fetch = FetchType.LAZY)
     private Usuarios usuarios;
 
     public Personas() {

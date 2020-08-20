@@ -87,7 +87,7 @@ public class BajasCausa implements Serializable {
     public void setDesercionPorEstudianteList(List<DesercionPorEstudiante> desercionPorEstudianteList) {
         this.desercionPorEstudianteList = desercionPorEstudianteList;
     }
-
+    
     @XmlTransient
     public List<BajasCausaCategoria> getBajasCausaCategoriaList() {
         return bajasCausaCategoriaList;
@@ -96,7 +96,7 @@ public class BajasCausa implements Serializable {
     public void setBajasCausaCategoriaList(List<BajasCausaCategoria> bajasCausaCategoriaList) {
         this.bajasCausaCategoriaList = bajasCausaCategoriaList;
     }
-
+    
     @Override
     public int hashCode() {
         int hash = 0;

@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
@@ -83,7 +84,7 @@ public class Alumnos implements Serializable {
         , @JoinColumn(name = "cve_unidad_academica", referencedColumnName = "cve_unidad_academica")
         , @JoinColumn(name = "cve_universidad", referencedColumnName = "cve_universidad", insertable = false, updatable = false)
         , @JoinColumn(name = "cve_periodo_actual", referencedColumnName = "cve_periodo")})
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Grupos grupos;
 
     public Alumnos() {

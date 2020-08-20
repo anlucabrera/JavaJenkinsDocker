@@ -121,7 +121,9 @@ public class SatisfaccionHistorico implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.prontuario.SatisfaccionHistorico[ satisfaccionHistoricoPK=" + satisfaccionHistoricoPK + " ]";
+        return "SatisfaccionHistorico{" +
+                "satisfaccionHistoricoPK=" + satisfaccionHistoricoPK +
+                ", satisfaccionNivel=" + satisfaccionNivel +
+                '}';
     }
-    
 }

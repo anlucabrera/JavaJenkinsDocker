@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -53,7 +54,7 @@ public class Desagregados implements Serializable {
     private short indice;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "desagregados", fetch = FetchType.LAZY)
     private DesagregadosProgramas desagregadosProgramas;
-    @JoinColumn(name = "indicador", referencedColumnName = "indicador")
+    @JoinColumns({@JoinColumn(name = "indicador", referencedColumnName = "indicador"),@JoinColumn(name = "clave", referencedColumnName = "clave")})
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Indicadores indicador;
     @JoinColumn(name = "tipo", referencedColumnName = "tipo")

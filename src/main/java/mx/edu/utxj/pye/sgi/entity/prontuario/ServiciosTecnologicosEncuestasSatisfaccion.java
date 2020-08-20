@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -84,7 +85,11 @@ public class ServiciosTecnologicosEncuestasSatisfaccion implements Serializable 
     @NotNull
     @Column(name = "satisbase_10")
     private BigDecimal satisbase10;
-    @JoinColumn(name = "clave_servicio", referencedColumnName = "clave_servicio")
+    @JoinColumns({
+        @JoinColumn(name = "ciclo", referencedColumnName = "ciclo"),
+        @JoinColumn(name = "mes", referencedColumnName = "mes"),
+        @JoinColumn(name = "clave_servicio", referencedColumnName = "clave_servicio"),
+    })
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ServiciosTecnologicos claveServicio;
     @JoinColumn(name = "periodo", referencedColumnName = "periodo")

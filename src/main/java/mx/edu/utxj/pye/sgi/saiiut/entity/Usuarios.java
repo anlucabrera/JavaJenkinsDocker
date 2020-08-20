@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.NamedQueries;
@@ -68,7 +69,7 @@ public class Usuarios implements Serializable {
     @JoinColumns({
         @JoinColumn(name = "cve_persona", referencedColumnName = "cve_persona", insertable = false, updatable = false)
         , @JoinColumn(name = "cve_universidad", referencedColumnName = "cve_universidad", insertable = false, updatable = false)})
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Personas personas;
 
     public Usuarios() {

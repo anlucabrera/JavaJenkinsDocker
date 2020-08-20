@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -38,7 +39,7 @@ public class IndicadoresVariables implements Serializable {
     @Basic(optional = false)
     @Column(name = "indicador_variable")
     private Integer indicadorVariable;
-    @JoinColumn(name = "indicador", referencedColumnName = "indicador")
+    @JoinColumns({@JoinColumn(name = "indicador", referencedColumnName = "indicador"),@JoinColumn(name = "clave", referencedColumnName = "clave")})
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Indicadores indicador;
     @JoinColumn(name = "variable", referencedColumnName = "variable")

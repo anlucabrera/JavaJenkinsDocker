@@ -9,7 +9,6 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -57,10 +56,10 @@ public class MarcoNormativo implements Serializable {
     @Column(name = "libro")
     private String libro;
     @JoinColumn(name = "clasificacion", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private MarcoClasificacion clasificacion;
     @JoinColumn(name = "tipo", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private MarcoTipo tipo;
 
     public MarcoNormativo() {

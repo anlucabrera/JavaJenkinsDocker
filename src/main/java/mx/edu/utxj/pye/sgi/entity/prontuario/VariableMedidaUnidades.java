@@ -46,7 +46,7 @@ public class VariableMedidaUnidades implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMedida", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMedida")
     private List<Variables> variablesList;
 
     public VariableMedidaUnidades() {
