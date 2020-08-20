@@ -16,7 +16,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.TipoCuestionario;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import mx.edu.utxj.pye.sgi.entity.ch.*;
-import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.view.Listaperiodosescolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.Operacion;

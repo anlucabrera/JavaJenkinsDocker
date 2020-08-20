@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -45,7 +46,7 @@ public class Partidas implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "denominacion")
     private String denominacion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "partida")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "partida", fetch = FetchType.LAZY)
     private List<ProductosAreas> productosAreasList;
 
     public Partidas() {

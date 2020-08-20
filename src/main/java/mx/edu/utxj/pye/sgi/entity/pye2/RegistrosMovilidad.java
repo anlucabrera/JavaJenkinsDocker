@@ -13,6 +13,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
@@ -150,17 +151,17 @@ public class RegistrosMovilidad implements Serializable {
     @JoinColumns({
         @JoinColumn(name = "ciudad", referencedColumnName = "idpais")
         , @JoinColumn(name = "pais", referencedColumnName = "idestado")})
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Estado estado;
     @JoinColumn(name = "programa_movilidad", referencedColumnName = "programa")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProgramasMovilidad programaMovilidad;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroMovilidad")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroMovilidad", fetch = FetchType.LAZY)
     private List<RegistroMovilidadDocente> registroMovilidadDocenteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroMovilidad")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroMovilidad", fetch = FetchType.LAZY)
     private List<RegistroMovilidadEstudiante> registroMovilidadEstudianteList;
 
     public RegistrosMovilidad() {

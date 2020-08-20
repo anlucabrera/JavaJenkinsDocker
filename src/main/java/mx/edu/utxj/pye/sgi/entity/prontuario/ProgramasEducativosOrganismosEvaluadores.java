@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,12 +43,12 @@ public class ProgramasEducativosOrganismosEvaluadores implements Serializable {
     @Column(name = "relacionpeoe")
     private Integer relacionpeoe;
     @JoinColumn(name = "organismo", referencedColumnName = "siglas")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private OrganismosEvaluadores organismo;
     @JoinColumn(name = "programa", referencedColumnName = "siglas")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProgramasEducativos programa;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "relacionpeoe")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "relacionpeoe", fetch = FetchType.LAZY)
     private List<ProgramasEducativosAcreditaciones> programasEducativosAcreditacionesList;
 
     public ProgramasEducativosOrganismosEvaluadores() {

@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -45,9 +46,9 @@ public class BajasCausa implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "causa")
     private String causa;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "causaBaja")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "causaBaja", fetch = FetchType.LAZY)
     private List<DesercionPorEstudiante> desercionPorEstudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bajasCausa")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bajasCausa", fetch = FetchType.LAZY)
     private List<BajasCausaCategoria> bajasCausaCategoriaList;
 
     public BajasCausa() {
@@ -86,7 +87,7 @@ public class BajasCausa implements Serializable {
     public void setDesercionPorEstudianteList(List<DesercionPorEstudiante> desercionPorEstudianteList) {
         this.desercionPorEstudianteList = desercionPorEstudianteList;
     }
-    
+
     @XmlTransient
     public List<BajasCausaCategoria> getBajasCausaCategoriaList() {
         return bajasCausaCategoriaList;
@@ -95,7 +96,7 @@ public class BajasCausa implements Serializable {
     public void setBajasCausaCategoriaList(List<BajasCausaCategoria> bajasCausaCategoriaList) {
         this.bajasCausaCategoriaList = bajasCausaCategoriaList;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;

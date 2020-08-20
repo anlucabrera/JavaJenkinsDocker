@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -51,7 +52,7 @@ public class ActividadesVinculacion implements Serializable {
     @JoinTable(name = "pye2.actividad_vinculacion_empresa", joinColumns = {
         @JoinColumn(name = "actividad_vinculacion", referencedColumnName = "actividad_vinculacion")}, inverseJoinColumns = {
         @JoinColumn(name = "empresa", referencedColumnName = "empresa")})
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<OrganismosVinculados> organismosVinculadosList;
 
     public ActividadesVinculacion() {

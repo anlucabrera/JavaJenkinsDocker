@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
@@ -64,16 +65,16 @@ public class FeriasProfesiograficas implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "evento")
     private String evento;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "feria")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "feria", fetch = FetchType.LAZY)
     private List<FeriasParticipantes> feriasParticipantesList;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
     @JoinColumns({
         @JoinColumn(name = "estado", referencedColumnName = "claveEstado")
         , @JoinColumn(name = "municipio", referencedColumnName = "claveMunicipio")
         , @JoinColumn(name = "localidad", referencedColumnName = "claveLocalidad")})
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Localidad localidad;
 
     public FeriasProfesiograficas() {

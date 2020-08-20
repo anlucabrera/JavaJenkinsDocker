@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -102,18 +103,18 @@ public class Iems implements Serializable {
     @NotNull
     @Column(name = "status")
     private short status;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "iems")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "iems", fetch = FetchType.LAZY)
     private List<FeriasParticipantes> feriasParticipantesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "iems")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "iems", fetch = FetchType.LAZY)
     private List<DifusionIems> difusionIemsList;
     @JoinColumns({
         @JoinColumn(name = "entidad", referencedColumnName = "claveEstado")
         , @JoinColumn(name = "municipio", referencedColumnName = "claveMunicipio")
         , @JoinColumn(name = "localidad", referencedColumnName = "claveLocalidad")})
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Localidad localidad;
     @JoinColumn(name = "servedu", referencedColumnName = "serveducativo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private IemsServedu servedu;
 
     public Iems() {

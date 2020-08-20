@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,11 +54,11 @@ public class CapitulosTipos implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "capituloTipo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "capituloTipo", fetch = FetchType.LAZY)
     private List<PretechoFinanciero> pretechoFinancieroList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "capituloTipo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "capituloTipo", fetch = FetchType.LAZY)
     private List<Presupuestos> presupuestosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "capitulo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "capitulo", fetch = FetchType.LAZY)
     private List<ProductosAreas> productosAreasList;
 
     public CapitulosTipos() {

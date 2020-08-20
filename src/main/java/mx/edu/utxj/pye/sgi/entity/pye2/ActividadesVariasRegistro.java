@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -94,7 +95,7 @@ public class ActividadesVariasRegistro implements Serializable {
     @Column(name = "personalidades")
     private String personalidades;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
 
     public ActividadesVariasRegistro() {

@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -57,7 +58,7 @@ public class UsuariosRegistros implements Serializable {
     @NotNull
     @Column(name = "clave_personal")
     private int clavePersonal;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuariosRegistros")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuariosRegistros", fetch = FetchType.LAZY)
     private List<UsuariosRegistroEspecifico> usuariosRegistroEspecificoList;
 
     public UsuariosRegistros() {

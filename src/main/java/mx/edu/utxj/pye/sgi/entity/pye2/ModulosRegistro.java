@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -88,10 +89,10 @@ public class ModulosRegistro implements Serializable {
     @Size(min = 1, max = 2)
     @Column(name = "estado")
     private String estado;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modulosRegistro")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modulosRegistro", fetch = FetchType.LAZY)
     private List<ModulosRegistroEspecifico> modulosRegistroEspecificoList;
     @JoinColumn(name = "eje", referencedColumnName = "eje")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EjesRegistro eje;
 
     public ModulosRegistro() {

@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,10 +50,10 @@ public class PreguntasEncuestaClimaLaboral implements Serializable {
     @Size(min = 1, max = 500)
     @Column(name = "pregunta")
     private String pregunta;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaClimaLaboral")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaClimaLaboral", fetch = FetchType.LAZY)
     private List<EncuestaCapacitacionClimaLaboral> encuestaCapacitacionClimaLaboralList;
     @JoinColumn(name = "categoria", referencedColumnName = "id_categoria")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CategoriasEncuestaClimaLaboral categoria;
 
     public PreguntasEncuestaClimaLaboral() {

@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -75,10 +76,10 @@ public class ServiciosEnfermeriaCicloPeriodos implements Serializable {
     @Column(name = "per_m")
     private int perM;
     @JoinColumn(name = "servicio", referencedColumnName = "servicio")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ServiciosEnfermeriaTipo servicio;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
 
     public ServiciosEnfermeriaCicloPeriodos() {

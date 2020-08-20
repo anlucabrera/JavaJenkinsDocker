@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -44,7 +45,7 @@ public class CostoPorAlumno implements Serializable {
     @Column(name = "presupuesto_autorizado")
     private BigDecimal presupuestoAutorizado;
     @JoinColumn(name = "ciclo", referencedColumnName = "ciclo", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private CiclosEscolares ciclosEscolares;
 
     public CostoPorAlumno() {

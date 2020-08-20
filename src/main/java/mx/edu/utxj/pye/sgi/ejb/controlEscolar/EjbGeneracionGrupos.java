@@ -13,7 +13,7 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
-import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.view.Listaperiodosescolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.AlertaTipo;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;

@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -63,17 +64,17 @@ public class IndicadoresPide implements Serializable {
     @Size(min = 1, max = 13)
     @Column(name = "frecuencia")
     private String frecuencia;
-    @JoinTable(name = "proyecto_indicador", joinColumns = {
+    @JoinTable(name = "pye2.proyecto_indicador", joinColumns = {
         @JoinColumn(name = "indicador", referencedColumnName = "indicador")}, inverseJoinColumns = {
         @JoinColumn(name = "proyecto", referencedColumnName = "proyecto")})
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Proyectos> proyectosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicadoresPide")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicadoresPide", fetch = FetchType.LAZY)
     private List<IndicadorPlazo> indicadorPlazoList;
     @JoinColumn(name = "unidad_medida", referencedColumnName = "unidad_medida")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private UnidadMedidas unidadMedida;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicadoresPide")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicadoresPide", fetch = FetchType.LAZY)
     private List<FuenteInformacion> fuenteInformacionList;
 
     public IndicadoresPide() {

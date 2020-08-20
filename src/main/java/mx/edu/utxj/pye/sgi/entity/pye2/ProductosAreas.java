@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,18 +49,18 @@ public class ProductosAreas implements Serializable {
     @NotNull
     @Column(name = "area")
     private short area;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productoArea")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productoArea", fetch = FetchType.LAZY)
     private List<RecursosActividad> recursosActividadList;
     @JoinColumn(name = "capitulo", referencedColumnName = "capitulo_tipo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CapitulosTipos capitulo;
     @JoinColumn(name = "partida", referencedColumnName = "partida")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Partidas partida;
     @JoinColumns({
         @JoinColumn(name = "producto", referencedColumnName = "producto")
         , @JoinColumn(name = "ejercicio_fiscal", referencedColumnName = "ejercicio_fiscal")})
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Productos productos;
 
     public ProductosAreas() {

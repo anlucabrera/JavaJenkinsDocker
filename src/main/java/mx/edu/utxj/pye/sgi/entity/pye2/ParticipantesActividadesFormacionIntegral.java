@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
@@ -39,15 +40,15 @@ public class ParticipantesActividadesFormacionIntegral implements Serializable {
     @Column(name = "registro")
     private Integer registro;
     @JoinColumn(name = "actividad_formacion_integral", referencedColumnName = "actividad_formacion_integral")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ActividadesFormacionIntegral actividadFormacionIntegral;
     @JoinColumns({
         @JoinColumn(name = "matricula", referencedColumnName = "matricula")
         , @JoinColumn(name = "periodo_escolar", referencedColumnName = "periodo")})
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private MatriculaPeriodosEscolares matriculaPeriodosEscolares;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
 
     public ParticipantesActividadesFormacionIntegral() {

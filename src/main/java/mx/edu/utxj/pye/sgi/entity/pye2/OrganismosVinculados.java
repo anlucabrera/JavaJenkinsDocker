@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
@@ -116,49 +117,49 @@ public class OrganismosVinculados implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
-    @ManyToMany(mappedBy = "organismosVinculadosList")
+    @ManyToMany(mappedBy = "organismosVinculadosList", fetch = FetchType.LAZY)
     private List<ActividadesVinculacion> actividadesVinculacionList;
-    @OneToMany(mappedBy = "empresa")
+    @OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY)
     private List<ServiciosTecnologicosParticipantes> serviciosTecnologicosParticipantesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa", fetch = FetchType.LAZY)
     private List<VisitasIndustriales> visitasIndustrialesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa", fetch = FetchType.LAZY)
     private List<CorreosEmpresa> correosEmpresaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa", fetch = FetchType.LAZY)
     private List<Convenios> conveniosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa", fetch = FetchType.LAZY)
     private List<TelefonosEmpresa> telefonosEmpresaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa", fetch = FetchType.LAZY)
     private List<ContactosEmpresa> contactosEmpresaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa", fetch = FetchType.LAZY)
     private List<BolsaTrabajo> bolsaTrabajoList;
     @JoinColumn(name = "emp_tip", referencedColumnName = "emptipo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EmpresasTipo empTip;
     @JoinColumn(name = "giro", referencedColumnName = "giro")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private GirosTipo giro;
     @JoinColumns({
         @JoinColumn(name = "estado", referencedColumnName = "claveEstado")
         , @JoinColumn(name = "municipio", referencedColumnName = "claveMunicipio")
         , @JoinColumn(name = "localidad", referencedColumnName = "claveLocalidad")})
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Localidad localidad;
     @JoinColumn(name = "org_tip", referencedColumnName = "orgtipo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private OrganismosTipo orgTip;
     @JoinColumn(name = "pais", referencedColumnName = "idpais")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Pais pais;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
     @JoinColumn(name = "sector", referencedColumnName = "sector")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private SectoresTipo sector;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organismosVinculados")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organismosVinculados", fetch = FetchType.LAZY)
     private List<ProgramasBeneficiadosVinculacion> programasBeneficiadosVinculacionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa", fetch = FetchType.LAZY)
     private List<EstadiasPorEstudiante> estadiasPorEstudianteList;
 
     public OrganismosVinculados() {

@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -41,22 +42,22 @@ public class CuadroMandoIntegral implements Serializable {
     @Basic(optional = false)
     @Column(name = "cuadro_mando_int")
     private Integer cuadroMandoInt;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuadroMandoInt")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuadroMandoInt", fetch = FetchType.LAZY)
     private List<ActividadesPoa> actividadesPoaList;
     @JoinColumn(name = "ejercicio_fiscal", referencedColumnName = "ejercicio_fiscal")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EjerciciosFiscales ejercicioFiscal;
     @JoinColumn(name = "eje", referencedColumnName = "eje")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EjesRegistro eje;
     @JoinColumn(name = "estrategia", referencedColumnName = "estrategia")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Estrategias estrategia;
     @JoinColumn(name = "linea_accion", referencedColumnName = "linea_accion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private LineasAccion lineaAccion;
     @JoinColumn(name = "proyecto", referencedColumnName = "proyecto")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Proyectos proyecto;
 
     public CuadroMandoIntegral() {

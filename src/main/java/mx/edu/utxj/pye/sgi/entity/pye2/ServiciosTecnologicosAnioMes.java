@@ -13,6 +13,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -93,13 +94,13 @@ public class ServiciosTecnologicosAnioMes implements Serializable {
     @Size(min = 1, max = 11)
     @Column(name = "servicio_demandado")
     private String servicioDemandado;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "servicioTecnologico")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "servicioTecnologico", fetch = FetchType.LAZY)
     private List<ServiciosTecnologicosParticipantes> serviciosTecnologicosParticipantesList;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
     @JoinColumn(name = "servicio_tipo", referencedColumnName = "servtipo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ServiciosTipos servicioTipo;
 
     public ServiciosTecnologicosAnioMes() {

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -56,10 +57,10 @@ public class IngresosServEstTec implements Serializable {
     @Column(name = "servicio")
     private String servicio;
     @JoinColumn(name = "ciclo_escolar", referencedColumnName = "ciclo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CiclosEscolares cicloEscolar;
     @JoinColumn(name = "periodo", referencedColumnName = "periodo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PeriodosEscolares periodo;
 
     public IngresosServEstTec() {

@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "actividades_poa", catalog = "pye2", schema = "")
@@ -41,37 +42,37 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "ActividadesPoa.findByNumeroS", query = "SELECT a FROM ActividadesPoa a WHERE a.numeroS = :numeroS")
     , @NamedQuery(name = "ActividadesPoa.findByDenominacion", query = "SELECT a FROM ActividadesPoa a WHERE a.denominacion = :denominacion")
     , @NamedQuery(name = "ActividadesPoa.findByNPEnero", query = "SELECT a FROM ActividadesPoa a WHERE a.nPEnero = :nPEnero")
-    , @NamedQuery(name = "ActividadesPoa.findByNAEnero", query = "SELECT a FROM ActividadesPoa a WHERE a.nAEnero = :nAEnero")
     , @NamedQuery(name = "ActividadesPoa.findByNPFebrero", query = "SELECT a FROM ActividadesPoa a WHERE a.nPFebrero = :nPFebrero")
-    , @NamedQuery(name = "ActividadesPoa.findByNAFebrero", query = "SELECT a FROM ActividadesPoa a WHERE a.nAFebrero = :nAFebrero")
     , @NamedQuery(name = "ActividadesPoa.findByNPMarzo", query = "SELECT a FROM ActividadesPoa a WHERE a.nPMarzo = :nPMarzo")
-    , @NamedQuery(name = "ActividadesPoa.findByNAMarzo", query = "SELECT a FROM ActividadesPoa a WHERE a.nAMarzo = :nAMarzo")
     , @NamedQuery(name = "ActividadesPoa.findByNPAbril", query = "SELECT a FROM ActividadesPoa a WHERE a.nPAbril = :nPAbril")
-    , @NamedQuery(name = "ActividadesPoa.findByNAAbril", query = "SELECT a FROM ActividadesPoa a WHERE a.nAAbril = :nAAbril")
     , @NamedQuery(name = "ActividadesPoa.findByNPMayo", query = "SELECT a FROM ActividadesPoa a WHERE a.nPMayo = :nPMayo")
-    , @NamedQuery(name = "ActividadesPoa.findByNAMayo", query = "SELECT a FROM ActividadesPoa a WHERE a.nAMayo = :nAMayo")
     , @NamedQuery(name = "ActividadesPoa.findByNPJunio", query = "SELECT a FROM ActividadesPoa a WHERE a.nPJunio = :nPJunio")
-    , @NamedQuery(name = "ActividadesPoa.findByNAJunio", query = "SELECT a FROM ActividadesPoa a WHERE a.nAJunio = :nAJunio")
     , @NamedQuery(name = "ActividadesPoa.findByNPJulio", query = "SELECT a FROM ActividadesPoa a WHERE a.nPJulio = :nPJulio")
-    , @NamedQuery(name = "ActividadesPoa.findByNAJulio", query = "SELECT a FROM ActividadesPoa a WHERE a.nAJulio = :nAJulio")
     , @NamedQuery(name = "ActividadesPoa.findByNPAgosto", query = "SELECT a FROM ActividadesPoa a WHERE a.nPAgosto = :nPAgosto")
-    , @NamedQuery(name = "ActividadesPoa.findByNAAgosto", query = "SELECT a FROM ActividadesPoa a WHERE a.nAAgosto = :nAAgosto")
     , @NamedQuery(name = "ActividadesPoa.findByNPSeptiembre", query = "SELECT a FROM ActividadesPoa a WHERE a.nPSeptiembre = :nPSeptiembre")
-    , @NamedQuery(name = "ActividadesPoa.findByNASeptiembre", query = "SELECT a FROM ActividadesPoa a WHERE a.nASeptiembre = :nASeptiembre")
     , @NamedQuery(name = "ActividadesPoa.findByNPOctubre", query = "SELECT a FROM ActividadesPoa a WHERE a.nPOctubre = :nPOctubre")
-    , @NamedQuery(name = "ActividadesPoa.findByNAOctubre", query = "SELECT a FROM ActividadesPoa a WHERE a.nAOctubre = :nAOctubre")
     , @NamedQuery(name = "ActividadesPoa.findByNPNoviembre", query = "SELECT a FROM ActividadesPoa a WHERE a.nPNoviembre = :nPNoviembre")
-    , @NamedQuery(name = "ActividadesPoa.findByNANoviembre", query = "SELECT a FROM ActividadesPoa a WHERE a.nANoviembre = :nANoviembre")
     , @NamedQuery(name = "ActividadesPoa.findByNPDiciembre", query = "SELECT a FROM ActividadesPoa a WHERE a.nPDiciembre = :nPDiciembre")
-    , @NamedQuery(name = "ActividadesPoa.findByNADiciembre", query = "SELECT a FROM ActividadesPoa a WHERE a.nADiciembre = :nADiciembre")
     , @NamedQuery(name = "ActividadesPoa.findByTotal", query = "SELECT a FROM ActividadesPoa a WHERE a.total = :total")
+    , @NamedQuery(name = "ActividadesPoa.findByActividadPadre", query = "SELECT a FROM ActividadesPoa a WHERE a.actividadPadre = :actividadPadre")
+    , @NamedQuery(name = "ActividadesPoa.findByBandera", query = "SELECT a FROM ActividadesPoa a WHERE a.bandera = :bandera")
+    , @NamedQuery(name = "ActividadesPoa.findByArea", query = "SELECT a FROM ActividadesPoa a WHERE a.area = :area")
+    , @NamedQuery(name = "ActividadesPoa.findByNAEnero", query = "SELECT a FROM ActividadesPoa a WHERE a.nAEnero = :nAEnero")
+    , @NamedQuery(name = "ActividadesPoa.findByNAFebrero", query = "SELECT a FROM ActividadesPoa a WHERE a.nAFebrero = :nAFebrero")
+    , @NamedQuery(name = "ActividadesPoa.findByNAMarzo", query = "SELECT a FROM ActividadesPoa a WHERE a.nAMarzo = :nAMarzo")
+    , @NamedQuery(name = "ActividadesPoa.findByNAAbril", query = "SELECT a FROM ActividadesPoa a WHERE a.nAAbril = :nAAbril")
+    , @NamedQuery(name = "ActividadesPoa.findByNAMayo", query = "SELECT a FROM ActividadesPoa a WHERE a.nAMayo = :nAMayo")
+    , @NamedQuery(name = "ActividadesPoa.findByNAJunio", query = "SELECT a FROM ActividadesPoa a WHERE a.nAJunio = :nAJunio")
+    , @NamedQuery(name = "ActividadesPoa.findByNAJulio", query = "SELECT a FROM ActividadesPoa a WHERE a.nAJulio = :nAJulio")
+    , @NamedQuery(name = "ActividadesPoa.findByNAAgosto", query = "SELECT a FROM ActividadesPoa a WHERE a.nAAgosto = :nAAgosto")
+    , @NamedQuery(name = "ActividadesPoa.findByNASeptiembre", query = "SELECT a FROM ActividadesPoa a WHERE a.nASeptiembre = :nASeptiembre")
+    , @NamedQuery(name = "ActividadesPoa.findByNAOctubre", query = "SELECT a FROM ActividadesPoa a WHERE a.nAOctubre = :nAOctubre")
+    , @NamedQuery(name = "ActividadesPoa.findByNANoviembre", query = "SELECT a FROM ActividadesPoa a WHERE a.nANoviembre = :nANoviembre")
+    , @NamedQuery(name = "ActividadesPoa.findByNADiciembre", query = "SELECT a FROM ActividadesPoa a WHERE a.nADiciembre = :nADiciembre")
     , @NamedQuery(name = "ActividadesPoa.findByJustAbril", query = "SELECT a FROM ActividadesPoa a WHERE a.justAbril = :justAbril")
     , @NamedQuery(name = "ActividadesPoa.findByJustAgosto", query = "SELECT a FROM ActividadesPoa a WHERE a.justAgosto = :justAgosto")
     , @NamedQuery(name = "ActividadesPoa.findByJustDiciembre", query = "SELECT a FROM ActividadesPoa a WHERE a.justDiciembre = :justDiciembre")
     , @NamedQuery(name = "ActividadesPoa.findByDescripcion", query = "SELECT a FROM ActividadesPoa a WHERE a.descripcion = :descripcion")
-    , @NamedQuery(name = "ActividadesPoa.findByArea", query = "SELECT a FROM ActividadesPoa a WHERE a.area = :area")
-    , @NamedQuery(name = "ActividadesPoa.findByBandera", query = "SELECT a FROM ActividadesPoa a WHERE a.bandera = :bandera")
-    , @NamedQuery(name = "ActividadesPoa.findByActividadPadre", query = "SELECT a FROM ActividadesPoa a WHERE a.actividadPadre = :actividadPadre")
     , @NamedQuery(name = "ActividadesPoa.findByEsPIDE", query = "SELECT a FROM ActividadesPoa a WHERE a.esPIDE = :esPIDE")
     , @NamedQuery(name = "ActividadesPoa.findByActividadPasada", query = "SELECT a FROM ActividadesPoa a WHERE a.actividadPasada = :actividadPasada")
     , @NamedQuery(name = "ActividadesPoa.findByEstratejica", query = "SELECT a FROM ActividadesPoa a WHERE a.estratejica = :estratejica")})
@@ -102,100 +103,111 @@ public class ActividadesPoa implements Serializable {
     private short nPEnero;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "NA_Enero")
-    private short nAEnero;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "NP_Febrero")
     private short nPFebrero;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "NA_Febrero")
-    private short nAFebrero;
     @Basic(optional = false)
     @NotNull
     @Column(name = "NP_Marzo")
     private short nPMarzo;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "NA_Marzo")
-    private short nAMarzo;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "NP_Abril")
     private short nPAbril;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "NA_Abril")
-    private short nAAbril;
     @Basic(optional = false)
     @NotNull
     @Column(name = "NP_Mayo")
     private short nPMayo;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "NA_Mayo")
-    private short nAMayo;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "NP_Junio")
     private short nPJunio;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "NA_Junio")
-    private short nAJunio;
     @Basic(optional = false)
     @NotNull
     @Column(name = "NP_Julio")
     private short nPJulio;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "NA_Julio")
-    private short nAJulio;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "NP_Agosto")
     private short nPAgosto;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "NA_Agosto")
-    private short nAAgosto;
     @Basic(optional = false)
     @NotNull
     @Column(name = "NP_Septiembre")
     private short nPSeptiembre;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "NA_Septiembre")
-    private short nASeptiembre;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "NP_Octubre")
     private short nPOctubre;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "NA_Octubre")
-    private short nAOctubre;
     @Basic(optional = false)
     @NotNull
     @Column(name = "NP_Noviembre")
     private short nPNoviembre;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "NA_Noviembre")
-    private short nANoviembre;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "NP_Diciembre")
     private short nPDiciembre;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "NA_Diciembre")
-    private short nADiciembre;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "total")
     private short total;
+    @Column(name = "actividadPadre")
+    private Integer actividadPadre;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 2)
+    @Column(name = "bandera")
+    private String bandera;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "area")
+    private short area;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "NA_Enero")
+    private short nAEnero;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "NA_Febrero")
+    private short nAFebrero;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "NA_Marzo")
+    private short nAMarzo;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "NA_Abril")
+    private short nAAbril;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "NA_Mayo")
+    private short nAMayo;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "NA_Junio")
+    private short nAJunio;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "NA_Julio")
+    private short nAJulio;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "NA_Agosto")
+    private short nAAgosto;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "NA_Septiembre")
+    private short nASeptiembre;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "NA_Octubre")
+    private short nAOctubre;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "NA_Noviembre")
+    private short nANoviembre;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "NA_Diciembre")
+    private short nADiciembre;
     @Size(max = 1000)
     @Column(name = "just_Abril")
     private String justAbril;
@@ -208,17 +220,6 @@ public class ActividadesPoa implements Serializable {
     @Size(max = 1500)
     @Column(name = "descripcion")
     private String descripcion;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "area")
-    private short area;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 2)
-    @Column(name = "bandera")
-    private String bandera;
-    @Column(name = "actividadPadre")
-    private Integer actividadPadre;
     @Size(max = 7)
     @Column(name = "esPIDE")
     private String esPIDE;
@@ -233,20 +234,20 @@ public class ActividadesPoa implements Serializable {
     @JoinTable(name = "pye2.actividades_registros", joinColumns = {
         @JoinColumn(name = "actividad", referencedColumnName = "actividad_poa")}, inverseJoinColumns = {
         @JoinColumn(name = "registro", referencedColumnName = "registro")})
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Registros> registrosList;
     @JoinTable(name = "pye2.actividades_evidencias", joinColumns = {
         @JoinColumn(name = "actividad", referencedColumnName = "actividad_poa")}, inverseJoinColumns = {
         @JoinColumn(name = "evidencia", referencedColumnName = "evidencia")})
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Evidencias> evidenciasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "actividadPoa")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "actividadPoa", fetch = FetchType.LAZY)
     private List<RecursosActividad> recursosActividadList;
     @JoinColumn(name = "cuadro_mando_int", referencedColumnName = "cuadro_mando_int")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CuadroMandoIntegral cuadroMandoInt;
     @JoinColumn(name = "unidad_medida", referencedColumnName = "unidad_medida")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private UnidadMedidas unidadMedida;
 
     public ActividadesPoa() {
@@ -256,38 +257,38 @@ public class ActividadesPoa implements Serializable {
         this.actividadPoa = actividadPoa;
     }
 
-    public ActividadesPoa(Integer actividadPoa, short numeroP, short numeroS, String denominacion, short nPEnero, short nAEnero, short nPFebrero, short nAFebrero, short nPMarzo, short nAMarzo, short nPAbril, short nAAbril, short nPMayo, short nAMayo, short nPJunio, short nAJunio, short nPJulio, short nAJulio, short nPAgosto, short nAAgosto, short nPSeptiembre, short nASeptiembre, short nPOctubre, short nAOctubre, short nPNoviembre, short nANoviembre, short nPDiciembre, short nADiciembre, short total, short area, String bandera, boolean actividadPasada, boolean estratejica) {
+    public ActividadesPoa(Integer actividadPoa, short numeroP, short numeroS, String denominacion, short nPEnero, short nPFebrero, short nPMarzo, short nPAbril, short nPMayo, short nPJunio, short nPJulio, short nPAgosto, short nPSeptiembre, short nPOctubre, short nPNoviembre, short nPDiciembre, short total, String bandera, short area, short nAEnero, short nAFebrero, short nAMarzo, short nAAbril, short nAMayo, short nAJunio, short nAJulio, short nAAgosto, short nASeptiembre, short nAOctubre, short nANoviembre, short nADiciembre, boolean actividadPasada, boolean estratejica) {
         this.actividadPoa = actividadPoa;
         this.numeroP = numeroP;
         this.numeroS = numeroS;
         this.denominacion = denominacion;
         this.nPEnero = nPEnero;
-        this.nAEnero = nAEnero;
         this.nPFebrero = nPFebrero;
-        this.nAFebrero = nAFebrero;
         this.nPMarzo = nPMarzo;
-        this.nAMarzo = nAMarzo;
         this.nPAbril = nPAbril;
-        this.nAAbril = nAAbril;
         this.nPMayo = nPMayo;
-        this.nAMayo = nAMayo;
         this.nPJunio = nPJunio;
-        this.nAJunio = nAJunio;
         this.nPJulio = nPJulio;
-        this.nAJulio = nAJulio;
         this.nPAgosto = nPAgosto;
-        this.nAAgosto = nAAgosto;
         this.nPSeptiembre = nPSeptiembre;
-        this.nASeptiembre = nASeptiembre;
         this.nPOctubre = nPOctubre;
-        this.nAOctubre = nAOctubre;
         this.nPNoviembre = nPNoviembre;
-        this.nANoviembre = nANoviembre;
         this.nPDiciembre = nPDiciembre;
-        this.nADiciembre = nADiciembre;
         this.total = total;
-        this.area = area;
         this.bandera = bandera;
+        this.area = area;
+        this.nAEnero = nAEnero;
+        this.nAFebrero = nAFebrero;
+        this.nAMarzo = nAMarzo;
+        this.nAAbril = nAAbril;
+        this.nAMayo = nAMayo;
+        this.nAJunio = nAJunio;
+        this.nAJulio = nAJulio;
+        this.nAAgosto = nAAgosto;
+        this.nASeptiembre = nASeptiembre;
+        this.nAOctubre = nAOctubre;
+        this.nANoviembre = nANoviembre;
+        this.nADiciembre = nADiciembre;
         this.actividadPasada = actividadPasada;
         this.estratejica = estratejica;
     }
@@ -332,28 +333,12 @@ public class ActividadesPoa implements Serializable {
         this.nPEnero = nPEnero;
     }
 
-    public short getNAEnero() {
-        return nAEnero;
-    }
-
-    public void setNAEnero(short nAEnero) {
-        this.nAEnero = nAEnero;
-    }
-
     public short getNPFebrero() {
         return nPFebrero;
     }
 
     public void setNPFebrero(short nPFebrero) {
         this.nPFebrero = nPFebrero;
-    }
-
-    public short getNAFebrero() {
-        return nAFebrero;
-    }
-
-    public void setNAFebrero(short nAFebrero) {
-        this.nAFebrero = nAFebrero;
     }
 
     public short getNPMarzo() {
@@ -364,28 +349,12 @@ public class ActividadesPoa implements Serializable {
         this.nPMarzo = nPMarzo;
     }
 
-    public short getNAMarzo() {
-        return nAMarzo;
-    }
-
-    public void setNAMarzo(short nAMarzo) {
-        this.nAMarzo = nAMarzo;
-    }
-
     public short getNPAbril() {
         return nPAbril;
     }
 
     public void setNPAbril(short nPAbril) {
         this.nPAbril = nPAbril;
-    }
-
-    public short getNAAbril() {
-        return nAAbril;
-    }
-
-    public void setNAAbril(short nAAbril) {
-        this.nAAbril = nAAbril;
     }
 
     public short getNPMayo() {
@@ -396,28 +365,12 @@ public class ActividadesPoa implements Serializable {
         this.nPMayo = nPMayo;
     }
 
-    public short getNAMayo() {
-        return nAMayo;
-    }
-
-    public void setNAMayo(short nAMayo) {
-        this.nAMayo = nAMayo;
-    }
-
     public short getNPJunio() {
         return nPJunio;
     }
 
     public void setNPJunio(short nPJunio) {
         this.nPJunio = nPJunio;
-    }
-
-    public short getNAJunio() {
-        return nAJunio;
-    }
-
-    public void setNAJunio(short nAJunio) {
-        this.nAJunio = nAJunio;
     }
 
     public short getNPJulio() {
@@ -428,28 +381,12 @@ public class ActividadesPoa implements Serializable {
         this.nPJulio = nPJulio;
     }
 
-    public short getNAJulio() {
-        return nAJulio;
-    }
-
-    public void setNAJulio(short nAJulio) {
-        this.nAJulio = nAJulio;
-    }
-
     public short getNPAgosto() {
         return nPAgosto;
     }
 
     public void setNPAgosto(short nPAgosto) {
         this.nPAgosto = nPAgosto;
-    }
-
-    public short getNAAgosto() {
-        return nAAgosto;
-    }
-
-    public void setNAAgosto(short nAAgosto) {
-        this.nAAgosto = nAAgosto;
     }
 
     public short getNPSeptiembre() {
@@ -460,28 +397,12 @@ public class ActividadesPoa implements Serializable {
         this.nPSeptiembre = nPSeptiembre;
     }
 
-    public short getNASeptiembre() {
-        return nASeptiembre;
-    }
-
-    public void setNASeptiembre(short nASeptiembre) {
-        this.nASeptiembre = nASeptiembre;
-    }
-
     public short getNPOctubre() {
         return nPOctubre;
     }
 
     public void setNPOctubre(short nPOctubre) {
         this.nPOctubre = nPOctubre;
-    }
-
-    public short getNAOctubre() {
-        return nAOctubre;
-    }
-
-    public void setNAOctubre(short nAOctubre) {
-        this.nAOctubre = nAOctubre;
     }
 
     public short getNPNoviembre() {
@@ -492,14 +413,6 @@ public class ActividadesPoa implements Serializable {
         this.nPNoviembre = nPNoviembre;
     }
 
-    public short getNANoviembre() {
-        return nANoviembre;
-    }
-
-    public void setNANoviembre(short nANoviembre) {
-        this.nANoviembre = nANoviembre;
-    }
-
     public short getNPDiciembre() {
         return nPDiciembre;
     }
@@ -508,20 +421,132 @@ public class ActividadesPoa implements Serializable {
         this.nPDiciembre = nPDiciembre;
     }
 
-    public short getNADiciembre() {
-        return nADiciembre;
-    }
-
-    public void setNADiciembre(short nADiciembre) {
-        this.nADiciembre = nADiciembre;
-    }
-
     public short getTotal() {
         return total;
     }
 
     public void setTotal(short total) {
         this.total = total;
+    }
+
+    public Integer getActividadPadre() {
+        return actividadPadre;
+    }
+
+    public void setActividadPadre(Integer actividadPadre) {
+        this.actividadPadre = actividadPadre;
+    }
+
+    public String getBandera() {
+        return bandera;
+    }
+
+    public void setBandera(String bandera) {
+        this.bandera = bandera;
+    }
+
+    public short getArea() {
+        return area;
+    }
+
+    public void setArea(short area) {
+        this.area = area;
+    }
+
+    public short getNAEnero() {
+        return nAEnero;
+    }
+
+    public void setNAEnero(short nAEnero) {
+        this.nAEnero = nAEnero;
+    }
+
+    public short getNAFebrero() {
+        return nAFebrero;
+    }
+
+    public void setNAFebrero(short nAFebrero) {
+        this.nAFebrero = nAFebrero;
+    }
+
+    public short getNAMarzo() {
+        return nAMarzo;
+    }
+
+    public void setNAMarzo(short nAMarzo) {
+        this.nAMarzo = nAMarzo;
+    }
+
+    public short getNAAbril() {
+        return nAAbril;
+    }
+
+    public void setNAAbril(short nAAbril) {
+        this.nAAbril = nAAbril;
+    }
+
+    public short getNAMayo() {
+        return nAMayo;
+    }
+
+    public void setNAMayo(short nAMayo) {
+        this.nAMayo = nAMayo;
+    }
+
+    public short getNAJunio() {
+        return nAJunio;
+    }
+
+    public void setNAJunio(short nAJunio) {
+        this.nAJunio = nAJunio;
+    }
+
+    public short getNAJulio() {
+        return nAJulio;
+    }
+
+    public void setNAJulio(short nAJulio) {
+        this.nAJulio = nAJulio;
+    }
+
+    public short getNAAgosto() {
+        return nAAgosto;
+    }
+
+    public void setNAAgosto(short nAAgosto) {
+        this.nAAgosto = nAAgosto;
+    }
+
+    public short getNASeptiembre() {
+        return nASeptiembre;
+    }
+
+    public void setNASeptiembre(short nASeptiembre) {
+        this.nASeptiembre = nASeptiembre;
+    }
+
+    public short getNAOctubre() {
+        return nAOctubre;
+    }
+
+    public void setNAOctubre(short nAOctubre) {
+        this.nAOctubre = nAOctubre;
+    }
+
+    public short getNANoviembre() {
+        return nANoviembre;
+    }
+
+    public void setNANoviembre(short nANoviembre) {
+        this.nANoviembre = nANoviembre;
+    }
+
+    public short getNADiciembre() {
+        return nADiciembre;
+    }
+
+    public void setNADiciembre(short nADiciembre) {
+        this.nADiciembre = nADiciembre;
     }
 
     public String getJustAbril() {
@@ -554,30 +579,6 @@ public class ActividadesPoa implements Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    public short getArea() {
-        return area;
-    }
-
-    public void setArea(short area) {
-        this.area = area;
-    }
-
-    public String getBandera() {
-        return bandera;
-    }
-
-    public void setBandera(String bandera) {
-        this.bandera = bandera;
-    }
-
-    public Integer getActividadPadre() {
-        return actividadPadre;
-    }
-
-    public void setActividadPadre(Integer actividadPadre) {
-        this.actividadPadre = actividadPadre;
     }
 
     public String getEsPIDE() {

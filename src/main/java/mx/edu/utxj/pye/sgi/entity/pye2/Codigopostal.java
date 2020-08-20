@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.Lob;
@@ -53,10 +54,10 @@ public class Codigopostal implements Serializable {
     @JoinColumns({
         @JoinColumn(name = "estado", referencedColumnName = "claveEstado", insertable = false, updatable = false)
         , @JoinColumn(name = "municipio", referencedColumnName = "claveMunicipio", insertable = false, updatable = false)})
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Municipio municipio1;
     @JoinColumn(name = "tipo_asentamiento", referencedColumnName = "tipoAsentamiento")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Tipoasentamiento tipoAsentamiento;
 
     public Codigopostal() {

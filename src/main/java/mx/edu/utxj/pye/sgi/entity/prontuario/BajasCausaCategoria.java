@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.entity.prontuario;
 import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -32,7 +33,7 @@ public class BajasCausaCategoria implements Serializable {
     @EmbeddedId
     protected BajasCausaCategoriaPK bajasCausaCategoriaPK;
     @JoinColumn(name = "causa", referencedColumnName = "cve_causa", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private BajasCausa bajasCausa;
 
     public BajasCausaCategoria() {

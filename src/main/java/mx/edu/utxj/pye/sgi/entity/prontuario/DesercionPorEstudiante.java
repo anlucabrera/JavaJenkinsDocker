@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -70,16 +71,16 @@ public class DesercionPorEstudiante implements Serializable {
     @Column(name = "genero")
     private Character genero;
     @JoinColumn(name = "causa_baja", referencedColumnName = "cve_causa")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private BajasCausa causaBaja;
     @JoinColumn(name = "tipo_baja", referencedColumnName = "tipo_baja")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private BajasTipo tipoBaja;
     @JoinColumn(name = "generacion", referencedColumnName = "generacion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Generaciones generacion;
     @JoinColumn(name = "siglas", referencedColumnName = "siglas")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProgramasEducativos siglas;
 
     public DesercionPorEstudiante() {

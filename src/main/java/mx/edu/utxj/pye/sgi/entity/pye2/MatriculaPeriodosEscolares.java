@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -94,17 +95,17 @@ public class MatriculaPeriodosEscolares implements Serializable {
     @Column(name = "comunidadIndigena")
     private String comunidadIndigena;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares", fetch = FetchType.LAZY)
     private List<BecasPeriodosEscolares> becasPeriodosEscolaresList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares", fetch = FetchType.LAZY)
     private List<ParticipantesActividadesFormacionIntegral> participantesActividadesFormacionIntegralList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares", fetch = FetchType.LAZY)
     private List<RegistroMovilidadEstudiante> registroMovilidadEstudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares", fetch = FetchType.LAZY)
     private List<EstadiasPorEstudiante> estadiasPorEstudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matriculaPeriodosEscolares", fetch = FetchType.LAZY)
     private List<DesercionPeriodosEscolares> desercionPeriodosEscolaresList;
 
     public MatriculaPeriodosEscolares() {

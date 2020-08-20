@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -45,15 +46,15 @@ public class EjerciciosFiscales implements Serializable {
     @NotNull
     @Column(name = "anio")
     private short anio;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejerciciosFiscales")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejerciciosFiscales", fetch = FetchType.LAZY)
     private List<Productos> productosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejerciciosFiscales")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejerciciosFiscales", fetch = FetchType.LAZY)
     private List<IndicadorPlazo> indicadorPlazoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejercicioFiscal")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejercicioFiscal", fetch = FetchType.LAZY)
     private List<PretechoFinanciero> pretechoFinancieroList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejercicioFiscal")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejercicioFiscal", fetch = FetchType.LAZY)
     private List<EventosRegistros> eventosRegistrosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejercicioFiscal")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ejercicioFiscal", fetch = FetchType.LAZY)
     private List<CuadroMandoIntegral> cuadroMandoIntegralList;
 
     public EjerciciosFiscales() {

@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -109,10 +110,10 @@ public class RecursosActividad implements Serializable {
     @Column(name = "justificacion")
     private String justificacion;
     @JoinColumn(name = "actividad_poa", referencedColumnName = "actividad_poa")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ActividadesPoa actividadPoa;
     @JoinColumn(name = "producto_area", referencedColumnName = "producto_area")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProductosAreas productoArea;
 
     public RecursosActividad() {

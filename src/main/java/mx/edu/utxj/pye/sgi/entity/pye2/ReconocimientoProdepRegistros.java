@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -63,13 +64,13 @@ public class ReconocimientoProdepRegistros implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date vigenciaFinal;
     @JoinColumn(name = "cuerp_acad", referencedColumnName = "cuerpo_academico")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CuerposAcademicosRegistro cuerpAcad;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
     @JoinColumn(name = "tipo_apoyo", referencedColumnName = "tipo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ReconocimientoProdepTiposApoyo tipoApoyo;
 
     public ReconocimientoProdepRegistros() {

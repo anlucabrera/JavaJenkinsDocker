@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -80,26 +81,26 @@ public class CuerposAcademicosRegistro implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico", fetch = FetchType.LAZY)
     private List<CuerpacadIntegrantes> cuerpacadIntegrantesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico", fetch = FetchType.LAZY)
     private List<CuerpacadIntegrantesBitacora> cuerpacadIntegrantesBitacoraList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpAcad")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpAcad", fetch = FetchType.LAZY)
     private List<ReconocimientoProdepRegistros> reconocimientoProdepRegistrosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico", fetch = FetchType.LAZY)
     private List<CuerpacadLineasBitacora> cuerpacadLineasBitacoraList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerpoAcademico", fetch = FetchType.LAZY)
     private List<CuerpacadLineas> cuerpacadLineasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerposAcademicosRegistro")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cuerposAcademicosRegistro", fetch = FetchType.LAZY)
     private List<CuerpoAreasAcademicas> cuerpoAreasAcademicasList;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
     @JoinColumn(name = "area_estudio", referencedColumnName = "area_estudio")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CuerpacadAreasEstudio areaEstudio;
     @JoinColumn(name = "disciplina", referencedColumnName = "disciplina")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CuerpacadDisciplinas disciplina;
 
     public CuerposAcademicosRegistro() {

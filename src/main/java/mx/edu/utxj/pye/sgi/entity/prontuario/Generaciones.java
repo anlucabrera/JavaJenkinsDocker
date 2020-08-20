@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -54,21 +55,21 @@ public class Generaciones implements Serializable {
     @NotNull
     @Column(name = "fin")
     private Short fin;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generacion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generacion", fetch = FetchType.LAZY)
     private List<NivelOcupacion> nivelOcupacionList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "generaciones")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "generaciones", fetch = FetchType.LAZY)
     private ResultadosEgetsu resultadosEgetsu;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generacion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generacion", fetch = FetchType.LAZY)
     private List<ActividadEgresado> actividadEgresadoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generacion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generacion", fetch = FetchType.LAZY)
     private List<BolsaTrabajoContratados> bolsaTrabajoContratadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generaciones")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generaciones", fetch = FetchType.LAZY)
     private List<EficienciaTerminalTasaTitulacion> eficienciaTerminalTasaTitulacionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generacion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generacion", fetch = FetchType.LAZY)
     private List<DesercionPorEstudiante> desercionPorEstudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generacion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generacion", fetch = FetchType.LAZY)
     private List<NivelIngreso> nivelIngresoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generacion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "generacion", fetch = FetchType.LAZY)
     private List<CiclosescolaresGeneraciones> ciclosescolaresGeneracionesList;
 
     public Generaciones() {

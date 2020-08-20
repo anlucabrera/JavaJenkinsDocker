@@ -7,7 +7,7 @@ package mx.edu.utxj.pye.siip.interfaces.vin;
 
 import java.util.List;
 import javax.ejb.Local;
-import mx.edu.utxj.pye.sgi.entity.pye2.CatalogoIemsRecurrentes;
+import mx.edu.utxj.pye.sgi.entity.pye2.view.CatalogoIemsRecurrentes;
 
 /**
  *

@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -53,10 +54,10 @@ public class IndicadoresCarrousel implements Serializable {
     @Column(name = "formula")
     private String formula;
     @JoinColumn(name = "categoria", referencedColumnName = "categoria")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private IndicadoresCategorias categoria;
     @JoinColumn(name = "eje", referencedColumnName = "eje")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Ejes eje;
 
     public IndicadoresCarrousel() {

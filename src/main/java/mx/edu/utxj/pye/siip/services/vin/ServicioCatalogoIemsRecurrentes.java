@@ -12,7 +12,7 @@ import javax.ejb.Stateful;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
-import mx.edu.utxj.pye.sgi.entity.pye2.CatalogoIemsRecurrentes;
+import mx.edu.utxj.pye.sgi.entity.pye2.view.CatalogoIemsRecurrentes;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbCatalogoIemsRecurrentes;

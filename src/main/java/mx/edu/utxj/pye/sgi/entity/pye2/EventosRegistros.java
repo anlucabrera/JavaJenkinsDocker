@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -64,12 +65,12 @@ public class EventosRegistros implements Serializable {
     @Size(min = 1, max = 10)
     @Column(name = "mes")
     private String mes;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventoRegistro")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventoRegistro", fetch = FetchType.LAZY)
     private List<Registros> registrosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventoRegistro")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventoRegistro", fetch = FetchType.LAZY)
     private List<EventosRegistrosDetalles> eventosRegistrosDetallesList;
     @JoinColumn(name = "ejercicio_fiscal", referencedColumnName = "ejercicio_fiscal")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EjerciciosFiscales ejercicioFiscal;
 
     public EventosRegistros() {

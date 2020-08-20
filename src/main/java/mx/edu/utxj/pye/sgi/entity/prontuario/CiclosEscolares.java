@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -56,57 +57,57 @@ public class CiclosEscolares implements Serializable {
     @Column(name = "fin")
     @Temporal(TemporalType.DATE)
     private Date fin;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<MovilidadAcademica> movilidadAcademicaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<EducacionContinua> educacionContinuaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<EquiposComputo> equiposComputoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cicloEscolar")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cicloEscolar", fetch = FetchType.LAZY)
     private List<ProgramasPertinentesCalidad> programasPertinentesCalidadList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<EncuestaSatisfaccion> encuestaSatisfaccionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<SatisfaccionHistorico> satisfaccionHistoricoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo", fetch = FetchType.LAZY)
     private List<RegistroEventos> registroEventosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<AprovechamientoEscolar> aprovechamientoEscolarList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private CostoPorAlumno costoPorAlumno;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private ResultadosExani resultadosExani;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private EquiposComputoInternet equiposComputoInternet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo", fetch = FetchType.LAZY)
     private List<DistribucionAulas> distribucionAulasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo", fetch = FetchType.LAZY)
     private List<PeriodosEscolares> periodosEscolaresList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<EncuestaSatisfaccionEmpleadoresPece> encuestaSatisfaccionEmpleadoresPeceList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<FormacionIntegral> formacionIntegralList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<MovilidadDocente> movilidadDocenteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cicloEscolar")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cicloEscolar", fetch = FetchType.LAZY)
     private List<IngresosServEstTec> ingresosServEstTecList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo", fetch = FetchType.LAZY)
     private List<DesercionHistorico> desercionHistoricoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo", fetch = FetchType.LAZY)
     private List<CapacidadInstalada> capacidadInstaladaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<ServiciosTecnologicos> serviciosTecnologicosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<CalificacionesCuatrimestre> calificacionesCuatrimestreList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo", fetch = FetchType.LAZY)
     private List<CiclosescolaresGeneraciones> ciclosescolaresGeneracionesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<EncuestaSatisfaccionEgresadosServicioProporcionado> encuestaSatisfaccionEgresadosServicioProporcionadoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<ServiciosEnfermeria> serviciosEnfermeriaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclosEscolares", fetch = FetchType.LAZY)
     private List<EncuestaSatisfaccionEgresadosPece> encuestaSatisfaccionEgresadosPeceList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ciclo", fetch = FetchType.LAZY)
     private List<AcervoBibliografico> acervoBibliograficoList;
 
     public CiclosEscolares() {

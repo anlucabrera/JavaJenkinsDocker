@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,7 +48,7 @@ public class OtrosTiposSesionesPsicopedagogia implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "descripcion")
     private String descripcion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "otroTipoSesion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "otroTipoSesion", fetch = FetchType.LAZY)
     private List<SesionIndividualMensualPsicopedogia> sesionIndividualMensualPsicopedogiaList;
 
     public OtrosTiposSesionesPsicopedagogia() {

@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -116,13 +117,13 @@ public class MovilidadAcademica implements Serializable {
     @Column(name = "bolivia")
     private int bolivia;
     @JoinColumn(name = "ciclo", referencedColumnName = "ciclo", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CiclosEscolares ciclosEscolares;
     @JoinColumn(name = "periodo", referencedColumnName = "periodo", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PeriodosEscolares periodosEscolares;
     @JoinColumn(name = "siglas", referencedColumnName = "siglas", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProgramasEducativos programasEducativos;
 
     public MovilidadAcademica() {

@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,9 +48,9 @@ public class GirosTipo implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "descripcion")
     private String descripcion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "giro")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "giro", fetch = FetchType.LAZY)
     private List<ActividadEconomicaEgresadoGeneracion> actividadEconomicaEgresadoGeneracionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "giro")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "giro", fetch = FetchType.LAZY)
     private List<OrganismosVinculados> organismosVinculadosList;
 
     public GirosTipo() {

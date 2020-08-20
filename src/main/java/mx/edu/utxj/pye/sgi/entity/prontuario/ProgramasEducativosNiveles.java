@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -46,9 +47,9 @@ public class ProgramasEducativosNiveles implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "nivel")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "nivel", fetch = FetchType.LAZY)
     private List<ProgramasEducativos> programasEducativosList;
-    @OneToMany(mappedBy = "nivelEducativo")
+    @OneToMany(mappedBy = "nivelEducativo", fetch = FetchType.LAZY)
     private List<AreasUniversidad> areasUniversidadList;
 
     public ProgramasEducativosNiveles() {

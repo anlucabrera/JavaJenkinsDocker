@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -45,7 +46,7 @@ public class MarcoClasificacion implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clasificacion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clasificacion", fetch = FetchType.LAZY)
     private List<MarcoNormativo> marcoNormativoList;
 
     public MarcoClasificacion() {

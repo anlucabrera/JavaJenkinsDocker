@@ -14,6 +14,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -96,13 +97,13 @@ public class ServiciosTecnologicos implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "servicio_otorgado")
     private String servicioOtorgado;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "claveServicio")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "claveServicio", fetch = FetchType.LAZY)
     private List<ServiciosTecnologicosEncuestasSatisfaccion> serviciosTecnologicosEncuestasSatisfaccionList;
     @JoinColumn(name = "ciclo", referencedColumnName = "ciclo", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CiclosEscolares ciclosEscolares;
     @JoinColumn(name = "mes", referencedColumnName = "numero", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Meses meses;
 
     public ServiciosTecnologicos() {

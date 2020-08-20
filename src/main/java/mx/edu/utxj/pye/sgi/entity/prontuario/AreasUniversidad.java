@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -76,13 +77,13 @@ public class AreasUniversidad implements Serializable {
     @Size(max = 255)
     @Column(name = "correoInstitucional")
     private String correoInstitucional;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "areasUniversidad")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "areasUniversidad", fetch = FetchType.LAZY)
     private List<SatisfaccionHistorico> satisfaccionHistoricoList;
     @JoinColumn(name = "categoria", referencedColumnName = "categoria")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Categorias categoria;
     @JoinColumn(name = "nivelEducativo", referencedColumnName = "nivel")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ProgramasEducativosNiveles nivelEducativo;
 
     public AreasUniversidad() {

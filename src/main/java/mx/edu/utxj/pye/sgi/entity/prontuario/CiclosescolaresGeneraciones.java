@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,10 +39,10 @@ public class CiclosescolaresGeneraciones implements Serializable {
     @Column(name = "ceg")
     private Integer ceg;
     @JoinColumn(name = "ciclo", referencedColumnName = "ciclo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CiclosEscolares ciclo;
     @JoinColumn(name = "generacion", referencedColumnName = "generacion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Generaciones generacion;
 
     public CiclosescolaresGeneraciones() {

@@ -12,6 +12,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -45,18 +46,18 @@ public class Municipio implements Serializable {
     @Size(min = 1, max = 300)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio", fetch = FetchType.LAZY)
     private List<ServiciosTecnologicosParticipantes> serviciosTecnologicosParticipantesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio", fetch = FetchType.LAZY)
     private List<ProductosAcademicos> productosAcademicosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio1")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio1", fetch = FetchType.LAZY)
     private List<Asentamiento> asentamientoList;
     @JoinColumn(name = "claveEstado", referencedColumnName = "idestado", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Estado estado;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio", fetch = FetchType.LAZY)
     private List<Localidad> localidadList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio1")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "municipio1", fetch = FetchType.LAZY)
     private List<Codigopostal> codigopostalList;
 
     public Municipio() {

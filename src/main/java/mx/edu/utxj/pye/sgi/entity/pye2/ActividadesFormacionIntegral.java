@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -112,16 +113,16 @@ public class ActividadesFormacionIntegral implements Serializable {
     @NotNull
     @Column(name = "periodo")
     private int periodo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "actividadFormacionIntegral")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "actividadFormacionIntegral", fetch = FetchType.LAZY)
     private List<ParticipantesActividadesFormacionIntegral> participantesActividadesFormacionIntegralList;
     @JoinColumn(name = "actividad_tipo", referencedColumnName = "actividad_tipo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ActividadesTipos actividadTipo;
     @JoinColumn(name = "evento_tipo", referencedColumnName = "evento_tipo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EventosTipos eventoTipo;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
 
     public ActividadesFormacionIntegral() {

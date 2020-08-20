@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.entity.pye2;
 import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -32,7 +33,7 @@ public class ProgramasBeneficiadosVinculacion implements Serializable {
     @EmbeddedId
     protected ProgramasBeneficiadosVinculacionPK programasBeneficiadosVinculacionPK;
     @JoinColumn(name = "empresa", referencedColumnName = "empresa", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private OrganismosVinculados organismosVinculados;
 
     public ProgramasBeneficiadosVinculacion() {

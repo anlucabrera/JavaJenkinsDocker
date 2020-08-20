@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -60,10 +61,10 @@ public class DistribucionAulas implements Serializable {
     @Column(name = "acondicionadas")
     private int acondicionadas;
     @JoinColumn(name = "ciclo", referencedColumnName = "ciclo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CiclosEscolares ciclo;
     @JoinColumn(name = "periodo", referencedColumnName = "periodo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PeriodosEscolares periodo;
 
     public DistribucionAulas() {

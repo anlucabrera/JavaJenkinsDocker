@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -60,7 +61,7 @@ public class EventosRegistrosDetalles implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaFin;
     @JoinColumn(name = "evento_registro", referencedColumnName = "evento_registro")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EventosRegistros eventoRegistro;
 
     public EventosRegistrosDetalles() {

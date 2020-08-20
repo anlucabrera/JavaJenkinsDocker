@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -55,13 +56,13 @@ public class BolsaTrabajoContratados implements Serializable {
     @Column(name = "observaciones")
     private String observaciones;
     @JoinColumn(name = "generacion", referencedColumnName = "generacion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Generaciones generacion;
     @JoinColumn(name = "id_plaza", referencedColumnName = "id_plaza")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private BolsaTrabajoPlazas idPlaza;
     @JoinColumn(name = "programa_educativo", referencedColumnName = "siglas")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProgramasEducativos programaEducativo;
 
     public BolsaTrabajoContratados() {

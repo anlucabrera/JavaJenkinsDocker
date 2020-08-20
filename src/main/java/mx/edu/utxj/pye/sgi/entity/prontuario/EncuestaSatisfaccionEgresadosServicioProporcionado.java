@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -72,13 +73,13 @@ public class EncuestaSatisfaccionEgresadosServicioProporcionado implements Seria
     @Column(name = "resp_g")
     private int respG;
     @JoinColumn(name = "ciclo", referencedColumnName = "ciclo", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CiclosEscolares ciclosEscolares;
     @JoinColumn(name = "periodo", referencedColumnName = "periodo", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PeriodosEscolares periodosEscolares;
     @JoinColumn(name = "pregunta", referencedColumnName = "cve_pregunta", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PreguntasSatisfaccionEgresadosServicio preguntasSatisfaccionEgresadosServicio;
 
     public EncuestaSatisfaccionEgresadosServicioProporcionado() {

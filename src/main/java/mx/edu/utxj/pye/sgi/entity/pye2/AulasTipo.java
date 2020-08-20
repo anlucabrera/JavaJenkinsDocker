@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,9 +54,9 @@ public class AulasTipo implements Serializable {
     @Size(min = 1, max = 20)
     @Column(name = "capacidad_turno")
     private String capacidadTurno;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aulaTipo")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aulaTipo", fetch = FetchType.LAZY)
     private List<DistribucionLabtallCicloPeriodosEscolares> distribucionLabtallCicloPeriodosEscolaresList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aula")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aula", fetch = FetchType.LAZY)
     private List<DistribucionAulasCicloPeriodosEscolares> distribucionAulasCicloPeriodosEscolaresList;
 
     public AulasTipo() {

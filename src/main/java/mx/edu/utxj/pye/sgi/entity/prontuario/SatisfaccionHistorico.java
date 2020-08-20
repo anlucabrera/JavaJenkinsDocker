@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -41,10 +42,10 @@ public class SatisfaccionHistorico implements Serializable {
     @Column(name = "satisfaccion_porcentaje")
     private Double satisfaccionPorcentaje;
     @JoinColumn(name = "area", referencedColumnName = "area", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private AreasUniversidad areasUniversidad;
     @JoinColumn(name = "ciclo", referencedColumnName = "ciclo", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CiclosEscolares ciclosEscolares;
 
     public SatisfaccionHistorico() {
@@ -120,9 +121,7 @@ public class SatisfaccionHistorico implements Serializable {
 
     @Override
     public String toString() {
-        return "SatisfaccionHistorico{" +
-                "satisfaccionHistoricoPK=" + satisfaccionHistoricoPK +
-                ", satisfaccionNivel=" + satisfaccionNivel +
-                '}';
+        return "mx.edu.utxj.pye.sgi.entity.prontuario.SatisfaccionHistorico[ satisfaccionHistoricoPK=" + satisfaccionHistoricoPK + " ]";
     }
+    
 }
