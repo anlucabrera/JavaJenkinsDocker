@@ -12,6 +12,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
@@ -50,16 +51,16 @@ public class Localidad implements Serializable {
     @JoinColumns({
         @JoinColumn(name = "claveEstado", referencedColumnName = "claveEstado", insertable = false, updatable = false)
         , @JoinColumn(name = "claveMunicipio", referencedColumnName = "claveMunicipio", insertable = false, updatable = false)})
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Municipio municipio;
     @JoinColumn(name = "claveTipoLocalidad", referencedColumnName = "clave")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Tipolocalidad claveTipoLocalidad;
-    @OneToMany(mappedBy = "localidad")
+    @OneToMany(mappedBy = "localidad", fetch = FetchType.LAZY)
     private List<OrganismosVinculados> organismosVinculadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "localidad")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "localidad", fetch = FetchType.LAZY)
     private List<FeriasProfesiograficas> feriasProfesiograficasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "localidad")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "localidad", fetch = FetchType.LAZY)
     private List<Iems> iemsList;
 
     public Localidad() {

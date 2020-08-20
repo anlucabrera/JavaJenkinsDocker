@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,22 +50,22 @@ public class Variables implements Serializable {
     @Size(min = 1, max = 250)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "variable")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "variable", fetch = FetchType.LAZY)
     private List<IndicadoresVariables> indicadoresVariablesList;
     @JoinColumn(name = "periodo_cumplimiento", referencedColumnName = "periodo_cumplimiento")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private VariableCumplimientoPeriodos periodoCumplimiento;
     @JoinColumn(name = "disponibilidad", referencedColumnName = "disponibilidad")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private VariableDisponibilidades disponibilidad;
     @JoinColumn(name = "forma_expresion", referencedColumnName = "forma_expresion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private VariableExpresionFormas formaExpresion;
     @JoinColumn(name = "frecuencia", referencedColumnName = "frecuencia")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private VariableFrecuencias frecuencia;
     @JoinColumn(name = "unidad_medida", referencedColumnName = "unidad_medida")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private VariableMedidaUnidades unidadMedida;
 
     public Variables() {

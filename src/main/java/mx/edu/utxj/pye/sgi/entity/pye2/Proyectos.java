@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -54,11 +55,11 @@ public class Proyectos implements Serializable {
     @Size(min = 1, max = 16777215)
     @Column(name = "nombre")
     private String nombre;
-    @ManyToMany(mappedBy = "proyectosList")
+    @ManyToMany(mappedBy = "proyectosList", fetch = FetchType.LAZY)
     private List<IndicadoresPide> indicadoresPideList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "proyectos")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "proyectos", fetch = FetchType.LAZY)
     private List<ProyectoArea> proyectoAreaList;
-    @OneToMany(mappedBy = "proyecto")
+    @OneToMany(mappedBy = "proyecto", fetch = FetchType.LAZY)
     private List<CuadroMandoIntegral> cuadroMandoIntegralList;
 
     public Proyectos() {

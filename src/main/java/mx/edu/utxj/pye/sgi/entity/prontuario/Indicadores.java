@@ -12,6 +12,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -56,15 +57,15 @@ public class Indicadores implements Serializable {
     @Size(min = 1, max = 400)
     @Column(name = "formula")
     private String formula;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicador")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicador", fetch = FetchType.LAZY)
     private List<IndicadoresVariables> indicadoresVariablesList;
     @JoinColumn(name = "categoria", referencedColumnName = "categoria")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private IndicadoresCategorias categoria;
     @JoinColumn(name = "eje", referencedColumnName = "eje")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Ejes eje;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicador")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicador", fetch = FetchType.LAZY)
     private List<Desagregados> desagregadosList;
 
     public Indicadores() {

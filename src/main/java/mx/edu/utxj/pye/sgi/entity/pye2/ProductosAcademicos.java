@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
@@ -112,17 +113,17 @@ public class ProductosAcademicos implements Serializable {
     @Column(name = "arbitradoIndexado")
     private String arbitradoIndexado;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
     @JoinColumn(name = "pais", referencedColumnName = "idpais")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Pais pais;
     @JoinColumns({
         @JoinColumn(name = "estado", referencedColumnName = "claveEstado")
         , @JoinColumn(name = "municipio", referencedColumnName = "claveMunicipio")})
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Municipio municipio;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productoAcademico")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productoAcademico", fetch = FetchType.LAZY)
     private List<ProductosAcademicosPersonal> productosAcademicosPersonalList;
 
     public ProductosAcademicos() {

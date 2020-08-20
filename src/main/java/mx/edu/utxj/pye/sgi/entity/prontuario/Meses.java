@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -51,13 +52,13 @@ public class Meses implements Serializable {
     @Size(min = 1, max = 3)
     @Column(name = "abreviacion")
     private String abreviacion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "mesFin")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "mesFin", fetch = FetchType.LAZY)
     private List<PeriodosEscolares> periodosEscolaresList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "mesInicio")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "mesInicio", fetch = FetchType.LAZY)
     private List<PeriodosEscolares> periodosEscolaresList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "meses")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "meses", fetch = FetchType.LAZY)
     private List<ServiciosTecnologicos> serviciosTecnologicosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "meses")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "meses", fetch = FetchType.LAZY)
     private List<ServiciosEnfermeria> serviciosEnfermeriaList;
 
     public Meses() {

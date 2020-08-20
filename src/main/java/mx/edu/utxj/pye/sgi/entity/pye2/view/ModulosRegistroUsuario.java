@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mx.edu.utxj.pye.sgi.entity.pye2;
+package mx.edu.utxj.pye.sgi.entity.pye2.view;
 
 import java.io.Serializable;
 import javax.persistence.Basic;

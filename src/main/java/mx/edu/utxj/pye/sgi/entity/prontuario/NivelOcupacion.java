@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -140,7 +141,7 @@ public class NivelOcupacion implements Serializable {
     @Column(name = "otros_m")
     private int otrosM;
     @JoinColumn(name = "generacion", referencedColumnName = "generacion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Generaciones generacion;
 
     public NivelOcupacion() {

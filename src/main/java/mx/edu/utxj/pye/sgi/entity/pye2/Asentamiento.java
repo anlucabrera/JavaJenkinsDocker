@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
@@ -25,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author UTXJ
  */
 @Entity
-@Table(name = "asentamiento",catalog = "pye2", schema = "")
+@Table(name = "asentamiento", catalog = "pye2", schema = "")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Asentamiento.findAll", query = "SELECT a FROM Asentamiento a")
@@ -52,13 +53,13 @@ public class Asentamiento implements Serializable {
     @JoinColumns({
         @JoinColumn(name = "estado", referencedColumnName = "claveEstado", insertable = false, updatable = false)
         , @JoinColumn(name = "municipio", referencedColumnName = "claveMunicipio", insertable = false, updatable = false)})
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Municipio municipio1;
     @JoinColumn(name = "tipo_asentamiento", referencedColumnName = "tipoAsentamiento")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Tipoasentamiento tipoAsentamiento;
     @JoinColumn(name = "zona_asentamiento", referencedColumnName = "clave")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Tipolocalidad zonaAsentamiento;
 
     public Asentamiento() {
@@ -148,7 +149,7 @@ public class Asentamiento implements Serializable {
 
     @Override
     public String toString() {
-        return "asentamientoPK-" + asentamientoPK ;
+        return "mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento[ asentamientoPK=" + asentamientoPK + " ]";
     }
     
 }

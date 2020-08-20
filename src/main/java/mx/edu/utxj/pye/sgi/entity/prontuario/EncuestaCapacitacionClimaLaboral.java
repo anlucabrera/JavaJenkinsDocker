@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -66,7 +67,7 @@ public class EncuestaCapacitacionClimaLaboral implements Serializable {
     @Column(name = "resp_f")
     private int respF;
     @JoinColumn(name = "pregunta", referencedColumnName = "cve_pregunta", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PreguntasEncuestaClimaLaboral preguntasEncuestaClimaLaboral;
 
     public EncuestaCapacitacionClimaLaboral() {

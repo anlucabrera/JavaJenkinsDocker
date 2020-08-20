@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -44,7 +45,7 @@ public class CuerposAcademicosIntegrantes implements Serializable {
     @Column(name = "integrante")
     private String integrante;
     @JoinColumn(name = "clave_registro", referencedColumnName = "clave_registro")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CuerposAcademicos claveRegistro;
 
     public CuerposAcademicosIntegrantes() {

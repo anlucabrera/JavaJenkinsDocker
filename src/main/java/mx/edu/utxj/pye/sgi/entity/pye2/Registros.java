@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -62,124 +63,124 @@ public class Registros implements Serializable {
     @NotNull
     @Column(name = "validado")
     private boolean validado;
-    @ManyToMany(mappedBy = "registrosList")
+    @ManyToMany(mappedBy = "registrosList", fetch = FetchType.LAZY)
     private List<ActividadesPoa> actividadesPoaList;
-    @ManyToMany(mappedBy = "registrosList")
+    @ManyToMany(mappedBy = "registrosList", fetch = FetchType.LAZY)
     private List<Evidencias> evidenciasList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ServiciosTecnologicosParticipantes serviciosTecnologicosParticipantes;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ProductosAcademicos productosAcademicos;
     @JoinColumn(name = "eje", referencedColumnName = "eje")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EjesRegistro eje;
     @JoinColumn(name = "evento_registro", referencedColumnName = "evento_registro")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EventosRegistros eventoRegistro;
     @JoinColumn(name = "tipo", referencedColumnName = "registro_tipo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private RegistrosTipo tipo;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ActividadEconomicaEgresadoGeneracion actividadEconomicaEgresadoGeneracion;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private VisitasIndustriales visitasIndustriales;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ProgramasEstimulos programasEstimulos;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private AsesoriasTutoriasMensualPeriodosEscolares asesoriasTutoriasMensualPeriodosEscolares;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ProductosAcademicosPersonal productosAcademicosPersonal;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private CuerpacadIntegrantes cuerpacadIntegrantes;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private PersonalCapacitado personalCapacitado;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private MatriculaPeriodosEscolares matriculaPeriodosEscolares;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private SesionIndividualMensualPsicopedogia sesionIndividualMensualPsicopedogia;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private EquiposComputoInternetCicloPeriodoEscolar equiposComputoInternetCicloPeriodoEscolar;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private EficienciaTerminalTitulacionRegistro eficienciaTerminalTitulacionRegistro;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private CapacidadInstaladaCiclosEscolares capacidadInstaladaCiclosEscolares;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ServiciosTecnologicosAnioMes serviciosTecnologicosAnioMes;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private Convenios convenios;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private AcervoBibliograficoPeriodosEscolares acervoBibliograficoPeriodosEscolares;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private DistribucionLabtallCicloPeriodosEscolares distribucionLabtallCicloPeriodosEscolares;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ReconocimientoProdepRegistros reconocimientoProdepRegistros;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ParticipantesPersonalCapacitado participantesPersonalCapacitado;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ActividadesVariasRegistro actividadesVariasRegistro;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private IngresosPropiosCaptados ingresosPropiosCaptados;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private NivelIngresosEgresadosGeneracion nivelIngresosEgresadosGeneracion;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private CuerpacadLineas cuerpacadLineas;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private RegistrosMovilidad registrosMovilidad;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private BolsaTrabajo bolsaTrabajo;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private FeriasParticipantes feriasParticipantes;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private Presupuestos presupuestos;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private RegistroMovilidadDocente registroMovilidadDocente;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ServiciosEnfermeriaCicloPeriodos serviciosEnfermeriaCicloPeriodos;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private AsesoriasTutoriasCicloPeriodos asesoriasTutoriasCicloPeriodos;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private BolsaTrabajoEntrevistas bolsaTrabajoEntrevistas;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private DistribucionAulasCicloPeriodosEscolares distribucionAulasCicloPeriodosEscolares;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private BecasPeriodosEscolares becasPeriodosEscolares;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private DesercionReprobacionMaterias desercionReprobacionMaterias;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ParticipantesActividadesFormacionIntegral participantesActividadesFormacionIntegral;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private OrganismosVinculados organismosVinculados;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ComisionesAcademicasParticipantes comisionesAcademicasParticipantes;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private DifusionIems difusionIems;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ProgramasPertcal programasPertcal;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ComisionesAcademicas comisionesAcademicas;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private RegistroMovilidadEstudiante registroMovilidadEstudiante;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private EgetsuResultadosGeneraciones egetsuResultadosGeneraciones;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ActividadEgresadoGeneracion actividadEgresadoGeneracion;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private EstadiasPorEstudiante estadiasPorEstudiante;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private CuerposAcademicosRegistro cuerposAcademicosRegistro;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private NivelOcupacionEgresadosGeneracion nivelOcupacionEgresadosGeneracion;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private EquiposComputoCicloPeriodoEscolar equiposComputoCicloPeriodoEscolar;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private FeriasProfesiograficas feriasProfesiograficas;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ExaniResultadosCiclosEscolares exaniResultadosCiclosEscolares;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private DesercionPeriodosEscolares desercionPeriodosEscolares;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private AsesoriasTutoriasCuatrimestrales asesoriasTutoriasCuatrimestrales;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ActividadesFormacionIntegral actividadesFormacionIntegral;
 
     public Registros() {

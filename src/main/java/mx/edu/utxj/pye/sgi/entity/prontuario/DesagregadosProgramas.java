@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -38,10 +39,10 @@ public class DesagregadosProgramas implements Serializable {
     @Column(name = "desagregado")
     private Integer desagregado;
     @JoinColumn(name = "desagregado", referencedColumnName = "desagregado", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Desagregados desagregados;
     @JoinColumn(name = "siglas", referencedColumnName = "siglas")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProgramasEducativos siglas;
 
     public DesagregadosProgramas() {

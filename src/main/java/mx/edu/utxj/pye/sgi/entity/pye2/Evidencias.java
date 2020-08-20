@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -50,14 +51,14 @@ public class Evidencias implements Serializable {
     @Size(min = 1, max = 8)
     @Column(name = "categoria")
     private String categoria;
-    @ManyToMany(mappedBy = "evidenciasList")
+    @ManyToMany(mappedBy = "evidenciasList", fetch = FetchType.LAZY)
     private List<ActividadesPoa> actividadesPoaList;
     @JoinTable(name = "pye2.registros_evidencias", joinColumns = {
         @JoinColumn(name = "evidencia", referencedColumnName = "evidencia")}, inverseJoinColumns = {
         @JoinColumn(name = "registro", referencedColumnName = "registro")})
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Registros> registrosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evidencia")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evidencia", fetch = FetchType.LAZY)
     private List<EvidenciasDetalle> evidenciasDetalleList;
 
     public Evidencias() {

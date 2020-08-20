@@ -12,6 +12,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -46,9 +47,9 @@ public class Productos implements Serializable {
     @Column(name = "descripcion")
     private String descripcion;
     @JoinColumn(name = "ejercicio_fiscal", referencedColumnName = "ejercicio_fiscal", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EjerciciosFiscales ejerciciosFiscales;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productos")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productos", fetch = FetchType.LAZY)
     private List<ProductosAreas> productosAreasList;
 
     public Productos() {

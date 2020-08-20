@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -54,14 +55,14 @@ public class PreguntasEncuestaSatisfaccion implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "pregunta")
     private String pregunta;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaSatisfaccion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaSatisfaccion", fetch = FetchType.LAZY)
     private List<EncuestaSatisfaccion> encuestaSatisfaccionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaSatisfaccion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaSatisfaccion", fetch = FetchType.LAZY)
     private List<EncuestaSatisfaccionEmpleadoresPece> encuestaSatisfaccionEmpleadoresPeceList;
     @JoinColumn(name = "categoria", referencedColumnName = "id_categoria")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CategoriasEncuestaSatisfaccion categoria;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaSatisfaccion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasEncuestaSatisfaccion", fetch = FetchType.LAZY)
     private List<EncuestaSatisfaccionEgresadosPece> encuestaSatisfaccionEgresadosPeceList;
 
     public PreguntasEncuestaSatisfaccion() {

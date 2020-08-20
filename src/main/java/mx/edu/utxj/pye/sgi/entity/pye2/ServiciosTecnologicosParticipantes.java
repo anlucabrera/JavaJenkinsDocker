@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
@@ -75,18 +76,18 @@ public class ServiciosTecnologicosParticipantes implements Serializable {
     @Column(name = "programa_educativo")
     private Short programaEducativo;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
     @JoinColumn(name = "servicio_tecnologico", referencedColumnName = "servicio")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ServiciosTecnologicosAnioMes servicioTecnologico;
     @JoinColumns({
         @JoinColumn(name = "estado", referencedColumnName = "claveEstado")
         , @JoinColumn(name = "municipio", referencedColumnName = "claveMunicipio")})
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Municipio municipio;
     @JoinColumn(name = "empresa", referencedColumnName = "empresa")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private OrganismosVinculados empresa;
 
     public ServiciosTecnologicosParticipantes() {

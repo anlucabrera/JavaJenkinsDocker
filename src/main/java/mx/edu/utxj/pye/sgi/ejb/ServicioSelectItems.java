@@ -29,7 +29,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 //import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
-import mx.edu.utxj.pye.sgi.entity.prontuario.Listaperiodosescolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.view.Listaperiodosescolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.*;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;

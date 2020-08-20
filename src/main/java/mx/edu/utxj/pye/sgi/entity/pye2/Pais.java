@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,11 +48,11 @@ public class Pais implements Serializable {
     @Size(min = 1, max = 150)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pais")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pais", fetch = FetchType.LAZY)
     private List<ProductosAcademicos> productosAcademicosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idpais")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idpais", fetch = FetchType.LAZY)
     private List<Estado> estadoList;
-    @OneToMany(mappedBy = "pais")
+    @OneToMany(mappedBy = "pais", fetch = FetchType.LAZY)
     private List<OrganismosVinculados> organismosVinculadosList;
 
     public Pais() {

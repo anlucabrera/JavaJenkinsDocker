@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -89,10 +90,10 @@ public class CuerposAcademicosRegistroBitacora implements Serializable {
     @Column(name = "estatus")
     private boolean estatus;
     @JoinColumn(name = "area_estudio", referencedColumnName = "area_estudio")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CuerpacadAreasEstudio areaEstudio;
     @JoinColumn(name = "disciplina", referencedColumnName = "disciplina")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CuerpacadDisciplinas disciplina;
 
     public CuerposAcademicosRegistroBitacora() {

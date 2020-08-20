@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.entity.pye2;
 import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -32,7 +33,7 @@ public class FuenteInformacion implements Serializable {
     @EmbeddedId
     protected FuenteInformacionPK fuenteInformacionPK;
     @JoinColumn(name = "indicador", referencedColumnName = "indicador", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private IndicadoresPide indicadoresPide;
 
     public FuenteInformacion() {

@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -45,7 +46,7 @@ public class PreguntasSatisfaccionEgresadosServicio implements Serializable {
     @Size(min = 1, max = 500)
     @Column(name = "pregunta")
     private String pregunta;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasSatisfaccionEgresadosServicio")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "preguntasSatisfaccionEgresadosServicio", fetch = FetchType.LAZY)
     private List<EncuestaSatisfaccionEgresadosServicioProporcionado> encuestaSatisfaccionEgresadosServicioProporcionadoList;
 
     public PreguntasSatisfaccionEgresadosServicio() {

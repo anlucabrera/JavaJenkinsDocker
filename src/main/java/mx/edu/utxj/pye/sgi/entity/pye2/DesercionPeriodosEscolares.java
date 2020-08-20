@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
@@ -64,15 +65,15 @@ public class DesercionPeriodosEscolares implements Serializable {
     @NotNull
     @Column(name = "tipo_baja")
     private int tipoBaja;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dpe")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dpe", fetch = FetchType.LAZY)
     private List<DesercionReprobacionMaterias> desercionReprobacionMateriasList;
     @JoinColumns({
         @JoinColumn(name = "matricula", referencedColumnName = "matricula")
         , @JoinColumn(name = "periodo_escolar", referencedColumnName = "periodo")})
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private MatriculaPeriodosEscolares matriculaPeriodosEscolares;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
 
     public DesercionPeriodosEscolares() {

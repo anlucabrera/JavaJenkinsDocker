@@ -13,6 +13,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -106,15 +107,15 @@ public class PersonalCapacitado implements Serializable {
     @Column(name = "periodo")
     private int periodo;
     @JoinColumn(name = "modalidad", referencedColumnName = "percap_mod")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PercapModalidad modalidad;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Registros registros;
     @JoinColumn(name = "tipo", referencedColumnName = "percap_tipo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PercapTipo tipo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "percap")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "percap", fetch = FetchType.LAZY)
     private List<ParticipantesPersonalCapacitado> participantesPersonalCapacitadoList;
 
     public PersonalCapacitado() {

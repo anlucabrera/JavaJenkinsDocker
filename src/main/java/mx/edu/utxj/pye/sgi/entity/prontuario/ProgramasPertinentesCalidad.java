@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -65,13 +66,13 @@ public class ProgramasPertinentesCalidad implements Serializable {
     @Column(name = "anio_ult_ast")
     private String anioUltAst;
     @JoinColumn(name = "carrera_actual", referencedColumnName = "siglas")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProgramasEducativos carreraActual;
     @JoinColumn(name = "carrera_inicial", referencedColumnName = "siglas")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProgramasEducativos carreraInicial;
     @JoinColumn(name = "ciclo_escolar", referencedColumnName = "ciclo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CiclosEscolares cicloEscolar;
 
     public ProgramasPertinentesCalidad() {

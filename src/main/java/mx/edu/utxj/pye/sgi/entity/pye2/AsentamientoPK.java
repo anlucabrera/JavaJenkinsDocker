@@ -94,7 +94,7 @@ public class AsentamientoPK implements Serializable {
 
     @Override
     public String toString() {
-        return estado + "-" + municipio + "-" + asentamiento;
+        return "mx.edu.utxj.pye.sgi.entity.pye2.AsentamientoPK[ estado=" + estado + ", municipio=" + municipio + ", asentamiento=" + asentamiento + " ]";
     }
     
 }

@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -90,9 +91,9 @@ public class CuerposAcademicos implements Serializable {
     @NotNull
     @Column(name = "orden")
     private short orden;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "claveRegistro")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "claveRegistro", fetch = FetchType.LAZY)
     private List<CuerposAcademicosLineasInvestigacion> cuerposAcademicosLineasInvestigacionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "claveRegistro")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "claveRegistro", fetch = FetchType.LAZY)
     private List<CuerposAcademicosIntegrantes> cuerposAcademicosIntegrantesList;
 
     public CuerposAcademicos() {

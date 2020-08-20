@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -56,9 +57,9 @@ public class Tipoasentamiento implements Serializable {
     @NotNull
     @Column(name = "activo")
     private boolean activo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoAsentamiento")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoAsentamiento", fetch = FetchType.LAZY)
     private List<Asentamiento> asentamientoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoAsentamiento")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoAsentamiento", fetch = FetchType.LAZY)
     private List<Codigopostal> codigopostalList;
 
     public Tipoasentamiento() {

@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,10 +50,10 @@ public class PretechoFinanciero implements Serializable {
     @Column(name = "monto")
     private double monto;
     @JoinColumn(name = "capitulo_tipo", referencedColumnName = "capitulo_tipo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CapitulosTipos capituloTipo;
     @JoinColumn(name = "ejercicio_fiscal", referencedColumnName = "ejercicio_fiscal")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EjerciciosFiscales ejercicioFiscal;
 
     public PretechoFinanciero() {

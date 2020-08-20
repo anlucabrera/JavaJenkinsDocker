@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -124,10 +125,10 @@ public class EficienciaTerminalTasaTitulacion implements Serializable {
     @Column(name = "registradosm")
     private short registradosm;
     @JoinColumn(name = "generacion", referencedColumnName = "generacion", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Generaciones generaciones;
     @JoinColumn(name = "siglas", referencedColumnName = "siglas")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProgramasEducativos siglas;
 
     public EficienciaTerminalTasaTitulacion() {

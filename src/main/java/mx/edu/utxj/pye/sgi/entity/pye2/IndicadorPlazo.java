@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -40,10 +41,10 @@ public class IndicadorPlazo implements Serializable {
     @Column(name = "meta")
     private double meta;
     @JoinColumn(name = "ejercicio_fiscal", referencedColumnName = "ejercicio_fiscal", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EjerciciosFiscales ejerciciosFiscales;
     @JoinColumn(name = "indicador", referencedColumnName = "indicador", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private IndicadoresPide indicadoresPide;
 
     public IndicadorPlazo() {

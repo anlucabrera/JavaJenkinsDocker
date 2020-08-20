@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -65,13 +66,13 @@ public class EjesRegistro implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "link")
     private String link;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje", fetch = FetchType.LAZY)
     private List<Registros> registrosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje", fetch = FetchType.LAZY)
     private List<ModulosRegistro> modulosRegistroList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje", fetch = FetchType.LAZY)
     private List<InformacionCorrespondienteArea> informacionCorrespondienteAreaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eje", fetch = FetchType.LAZY)
     private List<CuadroMandoIntegral> cuadroMandoIntegralList;
 
     public EjesRegistro() {

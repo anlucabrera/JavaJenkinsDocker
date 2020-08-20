@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -62,7 +63,7 @@ public class ResultadosEgetsu implements Serializable {
     @Column(name = "sin_test")
     private short sinTest;
     @JoinColumn(name = "generacion", referencedColumnName = "generacion", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Generaciones generaciones;
 
     public ResultadosEgetsu() {

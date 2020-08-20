@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,9 +54,9 @@ public class SectoresTipo implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "corresponde")
     private String corresponde;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sector")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sector", fetch = FetchType.LAZY)
     private List<ActividadEconomicaEgresadoGeneracion> actividadEconomicaEgresadoGeneracionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sector")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sector", fetch = FetchType.LAZY)
     private List<OrganismosVinculados> organismosVinculadosList;
 
     public SectoresTipo() {
