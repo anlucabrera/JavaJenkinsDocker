@@ -357,8 +357,17 @@ public class EjbCitaInscripcionAspirante {
                  date = date.plusDays(1)) {
                 ret.add(date);
                 Date fecha = util.castearLDaD(date);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date fecha1= sdf.parse("2020-08-21");
+                Date fecha2= sdf.parse("2020-08-22");
                 ResultadoEJB<Integer> resCita = getNumCitas(fecha,tramitesEscolares);
                 if(resCita.getCorrecto()==true){
+                    //21 Y 22  sólo deben tener un maaximo de 30 x dia
+                    if(fecha ==fecha1 || fecha==fecha2){
+                        if(resCita.getValor()==30){
+                            diasInv.add(fecha);
+                        }
+                    }
                     if(resCita.getValor()==tramitesEscolares.getMaxDia()){
                         diasInv.add(fecha);
                     }

@@ -101,10 +101,10 @@ public class AgendaCitaInscripcionAspirante extends ViewScopedRol implements Des
             if(resDiasIn.getCorrecto()==true){
                 diasInvalidos = resDiasIn.getValor();
                 //Se desabilitan fechas(No habrá servicio)
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                Date fecha1= sdf.parse("2020-08-21");
-                Date fecha2= sdf.parse("2020-08-22");
-                diasInvalidos.add(fecha1);diasInvalidos.add(fecha2);
+                //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                //Date fecha1= sdf.parse("2020-08-21");
+                //Date fecha2= sdf.parse("2020-08-22");
+                //diasInvalidos.add(fecha1);diasInvalidos.add(fecha2);
                 rol.setInvalidDates(diasInvalidos);
             }else {mostrarMensajeResultadoEJB(resDiasIn);}
         }catch (Exception e){mostrarExcepcion(e);}

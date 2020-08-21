@@ -78,6 +78,7 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
     @EJB private EjbPropiedades ep;
     @EJB private EjbGeneracionGrupos ejb;
     @EJB EjbFinanzasRegistroPagos ejbFinanzas;
+    @EJB EjbSeguimientoCitasSE ejbSeguimientoCitasSE;
 
     @Inject LogonMB login;
 
@@ -129,6 +130,7 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
             listaPe = ejbSelectItemCE.itemPEAll();
             listaAreasUniversidad = ejbAreasLogeo.listaProgramasEducativos();
             getTipoSangre();
+            getTramiteCitaActivo();
             if(rol.getEventoIncripcion()!=null){ listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(rol.getEventoIncripcion().getPeriodo());}
         }catch (Exception e){
             mostrarExcepcion(e);
@@ -160,6 +162,13 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
             if(resSangre.getCorrecto()==true){
                 rol.setTipoSangreList(resSangre.getValor());
             }else {mostrarMensajeResultadoEJB(resSangre);}
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
+    public void getTramiteCitaActivo(){
+        try{
+            ResultadoEJB<TramitesEscolares> resTramite = ejbSeguimientoCitasSE.getTramitesbyEvento(procesosInscripcion);
+            if(resTramite.getCorrecto()==true){rol.setTramiteCita(resTramite.getValor());
+            }else {mostrarMensajeResultadoEJB(resTramite);}
         }catch (Exception e){mostrarExcepcion(e);}
     }
 
@@ -223,6 +232,15 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
 
         return totalRegistroSemanal;
     }
+    public void getCitabyAspirante(@NonNull Aspirante aspirante){
+        try{
+            ResultadoEJB<CitasAspirantes> resCita = ejbSeguimientoCitasSE.getCitabyAspirante(aspirante,rol.getTramiteCita());
+            if(resCita.getCorrecto()==true) {
+                rol.setCita(resCita.getValor());
+                mostrarMensajeResultadoEJB(resCita);
+            }else {mostrarMensajeResultadoEJB(resCita);}
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
 
     public void buscarFichaAdmisionValida(){
         aspiranteValido = ejbProcesoInscripcion.buscaAspiranteByFolioValido(folioFichaInscripcion);
@@ -231,8 +249,9 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
             if(resVerficaPago.getCorrecto()==true){
                 mostrarMensajeResultadoEJB(resVerficaPago);
             }
-            else {
-                mostrarMensajeResultadoEJB(resVerficaPago);}
+            else { mostrarMensajeResultadoEJB(resVerficaPago);}
+            //Busca si el aspirante cuenta con cita previa
+            getCitabyAspirante(aspiranteValido);
             estudiante = ejbProcesoInscripcion.findByIdAspirante(aspiranteValido.getIdAspirante());
             if(estudiante != null){
                 opcionIncripcion = estudiante.getOpcionIncripcion();
@@ -297,6 +316,13 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
     public String nombrePE(Short idpe){
         return ejbProcesoInscripcion.buscaAreaByClave(idpe).getNombre();
     }
+    public void updateCita(){
+        try{
+            ResultadoEJB<CitasAspirantes> resUpdateCita = ejbSeguimientoCitasSE.updateCita(rol.getCita());
+            if(resUpdateCita.getCorrecto()==true){rol.setCita(resUpdateCita.getValor());mostrarMensajeResultadoEJB(resUpdateCita); }
+            else {mostrarMensajeResultadoEJB(resUpdateCita);}
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
 
     public void saveEstudiante(){
         try{
@@ -318,6 +344,8 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
                             rol.setCartaCom(false);
                         }else {rol.setCartaCom(true);}
                     }else {mostrarMensajeResultadoEJB(resDoc);}
+                    //Actualiza la cita (Atendido)
+                    if(rol.getCita()!=null){updateCita();}
                     carreraInscrito = ejbProcesoInscripcion.buscaAreaByClave((short) estudiante.getCarrera()).getNombre();
                     mostrarMensajeResultadoEJB(resEstudiante);
                 }else {mostrarMensajeResultadoEJB(resEstudiante);}
@@ -341,6 +369,8 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
                         }
                         else {mostrarMensajeResultadoEJB(resDoc);}
                         mostrarMensajeResultadoEJB(resEstudiante);
+                        //actualiza la cita
+                        if(rol.getCita()!=null){updateCita();}
                     }else {mostrarMensajeResultadoEJB(resEstudiante);}
                     getPosiblesGrupos();
                 }else {mostrarMensajeResultadoEJB(resGrupoPack);}
@@ -452,6 +482,7 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
         folioFichaInscripcion = null;
         opcionIncripcion = null;
         documentosentregadosestudiante =new Documentosentregadosestudiante();
+        rol.setCita(new CitasAspirantes());
     }
 
     public void imprimirComprobateIns(){

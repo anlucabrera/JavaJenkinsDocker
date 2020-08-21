@@ -173,6 +173,14 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                         //Actualiza sin cambiar de grupo
                         //Actualiza cambiando el grupo
                         TipoEstudiante tipoEstudiante = new TipoEstudiante((short)1, "Regular", true);
+                        //Se crea el Login
+                        Login login = new Login();
+                        String contrasena="";
+                        int generador;
+                        for(int i=0;i<6;i++){
+                            generador = (int)(Math.random()*10);
+                            contrasena+= generador;
+                        }
                         //Guarda estudiante
                         estudiante.setGrupo(grupo.getGrupo());
                         estudiante.setCarrera(grupo.getGrupo().getIdPe());
@@ -190,6 +198,20 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
                         facadeCE.flush();
                         em.merge(estudiante.getAspirante().getIdPersona().getDatosMedicos());
                         facadeCE.flush();
+                        login.setPersona(estudiante.getAspirante().getIdPersona().getIdpersona());
+                        ResultadoEJB<Login> resLogin = getLoginbyPersona(estudiante.getAspirante().getIdPersona());
+                        if(resLogin.getCorrecto()==true) {
+                            em.merge(resLogin.getValor());
+                            facadeCE.flush();
+                        }else {
+                            login.setActivo(true);
+                            login.setModificado(false);
+                            login.setUsuario(String.valueOf(estudiante.getMatricula()));
+                            login.setPassword(encriptaPassword(contrasena));
+                            login.setPersona(estudiante.getAspirante().getIdPersona().getIdpersona());
+                            em.persist(login);
+                            facadeCE.flush();
+                        }
                         return ResultadoEJB.crearCorrecto(estudiante,"Estudiante actualizado");
                     }else {
                         if (grupo.getLleno()==false){

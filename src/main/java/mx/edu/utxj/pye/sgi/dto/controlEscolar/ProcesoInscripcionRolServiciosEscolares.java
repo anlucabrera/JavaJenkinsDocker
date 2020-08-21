@@ -14,7 +14,9 @@ import java.util.Objects;
 
 public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
 
-    @Getter @NonNull private PersonalActivo serviciosEscolares;
+    @Getter
+    @NonNull
+    private PersonalActivo serviciosEscolares;
 
     /**
      * TODO:Representa la referencia del evento de inscripciones
@@ -24,20 +26,23 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
     @Getter @NonNull private PeriodosEscolares periodo;
     @Getter @NonNull private Integer periodoActivo, periodoAct;
     @Getter @NonNull private AreasUniversidad programa;
+    @Getter @NonNull private TramitesEscolares tramiteCita;
 
     @Getter @NonNull private List<TipoSangre> tipoSangreList; //Lista de tipo de sangre
-    @Getter @NonNull private  List<DtoGrupo> posiblesGrupos;// Grupos posibles
+    @Getter @NonNull private List<DtoGrupo> posiblesGrupos;// Grupos posibles
     @Getter @NonNull private DtoGrupo grupoSeleccionado; //Grupo seleccionado
-    @Getter @NonNull private  AreasUniversidad pePo,peSo; //Programas educativos del aspirante validado
-    @Getter @NonNull private Boolean cartaCom=true;
-//////////// Para modificacion de estudiante inscrito
+    @Getter @NonNull private AreasUniversidad pePo, peSo; //Programas educativos del aspirante validado
+    @Getter @NonNull private Boolean cartaCom = true;
+
+    //////////// Para modificacion de estudiante inscrito
     @Getter @NonNull private Estudiante estudianteSeleccionado; //Representa a un estudiante seleccionado en la tabla de estudiantes inscritos
-    @Getter  @NonNull private List<AreasUniversidad> areasAcademicasE, peE;
+    @Getter @NonNull private List<AreasUniversidad> areasAcademicasE, peE;
     @Getter @NonNull private List<DtoGrupo> gruposPosiblesE;
-    @Getter @NonNull private  DtoGrupo grupoSelecEs;
-    @Getter @NonNull private  AreasUniversidad areaAEstudiante, peEstudiante;
+    @Getter @NonNull private DtoGrupo grupoSelecEs;
+    @Getter @NonNull private AreasUniversidad areaAEstudiante, peEstudiante;
     @Getter @NonNull private Sistema sistemaSeleccionado;
-    @Getter @NonNull private  List<Sistema> sistemas;
+    @Getter @NonNull private List<Sistema> sistemas;
+    @Getter @NonNull private CitasAspirantes cita;
 
     public ProcesoInscripcionRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad programa) {
         super(filtro);
@@ -62,7 +67,7 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
 
     public void setPeriodo(PeriodosEscolares periodo) {
         this.periodo = periodo;
-        if(periodoActivo != null) soloLectura = !Objects.equals(periodo.getPeriodo(), periodoActivo);
+        if (periodoActivo != null) soloLectura = !Objects.equals(periodo.getPeriodo(), periodoActivo);
     }
 
     public void setPeriodoActivo(Integer periodoActivo) {
@@ -76,6 +81,7 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
     public void setTipoSangreList(List<TipoSangre> tipoSangreList) {
         this.tipoSangreList = tipoSangreList;
     }
+
     public void setGrupoSeleccionado(DtoGrupo grupoSeleccionado) {
         this.grupoSeleccionado = grupoSeleccionado;
     }
@@ -131,4 +137,8 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
     public void setSistemas(List<Sistema> sistemas) {
         this.sistemas = sistemas;
     }
+
+    public void setTramiteCita(TramitesEscolares tramiteCita) { this.tramiteCita = tramiteCita; }
+
+    public void setCita(CitasAspirantes cita) { this.cita = cita; }
 }
