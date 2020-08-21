@@ -41,7 +41,7 @@ public class EjbCuestionarioPsicopedagogico {
      */
     public ResultadoEJB<Estudiante> validaEstudiante(Integer matricula){
         try{
-            Estudiante e = em.createQuery("select e from Estudiante as e where e.matricula = :matricula and e.tipoEstudiante=:tipo and e.grupo.grado=:grado", Estudiante.class).setParameter("matricula", matricula)
+            Estudiante e = em.createQuery("select e from Estudiante as e where e.matricula = :matricula and e.tipoEstudiante.idTipoEstudiante=:tipo and e.grupo.grado=:grado", Estudiante.class).setParameter("matricula", matricula)
                     .setParameter("tipo",1)
                     .setParameter("grado",1)
                     .getResultStream().findFirst().orElse(new Estudiante());
