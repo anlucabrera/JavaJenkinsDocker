@@ -169,7 +169,8 @@ public class GeneracionGruposServiciosEscolares extends ViewScopedRol implements
     public void generarGrupo(){
         ResultadoEJB<Grupo> res;
         if(rol.getGrupo().getIdGrupo() == null){
-            rol.setCapMax(30);
+            rol.setCapMax(25);
+            rol.setNoGrupos(25);
             rol.getGrupo().setGrado(rol.getGrado());
             rol.getGrupo().setIdPe(rol.getIdPE());
             Sistema sis = ejb.obtenerSistema(rol.getIdSistema()).getValor();
@@ -183,16 +184,22 @@ public class GeneracionGruposServiciosEscolares extends ViewScopedRol implements
             obtenerGrupos();
             obtenerSugerencia();
             rol.setGrupo(new Grupo());
+            rol.setPlanEstudio(new PlanEstudio());
+            rol.setGeneracion(Short.valueOf("0"));
+            rol.setIdSistema(0);
             rol.setNoGrupos(0);
+            rol.setGrado(0);
+            rol.setIdPE(Short.valueOf("0"));
         }
     }
 
     public void actualizarGrupo(CellEditEvent event) {
-        rol.setCapMax(30);
+        rol.setCapMax(25);
         DataTable dataTable = (DataTable) event.getSource();
         Grupo grupoNew = (Grupo) dataTable.getRowData();
         ejb.guardarGrupo(grupoNew, rol.getPeriodoAct(), rol.getNoGrupos(), rol.getCapMax(), new Sistema(), rol.getPlanEstudio(), rol.getGeneraciones(), Operacion.ACTUALIZAR);
         mostrarMensaje("Se ha actualizado la información del grupo seleccionado");
+        alertas();
     }
 
     public void eliminarGrupo(Grupo grupo){

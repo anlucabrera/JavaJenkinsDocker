@@ -123,16 +123,17 @@ public class EjbGeneracionGrupos {
                     .setParameter("grupo", grupo.getIdGrupo()).getResultStream().findFirst().orElse(null);
             Integer gruposReg = em.createQuery("SELECT g FROM Grupo g WHERE g.idPe = :id_Pe AND g.periodo = :idPeriodo AND g.grado = :grado")
                     .setParameter("id_Pe", grupo.getIdPe()).setParameter("idPeriodo", periodoActivo).setParameter("grado", grupo.getGrado()).getResultList().size();
-
+            //System.out.println("Grupos registrados:"+ gruposReg);
             switch (operacion){
                 case PERSISTIR:
                     if(g == null){
                         Integer noAcumulado = gruposReg + noGrupos;
+                        //System.out.println("Numero acumulado"+ noAcumulado);
                         Character[] abecedario = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','U','V','W','X','Y','Z'};
                         for(int i = gruposReg; i < noAcumulado;i++) {
                             g = grupo;
                             g.setPeriodo(periodoActivo);
-                            g.setLiteral((abecedario[i++ ]));
+                            g.setLiteral((abecedario[i++]));
                             g.setCapMaxima(capaMax);
                             g.setIdSistema(sistema);
                             g.setPlan(planEstudio);

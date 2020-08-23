@@ -211,17 +211,6 @@
                                                                 </div>
                                                                 <div class="#{casilla4}">
                                                                     <div class="ui-material">
-                                                                        <p:outputLabel for="noG" value="No. grupos"
-                                                                                       style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/><br/>
-                                                                        <p:spinner id="noG" required="true" value="#{generacionGruposServiciosEscolares.rol.noGrupos}"
-                                                                                   maxlength="3" min="0" max="30" size="2" requiredMessage="Ingrese el número maximo de estudiantes.">
-                                                                            <p:ajax process="@this" update="@this"/>
-                                                                        </p:spinner>
-                                                                        <p:message for="noG"/>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="#{casilla4}">
-                                                                    <div class="ui-material">
                                                                         <p:outputLabel for="noEstu" value="Capacidad Maxima Estudiantes"
                                                                                        style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 11px"/><br/>
                                                                         <p:spinner id="noEstu" required="true"  maxlength="3" readonly="true" value="#{generacionGruposServiciosEscolares.rol.capMax}"
@@ -271,12 +260,29 @@
                                                                 </p:column>
                                                                 <p:column headerText="Cuatrimestre" style="width: 120px;text-align: center;">
                                                                     <h:outputText value="#{grupo.grado}"/>
-                                                                </p:column>
-                                                                <p:column headerText="Grupo" style="width: 120px;text-align: center;">
-                                                                    <h:outputText value="#{grupo.literal}"/>
-                                                                </p:column>   
+                                                                </p:column>  
                                                                 <p:column headerText="Generación" style="width: 120px;text-align: center;">
                                                                     <h:outputText value="#{grupo.generacion}"/>
+                                                                </p:column> 
+                                                                <p:column headerText="Grupo" style="width: 120px;text-align: center;">
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output"><h:outputText value="#{grupo.literal}" /></f:facet>
+                                                                        <f:facet name="input">
+                                                                            <p:selectOneMenu id="literales" value="#{grupo.literal}">
+                                                                                <f:selectItem itemValue="#{null}"/>
+                                                                                <f:selectItem itemValue="A" itemLabel="A"/>
+                                                                                <f:selectItem itemValue="B" itemLabel="B"/>
+                                                                                <f:selectItem itemValue="C" itemLabel="C"/>
+                                                                                <f:selectItem itemValue="D" itemLabel="D"/>
+                                                                                <f:selectItem itemValue="E" itemLabel="E"/>
+                                                                                <f:selectItem itemValue="F" itemLabel="F"/>
+                                                                                <f:selectItem itemValue="G" itemLabel="G"/>
+                                                                                <f:selectItem itemValue="H" itemLabel="H"/>
+                                                                                <f:selectItem itemValue="I" itemLabel="I"/>
+                                                                                <f:selectItem itemValue="J" itemLabel="J"/>
+                                                                            </p:selectOneMenu>
+                                                                        </f:facet>
+                                                                    </p:cellEditor>
                                                                 </p:column> 
                                                                 <p:column headerText="Sistema" style="width: 120px;text-align: center;">
                                                                     <p:cellEditor>
