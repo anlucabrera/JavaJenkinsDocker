@@ -32,10 +32,10 @@ public class CargaDocumentosRolAspirante {
     @Getter @NonNull private  EventoEscolar eventoEscolar;
     @Getter @NonNull private  ProcesosInscripcion procesosInscripcion;
     /////////////////////////////////////////////////////
-    @Getter @Setter  private  String curp;
-    @Getter @Setter  private  Integer folioAdmision;
+    @Getter @Setter  @NonNull private  String curp;
+    @Getter @Setter  @NonNull private  Integer folioAdmision;
     @Getter @Setter  private  Boolean validacionCurpFolio;
-    @Getter @Setter  private  Aspirante aspirante;
+    @Getter @Setter  @NonNull private  Aspirante aspirante;
     @Getter @Setter  private  Estudiante estudiante; 
     @Getter @Setter  private  AreasUniversidad programaEducativo;
     @Getter @Setter  private  List<DtoDocumentoAspirante> listaDocumentoAspirante;
