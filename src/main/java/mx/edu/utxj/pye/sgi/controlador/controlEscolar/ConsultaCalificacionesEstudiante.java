@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.omnifaces.util.Faces;
 
 @Named
 @ViewScoped
@@ -95,11 +96,34 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         return rol.getMapUnidadesTematicas();
     }
 
-    public List<DtoCargaAcademica> getCargasAcademicas(Estudiante estudiante){
+    public synchronized List<DtoCargaAcademica> getCargasAcademicas(Estudiante estudiante) {
+        if (estudiante.getGrupo() == null) {
+            mostrarMensaje("El estudiante no tiene grupo");
+            return Collections.EMPTY_LIST;
+        }
+
+        if (estudiante.getGrupo().getIdGrupo() == null) {
+            mostrarMensaje("La clave del grupo del estudiante es nula");
+            return Collections.EMPTY_LIST;
+        }
+        String clave = "cargasPorGrupo".concat(estudiante.getGrupo().getIdGrupo().toString());
+        List<DtoCargaAcademica> cargas = Faces.getApplicationAttribute(clave);
+        if (cargas != null) {
+            return cargas;
+        }
+
         ResultadoEJB<List<DtoCargaAcademica>> resCargas = ejb.obtenerCargasAcademicas(estudiante);
-        rol.setCargasEstudiante(resCargas.getValor());
-        if(rol.getCargasEstudiante().isEmpty()) return new ArrayList<>();
-        return rol.getCargasEstudiante();
+        if (!resCargas.getCorrecto()) {
+            mostrarMensaje("No se pudo obtener la lista de cargas en la capa de lógica de negocios. ".concat(resCargas.getMensaje()));
+            return Collections.EMPTY_LIST;
+        }
+
+        cargas = resCargas.getValor();
+        Faces.setApplicationAttribute(clave, cargas);
+        return cargas;
+//        rol.setCargasEstudiante(resCargas.getValor());
+//        if(rol.getCargasEstudiante().isEmpty()) return new ArrayList<>();
+//        return rol.getCargasEstudiante();
     }
 
     public List<DtoUnidadConfiguracion> getUnidades(DtoCargaAcademica dtoCargaAcademica){
