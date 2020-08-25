@@ -125,7 +125,11 @@ public class EjbCargaDocumentosAspirante {
                     .findFirst()
                     .orElse(null);
             
-            return ResultadoEJB.crearCorrecto(aspirante, "La curp y el folio de admisión se han validado correctamente.");
+            if (aspirante == null) {
+                return ResultadoEJB.crearErroneo(2, aspirante, "No se validó la información.");
+            } else {
+                return ResultadoEJB.crearCorrecto(aspirante, "La curp y el folio de admisión se han validado correctamente.");
+            }
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo validar la curp y el folio de admisión. (EjbCargaDocumentosAspirante.validarCurpFolio)", e, null);
         }

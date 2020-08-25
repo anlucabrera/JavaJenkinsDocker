@@ -131,7 +131,9 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
                  mostrarDocumentos(rol.getAspirante());
                  verificarInscripcion(rol.getAspirante());
              }
-            } else mostrarMensajeResultadoEJB(res);  
+            } else mostrarMensajeResultadoEJB(res); 
+              addDetailMessage("Por favor verifica tus datos");
+              Faces.getExternalContext().getFlash().setKeepMessages(true);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(CargaDocumentosAspirante.class.getName()).log(Level.SEVERE, null, ex);
