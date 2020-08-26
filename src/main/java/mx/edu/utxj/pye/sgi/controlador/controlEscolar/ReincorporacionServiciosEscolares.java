@@ -287,7 +287,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
                 Ajax.oncomplete("PF('dlgActualizacionActividad').show();");
                 break;
             case 4:
-                rol.setNombreR("Regularización de calificaciones por reincoporación");
+                rol.setNombreR("Equivalencia");
                 rol.setEditarCalificaciones(Boolean.FALSE);
                 rol.setTipoCal("Equivalencia");
                 llenarProceso();
@@ -313,7 +313,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera()).getValor());
             primeraOp = er.getEstudiante().getOpcionIncripcion();
             matr = er.getEstudiante().getMatricula();
-            if (er.getEstudiante().getTipoRegistro().equals("Regularización de calificaciones por reincoporación")) {
+            if (er.getEstudiante().getTipoRegistro().equals("Equivalencia")) {
                 rol.setTipoCal("Equivalencia");
             }
             List<Grupo> gs2 = new ArrayList<>();
@@ -625,7 +625,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     public void guardaEstudiante() {   
         rol.getRein().setTrabajadorInscribe(rol.getPersonalActivoSe().getPersonal().getClave());            
         prepararCoreo(null);
-        ResultadoEJB<DtoReincorporacion.ProcesoInscripcionRein> rejb =ejb.operacionesEstudianteR(rol.getRein(),rol.getAspirante().getAspirante());
+        ResultadoEJB<DtoReincorporacion.ProcesoInscripcionRein> rejb =ejb.operacionesEstudianteR(rol.getRein(),rol.getAspirante().getAspirante(),rol.getEventoActivo());
         if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
         rol.setRein(rejb.getValor());
         
@@ -798,7 +798,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
                 ejb.enviarConfirmacionCorreoElectronico(correoD, titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica destino
 
                 break;
-            case "Regularización de calificaciones por reincoporación":
+            case "Equivalencia":
                 if (rol.getRein().getOpcionIncripcion()) {
                     correoD = rol.getDacademicos().getUniversidad1().getCorreoInstitucional();
                 } else {

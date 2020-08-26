@@ -607,9 +607,9 @@ public class EjbReincorporacion {
                                 }
                                 if (cp.getTipo().equals("Oficial")) {
                                     editable = Boolean.FALSE;
-                                } else if (esEscolares && (t.getTipoRegistro().equals("Regularización de calificaciones por reincoporación") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
+                                } else if (esEscolares && (t.getTipoRegistro().equals("Equivalencia") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
                                     editable = Boolean.FALSE;
-                                } else if (!esEscolares && (t.getTipoRegistro().equals("Regularización de calificaciones por reincoporación") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
+                                } else if (!esEscolares && (t.getTipoRegistro().equals("Equivalencia") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
                                     editable = Boolean.TRUE;
                                 } else {
                                     editable = esEscolares;
@@ -617,9 +617,9 @@ public class EjbReincorporacion {
                                 crs.add(new DtoReincorporacion.CalificacionesR(cg, cg.getIdPlanMateria(), cg.getIdPlanMateria().getIdMateria(), p, cp, editable, ordinaria, Operacion.PERSISTIR, Boolean.FALSE));
                             } else {
                                 
-                                if (!esEscolares && (t.getTipoRegistro().equals("Regularización de calificaciones por reincoporación") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
+                                if (!esEscolares && (t.getTipoRegistro().equals("Equivalencia") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
                                     editable = Boolean.TRUE;
-                                } else if (t.getTipoRegistro().equals("Regularización de calificaciones por reincoporación") && esEscolares) {
+                                } else if (t.getTipoRegistro().equals("Equivalencia") && esEscolares) {
                                     editable = Boolean.FALSE;
                                 } else {
                                     editable = esEscolares;
@@ -1036,7 +1036,7 @@ public class EjbReincorporacion {
         return res;
     }
 
-    public ResultadoEJB<DtoReincorporacion.ProcesoInscripcionRein> operacionesEstudianteR(DtoReincorporacion.ProcesoInscripcionRein rr,Aspirante a) {
+    public ResultadoEJB<DtoReincorporacion.ProcesoInscripcionRein> operacionesEstudianteR(DtoReincorporacion.ProcesoInscripcionRein rr,Aspirante a,EventoEscolar escolar) {
         try {
             if (!rr.getGrupos().isEmpty()) {              
                 rr.getGrupos().forEach((t) -> {
@@ -1058,12 +1058,16 @@ public class EjbReincorporacion {
                         e.setFechaAlta(new Date());
                         operacion = Operacion.PERSISTIR;
                     }
+                    if (escolar.getPeriodo() == t.getPeriodo()) {
+                        e.setTipoRegistro(rr.getTipoRegistro());
+                    } else {
+                        e.setTipoRegistro("Regularización de calificaciones por reincoporación");
+                    }
                     e.setPeriodo(t.getPeriodo());
                     e.setCarrera(t.getIdPe());
                     e.setTrabajadorInscribe(rr.getTrabajadorInscribe());
                     e.setMatricula(rr.getMatricula());                    
                     e.setOpcionIncripcion(rr.getOpcionIncripcion());
-                    e.setTipoRegistro(rr.getTipoRegistro());
                     
                     switch (operacion) {
                         case PERSISTIR:
