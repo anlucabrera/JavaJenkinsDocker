@@ -76,7 +76,7 @@ public class EjbRegistraPromedioAsignatura {
             List<DtoCargaAcademica> cargasCalculadas = new ArrayList<>();
             int generarPromediosRango = ep.leerPropiedadEntera("generarPromediosRango").orElse(1);
             @NonNull List<DtoCargaAcademica> dtoCargaAcademicas = obtenerCargasAcademasPorPeriodo.getValor().stream().filter(dtoCargaAcademica -> dtoCargaAcademica.getCargaAcademica().getCarga() >= verificarRegistro.getValor()).limit(generarPromediosRango).collect(Collectors.toList());
-            dtoCargaAcademicas.parallelStream().forEach(dtoCargaAcademica -> {
+            dtoCargaAcademicas.stream().forEach(dtoCargaAcademica -> {
                 System.out.println("dtoCargaAcademica " + cargasCalculadas.size() + " = " + dtoCargaAcademica);
                 ResultadoEJB<List<DtoEstudiante>> packDtoEstudiantesGrupo = ejbPacker.packDtoEstudiantesHistoricoGrupo(dtoCargaAcademica);
                 if(packDtoEstudiantesGrupo.getCorrecto()){

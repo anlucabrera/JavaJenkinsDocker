@@ -465,7 +465,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                     dtoEstudiante.setEstudiantesClaves(estudianteC);
                     dtoEstudiante.setClaveEstudiante(estudianteC.getClave());
                 }*/
-               System.out.println("Estudiante Control Escolar --->" + dtoEstudiante);
+//               System.out.println("Estudiante Control Escolar --->" + dtoEstudiante);
                 listEstudiantesCE.add(dtoEstudiante);
             });
             return ResultadoEJB.crearCorrecto(listEstudiantesCE ,"Lista de estudiantes CE");

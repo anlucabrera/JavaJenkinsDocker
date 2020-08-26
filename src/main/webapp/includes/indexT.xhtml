@@ -277,7 +277,7 @@
                                     <a href="capitalHumano/contactoE.xhtml" class="small-box-footer">Registrar</a>
                                 </div>
                             </div>
-                            <c:if test="#{serviciosConsulta.mostrarEnDesarrollo(request) and serviciosConsulta.tieneAcceso}">
+                            <!--c:if test="# {serviciosConsulta.mostrarEnDesarrollo(request) and serviciosConsulta.tieneAcceso}">
                                 <div class="col-lg-3 col-md-6 col-xs-12">
                                     <div class="small-box bg-green">
                                         <div class="inner">
@@ -287,10 +287,10 @@
                                         <div class="icon">
                                             <i class="fa fa-search-plus"/>
                                         </div>
-                                        <a href="#{request.contextPath}/encuestas/consulta/servicios.xhtml" class="small-box-footer">Consultar</a>
+                                        <a href="# {request.contextPath}/encuestas/consulta/servicios.xhtml" class="small-box-footer">Consultar</a>
                                     </div>
                                 </div>
-                            </c:if>
+                            </c:if-->
                             <c:if test="#{fichaAdmisionReporte.tieneAcceso}">
                                 <div class="col-lg-3 col-md-6 col-xs-12">
                                     <div class="small-box bg-blue">

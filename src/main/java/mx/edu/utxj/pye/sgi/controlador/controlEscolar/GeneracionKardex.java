@@ -81,8 +81,10 @@ public class GeneracionKardex implements Serializable{
         PdfPTable table = new PdfPTable(2);        
         PdfPTable table3 = new PdfPTable(2);
         PdfPTable table2 = new PdfPTable(2);
+        PdfPTable table4 = new PdfPTable(2);
         PdfPTable tablaPromedio = new PdfPTable(2);
         PdfPTable tablaPromedio2 = new PdfPTable(2);
+        PdfPTable tablaPromedio3 = new PdfPTable(2);
         Caster caster = new Caster();
 
         //Se abre el pdf para iniciar a darle formato
@@ -145,12 +147,18 @@ public class GeneracionKardex implements Serializable{
         table2.setWidthPercentage(100);
         table2.setHorizontalAlignment(Element.ALIGN_LEFT);
         table2.setWidths(new float[] {40f, 7f});
+        table4.setWidthPercentage(100);
+        table4.setHorizontalAlignment(Element.ALIGN_LEFT);
+        table4.setWidths(new float[] {40f, 7f});
         tablaPromedio.setWidthPercentage(100);
         tablaPromedio.setHorizontalAlignment(Element.ALIGN_LEFT);
         tablaPromedio.setWidths(new float[] {40f, 7f});
         tablaPromedio2.setWidthPercentage(100);
         tablaPromedio2.setHorizontalAlignment(Element.ALIGN_LEFT);
         tablaPromedio2.setWidths(new float[] {40f, 7f});
+        tablaPromedio3.setWidthPercentage(100);
+        tablaPromedio3.setHorizontalAlignment(Element.ALIGN_LEFT);
+        tablaPromedio3.setWidths(new float[] {40f, 7f});
         tablaPrincipal.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
         tablaPrincipal.setWidthPercentage(100);
         tablaPrincipal.setSpacingBefore(8);
@@ -238,6 +246,43 @@ public class GeneracionKardex implements Serializable{
                     tablaPromedio.addCell(avg);
                     celda.addElement(table);
                     celda2.addElement(tablaPromedio);
+                    break;
+                    case 3:
+                    cuatrimestre = new PdfPCell(new Paragraph("TERCERO", fontBold));
+                    cuatrimestre.setColspan(3);
+                    cuatrimestre.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    table4.addCell(cuatrimestre);
+                     List<BigDecimal> listaPromedios3 = new ArrayList<>();
+                    controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 3).forEach(dtoCargaAcademica -> {
+                        BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor())
+                                .setScale(2, RoundingMode.HALF_UP);
+                        BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor())
+                                .setScale(2, RoundingMode.HALF_UP);
+                        BigDecimal promedioFinal = BigDecimal.ZERO;
+                        PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
+                        materias.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        PdfPCell promedios;
+                        if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
+                            promedioFinal = promedioFinal.add(promedio);
+                            promedios = new PdfPCell(new Paragraph(promedio.toString(), fontMateria2));
+                        }else{
+                            promedioFinal = promedioFinal.add(nivelacion);
+                            promedios = new PdfPCell(new Paragraph(nivelacion.toString(), fontMateria2));
+                        }
+                        listaPromedios3.add(promedioFinal);
+                        table4.addCell(materias);
+                        table4.addCell(promedios);
+                    });
+                    materiastotal = (int) ejb.obtenerCargasAcademicas(estudiante1.getInscripcion()).getValor().stream().filter(grado -> grado.getGrupo().getGrado() == 3).count();
+//                    System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.GeneracionKardex.generarPdf()"+materiastotal);
+                    promedioCuatrimestral = listaPromedios3.stream().reduce(BigDecimal.ZERO, BigDecimal::add).plus()
+                            .divide(new BigDecimal(materiastotal), RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
+                    texto = new PdfPCell(new Paragraph("Promedio", fontBold));
+                    avg = new PdfPCell(new Paragraph(promedioCuatrimestral.toString(), fontBold));
+                    tablaPromedio3.addCell(texto);
+                    tablaPromedio3.addCell(avg);
+                    celda.addElement(table4);
+                    celda2.addElement(tablaPromedio3);
                     break;
             }
             tablaPrincipal.addCell(celda);
