@@ -146,7 +146,7 @@ public class CuestionarioPsicopedagogicoEstudiante extends ViewScopedRol  implem
         finalizo =comparador.isCompleto(rol.getResultados());
         if(rol.isFinalizado()==true){
             ResultadoEJB<CuestionarioPsicopedagogicoResultados> resActualiza = ejbCuestionario.actualizarCompleto(rol.getResultados());
-            if(resActualiza.getCorrecto()==true){rol.setResultados(resActualiza.getValor());}
+            if(resActualiza.getCorrecto()==true){rol.setResultados(resActualiza.getValor());tieneAcceso=false;}
             else {mostrarMensajeResultadoEJB(resActualiza);}
         }
         //System.out.println(comparador.isCompleto(rol.getResultados()));

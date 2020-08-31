@@ -161,7 +161,7 @@ public class CedulaIdentificacionDirector extends ViewScopedRol implements Desar
                 //System.out.println("Entro a genera cedula");
                 rol.setCedulaIdentificacion(resCedula.getValor());
                 getPeriodoEstudiante();
-                getCalificaciones();
+                //getCalificaciones();
             }else{
                 mostrarMensajeResultadoEJB(resCedula);
             }

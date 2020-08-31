@@ -59,6 +59,7 @@ public class EvaluacionTutorEstudiante extends ViewScopedRol {
 
     @PostConstruct
     public void init() {
+        cargada=false;
         setVistaControlador(ControlEscolarVistaControlador.EVALAUCION_TUTOR_NUEVA);
         //Busca la evaluacion activa
         ResultadoEJB<Evaluaciones> resEvaluacion = ejbEvaluacionTutor2.getEvaluacionTutorActiva();

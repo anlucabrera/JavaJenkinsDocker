@@ -113,7 +113,7 @@ public class CedulaIdentificacionSE extends ViewScopedRol implements Desarrollab
                 //System.out.println("Entro a genera cedula");
                 rol.setCedulaIdentificacion(resCedula.getValor());
                 getPeriodoEstudiante();
-                getCalificaciones();
+               // getCalificaciones();
             }else{ mostrarMensajeResultadoEJB(resCedula); }
         } else {mostrarMensajeResultadoEJB(resEstudiante);}
     }
