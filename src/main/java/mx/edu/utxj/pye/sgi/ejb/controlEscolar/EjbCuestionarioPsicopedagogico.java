@@ -59,9 +59,15 @@ public class EjbCuestionarioPsicopedagogico {
         try {
            // System.out.println("Entro a cuestionario activo");
             Evaluaciones encuestaActiva = new Evaluaciones();
-            encuestaActiva = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
+            /*encuestaActiva = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
             .setParameter("tipo","Cuestionario Psicopedagógico")
             .setParameter("fecha",new Date())
+            .getResultStream()
+            .findFirst()
+            .orElse(null)
+            ;
+            */
+            encuestaActiva = em.createQuery("select e from Evaluaciones e where e.evaluacion=51",Evaluaciones.class)
             .getResultStream()
             .findFirst()
             .orElse(null)
@@ -85,10 +91,9 @@ public class EjbCuestionarioPsicopedagogico {
             CuestionarioPsicopedagogicoResultados resultados = new CuestionarioPsicopedagogicoResultados();
             if(estudiante==null){return ResultadoEJB.crearErroneo(2,resultados,"El estudiante no debe ser nulo");}
             if(evaluacion==null){return ResultadoEJB.crearErroneo(3,resultados,"La evaluación no debe ser nula");}
-            //TODO: Busca resultados por el id del estudiante
-            resultados = em.createQuery("select c from CuestionarioPsicopedagogicoResultados c where c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante=:idEstudiante and c.cuestionarioPsicopedagogicoResultadosPK.evaluacion=:evaluacion",CuestionarioPsicopedagogicoResultados.class)
+            // Busca resultados por el id del estudiante
+            resultados = em.createQuery("select c from CuestionarioPsicopedagogicoResultados c where c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante=:idEstudiante order by c.cuestionarioPsicopedagogicoResultadosPK.evaluacion ",CuestionarioPsicopedagogicoResultados.class)
             .setParameter("idEstudiante",estudiante.getIdEstudiante())
-            .setParameter("evaluacion",evaluacion.getEvaluacion())
             .getResultStream()
             .findFirst()
             .orElse(null)

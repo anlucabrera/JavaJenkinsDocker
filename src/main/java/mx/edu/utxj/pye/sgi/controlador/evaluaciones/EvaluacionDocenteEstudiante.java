@@ -57,6 +57,7 @@ public class EvaluacionDocenteEstudiante extends ViewScopedRol {
 
     @PostConstruct
     public  void  init(){
+        cargada =false;
         //System.out.println("EvaluacionDocenteEstudiante.init" +logonMB.getCurrentUser());
         setVistaControlador(ControlEscolarVistaControlador.EVALUACION_DOCENTE2);
         //Se busca evaluacion activa
@@ -85,26 +86,28 @@ public class EvaluacionDocenteEstudiante extends ViewScopedRol {
                             preguntas = ejbEvaluacionDocente2.getApartados();
                             getResultados();
                             tipoEvaluacion=1;
+                            cargada=true;
                         }
                         else if(evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_2.getLabel())){
                             //Carga el cuestionario de evaluacion docentes tipo 2 por contingencia
                             preguntas = ejbEvaluacionDocente2.getApartadosContingencia();
                             getResultadosTipo2();
                             tipoEvaluacion =2;
+                            cargada =true;
                         }
                         else if (evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_3.getLabel())){
                             //Carga el cuestionario de evaluacion a docente tipo 3 por contingencia
                             preguntas = ejbEvaluacionDocente2.getApartadosContingenciaCuestionario2();
                             getResultadosTipo3();
                             tipoEvaluacion =3;
+                            cargada=true;
                         }
                         respuestasPosibles = ejbEvaluacionDocente2.getRespuestasPosibles();
-                        cargada =true;
                     }else {mostrarMensajeResultadoEJB(resMaterias);}
 
                 }
             }
-        }else {mostrarMensajeResultadoEJB(resEvaluacion);}
+        }else {mostrarMensajeResultadoEJB(resEvaluacion); cargada =false;}
     }
 
     /**

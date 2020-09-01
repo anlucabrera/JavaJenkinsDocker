@@ -48,7 +48,7 @@ public class EjbEvaluacionDocente2 {
     public ResultadoEJB<Evaluaciones> getEvDocenteActiva() {
         try{
             Evaluaciones evaluacion = new Evaluaciones();
-            evaluacion = em.createQuery("SELECT e FROM Evaluaciones e WHERE :fecha BETWEEN e.fechaInicio AND e.fechaFin AND e.tipo=:tipo OR e.tipo=:tipo2 OR e.tipo=:tipo3 ORDER BY e.evaluacion desc", Evaluaciones.class)
+            evaluacion = em.createQuery("SELECT e FROM Evaluaciones e WHERE :fecha BETWEEN e.fechaInicio AND e.fechaFin AND (e.tipo=:tipo OR e.tipo=:tipo2 OR e.tipo=:tipo3) ORDER BY e.evaluacion desc", Evaluaciones.class)
                     .setParameter("tipo2", EvaluacionesTipo.DOCENTE_2.getLabel())
                     .setParameter("tipo3", EvaluacionesTipo.DOCENTE_3.getLabel())
                     .setParameter("tipo", "Docente materia")

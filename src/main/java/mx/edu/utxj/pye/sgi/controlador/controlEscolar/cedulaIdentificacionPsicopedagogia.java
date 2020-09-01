@@ -125,15 +125,6 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
                 getPeriodoEstudiante();
                 getResultadosCuestionario();
                 alertas();
-//                obtenerMateriasPorEstudiante();
-//                obtenerUnidadesPorMateria();
-//                obtenerCalificaciones();
-//                obtenerPromedioMateria();
-//                obtenerTareaIntegradoraPorMateria();
-//                obtenerNivelacionesPorMateria();
-//                obtenerPromediosFinales();
-//                obtenerPromedioCuatrimestral();
-                //obtenerPromedioAcumulado();
             }else{ mostrarMensajeResultadoEJB(resCedula); }
         } else {mostrarMensajeResultadoEJB(resEstudiante);}
     }

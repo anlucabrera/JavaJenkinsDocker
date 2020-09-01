@@ -37,9 +37,9 @@ public class EjbNuevaEvaluacionTutor {
     public ResultadoEJB<Evaluaciones> getEvaluacionTutorActiva (){
         try{
             Evaluaciones evaluacion = new Evaluaciones();
-            evaluacion = em.createQuery("SELECT e FROM Evaluaciones e WHERE :fecha BETWEEN e.fechaInicio AND e.fechaFin AND e.tipo=:tipo OR e.tipo=:tipo2 ORDER BY e.evaluacion desc", Evaluaciones.class)
-                    .setParameter("tipo", EvaluacionesTipo.TUTOR.getLabel())
+            evaluacion = em.createQuery("SELECT e FROM Evaluaciones e WHERE :fecha BETWEEN e.fechaInicio AND e.fechaFin AND (e.tipo=:tipo2 or e.tipo=:tipo) ORDER BY e.evaluacion desc", Evaluaciones.class)
                     .setParameter("tipo2",EvaluacionesTipo.TUTOR_2.getLabel())
+                    .setParameter("tipo", EvaluacionesTipo.TUTOR.getLabel())
                     .setParameter("fecha", new Date())
                     .getResultStream()
                     .findFirst()
