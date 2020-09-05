@@ -642,10 +642,11 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             if(eventoEscolar==null){return ResultadoEJB.crearErroneo(2,grupos,"El evento no debe ser nulo");}
             if(pe==null){ return  ResultadoEJB.crearErroneo(3,grupos,"El programa educativo no debe ser nulo");}
             if(sistema==null){ return ResultadoEJB.crearErroneo(4,grupos,"El sistema no debe ser nulo");}
-            grupos = em.createQuery("select g from Grupo g where g.periodo=:periodo and g.idPe=:pe and g.idSistema.idSistema=:sistema", Grupo.class)
+            grupos = em.createQuery("select g from Grupo g where g.periodo=:periodo and g.idPe=:pe and g.idSistema.idSistema=:sistema and g.grado=:grado", Grupo.class)
                     .setParameter("periodo", eventoEscolar.getPeriodo())
                     .setParameter("pe",pe.getArea())
                     .setParameter("sistema",sistema.getIdSistema())
+                    .setParameter("grado",1)
                     .getResultList()
             ;
             if(grupos==null || grupos.isEmpty()){ return ResultadoEJB.crearErroneo(5,grupos,"No existen grupos creados para el programa educativo");}
