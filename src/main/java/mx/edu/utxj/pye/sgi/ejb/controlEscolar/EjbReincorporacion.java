@@ -1053,7 +1053,11 @@ public class EjbReincorporacion {
                         e.setTipoEstudiante(new TipoEstudiante());
                         e.setGrupo(new Grupo());
                         e.setAspirante(a);
-                        e.setTipoEstudiante(new TipoEstudiante(Short.parseShort("1")));
+                        if (escolar.getPeriodo() == t.getPeriodo()) {
+                            e.setTipoEstudiante(new TipoEstudiante(Short.parseShort("1")));
+                        } else {
+                            e.setTipoEstudiante(new TipoEstudiante(Short.parseShort("5")));
+                        }
                         e.setGrupo(t);
                         e.setFechaAlta(new Date());
                         operacion = Operacion.PERSISTIR;
