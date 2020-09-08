@@ -155,7 +155,7 @@ public class ReporteAsistenciasTutor extends ViewScopedRol implements Desarrolla
         rol.setDplrs(new ArrayList<>());
         rol.setUms(new ArrayList<>());
         rol.setDocentes(new ArrayList<>());
-        ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorTutor(rol.getTutor().getPersonal().getClave(), rol.getPeriodo());
+        ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());
         academicas = new ArrayList<>();
         academicas = rejb.getValor().stream().filter(a -> Objects.equals(a.getGrupo().getIdGrupo(), rol.getGrupoSelec().getIdGrupo())).collect(Collectors.toList());
         academicas.forEach((t) -> {

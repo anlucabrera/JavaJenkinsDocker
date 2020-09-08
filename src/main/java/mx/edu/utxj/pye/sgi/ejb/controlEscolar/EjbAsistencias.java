@@ -137,11 +137,11 @@ public class EjbAsistencias {
         }
     }
     
-    public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicasPorTutor(Integer docente, PeriodosEscolares periodo) {
+    public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicasPorGrupo(Integer idGrupo, PeriodosEscolares periodo) {
         try {
             //buscar carga académica del personal docente logeado del periodo seleccionado
-            List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c INNER JOIN c.cveGrupo g WHERE g.tutor =:tutor AND c.evento.periodo =:periodo", CargaAcademica.class)
-                    .setParameter("tutor", docente)
+            List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c INNER JOIN c.cveGrupo g WHERE g.idGrupo =:idGrupo AND c.evento.periodo =:periodo", CargaAcademica.class)
+                    .setParameter("idGrupo", idGrupo)
                     .setParameter("periodo", periodo.getPeriodo())
                     .getResultStream()
                     .distinct()

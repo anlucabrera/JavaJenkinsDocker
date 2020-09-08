@@ -55,6 +55,7 @@ import org.primefaces.model.timeline.TimelineEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -114,7 +115,9 @@ public class PaseListaSegTutor extends ViewScopedRol implements Desarrollable {
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
                        
-            ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicasPorTutor(rol.getTutor().getPersonal().getClave(), rol.getPeriodo());
+            Grupo gr=new Grupo();
+            gr=rol.getTutor().getGruposTutorados().get(0);
+            ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicasPorGrupo(gr.getIdGrupo(), rol.getPeriodo());
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
             rol.setCargas(resCarga.getValor());
             rol.setCarga(resCarga.getValor().get(0));

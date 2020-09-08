@@ -184,7 +184,7 @@ public class AvanceProgramaticoSecAca extends ViewScopedRol implements Desarroll
     public void creareporte() {
         rol.setDvcs(new ArrayList<>());
         rol.setDccs(new ArrayList<>());
-        ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());
+        ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());
         academicas = new ArrayList<>();
         academicas = rejb.getValor().stream().filter(a -> Objects.equals(a.getGrupo().getIdGrupo(), rol.getGrupoSelec().getIdGrupo())).collect(Collectors.toList());
         academicas.forEach((a) -> {

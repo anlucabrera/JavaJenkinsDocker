@@ -127,7 +127,7 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
             rol.setGrupos(resgrupos.getValor());             
             rol.setGrupoSelec(rol.getGrupos().get(0));
             
-            ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());            
+            ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());            
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
             rol.setCargas(resCarga.getValor());
             rol.setCarga(resCarga.getValor().get(0));
@@ -163,7 +163,7 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
         rol.setGrupos(resgrupos.getValor());
         rol.setGrupoSelec(rol.getGrupos().get(0));
 
-        ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());
+        ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());
         if (!resCarga.getCorrecto()) {
             mostrarMensajeResultadoEJB(resCarga);
         }
@@ -187,7 +187,7 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
         if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
         rol.setGrupos(resgrupos.getValor()); 
         rol.setGrupoSelec(rol.getGrupos().get(0));
-        ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());            
+        ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());            
         if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
         if (resCarga.getValor().isEmpty()) {
             rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
@@ -204,7 +204,7 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
    public void cambiarGrupo(ValueChangeEvent event) {
         rol.setCargas(new ArrayList<>());
         rol.setGrupoSelec((Grupo) event.getNewValue());
-        ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());            
+        ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());            
         if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
         if (resCarga.getValor().isEmpty()) {
             rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);

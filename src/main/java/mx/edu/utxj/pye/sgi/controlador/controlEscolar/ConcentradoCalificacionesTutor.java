@@ -195,7 +195,7 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
         rol.setDrpls(new ArrayList<>());
         rol.setDplrs(new ArrayList<>());
         rol.setEstudiantes(new ArrayList<>());
-        ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorTutor(rol.getGrupoSelec().getTutor(), rol.getPeriodo());        
+        ResultadoEJB<List<DtoCargaAcademica>> rejb = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());        
         academicas = new ArrayList<>();
        
         if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
