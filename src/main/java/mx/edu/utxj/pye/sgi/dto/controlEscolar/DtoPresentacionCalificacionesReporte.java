@@ -22,12 +22,14 @@ import lombok.ToString;
 public class DtoPresentacionCalificacionesReporte implements Serializable{
     
     @Getter @Setter private Integer matricula;
+    @Getter @Setter private Short tipoEstudiante;
     @Getter @Setter private String nombre;
     @Getter @Setter private List<DtoVistaCalificaciones> materias;
     @Getter @Setter private BigDecimal promedioFinal;
 
-    public DtoPresentacionCalificacionesReporte(Integer matricula, String nombre, List<DtoVistaCalificaciones> materias, BigDecimal promedioFinal) {
+    public DtoPresentacionCalificacionesReporte(Integer matricula, Short tipoEstudiante, String nombre, List<DtoVistaCalificaciones> materias, BigDecimal promedioFinal) {
         this.matricula = matricula;
+        this.tipoEstudiante = tipoEstudiante;
         this.nombre = nombre;
         this.materias = materias;
         this.promedioFinal = promedioFinal;

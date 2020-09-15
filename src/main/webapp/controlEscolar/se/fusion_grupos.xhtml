@@ -48,7 +48,7 @@
         <c:if test="#{fusionGruposServiciosEscolares.cargado}">
         <adm:breadcrumb title="Fusion de grupos"/>
         <div class="contenedor">
-            <c:if test="#{fusionGruposServiciosEscolares.tieneAcceso}">
+            <!--c:if test="#{fusionGruposServiciosEscolares.tieneAcceso}"-->
                 <!-- zona de importación de enums -->
                 <h:form id="frm" prependId="false" class="form-inline">
                     <div class="box box-primary">
@@ -154,15 +154,15 @@
                                                 <h:outputText rendered="#{estudiante.calificacionList.size() > 0}" value="Si"/>
                                             </p:column>
                                             <f:facet name="footer">
-                                                <c:forEach var="grupo" items="#{fusionGruposServiciosEscolares.rol.grupos}">
+                                                <c:forEach var="grupo" items="#{fusionGruposServiciosEscolares.rol.gruposDestino}">
                                                     <div class="btn-group">
                                                         <p:commandLink
                                                                 update="tbl2"
                                                                 class="#{true?'btn btn-info btn-sm':'btn btn-warning btn-sm'}"
                                                                 rendered="#{grupo ne fusionGruposServiciosEscolares.rol.grupoSeleccionado}"
                                                                 actionListener="#{fusionGruposServiciosEscolares.fusionarGrupo(grupo)}"
-                                                                title="Mover al grupo: #{grupo.literal}">
-                                                                Mover al grupo: #{grupo.literal}
+                                                                title="Mover al grupo: #{grupo.grado} #{grupo.literal}">
+                                                                Mover al grupo: #{grupo.grado} #{grupo.literal}
                                                             <p:confirm header="Mover al grupo: #{grupo.literal}"
                                                                        message="¿Está seguro que desea mover el/los estudiantes al grupo #{grupo.grado}° #{grupo.literal} ?"/>
                                                         </p:commandLink>
@@ -211,15 +211,15 @@
                         <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
                     </div>
                 </p:dialog>
-            </c:if>
-            <c:if test="#{!fusionGruposServiciosEscolares.tieneAcceso}">
+            <!--/c:if-->
+            <!--c:if test="#{!fusionGruposServiciosEscolares.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
                         <h:outputText value="El acceso solo está autorizado a directores de área académica."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>
-            </c:if>
+            </c:if-->
         </div>
         <script>
             //collapseSidebar(); activar para colapsar barra lateral

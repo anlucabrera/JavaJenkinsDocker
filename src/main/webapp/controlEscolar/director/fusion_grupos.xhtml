@@ -154,7 +154,7 @@
                                                 <h:outputText rendered="#{estudiante.calificacionList.size() > 0}" value="Si"/>
                                             </p:column>
                                             <f:facet name="footer">
-                                                <c:forEach var="grupo" items="#{fusionGruposDirector.rol.grupos}">
+                                                <c:forEach var="grupo" items="#{fusionGruposDirector.rol.gruposDestino}">
                                                     <div class="btn-group">
                                                         <p:commandLink
                                                                 update="tbl2"

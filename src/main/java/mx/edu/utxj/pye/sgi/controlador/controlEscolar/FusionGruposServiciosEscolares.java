@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -110,6 +111,7 @@ public class FusionGruposServiciosEscolares extends ViewScopedRol implements Des
             obtenerEstudiatesGrupoSeleccionado();
         }else{
             rol.setGrupoSeleccionado(rol.getGrupos().get(0));
+            rol.setGruposDestino(rol.getGrupos().stream().filter(grupo -> grupo.getGrado() == rol.getGrupoSeleccionado().getGrado()).collect(Collectors.toList()));
             rol.setTutor(ejb.getPersonalTutorGrupo(rol.getGrupoSeleccionado()).getValor());
             obtenerEstudiatesGrupoSeleccionado();
         }

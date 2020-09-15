@@ -299,6 +299,7 @@ public class ConcentradoCalificacionesSecAca extends ViewScopedRol implements De
                 });
                 rol.getDvcs().add(new DtoPresentacionCalificacionesReporte(
                     t.getEstudiante().getMatricula(),
+                    t.getEstudiante().getTipoEstudiante().getIdTipoEstudiante(),
                     t.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " " + t.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + " " + t.getEstudiante().getAspirante().getIdPersona().getNombre(),
                     dvcs,
                     t.getPromedioF()));

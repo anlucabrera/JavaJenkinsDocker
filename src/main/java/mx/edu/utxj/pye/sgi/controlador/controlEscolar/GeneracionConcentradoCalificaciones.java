@@ -1,6 +1,5 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
-import com.github.adminfaces.starter.infra.security.LogonMB;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
@@ -18,30 +17,22 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import org.omnifaces.cdi.ViewScoped;
-import org.omnifaces.util.Ajax;
-import org.omnifaces.util.Faces;
-import org.omnifaces.util.Messages;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.awt.*;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ViewScoped
 @Named
@@ -58,6 +49,9 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
     public void generarPdf(Grupo grupo, List<DtoVistaCalificacionestitulosTabla> titulos, PeriodosEscolares periodoSelect, List<DtoPresentacionCalificacionesReporte> calificaciones, AreasUniversidad areasUniversidad) throws IOException, DocumentException {
         //Se crean las variables a utilizar para la creación del pdf
         Personal director = ejb.obtenerDirector(grupo.getPlan()).getValor();
+        calificaciones.stream().forEach(System.out::println);
+        List<DtoPresentacionCalificacionesReporte> dpcp = calificaciones
+                .stream().filter(dto -> dto.getTipoEstudiante().equals(Short.parseShort("1"))).collect(Collectors.toList());
         Document document;
         /*if(calificaciones.size() > 25){
             document = new Document(PageSize.LETTER, 15, 15, 15, 15);
@@ -163,7 +157,7 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
             materia.setHorizontalAlignment(Element.ALIGN_CENTER);
             table.addCell(materia);
         });
-        calificaciones.forEach(x -> {
+        dpcp.forEach(x -> {
             PdfPCell mat = new PdfPCell(new Paragraph(x.getMatricula().toString(), fontMateria));
             mat.setHorizontalAlignment(Element.ALIGN_CENTER);
             table.addCell(mat);
@@ -189,7 +183,7 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
             table.addCell(docente);
         });
         final PdfPCell[] leyenda = new PdfPCell[1];
-        calificaciones.forEach(x -> {
+        dpcp.forEach(x -> {
             x.getMaterias().forEach(y -> {
                 if(!y.getPromedioFinalN().equals(BigDecimal.ZERO)){
                     leyenda[0] = new PdfPCell(new Paragraph("* Resultado obtenido en nivelación final", fontMateria1));
@@ -202,23 +196,23 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
         table.addCell(leyenda[0]);
 
 
-        if(calificaciones.size() > 10 && calificaciones.size() <= 14){
-            tableFirma.setSpacingBefore(200);
-        }
-        if(calificaciones.size() > 15 && calificaciones.size() <= 20){
+        if(dpcp.size() > 10 && dpcp.size() <= 14){
             tableFirma.setSpacingBefore(170);
         }
-        if(calificaciones.size() >= 21 && calificaciones.size() <= 25){
-            tableFirma.setSpacingBefore(130);
+        if(dpcp.size() > 15 && dpcp.size() <= 20){
+            tableFirma.setSpacingBefore(140);
         }
-        if(calificaciones.size() >= 26 && calificaciones.size() <= 30){
-            tableFirma.setSpacingBefore(45);
+        if(dpcp.size() >= 21 && dpcp.size() <= 25){
+            tableFirma.setSpacingBefore(70);
         }
-        if(calificaciones.size() >= 31 && calificaciones.size() <= 35){
-            tableFirma.setSpacingBefore(45);
+        if(dpcp.size() >= 26 && dpcp.size() <= 30){
+            tableFirma.setSpacingBefore(30);
         }
-        if(calificaciones.size() >= 32 && calificaciones.size() <= 40){
-            tableFirma.setSpacingBefore(45);
+        if(dpcp.size() >= 31 && dpcp.size() <= 35){
+            tableFirma.setSpacingBefore(42);
+        }
+        if(dpcp.size() >= 36 && dpcp.size() <= 40){
+            tableFirma.setSpacingBefore(42);
         }
 
         tableFirma.setWidthPercentage(60);
