@@ -209,7 +209,9 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
     }
 
     public BigDecimal getPromedioCuatrimestral(Estudiante estudiante){
-        BigDecimal promedioCuatrimestral = BigDecimal.ZERO;
+        BigDecimal promedioCuatrimestral;
+        if(estudiante.getGrupo().getIdGrupo() == null) return BigDecimal.ZERO;
+        if(estudiante.getGrupo().getCargaAcademicaList().isEmpty()) return BigDecimal.ZERO;
         ResultadoEJB<List<DtoCargaAcademica>> resCargas = ejb.obtenerCargasAcademicas(estudiante);
         List<BigDecimal> lista = new ArrayList<>();
         if(!resCargas.getCorrecto()) mostrarMensajeResultadoEJB(resCargas);

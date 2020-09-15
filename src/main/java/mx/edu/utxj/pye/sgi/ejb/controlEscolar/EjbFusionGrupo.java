@@ -151,7 +151,7 @@ public class EjbFusionGrupo {
                             .setParameter("categoria1", Short.parseShort("7"))
                             .setParameter("categoria2", Short.parseShort("8"))
                             .getResultStream().collect(Collectors.toList());
-            System.out.println("Divisiones:"+ divisiones);
+            //System.out.println("Divisiones:"+ divisiones);
             return ResultadoEJB.crearCorrecto(divisiones, "Los estudiantes fueron cambiados satisfactoriamente de grupo");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo realizar el cambio de grupo de los estudiantes", e, null);
@@ -168,7 +168,7 @@ public class EjbFusionGrupo {
                             .setParameter("vigente", String.valueOf(1))
                             .setParameter("divsion", areaUniversidad.getArea())
                             .getResultStream().collect(Collectors.toList());
-            System.out.println("Programas educativos:"+programas);
+            //System.out.println("Programas educativos:"+programas);
             return ResultadoEJB.crearCorrecto(programas, "Los estudiantes fueron cambiados satisfactoriamente de grupo");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo realizar el cambio de grupo de los estudiantes", e, null);
@@ -181,7 +181,7 @@ public class EjbFusionGrupo {
                     .setParameter("programa", Short.parseShort(areasUniversidad.getArea().toString()))
                     .setParameter("periodo", periodoActivo)
                     .getResultStream().collect(Collectors.toList());
-            System.out.println("Grupos:"+grupos);
+            //System.out.println("Grupos:"+grupos);
             return ResultadoEJB.crearCorrecto(grupos, "Los estudiantes fueron cambiados satisfactoriamente de grupo");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo realizar el cambio de grupo de los estudiantes", e, null);

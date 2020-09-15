@@ -98,29 +98,9 @@ public class ConsultaCalificaciones extends ViewScopedRol implements Desarrollab
             ResultadoEJB<DtoEstudiante> estudianteEncontrado = ejbC.validadEstudiante(estudiante.getEstudiantes().getMatricula());
             if(estudianteEncontrado.getCorrecto()){
                 rol.setEstudiante(estudianteEncontrado.getValor());
-                rol.getEstudiante().getInscripciones().forEach(dtoInscripcion -> {
-                    List<DtoCargaAcademica> dtoCargaAcademicas = c.getCargasAcademicas(dtoInscripcion.getInscripcion());
-                    List<DtoUnidadesCalificacionEstudiante> dtoUnidadesCalificacionEstudiantes = dtoCargaAcademicas
-                            .stream()
-                            .map(dtoCargaAcademica -> c.getContenedor(dtoCargaAcademica, dtoInscripcion.getInscripcion())).collect(Collectors.toList());
-                    dtoCargaAcademicas.forEach(dtoCargaAcademica -> {
-                        rol.setDtoUnidadConfiguraciones(c.getContenedor(dtoCargaAcademica, dtoInscripcion.getInscripcion()).getDtoUnidadConfiguraciones());
-                        dtoCargaAcademica.getMateria().getUnidadMateriaList().forEach(unidadMateria -> {
-                            map.add(new DtoCalificacionEstudiante.MapUnidadesTematicas(dtoCargaAcademica.getGrupo().getIdGrupo(), unidadMateria.getNoUnidad()));
-                        });
-                    });
-                    rol.setMapUnidadesTematicas(new ArrayList<>(new HashSet<>(map)));
-
-                    dtoHistorialCalificaciones.add(
-                            new DtoCalificacionEstudiante.DtoHistorialCalificaciones(
-                                    dtoInscripcion,
-                                    dtoCargaAcademicas,
-                                    rol.getMapUnidadesTematicas(),
-                                    dtoUnidadesCalificacionEstudiantes
-                            )
-                    );
-                });
-                rol.setDtoHistorialCalificaciones(dtoHistorialCalificaciones);
+                if(rol.getEstudiante().getInscripcionActiva().getGrupo().getCargaAcademicaList().isEmpty())return;
+                rol.setDtoInscripciones(rol.getEstudiante().getInscripciones());
+                
             }else{
                 mostrarMensaje("El estudiante no cuenta con una inscripción activa.");
             }

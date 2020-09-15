@@ -82,7 +82,7 @@ public class FusionGruposRolDirector extends AbstractRol{
     /**
      * Representa el listado de grupos que pertenecen a un programa educativo
      */
-    @Getter @NonNull private List<Grupo> grupos;
+    @Getter @NonNull private List<Grupo> grupos, gruposDestino;
     /**
      * Representa el listado de estudiantes que pertenecen al grupo selececcionado
      */
@@ -205,4 +205,10 @@ public class FusionGruposRolDirector extends AbstractRol{
     public void setAreaUniversidad(AreasUniversidad areaUniversidad) {
         this.areaUniversidad = areaUniversidad;
     }
+
+    public void setGruposDestino(List<Grupo> gruposDestino) {
+        this.gruposDestino = gruposDestino;
+    }
+    
+    
 }
