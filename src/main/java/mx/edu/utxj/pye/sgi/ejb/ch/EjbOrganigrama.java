@@ -87,16 +87,16 @@ public class EjbOrganigrama {
             }
             String color = "";
             if (ar.getCategoria().getCategoria() == 7) {
-                color = "#0675ca";
+                color = "#000000";
             } else {
-                color = "#043191";
+                color = "#61BF1A";
             }
             if (ar.getArea() == 1) {
                 organigrama.add(new PersonalOrganigrama(0, l.getClave(), null, ar.getNombre(), l.getNombre() + " ______________________________ " + l.getCategoriaOperativaNombre(), color, 1));
             } else {
                 if (ar.getAreaSuperior() == 1) {
                     if (ar.getCategoria().getCategoria() == 10) {
-                        organigrama.add(new PersonalOrganigrama(Integer.parseInt(ar.getArea().toString()), 0, 0, "Personal de apoyo", "Personal de apoyo administrativo de Rectoría", "#434c52", 1));
+                        organigrama.add(new PersonalOrganigrama(Integer.parseInt(ar.getArea().toString()), 0, 0, "Personal de apoyo", "Personal de apoyo administrativo de Rectoría", "#BDBFC1", 1));
                     } else {
                         organigrama.add(new PersonalOrganigrama(Integer.parseInt(ar.getArea().toString()), l.getClave(), 0, ar.getNombre(), l.getNombre() + " ______________________________ " + l.getCategoriaOperativaNombre(), color, 1));
                     }
@@ -124,20 +124,20 @@ public class EjbOrganigrama {
                 AreasUniversidad ar = empy.find(AreasUniversidad.class, l.getAreaOperativa());
                 if (ar.getCategoria().getCategoria() <= 8) {
                     if (ar.getArea() == 1) {
-                        organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), idArApoRec, l.getNombre(), l.getCategoriaOperativaNombre(), "#434c52", 2));
+                        organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), idArApoRec, l.getNombre(), l.getCategoriaOperativaNombre(), "#BDBFC1", 2));
 
                     } else {
-                        organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), Integer.parseInt(String.valueOf(l.getAreaOperativa())), l.getNombre(), l.getCategoriaOperativaNombre(), "#434c52", 2));
+                        organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), Integer.parseInt(String.valueOf(l.getAreaOperativa())), l.getNombre(), l.getCategoriaOperativaNombre(), "#BDBFC1", 2));
                     }
                 } else {
-                    organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), Integer.parseInt(ar.getAreaSuperior().toString()), l.getNombre(), l.getCategoriaOperativaNombre(), "#434c52", 2));
+                    organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), Integer.parseInt(ar.getAreaSuperior().toString()), l.getNombre(), l.getCategoriaOperativaNombre(), "#BDBFC1", 2));
                 }
                 idOrganigrama++;
             }
         });
         doc.forEach((l) -> {
             if (!direcPersonals.contains(l)) {
-                organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), Integer.parseInt(String.valueOf(l.getAreaSuperior())), l.getNombre(), l.getCategoriaOperativaNombre(), "#434c52", 2));
+                organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), Integer.parseInt(String.valueOf(l.getAreaSuperior())), l.getNombre(), l.getCategoriaOperativaNombre(), "#BDBFC1", 2));
                 idOrganigrama++;
             }
         });

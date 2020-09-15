@@ -55,7 +55,7 @@ public class CuadroMandoIntegralPlaneacion implements Serializable {
     @Getter    @Setter    private List<EjesRegistro> ejesRegistros = new ArrayList<>();
     @Getter    @Setter    private List<String> resultados = new ArrayList<>();
 
-    @Getter    @Setter    private Integer programadasCorte = 0, realizadasCorte = 0, incremento = 0,prograRepoCorte = 0, realRepoCorte = 0;
+    @Getter    @Setter    private Integer programadasCorte = 0, realizadasCorte = 0, incremento = 0,prograRepoCorte = 0, realRepoCorte = 0,cua=0,tP=0,tR=0;
     @Getter    @Setter    private Integer programadasMensual = 0, realizadasMensual = 0, numeroMes = 0,prograRepoMensual = 0, realRepoMensual = 0, numeroEje = 0;
     @Getter    @Setter    private Short ejercicioFiscal = 0;
     @Getter    @Setter    private Double avance = 0D,avanceSp = 0D,maximoValor=0D;

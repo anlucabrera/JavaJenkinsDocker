@@ -288,20 +288,21 @@
                         var buttons = [];
                         buttons.push(new primitives.orgdiagram.ButtonConfig("notice", "ui-icon-notice", "Info"));
                         result.buttons = buttons;
-                        result.itemSize = new primitives.common.Size(220, 120);
+                        result.itemSize = new primitives.common.Size(200, 200);
                         result.minimizedItemSize = new primitives.common.Size(3, 3);
                         result.highlightPadding = new primitives.common.Thickness(2, 2, 2, 2);
                         var itemTemplate = jQuery(
-                                '<div class="bp-item bp-corner-all bt-item-frame">'
-                                + '<div name="titleBackground" class="bp-item bp-corner-all bp-title-frame" style="top: 2px; left: 2px; width: 216px; height: 42px;">'
-                                + '<div name="title" class="bp-item" style="top: 3px; left: 6px; width: 208px; height: 40px;text-align: center;">'
-                                + '</div>'
-                                + '</div>'
-                                + '<div class="bp-item bp-photo-frame" style="top: 46px; left: 2px; width: 50px; height: 60px;">'
-                                + '<img name="photo" style="height:60px; width:50px;" />'
-                                + '</div>'
-                                + '<div name="description" class="bp-item" style="top: 46px; left: 56px; width: 162px; height: 80px; font-size: 10px;"></div>'
-                                + '</div>'
+                                    '<div class="bp-item bp-corner-all bt-item-frame">'
+                                +       '<div name="titleBackground" class="bp-item bp-corner-all bp-title-frame" style="top: 102px; left: 2px; width: 196px; height: 42px;">'
+                                +           '<div name="title" class="bp-item" style="top: 3px; left: 0px; width: 196px; height: 40px;text-align: center;">'
+                                +           '</div>'
+                                +       '</div>'
+                                +       '<div class="bp-item bp-photo-frame" style="top: 0px; left: 50px; width: 100px; height: 100px;">'
+                                +           '<img name="photo" style="height:100px; width:100px;" />'
+                                +       '</div>'
+                                +       '<div name="description" class="bp-item" style="top: 146px; left: 2px; width: 200px; height: 80px; font-size: 11px; text-align: center;">'
+                                +       '</div>'
+                                +   '</div>'
                                 ).css({
                             width: result.itemSize.width + "px", height: result.itemSize.height + "px"
                         }).addClass("bp-item bp-corner-all bt-item-frame");
