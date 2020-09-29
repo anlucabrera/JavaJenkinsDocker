@@ -437,11 +437,11 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
         areas = ejbModulos.getAreasDependientes(claveArea);
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         if (secretariaAcademica == (short)2) {
-            entities = f.getEntityManager().createQuery("SELECT p FROM PersonalCapacitado p INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er INNER JOIN p.participantesPersonalCapacitadoList list WHERE er.eventoRegistro=:evento AND p.periodo =:periodo AND reg.area IN :areas AND list.actividad = :actividad", PersonalCapacitado.class)
+            entities = f.getEntityManager().createQuery("SELECT p FROM PersonalCapacitado p INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND p.periodo =:periodo ", PersonalCapacitado.class)
                     .setParameter("evento", evento.getEventoRegistro())
                     .setParameter("periodo", periodo.getPeriodo())
-                    .setParameter("areas", areas)
-                    .setParameter("actividad", (short)3)
+                    
+                 
                     .getResultList();
         } else {
             entities = f.getEntityManager().createQuery("SELECT p FROM PersonalCapacitado p INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND p.periodo =:periodo AND reg.area IN :areas", PersonalCapacitado.class)
@@ -484,11 +484,9 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
         
         //obtener la lista de registros mensuales filtrando por evento y por claves de areas
         if (secretariaAcademica == (short)2) {
-            entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesPersonalCapacitado p INNER JOIN p.percap a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo=:periodo AND reg.area IN :areas AND p.actividad = :actividad", ParticipantesPersonalCapacitado.class)
+            entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesPersonalCapacitado p INNER JOIN p.percap a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo=:periodo", ParticipantesPersonalCapacitado.class)
                     .setParameter("evento", evento.getEventoRegistro())
                     .setParameter("periodo", periodo.getPeriodo())
-                    .setParameter("areas", areas)
-                    .setParameter("actividad", (short)3)
                     .getResultList();
         } else {
             entities = f.getEntityManager().createQuery("SELECT p FROM ParticipantesPersonalCapacitado p INNER JOIN p.percap a INNER JOIN p.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND a.periodo=:periodo AND reg.area IN :areas", ParticipantesPersonalCapacitado.class)
