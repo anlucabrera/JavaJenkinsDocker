@@ -86,9 +86,8 @@
             </h1>
         </p:panel>
         <p:panel id="informacion" class="hidden-xs hidden-sm">
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 53 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
-
-                <section class="content">
+            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 16 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 53 or controladorEmpleado.nuevoOBJListaPersonal.clave eq 30}">
+                    <section class="content">
                     <div class="row">
                         <ui:include src="/includes/plantillaPerfilFDA.xhtml"/>
                         <div class="col-md-9">
