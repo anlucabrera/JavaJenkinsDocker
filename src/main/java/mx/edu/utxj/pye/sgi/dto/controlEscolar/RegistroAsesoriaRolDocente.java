@@ -58,7 +58,6 @@ public class RegistroAsesoriaRolDocente extends AbstractRol{
     public RegistroAsesoriaRolDocente(@NonNull Filter<PersonalActivo> filtro) {
         super(filtro);
         this.docenteLogueado = filtro.getEntity();
-        this.asesoriaSeleccionada = new Asesoria();
     }
     
     public void setDocenteLogueado(PersonalActivo docenteLogueado) {
@@ -144,7 +143,7 @@ public class RegistroAsesoriaRolDocente extends AbstractRol{
 
     public void setAsesoriaSeleccionada(Asesoria asesoriaSeleccionada) {
         this.asesoriaSeleccionada = asesoriaSeleccionada;
-        if(this.asesoriaSeleccionada.getFechaHora() != null){
+        if(this.asesoriaSeleccionada != null){
             this.setFormatoFechaAsesoria(Caster.convertirFormatoFecha(this.asesoriaSeleccionada.getFechaHora()));
         }else{
             this.setFormatoFechaAsesoria("");
