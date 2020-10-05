@@ -195,7 +195,25 @@
                                             </div>
                                         </div> 
                                     </c:if>
-                                </c:if>                               
+                                </c:if>    
+                                <c:if test="#{controladorEmpleado.tienePOA}">
+                                    <c:if test="#{controladorEmpleado.mensajeGeneral}">                                                             
+                                        <div class="col-lg-6 col-md-6 col-xs-12">
+                                            <div class="small-box #{controladorEmpleado.estiloInfo?'bg-blue':'bg-yellow'}">
+                                                <div class="inner">
+                                                    <h3>¡Atento Aviso!</h3>
+                                                    <p>Con la finalidad de mantener la información 
+                                                        actualizada se le recomienda cada inicio de cuatrimestre descargar las plantillas de los módulos de registros 
+                                                        por motivos de actualización de matrícula, periodo escolar y ciclo escolar en caso de aplicar.</p>
+                                                </div>
+                                                <div class="icon">
+                                                    <i class="fa fa-cloud-download"/>
+                                                </div>
+                                                <a href="poa/areas/evaluacion.xhtml" class="small-box-footer">Evaluar <i class="fa fa-chevron-circle-right"/></a>
+                                            </div>
+                                        </div> 
+                                    </c:if>
+                                </c:if>    
                                 <c:if test="#{controladorEmpleado.nuevoOBJInformacionAdicionalPersonal.tipoSangre eq null}">
                                     <div class="col-lg-3 col-md-6 col-xs-12">
                                         <div class="small-box bg-yellow">
