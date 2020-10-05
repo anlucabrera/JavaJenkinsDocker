@@ -163,7 +163,7 @@
                                             <p:commandButton  class="btn-primary" icon="fa fa-download" actionListener="#{procesoInscripcion.downloadFicha(a)}" ajax="false"/>
                                         </p:column>
                                         <p:column style="width: 130px;text-align: center;">
-                                            <p:commandButton icon="fa fa-refresh" class="btn-primary" onclick="PF('dglDatosAcademicos').show();" update=":tabw1:frmDatosAcademicos" actionListener="#{FichaAdmision.muestraDatosAcademicos(a)}" disabled="#{!(a.estudianteList.size() == 0)}"/>
+                                            <p:commandButton icon="fa fa-refresh" class="btn-primary" onclick="PF('dglDatosAcademicos').show();" update=":tabw1:frmDatosAcademicos" actionListener="#{procesoInscripcion.seleccionaAspirante(a)}" disabled="#{!(a.estudianteList.size() == 0)}"/>
                                             <p:commandButton icon="fa fa-question" id="btnE" class="btn-primary" onclick="PF('dglEncuestaAspirante').show();" actionListener="#{FichaAdmision.inicializarEncuesta(a)}" update=":tabw1:frmEncuestaA"/>
                                             <p:tooltip id="toolTipGrow" for="btnE" value="#{FichaAdmision.verificaEncuesta(a.idAspirante)}"
                                                        showEffect="clip" hideEffect="explode" position="left"/>
@@ -178,52 +178,52 @@
 
                                     <f:facet name="header">Carreras ficha de admisión</f:facet>
 
-                                    <p:outputLabel for="folio" value="Folio Ficha"/>
-                                    <p:outputLabel id="folio" value="#{FichaAdmision.datosAcademicos.aspirante1.folioAspirante}"/>
+                                    <p:outputLabel for="folioA" value="Folio Ficha"/>
+                                    <p:outputLabel id="folioA" value="#{procesoInscripcion.rol.aspiranteSeleccionado.folioAspirante}"/>
 
-                                    <p:outputLabel for="nombre" value="Nombre"/>
-                                    <p:outputLabel id="nombre" value="#{FichaAdmision.datosAcademicos.aspirante1.idPersona.nombre} #{FichaAdmision.datosAcademicos.aspirante1.idPersona.apellidoPaterno} #{FichaAdmision.datosAcademicos.aspirante1.idPersona.apellidoMaterno}"/>
+                                    <p:outputLabel for="nombreA" value="Nombre completo"/>
+                                    <p:outputLabel id="nombreA" value="#{procesoInscripcion.rol.aspiranteSeleccionado.idPersona.nombre} #{procesoInscripcion.rol.aspiranteSeleccionado.idPersona.apellidoPaterno} #{procesoInscripcion.rol.aspiranteSeleccionado.idPersona.apellidoMaterno}"/>
 
                                     <p:separator/><p:separator/>
 
-                                    <p:outputLabel for="areaAPO" value="Área Academica Primera Opción"/>
-                                    <p:selectOneMenu id="areaAPO" value="#{FichaAdmision.areaAcademicaPO}" class="form-control" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción">
+                                    <p:outputLabel for="areaASPO" value="Área Academica Primera Opción"/>
+                                    <p:selectOneMenu id="areaASPO" value="#{procesoInscripcion.rol.areaPoA}" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción" converter="entityConverter">
                                         <f:selectItem itemValue="#{null}"/>
-                                        <f:selectItems value="#{FichaAdmision.listaAreasSO}"/>
-                                        <p:ajax listener="#{FichaAdmision.selectPEPrincipal()}" update="pePO,sistema1"/>
+                                        <f:selectItems value="#{procesoInscripcion.rol.areasPoA}" var="areasPo" itemValue="#{areasPo}" itemLabel="#{areasPo.nombre}"/>
+                                        <p:ajax listener="#{procesoInscripcion.selectPePrimeraOAspirantebyArea()}" update="pePO,sistema1" process="@this" />
                                     </p:selectOneMenu>
 
                                     <p:outputLabel for="pePO" value="Programa Educativo Primera Opción"/>
-                                    <p:selectOneMenu id="pePO" required="true" class="form-control" value="#{FichaAdmision.datosAcademicos.primeraOpcion}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
+                                    <p:selectOneMenu id="pePO" required="true" class="form-control" value="#{procesoInscripcion.rol.pePoA}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción" converter="entityConverter">
                                         <f:selectItem itemValue="#{null}"/>
-                                        <f:selectItems value="#{FichaAdmision.listaPEP}"/>
+                                        <f:selectItems value="#{procesoInscripcion.rol.pesPoA}" var="pePo" itemLabel="#{pePo.nombre}" itemValue="#{pePo}"/>
                                     </p:selectOneMenu>
 
                                     <p:outputLabel for="sistema1" value="Sistema Primera Opción"/>
-                                    <p:selectOneMenu id="sistema1" required="true" class="form-control" value="#{FichaAdmision.datosAcademicos.sistemaPrimeraOpcion}" converter="entidadCEConverter" requiredMessage="Debe de indicar el turno del programa educativo">
+                                    <p:selectOneMenu id="sistema1" required="true" class="form-control" value="#{procesoInscripcion.rol.datosAcademicosAspiranteSelect.sistemaPrimeraOpcion}" converter="entityConverter" requiredMessage="Debe de indicar el turno del programa educativo">
                                         <f:selectItem itemValue="#{null}"/>
-                                        <f:selectItems value="#{FichaAdmision.listaSistema}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaPO.idSistema == 2 and fichaAdm.areaAcademicaPO == 25)}"/>
+                                        <f:selectItems value="#{procesoInscripcion.rol.sistemasAspirante}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaPO.idSistema == 2 and fichaAdm.areaAcademicaPO == 25)}"/>
                                     </p:selectOneMenu>
 
                                     <p:separator/><p:separator/>
 
                                     <p:outputLabel for="areaASO" value="Área Academica Segunda Opción"/>
-                                    <p:selectOneMenu id="areaASO" value="#{FichaAdmision.areaAcademicaSO}" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de primera opción">
+                                    <p:selectOneMenu id="areaASO" value="#{procesoInscripcion.rol.areaSoA}" required="true" requiredMessage="Debe de indicar la divición academica de la carrera de segunda opción" converter="entityConverter">
                                         <f:selectItem itemValue="#{null}"/>
-                                        <f:selectItems value="#{FichaAdmision.listaAreasSO}"/>
-                                        <p:ajax listener="#{FichaAdmision.selectPEOpcional()}" update="peSO,sistema2"/>
+                                        <f:selectItems value="#{procesoInscripcion.rol.areasSoA}" var="areasSo" itemValue="#{areasSo}" itemLabel="#{areasSo.nombre}"/>
+                                        <p:ajax listener="#{procesoInscripcion.selectPeSegundaOAspirantebyArea()}" update="peSO,sistema2" process="@this" />
                                     </p:selectOneMenu>
 
-                                    <p:outputLabel for="peSO" value="Programa Educativo Segunda Opción"/>
-                                    <p:selectOneMenu id="peSO" required="true" value="#{FichaAdmision.datosAcademicos.segundaOpcion}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
+                                    <p:outputLabel for="peSO" value="Programa Educativo Primera Opción"/>
+                                    <p:selectOneMenu id="peSO" required="true" class="form-control" value="#{procesoInscripcion.rol.datosAcademicosAspiranteSelect.segundaOpcion}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
                                         <f:selectItem itemValue="#{null}"/>
-                                        <f:selectItems value="#{FichaAdmision.listaPES}"/>
+                                        <f:selectItems value="#{procesoInscripcion.rol.pesSoA}" var="pe" itemLabel="#{pe.nombre}" itemValue="#{pe.area}"/>
                                     </p:selectOneMenu>
 
                                     <p:outputLabel for="sistema2" value="Sistema Segunda Opción"/>
-                                    <p:selectOneMenu id="sistema2" required="true" value="#{FichaAdmision.datosAcademicos.sistemaSegundaOpcion}" converter="entidadCEConverter" requiredMessage="Debe de indicar el turno del programa educativo">
+                                    <p:selectOneMenu id="sistema2" required="true" value="#{procesoInscripcion.rol.datosAcademicosAspiranteSelect.sistemaSegundaOpcion}" converter="entityConverter" requiredMessage="Debe de indicar el turno del programa educativo">
                                         <f:selectItem itemValue="#{null}"/>
-                                        <f:selectItems value="#{FichaAdmision.listaSistema}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaSO.idSistema == 2 and FichaAdmision.areaAcademicaSO == 25)}"/>
+                                        <f:selectItems value="#{procesoInscripcion.rol.sistemasAspirante}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaSO.idSistema == 2 and FichaAdmision.areaAcademicaSO == 25)}"/>
                                     </p:selectOneMenu>
 
                                     <f:facet name="footer">

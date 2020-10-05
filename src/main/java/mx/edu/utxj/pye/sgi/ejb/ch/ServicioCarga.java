@@ -412,4 +412,25 @@ public class ServicioCarga implements EjbCarga {
             return "Error: No se pudo leer el archivo";
         }
     }
+
+    @Override
+    public String subirFotoFirmaEstudiante(Part file, File rutaRelativa) {
+        try {
+            byte[] content = Utils.toByteArray(file.getInputStream());
+            File carpeta = new File("C:/archivos/control_escolar/".concat(rutaRelativa.toString()));
+            addCarpetaRelativa(carpeta.toString());
+            nombreArchivo = file.getSubmittedFileName();
+
+            String name = carpeta.toString().concat(File.separator).concat(nombreArchivo);
+            FileOutputStream fos = new FileOutputStream(name);
+            FileCopyUtils.copy(content, fos);
+            aleatorio = "";
+            return name;
+        } catch (IOException ex) {
+            Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);
+            return "Error: No se pudo leer el archivo";
+        }
+    }
+
+
 }

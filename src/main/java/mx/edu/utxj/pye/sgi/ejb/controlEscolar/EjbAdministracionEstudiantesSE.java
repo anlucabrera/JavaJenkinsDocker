@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.controladores.ch.PersonalAdmin;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
@@ -11,6 +12,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.Encrypted;
+import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -63,7 +65,7 @@ public class EjbAdministracionEstudiantesSE {
             if(rol.getEstudiante()==null){return  ResultadoEJB.crearErroneo(2,login,"El estudiante no debe ser nulo");}
             if(rol.getPwdNueva()==null){return  ResultadoEJB.crearErroneo(3,login,"La nueva contraseña no debe ser nula");}
             login = rol.getEstudiante().getAspirante().getIdPersona().getLogin();
-            //TODO: Encripta la contraseña generada
+            //Encripta la contraseña generada
             String pdwEncript= encriptaPassword(rol.getPwdNueva());
             login.setPassword(pdwEncript);
             login.setModificado(false);
@@ -82,6 +84,17 @@ public class EjbAdministracionEstudiantesSE {
         contraseñaEncriptada = Encrypted.encrypt(key, iv, password);
 
         return contraseñaEncriptada;
+    }
+    public ResultadoEJB<Boolean> deleteFotoFirma(@NonNull String ruta){
+        try{
+            if(ruta==null){return ResultadoEJB.crearErroneo(2,false,"La ruta no debe ser nula");}
+            ServicioArchivos.eliminarArchivo(ruta);
+            return ResultadoEJB.crearCorrecto(true,"¡Elimnado con éxito!");
+        }
+        catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo elimnar la foto/firma del estudiante(EjbAdministracionEstudiantesSE.deleteFotoFirma)", e, null);
+        }
+
     }
 
 

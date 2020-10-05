@@ -432,6 +432,50 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
         listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(procesosInscripcion.getIdPeriodo());
 //        actualizaPago();
     }
+    public void seleccionaAspirante(@NonNull Aspirante aspirante){
+        try{
+            rol.setAspiranteSeleccionado(aspirante);
+            //System.out.println("Aspirante seleccionado "+rol.getAspiranteSeleccionado());
+            rol.setDatosAcademicosAspiranteSelect(rol.getAspiranteSeleccionado().getDatosAcademicos());
+            //System.out.println("Datis ac" + rol.getDatosAcademicosAspiranteSelect());
+            //Primera opcion
+            rol.setPePoA(ejbFichaAdmision.buscaPEByClave(rol.getDatosAcademicosAspiranteSelect().getPrimeraOpcion()));
+            //System.out.println("Po ->" +rol.getPePoA());
+            rol.setAreaPoA(ejbFichaAdmision.buscaPEByClave(rol.getPePoA().getAreaSuperior()));
+            //System.out.println("Area po ->" + rol.getAreaPoA());
+            rol.setsPoA(rol.getDatosAcademicosAspiranteSelect().getSistemaPrimeraOpcion());
+            //Segunda opcion
+            rol.setPeSoA(ejbFichaAdmision.buscaPEByClave(rol.getDatosAcademicosAspiranteSelect().getSegundaOpcion()));
+            //System.out.println("Pe Segunda opción " + rol.getPeSoA());
+            rol.setAreaSoA(ejbFichaAdmision.buscaPEByClave(rol.getPeSoA().getAreaSuperior()));
+            //System.out.println("Area so ->" + rol.getAreaSoA());
+            rol.setsSoA(rol.getDatosAcademicosAspiranteSelect().getSistemaSegundaOpcion());
+            //System.out.println("Sistema SO ->" + rol.getSSoA());
+            //Lista de sistemas
+            ResultadoEJB<List<Sistema>> resSistemas= ejbRegistroFichaAdmision2.getSistemas();
+            if(resSistemas.getCorrecto()==true){rol.setSistemasAspirante(resSistemas.getValor());}
+            //Areas academicas y pe (Primera y segunda opción)
+            ResultadoEJB<List<AreasUniversidad>>resAreas = ejbRegistroFichaAdmision2.getAreasAcademicas();
+            //System.out.println("Areas academicas " + resAreas.getValor());
+            if(resAreas.getCorrecto()==true){ rol.setAreasPoA(resAreas.getValor());rol.setAreasSoA(resAreas.getValor());
+                //System.out.println("Areas academicas " +rol.getAreasPoA());
+                }
+            else {mostrarMensajeResultadoEJB(resAreas);}
+            //Lista de programas educativos (Primera opcion)
+            ResultadoEJB<List<AreasUniversidad>> resPe = ejbRegistroFichaAdmision2.getProgramasE();
+            if(resPe.getCorrecto()==true){
+                rol.setPesPoA(resPe.getValor().stream().filter(t -> Objects.equals(t.getAreaSuperior(), rol.getAreaPoA().getArea())).collect(Collectors.toList()));
+            }else {mostrarMensajeResultadoEJB(resPe);}
+            //System.out.println("PE por area primera opcion "+ rol.getPesPoA().size());
+            //Lista de programas educativos (Segunda opcion)
+            ResultadoEJB<List<AreasUniversidad>> resPeSo = ejbRegistroFichaAdmision2.getProgramasE();
+            if(resPeSo.getCorrecto()==true){
+                rol.setPesSoA(resPe.getValor().stream().filter(t -> Objects.equals(t.getAreaSuperior(), rol.getAreaSoA().getArea())).collect(Collectors.toList()));
+            }else {mostrarMensajeResultadoEJB(resPe);}
+            //System.out.println("PE por area "+ rol.getPesSoA().size());
+
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
     public void  getSelectEstudiante(@NonNull Estudiante estudiante){
         try{
             rol.setEstudianteSeleccionado(estudiante);
@@ -531,6 +575,45 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
                     rol.setGruposPosiblesE(grupos);
                     rol.setGrupoSelecEs(grupos.get(1));
                 }else {mostrarMensajeResultadoEJB(resGruposbyPe);}
+            }else {mostrarMensajeResultadoEJB(resPe);}
+
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
+    /*
+    Obtiene los programas educativos por area academica seleccionada (Primera opción)
+     */
+    public  void selectPePrimeraOAspirantebyArea(){
+        try{
+            //Lista de programas educativos x area primera opción
+            //System.out.println("Pe primera opción --------- Areas seleccionada"+ rol.getAreaPoA().getArea());
+            ResultadoEJB<List<AreasUniversidad>> resPe = ejbRegistroFichaAdmision2.getProgramasE();
+            //System.out.println("Lista de pe -> " +resPe.getValor().size());
+            if(resPe.getCorrecto()==true){
+                rol.setPesPoA(resPe.getValor().stream().filter(t -> Objects.equals(t.getAreaSuperior(), rol.getAreaPoA().getArea())).collect(Collectors.toList()));
+                //System.out.println("1" + rol.getPesPoA().size());
+                rol.setPePoA(rol.getPesPoA().get(1));
+                rol.setsPoA(rol.getSistemasAspirante().get(1));
+                rol.getDatosAcademicosAspiranteSelect().setPrimeraOpcion(rol.getPePoA().getArea());
+                rol.getDatosAcademicosAspiranteSelect().setSistemaPrimeraOpcion(rol.getSPoA());
+               // System.out.println("Programas educativos res....." + rol.getPesPoA().size()+ "Datos academicos ->"+rol.getDatosAcademicosAspiranteSelect());
+
+            }else {mostrarMensajeResultadoEJB(resPe);}
+
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
+    public  void selectPeSegundaOAspirantebyArea(){
+        try{
+            //Lista de programas educativos x area primera opción
+            //System.out.println("Pe segunda opción ---------");
+            ResultadoEJB<List<AreasUniversidad>> resPe = ejbRegistroFichaAdmision2.getProgramasE();
+            if(resPe.getCorrecto()==true){
+                rol.setPesSoA(resPe.getValor().stream().filter(t -> Objects.equals(t.getAreaSuperior(), rol.getAreaSoA().getArea())).collect(Collectors.toList()));
+                rol.setPeSo(rol.getPesPoA().get(1));
+                rol.setsSoA(rol.getSistemasAspirante().get(1));
+                rol.getDatosAcademicosAspiranteSelect().setSegundaOpcion(rol.getPeSoA().getArea());
+                rol.getDatosAcademicosAspiranteSelect().setSistemaSegundaOpcion(rol.getSSoA());
+               // System.out.println("Programas educativos res....." + rol.getPesSoA().size());
+
             }else {mostrarMensajeResultadoEJB(resPe);}
 
         }catch (Exception e){mostrarExcepcion(e);}
