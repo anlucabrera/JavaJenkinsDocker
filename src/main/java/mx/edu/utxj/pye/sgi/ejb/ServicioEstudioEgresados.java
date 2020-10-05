@@ -580,21 +580,17 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
 
     @Override
     public Alumnos procedimiento(String matricula) {
-        Short grado = 11;
-        Short grado2= 6;
-        Integer periodo =54;
+        Short grado = 6;
 
         List<Alumnos> a = em2
                 .createQuery("select a from Alumnos as a "
                         + "inner join Grupos as g on a.grupos.gruposPK.cveGrupo = g.gruposPK.cveGrupo "
-                        + "where (g.gruposPK.cvePeriodo = :periodo or g.gruposPK.cvePeriodo=:periodo2) and (a.cveStatus = :estatus1 or a.cveStatus = :estatus2) and a.matricula = :matricula and (a.gradoActual = :grado or a.gradoActual=:grado2)", Alumnos.class)
-                .setParameter("periodo", 53)
-                .setParameter("periodo2",54)
+                        + "where g.gruposPK.cvePeriodo = :periodo  and (a.cveStatus = :estatus1 or a.cveStatus = :estatus2) and a.matricula = :matricula and a.gradoActual = :grado ", Alumnos.class)
+                .setParameter("periodo",54)
                 .setParameter("estatus1", 1)
                 .setParameter("estatus2", 6)
                 .setParameter("matricula", matricula)
                 .setParameter("grado", grado)
-                .setParameter("grado2",grado2)
                 .getResultStream().collect(Collectors.toList());
        // a.forEach(x -> System.out.println(x.getMatricula() + "-" + x.getGrupos().getGruposPK().getCvePeriodo()));
         if (!a.isEmpty()) {

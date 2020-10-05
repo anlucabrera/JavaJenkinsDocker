@@ -58,6 +58,14 @@
                                                             icon="fa fa-list-ul"
                                                             action="/controlEscolar/se/prestamoDocumentos?faces-redirect=true"
                                                             ></p:menuitem>
+                                            <p:menuitem value="Fotografia y firma"
+                                                        update=":frm1,:tabw1:frm,:tabw2:frm2,:tabw2:frm3,:tabw2:frm4,:tabw2:tabw3:frm5,:tabw2:frm6,:frmPwd,:frmConfirm, :tbFiles:frmFoto,:tbFiles:frmFirma"
+                                                        icon="fa fa-camera"
+                                                        oncomplete="PF('modalFoto').show();"
+
+                                            >
+
+                                            </p:menuitem>
 
                                         </p:menu>
                                         <p:spacer width="10px"/>
@@ -710,6 +718,97 @@
                                 </p:commandButton>
                             </div>
                         </h:form>
+
+                    </div>
+                </p:dialog>
+                <!-- Modulo para agregar fotografia y firma del estudiante -->
+                <p:dialog id="modalFoto"
+                          widgetVar="modalFoto" width="500" max-height="300" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          style="scroll-: 300px"
+                          modal="true" draggable="true" header="Fotografia y firma del estudiante" position="center" styleClass="panel panel-primary" responsive="true" resizable="true" closable="true" maximizable="false">
+                    <div class="box box-primary">
+                            <div class="box-body">
+                                <p:tabView id="tbFiles">
+                                    <p:tab >
+                                        <f:facet name="title"><i class="fa fa-image"> </i><span> Foto</span></f:facet>
+                                        <h:form id="frmFoto" enctype="multipart/form-data">
+                                        <div  class="col-sm-12 col-md-12">
+                                            <div  class="col-sm-4 col-md-4"/>
+                                        <div  class="col-sm-6 col-md-6">
+                                            <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{cedulaIdentificacionSE.rol.matricula}.jpg"  style="width: 100px; height: 180px;" class="img-circle"/>
+                                        </div>
+                                            <hr/>
+                                            <div  class="col-sm-2 col-md-2"/>
+                                            <div  class="col-sm-3 col-md-3">
+                                                <o:inputFile id="fileFoto" value="#{cedulaIdentificacionSE.rol.fileFoto}"
+                                                             accept="image/jpeg||image/pjpeg"  acceptMessage="Sólo se permiten imágenes JPG"
+                                                             maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB."
+                                                             required="true" requiredMessage="Debe elegir un archivo." >
+                                                </o:inputFile>
+                                            </div>
+
+                                        </div>
+                                        <p:spacer width="20px"/>
+                                        <div class="row">
+
+                                            <div class="col-sm-3 col-md-3"/>
+                                            <div  class="col-sm-8 col-md-8">
+                                                <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir Foto" class="btn btn-sm btn-primary" icon="fa fa-upload" action="#{cedulaIdentificacionSE.agregarFotoEstudiante}">
+                                                    <p:ajax process="@this" update=":tbFiles:frmFoto,tbFiles:frmFirma,tabw1:frm"/>
+                                                </h:commandButton>
+                                                <p:spacer width="20px"/>
+
+                                                <h:commandButton id="btnEliminarFoto" value="Eliminar" actionListener="#{cedulaIdentificacionSE.deleteFoto}" onclick="return confirm('¿Estás seguro de eliminar la fotografía?')" class="btn btn-danger btn-sm" icon="fa fa-trash">
+                                                    <p:ajax process="@this" update=":tbFiles:frmFoto,tbFiles:frmFirma,tabw1:frm"/>
+                                                </h:commandButton>
+                                            </div>
+
+
+                                        </div>
+                                        </h:form>
+
+                                    </p:tab>
+                                    <p:tab >
+                                        <f:facet name="title"><i class="fa fa-check-circle"> </i><span> Firma</span></f:facet>
+                                        <h:form id="frmFirma" enctype="multipart/form-data">
+                                            <div  class="col-sm-12 col-md-12">
+                                                <div  class="col-sm-4 col-md-4"/>
+                                                <div  class="col-sm-6 col-md-6">
+                                                    <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/firmas/#{cedulaIdentificacionSE.rol.matricula}.png"  style="width: 100px; height: 180px;" />
+                                                </div>
+                                                <hr/>
+                                                <div  class="col-sm-2 col-md-2"/>
+                                                <div  class="col-sm-3 col-md-3">
+                                                    <o:inputFile id="fileFirma" value="#{cedulaIdentificacionSE.rol.fileFirma}"
+                                                                 accept="image/png"  acceptMessage="Sólo se permiten imágenes PNG"
+                                                                 maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB."
+                                                                 required="true" requiredMessage="Debe elegir un archivo." >
+                                                    </o:inputFile>
+                                                </div>
+
+                                            </div>
+                                            <p:spacer width="20px"/>
+                                            <div class="row">
+                                                <div class="col-sm-3 col-md-3"/>
+                                                <div  class="col-sm-8 col-md-8">
+                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFirma" value="Subir Firma" class="btn btn-sm btn-primary" icon="fa fa-upload" action="#{cedulaIdentificacionSE.agregarFirmaEstudiante}">
+                                                        <p:ajax process="@this" update=":tbFiles:frmFoto,:tbFiles:frmFirma,tabw1:frm"/>
+                                                    </h:commandButton>
+                                                    <p:spacer width="20px"/>
+
+                                                    <h:commandButton id="btnEliminarFirma" value="Eliminar" actionListener="#{cedulaIdentificacionSE.deleteFirma}" onclick="return confirm('¿Estás seguro de eliminar la firma del estudiante?')" class="btn btn-danger btn-sm" icon="fa fa-trash">
+                                                        <p:ajax process="@this" update=":tbFiles:frmFoto,:tbFiles:frmFirma,tabw1:frm"/>
+                                                    </h:commandButton>
+                                                </div>
+
+                                            </div>
+                                        </h:form>
+
+                                    </p:tab>
+                                </p:tabView>
+
+
+                            </div>
 
                     </div>
                 </p:dialog>

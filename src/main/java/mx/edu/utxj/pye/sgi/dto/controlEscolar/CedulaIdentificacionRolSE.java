@@ -11,6 +11,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
+import javax.servlet.http.Part;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -26,11 +27,11 @@ public class CedulaIdentificacionRolSE  extends AbstractRol {
     //Lista general de Estudiantes
     @Getter @Setter private List<Estudiante> estudiantes;
     @Getter @Setter String matricula;
-    //TODO: Representa al estudiante que esta buscando
+    // Representa al estudiante que esta buscando
     @Getter @Setter Estudiante estudiante;
     @Getter @NonNull private  Estudiante estudiantePeriodo;
     @Getter @NonNull private  List<PeriodosEscolares> periodosEstudiante;
-    //TODO: Cedula de identificacion del estudiante
+    //Cedula de identificacion del estudiante
     @Getter @Setter DtoCedulaIdentificacion cedulaIdentificacion;
     @Getter @Setter String pwdNueva;
     //Calificaciones del estudiante
@@ -46,6 +47,8 @@ public class CedulaIdentificacionRolSE  extends AbstractRol {
     @Getter @NonNull PeriodosEscolares periodoEstudiante;
     @Getter @NonNull Integer periodoE;
     @Getter @NonNull Integer periodo;
+    //Fotografia y firma  del estudiante
+    @Getter @NonNull private Part fileFoto,fileFirma;
 
     public CedulaIdentificacionRolSE(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad programa) {
         super(filtro);
@@ -110,4 +113,8 @@ public class CedulaIdentificacionRolSE  extends AbstractRol {
     public void setAvisoPrivacidad(Boolean avisoPrivacidad) {
         this.avisoPrivacidad = avisoPrivacidad;
     }
+
+    public void setFileFoto(Part fileFoto) { this.fileFoto = fileFoto; }
+
+    public void setFileFirma(Part fileFirma) { this.fileFirma = fileFirma; }
 }

@@ -141,4 +141,6 @@ public interface EjbCarga extends Serializable {
      * @return Devuelve la ruta completa del archivo
      */
     public String subirDocumentoAspirante(Part file, String tipoDoc, File rutaRelativa);
+
+    public String subirFotoFirmaEstudiante(Part file, File rutaRelativa);
 }

@@ -28,6 +28,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -36,7 +37,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-
+import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
+import org.omnifaces.util.Messages;
 
 
 @Named(value = "cedulaIdentificacionSE")
@@ -45,6 +47,7 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 public class CedulaIdentificacionSE extends ViewScopedRol implements Desarrollable {
     @Getter @Setter CedulaIdentificacionRolSE rol;
     @Inject LogonMB logonMB;
+    @Inject UtilidadesCH utilidadesCH;
     @EJB EjbCedulaIdentificacion ejbCedulaIdentificacion;
     @EJB EjbAdministracionEstudiantesSE ejbAdministracionEstudiantesSE;
     @EJB EjbConsultaCalificacion ejbCalificaiones;
@@ -176,9 +179,40 @@ public class CedulaIdentificacionSE extends ViewScopedRol implements Desarrollab
         }else {mostrarMensajeResultadoEJB(resEstudiantePeriodo);}
     }
     public void addMessage() {
-        System.out.println("---> "+rol.getAvisoPrivacidad());
+       // System.out.println("---> "+rol.getAvisoPrivacidad());
         String summary = rol.getAvisoPrivacidad() ? "Aceptado":"Debes aceptar el aviso de privacidad";
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(summary));
+    }
+
+    public void agregarFotoEstudiante() {
+        //Se invoca el método agregarEvidencias en el cual se envía ciertos parámetros (descritos dentro del método) el cual regresara la ruta del archivo ya almacenado en el servidor.
+        utilidadesCH.agregarFotoEstudiante(rol.getFileFoto(), new File("fotos".concat(File.separator)));
+        //Finalmente se procede a reiniciar las variables utilizadas en el método
+        rol.setFileFoto(null);
+    }
+    public void agregarFirmaEstudiante(){
+        try{
+            utilidadesCH.agregarFirmaEstudiante(rol.getFileFirma(), new File("firmas".concat(File.separator)),Integer.parseInt(rol.getMatricula()));
+            rol.setFileFoto(null);
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
+    public void deleteFoto(){
+        try{
+            String ruta = "C:/archivos/control_escolar/fotos/"+rol.getMatricula()+".jpg";
+            //System.out.println("Ruta -->" +ruta);
+            ResultadoEJB<Boolean> resDelete = ejbAdministracionEstudiantesSE.deleteFotoFirma(ruta);
+            if(resDelete.getCorrecto()){mostrarMensajeResultadoEJB(resDelete);}
+            else {mostrarMensajeResultadoEJB(resDelete);}
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
+    public void deleteFirma(){
+        try{
+            String ruta = "C:/archivos/control_escolar/firmas/"+rol.getMatricula()+".png";
+            //System.out.println("Ruta -->" +ruta);
+            ResultadoEJB<Boolean> resDelete = ejbAdministracionEstudiantesSE.deleteFotoFirma(ruta);
+            if(resDelete.getCorrecto()){mostrarMensajeResultadoEJB(resDelete);}
+            else {mostrarMensajeResultadoEJB(resDelete);}
+        }catch (Exception e){mostrarExcepcion(e);}
     }
 
     //----------------------- Calificaciones del estudiante(Marce)---------------------

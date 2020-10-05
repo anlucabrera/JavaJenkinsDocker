@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.servlet.http.Part;
+
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.controladores.ch.CvEducacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
@@ -266,6 +268,36 @@ public class UtilidadesCH implements Serializable {
             return ruta;
         } else {
             Messages.addGlobalInfo("El documento no se ha podido guardar.");
+            return "";
+        }
+    }
+    public String agregarFotoEstudiante(Part file, File rutaRelativa) {
+        String ruta = "";
+        if (file == null) {
+            mensajes("es necesario seleccionar una foto.", "W", "F");
+            return null;
+        }
+        ruta = carga.subirFotoFirmaEstudiante(file, new File("fotos".concat(File.separator)));
+        if (!"Error: No se pudo leer el archivo".equals(ruta)) {
+            mensajes("el archivo se a cargado.", "I", "C");
+            return ruta;
+        } else {
+            mensajes("no fue posible cargar el archivo, Intente nuevamente.", "E", "F");
+            return "";
+        }
+    }
+    public String agregarFirmaEstudiante(Part file, File rutaRelativa, int matricula) {
+        String ruta = "";
+        if (file == null) {
+            mensajes("es necesario seleccionar una foto.", "W", "F");
+            return null;
+        }
+        ruta = carga.subirFotoFirmaEstudiante(file, new File("firmas".concat(File.separator)));
+        if (!"Error: No se pudo leer el archivo".equals(ruta)) {
+            mensajes("el archivo se a cargado.", "I", "C");
+            return ruta;
+        } else {
+            mensajes("no fue posible cargar el archivo, Intente nuevamente.", "E", "F");
             return "";
         }
     }

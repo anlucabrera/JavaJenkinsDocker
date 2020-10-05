@@ -43,6 +43,13 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
     @Getter @NonNull private Sistema sistemaSeleccionado;
     @Getter @NonNull private List<Sistema> sistemas;
     @Getter @NonNull private CitasAspirantes cita;
+    // Modificación de aspirante seleccionado
+    @Getter @NonNull private Aspirante aspiranteSeleccionado; //Representa a un aspirante seleccionado de la lista de aspirantes registrados
+    @Getter @NonNull private AreasUniversidad areaPoA, areaSoA, pePoA,peSoA;
+    @Getter @NonNull private  List<AreasUniversidad> areasPoA, areasSoA, pesPoA,pesSoA;
+    @Getter @NonNull private  Sistema sPoA, sSoA;
+    @Getter @NonNull private  List<Sistema> sistemasAspirante;
+    @Getter @NonNull private DatosAcademicos datosAcademicosAspiranteSelect;
 
     public ProcesoInscripcionRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad programa) {
         super(filtro);
@@ -141,4 +148,33 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
     public void setTramiteCita(TramitesEscolares tramiteCita) { this.tramiteCita = tramiteCita; }
 
     public void setCita(CitasAspirantes cita) { this.cita = cita; }
+
+    public void setAspiranteSeleccionado(Aspirante aspiranteSeleccionado) { this.aspiranteSeleccionado = aspiranteSeleccionado; }
+
+    public void setAreaPoA(AreasUniversidad areaPoA) { this.areaPoA = areaPoA; }
+
+    public void setAreaSoA(AreasUniversidad areaSoA) { this.areaSoA = areaSoA; }
+
+    public void setPePoA(AreasUniversidad pePoA) { this.pePoA = pePoA; }
+
+    public void setPeSoA(AreasUniversidad peSoA) {
+        this.peSoA = peSoA;
+    }
+
+    public void setAreasPoA(List<AreasUniversidad> areasPoA) { this.areasPoA = areasPoA; }
+
+    public void setAreasSoA(List<AreasUniversidad> areasSoA) { this.areasSoA = areasSoA; }
+
+    public void setPesPoA(List<AreasUniversidad> pesPoA) { this.pesPoA = pesPoA; }
+
+    public void setPesSoA(List<AreasUniversidad> pesSoA) { this.pesSoA = pesSoA; }
+
+    public void setsPoA(Sistema sPoA) { this.sPoA = sPoA; }
+
+    public void setsSoA(Sistema sSoA) { this.sSoA = sSoA; }
+
+    public void setSistemasAspirante(List<Sistema> sistemasAspirante) { this.sistemasAspirante = sistemasAspirante; }
+
+    public void setDatosAcademicosAspiranteSelect(DatosAcademicos datosAcademicosAspiranteSelect) { this.datosAcademicosAspiranteSelect = datosAcademicosAspiranteSelect; }
+
 }
