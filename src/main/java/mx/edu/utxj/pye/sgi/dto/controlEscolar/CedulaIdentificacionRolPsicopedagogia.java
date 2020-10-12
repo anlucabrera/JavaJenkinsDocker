@@ -43,7 +43,7 @@ public class CedulaIdentificacionRolPsicopedagogia extends AbstractRol {
     @Getter @Setter boolean finalizadoPersonal ;
     @Getter @Setter List<Apartado> apartados;
     @Getter @Setter List<Apartado> apartadoCuestionario;
-    @Getter @Setter private  List<SelectItem>  sino,gruposVunerabilidad, estadoCivilPadres;
+    @Getter @Setter private  List<SelectItem>  sino,gruposVunerabilidad, estadoCivilPadres, tecnicasEstudio;
     //Calificaciones del estudiante
     @Getter @NonNull private List<DtoCalificacionEstudiante.MateriasPorEstudiante> materiasPorEstudiante;
     @Getter @NonNull private List<DtoCalificacionEstudiante.CalificacionePorUnidad> calificacionePorUnidad;
