@@ -86,19 +86,20 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
             if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
             rol.setNivelRol(NivelRol.OPERATIVO);
             
-            //Todo: Se obtienen los datos de la cédula de identificación
+            //Se obtienen los datos de la cédula de identificación
             rol.setApartados(ejbCedulaIdentificacion.getApartados());
-            //TODO: Obtiene la lista de estudiantes
+            //Obtiene la lista de estudiantes
             ResultadoEJB<List<Estudiante>> resEstudiantes= ejbCedulaIdentificacion.getEstudiantes();
             if(resEstudiantes.getCorrecto()==true){rol.setEstudiantes(resEstudiantes.getValor());}
             else {mostrarMensajeResultadoEJB(resEstudiantes);}
-            //TODO:Apartados para cuestionario
+            //Apartados para cuestionario
             rol.setApartadoCuestionario(ejbCuestionarioPsicopedagogico.getApartados());
-            //TODO:Respuestas posibles
+            //Respuestas posibles
             rol.setSino(ejbCuestionarioPsicopedagogico.getSiNo());
             rol.setGruposVunerabilidad(ejbCuestionarioPsicopedagogico.getGruposVunerabilidad());
             rol.setEstadoCivilPadres(ejbCuestionarioPsicopedagogico.getEstadoCivilPadres());
-            //TODO: Instrucciones
+            rol.setTecnicasEstudio(ejbCuestionarioPsicopedagogico.getTecnicasEstudio());
+            //Instrucciones
             rol.getInstrucciones().add("Ingrese el nombre o la matricula del estudiante que desea buscar");
             rol.getInstrucciones().add("Los datos del estudiante se cargarán automaticamente.");
             rol.getInstrucciones().add("NOTA IMPORTANTE: La coordinación de desarrollo de software sigue trabajando en algunos datos que son necesarios en la cédula de identificación, los cuales se estarán liberando en las próximos días.");
@@ -110,14 +111,14 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
             mostrarExcepcion(e);
         }
     }
-    //TODO: Busca los datos del estudiante
+    //Busca los datos del estudiante
     public void getEstudiante(){
         if(rol.getMatricula()== null) return;
-        //TODO:Busca al estudiante
+        //Busca al estudiante
         ResultadoEJB<Estudiante> resEstudiante = ejbCedulaIdentificacion.validaEstudiante(Integer.parseInt(rol.getMatricula()));
         if(resEstudiante.getCorrecto()==true){
             rol.setEstudiante(resEstudiante.getValor());
-            //TODO: Se ejecuta el metodo de busqueda
+            //Se ejecuta el metodo de busqueda
             ResultadoEJB<DtoCedulaIdentificacion> resCedula = ejbCedulaIdentificacion.getCedulaIdentificacion(rol.getEstudiante().getMatricula());
             if(resCedula.getCorrecto()==true){
                 //System.out.println("Entro a genera cedula");
@@ -147,12 +148,13 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
         }
         repetirUltimoMensaje();
     }
-    //TODO: Obtiene los resultados del cuestionario psicopedagogico
+    //Obtiene los resultados del cuestionario psicopedagogico
     public void getResultadosCuestionario(){
         CuestionarioPsicopedagogicoResultados resultados = new CuestionarioPsicopedagogicoResultados();
         ResultadoEJB<CuestionarioPsicopedagogicoResultados> resResultados = ejbCuestionarioPsicopedagogico.getResultadosCuestionarioPersonal(rol.getEstudiante(),rol.getPersonalPsicopedagogia().getPersonal());
         if(resResultados.getCorrecto()==true){resultados = resResultados.getValor();
         rol.setResultados(resultados);
+        comprobar();
         }else { rol.setResultados(resultados);}
     }
     public void getPeriodoEstudiante(){
@@ -179,8 +181,15 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
         // System.out.println("id " + id.getId());
         //System.out.println("valor " + valor);
         ResultadoEJB<CuestionarioPsicopedagogicoResultados> refrescar=ejbCuestionarioPsicopedagogico.cargaResultadosCuestionarioPsicopedagogicoPersonal(id.getId(), valor, rol.getResultados(), Operacion.REFRESCAR);
-        ResultadoEJB<CuestionarioPsicopedagogicoResultados> save=ejbCuestionarioPsicopedagogico.cargaResultadosCuestionarioPsicopedagogicoPersonal(id.getId(), valor, rol.getResultados(), Operacion.PERSISTIR);
-        comprobar();
+        if(refrescar.getCorrecto()){
+            rol.setResultados(refrescar.getValor());
+            ResultadoEJB<CuestionarioPsicopedagogicoResultados> save=ejbCuestionarioPsicopedagogico.cargaResultadosCuestionarioPsicopedagogicoPersonal(id.getId(), valor, rol.getResultados(), Operacion.PERSISTIR);
+            if(save.getCorrecto()){
+                rol.setResultados(save.getValor());
+                comprobar();
+                alertas();
+            }else {mostrarMensajeResultadoEJB(save);}
+        }
 
     }
 
@@ -188,14 +197,12 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
         //System.out.println("COMPROBAR");
         Comparador<CuestionarioPsicopedagogicoResultados> comparador = new ComparadorCuestionarioPsicopedagogicoPersonal();
         rol.setFinalizadoPersonal(comparador.isCompleto(rol.getResultados()));
-        if(rol.isFinalizadoPersonal()==true){
-            ResultadoEJB<CuestionarioPsicopedagogicoResultados> resActualiza = ejbCuestionarioPsicopedagogico.actualizaRevisado(rol.getResultados());
-            if(resActualiza.getCorrecto()==true){rol.setResultados(resActualiza.getValor());
-            //System.out.println("Temino ----> " + rol.isFinalizadoPersonal());
-               // System.out.println("Actualizo ----> " + rol.getResultados().getReviso());
-            }
-            else {mostrarMensajeResultadoEJB(resActualiza);}
-        }
+        //System.out.println("Termino ->"+ comparador.isCompleto(rol.getResultados()));
+        rol.getResultados().setReviso(comparador.isCompleto(rol.getResultados()));
+        ResultadoEJB<CuestionarioPsicopedagogicoResultados> resActualiza = ejbCuestionarioPsicopedagogico.actualizaRevisado(rol.getResultados());
+        if(resActualiza.getCorrecto()==true){rol.setResultados(resActualiza.getValor()); }
+        else {mostrarMensajeResultadoEJB(resActualiza);}
+
         //System.out.println(comparador.isCompleto(rol.getResultados()));
     }
     //----------------------- Calificaciones del estudiante(Marce)---------------------

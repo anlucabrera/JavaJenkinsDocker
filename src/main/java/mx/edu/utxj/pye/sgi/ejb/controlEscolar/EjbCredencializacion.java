@@ -184,8 +184,8 @@ public class EjbCredencializacion {
                 PdfStamper pdfStamper = new PdfStamper(pdfReader, baos);
                  //Foto del estudiante
                 Image imageEstudiante = Image.getInstance("C://archivos//control_escolar//fotos//" + estudiante.getMatricula()+".jpg");
-                imageEstudiante.setAbsolutePosition(48,120);
-                imageEstudiante.scalePercent(45f,36f);
+                imageEstudiante.setAbsolutePosition(46,120);
+                imageEstudiante.scalePercent(46f,36f);
                 PdfContentByte content = pdfStamper.getOverContent(1);
                 content.addImage(imageEstudiante);
                 
