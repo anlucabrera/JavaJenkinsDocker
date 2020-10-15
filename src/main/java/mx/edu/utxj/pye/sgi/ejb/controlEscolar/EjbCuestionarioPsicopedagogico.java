@@ -59,19 +59,14 @@ public class EjbCuestionarioPsicopedagogico {
         try {
            // System.out.println("Entro a cuestionario activo");
             Evaluaciones encuestaActiva = new Evaluaciones();
-            /*encuestaActiva = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
+            encuestaActiva = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
             .setParameter("tipo","Cuestionario Psicopedagógico")
             .setParameter("fecha",new Date())
             .getResultStream()
             .findFirst()
             .orElse(null)
             ;
-            */
-            encuestaActiva = em.createQuery("select e from Evaluaciones e where e.evaluacion=51",Evaluaciones.class)
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
-            ;
+
             //System.out.println("Evaluacion" + encuestaActiva);
             if(encuestaActiva !=null){return ResultadoEJB.crearCorrecto(encuestaActiva,"Se encontró una encuesta activa");}
             else {return ResultadoEJB.crearErroneo(3,encuestaActiva,"No hay encuesta psicopedagógica activa");}
@@ -133,18 +128,18 @@ public class EjbCuestionarioPsicopedagogico {
                     .orElse(null)
                     ;
             if(estudiante1!=null){
-                //TODO: Busca resultados
+                //Busca resultados
                 resultados = em.createQuery("select c from CuestionarioPsicopedagogicoResultados c where c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante=:idEstudiante order by c.cuestionarioPsicopedagogicoResultadosPK.evaluacion",CuestionarioPsicopedagogicoResultados.class)
                         .setParameter("idEstudiante",estudiante1.getIdEstudiante())
                         .getResultStream()
                         .findFirst()
                         .orElse(null)
                 ;
-                //TODO: Si no se encuentran resultados el estudiante, se da aviso al personal examinador que el estudiante no ha respondido el cuestionario
+                //Si no se encuentran resultados el estudiante, se da aviso al personal examinador que el estudiante no ha respondido el cuestionario
                 if(resultados==null){return ResultadoEJB.crearErroneo(5,resultados,"El estudiante con matricula "+estudiante.getMatricula() +" no ha respondido el cuestionario");}
-                //TODO: Se revisa que los resultados ya hayan sido terminados
+                //Se revisa que los resultados ya hayan sido terminados
                 else if(resultados.getCompleto()==true){
-                    //TODO: Se agrega la clave del persona
+                    //Se agrega la clave del persona
                     resultados.setClave(examinador.getClave());
                     resultados.setReviso(false);
                     em.merge(resultados);
@@ -194,31 +189,31 @@ public class EjbCuestionarioPsicopedagogico {
         try {
             if(rol.getEstudiante()!=null){
                 List<DtoAlerta> alertas = new ArrayList<>();
-                //TODO: Buscar los resultados por estudiante
+                //Buscar los resultados por estudiante
                if(rol.getResultados().getEstudiante()==null ){
-                   //TODO: Se envia mensaje de alerta que el estudiante no ha respondido el cuestionario
+                   //Se envia mensaje de alerta que el estudiante no ha respondido el cuestionario
                    alertas.add(new DtoAlerta("El estudiante " + rol.getEstudiante().getAspirante().getIdPersona().getNombre()+" "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()+" no ha contestado el cuestionario", AlertaTipo.ERROR));
                }else {
-                   //Todo: Comprueba que el estudiante ya lo haya terminado el cuestionario
+                   //Comprueba que el estudiante ya lo haya terminado el cuestionario
                    if(rol.getResultados().getCompleto()==true){
-                       //TODO:Lo termino
+                       //Lo termino
                        alertas.add(new DtoAlerta("El estudiante " + rol.getEstudiante().getAspirante().getIdPersona().getNombre()+" "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()+" ha completado el cuestionario", AlertaTipo.CORRECTO));
                    }
                    else {
-                       //TODO: No lo ha terminado
+                       //No lo ha terminado
                        alertas.add(new DtoAlerta("El estudiante " + rol.getEstudiante().getAspirante().getIdPersona().getNombre()+" "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()+" no ha completado el cuestionario", AlertaTipo.INFORMATIVO));
                    }
-                   //TODO: Comprueba que ya cuente con un personal examinador
+                   //Comprueba que ya cuente con un personal examinador
                    if(rol.getResultados().getClave()==null){
-                       //TODO: Se envia alerta de que el cuestionario no cuenta con personal examinador
+                       //Se envia alerta de que el cuestionario no cuenta con personal examinador
                        alertas.add(new DtoAlerta("Los resultados del cuestionario no han sido examinados.", AlertaTipo.INFORMATIVO));
                    }else {
-                       //TODO: Revisa si el personal examinador  ya termino de revisar las respuestas
+                       //Revisa si el personal examinador  ya termino de revisar las respuestas
                        if(rol.getResultados().getReviso()==true){
-                           //TODO: Envia mesaje de aviso que ya se ha terminado de revisar el cuestuinario
+                           //Envia mesaje de aviso que ya se ha terminado de revisar el cuestuinario
                            alertas.add(new DtoAlerta("Los resultados del cuestionario han sido revisados", AlertaTipo.CORRECTO));
                        }else {
-                           //TODO: Mensaje de alerta que no se ha terminado de revisar el cuestionario
+                           //Mensaje de alerta que no se ha terminado de revisar el cuestionario
                            alertas.add(new DtoAlerta("Los resultados del cuestionario no se han terminado de examinar.", AlertaTipo.INFORMATIVO));
                        }
                    }
@@ -366,7 +361,7 @@ public class EjbCuestionarioPsicopedagogico {
     public ResultadoEJB<CuestionarioPsicopedagogicoResultados> actualizaRevisado(CuestionarioPsicopedagogicoResultados resultados) {
         try {
             if(resultados==null){return ResultadoEJB.crearErroneo(2,resultados,"Los resultados no deben ser nulos");}
-            resultados.setReviso(true);
+            //resultados.setReviso(true);
             em.merge(resultados);
             return ResultadoEJB.crearCorrecto(resultados,"Los resultados del cuestionario del estudiante se han actualizado como revisados por el examinador");
 
