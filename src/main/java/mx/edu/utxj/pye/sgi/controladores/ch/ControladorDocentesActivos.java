@@ -24,6 +24,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Congresos;
 import mx.edu.utxj.pye.sgi.entity.ch.DesarrolloSoftware;
 import mx.edu.utxj.pye.sgi.entity.ch.DesarrollosTecnologicos;
 import mx.edu.utxj.pye.sgi.entity.ch.Distinciones;
+import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
 import mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica;
 import mx.edu.utxj.pye.sgi.entity.ch.HabilidadesInformaticas;
 import mx.edu.utxj.pye.sgi.entity.ch.Idiomas;
@@ -64,6 +65,7 @@ public class ControladorDocentesActivos implements Serializable {
     @Getter    @Setter    private List<Memoriaspub> memoriaspubs = new ArrayList<>();
     @Getter    @Setter    private List<Articulosp> articulosps = new ArrayList<>();
     @Getter    @Setter    private List<Congresos> congresoses = new ArrayList<>();
+    @Getter    @Setter    private List<Docencias> docenciases = new ArrayList<>();
     @Getter    @Setter    private List<LibrosPub> librosPubs = new ArrayList<>();
     @Getter    @Setter    private List<Idiomas> idiomases = new ArrayList<>();
     @Getter    @Setter    private List<Lenguas> lenguases = new ArrayList<>();
@@ -148,6 +150,7 @@ public class ControladorDocentesActivos implements Serializable {
             memoriaspubs = new ArrayList<>();
             articulosps = new ArrayList<>();
             congresoses = new ArrayList<>();
+            docenciases = new ArrayList<>();
             librosPubs = new ArrayList<>();
             idiomases = new ArrayList<>();
             lenguases = new ArrayList<>();
@@ -164,6 +167,7 @@ public class ControladorDocentesActivos implements Serializable {
             memoriaspubs.clear();
             articulosps.clear();
             congresoses.clear();
+            docenciases.clear();
             librosPubs.clear();
             idiomases.clear();
             lenguases.clear();
@@ -178,6 +182,7 @@ public class ControladorDocentesActivos implements Serializable {
             memoriaspubs = ejbProduccionProfecional.mostrarMemoriaspub(docenteBusqueda);
             articulosps = ejbProduccionProfecional.mostrarArticulosp(docenteBusqueda);
             congresoses = ejbProduccionProfecional.mostrarCongresos(docenteBusqueda);
+            docenciases = ejbPersonal.mostrarListaDocencias(docenteBusqueda);
             librosPubs = ejbProduccionProfecional.mostrarLibrosPub(docenteBusqueda);
             innovacioneses = ejbTecnologia.mostrarInnovaciones(docenteBusqueda);
             distincioneses = ejbPremios.mostrarDistinciones(docenteBusqueda);

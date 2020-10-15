@@ -373,7 +373,7 @@
                                                         </p:commandButton>
                                                         <p:spacer width="20px"/>
                                                         <p:commandButton icon="fa fa-trash" title="Eliminar actividad" styleClass="btn-primary" oncomplete="PF('eliminar').show()" process="@this" update=":frmEliminarActividad"
-                                                                         actionListener="#{areaPoaProgramacion.buscarActividadeaEliminar(pOa)}" onsuccess="actualizarTabla2()" disabled="#{pOa.esPIDE eq 'PIDE O' ?true:pOa.esPIDE eq 'PIDE' ?true:false}">
+                                                                         actionListener="#{areaPoaProgramacion.buscarActividadeaEliminar(pOa)}" onsuccess="actualizarTabla2()" >
                                                             <span class="label label-success"></span>
                                                             <f:setPropertyActionListener target="#{areaPoaProgramacion.actividadPoaEliminado}" value="#{pOa}" />
                                                         </p:commandButton>
@@ -424,7 +424,7 @@
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <div class="col-sm-6 col-md-4 col-lg-4">
                                 <p:outputLabel for="medida1"  value="Unidad de medida" />
-                                <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" disabled="#{areaPoaProgramacion.actividadPoaEditando.esPIDE ne 'NO PIDE'}" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="medida1"  value="#{areaPoaProgramacion.unidadDMedida}" >
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="medida1"  value="#{areaPoaProgramacion.unidadDMedida}" >
                                     <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
                                     <f:selectItems value="#{areaPoaProgramacion.consultaListaUnidadMedidas}" var="unidadMedida" itemValue="#{unidadMedida.unidadMedida}" itemLabel="#{unidadMedida.nombre}" />
                                 </p:selectOneMenu> 
@@ -433,7 +433,7 @@
                             </div> 
                             <div class="col-sm-12 col-md-8 col-lg-8">
                                 <p:outputLabel for="nombre1"  value="Nombre de la actividad" />
-                                <p:inputText id="nombre1" value="#{areaPoaProgramacion.actividadPoaEditando.denominacion}" disabled="#{areaPoaProgramacion.actividadPoaEditando.esPIDE ne 'NO PIDE'}" required="true" requiredMessage="La actividad debe contar con un nombre" style="height:100%; width: 100%;" placeholder="Nombre de la actividad" />
+                                <p:inputText id="nombre1" value="#{areaPoaProgramacion.actividadPoaEditando.denominacion}"  required="true" requiredMessage="La actividad debe contar con un nombre" style="height:100%; width: 100%;" placeholder="Nombre de la actividad" />
                                 <p:message for="nombre1" display="tooltip"/>    
                                 <hr/>  
                             </div> 

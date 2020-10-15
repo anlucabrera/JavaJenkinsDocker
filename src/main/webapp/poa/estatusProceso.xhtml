@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{estatusProceso.cargado}">
+            <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+                <h1>
+                    Esta página está disponible solo para pantallas superiores a 1024px.
+                </h1>
+            </p:panel>
+            <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="../includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-10">
+                            <div class="nav-tabs-custom">                                    
+                                <p:tabView>
+                                    <p:tab title="Observaciones Proceso Poa">
+                                        <h:form id="frmExLab">   
+
+                                            <p:outputPanel>
+                                                <p:steps activeIndex="#{estatusProceso.etapa}" >
+                                                    <p:menuitem value="Registro de Actividades" />
+                                                    <p:menuitem value="Validacion de Actividades" />
+                                                    <p:menuitem value="Registro de Presupuesto" />
+                                                    <p:menuitem value="Validacion de Presupuesto" />
+                                                    <p:menuitem value="Registro de justificación" />
+                                                    <p:menuitem value="Validacion de justificación" />
+                                                </p:steps>
+                                                <hr/>
+                                                <p:dataTable id="tblActividades"  value="#{estatusProceso.comentariosprocesopoas}"  var="estPoa"
+                                                             paginator="true" rows="10" editable="true"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30"
+                                                             sortBy="#{estPoa.proceso}" expandableRowGroups="true"
+                                                             emptyMessage="No se encontraron registros." rendered="true">
+
+                                                    <p:ajax event="rowEdit" listener="#{estatusProceso.onRowEdit}" update="tblActividades" />
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblActividades" />
+
+                                                    <p:headerRow>
+                                                        <p:column colspan="3">
+                                                            <h:outputText value="#{estPoa.proceso}" />
+                                                        </p:column>
+                                                    </p:headerRow>
+                                                    <p:column headerText="Asignatura" 
+                                                              sortBy="#{estPoa.comentarios}" 
+                                                              filterBy="#{estPoa.comentarios}" 
+                                                              filterMatchMode="contains">
+                                                        <h:outputText value="#{estPoa.comentarios}" />
+                                                    </p:column>                                                
+                                                    <p:column headerText="Periodo escolar" 
+                                                              sortBy="#{estPoa.status}" 
+                                                              filterBy="#{estPoa.status}" 
+                                                              filterMatchMode="contains"
+                                                              width="200">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{estPoa.status eq true?'Atendido':'Pendiente'}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:selectOneMenu value="#{estPoa.status}" style="width:100%">
+                                                                    <f:selectItem itemValue="#{true}" itemLabel="#{'Atendido'}" />
+                                                                    <f:selectItem itemValue="#{false}" itemLabel="#{'Pendiente'}" />
+                                                                </p:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column style="width:6%" class="noprint" >
+                                                        <p:rowEditor/>
+                                                    </p:column>
+                                                </p:dataTable>  
+                                            </p:outputPanel>    
+                                        </h:form>
+                                    </p:tab>
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>
+                </section> 
+
+            </p:panel>
+        </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

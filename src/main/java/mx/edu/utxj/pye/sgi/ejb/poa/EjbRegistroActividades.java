@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.ejb.poa;
 import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
+import mx.edu.utxj.pye.sgi.entity.pye2.Comentariosprocesopoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
@@ -48,5 +49,13 @@ public interface EjbRegistroActividades {
     public List<ActividadesPoa> getActividadesPoasporEstarategias(Estrategias estrategia, EjesRegistro eje, Short ejercicio, Short area);
 
     public List<ActividadesPoa> mostrarAreasQueRegistraronActividades();
+    
+    public List<Comentariosprocesopoa> mostrarComentariosprocesopoaArea(Short area, Short ejercicioFiscal);
+    
+    public Comentariosprocesopoa agregarComentariosprocesopoa(Comentariosprocesopoa nuevaComentariosprocesopoa);
+
+    public Comentariosprocesopoa actualizaComentariosprocesopoa(Comentariosprocesopoa nuevaComentariosprocesopoa);
+
+    public Comentariosprocesopoa eliminarComentariosprocesopoa(Comentariosprocesopoa nuevaComentariosprocesopoa);
 
 }

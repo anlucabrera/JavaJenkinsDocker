@@ -285,9 +285,10 @@
 
                                 <p:columnGroup type="header">
                                     <p:row class="success">
-                                        <p:column rowspan="2" headerText="Producto" styleClass="hederTablesTitle"/>
-                                        <p:column colspan="12" headerText="Calendarización de Metas" style="width: 700px;" styleClass="hederTablesTitle"/>  
-                                        <p:column rowspan="2" headerText="Total" style="width: 80px;" styleClass="hederTablesTitle"/>
+                                        <p:column rowspan="2" headerText="Producto" style="width: 200px;" styleClass="hederTablesTitle"/>
+                                        <p:column rowspan="2" headerText="Unidad de Medida" style="width: 80px;" styleClass="hederTablesTitle"/>
+                                        <p:column colspan="12" headerText="Calendarización de Metas" style="width: 650px;" styleClass="hederTablesTitle"/>  
+                                        <p:column rowspan="2" headerText="Total" style="width: 70px;" styleClass="hederTablesTitle"/>
                                     </p:row>
                                     <p:row class="success">
                                         <p:column headerText="Ene" styleClass="hederTablesTitle"/>
@@ -306,7 +307,7 @@
                                 </p:columnGroup>
 
                                 <p:headerRow>
-                                    <p:column colspan="1">
+                                    <p:column colspan="2">
                                         <h:outputText value="Partida: #{recurso.productoArea.partida.partida}" />
                                     </p:column>
                                     <p:column colspan="13">
@@ -316,6 +317,9 @@
 
                                 <p:column> 
                                     <h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" />
+                                </p:column>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.cantidad} unidad(es) de tipo #{recurso.productoArea.productos.unidadMedida}" />
                                 </p:column>
                                 <p:column> 
                                     <h:outputText value="#{recurso.RPEnero}" />

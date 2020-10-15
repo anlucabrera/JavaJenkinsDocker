@@ -12,7 +12,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -26,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "productos", catalog = "pye2", schema = "")
@@ -35,22 +34,27 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Productos.findAll", query = "SELECT p FROM Productos p")
     , @NamedQuery(name = "Productos.findByProducto", query = "SELECT p FROM Productos p WHERE p.productosPK.producto = :producto")
     , @NamedQuery(name = "Productos.findByEjercicioFiscal", query = "SELECT p FROM Productos p WHERE p.productosPK.ejercicioFiscal = :ejercicioFiscal")
-    , @NamedQuery(name = "Productos.findByDescripcion", query = "SELECT p FROM Productos p WHERE p.descripcion = :descripcion")})
+    , @NamedQuery(name = "Productos.findByDescripcion", query = "SELECT p FROM Productos p WHERE p.descripcion = :descripcion")
+    , @NamedQuery(name = "Productos.findByUnidadMedida", query = "SELECT p FROM Productos p WHERE p.unidadMedida = :unidadMedida")})
 public class Productos implements Serializable {
+
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 500)
+    @Column(name = "descripcion")
+    private String descripcion;
+    @Size(max = 255)
+    @Column(name = "unidadMedida")
+    private String unidadMedida;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productos")
+    private List<ProductosAreas> productosAreasList;
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected ProductosPK productosPK;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "descripcion")
-    private String descripcion;
     @JoinColumn(name = "ejercicio_fiscal", referencedColumnName = "ejercicio_fiscal", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private EjerciciosFiscales ejerciciosFiscales;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productos", fetch = FetchType.LAZY)
-    private List<ProductosAreas> productosAreasList;
 
     public Productos() {
     }
@@ -76,13 +80,6 @@ public class Productos implements Serializable {
         this.productosPK = productosPK;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
 
     public EjerciciosFiscales getEjerciciosFiscales() {
         return ejerciciosFiscales;
@@ -90,15 +87,6 @@ public class Productos implements Serializable {
 
     public void setEjerciciosFiscales(EjerciciosFiscales ejerciciosFiscales) {
         this.ejerciciosFiscales = ejerciciosFiscales;
-    }
-
-    @XmlTransient
-    public List<ProductosAreas> getProductosAreasList() {
-        return productosAreasList;
-    }
-
-    public void setProductosAreasList(List<ProductosAreas> productosAreasList) {
-        this.productosAreasList = productosAreasList;
     }
 
     @Override
@@ -124,6 +112,31 @@ public class Productos implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.Productos[ productosPK=" + productosPK + " ]";
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public String getUnidadMedida() {
+        return unidadMedida;
+    }
+
+    public void setUnidadMedida(String unidadMedida) {
+        this.unidadMedida = unidadMedida;
+    }
+
+    @XmlTransient
+    public List<ProductosAreas> getProductosAreasList() {
+        return productosAreasList;
+    }
+
+    public void setProductosAreasList(List<ProductosAreas> productosAreasList) {
+        this.productosAreasList = productosAreasList;
     }
     
 }

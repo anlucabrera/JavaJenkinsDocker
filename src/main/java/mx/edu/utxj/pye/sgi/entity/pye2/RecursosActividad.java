@@ -9,7 +9,6 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "recursos_actividad", catalog = "pye2", schema = "")
@@ -45,7 +44,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "RecursosActividad.findByRPNoviembre", query = "SELECT r FROM RecursosActividad r WHERE r.rPNoviembre = :rPNoviembre")
     , @NamedQuery(name = "RecursosActividad.findByRPDiciembre", query = "SELECT r FROM RecursosActividad r WHERE r.rPDiciembre = :rPDiciembre")
     , @NamedQuery(name = "RecursosActividad.findByTotal", query = "SELECT r FROM RecursosActividad r WHERE r.total = :total")
-    , @NamedQuery(name = "RecursosActividad.findByJustificacion", query = "SELECT r FROM RecursosActividad r WHERE r.justificacion = :justificacion")})
+    , @NamedQuery(name = "RecursosActividad.findByJustificacion", query = "SELECT r FROM RecursosActividad r WHERE r.justificacion = :justificacion")
+    , @NamedQuery(name = "RecursosActividad.findByCantidad", query = "SELECT r FROM RecursosActividad r WHERE r.cantidad = :cantidad")})
 public class RecursosActividad implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -109,11 +109,14 @@ public class RecursosActividad implements Serializable {
     @Size(max = 1000)
     @Column(name = "justificacion")
     private String justificacion;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "cantidad")
+    private Double cantidad;
     @JoinColumn(name = "actividad_poa", referencedColumnName = "actividad_poa")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private ActividadesPoa actividadPoa;
     @JoinColumn(name = "producto_area", referencedColumnName = "producto_area")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private ProductosAreas productoArea;
 
     public RecursosActividad() {
@@ -258,6 +261,14 @@ public class RecursosActividad implements Serializable {
 
     public void setJustificacion(String justificacion) {
         this.justificacion = justificacion;
+    }
+
+    public Double getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Double cantidad) {
+        this.cantidad = cantidad;
     }
 
     public ActividadesPoa getActividadPoa() {

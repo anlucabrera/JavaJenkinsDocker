@@ -1,5 +1,5 @@
 .actividad{
-    background-color: #cdd5e0 !important;
+    background-color: #bdbfc1 !important;
     color: #000000 !important;
 }
 .principal{
@@ -7,16 +7,16 @@
     color: #ffffff!important;
 }
 .eje{
-    background-color: #00204a!important;
-    color: #ffffff!important;
+    background-color: #61BF1A !important;
+    color: #000000 !important;
 }
 .est{
-    background-color: #005792!important;
-    color: #ffffff!important;
+    background-color: #777575 !important;
+    color: #000000 !important;
 }
 .lac{
-    background-color: #89a4c7!important;
-    color: #000000!important;
+    background-color: #a9abae !important;
+    color: #000000 !important;
 }
 body .ui-datatable table tbody td, body .ui-treetable table tbody td, body .ui-datatable table thead th, body .ui-treetable table thead th {
     padding: 1px 1px;
@@ -41,26 +41,26 @@ h4, .h4, h5, .h5, h6, .h6 {
     text-align: center;
 }
 @media print {
- .actividad{
-        background-color: #cdd5e0 !important;
+    .actividad{
+        background-color: #bdbfc1 !important;
         color: #000000 !important;
-     font-size: xx-small;
+        font-size: xx-small;
     }
     .subactiviades{
         font-size: xx-small;
     }
     .eje{
-        background-color: #00204a !important;
-        color: #ffffff !important;
+        background-color: #61BF1A !important;
+        color: #000000 !important;
         text-align: justify !important;
     }
     .est{
-        background-color: #005792 !important;
-        color: #ffffff !important;
+        background-color: #777575 !important;
+        color: #000000 !important;
         text-align: justify !important;
     }
     .lac{
-        background-color: #89a4c7 !important;
+        background-color: #a9abae !important;
         color: #000000 !important;
         text-align: justify !important;
     }

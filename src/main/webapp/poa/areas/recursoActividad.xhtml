@@ -351,6 +351,7 @@
                                                                         <p:columnGroup type="header">
                                                                             <p:row class="success">
                                                                                 <p:column rowspan="2" headerText="Producto" style="width: 490px;background-color: #d9d9d9; color: #000000;"/>
+                                                                                <p:column rowspan="2" headerText="Unidad de Medida" style="width: 200px;background-color: #d9d9d9; color: #000000;"/>
                                                                                 <p:column colspan="12" headerText="Calendarización de Metas" style="background-color: #d9d9d9; color: #000000;"/>  
                                                                                 <p:column rowspan="2" headerText="Total" style="width: 90px; background-color: #d9d9d9; color: #000000;"/> 
                                                                                 <p:column rowspan="2" colspan="2" headerText="Opciones" style="width:140px; background-color: #d9d9d9; color: #000000;"/>
@@ -386,7 +387,9 @@
                                                                         <p:column> 
                                                                             <h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" />
                                                                         </p:column>
-
+                                                                        <p:column> 
+                                                                            <h:outputText value="#{recurso.cantidad} unidad(es) de tipo #{recurso.productoArea.productos.unidadMedida}" />
+                                                                        </p:column>
                                                                         <p:column> 
                                                                             <p:cellEditor>
                                                                                 <f:facet name="output"> <h:outputText value="#{recurso.RPEnero}" /></f:facet>
@@ -528,11 +531,20 @@
                                     <p:ajax update="producto mensejeError"/>
                                 </p:selectOneMenu> 
                             </div>
+                            <br/>
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <p:outputLabel for="cant"  value="Cantidad" />
+                                <p:inputNumber id="cant" value="#{areaPoaPresupuestacion.recursosActividad.cantidad}" required="true" requiredMessage="La actividad debe contar con un nombre" style="height:100%; width: 100%;" placeholder="Nombre de la actividad" />
+                                    <p:message for="cant" display="tooltip"/>    
+                            </div>
                             <p:outputPanel>
                                 <p:autoUpdate/>
                                 <div class="col-sm-12 col-md-12 col-lg-12" style="#{areaPoaPresupuestacion.contenido eq true?'visibility: visible':'visibility: hidden'}">
                                     <p:outputLabel id="mensejeError" value="El producto ya está asignado a la actividad, favor de seleccionar otro" style="height:100%; width: 100%; color: #D82B00"/>
                                 </div>
+                                <div class="col-sm-12 col-md-12 col-lg-12" style="#{areaPoaPresupuestacion.contenido eq false?'visibility: visible':'visibility: hidden'}">
+                                    <p:outputLabel id="mensejeUnidad" value="La forma de adquirir este producto es mediante #{areaPoaPresupuestacion.productos.unidadMedida}" style="height:100%; width: 100%; color: #D82B00"/>
+                                </div>                                
                             </p:outputPanel>
 
                             <div class="col-sm-12 col-md-12 col-lg-12">

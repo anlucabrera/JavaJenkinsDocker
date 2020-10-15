@@ -43,318 +43,322 @@
 
         <c:if test="#{adminPoaValidacionJustificacion.cargado}">
 
-        <adm:sidebar collapsed="true"/>
+            <adm:sidebar collapsed="true"/>
 
-        <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
-            <div class="box box-primary">
-                <div id="main-buttons" class="hidden-sm hidden-xs" >
-                    <p:panel header="Alineación estratégica">
-                        <div class="row">
-                            <div class="col-sm-12 col-md-3 col-lg-3">            
-                                <p:autoUpdate/>
-                                <p:outputLabel value="Área:" />
-
-                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{adminPoaValidacionJustificacion.areaSeleccionada}">
-                                    <f:selectItems value="#{adminPoaValidacionJustificacion.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
-                                    <p:ajax update=":frm" listener="#{adminPoaValidacionJustificacion.imprimirValores()}"/>
-                                </p:selectOneMenu> 
-                                <p:message for="eje" display="tooltip" />
-                            </div>
-                        </div>
-                    </p:panel>
-                </div>
-            </div>
-        </h:form>
-        <h:form id="frm" prependId="false" class="form-inline">
-            <div class="box box-primary">
-                <div class="box-header with-border">
+            <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
+                <div class="box box-primary">
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
-                        <p:toolbar id="tb">
-                            <f:facet name="left">
-                                <p:outputPanel>     
-                                    <p:outputLabel value="Área: #{adminPoaValidacionJustificacion.areaPOASeleccionada.nombre}" />
-                                    <p:autoUpdate/>
-                                </p:outputPanel>
-                            </f:facet>
-                            <f:facet name="center">
-                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>                                
-                            </f:facet>
-                            <f:facet name="right">
-
-                                <p:outputPanel>            
-                                    <p:autoUpdate/>
-                                    <p:commandButton value="Liberar POA" id="btnEnviaCorreoConfirmacion" 
-                                                     actionListener="#{utilidadesPOA.enviarCorreo('J', 'Ad',true,'',adminPoaValidacionJustificacion.areaPOASeleccionada)}"
-                                                     process="@this" disabled="#{adminPoaValidacionJustificacion.procesopoa.validacionJustificacion || !adminPoaValidacionJustificacion.procesopoa.registroJustificacionFinalizado}"
-                                                     icon="fa fa-info-circle" styleClass="btn-primary"/>
-                                    <p:commandButton value="Denegar POA" id="btnEnviaCorreoNegacion" 
-                                                     actionListener="#{adminPoaValidacionJustificacion.imprimirValores()}"
-                                                     oncomplete="PF('dlgObservacion').show()"
-                                                     process="@this" disabled="#{adminPoaValidacionJustificacion.procesopoa.validacionJustificacion || !adminPoaValidacionJustificacion.procesopoa.registroJustificacionFinalizado}"
-                                                     icon="fa fa-info-circle" styleClass="btn-primary"/>
-                                    
-                                </p:outputPanel>
-                            </f:facet>
-                        </p:toolbar>
-                    </div>
-                    <p:separator/>
-                    <div class="box box-solid">
-                        <div class="box-body">
+                        <p:panel header="Alineación estratégica">
                             <div class="row">
-                                <div class="col-lg-12 col-md-12 text-info text-center">
-                                    <p:remoteCommand name="actualizarTabla2" actionListener="#{adminPoaValidacionJustificacion.imprimirValores()}" update=":frm:dtbBajas" />
-                                    <p:dataTable id="dtbBajas" widgetVar="dtbBajas" var="ejesRegistro" sortBy="#{ejesRegistro.ejeA.eje}" expandableRowGroups="true"
-                                                 value="#{adminPoaValidacionJustificacion.ejesEsLaAp}">
+                                <div class="col-sm-12 col-md-3 col-lg-3">            
+                                    <p:autoUpdate/>
+                                    <p:outputLabel value="Área:" />
 
-                                        <p:headerRow>
-                                            <p:column colspan="1" styleClass="eje" style="text-align: left; color: #FFFFFF;">
-                                                <h:outputText value="#{ejesRegistro.ejeA.eje}.#{ejesRegistro.ejeA.nombre}" style="text-align: left"/>
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{adminPoaValidacionJustificacion.areaSeleccionada}">
+                                        <f:selectItems value="#{adminPoaValidacionJustificacion.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
+                                        <p:ajax update=":frm" listener="#{adminPoaValidacionJustificacion.imprimirValores()}"/>
+                                    </p:selectOneMenu> 
+                                    <p:message for="eje" display="tooltip" />
+                                </div>
+                            </div>
+                        </p:panel>
+                    </div>
+                </div>
+            </h:form>
+            <h:form id="frm" prependId="false" class="form-inline">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <div id="main-buttons" class="hidden-sm hidden-xs" >
+                            <p:toolbar id="tb">
+                                <f:facet name="left">
+                                    <p:outputPanel>     
+                                        <p:outputLabel value="Área: #{adminPoaValidacionJustificacion.areaPOASeleccionada.nombre}" />
+                                        <p:autoUpdate/>
+                                    </p:outputPanel>
+                                </f:facet>
+                                <f:facet name="center">
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>                                
+                                </f:facet>
+                                <f:facet name="right">
+
+                                    <p:outputPanel>            
+                                        <p:autoUpdate/>
+                                        <p:commandButton value="Liberar POA" id="btnEnviaCorreoConfirmacion" 
+                                                         actionListener="#{utilidadesPOA.enviarCorreo('J', 'Ad',true,'',adminPoaValidacionJustificacion.areaPOASeleccionada)}"
+                                                         process="@this" disabled="#{adminPoaValidacionJustificacion.procesopoa.validacionJustificacion || !adminPoaValidacionJustificacion.procesopoa.registroJustificacionFinalizado}"
+                                                         icon="fa fa-info-circle" styleClass="btn-primary"/>
+                                        <p:commandButton value="Denegar POA" id="btnEnviaCorreoNegacion" 
+                                                         actionListener="#{adminPoaValidacionJustificacion.imprimirValores()}"
+                                                         oncomplete="PF('dlgObservacion').show()"
+                                                         process="@this" disabled="#{adminPoaValidacionJustificacion.procesopoa.validacionJustificacion || !adminPoaValidacionJustificacion.procesopoa.registroJustificacionFinalizado}"
+                                                         icon="fa fa-info-circle" styleClass="btn-primary"/>
+
+                                    </p:outputPanel>
+                                </f:facet>
+                            </p:toolbar>
+                        </div>
+                        <p:separator/>
+                        <div class="box box-solid">
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 text-info text-center">
+                                        <p:remoteCommand name="actualizarTabla2" actionListener="#{adminPoaValidacionJustificacion.imprimirValores()}" update=":frm:dtbBajas" />
+                                        <p:dataTable id="dtbBajas" widgetVar="dtbBajas" var="ejesRegistro" sortBy="#{ejesRegistro.ejeA.eje}" expandableRowGroups="true"
+                                                     value="#{adminPoaValidacionJustificacion.ejesEsLaAp}">
+
+                                            <p:headerRow>
+                                                <p:column colspan="1" styleClass="eje" style="text-align: left; color: #FFFFFF;">
+                                                    <h:outputText value="#{ejesRegistro.ejeA.eje}.#{ejesRegistro.ejeA.nombre}" style="text-align: left"/>
+                                                </p:column>
+                                            </p:headerRow>
+                                            <p:column colspan="1" style="padding: 0px 0px">
+                                                <p:dataTable var="estrategiasRegistro"  sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="true"
+                                                             value="#{ejesRegistro.listalistaEstrategiaLaAp}">
+
+                                                    <p:headerRow>
+                                                        <p:column colspan="1" styleClass="est" style="text-align: left; color: #FFFFFF;">
+                                                            <h:outputText value="#{ejesRegistro.ejeA.eje}.#{estrategiasRegistro.estrategias.numero} -- #{estrategiasRegistro.estrategias.nombre}" style="text-align: left"/>
+                                                        </p:column>
+                                                    </p:headerRow>
+                                                    <p:column colspan="1" style="padding: 0px 0px">
+                                                        <p:dataTable value="#{estrategiasRegistro.actividadesPoas}" 
+                                                                     var="pOa" sortBy="#{pOa.cuadroMandoInt.lineaAccion.lineaAccion}" 
+                                                                     rowStyleClass="#{pOa.numeroS eq 0?'actividad':''}" 
+                                                                     emptyMessage="No hay actividades registradas">
+
+                                                            <p:headerRow>
+                                                                <p:column colspan="18" styleClass="lac" style="text-align: left">
+                                                                    <h:outputText value="#{ejesRegistro.ejeA.eje}.#{estrategiasRegistro.estrategias.numero}.#{pOa.cuadroMandoInt.lineaAccion.numero} --#{pOa.cuadroMandoInt.lineaAccion.nombre}"/>
+                                                                </p:column>
+                                                            </p:headerRow>  
+
+                                                            <f:facet name="header"></f:facet>
+
+                                                            <p:columnGroup type="header">
+                                                                <p:row class="success">
+                                                                    <p:column colspan="2" rowspan="2" headerText="No." style="width: 3%;" styleClass="hederTablesTitle"/>
+                                                                    <p:column rowspan="2" headerText="Actividad" style="width: 15%;" styleClass="hederTablesTitle"/>
+                                                                    <p:column rowspan="2" headerText="Unidad de medida" style="width:6%;" styleClass="hederTablesTitle"/>
+                                                                    <p:column colspan="12" headerText="Calendarización de Metas" style="width: 60%;" styleClass="hederTablesTitle"/>  
+                                                                    <p:column rowspan="2" headerText="Total" style="width: 5%;" styleClass="hederTablesTitle"/>
+                                                                    <p:column rowspan="2" headerText="Opciones" style="width:8%;" styleClass="hederTablesTitle"/>
+                                                                </p:row>
+                                                                <p:row class="success">
+                                                                    <p:column headerText="Enero" styleClass="hederTablesTitle"/>
+                                                                    <p:column headerText="Febrero" styleClass="hederTablesTitle"/>
+                                                                    <p:column headerText="Marzo" styleClass="hederTablesTitle"/>
+                                                                    <p:column headerText="Abril" styleClass="hederTablesTitle"/>
+                                                                    <p:column headerText="Mayo" styleClass="hederTablesTitle"/>                                                    
+                                                                    <p:column headerText="Junio" styleClass="hederTablesTitle"/>
+                                                                    <p:column headerText="Julio" styleClass="hederTablesTitle"/>
+                                                                    <p:column headerText="Agosto" styleClass="hederTablesTitle"/>
+                                                                    <p:column headerText="Septiembre" styleClass="hederTablesTitle"/>
+                                                                    <p:column headerText="Octubre" styleClass="hederTablesTitle"/>
+                                                                    <p:column headerText="Noviembre" styleClass="hederTablesTitle"/>
+                                                                    <p:column headerText="Diciembre" styleClass="hederTablesTitle"/>
+                                                                </p:row>
+                                                            </p:columnGroup>
+
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.numeroP}" />
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.numeroS}" />
+                                                            </p:column>
+                                                            <p:column style="text-align: justify"> 
+                                                                <h:outputText value="#{pOa.denominacion}" /> 
+                                                            </p:column>
+                                                            <p:column style="text-align: justify"> 
+                                                                <h:outputText value="#{pOa.unidadMedida.nombre}" />
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.NPEnero}" />
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.NPFebrero}" /> 
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.NPMarzo}" /> 
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.NPAbril}" /> 
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.NPMayo}" /> 
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.NPJunio}" /> 
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.NPJulio}" /> 
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.NPAgosto}" /> 
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.NPSeptiembre}" /> 
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.NPOctubre}" /> 
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.NPNoviembre}" /> 
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.NPDiciembre}" /> 
+                                                            </p:column>
+                                                            <p:column> 
+                                                                <h:outputText value="#{pOa.total}"/> 
+                                                            </p:column> 
+                                                            <p:column>
+                                                                <p:column>
+                                                                    <p:commandButton icon="fa fa-usd" styleClass="btn-primary" rendered="#{pOa.recursosActividadList.isEmpty()?false:true}"
+                                                                                     oncomplete="PF('dlgRecurso').show()" process="@this" update=":frmRecurso:pnlRecurso">
+                                                                        <f:setPropertyActionListener target="#{adminPoaValidacionJustificacion.actividadesPoaEditando}" value="#{pOa}" />
+                                                                    </p:commandButton>
+                                                                </p:column>
+                                                                <p:spacer width="10px"/>
+                                                                <p:column>
+                                                                    <p:commandButton icon="fa fa-comment" styleClass="btn-primary" rendered="#{pOa.recursosActividadList.isEmpty()?false:true}"
+                                                                                     oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
+                                                                        <f:setPropertyActionListener target="#{adminPoaValidacionJustificacion.actividadesPoaEditando}" value="#{pOa}" />
+                                                                    </p:commandButton>
+                                                                </p:column>
+                                                            </p:column>                                                       
+                                                            <p:autoUpdate/>
+                                                        </p:dataTable>
+                                                    </p:column> 
+                                                </p:dataTable>
                                             </p:column>
-                                        </p:headerRow>
-                                        <p:column colspan="1" style="padding: 0px 0px">
-                                            <p:dataTable var="estrategiasRegistro"  sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="true"
-                                                         value="#{ejesRegistro.listalistaEstrategiaLaAp}">
-
-                                                <p:headerRow>
-                                                    <p:column colspan="1" styleClass="est" style="text-align: left; color: #FFFFFF;">
-                                                        <h:outputText value="#{ejesRegistro.ejeA.eje}.#{estrategiasRegistro.estrategias.numero} -- #{estrategiasRegistro.estrategias.nombre}" style="text-align: left"/>
-                                                    </p:column>
-                                                </p:headerRow>
-                                                <p:column colspan="1" style="padding: 0px 0px">
-                                                    <p:dataTable value="#{estrategiasRegistro.actividadesPoas}" 
-                                                                 var="pOa" sortBy="#{pOa.cuadroMandoInt.lineaAccion.lineaAccion}" 
-                                                                 rowStyleClass="#{pOa.numeroS eq 0?'actividad':''}" 
-                                                                 emptyMessage="No hay actividades registradas">
-
-                                                        <p:headerRow>
-                                                            <p:column colspan="18" styleClass="lac" style="text-align: left">
-                                                                <h:outputText value="#{ejesRegistro.ejeA.eje}.#{estrategiasRegistro.estrategias.numero}.#{pOa.cuadroMandoInt.lineaAccion.numero} --#{pOa.cuadroMandoInt.lineaAccion.nombre}"/>
-                                                            </p:column>
-                                                        </p:headerRow>  
-
-                                                        <f:facet name="header"></f:facet>
-
-                                                        <p:columnGroup type="header">
-                                                            <p:row class="success">
-                                                                <p:column colspan="2" rowspan="2" headerText="No." style="width: 3%;" styleClass="hederTablesTitle"/>
-                                                                <p:column rowspan="2" headerText="Actividad" style="width: 15%;" styleClass="hederTablesTitle"/>
-                                                                <p:column rowspan="2" headerText="Unidad de medida" style="width:6%;" styleClass="hederTablesTitle"/>
-                                                                <p:column colspan="12" headerText="Calendarización de Metas" style="width: 60%;" styleClass="hederTablesTitle"/>  
-                                                                <p:column rowspan="2" headerText="Total" style="width: 5%;" styleClass="hederTablesTitle"/>
-                                                                <p:column rowspan="2" headerText="Opciones" style="width:8%;" styleClass="hederTablesTitle"/>
-                                                            </p:row>
-                                                            <p:row class="success">
-                                                                <p:column headerText="Enero" styleClass="hederTablesTitle"/>
-                                                                <p:column headerText="Febrero" styleClass="hederTablesTitle"/>
-                                                                <p:column headerText="Marzo" styleClass="hederTablesTitle"/>
-                                                                <p:column headerText="Abril" styleClass="hederTablesTitle"/>
-                                                                <p:column headerText="Mayo" styleClass="hederTablesTitle"/>                                                    
-                                                                <p:column headerText="Junio" styleClass="hederTablesTitle"/>
-                                                                <p:column headerText="Julio" styleClass="hederTablesTitle"/>
-                                                                <p:column headerText="Agosto" styleClass="hederTablesTitle"/>
-                                                                <p:column headerText="Septiembre" styleClass="hederTablesTitle"/>
-                                                                <p:column headerText="Octubre" styleClass="hederTablesTitle"/>
-                                                                <p:column headerText="Noviembre" styleClass="hederTablesTitle"/>
-                                                                <p:column headerText="Diciembre" styleClass="hederTablesTitle"/>
-                                                            </p:row>
-                                                        </p:columnGroup>
-
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.numeroP}" />
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.numeroS}" />
-                                                        </p:column>
-                                                        <p:column style="text-align: justify"> 
-                                                            <h:outputText value="#{pOa.denominacion}" /> 
-                                                        </p:column>
-                                                        <p:column style="text-align: justify"> 
-                                                            <h:outputText value="#{pOa.unidadMedida.nombre}" />
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPEnero}" />
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPFebrero}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPMarzo}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPAbril}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPMayo}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPJunio}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPJulio}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPAgosto}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPSeptiembre}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPOctubre}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPNoviembre}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.NPDiciembre}" /> 
-                                                        </p:column>
-                                                        <p:column> 
-                                                            <h:outputText value="#{pOa.total}"/> 
-                                                        </p:column> 
-                                                        <p:column>
-                                                            <p:column>
-                                                                <p:commandButton icon="fa fa-usd" styleClass="btn-primary" rendered="#{pOa.recursosActividadList.isEmpty()?false:true}"
-                                                                                 oncomplete="PF('dlgRecurso').show()" process="@this" update=":frmRecurso:pnlRecurso">
-                                                                    <f:setPropertyActionListener target="#{adminPoaValidacionJustificacion.actividadesPoaEditando}" value="#{pOa}" />
-                                                                </p:commandButton>
-                                                            </p:column>
-                                                            <p:spacer width="10px"/>
-                                                            <p:column>
-                                                                <p:commandButton icon="fa fa-comment" styleClass="btn-primary" rendered="#{pOa.recursosActividadList.isEmpty()?false:true}"
-                                                                                 oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
-                                                                    <f:setPropertyActionListener target="#{adminPoaValidacionJustificacion.actividadesPoaEditando}" value="#{pOa}" />
-                                                                </p:commandButton>
-                                                            </p:column>
-                                                        </p:column>                                                       
-                                                        <p:autoUpdate/>
-                                                    </p:dataTable>
-                                                </p:column> 
-                                            </p:dataTable>
-                                        </p:column>
-                                    </p:dataTable>
+                                        </p:dataTable>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </h:form>
+            </h:form>
 
-        <h:form id="frmComentario">
-            <p:dialog header="Justificacion" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" height="100%" closeOnEscape="true">
-                <p:outputPanel id="pnlAgregarComentario" style="text-align:justify;" >
-                    <p:outputLabel value="Actividad: #{adminPoaValidacionJustificacion.actividadesPoaEditando.denominacion}" />
-                    <hr/>
-                    <p:outputLabel id="txtComentario" value="#{adminPoaValidacionJustificacion.actividadesPoaEditando.descripcion}" styleClass="form-control" />
-                </p:outputPanel>
-            </p:dialog>
-        </h:form>
+            <h:form id="frmComentario">
+                <p:dialog header="Justificacion" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" height="100%" closeOnEscape="true">
+                    <p:outputPanel id="pnlAgregarComentario" style="text-align:justify;" >
+                        <p:outputLabel value="Actividad: #{adminPoaValidacionJustificacion.actividadesPoaEditando.denominacion}" />
+                        <hr/>
+                        <p:outputLabel id="txtComentario" value="#{adminPoaValidacionJustificacion.actividadesPoaEditando.descripcion}" styleClass="form-control" />
+                    </p:outputPanel>
+                </p:dialog>
+            </h:form>
 
-        <h:form id="frmRecurso">
-            <p:dialog header="Consultar recurso" widgetVar="dlgRecurso" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="1000" closeOnEscape="true">
-                <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
-                    <p:outputPanel>
-                        <p:dataTable id="dtbBajas" var="recurso"  sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{adminPoaValidacionJustificacion.actividadesPoaEditando.recursosActividadList}">
+            <h:form id="frmRecurso">
+                <p:dialog header="Consultar recurso" widgetVar="dlgRecurso" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="1000" closeOnEscape="true">
+                    <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
+                        <p:outputPanel>
+                            <p:dataTable id="dtbBajas" var="recurso"  sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{adminPoaValidacionJustificacion.actividadesPoaEditando.recursosActividadList}">
 
-                            <f:facet name="header"></f:facet>
+                                <f:facet name="header"></f:facet>
 
-                            <p:columnGroup type="header">
-                                <p:row class="success">
-                                    <p:column rowspan="2" headerText="Producto" styleClass="hederSubTablesTitle"/>
-                                    <p:column colspan="12" headerText="Calendarización de Metas" style="width: 700px;" styleClass="hederSubTablesTitle"/>  
-                                    <p:column rowspan="2" headerText="Total" style="width: 80px;" styleClass="hederSubTablesTitle"/>
-                                </p:row>
-                                <p:row class="success">
-                                    <p:column headerText="Ene" styleClass="hederSubTablesTitle"/>
-                                    <p:column headerText="Feb" styleClass="hederSubTablesTitle"/>
-                                    <p:column headerText="Mar" styleClass="hederSubTablesTitle"/>
-                                    <p:column headerText="Abr" styleClass="hederSubTablesTitle"/>
-                                    <p:column headerText="May" styleClass="hederSubTablesTitle"/>                                                    
-                                    <p:column headerText="Jun" styleClass="hederSubTablesTitle"/>
-                                    <p:column headerText="Jul" styleClass="hederSubTablesTitle"/>
-                                    <p:column headerText="Ago" styleClass="hederSubTablesTitle"/>
-                                    <p:column headerText="Sep" styleClass="hederSubTablesTitle"/>
-                                    <p:column headerText="Oct" styleClass="hederSubTablesTitle"/>
-                                    <p:column headerText="Nov" styleClass="hederSubTablesTitle"/>
-                                    <p:column headerText="Dic" styleClass="hederSubTablesTitle"/>
-                                </p:row>
-                            </p:columnGroup>
+                                <p:columnGroup type="header">
+                                    <p:row class="success">
+                                        <p:column rowspan="2" headerText="Producto" style="width: 200px;" styleClass="hederTablesTitle"/>
+                                        <p:column rowspan="2" headerText="Unidad de Medida" style="width: 80px;" styleClass="hederTablesTitle"/>
+                                        <p:column colspan="12" headerText="Calendarización de Metas" style="width: 650px;" styleClass="hederTablesTitle"/>  
+                                        <p:column rowspan="2" headerText="Total" style="width: 70px;" styleClass="hederTablesTitle"/>
+                                    </p:row>
+                                    <p:row class="success">
+                                        <p:column headerText="Ene" styleClass="hederSubTablesTitle"/>
+                                        <p:column headerText="Feb" styleClass="hederSubTablesTitle"/>
+                                        <p:column headerText="Mar" styleClass="hederSubTablesTitle"/>
+                                        <p:column headerText="Abr" styleClass="hederSubTablesTitle"/>
+                                        <p:column headerText="May" styleClass="hederSubTablesTitle"/>                                                    
+                                        <p:column headerText="Jun" styleClass="hederSubTablesTitle"/>
+                                        <p:column headerText="Jul" styleClass="hederSubTablesTitle"/>
+                                        <p:column headerText="Ago" styleClass="hederSubTablesTitle"/>
+                                        <p:column headerText="Sep" styleClass="hederSubTablesTitle"/>
+                                        <p:column headerText="Oct" styleClass="hederSubTablesTitle"/>
+                                        <p:column headerText="Nov" styleClass="hederSubTablesTitle"/>
+                                        <p:column headerText="Dic" styleClass="hederSubTablesTitle"/>
+                                    </p:row>
+                                </p:columnGroup>
 
-                            <p:headerRow>
-                                <p:column colspan="1">
-                                    <h:outputText value="Partida: #{recurso.productoArea.partida.partida}" />
+                                <p:headerRow>
+                                    <p:column colspan="1">
+                                        <h:outputText value="Partida: #{recurso.productoArea.partida.partida}" />
+                                    </p:column>
+                                    <p:column colspan="13">
+                                        <h:outputText value="#{recurso.productoArea.partida.denominacion}" />
+                                    </p:column>
+                                </p:headerRow>
+
+                                <p:column> 
+                                    <h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" />
                                 </p:column>
-                                <p:column colspan="13">
-                                    <h:outputText value="#{recurso.productoArea.partida.denominacion}" />
+                                <p:column>
+                                    <h:outputText value="#{recurso.productoArea.productos.unidadMedida}" style="font-size: xx-small"/>
                                 </p:column>
-                            </p:headerRow>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.RPEnero}" />
+                                </p:column>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.RPFebero}" />
+                                </p:column>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.RPMarzo}" />
+                                </p:column>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.RPAbril}" />
+                                </p:column>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.RPMayo}" />
+                                </p:column>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.RPJunio}" />
+                                </p:column>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.RPJulio}" />
+                                </p:column>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.RPAgosto}" />
+                                </p:column>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.RPSeptiembre}" />
+                                </p:column>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.RPOctubre}" />
+                                </p:column>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.RPNoviembre}" />
+                                </p:column>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.RPDiciembre}" />
+                                </p:column>
+                                <p:column> 
+                                    <h:outputText value="#{recurso.total}" /> 
+                                </p:column>
+                            </p:dataTable>
+                            <p:autoUpdate/>
+                        </p:outputPanel>                    
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
 
-                            <p:column> 
-                                <h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" />
-                            </p:column>
-                            <p:column> 
-                                <h:outputText value="#{recurso.RPEnero}" />
-                            </p:column>
-                            <p:column> 
-                                <h:outputText value="#{recurso.RPFebero}" />
-                            </p:column>
-                            <p:column> 
-                                <h:outputText value="#{recurso.RPMarzo}" />
-                            </p:column>
-                            <p:column> 
-                                <h:outputText value="#{recurso.RPAbril}" />
-                            </p:column>
-                            <p:column> 
-                                <h:outputText value="#{recurso.RPMayo}" />
-                            </p:column>
-                            <p:column> 
-                                <h:outputText value="#{recurso.RPJunio}" />
-                            </p:column>
-                            <p:column> 
-                                <h:outputText value="#{recurso.RPJulio}" />
-                            </p:column>
-                            <p:column> 
-                                <h:outputText value="#{recurso.RPAgosto}" />
-                            </p:column>
-                            <p:column> 
-                                <h:outputText value="#{recurso.RPSeptiembre}" />
-                            </p:column>
-                            <p:column> 
-                                <h:outputText value="#{recurso.RPOctubre}" />
-                            </p:column>
-                            <p:column> 
-                                <h:outputText value="#{recurso.RPNoviembre}" />
-                            </p:column>
-                            <p:column> 
-                                <h:outputText value="#{recurso.RPDiciembre}" />
-                            </p:column>
-                            <p:column> 
-                                <h:outputText value="#{recurso.total}" /> 
-                            </p:column>
-                        </p:dataTable>
-                        <p:autoUpdate/>
-                    </p:outputPanel>                    
-                </p:panelGrid>
-            </p:dialog>
-        </h:form>
 
-        
-        <h:form id="frmObservaciones">
-            <p:dialog header="Agregar Observaciones" widgetVar="dlgObservacion" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
-                <p:panelGrid id="pnlAgregarObservacion" style="text-align:justify;" columns="1">
-                    <p:outputLabel value="Observaciones" />
-                    <p:inputTextarea id="txtComentario" value="#{adminPoaValidacionJustificacion.mss}" 
-                                     rows="5" cols="95" counter="display" maxlength="2000" counterTemplate="{0} caracteres restantes." 
-                                     styleClass="form-control" autoResize="true" />
-                    <p:message for="txtComentario" />
-                    <h:outputText id="display" />
-                    <p:commandButton id="btnAceptarComentario" value="Aceptar"
-                                     actionListener="#{adminPoaValidacionJustificacion.enviarmensajes('J')}"
-                                     icon="fa fa-chek" styleClass="btn-primary"  update=":frm:dtbBajas" onsuccess="actualizarTabla2()"
-                                     oncomplete="PF('dlgObservacion').hide()" />
-                </p:panelGrid>
-            </p:dialog>
-        </h:form>
-        
+            <h:form id="frmObservaciones">
+                <p:dialog header="Agregar Observaciones" widgetVar="dlgObservacion" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+                    <p:panelGrid id="pnlAgregarObservacion" style="text-align:justify;" columns="1">
+                        <p:outputLabel value="Observaciones" />
+                        <p:inputTextarea id="txtComentario" value="#{adminPoaValidacionJustificacion.mss}" 
+                                         rows="5" cols="95" counter="display" maxlength="2000" counterTemplate="{0} caracteres restantes." 
+                                         styleClass="form-control" autoResize="true" />
+                        <p:message for="txtComentario" />
+                        <h:outputText id="display" />
+                        <p:commandButton id="btnAceptarComentario" value="Aceptar"
+                                         actionListener="#{adminPoaValidacionJustificacion.enviarmensajes('J')}"
+                                         icon="fa fa-chek" styleClass="btn-primary"  update=":frm:dtbBajas" onsuccess="actualizarTabla2()"
+                                         oncomplete="PF('dlgObservacion').hide()" />
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+
         </c:if>
     </ui:define>
 </ui:composition>

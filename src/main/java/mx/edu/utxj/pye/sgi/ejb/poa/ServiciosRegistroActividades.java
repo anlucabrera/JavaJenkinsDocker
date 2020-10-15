@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
+import mx.edu.utxj.pye.sgi.entity.pye2.Comentariosprocesopoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
@@ -262,4 +263,38 @@ public class ServiciosRegistroActividades implements EjbRegistroActividades {
         List<ActividadesPoa> pr = q.getResultList();
         return pr;
     }
+
+@Override
+    public List<Comentariosprocesopoa> mostrarComentariosprocesopoaArea(Short area, Short ejercicioFiscal) {
+        TypedQuery<Comentariosprocesopoa> q = em.createQuery("SELECT a FROM Comentariosprocesopoa a WHERE a.area = :area AND a.ejercicioFiscal.ejercicioFiscal=:ejercicioFiscal", Comentariosprocesopoa.class);
+        q.setParameter("area", area);
+        q.setParameter("ejercicioFiscal", ejercicioFiscal);
+        List<Comentariosprocesopoa> pr = q.getResultList();
+        return pr;
+    }
+    
+     @Override
+    public Comentariosprocesopoa agregarComentariosprocesopoa(Comentariosprocesopoa nuevaComentariosprocesopoa) {
+        facadePoa.setEntityClass(Comentariosprocesopoa.class);
+        facadePoa.create(nuevaComentariosprocesopoa);
+        facadePoa.flush();
+        return nuevaComentariosprocesopoa;
+    }
+
+    @Override
+    public Comentariosprocesopoa actualizaComentariosprocesopoa(Comentariosprocesopoa nuevaComentariosprocesopoa) {
+        facadePoa.setEntityClass(Comentariosprocesopoa.class);
+        facadePoa.edit(nuevaComentariosprocesopoa);
+        facadePoa.flush();
+        return nuevaComentariosprocesopoa;
+    }
+
+    @Override
+    public Comentariosprocesopoa eliminarComentariosprocesopoa(Comentariosprocesopoa nuevaComentariosprocesopoa) {
+        facadePoa.setEntityClass(Comentariosprocesopoa.class);
+        facadePoa.remove(nuevaComentariosprocesopoa);
+        facadePoa.flush();
+        return nuevaComentariosprocesopoa;
+    }
+
 }
