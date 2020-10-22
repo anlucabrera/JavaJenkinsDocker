@@ -199,13 +199,13 @@
                                     </div>
                                 </div>
                             </c:if>
-                            <!--c:if test="# {encuestaServicios.dto.cargada}">
+                            <c:if test="# {encuestaServicios.dto.cargada}">
                                 <div class="# {claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
                                         <div class="inner" style="cursor: pointer;">
                                             <p:link outcome="encuestas/Estudiantes/servicios">
                                                 <h3>
-                                                    <h:outputLabel value="# {encuestaServicios.dto.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer; color: #ffffff"/>
+                                                    <h:outputLabel value="#{encuestaServicios.dto.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer; color: #ffffff"/>
                                                     <sup style="font-size: 20px"></sup>
                                                 </h3>
                                                 <p style="color: #ffffff">Satisfacción de servicios<br/></p>
@@ -219,7 +219,7 @@
                                         </p:link>
                                     </div>
                                 </div>
-                            </c:if-->
+                            </c:if>
                             <c:if test="#{evaluacionEstadia.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">

@@ -156,7 +156,7 @@
 
                 </c:if>
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluaciones y encuestas</li>
-                <!--c:if test="# {serviciosConsulta.mostrarEnDesarrollo(request) and serviciosConsulta.tieneAcceso}"><li><p:link href="# {request.contextPath}/encuestas/consulta/servicios.xhtml" title="Satisfacción de servicios"><i class="fa fa-slideshare"></i><span>Satisfacción de servicios</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if-->
+                <c:if test="#{serviciosConsulta.mostrarEnDesarrollo(request) and serviciosConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/consulta/servicios.xhtml" title="Satisfacción de servicios"><i class="fa fa-slideshare"></i><span>Satisfacción de servicios</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <c:if test="#{controlEscolarMenu.tieneElementos()}">
                     <li class="treeview">
                         <a href="#">
@@ -695,22 +695,27 @@
                                 </a>
                                 <ul class="treeview-menu" style="display: none;">
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/ESPACIOS_CONCERTADOS_DE_ESTADIA_ TSU_2020.xlsx">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/Guia_Proceso_Estadia.pdf">
+                                            <span>Guia Procesode Estadia</span>
+                                        </p:link>
+                                    </li>
+                                    <li>
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/ESPACIOS_CONCERTADOS_DE_ESTADIA_2021.xlsx">
                                             <span>1. Espacios concertados</span>
                                         </p:link>
                                     </li>
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/CONCENTRADO_DE_ESTADIAS_TSU_2020.xlsx">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/CONCENTRADO_DE_ESTADIAS_2021.xlsx">
                                             <span>2. Concentrado de estadías</span>
                                         </p:link>
                                     </li>
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/CARTA_DE_PRESENTACION_TSU_2020.docx">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/CARTA_DE_PRESENTACION_2021.pdf">
                                             <span>3. Carta de presentación</span>
                                         </p:link>
                                     </li>
                                     <li>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/CARTA_DE_ACEPTACION_ TSU_2020.docx">
+                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/CARTA_DE_ACEPTACION_2021.docx">
                                             <span>4. Carta de aceptación</span>
                                         </p:link>
                                     </li>
@@ -726,18 +731,28 @@
                                             </p:link>
                                         </li>
                                         <li>
-                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/EVALUACION_POR_ASESOR_EMPRESARIAL_TSU_2020.docx">
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/EVALUACION_POR_ASESOR_EMPRESARIAL_2021.docx">
                                                 <span>7. Evaluación asesor <br/>empresarial</span>
                                             </p:link>
                                         </li>
                                         <li>
-                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/CARTA_DE_LIBERACION_TSU_ 2020.docx">
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/CARTA_DE_LIBERACION_2021.docx">
                                                 <span>8. Carta de liberación <br/>empresarial</span>
                                             </p:link>
                                         </li>
                                         <li>
                                             <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/9_Carta_de_evaluacion_y_acreditacion_de_estadia_2020.doc">
                                                 <span>9. Evaluación, acreditación <br/>estadía</span>
+                                            </p:link>
+                                        </li>
+                                        <li>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/9_Carta_de_evaluacion_y_acreditacion_de_estadia_2020.doc">
+                                                <span>9. Evaluación, acreditación <br/>estadía</span>
+                                            </p:link>
+                                        </li>
+                                        <li>
+                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/formatosEstadia/SOLICITUD_EMPRESAS ESTADIAS UTXJ 2021.xlsx">
+                                                <span>Solicitud Empresas <br/>Estadias UTXJ 2021.xlsx</span>
                                             </p:link>
                                         </li>
                                     </c:if>
@@ -1245,7 +1260,7 @@
                             </p:link>
                         </li>
                         <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/Diseno_Instruccional_EOE_I_UTXJ.docx" target="_blank">
+                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_EXPRESION_ORAL_Y_ESCRITA_I_UTXJ-2020.docx" target="_blank">
                                 <span>Expresión Oral y Escrita I</span>
                             </p:link>
                         </li>

@@ -28,9 +28,9 @@
             <c:if test="#{evaluacionTutorEstudiante.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/nuevaTutor.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
 
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Evaluaciones</li>
-            <!--c:if test="# {encuestaServiciosEstudiante19.mostrarEnDesarrollo(request) and encuestaServiciosEstudiante19.tieneAcceso}">
-                <li><p:link href="# {request.contextPath}/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-check-square"></i><span>Servicios</span></p:link></li>
-            </c:if-->
+            <c:if test="#{encuestaServiciosEstudiante19.mostrarEnDesarrollo(request) and encuestaServiciosEstudiante19.tieneAcceso}">
+                <li><p:link href="#{request.contextPath}/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-check-square"></i><span>Servicios</span></p:link></li>
+            </c:if>
             <c:if test="#{encuestaCondicionesEstudio.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/condiciones_estudio.xhtml"><i class="fa fa-check-square"></i><span>Condiciones de estudio</span></p:link></li></c:if>
             <c:if test="#{evaluacionDesempenioAmbientalEstudiante19.mostrarEnDesarrollo(request) and evaluacionDesempenioAmbientalEstudiante19.tieneAcceso}">
                 <li><p:link href="#{request.contextPath}/encuestas/evaluacionDesempenioAmbiental.xhtml"><i class="fa fa-check-square"></i><span>Evaluación de Desempeño Ambiental</span></p:link></li>
