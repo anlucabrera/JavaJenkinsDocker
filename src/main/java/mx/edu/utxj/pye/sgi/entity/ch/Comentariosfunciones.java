@@ -48,7 +48,7 @@ public class Comentariosfunciones implements Serializable {
     private Integer idComentario;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 500)
+    @Size(min = 1, max = 2000)
     @Column(name = "comentario")
     private String comentario;
     @Basic(optional = false)
