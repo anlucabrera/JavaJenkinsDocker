@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.entity.pye2;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,10 +14,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,9 +36,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Comentariosprocesopoa.findAll", query = "SELECT c FROM Comentariosprocesopoa c")
     , @NamedQuery(name = "Comentariosprocesopoa.findByComentariosProcesoPoa", query = "SELECT c FROM Comentariosprocesopoa c WHERE c.comentariosProcesoPoa = :comentariosProcesoPoa")
     , @NamedQuery(name = "Comentariosprocesopoa.findByArea", query = "SELECT c FROM Comentariosprocesopoa c WHERE c.area = :area")
-    , @NamedQuery(name = "Comentariosprocesopoa.findByComentarios", query = "SELECT c FROM Comentariosprocesopoa c WHERE c.comentarios = :comentarios")
     , @NamedQuery(name = "Comentariosprocesopoa.findByStatus", query = "SELECT c FROM Comentariosprocesopoa c WHERE c.status = :status")
-    , @NamedQuery(name = "Comentariosprocesopoa.findByProceso", query = "SELECT c FROM Comentariosprocesopoa c WHERE c.proceso = :proceso")})
+    , @NamedQuery(name = "Comentariosprocesopoa.findByProceso", query = "SELECT c FROM Comentariosprocesopoa c WHERE c.proceso = :proceso")
+    , @NamedQuery(name = "Comentariosprocesopoa.findByFecha", query = "SELECT c FROM Comentariosprocesopoa c WHERE c.fecha = :fecha")})
 public class Comentariosprocesopoa implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,7 +51,8 @@ public class Comentariosprocesopoa implements Serializable {
     @NotNull
     @Column(name = "area")
     private short area;
-    @Size(max = 500)
+    @Lob
+    @Size(max = 65535)
     @Column(name = "comentarios")
     private String comentarios;
     @Basic(optional = false)
@@ -59,6 +64,9 @@ public class Comentariosprocesopoa implements Serializable {
     @Size(min = 1, max = 500)
     @Column(name = "proceso")
     private String proceso;
+    @Column(name = "fecha")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fecha;
     @JoinColumn(name = "ejercicio_fiscal", referencedColumnName = "ejercicio_fiscal")
     @ManyToOne(optional = false)
     private EjerciciosFiscales ejercicioFiscal;
@@ -115,6 +123,14 @@ public class Comentariosprocesopoa implements Serializable {
 
     public void setProceso(String proceso) {
         this.proceso = proceso;
+    }
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
     }
 
     public EjerciciosFiscales getEjercicioFiscal() {
