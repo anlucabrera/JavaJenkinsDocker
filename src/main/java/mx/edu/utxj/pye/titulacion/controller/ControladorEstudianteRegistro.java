@@ -70,7 +70,7 @@ public class ControladorEstudianteRegistro implements Serializable{
     /* Objetos para Datos Personales */
     @Getter @Setter private Personas nuevoOBJpersona;
     @Getter @Setter private Egresados nuevoOBJegresado;
-    @Getter @Setter private ExpedientesTitulacion nuevoOBJexpediente;
+    @Getter @Setter private ExpedientesTitulacion nuevoOBJexpediente, expedienteRegistrado;
     @Getter @Setter private DtoDatosTitulacion nuevoDTOdatTit;
     @Getter @Setter private List<String> listaGeneros;
     
@@ -87,7 +87,7 @@ public class ControladorEstudianteRegistro implements Serializable{
     
     /* Objetos para Documentos del Expediente */
     @Getter @Setter private List<DocumentosNivel> listaDocsPorNivel;
-    @Getter @Setter private DocumentosExpediente nuevoOBJdocExp;
+    @Getter @Setter private DocumentosExpediente nuevoOBJdocExp, fotografiaCargada;
     @Inject UtilidadesCH utilidadesCH;
     @Getter @Setter private Integer claveDoc;
     @Getter @Setter private Part file; 
@@ -135,7 +135,8 @@ public class ControladorEstudianteRegistro implements Serializable{
 //            }
             
             
-            if (estudiante.getGradoActual() == 5 || estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11 || estudiante.getGradoActual() == 10) {
+            //if (estudiante.getGradoActual() == 5 || estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11 || estudiante.getGradoActual() == 10) {
+            if (estudiante.getGradoActual() == 5 || estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11) {
                 procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
 
                 if (procesosIntexp == null) {
@@ -174,6 +175,82 @@ public class ControladorEstudianteRegistro implements Serializable{
                         listaEstadosIEMS = eJBSelectItems.itemEstados();
 
                     }
+                }
+                
+            } 
+            
+            else if (estudiante.getGradoActual() == 10 && estudiante.getGrupos().getGruposPK().getCvePeriodo() == 55) {
+                expedienteRegistrado = ejbEstudianteRegistro.buscarExpedienteTSU(estudiante);
+                
+                if(expedienteRegistrado == null) {
+                    estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
+                
+                    if (estudiante == null) {
+                        cargada = false;
+                    } else {
+                        procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
+
+                        if (procesosIntexp == null) {
+                        cargada = false;
+                        } else {
+                            cargada = true;
+
+                            progresoExpediente = 0;
+                            datosPerVal();
+                            datosContVal();
+                            datosAntAcad();
+                            consultarStatusExpediente();
+                            listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+                            listaEstadosIEMS = eJBSelectItems.itemEstados();
+
+                        }
+                    }
+                
+                }else {
+                    fotografiaCargada = ejbEstudianteRegistro.buscarFotografiaExpedienteTSU(expedienteRegistrado);
+                    if (fotografiaCargada == null) {
+                        estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
+
+                        if (estudiante == null) {
+                            cargada = false;
+                        } else {
+                            procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
+
+                            if (procesosIntexp == null) {
+                                cargada = false;
+                            } else {
+                                cargada = true;
+
+                                progresoExpediente = 0;
+                                datosPerVal();
+                                datosContVal();
+                                datosAntAcad();
+                                consultarStatusExpediente();
+                                listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+                                listaEstadosIEMS = eJBSelectItems.itemEstados();
+
+                            }
+                        }
+
+                    } else {
+                        procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
+
+                        if (procesosIntexp == null) {
+                            cargada = false;
+                        } else {
+                            cargada = true;
+
+                            progresoExpediente = 0;
+                            datosPerVal();
+                            datosContVal();
+                            datosAntAcad();
+                            consultarStatusExpediente();
+                            listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+                            listaEstadosIEMS = eJBSelectItems.itemEstados();
+
+                        }
+                    }
+                
                 }
                 
             } 

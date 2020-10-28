@@ -323,4 +323,18 @@ public interface EjbEstudianteRegistro {
      * @throws java.lang.Throwable
      */
     public TituloExpediente actualizarFechaEmision(TituloExpediente tituloExpediente) throws Throwable;
+    
+     /**
+     * Busca si el estudiante integró expediente de TSU
+     * @param estudiante
+     * @return entity ExpedientesTitulacion
+     */
+    public ExpedientesTitulacion buscarExpedienteTSU (Alumnos estudiante);
+    
+     /**
+     * Buscar si el estudiante subió fotogafía en su expediente de TSU
+     * @param expedientesTitulacion
+     * @return entity DocumentosExpediente
+     */
+    public DocumentosExpediente buscarFotografiaExpedienteTSU (ExpedientesTitulacion expedientesTitulacion);
 }
