@@ -365,4 +365,11 @@ public interface EjbEstudianteRegistro {
      * @return entity ExpedientesTitulacion
      */
     public DatosContacto buscarDatosContactoExpediente (ExpedientesTitulacion expedientesTitulacion);
+    
+     /**
+     * Buscar si el estudiante subió fotogafía en su expediente de TSU
+     * @param expedientesTitulacion
+     * @return entity DocumentosExpediente
+     */
+    public DocumentosExpediente buscarFotografiaExpedienteContinuidad (ExpedientesTitulacion expedientesTitulacion);
 }

@@ -1460,10 +1460,10 @@
                                                                             </div>
                                                                         </div>
                                                                         <br/>-->
-                                                            <c:if test="#{controladorArchExp.expediente.nivel eq 2}">
+                                                            <c:if test="#{controladorArchExp.expedienteContinuidad.nivel eq 2}">
                                                                         <div class="row">
                                                                             <o:form id="frmFotoExp" enctype="multipart/form-data">
-                                                                                <c:set var="expediente" value="#{controladorArchExp.expediente.expediente}"/> <!--Se agregó pero una vez descomentando la parte superior se debe quitar para no repetirse -->
+                                                                                <c:set var="expediente" value="#{controladorArchExp.expedienteContinuidad.expediente}"/> <!--Se agregó pero una vez descomentando la parte superior se debe quitar para no repetirse -->
                                                                                 <c:set var="existeFI" value="#{controladorArchExp.docExiste(12, expediente)}"/>
                                                                                 <c:if test="#{!existeFI}">
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
@@ -1486,7 +1486,7 @@
                                                                                     <br/>
                                                                                     <h:message id="messageForFileFotoIL" for="fileFotoIL" />
                                                                                     <br/>
-                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchExp.subirDocumentoFotoIL}" />
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchExp.subirDocumentoFotoILContinuidad}" />
                                                                                     <br/>
                                                                                     <br/>
                                                                                 </div>
@@ -1494,10 +1494,10 @@
                                                                             </o:form>
                                                                         </div>
                                                             </c:if>
-                                                            <c:if test="#{controladorArchExp.expediente.nivel eq 4}">
+                                                            <c:if test="#{controladorArchExp.expedienteContinuidad.nivel eq 4}">
                                                                         <div class="row">
                                                                             <o:form id="frmFotoExp" enctype="multipart/form-data">
-                                                                                <c:set var="expediente" value="#{controladorArchExp.expediente.expediente}"/> <!--Se agregó pero una vez descomentando la parte superior se debe quitar para no repetirse -->
+                                                                                <c:set var="expediente" value="#{controladorArchExp.expedienteContinuidad.expediente}"/> <!--Se agregó pero una vez descomentando la parte superior se debe quitar para no repetirse -->
                                                                                 <c:set var="existeFI" value="#{controladorArchExp.docExiste(12, expediente)}"/>
                                                                                 <c:if test="#{!existeFI}">
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
@@ -1520,7 +1520,7 @@
                                                                                     <br/>
                                                                                     <h:message id="messageForFileFotoIL" for="fileFotoIL" />
                                                                                     <br/>
-                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchExp.subirDocumentoFotoIL}" />
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchExp.subirDocumentoFotoILContinuidad}" />
                                                                                     <br/>
                                                                                     <br/>
                                                                                 </div>

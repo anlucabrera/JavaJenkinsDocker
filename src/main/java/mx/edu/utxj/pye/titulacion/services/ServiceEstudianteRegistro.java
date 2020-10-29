@@ -830,4 +830,24 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         
         return datExp;
     }
+    
+    @Override
+    public DocumentosExpediente buscarFotografiaExpedienteContinuidad(ExpedientesTitulacion expedientesTitulacion) {
+        //verificar que el parametro no sea nulo
+        if (expedientesTitulacion == null) {
+            return null;
+        }
+        DocumentosExpediente docExp = new  DocumentosExpediente();
+        
+        TypedQuery<DocumentosExpediente> doc = facade.getEntityManager().createQuery("SELECT d FROM DocumentosExpediente d WHERE d.expediente.expediente =:expediente AND d.documento.documento =:documento", DocumentosExpediente.class);
+        doc.setParameter("expediente", expedientesTitulacion.getExpediente());
+        doc.setParameter("documento", (int)12);
+        
+        try {
+            docExp = doc.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            docExp = null;
+        }
+        return docExp;
+    }
 }

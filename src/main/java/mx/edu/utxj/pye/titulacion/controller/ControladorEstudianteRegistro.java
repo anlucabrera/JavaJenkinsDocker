@@ -248,22 +248,40 @@ public class ControladorEstudianteRegistro implements Serializable{
                             expedienteRegContinuacion = ejbEstudianteRegistro.buscarExpedienteContinuacion(estudiante, procesosIntexp.getProceso());
                             if(expedienteRegContinuacion==null){
                                 nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(matricula);
-                                consultarRegistroDatosPer(matricula);
                                 guardarExpedienteContinuacion(nuevoOBJegresado,procesosIntexp,estudiante,expedienteRegistrado);
-                                consultarRegistroAntAcad(matricula);
+                                progresoExpediente = 80;
+                                System.err.println("progresoExp1 " + progresoExpediente);
+                                consultarExpedienteContinuacion();
+//                                consultarStatusExpedienteContinuacion();
+//                                consultarRegistroDatosPer(matricula);
+//                                nuevoOBJexpediente = expedienteRegContinuacion;
+//                                nuevoOBJdomicilio = ejbEstudianteRegistro.buscarDomicilioExpediente(expedienteRegContinuacion);
+//                                nuevoOBJdatosCont = ejbEstudianteRegistro.buscarDatosContactoExpediente(expedienteRegContinuacion);
+//                                consultarRegistroAntAcad(matricula);
+//                                listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+//                                listaEstadosIEMS = eJBSelectItems.itemEstados();
+//                                selectMunicipio();
+//                                selectAsentamiento();
+                                
                             }else{
-                                consultarStatusExpedienteContinuacion();
-                                System.err.println("consultarStatusExpedienteContinuacion - expValidado " + expValidadoContinuacion);
+                                if(ejbEstudianteRegistro.buscarFotografiaExpedienteContinuidad(expedienteRegContinuacion)== null){
+                                    progresoExpediente = 80;
+                                }else{
+                                    progresoExpediente = 100;
+                                }
+                                System.err.println("progresoExp2 " + progresoExpediente);
+//                                consultarStatusExpedienteContinuacion();
                                 nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(matricula);
-                                consultarRegistroDatosPer(matricula);
-                                nuevoOBJexpediente = expedienteRegContinuacion;
-                                nuevoOBJdomicilio = ejbEstudianteRegistro.buscarDomicilioExpediente(expedienteRegContinuacion);
-                                nuevoOBJdatosCont = ejbEstudianteRegistro.buscarDatosContactoExpediente(expedienteRegContinuacion);
-                                consultarRegistroAntAcad(matricula);  
-                                listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
-                                listaEstadosIEMS = eJBSelectItems.itemEstados();    
-                                selectMunicipio();
-                                selectAsentamiento();
+                                consultarExpedienteContinuacion();
+//                                consultarRegistroDatosPer(matricula);
+//                                nuevoOBJexpediente = expedienteRegContinuacion;
+//                                nuevoOBJdomicilio = ejbEstudianteRegistro.buscarDomicilioExpediente(expedienteRegContinuacion);
+//                                nuevoOBJdatosCont = ejbEstudianteRegistro.buscarDatosContactoExpediente(expedienteRegContinuacion);
+//                                consultarRegistroAntAcad(matricula);  
+//                                listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+//                                listaEstadosIEMS = eJBSelectItems.itemEstados();    
+//                                selectMunicipio();
+//                                selectAsentamiento();
                                     
                             }
 
@@ -668,6 +686,24 @@ public class ControladorEstudianteRegistro implements Serializable{
             nuevoOBJdatosCont.setEmail(datosContactoReg.getEmail());
             nuevoOBJdatosCont = ejbEstudianteRegistro.guardarDatosContacto(nuevoOBJdatosCont);
             System.err.println("guardaComunicacionDomicilioContinuacion - cont " +nuevoOBJdatosCont);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorEstudianteRegistro.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void consultarExpedienteContinuacion(){
+        try {
+            consultarStatusExpedienteContinuacion();
+            consultarRegistroDatosPer(matricula);
+            nuevoOBJexpediente = expedienteRegContinuacion;
+            nuevoOBJdomicilio = ejbEstudianteRegistro.buscarDomicilioExpediente(expedienteRegContinuacion);
+            nuevoOBJdatosCont = ejbEstudianteRegistro.buscarDatosContactoExpediente(expedienteRegContinuacion);
+            consultarRegistroAntAcad(matricula);
+            listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+            listaEstadosIEMS = eJBSelectItems.itemEstados();
+            selectMunicipio();
+            selectAsentamiento();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEstudianteRegistro.class.getName()).log(Level.SEVERE, null, ex);
