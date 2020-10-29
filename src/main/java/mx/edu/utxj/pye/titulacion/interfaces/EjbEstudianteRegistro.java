@@ -337,4 +337,32 @@ public interface EjbEstudianteRegistro {
      * @return entity DocumentosExpediente
      */
     public DocumentosExpediente buscarFotografiaExpedienteTSU (ExpedientesTitulacion expedientesTitulacion);
+    
+     /**
+     * Consulta el status del expediente de titulación del estudiante
+     * @param matricula
+     * @return entity ExpedientesTitulacion
+     */
+    public ExpedientesTitulacion consultarStatusExpedienteContinuacion(String matricula, Integer proceso);
+    
+    /**
+     * Busca si el estudiante integró expediente de TSU
+     * @param estudiante
+     * @return entity ExpedientesTitulacion
+     */
+    public ExpedientesTitulacion buscarExpedienteContinuacion (Alumnos estudiante, Integer proceso);
+    
+    /**
+     * Busca si el estudiante integró expediente de TSU
+     * @param estudiante
+     * @return entity ExpedientesTitulacion
+     */
+    public DomiciliosExpediente buscarDomicilioExpediente (ExpedientesTitulacion expedientesTitulacion);
+    
+    /**
+     * Busca si el estudiante integró expediente de TSU
+     * @param estudiante
+     * @return entity ExpedientesTitulacion
+     */
+    public DatosContacto buscarDatosContactoExpediente (ExpedientesTitulacion expedientesTitulacion);
 }

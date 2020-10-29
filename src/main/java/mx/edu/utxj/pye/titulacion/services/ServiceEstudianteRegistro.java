@@ -761,4 +761,73 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         }
         return docExp;
     }
+    
+    @Override
+    public ExpedientesTitulacion consultarStatusExpedienteContinuacion(String matricula, Integer proceso) {
+        ExpedientesTitulacion expTit = new ExpedientesTitulacion();
+        TypedQuery<ExpedientesTitulacion> query = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.matricula.matricula =:matricula AND e.proceso.proceso=:proceso AND e.validado =:validado", ExpedientesTitulacion.class);
+        query.setParameter("matricula", matricula);
+        query.setParameter("proceso", proceso);
+        query.setParameter("validado", true);
+        try {
+            expTit = query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            expTit = null;
+            ex.toString();
+        }
+        return  expTit;
+    }
+    
+    @Override
+    public ExpedientesTitulacion buscarExpedienteContinuacion(Alumnos estudiante, Integer proceso) {
+        //verificar que el parametro no sea nulo
+        if (estudiante == null) {
+            return null;
+        }
+        ExpedientesTitulacion exp = new  ExpedientesTitulacion();
+        
+        TypedQuery<ExpedientesTitulacion> expTit = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.matricula.matricula =:matricula AND e.proceso.proceso =:proceso", ExpedientesTitulacion.class);
+        expTit.setParameter("matricula", estudiante.getMatricula());
+        expTit.setParameter("proceso", proceso);
+        
+        try {
+            exp = expTit.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            exp = null;
+        }
+        return exp;
+    }
+
+    @Override
+    public DomiciliosExpediente buscarDomicilioExpediente(ExpedientesTitulacion expedienteTitulacion) {
+        System.err.println("buscarDomicilioExpediente - exp " + expedienteTitulacion.getExpediente());
+        //verificar que el parametro no sea nulo
+        if (expedienteTitulacion == null) {
+            return null;
+        }
+        
+        DomiciliosExpediente domExp = facade.getEntityManager().createQuery("SELECT d FROM DomiciliosExpediente d WHERE d.expediente.expediente=:expediente", DomiciliosExpediente.class)
+                .setParameter("expediente", expedienteTitulacion.getExpediente())
+                .getResultStream().findFirst().orElse(null);
+        
+        System.err.println("buscarDomicilioExpediente - domExp " + domExp);
+        
+        return domExp;
+    }
+
+    @Override
+    public DatosContacto buscarDatosContactoExpediente(ExpedientesTitulacion expedienteTitulacion) {
+       //verificar que el parametro no sea nulo
+        if (expedienteTitulacion == null) {
+            return null;
+        }
+        
+        DatosContacto datExp = facade.getEntityManager().createQuery("SELECT d FROM DatosContacto d WHERE d.expediente.expediente =:expediente", DatosContacto.class)
+                .setParameter("expediente", expedienteTitulacion.getExpediente())
+                .getResultStream().findFirst().orElse(null);
+        
+        System.err.println("buscarDatosContactoExpediente - datExp " + datExp);
+        
+        return datExp;
+    }
 }

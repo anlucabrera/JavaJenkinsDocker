@@ -57,7 +57,7 @@ public class ControladorEstudianteRegistro implements Serializable{
 
     private static final long serialVersionUID = -7488066163464152954L;
     
-    @Getter private Boolean estOnceavo, valDatPer = false, valDatCont = false, valDatAcad = false, expValidado = false, cargada = false;
+    @Getter private Boolean estOnceavo, valDatPer = false, valDatCont = false, valDatAcad = false, expValidado = false, expValidadoContinuacion = false, cargada = false;
     @Getter private String matricula;
     @Getter @Setter private Integer pestaniaActiva;
     
@@ -70,15 +70,15 @@ public class ControladorEstudianteRegistro implements Serializable{
     /* Objetos para Datos Personales */
     @Getter @Setter private Personas nuevoOBJpersona;
     @Getter @Setter private Egresados nuevoOBJegresado;
-    @Getter @Setter private ExpedientesTitulacion nuevoOBJexpediente, expedienteRegistrado;
+    @Getter @Setter private ExpedientesTitulacion nuevoOBJexpediente, expedienteRegistrado, expedienteRegContinuacion;
     @Getter @Setter private DtoDatosTitulacion nuevoDTOdatTit;
     @Getter @Setter private List<String> listaGeneros;
     
     /* Objetos para Datos de Contacto y Domicilio */
     @Getter @Setter private Comunicaciones consultaOBJcelular, consultaOBJemail;
-    @Getter @Setter private DatosContacto nuevoOBJdatosCont, nuevoOBJdatosContConf;
+    @Getter @Setter private DatosContacto nuevoOBJdatosCont, nuevoOBJdatosContConf, datosContactoReg;
     @Getter @Setter private Domicilios consultaOBJdomicilio;
-    @Getter @Setter private DomiciliosExpediente nuevoOBJdomicilio;
+    @Getter @Setter private DomiciliosExpediente nuevoOBJdomicilio, domicilioReg;
     @Getter @Setter private String email;
     
     /* Para selectOneMenu de Estado, Municipio y Localidad */
@@ -181,8 +181,9 @@ public class ControladorEstudianteRegistro implements Serializable{
             
             else if (estudiante.getGradoActual() == 10 && estudiante.getGrupos().getGruposPK().getCvePeriodo() == 55) {
                 expedienteRegistrado = ejbEstudianteRegistro.buscarExpedienteTSU(estudiante);
-                
+                System.err.println("expedienteRegistrado " + expedienteRegistrado);
                 if(expedienteRegistrado == null) {
+                    System.err.println("expedienteRegistrado - null ");
                     estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
                 
                     if (estudiante == null) {
@@ -207,8 +208,11 @@ public class ControladorEstudianteRegistro implements Serializable{
                     }
                 
                 }else {
+                    System.err.println("expedienteRegistrado - nonNull");
                     fotografiaCargada = ejbEstudianteRegistro.buscarFotografiaExpedienteTSU(expedienteRegistrado);
+                    System.err.println("fotografiaCargada " + fotografiaCargada);
                     if (fotografiaCargada == null) {
+                        System.err.println("fotografiaCargada - null");
                         estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
 
                         if (estudiante == null) {
@@ -233,20 +237,35 @@ public class ControladorEstudianteRegistro implements Serializable{
                         }
 
                     } else {
+                        System.err.println("fotografiaCargada - nonNull");
+                        estudiante = ejbEstudianteRegistro.obtenerInformacionAlumno(matricula);
                         procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
 
                         if (procesosIntexp == null) {
                             cargada = false;
                         } else {
                             cargada = true;
-
-                            progresoExpediente = 0;
-                            datosPerVal();
-                            datosContVal();
-                            datosAntAcad();
-                            consultarStatusExpediente();
-                            listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
-                            listaEstadosIEMS = eJBSelectItems.itemEstados();
+                            expedienteRegContinuacion = ejbEstudianteRegistro.buscarExpedienteContinuacion(estudiante, procesosIntexp.getProceso());
+                            if(expedienteRegContinuacion==null){
+                                nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(matricula);
+                                consultarRegistroDatosPer(matricula);
+                                guardarExpedienteContinuacion(nuevoOBJegresado,procesosIntexp,estudiante,expedienteRegistrado);
+                                consultarRegistroAntAcad(matricula);
+                            }else{
+                                consultarStatusExpedienteContinuacion();
+                                System.err.println("consultarStatusExpedienteContinuacion - expValidado " + expValidadoContinuacion);
+                                nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(matricula);
+                                consultarRegistroDatosPer(matricula);
+                                nuevoOBJexpediente = expedienteRegContinuacion;
+                                nuevoOBJdomicilio = ejbEstudianteRegistro.buscarDomicilioExpediente(expedienteRegContinuacion);
+                                nuevoOBJdatosCont = ejbEstudianteRegistro.buscarDatosContactoExpediente(expedienteRegContinuacion);
+                                consultarRegistroAntAcad(matricula);  
+                                listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+                                listaEstadosIEMS = eJBSelectItems.itemEstados();    
+                                selectMunicipio();
+                                selectAsentamiento();
+                                    
+                            }
 
                         }
                     }
@@ -550,6 +569,24 @@ public class ControladorEstudianteRegistro implements Serializable{
         }
     }
     
+     public void consultarStatusExpedienteContinuacion(){
+        if(ejbEstudianteRegistro.consultarStatusExpedienteContinuacion(matricula, procesosIntexp.getProceso()) != null){
+            expValidadoContinuacion= true;
+        }
+        else{
+            expValidadoContinuacion= false;
+        }
+    }
+    
+     public void buscarExpedienteContinuacion(){
+        if(ejbEstudianteRegistro.consultarStatusExpedienteContinuacion(matricula, procesosIntexp.getProceso()) != null){
+            expValidadoContinuacion= true;
+        }
+        else{
+            expValidadoContinuacion= false;
+        }
+    } 
+     
 //    public void progressBarDocumentos(List<DocumentosExpediente> listaDocsExp, ExpedientesTitulacion expediente){
 //        if ("LTF".equals(expediente.getProgramaEducativo())) {
 //            
@@ -587,5 +624,53 @@ public class ControladorEstudianteRegistro implements Serializable{
             }
         }
             numTotalDocs = 1;
+    }
+    
+    public void guardarExpedienteContinuacion(Egresados egresado, ProcesosIntexp procesoInt, Alumnos estudianteCont, ExpedientesTitulacion expedienteInicio) {
+        ProcesosGeneraciones procGen = ejbEstudianteRegistro.obtenerGeneracionProcIntExp(procesoInt.getProceso());
+        nuevoOBJexpediente = new ExpedientesTitulacion();
+        try {
+            nuevoOBJexpediente.setProceso(procesoInt);
+            nuevoOBJexpediente.setFecha(new Date());
+            nuevoOBJexpediente.setMatricula(egresado);
+            nuevoOBJexpediente.setNivel(ejbEstudianteRegistro.obtenerNivelyProgEgresado(estudianteCont).getNivel());
+            nuevoOBJexpediente.setProgramaEducativo(ejbEstudianteRegistro.obtenerNivelyProgEgresado(estudianteCont).getPrograma());
+            nuevoOBJexpediente.setGeneracion(procGen.getProcesosGeneracionesPK().getGeneracion());
+            nuevoOBJexpediente = ejbEstudianteRegistro.guardarExpedienteTitulacion(nuevoOBJexpediente);
+            
+            guardaComunicacionDomicilioContinuacion(nuevoOBJexpediente, expedienteInicio);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorEstudianteRegistro.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void guardaComunicacionDomicilioContinuacion(ExpedientesTitulacion expedientesTitulacion, ExpedientesTitulacion expedienteInicio){
+        System.err.println("guardaComunicacionDomicilioContinuacion " + expedientesTitulacion.getExpediente());
+        nuevoOBJdomicilio = new  DomiciliosExpediente();
+        nuevoOBJdatosCont = new DatosContacto();
+        try {
+            domicilioReg = ejbEstudianteRegistro.buscarDomicilioExpediente(expedienteInicio);
+            nuevoOBJdomicilio.setExpediente(expedientesTitulacion);
+            nuevoOBJdomicilio.setCalle(domicilioReg.getCalle());
+            nuevoOBJdomicilio.setColonia(domicilioReg.getColonia());
+            nuevoOBJdomicilio.setNumExterior(domicilioReg.getNumExterior());
+            nuevoOBJdomicilio.setNumInterior(domicilioReg.getNumInterior());
+            nuevoOBJdomicilio.setEstado(domicilioReg.getEstado());
+            nuevoOBJdomicilio.setMunicipio(domicilioReg.getMunicipio());
+            nuevoOBJdomicilio.setLocalidad(domicilioReg.getLocalidad());
+            nuevoOBJdomicilio = ejbEstudianteRegistro.guardarDomicilio(nuevoOBJdomicilio);
+            System.err.println("guardaComunicacionDomicilioContinuacion - dom " + nuevoOBJdomicilio);
+            
+            datosContactoReg = ejbEstudianteRegistro.buscarDatosContactoExpediente(expedienteInicio);
+            nuevoOBJdatosCont.setExpediente(expedientesTitulacion);
+            nuevoOBJdatosCont.setCelular(datosContactoReg.getCelular());
+            nuevoOBJdatosCont.setEmail(datosContactoReg.getEmail());
+            nuevoOBJdatosCont = ejbEstudianteRegistro.guardarDatosContacto(nuevoOBJdatosCont);
+            System.err.println("guardaComunicacionDomicilioContinuacion - cont " +nuevoOBJdatosCont);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorEstudianteRegistro.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
