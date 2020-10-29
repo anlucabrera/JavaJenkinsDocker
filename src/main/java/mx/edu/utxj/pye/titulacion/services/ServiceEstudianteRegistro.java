@@ -800,7 +800,6 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
 
     @Override
     public DomiciliosExpediente buscarDomicilioExpediente(ExpedientesTitulacion expedienteTitulacion) {
-        System.err.println("buscarDomicilioExpediente - exp " + expedienteTitulacion.getExpediente());
         //verificar que el parametro no sea nulo
         if (expedienteTitulacion == null) {
             return null;
@@ -809,9 +808,7 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         DomiciliosExpediente domExp = facade.getEntityManager().createQuery("SELECT d FROM DomiciliosExpediente d WHERE d.expediente.expediente=:expediente", DomiciliosExpediente.class)
                 .setParameter("expediente", expedienteTitulacion.getExpediente())
                 .getResultStream().findFirst().orElse(null);
-        
-        System.err.println("buscarDomicilioExpediente - domExp " + domExp);
-        
+       
         return domExp;
     }
 
@@ -825,8 +822,6 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         DatosContacto datExp = facade.getEntityManager().createQuery("SELECT d FROM DatosContacto d WHERE d.expediente.expediente =:expediente", DatosContacto.class)
                 .setParameter("expediente", expedienteTitulacion.getExpediente())
                 .getResultStream().findFirst().orElse(null);
-        
-        System.err.println("buscarDatosContactoExpediente - datExp " + datExp);
         
         return datExp;
     }

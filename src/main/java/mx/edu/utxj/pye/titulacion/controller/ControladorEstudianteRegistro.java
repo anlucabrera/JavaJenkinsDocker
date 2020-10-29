@@ -181,9 +181,7 @@ public class ControladorEstudianteRegistro implements Serializable{
             
             else if (estudiante.getGradoActual() == 10 && estudiante.getGrupos().getGruposPK().getCvePeriodo() == 55) {
                 expedienteRegistrado = ejbEstudianteRegistro.buscarExpedienteTSU(estudiante);
-                System.err.println("expedienteRegistrado " + expedienteRegistrado);
                 if(expedienteRegistrado == null) {
-                    System.err.println("expedienteRegistrado - null ");
                     estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
                 
                     if (estudiante == null) {
@@ -208,11 +206,8 @@ public class ControladorEstudianteRegistro implements Serializable{
                     }
                 
                 }else {
-                    System.err.println("expedienteRegistrado - nonNull");
                     fotografiaCargada = ejbEstudianteRegistro.buscarFotografiaExpedienteTSU(expedienteRegistrado);
-                    System.err.println("fotografiaCargada " + fotografiaCargada);
                     if (fotografiaCargada == null) {
-                        System.err.println("fotografiaCargada - null");
                         estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
 
                         if (estudiante == null) {
@@ -237,7 +232,6 @@ public class ControladorEstudianteRegistro implements Serializable{
                         }
 
                     } else {
-                        System.err.println("fotografiaCargada - nonNull");
                         estudiante = ejbEstudianteRegistro.obtenerInformacionAlumno(matricula);
                         procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
 
@@ -250,7 +244,6 @@ public class ControladorEstudianteRegistro implements Serializable{
                                 nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(matricula);
                                 guardarExpedienteContinuacion(nuevoOBJegresado,procesosIntexp,estudiante,expedienteRegistrado);
                                 progresoExpediente = 80;
-                                System.err.println("progresoExp1 " + progresoExpediente);
                                 consultarExpedienteContinuacion();
 //                                consultarStatusExpedienteContinuacion();
 //                                consultarRegistroDatosPer(matricula);
@@ -269,7 +262,6 @@ public class ControladorEstudianteRegistro implements Serializable{
                                 }else{
                                     progresoExpediente = 100;
                                 }
-                                System.err.println("progresoExp2 " + progresoExpediente);
 //                                consultarStatusExpedienteContinuacion();
                                 nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(matricula);
                                 consultarExpedienteContinuacion();
@@ -664,7 +656,6 @@ public class ControladorEstudianteRegistro implements Serializable{
     }
     
     public void guardaComunicacionDomicilioContinuacion(ExpedientesTitulacion expedientesTitulacion, ExpedientesTitulacion expedienteInicio){
-        System.err.println("guardaComunicacionDomicilioContinuacion " + expedientesTitulacion.getExpediente());
         nuevoOBJdomicilio = new  DomiciliosExpediente();
         nuevoOBJdatosCont = new DatosContacto();
         try {
@@ -678,14 +669,12 @@ public class ControladorEstudianteRegistro implements Serializable{
             nuevoOBJdomicilio.setMunicipio(domicilioReg.getMunicipio());
             nuevoOBJdomicilio.setLocalidad(domicilioReg.getLocalidad());
             nuevoOBJdomicilio = ejbEstudianteRegistro.guardarDomicilio(nuevoOBJdomicilio);
-            System.err.println("guardaComunicacionDomicilioContinuacion - dom " + nuevoOBJdomicilio);
             
             datosContactoReg = ejbEstudianteRegistro.buscarDatosContactoExpediente(expedienteInicio);
             nuevoOBJdatosCont.setExpediente(expedientesTitulacion);
             nuevoOBJdatosCont.setCelular(datosContactoReg.getCelular());
             nuevoOBJdatosCont.setEmail(datosContactoReg.getEmail());
             nuevoOBJdatosCont = ejbEstudianteRegistro.guardarDatosContacto(nuevoOBJdatosCont);
-            System.err.println("guardaComunicacionDomicilioContinuacion - cont " +nuevoOBJdatosCont);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEstudianteRegistro.class.getName()).log(Level.SEVERE, null, ex);
@@ -694,6 +683,7 @@ public class ControladorEstudianteRegistro implements Serializable{
     
     public void consultarExpedienteContinuacion(){
         try {
+            expedienteRegContinuacion = ejbEstudianteRegistro.buscarExpedienteContinuacion(estudiante, procesosIntexp.getProceso());
             consultarStatusExpedienteContinuacion();
             consultarRegistroDatosPer(matricula);
             nuevoOBJexpediente = expedienteRegContinuacion;
