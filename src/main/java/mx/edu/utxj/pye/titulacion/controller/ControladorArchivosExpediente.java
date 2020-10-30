@@ -65,7 +65,7 @@ public class ControladorArchivosExpediente implements Serializable{
     
     @Getter @Setter private List<DocumentosExpediente> listaDocsExp;
     
-    @Getter @Setter private ExpedientesTitulacion expediente;
+    @Getter @Setter private ExpedientesTitulacion expediente, expedienteContinuidad;
     
     @Getter @Setter private Boolean existeAN;
     
@@ -76,6 +76,12 @@ public class ControladorArchivosExpediente implements Serializable{
             estudiante = controladorEstudianteRegistro.getEstudiante();
             
             cargarDocumentosPorExpediente();
+            
+            if(controladorEstudianteRegistro.getExpedienteRegContinuacion()!=null)
+            {
+                expedienteContinuidad = controladorEstudianteRegistro.getExpedienteRegContinuacion();
+                listaDocsExp = ejbEstudianteRegistro.getListaDocumentosPorRegistro(expedienteContinuidad);
+            }
        
     }
     
@@ -623,6 +629,51 @@ public class ControladorArchivosExpediente implements Serializable{
         }else{
             return true;  
         }
+    }
+    
+    public void subirDocumentoFotoILContinuidad(){
+            try {
+            claveDoc = 12;
+            nuevoOBJdocExp = new DocumentosExpediente();
+            nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(matricula);
+
+            Short gen = expedienteContinuidad.getGeneracion();
+            String generacion = ejbEstudianteRegistro.obtenerGeneracionProntuario(gen);
+            
+            String nivel = "";
+            if (expedienteContinuidad.getNivel() == 2) {
+                nivel = "ING";
+            } else if (expedienteContinuidad.getNivel() == 1) {
+                nivel = "TSU";
+            }
+            if (expedienteContinuidad.getNivel() == 4) {
+                nivel = "LIC";
+            }
+
+            Documentos doc = new Documentos();
+            doc = ejbEstudianteRegistro.obtenerInformacionDocumento(claveDoc);
+
+            nuevoOBJdocExp.setExpediente(expedienteContinuidad);
+            nuevoOBJdocExp.setDocumento(doc);
+
+            String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileFotoIL, generacion , nivel, expedienteContinuidad.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), matricula));
+            nuevoOBJdocExp.setFechaCarga(new Date());
+            nuevoOBJdocExp.setObservaciones("Sin revisar");
+            nuevoOBJdocExp.setFechaValidacion(null);
+            nuevoOBJdocExp.setValidadoTitulacion(false);
+            nuevoOBJdocExp = ejbEstudianteRegistro.guardarDocumentoExpediente(nuevoOBJdocExp);
+            
+            listaDocsExp = ejbEstudianteRegistro.getListaDocumentosPorRegistro(expedienteContinuidad); 
+            Ajax.update("frmDocsExp");
+            controladorEstudianteRegistro.setPestaniaActiva(3);
+            controladorEstudianteRegistro.setProgresoExpediente(100);
+            
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(ControladorArchivosExpediente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                 
     }
  
 }
