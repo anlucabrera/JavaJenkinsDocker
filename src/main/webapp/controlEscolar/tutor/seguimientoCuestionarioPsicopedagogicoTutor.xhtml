@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento de Cuestionario Psicopedagógico
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{seguimientoCuestionariopsiTutor.cargado}">
+        <adm:breadcrumb title="Seguimiento de Cuestionario Psicopedagógico"/>
+        <div class="contenedor">
+            <c:if test="#{seguimientoCuestionariopsiTutor.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <p:tabView id="tabView">
+                    <p:tab id="completos" title="Estudiantes con cuestionario completo">
+                        <h:form id="fr1">
+                            <p:outputPanel>
+                                <p:dataTable id="tblCuestTer" value="#{seguimientoCuestionariopsiTutor.rol.completos}"
+                                                 paginator="true" rows="10" emptyMessage="No se encontraron registros" paginatorPosition="top"
+                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                                 rowsPerPageTemplate="10,20,30,40,50"
+                                                 var="cuesRes" filteredValue="#{seguimientoCuestionariopsiTutor.rol.filter}">
+
+                                    <f:facet name="{Exporters}">
+                                            <p:commandLink  ajax="false">
+                                                <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                                <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblCuestTer"
+                                                                fileName="Reporte_cuestionario_completo"/>
+                                            </p:commandLink>
+
+                                    </f:facet>
+                                        <p:column headerText="Matricula" filterBy="#{cuesRes.estudianteA.matricula}" sortBy="#{cuesRes.estudianteA.matricula}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesRes.estudianteA.matricula}" />
+                                        </p:column>
+                                        <p:column headerText="Nombre" filterBy="#{cuesRes.estudianteA.aspirante.idPersona.nombre.concat(' ').concat(cuesRes.estudianteA.aspirante.idPersona.apellidoPaterno).concat(' ').concat(cuesRes.estudianteA.aspirante.idPersona.apellidoMaterno)} " sortBy="#{cuesRes.estudianteA.aspirante.idPersona.nombre.concat(' ').concat(cuesRes.estudianteA.aspirante.idPersona.apellidoMaterno).concat(' ').concat(cuesRes.estudianteA.aspirante.idPersona.apellidoMaterno)} " filterMatchMode="contains">
+                                            <h:outputText value="#{cuesRes.estudianteA.aspirante.idPersona.nombre.concat(' ').concat(cuesRes.estudianteA.aspirante.idPersona.apellidoMaterno).concat(' ').concat(cuesRes.estudianteA.aspirante.idPersona.apellidoMaterno)}" />
+                                        </p:column>
+                                        <p:column headerText="Grado" filterBy="#{cuesRes.estudianteA.grupo.grado}" sortBy="#{cuesRes.estudianteA.grupo.grado}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesRes.estudianteA.grupo.grado}" />
+                                        </p:column>
+                                        <p:column headerText="Carrera" filterBy="#{cuesRes.pe.siglas}" sortBy="#{cuesRes.pe.siglas}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesRes.pe.siglas}" />
+                                        </p:column>
+                                        <p:column headerText="Grupo" filterBy="#{cuesRes.estudianteA.grupo.literal}" sortBy="#{cuesRes.estudianteA.grupo.literal}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesRes.estudianteA.grupo.literal}" />
+                                        </p:column>
+                                        <f:facet name="footer">
+                                            <p:commandButton actionListener="#{seguimientoCuestionariopsiTutor.getReporteq()}" value="Actualizar información" icon="fa fa-refresh"
+                                                                 class="btn btn-primary" update="tabView:fr1:tblCuestTer tabView:fr2:tblResCuestIncom tabView:fr3:tblCuesNoIngreso " process="@form"/>
+
+                                        </f:facet>
+                                    </p:dataTable>
+                                </p:outputPanel>
+                            </h:form>
+                        </p:tab>
+
+                    <p:tab id="noCompletos" title="Estudiantes con cuestionario no terminado">
+                        <h:form id="fr2">
+                            <p:outputPanel>
+                                <p:dataTable id="tblResCuestIncom" value="#{seguimientoCuestionariopsiTutor.rol.incompletos}"
+                                                 paginator="true" rows="10" emptyMessage="No se encontraron registros" paginatorPosition="top"
+                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                                 rowsPerPageTemplate="10,20,30,40,50"
+                                                 var="cuesIn" filteredValue="#{seguimientoCuestionariopsiTutor.rol.filter}">
+
+                                    <f:facet name="{Exporters}">
+                                            <p:commandLink  ajax="false">
+                                                <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                                <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblResCuestIncom"
+                                                                fileName="Reporte_cuestionario_imcompletas"/>
+                                            </p:commandLink>
+
+                                        </f:facet>
+
+                                        <p:column headerText="Matricula" filterBy="#{cuesIn.estudianteA.matricula}" sortBy="#{cuesIn.estudianteA.matricula}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesIn.estudianteA.matricula}" />
+                                        </p:column>
+                                        <p:column headerText="Nombre" filterBy="#{cuesIn.estudianteA.aspirante.idPersona.nombre.concat(' ').concat(cuesIn.estudianteA.aspirante.idPersona.apellidoPaterno).concat(' ').concat(cuesIn.estudianteA.aspirante.idPersona.apellidoMaterno)}" sortBy="#{cuesIn.estudianteA.aspirante.idPersona.nombre.concat(' ').concat(cuesIn.estudianteA.aspirante.idPersona.apellidoPaterno).concat(' ').concat(cuesIn.estudianteA.aspirante.idPersona.apellidoMaterno)}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesIn.estudianteA.aspirante.idPersona.nombre.concat(' ').concat(cuesIn.estudianteA.aspirante.idPersona.apellidoPaterno).concat(' ').concat(cuesIn.estudianteA.aspirante.idPersona.apellidoMaterno)}" />
+                                        </p:column>
+                                        <p:column headerText="Grado" filterBy="#{cuesIn.estudianteA.grupo.grado}" sortBy="#{cuesIn.estudianteA.grupo.grado}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesIn.estudianteA.grupo.grado}" />
+                                        </p:column>
+                                        <p:column headerText="Carrera" filterBy="#{cuesIn.pe.siglas}" sortBy="#{cuesIn.pe.siglas}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesIn.pe.siglas}" />
+                                        </p:column>
+                                        <p:column headerText="Grupo" filterBy="#{cuesIn.estudianteA.grupo.literal}" sortBy="#{cuesIn.estudianteA.grupo.literal}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesIn.estudianteA.grupo.literal}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:outputPanel>
+                            </h:form>
+                        </p:tab>
+                        <p:tab if="noIngreso" title="Estudiantes que no ingresaron al sistema">
+                            <h:form id="fr3">
+                                <p:outputPanel>
+                                    <p:dataTable id="tblCuesNoIngreso" value="#{seguimientoCuestionariopsiTutor.rol.noIngresaron}"
+                                                 paginator="true" rows="10" emptyMessage="No se encontraron registros" paginatorPosition="top"
+                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                                 rowsPerPageTemplate="10,20,30,40,50"
+                                                 var="cuesNoIngreso" filteredValue="#{seguimientoCuestionariopsiTutor.rol.filter}">
+
+                                        <f:facet name="{Exporters}">
+                                            <p:commandLink  ajax="false">
+                                                <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                                <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblCuesNoIngreso"
+                                                                fileName="Reporte_cuestionario_noingreso"/>
+                                            </p:commandLink>
+
+                                        </f:facet>
+
+                                        <p:column headerText="Matricula" filterBy="#{cuesNoIngreso.estudianteA.matricula}" sortBy="#{cuesNoIngreso.estudianteA.matricula}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesNoIngreso.estudianteA.matricula}" />
+                                        </p:column>
+                                        <p:column headerText="Nombre" filterBy="#{cuesNoIngreso.estudianteA.aspirante.idPersona.nombre.concat(' ').concat(cuesNoIngreso.estudianteA.aspirante.idPersona.apellidoPaterno).concat(' ').concat(cuesNoIngreso.estudianteA.aspirante.idPersona.apellidoMaterno)}" sortBy="#{cuesNoIngreso.estudianteA.aspirante.idPersona.nombre.concat(' ').concat(cuesNoIngreso.estudianteA.aspirante.idPersona.apellidoPaterno).concat(' ').concat(cuesNoIngreso.estudianteA.aspirante.idPersona.apellidoMaterno)}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesNoIngreso.estudianteA.aspirante.idPersona.nombre.concat(' ').concat(cuesNoIngreso.estudianteA.aspirante.idPersona.apellidoPaterno).concat(' ').concat(cuesNoIngreso.estudianteA.aspirante.idPersona.apellidoMaterno)}" />
+                                        </p:column>
+                                        <p:column headerText="Grado" filterBy="#{cuesNoIngreso.estudianteA.grupo.grado}" sortBy="#{cuesNoIngreso.estudianteA.grupo.grado}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesNoIngreso.estudianteA.grupo.grado}" />
+                                        </p:column>
+                                        <p:column headerText="Carrera" filterBy="#{cuesNoIngreso.pe.siglas}" sortBy="#{cuesNoIngreso.pe.siglas}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesNoIngreso.pe.siglas}" />
+                                        </p:column>
+                                        <p:column headerText="Grupo" filterBy="#{cuesIn.estudianteA.grupo.literal}" sortBy="#{cuesIn.estudianteA.grupo.literal}" filterMatchMode="contains">
+                                            <h:outputText value="#{cuesIn.estudianteA.grupo.literal}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:outputPanel>
+                            </h:form>
+
+                        </p:tab>
+
+                    <c:if test="#{logonMB.usuarioTipo eq 'ESTUDIANTE'}">
+                        <p:tab title="Información no disponible">
+                            <p:outputPanel>
+                                <div class="row">
+                                    <center><span><i style="align-content: center" class="fa fa-exclamation-triangle fa-5x"></i></span></center>
+                                </div>
+                                <div class="row">
+                                    <center><h2>Información no disponible</h2></center>
+                                </div>
+
+
+                            </p:outputPanel>
+                        </p:tab>
+                    </c:if>
+                </p:tabView>
+
+            </c:if>
+            <c:if test="#{!seguimientoCuestionariopsiTutor.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a tutores de grupo."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>
