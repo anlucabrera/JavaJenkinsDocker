@@ -13,7 +13,6 @@ package mx.edu.utxj.pye.sgi.controlador;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,16 +21,12 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.event.ActionListener;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import jdk.nashorn.internal.objects.NativeUint16Array;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -40,7 +35,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudianteMateria;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import mx.edu.utxj.pye.sgi.ejb.EJBAdimEstudianteBase;
-import mx.edu.utxj.pye.sgi.ejb.EJBEvaluacionDocenteMateria;
+import mx.edu.utxj.pye.sgi.ejb.evaluaciones.EJBEvaluacionDocenteMateria;
 import mx.edu.utxj.pye.sgi.ejb.EjbEstudioEgresados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados;
@@ -53,7 +48,6 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.VistaEvaluacionDocenteMateriaPye;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
-import org.omnifaces.util.Messages;
 import org.primefaces.component.selectonemenu.SelectOneMenu;
 
 /**
@@ -414,12 +408,12 @@ public class    EvaluacionDoncenteMateriaControler extends ViewScopedRol {
     public void continuarEvaluando() throws IOException {
         init();
         initDocenteEvaluado();
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.continuarEvaluando(1) clavesOpciones: " + clavesOpciones);
-//        listaDatosEvaluacion.stream().forEach(p -> System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.continuarEvaluando() lpe: " + p));
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.continuarEvaluando(1) clavesOpciones: " + clavesOpciones);
+//        listaDatosEvaluacion.stream().forEach(p -> System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.continuarEvaluando() lpe: " + p));
         clavesOpcionesMateria.clear();
         int total = 0;
         for (EvaluacionDocentesMateriaResultados lpde : listaDocentesEvaluados.stream().filter(personal -> !personal.getCompleto()).collect(Collectors.toList())) {
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.continuarEvaluando() incompleto: " + lpde);
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.continuarEvaluando() incompleto: " + lpde);
             if (total < 4) {
                 clavesOpcionesMateria.add(lpde.getEvaluacionDocentesMateriaResultadosPK().getCveMateria());
                 total++;
@@ -430,7 +424,7 @@ public class    EvaluacionDoncenteMateriaControler extends ViewScopedRol {
 
         if (clavesOpcionesMateria.size() < 4) {
             for (EvaluacionDocentesMateriaResultados lpde : listaDocentesEvaluados.stream().filter(personal -> personal.getCompleto()).collect(Collectors.toList())) {
-//                System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.continuarEvaluando() completo: " + lpde);
+//                System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.continuarEvaluando() completo: " + lpde);
                 if (total < 4) {
                     clavesOpcionesMateria.add(lpde.getEvaluacionDocentesMateriaResultadosPK().getCveMateria());
                     total++;
@@ -443,13 +437,13 @@ public class    EvaluacionDoncenteMateriaControler extends ViewScopedRol {
         initDocenteEvaluando();
         initOpciones();
 
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.continuarEvaluando(2) clavesOpciones: " + clavesOpciones);
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.continuarEvaluando(2) clavesOpciones: " + clavesOpciones);
         Faces.refresh();
     }
 
     public String getId(@NonNull Float preguntaNumero, @NonNull Integer trabajadorClave) {
         String id = "r" + preguntaNumero.toString().replaceAll("\\.", "-") + "_" + trabajadorClave.toString();
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.Evaluacion360Admin1.getId(): " + id);
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.getId(): " + id);
         return id;
     }
 

@@ -37,17 +37,18 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Grados.findByNombre", query = "SELECT g FROM Grados g WHERE g.nombre = :nombre")})
 public class Grados implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
+    @Column(name = "nombre")
+    private String nombre;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "grado")
     private Short grado;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
-    @Column(name = "nombre")
-    private String nombre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "nivelEscolaridad", fetch = FetchType.LAZY)
     private List<FormacionAcademica> formacionAcademicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grado", fetch = FetchType.LAZY)
@@ -75,13 +76,6 @@ public class Grados implements Serializable {
         this.grado = grado;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 
     @XmlTransient
     public List<FormacionAcademica> getFormacionAcademicaList() {
@@ -133,6 +127,14 @@ public class Grados implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Grados[ grado=" + grado + " ]";
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
     
 }

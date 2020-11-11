@@ -186,6 +186,21 @@
                         </ul>
                     </li>
                 </c:if>
+                <!--Cuestionarios a personal-->
+
+                <c:if test="#{controlEscolarMenu.tieneElementos()}">
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-list-alt"></i> <span>Cuestionarios</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" style="display: none;">
+                            <c:if test="#{cuestionarioComplementarioInfPersonal.mostrarEnDesarrollo(request) and cuestionarioComplementarioInfPersonal.tieneAcceso}"><li><p:link href="#{request.contextPath}/cuestionarios/cuestionarioComplemenarioInfPersonal.xhtml"><i class="fa fa-check-square"></i><span>Cuestionario información personal</span></p:link></li></c:if>
+                        </ul>
+                    </li>
+                </c:if>
                 <li class="treeview">
                     <a href="#">
                         <i class="fa fa-list-alt"></i> <span>Administración evaluaciones</span>
@@ -239,9 +254,6 @@
                                 </ul>
                             </li>
                         </c:if>
-
-
-
 
                         <!--Directivos/Directores de carrera-->
 
