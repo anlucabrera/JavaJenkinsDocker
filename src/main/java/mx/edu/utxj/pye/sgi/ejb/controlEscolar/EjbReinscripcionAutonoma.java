@@ -1,27 +1,18 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
-import com.github.adminfaces.starter.infra.model.Filter;
-import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalificacionEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.EstudianteDto;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudianteMateria;
 import mx.edu.utxj.pye.sgi.ejb.EJBAdimEstudianteBase;
-import mx.edu.utxj.pye.sgi.ejb.EJBEvaluacionDocenteMateria;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
-import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Registro;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Periodos;
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;

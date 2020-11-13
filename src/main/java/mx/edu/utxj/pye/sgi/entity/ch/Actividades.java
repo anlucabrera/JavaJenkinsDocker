@@ -138,5 +138,5 @@ public class Actividades implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Actividades[ actividad=" + actividad + " ]";
     }
-    
-}
+
+    }

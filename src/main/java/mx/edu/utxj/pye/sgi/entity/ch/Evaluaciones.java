@@ -68,6 +68,8 @@ public class Evaluaciones implements Serializable {
     @Size(min = 1, max = 49)
     @Column(name = "tipo")
     private String tipo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<CuestionarioComplementarioInformacionPersonal> cuestionarioComplementarioInformacionPersonalList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EvaluacionConocimientoCodigoEticaResultados> evaluacionConocimientoCodigoEticaResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
@@ -345,6 +347,16 @@ public class Evaluaciones implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones[ evaluacion=" + evaluacion + " ]";
+    }
+
+
+    @XmlTransient
+    public List<CuestionarioComplementarioInformacionPersonal> getCuestionarioComplementarioInformacionPersonalList() {
+        return cuestionarioComplementarioInformacionPersonalList;
+    }
+
+    public void setCuestionarioComplementarioInformacionPersonalList(List<CuestionarioComplementarioInformacionPersonal> cuestionarioComplementarioInformacionPersonalList) {
+        this.cuestionarioComplementarioInformacionPersonalList = cuestionarioComplementarioInformacionPersonalList;
     }
     
 }

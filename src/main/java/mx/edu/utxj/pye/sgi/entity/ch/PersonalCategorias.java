@@ -246,5 +246,5 @@ public class PersonalCategorias implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias[ categoria=" + categoria + " ]";
     }
-    
-}
+
+    }

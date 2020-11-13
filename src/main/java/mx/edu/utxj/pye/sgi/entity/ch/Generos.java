@@ -137,5 +137,5 @@ public class Generos implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Generos[ genero=" + genero + " ]";
     }
-    
-}
+
+    }

@@ -143,6 +143,8 @@ public class Personal implements Serializable {
     @Size(max = 200)
     @Column(name = "correo_electronico2")
     private String correoElectronico2;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal1")
+    private List<CuestionarioComplementarioInformacionPersonal> cuestionarioComplementarioInformacionPersonalList;
     @ManyToMany(mappedBy = "personalList", fetch = FetchType.LAZY)
     private List<Eventos> eventosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal", fetch = FetchType.LAZY)
@@ -972,6 +974,16 @@ public class Personal implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Personal[ clave=" + clave + " ]";
+    }
+
+ 
+    @XmlTransient
+    public List<CuestionarioComplementarioInformacionPersonal> getCuestionarioComplementarioInformacionPersonalList() {
+        return cuestionarioComplementarioInformacionPersonalList;
+    }
+
+    public void setCuestionarioComplementarioInformacionPersonalList(List<CuestionarioComplementarioInformacionPersonal> cuestionarioComplementarioInformacionPersonalList) {
+        this.cuestionarioComplementarioInformacionPersonalList = cuestionarioComplementarioInformacionPersonalList;
     }
     
 }
