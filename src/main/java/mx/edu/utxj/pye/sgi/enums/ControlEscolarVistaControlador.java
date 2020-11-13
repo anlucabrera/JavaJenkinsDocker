@@ -6,13 +6,13 @@ import lombok.RequiredArgsConstructor;
 import mx.edu.utxj.pye.sgi.controlador.*;
 import mx.edu.utxj.pye.sgi.controlador.consulta.ServiciosConsulta;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.controlador.cuestionarios.CuestionarioComplementarioInfPersonal;
 import mx.edu.utxj.pye.sgi.controlador.evaluaciones.AdministracionEvaluacionDocente;
 import mx.edu.utxj.pye.sgi.controlador.evaluaciones.AdministracionEvaluacionTutor;
 import mx.edu.utxj.pye.sgi.controlador.evaluaciones.EvaluacionTutor2;
 import mx.edu.utxj.pye.sgi.controlador.evaluaciones.EvaluacionTutorEstudiante;
 import mx.edu.utxj.pye.sgi.controlador.reporteBecas;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.ValidacionTutoriaGrupalEstudiante;
-import mx.edu.utxj.pye.sgi.entity.ch.CuestionarioComplementarioInformacionPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados2;
 
 @RequiredArgsConstructor
@@ -108,7 +108,7 @@ public enum ControlEscolarVistaControlador {
     FICHA_ADMISION_REPORTE("/controlEscolar/reporteFichaAdmision.xhtml",FichaAdmisionReporte.class),
 
     EVALUACION_CONOCIMIENTO_CUMPLIMIENTO("/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml", EvaluacionConocimientoCodigoEtica.class),
-    CUESTIONARIO_COMPLEMENTARIO_INF_PERSONAL("/cuestionarios/cuestionarioComplemenarioInfPersonal.xhtml", CuestionarioComplementarioInformacionPersonal.class),
+    CUESTIONARIO_COMPLEMENTARIO_INF_PERSONAL("/cuestionarios/cuestionarioComplemenarioInfPersonal.xhtml", CuestionarioComplementarioInfPersonal.class),
 
 
     EVALUACION_DESEMPENIO_AMBIENTAL("/encuestas/evaluacionDesempenioAmbiental.xhtml", EvaluacionDesempenioAmbiental.class),
