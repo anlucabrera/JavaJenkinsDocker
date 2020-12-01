@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.ejb.evaluaciones;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -14,6 +15,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import mx.edu.utxj.pye.sgi.ejb.EJBAdimEstudianteBase;
 import mx.edu.utxj.pye.sgi.entity.ch.*;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AperturaVisualizacionEncuestas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -187,5 +189,23 @@ public class ServicioAdministracionEvTutor  implements EjbAdministracionEvTutor 
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Ocurrio un error en EJBAdministracionEvTutor(getResultadosEvByEstudiante)", e, null);
         }
+    }
+
+    @Override
+    public ResultadoEJB<AperturaVisualizacionEncuestas> getAperturaActiva(Evaluaciones evaluacion) {
+       try{
+           AperturaVisualizacionEncuestas apertura= new AperturaVisualizacionEncuestas();
+           apertura = f.getEntityManager().createQuery("SELECT a FROM AperturaVisualizacionEncuestas a WHERE current_timestamp between a.fechaInicial and a.fechaFinal AND a.encuesta=:tipo ORDER BY a.apertura desc", AperturaVisualizacionEncuestas.class)
+                   .setParameter("tipo", evaluacion.getTipo())
+                   .getResultStream()
+                   .findFirst()
+                   .orElse(null)
+           ;
+           if(apertura==null){return ResultadoEJB.crearErroneo(2,new AperturaVisualizacionEncuestas(),"No hay apertura de ese tipo");}
+           else {return ResultadoEJB.crearCorrecto(apertura,"");}
+       }catch (Exception e){
+           return ResultadoEJB.crearErroneo(1, "Ocurrio un error en EJBAdministracionEvTutor(getAperturaActiva)", e, null);
+
+       }
     }
 }

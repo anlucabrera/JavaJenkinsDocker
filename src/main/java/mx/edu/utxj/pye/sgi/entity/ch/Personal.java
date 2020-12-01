@@ -143,6 +143,8 @@ public class Personal implements Serializable {
     @Size(max = 200)
     @Column(name = "correo_electronico2")
     private String correoElectronico2;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<EvaluacionDocentesMateriaResultados5> evaluacionDocentesMateriaResultados5List;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal1")
     private List<CuestionarioComplementarioInformacionPersonal> cuestionarioComplementarioInformacionPersonalList;
     @ManyToMany(mappedBy = "personalList", fetch = FetchType.LAZY)
@@ -984,6 +986,15 @@ public class Personal implements Serializable {
 
     public void setCuestionarioComplementarioInformacionPersonalList(List<CuestionarioComplementarioInformacionPersonal> cuestionarioComplementarioInformacionPersonalList) {
         this.cuestionarioComplementarioInformacionPersonalList = cuestionarioComplementarioInformacionPersonalList;
+    }
+
+    @XmlTransient
+    public List<EvaluacionDocentesMateriaResultados5> getEvaluacionDocentesMateriaResultados5List() {
+        return evaluacionDocentesMateriaResultados5List;
+    }
+
+    public void setEvaluacionDocentesMateriaResultados5List(List<EvaluacionDocentesMateriaResultados5> evaluacionDocentesMateriaResultados5List) {
+        this.evaluacionDocentesMateriaResultados5List = evaluacionDocentesMateriaResultados5List;
     }
     
 }

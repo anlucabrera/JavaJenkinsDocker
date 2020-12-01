@@ -7,10 +7,7 @@ import mx.edu.utxj.pye.sgi.controlador.*;
 import mx.edu.utxj.pye.sgi.controlador.consulta.ServiciosConsulta;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.controlador.cuestionarios.CuestionarioComplementarioInfPersonal;
-import mx.edu.utxj.pye.sgi.controlador.evaluaciones.AdministracionEvaluacionDocente;
-import mx.edu.utxj.pye.sgi.controlador.evaluaciones.AdministracionEvaluacionTutor;
-import mx.edu.utxj.pye.sgi.controlador.evaluaciones.EvaluacionTutor2;
-import mx.edu.utxj.pye.sgi.controlador.evaluaciones.EvaluacionTutorEstudiante;
+import mx.edu.utxj.pye.sgi.controlador.evaluaciones.*;
 import mx.edu.utxj.pye.sgi.controlador.reporteBecas;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.ValidacionTutoriaGrupalEstudiante;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados2;
@@ -57,6 +54,9 @@ public enum ControlEscolarVistaControlador {
     VALIDACION_PLAN_ACCION_TUTORIAL_PSICOPEDAGOGIA("/controlEscolar/psicopedagogia/validacion_plan_accion_tutorial_psicopedagogia.xhtml",ValidacionPlanAccionTutorialPsicopedagogia.class),
     REGISTRO_PlANTILLA_PLAN_ACCION_TUTORIAL_PSICOPEDAGOGIA("/controlEscolar/psicopedagogia/plantilla_plan_accion_tutorial.xhtml", PlantillaPlanAccionTutorialPsicopedagogia.class),
     SEGUIMIENTO_CUESTIONARIO_PSICOPEDAGOGICO("/controlEscolar/psicopedagogia/seguimientoCuestionarioPsicopedagogico.xhtml", SeguimientoCuestionariopsiPsicopedagogia.class),
+    ADMINISTRACION_EVALUACIONES_PSICOPEDAGOGIA("/controlEscolar/psicopedagogia/administracionEvaluacionesPsicopedagogia.xhtml", AdministracionEvaluacionesPsicopedagogia.class),
+
+    ADMINISTRACION_EVALUACIONES_FORTALECIMIENTO("/evaluaciones/administracion/administracionEvaluacionesFortalecimiento.xhtml", AdministracionEvaluacionesFortalecimiento.class),
 
 
     PASE_DE_LISTA_TUTOR("/controlEscolar/tutor/seguimientoPaseListaTutor.xhtml", PaseListaSegTutor.class),

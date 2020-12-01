@@ -14,6 +14,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AperturaVisualizacionEncuestas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.VariablesProntuario;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
+import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEvaluacionTutor;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Grupos;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Periodos;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
@@ -95,6 +96,12 @@ public class EjbAdministracionEncuesta {
                 .setParameter("periodo",Integer.parseInt(periodoEncuesta))
                 .setParameter("cvePersona", cvePersona)
                 .getResultStream().collect(Collectors.toList());
+    }
+    public List<AlumnosEvaluacionTutor> estTutor(Integer cvePersona){
+
+        return f2.getEntityManager().createQuery("SELECT a FROM AlumnosEvaluacionTutor as a WHERE a.cveMaestro = :clave")
+                .setParameter("clave", cvePersona)
+                .getResultList();
     }
 
     public Grupo esTutorCE (Integer clave){

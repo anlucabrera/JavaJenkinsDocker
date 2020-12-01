@@ -101,6 +101,13 @@ public class EvaluacionDocenteEstudiante extends ViewScopedRol {
                             tipoEvaluacion =3;
                             cargada=true;
                         }
+                        else if (evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_4.getLabel())){
+                            //Carga el cuestionario de evaluacion a docente tipo 3 por contingencia
+                            preguntas = ejbEvaluacionDocente2.getApartadosContingenciaCuestionario3();
+                            getResultadosTipo4();
+                            tipoEvaluacion =4;
+                            cargada=true;
+                        }
                         respuestasPosibles = ejbEvaluacionDocente2.getRespuestasPosibles();
                     }else {mostrarMensajeResultadoEJB(resMaterias);}
 
@@ -223,6 +230,44 @@ public class EvaluacionDocenteEstudiante extends ViewScopedRol {
         //Una vez obtenida la lista de resultados, filtramos por las que ya estan completas y las que no
         // System.out.println("Resultados filtrados " + listaDocentesEvaluados + "  " + listaDocentesEvaluando);
     }
+    /**
+     * Obtiene los resultados del estudiante logueado (Evaluación Docente materia (Cuestionario 4 por contingencia))
+     */
+    public void getResultadosTipo4(){
+        listaResultados = new ArrayList<>();
+        //Se recorre la lista de materias que cursa el estudiante (Esta lista ya tiene quien imparte la materia
+        listaMaterias.stream().forEach(m->{
+            EvaluacionDocentesMateriaResultados5 resultados = new EvaluacionDocentesMateriaResultados5();
+            dtoEstudianteMateria materia = new dtoEstudianteMateria();
+            //Obtienen los datos ---> Aqui si no existen los crea dentro del metodo que se llama en el ejb
+            ResultadoEJB<EvaluacionDocentesMateriaResultados5> resResultados = ejbEvaluacionDocente2.getResultadosTipo4byEvaluadorEvaluado(estudianteEvaluacion,m,evaluacion);
+            if(resResultados.getCorrecto()==true){
+                //Se le asigna el valor
+                resultados = resResultados.getValor();
+                //Se agrega a la lista de resultados
+                materia.setResultadosTipo5(resultados);
+                // System.out.println("Resultados "+ materia.getResultados().getR1());
+                materia.setNombreMateria(m.getNombreMateria());
+                materia.setClaveMateria(m.getClaveMateria());
+                materia.setDocenteImparte(m.getDocenteImparte());
+                //  System.out.println("Materia " + materia);
+                listaResultados.add(materia);
+                //System.out.println("EvaluacionDocenteEstudiante.getResultados");
+            }else {mostrarMensajeResultadoEJB(resResultados);}
+        });
+        totalDocentes = listaResultados.size();
+        //System.out.println("EvaluacionDocenteEstudiante.getResultados "+ listaResultados);
+        evaluados2 = listaResultados.stream().filter(docente -> docente.getResultadosTipo5().getCompleto()).collect(Collectors.toList()).size();
+        Double dte = new Double(totalDocentes);
+        Double dc= new Double(evaluados2);
+        porcentaje = (dc * 100) / dte;
+        if(totalDocentes==evaluados2){finalizado =true;}
+        else {finalizado =false;}
+        //  System.out.println("Evaluados" + evaluados2 + " Porcentaje  " + porcentaje);
+        //  System.out.println("Resultados" + listaResultados);
+        //Una vez obtenida la lista de resultados, filtramos por las que ya estan completas y las que no
+        // System.out.println("Resultados filtrados " + listaDocentesEvaluados + "  " + listaDocentesEvaluando);
+    }
     /*
     Guarda la respuesta (Evaluacion docente tipo 1)
      */
@@ -268,7 +313,7 @@ public class EvaluacionDocenteEstudiante extends ViewScopedRol {
         }
     }
     /*
-    Guarda respuesta evaluacion tipo 2
+    Guarda respuesta evaluacion tipo 3
      */
     public void saveRespuetaTipo3(ValueChangeEvent e){
         UIComponent id = (UIComponent)e.getSource();
@@ -285,6 +330,27 @@ public class EvaluacionDocenteEstudiante extends ViewScopedRol {
             // System.out.println("Valoooor"+resultados.getR1());
             ejbEvaluacionDocente2.comprobarResultado3(resultados);
             getResultadosTipo3();
+            //System.out.println("Id que recibe -> "+ id.getId() + " valor ->" + valor);
+        }
+    }
+    /*
+  Guarda respuesta evaluacion tipo 4
+   */
+    public void saveRespuetaTipo4(ValueChangeEvent e){
+        UIComponent id = (UIComponent)e.getSource();
+        if(e.getNewValue() != null){
+            valor = e.getNewValue().toString();
+        }else{
+            valor = e.getOldValue().toString();
+        }
+        ResultadoEJB<EvaluacionDocentesMateriaResultados5> resActualiza = ejbEvaluacionDocente2.actualizaRespuestaPorPregunta5(dtoDocenteEvaluando.getResultadosTipo5(),id.getId(),valor);
+        if(resActualiza.getCorrecto()==true){
+            //System.out.println("Pregunta: "+ id.getId()+"Valor ----------->" +valor);
+            EvaluacionDocentesMateriaResultados5 resultados = new EvaluacionDocentesMateriaResultados5();
+            resultados = resActualiza.getValor();
+            // System.out.println("Valoooor"+resultados.getR1());
+            ejbEvaluacionDocente2.comprobarResultado4(resultados);
+            getResultadosTipo4();
             //System.out.println("Id que recibe -> "+ id.getId() + " valor ->" + valor);
         }
     }

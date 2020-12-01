@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
@@ -324,7 +325,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
             listAlumnosSauiit = em2.createQuery("SELECT a FROM AlumnosEvaluacionTutor a",AlumnosEvaluacionTutor.class)
                     .getResultList()
                     ;
-            System.out.println("Lista Saiiut" + listAlumnosSauiit.size());
+            //System.out.println("Lista Saiiut" + listAlumnosSauiit.size());
              //System.out.println("Lista de vista --->" + listAlumnosSauiit.size());
             if(listAlumnosSauiit.isEmpty() || listAlumnosSauiit== null){return ResultadoEJB.crearErroneo(2,listDtoEstudiantesSauiit , "La lista de Estudiantes en Sauiit es nula");}
             else{
@@ -341,6 +342,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                    }else {  Personal tutor = getClaveNominabyClavePersona(x.getCveMaestro()).getValor();
                        dtoEstudiante.setTutor(tutor);
                        dtoEstudiante.setNombreTutor(tutor.getNombre());
+                       dtoEstudiante.setClaveTutor(tutor.getClave());
                        //.out.println("Tutor->" + tutor);
                    }
                    Personal director= getClaveNominabyClavePersona(Integer.parseInt(x.getCveDirector())).getValor();
@@ -377,7 +379,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
                     listDtoEstudiantesSauiit.add(dtoEstudiante);
                     //System.out.println("DTo s->"+ dtoEstudiante);
                 });
-                System.out.println("Lista total--> " + listDtoEstudiantesSauiit.size());
+                //System.out.println("Lista total--> " + listDtoEstudiantesSauiit.size());
             }
             if(listDtoEstudiantesSauiit.isEmpty()||listDtoEstudiantesSauiit ==null){return ResultadoEJB.crearErroneo(3, listDtoEstudiantesSauiit, "No se pudo hacer el llenado de la lista de estudiantes en sauiit.");}
             else{return ResultadoEJB.crearCorrecto(listDtoEstudiantesSauiit,"Lista de Estudiantes activos en sauiit creada correctamente");}
@@ -405,7 +407,7 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
         else {
             //Se recorre la lista para obetener sus datos
             estudiantesCE.forEach(e->{
-                System.out.println("Estudiante--------->" + e);
+                //System.out.println("Estudiante--------->" + e);
                 dtoEstudiantesEvalauciones dtoEstudiante = new dtoEstudiantesEvalauciones();
                 dtoEstudiante.setEstudianteCE(e);
                 dtoEstudiante.setMatricula(Integer.toString(e.getMatricula()));

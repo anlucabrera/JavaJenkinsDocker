@@ -13,6 +13,7 @@ import mx.edu.utxj.pye.sgi.ejb.evaluaciones.EJBEvaluacionDocenteMateria;
 import mx.edu.utxj.pye.sgi.ejb.evaluaciones.EjbEvaluacionDocente2;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.*;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AperturaVisualizacionEncuestas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -50,6 +51,7 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
     @Getter @Setter int totalEstudiantes,totalCompletos,totalIncompletos,totalNoAcceso,totalEstudiantesPE, totalCompletosPE,totalIncompletosPE,totalNoAccesoPE;
     @Getter @Setter int tipoEvaluacion;
     @Getter @Setter double porcentaje, porcentajePE;
+    @Getter @Setter Boolean cargada;
 
     @EJB EJBAdimEstudianteBase ejbAdimEstudianteBase;
     @EJB  EJBEvaluacionDocenteMateria ejbEvaluacionDocenteMateria;
@@ -80,6 +82,10 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
         ResultadoEJB<Evaluaciones> resEvaluacion = ejbEvaluacionDocenteMateria.getUltimaEvDocenteActiva();
         if(resEvaluacion.getCorrecto()==true){
             evaluacion = resEvaluacion.getValor();
+            ResultadoEJB<AperturaVisualizacionEncuestas> resAper= ejbEvaluacionDocente2.getApertura(evaluacion);
+            if(resAper.getCorrecto()){
+                cargada=true;
+            }else {cargada=false;}
         }
         else {mostrarMensajeResultadoEJB(resEvaluacion);}
     }
@@ -89,6 +95,7 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
             if(evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE.getLabel())){tipoEvaluacion=1;}
             else if(evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_2.getLabel())){tipoEvaluacion=2;}
             else if(evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_3.getLabel())){tipoEvaluacion=3;}
+            else if(evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_4.getLabel())){tipoEvaluacion=4;}
         }
         catch (Exception e){mostrarExcepcion(e);}
     }
@@ -113,7 +120,9 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
     public void getEstudiantesActivosbyPeriodo(){
         listEstudiantesGeneral = new ArrayList<>();
         ResultadoEJB<List<dtoEstudiantesEvalauciones>> resEstudiantes = ejbAdimEstudianteBase.getEstudiantesSauiityCE(periodoEvalucaion);
-        if(resEstudiantes.getCorrecto()==true){listEstudiantesGeneral=resEstudiantes.getValor();}
+        if(resEstudiantes.getCorrecto()==true){listEstudiantesGeneral=resEstudiantes.getValor();
+           // System.out.println("Lista total controlador -> "+ listEstudiantesGeneral.size());
+        }
         else{mostrarMensajeResultadoEJB(resEstudiantes);}
     }
     public void generarListasSeguimiento(List<dtoEstudiantesEvalauciones> estudiantes){
@@ -124,6 +133,7 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
         estudiantes.forEach(e->{
             //Obtiene la lista de materias, no importa en que base este registrada
             List<dtoEstudianteMateria> listaMaterias = new ArrayList<>();
+            //System.out.println(e);
             ResultadoEJB<List<dtoEstudianteMateria>> resMaterias = ejbEvaluacionDocenteMateria.getMateriasbyEstudiante(e,evaluacion);
             if(resMaterias.getCorrecto()==true){
                 listaMaterias = resMaterias.getValor();
@@ -136,6 +146,9 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
                 }
                 else if(tipoEvaluacion==3){
                     getResultadosTipo3(e,listaMaterias);
+                }
+                else if(tipoEvaluacion==4){
+                    getResultadosTipo4(e,listaMaterias);
                 }
 
             }
@@ -231,6 +244,35 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
             }
         }catch (Exception e){mostrarExcepcion(e);}
     }
+    public void getResultadosTipo4(dtoEstudiantesEvalauciones estudiante,List<dtoEstudianteMateria> materias){
+        try{
+            //Obtien la lista de resultados (evaluacion tipo 3 = evaluacion al desempeño docente por contingencia de salud)
+            ResultadoEJB<List<EvaluacionDocentesMateriaResultados5>> resResultados = ejbEvaluacionDocente2.getListaResultados5MateriabyMatricula(evaluacion,Integer.parseInt(estudiante.getMatricula()));
+            List<EvaluacionDocentesMateriaResultados5> listTotalResuldos = resResultados.getValor();
+            if(resResultados.getCorrecto()==true){
+                //Se filtran los resultados encontrados, para obtener solo los resultados completos
+                List<EvaluacionDocentesMateriaResultados5> listResultadosCompletos= resResultados.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
+                //List<EvaluacionDocentesMateriaResultados> listResultadosCompletos= resResultadosEvaluacion.getValor().stream().filter(x-> x.getCompleto()==true).collect(Collectors.toList());
+                // System.out.println("TOTAL DE RESULTADOS COMPLETOS "+ listResultadosCompletos.size());
+                int totalaEvaluar = materias.size();
+                int totalResultadosCompletos = listResultadosCompletos.size();
+                // Comprueba si ha terminado la evaluacion a docente
+                if(totalResultadosCompletos < totalaEvaluar){
+                    //Si la los registros de resultados completos es menor a la total de la que debe evaluar, la evaluacion esta incompleta y se agrega a la lista de incompletos
+                    listIncompletos.add(estudiante);
+                    //System.out.println("Ev incompleta");
+                }if(totalResultadosCompletos == totalaEvaluar){
+                    //Si los registros de resultados completos del estudiante es igual al los que debe evaluar, entonces la evaluacion esta finalizada, y se agrega a la lista de completos
+                    listCompletos.add(estudiante);
+                    // System.out.println("Ev completa");
+                }
+            }
+            //Si no existen registros se agrega a la lista de estudiantes que no han ingresado al sistema
+            else {listNoAcceso.add(estudiante); totalNoAcceso++;
+                //System.out.println("Ev no accedio");
+            }
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
     //Genera el avance de la evaluacion
     public void generarAvance(){
         listAvance = new ArrayList<>();
@@ -282,13 +324,20 @@ public class AdministracionEvaluacionDocente extends ViewScopedRol implements Se
     }
     //Seguimiento para el tutor
     public void seguimientoTutor(){
+        System.out.println("Persona clave" + persona.getClave());
         //:Obtiene la lista general de estudiantes(Sauiit y CE)
         getEstudiantesActivosbyPeriodo();
         //Filtra la lista general de estudiantes a sólo sus estudiantes tutorados
+        listEstudiantesGeneral.forEach(e->{
+            if(e.getClaveTutor()==persona.getClave()){
+                System.out.println("Es su tutorado");
+            }
+        });
         listEstudiantesFiltrados = listEstudiantesGeneral.stream()
                 .filter(e-> persona.getClave().equals(e.getClaveTutor()))
                 .filter(e->e.getGrado()!=6 & e.getGrado()!=11 )
                 .collect(Collectors.toList());
+        System.out.println("Estudiantes "+ listEstudiantesFiltrados.size() + " --->general" + listEstudiantesGeneral.size());
         //Cuenta el total de estudiantes a su cargo
         totalEstudiantes = listEstudiantesFiltrados.size();
         generarListasSeguimiento(listEstudiantesFiltrados);

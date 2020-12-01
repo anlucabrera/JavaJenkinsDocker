@@ -7,6 +7,8 @@ package mx.edu.utxj.pye.sgi.ejb;
 
 import java.util.List;
 import javax.ejb.Local;
+
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import mx.edu.utxj.pye.sgi.entity.ch.EstudiantesClaves;
