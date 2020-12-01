@@ -23,6 +23,7 @@ import mx.edu.utxj.pye.sgi.ejb.evaluaciones.EjbAdministracionEvTutor;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AperturaVisualizacionEncuestas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -56,7 +57,8 @@ public class AdministracionEvaluacionTutor extends ViewScopedRol implements Seri
     @Getter @Setter Personal persona= new Personal();
     @Getter @Setter Evaluaciones evaluacion = new Evaluaciones();
     @Getter @Setter EstudiantesClaves estudiante= new EstudiantesClaves();
-    @Getter @Setter boolean completo;
+    @Getter @Setter boolean completo, cargada;
+    @Getter @Setter AperturaVisualizacionEncuestas apertura;
     @Getter @Setter ComparadorEvaluacionTutor comparadorET;
     @Getter @Setter PeriodosEscolares periodoEvaluacion;
     @Getter @Setter int totalEstudiantes,totalCompletos,totalIncompletos,totalNoAcceso,faltates, totalFaltantes,totalEstudiantesPE,totalCompletosPE,totalIncompletosPE,
@@ -122,6 +124,11 @@ public class AdministracionEvaluacionTutor extends ViewScopedRol implements Seri
 
             if (resEvaluacion.getCorrecto()==true){
                 evaluacion = resEvaluacion.getValor();
+                ResultadoEJB<AperturaVisualizacionEncuestas> resApertur= ejbAdmminEvTutor.getAperturaActiva(evaluacion);
+                if(resApertur.getCorrecto()){
+                    apertura=resApertur.getValor();
+                    cargada=true;
+                }else {mostrarMensajeResultadoEJB(resApertur);}
             }else {mostrarMensajeResultadoEJB(resEvaluacion);}
 
         }catch (Exception e){

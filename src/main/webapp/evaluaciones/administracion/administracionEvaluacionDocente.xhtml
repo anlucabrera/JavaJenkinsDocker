@@ -73,7 +73,7 @@
     </ui:define>
 
     <ui:define name="body">
-        <c:if test="#{administracionEncuesta.cargado}">
+        <c:if test="#{administracionEvaluacionDocente.cargada}">
         <div id="main-buttons"  >
             <p:toolbar id="tb">
                 <f:facet name="left">
@@ -84,7 +84,7 @@
             <p:sticky target="tb" />
         </div>
         <p:tabView id="tabView">
-            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor or administracionEncuesta.dto.tutorCe or administracionEncuesta.dto.esSecretario}">
+            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor2 or administracionEncuesta.dto.tutorCe or administracionEncuesta.dto.esSecretario}">
                 <p:tab id="completos" title="Estudiantes con evaluación completa">
                     <h:form id="fr1">
                         <p:outputPanel>
@@ -131,7 +131,7 @@
                                         <p:commandButton actionListener="#{administracionEvaluacionDocente.seguimientoDirector}" value="Actualizar información" icon="fa fa-refresh"
                                                          class="btn btn-primary" update="tabView:fr1:tblEvDocenteTer tabView:fr2:tblEvDocenteNoTer tabView:fr3:tblEvDocenteNoAcceso tabView:fr45:avanceEvaDocente" process="@form"/>
                                     </c:if>
-                                    <c:if test="#{administracionEncuesta.dto.tutor or administracionEncuesta.dto.tutorCe}">
+                                    <c:if test="#{administracionEncuesta.dto.tutor2 or administracionEncuesta.dto.tutorCe }">
                                         <p:commandButton actionListener="#{administracionEvaluacionDocente.seguimientoTutor()}" value="Actualizar información" icon="fa fa-refresh"
                                                          class="btn btn-primary" update="tabView:fr1:tblEvDocenteTer tabView:fr2:tblEvDocenteNoTer tabView:fr3:tblEvDocenteNoAcceso tabView:fr45:avanceEvaDocente"   process="@form"/>
                                     </c:if>
@@ -233,7 +233,7 @@
 
             </c:if>
 
-            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.tutor or administracionEncuesta.dto.tutorCe or administracionEncuesta.dto.director or administracionEncuesta.dto.esSecretario}">
+            <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.tutor2 or administracionEncuesta.dto.tutorCe or administracionEncuesta.dto.director or administracionEncuesta.dto.esSecretario}">
                 <p:tab title="Porcentaje de avance">
                     <h:form id="fr45">
                         <p:outputPanel>

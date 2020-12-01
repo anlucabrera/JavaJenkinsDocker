@@ -159,9 +159,10 @@ public class ServicioEvaluacionDocenteMateria implements EJBEvaluacionDocenteMat
     public ResultadoEJB<Evaluaciones> getUltimaEvDocenteActiva() {
         try{
             //TODO:Obtiene la ultima evalaucion de docente materia activa
-            Evaluaciones evaluacion = f.getEntityManager().createQuery("select e from Evaluaciones e where e.tipo=:tipo or e.tipo=:tipo2 or e.tipo=:tipo3 order by e.evaluacion desc ",Evaluaciones.class)
+            Evaluaciones evaluacion = f.getEntityManager().createQuery("select e from Evaluaciones e where (e.tipo=:tipo or e.tipo=:tipo2 or e.tipo=:tipo3 or e.tipo=:tipo4) order by e.evaluacion desc ",Evaluaciones.class)
                     .setParameter("tipo2", EvaluacionesTipo.DOCENTE_2.getLabel())
                     .setParameter("tipo3", EvaluacionesTipo.DOCENTE_3.getLabel())
+                    .setParameter("tipo4",EvaluacionesTipo.DOCENTE_4.getLabel())
                     .setParameter("tipo", "Docente materia")
                     .getResultStream()
                     .findFirst()

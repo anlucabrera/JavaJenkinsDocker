@@ -15,6 +15,8 @@ public class dtoEstudianteMateria {
     @Getter @Setter EvaluacionDocentesMateriaResultados2 resultados2;
     @Getter @Setter EvaluacionDocentesMateriaResultados3 resultadosTipo2;
     @Getter @Setter EvaluacionDocentesMateriaResultados4 resultadosTipo4;
+    @Getter @Setter EvaluacionDocentesMateriaResultados5 resultadosTipo5;
+
 
     public dtoEstudianteMateria(String claveMateria, String nombreMateria, Personal docenteImparte) {
         this.claveMateria = claveMateria;

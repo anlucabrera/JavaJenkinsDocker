@@ -5,6 +5,7 @@ import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudiantesEvalauciones;
 import mx.edu.utxj.pye.sgi.entity.ch.*;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AperturaVisualizacionEncuestas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.saiiut.entity.AlumnosEncuestas;
@@ -64,4 +65,6 @@ public interface EjbAdministracionEvTutor {
     public ResultadoEJB<EvaluacionTutoresResultados2> getResultadosEvByEstudiante (dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion);
 
     public ResultadoEJB<EvaluacionTutoresResultados3> getResultados2EvByEstudiante (dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion);
+
+    public ResultadoEJB<AperturaVisualizacionEncuestas> getAperturaActiva(Evaluaciones evaluacion);
 }

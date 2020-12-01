@@ -77,6 +77,10 @@ private Boolean cargado = false;
                     dto.tutorCe = true;
                     aperturarEncuestas();
                 }
+                if(ejbAdmEncuesta.estTutor(dto.usuarioNomina)!=null){
+                    dto.tutor2 = true;
+                    aperturarEncuestas();
+                }
                 if (!ejbAdmEncuesta.esSecretarioAcademico(1, Short.parseShort("2"), Short.parseShort("38"), Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()) {
                     dto.esSecretario = ejbAdmEncuesta.activarOrDesactivarVisualizacion("secretario");
                     aperturarEncuestas();

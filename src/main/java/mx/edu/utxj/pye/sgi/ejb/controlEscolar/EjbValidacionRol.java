@@ -215,6 +215,17 @@ public class EjbValidacionRol {
             return ResultadoEJB.crearErroneo(1, "El personal del área no se pudo validar. (EjbValidacionRol.validarPsicopedagogia)", e, null);
         }
     }
+    public ResultadoEJB<Filter<PersonalActivo>> validarFortalecimiento(Integer clave){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalFortalecimiento").orElse(12)));
+            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal del área de fortalecimiento académico.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El personal del área no se pudo validar. (EjbValidacionRol.validarFortalecimiento)", e, null);
+        }
+    }
     
     public ResultadoEJB<Filter<PersonalActivo>> validarTrabajador(Integer clave) {
         try {

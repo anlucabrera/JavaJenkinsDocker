@@ -25,6 +25,7 @@ public enum EvaluacionesTipo {//Tutor, Control interno, Docente, Satisfacción d
     DOCENTE(13,"Docente materia"),
     DOCENTE_2(14,"Docente materia (Cuestionario 2 por contingencia)"),
     DOCENTE_3(15,"Docente materia (Cuestionario 3 por contingencia)"),
+    DOCENTE_4(16,"Docente materia (Cuestionario 4 por contingencia)"),
     CUESTIONARIO_COMPLEMENTARIO_INFORMACION_PERSONAL(16,"Cuestionario complementario de información personal")
     ;
     @Getter @NonNull private final Integer numero;
