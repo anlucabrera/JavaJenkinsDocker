@@ -258,7 +258,7 @@
                                                     <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditMesEvaluacion}" update="tblEvenAre" process="@this"/>
                                                     <p:ajax event="rowEditCancel" listener="#{administracionControl.onRowCancel}" update="tblEvenAre" />
                                                     <p:column >
-                                                        <h:outputText value="#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" />
+                                                        <h:outputText value="#{procesoPoa.area}-#{administracionControl.buscarAreaEventosA(procesoPoa.area)}" />
                                                     </p:column>   
                                                     <p:column >
                                                         <h:outputText value="#{administracionControl.buscarPersonal(procesoPoa.responsable)}" />
