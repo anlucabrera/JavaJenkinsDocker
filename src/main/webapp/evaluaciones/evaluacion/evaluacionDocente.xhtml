@@ -1857,7 +1857,7 @@
                                                                     <td class="text-center" style="min-width: 120px;">
                                                                         <f:ajax id="r#{16}" execute="#{id}">
                                                                             <p:selectOneButton  id="r#{16}" value="#{docente.resultadosTipo5.r16}"
-                                                                                                valueChangeListener="#{evaluacionDocenteEstudiante.saveRespuetaTipo3}">
+                                                                                                valueChangeListener="#{evaluacionDocenteEstudiante.saveRespuetaTipo4}">
                                                                                 <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
                                                                                 <p:ajax process="@this"/>
                                                                             </p:selectOneButton>
@@ -1871,7 +1871,7 @@
                                                                     <td class="text-center" style="min-width: 120px;">
                                                                         <f:ajax id="r#{17}" execute="#{id}">
                                                                             <p:selectOneButton  id="r#{17}" value="#{docente.resultadosTipo5.r17}"
-                                                                                                valueChangeListener="#{evaluacionDocenteEstudiante.saveRespuetaTipo3}">
+                                                                                                valueChangeListener="#{evaluacionDocenteEstudiante.saveRespuetaTipo4}">
                                                                                 <f:selectItems class="btn-primary" value="#{evaluacionDocenteEstudiante.respuestasPosibles}" />
                                                                                 <p:ajax process="@this"/>
                                                                             </p:selectOneButton>
@@ -1931,8 +1931,8 @@
                                                                 </tr>
                                                                 <!--20 -->
                                                                 <tr>
-                                                                    <td><h:outputLabel value="#{pregunta[1].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
-                                                                    <td style="text-align: justify;">#{pregunta[1].titulo}</td>
+                                                                    <td><h:outputLabel value="#{pregunta[2].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                    <td style="text-align: justify;">#{pregunta[2].titulo}</td>
                                                                     <td class="text-center" style="min-width: 120px;">
                                                                         <f:ajax id="r#{20}" execute="#{id}">
                                                                             <p:selectOneButton  id="r#{20}" value="#{docente.resultadosTipo5.r20}"
@@ -1945,8 +1945,8 @@
                                                                 </tr>
                                                                 <!--21-->
                                                                 <tr>
-                                                                    <td><h:outputLabel value="#{pregunta[1].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
-                                                                    <td style="text-align: justify;">#{pregunta[1].titulo}</td>
+                                                                    <td><h:outputLabel value="#{21}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                    <td style="text-align: justify;">En general, el desempeño del docente fue.</td>
                                                                     <td class="text-center" style="min-width: 120px;">
                                                                         <f:ajax id="r#{21}" execute="#{id}">
                                                                             <p:selectOneButton  id="r#{21}" value="#{docente.resultadosTipo5.r21}"
@@ -1959,8 +1959,8 @@
                                                                 </tr>
                                                                 <!--22 -->
                                                                 <tr>
-                                                                    <td><h:outputLabel value="#{pregunta[2].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
-                                                                    <td style="text-align: justify;">#{pregunta[2].titulo}</td>
+                                                                    <td><h:outputLabel value="#{pregunta[3].numero}"><f:convertNumber pattern="##.#" /></h:outputLabel></td>
+                                                                    <td style="text-align: justify;">#{pregunta[3].titulo}</td>
                                                                     <td class="text-center" style="min-width: 120px;">
                                                                         <f:ajax id="r#{22}" execute="#{id}">
                                                                             <p:inputTextarea  id="r#{22}" value="#{docente.resultadosTipo5.r22}"
