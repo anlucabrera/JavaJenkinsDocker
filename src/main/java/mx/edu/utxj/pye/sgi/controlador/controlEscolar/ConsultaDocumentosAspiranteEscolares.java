@@ -59,7 +59,7 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
     
     public void mostrarDocumentos(Aspirante aspirante){
        aspiranteB = aspirante;
-       listaDocumentoAspirantes = ejbCargaDocumentosAspirante.getDocumentoAspirante(aspirante).getValor();
+       listaDocumentoAspirantes = ejbCargaDocumentosAspirante.getConsultaDocumentoAspirante(aspirante).getValor();
        setForzarAperturaDialogo(Boolean.FALSE); 
        Ajax.update("frmDocsAsp");
         

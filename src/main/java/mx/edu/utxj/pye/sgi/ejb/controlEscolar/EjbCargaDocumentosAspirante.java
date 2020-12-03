@@ -207,7 +207,31 @@ public class EjbCargaDocumentosAspirante {
         }
     }
     
-    /**
+     /**
+     * Permite obtener la lista de documento que debe cargar el aspirante
+     * @param aspirante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoDocumentoAspirante>> getConsultaDocumentoAspirante(Aspirante aspirante){
+        try{
+            List<DtoDocumentoAspirante> listaDocumentos = new ArrayList<>();
+           
+                List<String> procesos = Arrays.asList("Admision","Inscripcion");
+                listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso IN :procesos AND d.documento.activo =:valor ORDER BY d.proceso, d.documentoProceso", DocumentoProceso.class)
+                    .setParameter("procesos", procesos)
+                    .setParameter("valor", true)
+                    .getResultStream()
+                    .map(doc -> pack(doc, aspirante).getValor())
+                    .filter(dto -> dto != null)
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(listaDocumentos, "Lista de documentos por aspirante.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de documentos por aspirante. (EjbCargaDocumentosAspirante.getDocumentoAspirante)", e, null);
+        }
+    }
+    
+     /**
      * Empaqueta un documento del proceso en su DTO Wrapper
      * @param documentoProceso
      * @param aspirante
