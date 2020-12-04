@@ -68,7 +68,7 @@ public class RegistrosMovilidad implements Serializable {
     private Integer registro;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 15)
+    @Size(min = 1, max = 25)
     @Column(name = "registro_movilidad")
     private String registroMovilidad;
     @Basic(optional = false)

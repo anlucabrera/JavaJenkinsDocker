@@ -528,7 +528,7 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         List<RegistrosMovilidad> entities = new ArrayList<>();
       
         areas = ejbModulos.getAreasDependientes(claveArea);
-        entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas", RegistrosMovilidad.class)
+        entities = f.getEntityManager().createQuery("SELECT r FROM RegistrosMovilidad r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas ORDER BY r.registroMovilidad ASC", RegistrosMovilidad.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("areas", areas)
@@ -594,7 +594,7 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         List<RegistroMovilidadDocente> entities = new ArrayList<>();
       
         areas = ejbModulos.getAreasDependientes(claveArea);
-        entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registroMovilidad r INNER JOIN d.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas", RegistroMovilidadDocente.class)
+        entities = f.getEntityManager().createQuery("SELECT d FROM RegistroMovilidadDocente d INNER JOIN d.registroMovilidad r INNER JOIN d.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas ORDER BY d.registroMovilidad.registroMovilidad ASC", RegistroMovilidadDocente.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("areas", areas)
@@ -626,7 +626,7 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         List<RegistroMovilidadEstudiante> entities = new ArrayList<>();
       
         areas = ejbModulos.getAreasDependientes(claveArea);
-        entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas", RegistroMovilidadEstudiante.class)
+        entities = f.getEntityManager().createQuery("SELECT e FROM RegistroMovilidadEstudiante e INNER JOIN e.registroMovilidad r INNER JOIN e.registros reg INNER JOIN reg.eventoRegistro er WHERE er.eventoRegistro=:evento AND r.periodoEscolarCursado=:periodo AND reg.area IN :areas ORDER BY e.registroMovilidad.registroMovilidad ASC", RegistroMovilidadEstudiante.class)
                 .setParameter("evento", evento.getEventoRegistro())
                 .setParameter("periodo", periodo.getPeriodo())
                 .setParameter("areas", areas)
