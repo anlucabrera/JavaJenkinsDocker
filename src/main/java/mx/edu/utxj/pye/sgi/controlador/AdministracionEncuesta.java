@@ -77,7 +77,8 @@ private Boolean cargado = false;
                     dto.tutorCe = true;
                     aperturarEncuestas();
                 }
-                if(ejbAdmEncuesta.estTutor(dto.usuarioNomina)!=null){
+                if(!ejbAdmEncuesta.estTutor(dto.cveTrabajador).isEmpty()){
+                    dto.tutor2 = ejbAdmEncuesta.activarOrDesactivarVisualizacion("tutor");
                     dto.tutor2 = true;
                     aperturarEncuestas();
                 }
