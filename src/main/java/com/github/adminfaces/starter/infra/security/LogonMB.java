@@ -56,7 +56,8 @@ public class LogonMB extends AdminSession implements Serializable {
     @Getter @Setter private String currentUser;
     @Getter @Setter private String email;
     @Getter @Setter private String password;
-    @Getter @Setter private Boolean acceso=true;
+    @Getter @Setter private Boolean acceso=true;    
+    @Getter @Setter private Integer g2=0;
     @Getter @Setter private boolean remember;
       
     @Getter    @Setter    private Bitacoraacceso nuevaBitacoraacceso;
@@ -91,6 +92,8 @@ public class LogonMB extends AdminSession implements Serializable {
     */   
     public void login() throws IOException {
 //        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()");
+g2=0;
+//        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()"+g2);
         Login estudiante19 = ejbLogin.autenticar19(email, password);
         if ("estudioEgresad@s".equals(email) && password.equals("248163264")) {
             currentUser = email;

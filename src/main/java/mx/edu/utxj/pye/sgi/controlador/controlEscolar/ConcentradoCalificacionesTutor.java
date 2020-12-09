@@ -61,6 +61,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInscripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 
 
 
@@ -124,9 +125,9 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
             ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPorTutor(rol.getTutor(),rol.getPeriodo());
             if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
             if(resgrupos.getValor().isEmpty())return;
-            rol.setGrupos(resgrupos.getValor());   
-            rol.setGrupoSelec(rol.getGrupos().get(0));
-        
+            rol.setGrupos(resgrupos.getValor()); 
+            gruposeleccionado();
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ConcentradoCalificacionesTutor.init(A)"+rol.getGrupoSelec());        
             ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
             if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
             if(rejb.getValor().isEmpty())return;
@@ -166,6 +167,25 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
         Ajax.update("frm");
     }
     
+    public void gruposeleccionado() {
+        try {
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ConcentradoCalificacionesTutor.gruposeleccionado()" + logon.getG2());
+            if (logon.getG2() == 0) {
+                rol.setGrupoSelec(rol.getGrupos().get(0));
+            } else {
+                rol.getGrupos().forEach((t) -> {
+                    if (Objects.equals(logon.getG2(), t.getIdGrupo())) {
+                        rol.setGrupoSelec(t);
+                    }
+                });
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+     
     public String buscarPersonal(Integer clave) {
         try {
             Personal p = new Personal();
@@ -184,11 +204,16 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
     
     public void consultarAlumnos(ValueChangeEvent event) {
         rol.setListaalumnoscas(new ArrayList<>());
-        rol.setGrupoSelec((Grupo) event.getNewValue());
-        ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
-        if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
-        rol.setListaalumnoscas(rejb.getValor());  
-        creareporte();
+        Grupo g= (Grupo) event.getNewValue();
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ConcentradoCalificacionesTutor.consultarAlumnos()"+g.getIdGrupo());
+        logon.setG2(g.getIdGrupo());
+        gruposeleccionado();
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ConcentradoCalificacionesTutor.consultarAlumnos(B)"+rol.getGrupoSelec());
+//        ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
+//        if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
+//        rol.setListaalumnoscas(rejb.getValor());  
+//        creareporte();
+        Faces.redirect("controlEscolar/tutor/concentradoCal.xhtml");
     }
     
     public void creareporte() {

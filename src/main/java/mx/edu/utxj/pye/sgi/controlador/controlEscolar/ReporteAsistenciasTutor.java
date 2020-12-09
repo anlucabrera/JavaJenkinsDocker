@@ -48,6 +48,7 @@ import org.omnifaces.util.Messages;
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Faces;
 
 
 
@@ -104,8 +105,9 @@ public class ReporteAsistenciasTutor extends ViewScopedRol implements Desarrolla
             ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPorTutor(rol.getTutor(),rol.getPeriodo());
             if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
             rol.setGrupos(resgrupos.getValor());           
+            gruposeleccionado();
             
-            rol.setGrupoSelec(rol.getGrupos().get(0));
+//            rol.setGrupoSelec(rol.getGrupos().get(0));
         
             ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
             if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
@@ -124,6 +126,25 @@ public class ReporteAsistenciasTutor extends ViewScopedRol implements Desarrolla
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
     }
+    
+    public void gruposeleccionado() {
+        try {
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ConcentradoCalificacionesTutor.gruposeleccionado()" + logon.getG2());
+            if (logon.getG2() == 0) {
+                rol.setGrupoSelec(rol.getGrupos().get(0));
+            } else {
+                rol.getGrupos().forEach((t) -> {
+                    if (Objects.equals(logon.getG2(), t.getIdGrupo())) {
+                        rol.setGrupoSelec(t);
+                    }
+                });
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 
     public String buscarPersonal(Integer clave) {
         try {
@@ -143,11 +164,15 @@ public class ReporteAsistenciasTutor extends ViewScopedRol implements Desarrolla
     
     public void consultarAlumnos(ValueChangeEvent event) {
         rol.setListaalumnoscas(new ArrayList<>());
-        rol.setGrupoSelec((Grupo) event.getNewValue());
-        ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
-        if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
-        rol.setListaalumnoscas(rejb.getValor());  
-        creareporte();
+        Grupo g= (Grupo) event.getNewValue();
+        logon.setG2(g.getIdGrupo());
+        gruposeleccionado();
+//        rol.setGrupoSelec((Grupo) event.getNewValue());
+//        ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
+//        if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
+//        rol.setListaalumnoscas(rejb.getValor());  
+//        creareporte();
+        Faces.redirect("controlEscolar/tutor/reporteAsistenciasTutor.xhtml");
     }
     
     public void creareporte() {
