@@ -68,10 +68,10 @@
                                         <div class="#{casilla}">
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="periodo" value="#{reporteAsistenciasTutor.rol.periodo}" converter="entityConverter" styleClass="form-control" >
-                                                    <f:selectItems value="#{reporteAsistenciasTutor.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                    <p:ajax process="@this, unidad"/>
-                                                    <p:autoUpdate />
-                                                </p:selectOneMenu>
+                                                        <f:selectItems value="#{reporteAsistenciasTutor.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                        <p:ajax process="@this, unidad" listener="#{reporteAsistenciasTutor.cambiarPeriodo}"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
                                                 <p:outputLabel value="Periodo" for="periodo"/>
                                                 <p:message for="periodo" />
                                             </div>

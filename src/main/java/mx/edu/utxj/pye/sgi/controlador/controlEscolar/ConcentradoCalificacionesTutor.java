@@ -121,7 +121,8 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
             if(resPeriodos.getValor().isEmpty()) return;
             
             rol.setPeriodos(resPeriodos.getValor());
-            rol.setPeriodo(rol.getPeriodos().get(0));
+            periodoseleccionado();
+//            rol.setPeriodo(rol.getPeriodos().get(0));
             ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPorTutor(rol.getTutor(),rol.getPeriodo());
             if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
             if(resgrupos.getValor().isEmpty())return;
@@ -135,6 +136,9 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
             
             creareporte();
             rol.setFechaInpresion(new Date());
+            
+            logon.setPer(0);
+            logon.setG2(0);
         } catch (Exception e) {
             e.printStackTrace();
             mostrarExcepcion(e);
@@ -160,11 +164,14 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
             mostrarMensaje("No hay periodo escolar seleccionado.");
             return;
         }
-        ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPorTutor(rol.getTutor(),rol.getPeriodo());
-        if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
-        if(resgrupos.getValor().isEmpty())return;
-        rol.setGrupos(resgrupos.getValor());   
-        Ajax.update("frm");
+        logon.setPer(rol.getPeriodo().getPeriodo());        
+        logon.setG2(0);
+//        ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPorTutor(rol.getTutor(),rol.getPeriodo());
+//        if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
+//        if(resgrupos.getValor().isEmpty())return;
+//        rol.setGrupos(resgrupos.getValor());   
+//        Ajax.update("frm");
+        Faces.redirect("controlEscolar/tutor/concentradoCal.xhtml");
     }
     
     public void gruposeleccionado() {
@@ -176,6 +183,22 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
                 rol.getGrupos().forEach((t) -> {
                     if (Objects.equals(logon.getG2(), t.getIdGrupo())) {
                         rol.setGrupoSelec(t);
+                    }
+                });
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public void periodoseleccionado() {
+        try {
+            if (logon.getPer()== 0) {
+                rol.setPeriodo(rol.getPeriodos().get(0));
+            } else {
+                rol.getPeriodos().forEach((t) -> {
+                    if (Objects.equals(logon.getPer(), t.getPeriodo())) {
+                        rol.setPeriodo(t);
                     }
                 });
             }

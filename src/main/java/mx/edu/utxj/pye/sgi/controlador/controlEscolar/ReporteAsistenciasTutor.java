@@ -97,10 +97,11 @@ public class ReporteAsistenciasTutor extends ViewScopedRol implements Desarrolla
             if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
             rol.setNivelRol(NivelRol.CONSULTA);
             
-            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
+            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosRegistros(rol.getTutor());
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
-            rol.setPeriodo(ea.getPeriodoActual());
+            periodoseleccionado();
+//            rol.setPeriodo(ea.getPeriodoActual());
             
             ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPorTutor(rol.getTutor(),rol.getPeriodo());
             if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
@@ -115,6 +116,9 @@ public class ReporteAsistenciasTutor extends ViewScopedRol implements Desarrolla
             creareporte();
             rol.setFechaInpresion(new Date());
             rol.setNewCompetencia(false);
+            
+            logon.setPer(0);
+            logon.setG2(0);
         } catch (Exception e) {
             mostrarExcepcion(e);
         }
@@ -144,7 +148,42 @@ public class ReporteAsistenciasTutor extends ViewScopedRol implements Desarrolla
             Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+   
+    public void cambiarPeriodo() {
+        rol.setDrpls(new ArrayList<>());
+        rol.setDplrs(new ArrayList<>());
+        academicas = new ArrayList<>();
+        rol.setGrupoSelec(new Grupo());
+        if (rol.getPeriodo() == null) {
+            mostrarMensaje("No hay periodo escolar seleccionado.");
+            return;
+        }
+        logon.setPer(rol.getPeriodo().getPeriodo());
+        logon.setG2(0);
+//        ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPorTutor(rol.getTutor(),rol.getPeriodo());
+//        if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
+//        if(resgrupos.getValor().isEmpty())return;
+//        rol.setGrupos(resgrupos.getValor());   
+//        Ajax.update("frm");
+        Faces.redirect("controlEscolar/tutor/reporteAsistenciasTutor.xhtml");
+    }
+    
+    public void periodoseleccionado() {
+        try {
+            if (logon.getPer()== 0) {
+                rol.setPeriodo(rol.getPeriodos().get(0));
+            } else {
+                rol.getPeriodos().forEach((t) -> {
+                    if (Objects.equals(logon.getPer(), t.getPeriodo())) {
+                        rol.setPeriodo(t);
+                    }
+                });
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public String buscarPersonal(Integer clave) {
         try {
