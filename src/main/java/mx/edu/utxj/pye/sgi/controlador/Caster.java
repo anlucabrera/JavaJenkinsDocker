@@ -25,6 +25,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.enums.ComisionOficioEstatus;
+import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.enums.converter.ComisionOficioEstatusConverter;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import org.apache.commons.io.FilenameUtils;
@@ -463,5 +464,14 @@ public class Caster {
         DateFormat formatoEjercicio = new SimpleDateFormat("yyyy");
         String ejercicioCadena = formatoEjercicio.format(ejercicio);
         return ejercicioCadena;
+    }
+    public static String tipoEvaluacionconverter(String tipo){
+        String tipoEv = new String();
+        if(tipo.equals(EvaluacionesTipo.DOCENTE.getLabel()) || tipo.equals(EvaluacionesTipo.DOCENTE_2.getLabel() )|| tipo.equals(EvaluacionesTipo.DOCENTE_3.getLabel()) || tipo.equals(EvaluacionesTipo.DOCENTE_4.getLabel())){
+            tipoEv= "Docente por asignatura";
+        }else if (tipo.equals(EvaluacionesTipo.TUTOR.getLabel()) || tipo.equals(EvaluacionesTipo.TUTOR_2.getLabel())){
+            tipoEv= "Tutor";
+        }
+        return tipoEv;
     }
 }
