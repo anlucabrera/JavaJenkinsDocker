@@ -23,7 +23,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
-@Stateless
+//@Stateless
 @Path("organigrama")
 public class EjbOrganigrama {
     @Getter @Setter Integer idOrganigrama=0;
