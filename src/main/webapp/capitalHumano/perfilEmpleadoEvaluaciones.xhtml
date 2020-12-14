@@ -13,6 +13,8 @@
 
 
     <ui:define name="head-end">
+        <h:outputScript library="js" name="dialogs.js"/>
+
         <ui:param name="renderBreadCrumb" value="false"/>
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
@@ -150,6 +152,67 @@
                                             </p:outputPanel>    
                                         </h:form>
                                     </p:tab>
+                                    <c:if test="#{reporteEvaluacionesDocente.tieneAcceso}">
+                                        <p:tab title="Informe de Resultados de Evaluación Tutor - Docente">
+                                            <h:form id="frmReporte">
+                                                <p:outputPanel deferred="true" >
+
+                                                    <p:dataTable id="tblReporte"  value="#{reporteEvaluacionesDocente.rol.listReporte}"  var="reporte"
+                                                                 paginator="true" rows="10"
+                                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                 rowsPerPageTemplate="5,10,15,20,25,30"
+                                                                 emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                        <p:column headerText="Evaluación"
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 30%">
+                                                            <h:outputText id="evaluacion" value="#{caster.tipoEvaluacionconverter(reporte.evaluacion.tipo)}" />
+                                                        </p:column>
+
+                                                        <p:column headerText="Periodo"
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 40%">
+                                                            <h:outputText id="periodo" value="#{caster.periodoToString(reporte.periodoEscolar)}" />
+                                                        </p:column>
+                                                        <p:column headerText="Opciones"
+                                                                  style="width: 10%"
+                                                        >
+                                                            <p:commandButton class="btn btn-sm btn-warning"
+                                                                             icon="fa fa-download"
+                                                                             title="Descargar informe (Interno)"
+                                                                             ajax="false"
+                                                                             actionListener="#{reporteEvaluacionesDocente.getDto(reporte)}"
+                                                            >
+                                                                <f:setPropertyActionListener target="#{reporteEvaluacionesDocente.rol.idEvaluado}" value="#{reporteEvaluacionesDocente.rol.docente.personal.clave}" />
+                                                                <f:setPropertyActionListener target="#{reporteEvaluacionesDocente.rol.idPeriodo}" value="#{reporte.periodoEscolar.periodo}" />
+                                                                <f:setPropertyActionListener target="#{reporteEvaluacionesDocente.rol.idEvaluacion}" value="#{reporte.evaluacion.evaluacion}" />
+                                                                <p:fileDownload value="#{reporteEvaluacionesDocente.pdf}"/>
+                                                            </p:commandButton>
+                                                            <p:commandButton class="btn btn-sm btn-info"
+                                                                             icon="fa fa-download"
+                                                                             title="Descargar informe (Externo)"
+                                                                             ajax="false"
+                                                                             actionListener="#{reporteEvaluacionesDocente.getDto(reporte)}"
+                                                            >
+                                                                <f:setPropertyActionListener target="#{reporteEvaluacionesDocente.rol.idEvaluado}" value="#{reporteEvaluacionesDocente.rol.docente.personal.clave}" />
+                                                                <f:setPropertyActionListener target="#{reporteEvaluacionesDocente.rol.idPeriodo}" value="#{reporte.periodoEscolar.periodo}" />
+                                                                <f:setPropertyActionListener target="#{reporteEvaluacionesDocente.rol.idEvaluacion}" value="#{reporte.evaluacion.evaluacion}" />
+                                                                <p:fileDownload value="#{reporteEvaluacionesDocente.pdf2}"/>
+                                                            </p:commandButton>
+
+
+                                                        </p:column>
+
+                                                    </p:dataTable>
+
+                                                </p:outputPanel>
+                                            </h:form>
+
+                                            </p:tab>
+
+                                    </c:if>
+
+
                                 </p:tabView>
                             </div>
                         </div>
@@ -157,6 +220,7 @@
                 </section>
             </p:panel>
         </c:if>
+
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 

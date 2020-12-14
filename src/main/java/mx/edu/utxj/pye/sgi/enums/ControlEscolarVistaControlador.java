@@ -81,6 +81,8 @@ public enum ControlEscolarVistaControlador {
     CAPTURA_COMENTARIOS_DOCENTE("/controlEscolar/docente/captura_comentarios.xhtml", CapturaComentariosDocente.class),
     AVANCE_PROGRAMATICO_DOCENTE("/controlEscolar/docente/avanceP.xhtml",  AvanceProgramaticoDocente.class),
     REGISTRO_ASESORIA("/controlEscolar/docente/registro_asesorias.xhtml", RegistroAsesoriaDocente.class),
+    REPORTE_EVALUACIONES("/capitalHumano/perfilEmpleadoEvaluaciones.xhtml",ReporteEvaluacionesDocente.class),
+
     
     REPORTE_BECAS("/becas/reporteBecas.xhtml", reporteBecas.class),
     SEGUIMIENTO_EV_TUTOR("/evaluaciones/administracion/administracionEvaluacionTutor.xhtml", AdministracionEvaluacionTutor.class),
