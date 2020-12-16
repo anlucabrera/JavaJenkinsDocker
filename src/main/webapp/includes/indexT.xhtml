@@ -341,6 +341,21 @@
                                     </div>
                                 </div>
                             </c:if>
+                            <c:if test="#{reporteEvaluacionesDocente.tieneAcceso}">
+                                <div class="col-lg-3 col-md-6 col-xs-12">
+                                    <div class="small-box bg-yellow">
+                                        <div class="inner">
+                                            <h3>Informe de <br/>resultados</h3>
+                                            <p>Evaluaciones Tutor - Docente</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-file-pdf"/>
+                                        </div>
+                                        <a href="#{request.contextPath}/capitalHumano/perfilEmpleadoEvaluaciones.xhtml" class="small-box-footer">Consultar</a>
+                                    </div>
+                                </div>
+
+                            </c:if>
                             <c:if test="#{fichaAdmisionReporte.tieneAcceso}">
                                 <div class="col-lg-3 col-md-6 col-xs-12">
                                     <div class="small-box bg-blue">
