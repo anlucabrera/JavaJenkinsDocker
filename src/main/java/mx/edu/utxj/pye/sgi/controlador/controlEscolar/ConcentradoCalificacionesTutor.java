@@ -128,7 +128,7 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
             if(resgrupos.getValor().isEmpty())return;
             rol.setGrupos(resgrupos.getValor()); 
             gruposeleccionado();
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ConcentradoCalificacionesTutor.init(A)"+rol.getGrupoSelec());        
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ConcentradoCalificacionesTutor.init(A)"+rol.getGrupoSelec());        
             ResultadoEJB<List<Listaalumnosca>> rejb = ejb.getListaAlumnosPorGrupo(rol.getGrupoSelec());
             if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
             if(rejb.getValor().isEmpty())return;
@@ -137,7 +137,7 @@ public class ConcentradoCalificacionesTutor extends ViewScopedRol implements Des
             creareporte();
             rol.setFechaInpresion(new Date());
             
-            logon.setPer(0);
+//            logon.setPer(0);
             logon.setG2(0);
         } catch (Exception e) {
             e.printStackTrace();

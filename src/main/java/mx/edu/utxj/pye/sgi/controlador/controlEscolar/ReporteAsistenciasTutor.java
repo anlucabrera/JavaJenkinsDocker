@@ -117,7 +117,7 @@ public class ReporteAsistenciasTutor extends ViewScopedRol implements Desarrolla
             rol.setFechaInpresion(new Date());
             rol.setNewCompetencia(false);
             
-            logon.setPer(0);
+//            logon.setPer(0);
             logon.setG2(0);
         } catch (Exception e) {
             mostrarExcepcion(e);
