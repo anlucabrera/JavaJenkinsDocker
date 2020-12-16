@@ -17,7 +17,7 @@ public class ConsultaCalificacionesRolEstudiante{
 
     @Getter @Setter @NonNull protected NivelRol nivelRol = NivelRol.CONSULTA;
     @Getter protected List<String> instrucciones = new ArrayList<>();
-    @Getter @NonNull private DtoEstudiante estudiante;
+    @Getter @NonNull private DtoEstudiante estudiante, estudianteK;
     @Getter @Setter @NonNull private Estudiante estudianteCE;
     @Getter @NonNull private PeriodosEscolares periodoActivo;
     @Getter @NonNull private List<PeriodosEscolares> periodosEscolares;
@@ -45,6 +45,13 @@ public class ConsultaCalificacionesRolEstudiante{
         return true;
     }
 
+    public void setEstudianteK(DtoEstudiante estudianteK) {
+        this.estudianteK = estudianteK;
+    }
+    
+    
+    
+    
     public void setEstudiante(DtoEstudiante estudiante) {
         this.estudiante = estudiante;
     }

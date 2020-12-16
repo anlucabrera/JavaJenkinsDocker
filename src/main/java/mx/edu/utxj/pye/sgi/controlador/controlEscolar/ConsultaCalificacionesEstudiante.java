@@ -54,12 +54,15 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
                 if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
                 ResultadoEJB<DtoEstudiante> resValidacion = ejb.validadEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
                 if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
+                ResultadoEJB<DtoEstudiante> resEstudianteK = ejb.validadEstudianteK(Integer.parseInt(logonMB.getCurrentUser()));
+                if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
                 DtoEstudiante estudiante = resValidacion.getValor();
+                DtoEstudiante estudianteK = resEstudianteK.getValor();
                 tieneAcceso = rol.tieneAcceso(estudiante, UsuarioTipo.ESTUDIANTE19);
                 if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
 
                 rol.setEstudiante(estudiante);
-
+                rol.setEstudianteK(estudianteK);
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////
                 if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
                 if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu

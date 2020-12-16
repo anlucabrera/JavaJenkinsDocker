@@ -24,7 +24,7 @@ public class ConsultaCalificacionesRolMultiple extends AbstractRol {
     @Getter @NonNull private List<PeriodosEscolares> periodosEscolares;
     @Getter @NonNull private List<DtoEstudiante> estudiantes, estudianteRegistro = new ArrayList<>();
     @Getter @Setter @NonNull private List<DtoInscripcion> dtoInscripciones = new ArrayList<>();
-    @Getter @NonNull private DtoEstudiante estudiante;
+    @Getter @NonNull private DtoEstudiante estudiante, estudianteK;
     @Getter @NonNull private Integer periodoSelect;
     @Getter @NonNull private List<DtoCalificacionEstudiante.MapUnidadesTematicas> mapUnidadesTematicas;
     @Getter @NonNull private List<BigDecimal> promediosAcumulados;
@@ -51,6 +51,10 @@ public class ConsultaCalificacionesRolMultiple extends AbstractRol {
         super(filtro);
         this.coordinador = coordinador;
         this.programa = programa;
+    }
+
+    public void setEstudianteK(DtoEstudiante estudianteK) {
+        this.estudianteK = estudianteK;
     }
 
     public void setCargasEstudiante(List<DtoCargaAcademica> cargasEstudiante) {
