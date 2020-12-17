@@ -86,21 +86,6 @@ public class ReporteEvaluacionesDocente extends ViewScopedRol implements Desarro
     public void getDto(DtoReporteEvaluaciones dto){
         rol.setDto(dto);
     }
-    public StreamedContent getPdf() throws FileNotFoundException {
-        String tipoEv= new String();
-        tipoEv = Caster.tipoEvaluacionconverter(rol.getDto().getEvaluacion().getTipo());
-        String requestServerName = FacesContext.getCurrentInstance().getExternalContext().getRequestServerName();
-        if(requestServerName.equals(servidor)) servidor = "150.140.1.26";
-
-        Client client = ClientBuilder.newClient();
-        WebTarget webTarget = client.target( String.format("http://%s:8090/reporteEvaluacion/generar?idEvaluado=%s&idPeriodo=%s&idEvaluacion=%s", servidor, rol.getIdEvaluado().toString(), rol.getIdPeriodo().toString(),rol.getIdEvaluacion().toString()));
-
-        Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        File entity = invocationBuilder.get(File.class);
-        //return new DefaultStreamedContent(new FileInputStream(entity), "application/pdf", "evaluacion.pdf");
-
-        return new DefaultStreamedContent(new FileInputStream(entity), "application/pdf", "Informe_Ev"+tipoEv+"_"+rol.getDto().getPeriodoEscolar().getMesInicio().getMes()+"_"+rol.getDto().getPeriodoEscolar().getMesFin().getMes()+"_"+rol.getDto().getPeriodoEscolar().getAnio()+".pdf");
-    }
 
     public StreamedContent getPdf2() throws FileNotFoundException {
         String tipoEv= new String();

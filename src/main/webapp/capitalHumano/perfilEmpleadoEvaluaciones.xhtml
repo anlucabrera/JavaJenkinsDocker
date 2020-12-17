@@ -177,20 +177,9 @@
                                                         <p:column headerText="Opciones"
                                                                   style="width: 10%"
                                                         >
-                                                            <p:commandButton class="btn btn-sm btn-warning"
-                                                                             icon="fa fa-download"
-                                                                             title="Descargar informe (Interno)"
-                                                                             ajax="false"
-                                                                             actionListener="#{reporteEvaluacionesDocente.getDto(reporte)}"
-                                                            >
-                                                                <f:setPropertyActionListener target="#{reporteEvaluacionesDocente.rol.idEvaluado}" value="#{reporteEvaluacionesDocente.rol.docente.personal.clave}" />
-                                                                <f:setPropertyActionListener target="#{reporteEvaluacionesDocente.rol.idPeriodo}" value="#{reporte.periodoEscolar.periodo}" />
-                                                                <f:setPropertyActionListener target="#{reporteEvaluacionesDocente.rol.idEvaluacion}" value="#{reporte.evaluacion.evaluacion}" />
-                                                                <p:fileDownload value="#{reporteEvaluacionesDocente.pdf}"/>
-                                                            </p:commandButton>
                                                             <p:commandButton class="btn btn-sm btn-info"
                                                                              icon="fa fa-download"
-                                                                             title="Descargar informe (Externo)"
+                                                                             title="Descargar informe"
                                                                              ajax="false"
                                                                              actionListener="#{reporteEvaluacionesDocente.getDto(reporte)}"
                                                             >
