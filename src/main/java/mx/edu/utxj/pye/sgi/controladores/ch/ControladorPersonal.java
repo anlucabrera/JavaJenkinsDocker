@@ -30,6 +30,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.DesarrolloSoftware;
 import mx.edu.utxj.pye.sgi.entity.ch.DesarrollosTecnologicos;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Distinciones;
+import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
 import mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica;
 import mx.edu.utxj.pye.sgi.entity.ch.Funciones;
@@ -65,6 +66,7 @@ public class ControladorPersonal implements Serializable {
     @Getter    @Setter    private List<Congresos> listaCongresos = new ArrayList<>();
     @Getter    @Setter    private List<LibrosPub> listaLibrosPubs = new ArrayList<>();
     @Getter    @Setter    private List<Articulosp> listaArticulosp = new ArrayList<>();
+    @Getter    @Setter    private List<Docencias> listaDocenciases = new ArrayList<>();
     @Getter    @Setter    private List<Memoriaspub> listaMemoriaspub = new ArrayList<>();
     @Getter    @Setter    private List<Innovaciones> listaInnovaciones = new ArrayList<>();
     @Getter    @Setter    private List<Distinciones> listaDistinciones = new ArrayList<>();
@@ -280,6 +282,7 @@ public class ControladorPersonal implements Serializable {
             listaLibrosPubs.clear();
             listaArticulosp.clear();
             listaMemoriaspub.clear();
+            listaDocenciases.clear();
             listaInnovaciones.clear();
             listaDistinciones.clear();
             rutasEvidenciasBD.clear();
@@ -295,6 +298,7 @@ public class ControladorPersonal implements Serializable {
             listaIdiomas = ejbHabilidades.mostrarIdiomas(contactoDestino);
             listaLenguas = ejbHabilidades.mostrarLenguas(contactoDestino);
             listaDistinciones = ejbPremios.mostrarDistinciones(contactoDestino);
+            listaDocenciases = ejbPersonal.mostrarListaDocencias(contactoDestino);
             listaInnovaciones = ejbTecnologia.mostrarInnovaciones(contactoDestino);
             listaCongresos = ejbProduccionProfecional.mostrarCongresos(contactoDestino);
             listaLibrosPubs = ejbProduccionProfecional.mostrarLibrosPub(contactoDestino);
