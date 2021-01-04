@@ -3,13 +3,16 @@ package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.*;
+import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 
+import javax.faces.model.SelectItem;
 import javax.servlet.http.Part;
 import java.util.List;
 
@@ -24,16 +27,16 @@ public class RegistroFichaAdmisionRolAspirante {
     @Getter         @NonNull   private              EventoEscolar eventoEscolar;
     @Getter         @NonNull    private     ProcesosInscripcion procesosInscripcion;
     /////////////////////////////////////////////////////
-    @Getter         @Setter     private     String curpBusqueda;
+    @Getter         @Setter     private     String curpBusqueda,pwdPer;
     @Getter         @Setter     private     Integer paso, folioAspirante;
     @Getter         @Setter     private     Part fileCurp;
-    @Getter         @Setter     private     Boolean extran,finalizado;
+    @Getter         @Setter     private     Boolean extran,finalizado,finalizadoEnVocacional,dialogEn;
     @Getter         @Setter     private     AreasUniversidad areaApO, areaAsO;
-    @Getter         @Setter     private     String valor;
+    @Getter         @Setter     private     String valor, resultadoEn;
 
     /////////////////////Pasos //////////////////
     @Getter         @Setter     private     Integer step;
-    @Getter         @Setter     private     Boolean tab1,tab2,tab3,tab4,tab5,tab6,tab7, tab8;
+    @Getter         @Setter     private     Boolean tab1,tab2,tab3,tab4,tab5,tab6,tab7, tab8,tab9;
     // /// Datos del Apirante /////////////////
     @Getter @Setter @NonNull private DtoAspirante.General general;
     @Getter @Setter @NonNull private MedioComunicacion comunicacion;
@@ -44,8 +47,12 @@ public class RegistroFichaAdmisionRolAspirante {
     @Getter @Setter @NonNull private DtoAspirante.DomicilioR ddomicilios;
     @Getter @Setter @NonNull private DtoAspirante.AcademicosR dacademicos;
     @Getter @Setter @NonNull private DtoAspirante.EncuestaR encuesta;
-    @Getter @Setter @NonNull private DtoAspirante.TutorR tutor;
+    @Getter @Setter @NonNull private DtoAspirante.EncuestaVocacionalR encuestaVocacional;
 
+    @Getter @Setter @NonNull private DtoAspirante.TutorR tutor;
+    // Encuesta vocacional
+    @Getter @Setter @NonNull private List<Apartado> apartadoEncuestaVocacional;
+    @Getter @Setter @NonNull private List<SelectItem> siNo,rP1,rP4,rP5;
     //Datos necesario para registro
     @Getter @Setter @NonNull private List<TipoSangre> tipoSangres;
     @Getter @Setter @NonNull private List<TipoDiscapacidad> tipoDiscapacidads;
@@ -62,7 +69,7 @@ public class RegistroFichaAdmisionRolAspirante {
     @Getter @Setter @NonNull private List<Asentamiento> asentamientosDo,asentamientosPo,asentamientosTt;
     @Getter @Setter @NonNull private List<Iems> iemses;
     @Getter @Setter @NonNull private List<AreasUniversidad> areasAcademicas;
-    @Getter @Setter @NonNull private List<AreasUniversidad> programasEducativosPo,programasEducativosSo;
+    @Getter @Setter @NonNull private List<AreasUniversidad> programasEducativosPo,programasEducativosSo,carrerasEv;
     @Getter @Setter @NonNull private  List<Generos> generos;
 
     public void setEventoEscolar(EventoEscolar eventoEscolar) {

@@ -18,6 +18,7 @@ public class DtoAspirante {
         @Getter        @Setter        @NonNull       DomicilioR dr;
         @Getter        @Setter        @NonNull       AcademicosR ac;
         @Getter        @Setter        @NonNull       EncuestaR er;
+        @Getter        @Setter        @NonNull       EncuestaVocacionalR ev;
         @Getter        @Setter        @NonNull       Boolean econtrado;
 
     }
@@ -100,6 +101,14 @@ public class DtoAspirante {
         @Getter        @Setter        @NonNull        Operacion operacion;
         @Getter        @Setter        @NonNull        Boolean econtrado;
     }
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode
+    public static class EncuestaVocacionalR {
+        @Getter        @Setter        @NonNull        EncuestaVocacional encuestaAspirante;
+        @Getter        @Setter        @NonNull        AreasUniversidad carreraSelect;
+        @Getter        @Setter        @NonNull        Operacion operacion;
+        @Getter        @Setter        @NonNull        Boolean econtrado;
+    }
+
 
 
 }
