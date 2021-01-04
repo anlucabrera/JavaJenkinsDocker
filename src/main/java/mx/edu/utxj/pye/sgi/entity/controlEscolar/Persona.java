@@ -108,6 +108,8 @@ public class Persona implements Serializable {
     private Login login;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersona", fetch = FetchType.LAZY)
     private List<Aspirante> aspiranteList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona")
+    private EncuestaVocacional encuestaVocacional;
 
     public Persona() {
     }
@@ -280,5 +282,12 @@ public class Persona implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona[ idpersona=" + idpersona + " ]";
     }
-    
+
+    public EncuestaVocacional getEncuestaVocacional() {
+        return encuestaVocacional;
+    }
+
+    public void setEncuestaVocacional(EncuestaVocacional encuestaVocacional) {
+        this.encuestaVocacional = encuestaVocacional;
+    }
 }

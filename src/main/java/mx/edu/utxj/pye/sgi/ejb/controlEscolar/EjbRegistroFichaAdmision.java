@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import com.google.zxing.NotFoundException;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.*;
@@ -23,6 +24,8 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
+import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
+import nl.lcs.qrscan.core.QrPdf;
 import org.apache.poi.ss.formula.functions.T;
 import org.apache.xmlbeans.impl.regex.REUtil;
 import org.omg.CORBA.PUBLIC_MEMBER;
@@ -38,16 +41,21 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import javax.xml.transform.sax.SAXSource;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.rmi.server.ExportException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Ejb para el registro de fichas de admision para aspirantes
@@ -58,6 +66,7 @@ public class EjbRegistroFichaAdmision {
     @EJB Facade f;
     @EJB EjbPersonal ejbPersonal;
     @EJB EjbEventoEscolar ejbEventoEscolar;
+    @EJB EjbEncuestaVocacional ejbEncuestaVocacional;
     @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
     @EJB EjbAreasLogeo ejbAreasLogeo;
 
@@ -97,7 +106,9 @@ public class EjbRegistroFichaAdmision {
      */
     public ResultadoEJB<EventoEscolar> verificaEvento() {
         try {
-            return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.REGISTRO_FICHAS_ADMISION);
+           // return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.REGISTRO_FICHAS_ADMISION);
+            EventoEscolar ev =em.createQuery("select e from EventoEscolar e where e.evento=58",EventoEscolar.class).getResultStream().findFirst().orElse(null);
+            return ResultadoEJB.crearCorrecto(ev,"");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para el registro de fichas de admision (EjbRegistroFichaAdmision.verificaEvento).", e, EventoEscolar.class);
         }
@@ -106,13 +117,15 @@ public class EjbRegistroFichaAdmision {
     public ResultadoEJB<ProcesosInscripcion> getProcesosInscripcionActivo() {
         try {
             ProcesosInscripcion procesosInscripcion = new ProcesosInscripcion();
+            procesosInscripcion = em.createQuery("SELECT p from  ProcesosInscripcion p where p.idProcesosInscripcion=8",ProcesosInscripcion.class).getResultStream().findFirst().orElse(null);
+            /*
             procesosInscripcion = em.createQuery("select p from ProcesosInscripcion p where :fecha between p.fechaInicio and p.fechaFin and p.activoNi=:tipo", ProcesosInscripcion.class)
                     .setParameter("fecha", new Date())
                     .setParameter("tipo",true)
                     .getResultStream()
                     .findFirst()
                     .orElse(null)
-            ;
+            ;}*/
             if (procesosInscripcion == null) {
                 return ResultadoEJB.crearErroneo(2, procesosInscripcion, "No se encontro proceso de inscripción");
             } else {
@@ -456,6 +469,9 @@ public class EjbRegistroFichaAdmision {
                 case 17:                    e.setR17Alergia(valor);                    break;
                 case 18:                    e.setR18padecesEnfermedad(valor);                    break;
                 case 19:                    e.setR19tratamientoMedico(valor);                    break;
+                case 20:                    e.setR20Hijos(valor);                    break;
+                case 21:                    e.setR21noHijos(valor);                    break;
+
             }
 
             switch (operacion) {
@@ -676,7 +692,7 @@ public class EjbRegistroFichaAdmision {
                     "ATENTAMENTE \n" +
                     "Departamento de Servicios Escolares";
 
-            String identificador = "Registro de Ficha de Admisión 2020 UTXJ";
+            String identificador = "Registro de Ficha de Admisión 2021 UTXJ";
             String asunto = "Registro Exitoso";
             System.out.println(medioComunicacion.getEmail());
             if(medioComunicacion.getEmail() != null){
@@ -714,11 +730,11 @@ public class EjbRegistroFichaAdmision {
                 return ResultadoEJB.crearErroneo(2, rr, "La curp no debe ser nula");
             }
             //System.out.println("2");
-            /*if (persona.getEstado() > 32) {
+            if (persona.getEstado() > 32) {
                 //System.out.println("E");
                 return ResultadoEJB.crearErroneo(5, rr, "Usted es nacido en el extranjero, favor de dirigirse al Departamento de servicios escolares");
             }
-            */else {
+            else {
                 //System.out.println("3" +persona.getEstado()+ " " + persona.getCurp());
                 ResultadoEJB<Persona> resPersona = getPersonabyCurp(persona.getCurp());
                 ResultadoEJB<Pais> resPaisO = getPaisOrigenByEstado(persona.getEstado());
@@ -819,6 +835,36 @@ public class EjbRegistroFichaAdmision {
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obeneter medio de comunicacion por persona(EjbRegistroFichaAdmision.getMedioCbyPersona).", e, null);
         }
+    }
+
+    /**
+     * Busca los datos de la encuesta vocacional por persona
+     * @param personaR Dto de la persona
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DtoAspirante.EncuestaVocacionalR> getEncuestaVocacionalbyPersona(@NonNull DtoAspirante.PersonaR personaR){
+        try{
+            EncuestaVocacional ev= new EncuestaVocacional();
+            DtoAspirante.EncuestaVocacionalR dtoVocacional = new DtoAspirante.EncuestaVocacionalR(ev,new AreasUniversidad(),Operacion.PERSISTIR,false);
+            if(personaR==null){return ResultadoEJB.crearErroneo(2,dtoVocacional,"La persona no debe ser nulo");}
+            ResultadoEJB<EncuestaVocacional> resEn = ejbEncuestaVocacional.getResultados(personaR.getPersona());
+            ev= resEn.getValor();
+
+            if(resEn.getCorrecto()){
+                dtoVocacional.setOperacion(Operacion.ACTUALIZAR);
+                dtoVocacional.setEcontrado(true);
+                dtoVocacional.setEncuestaAspirante(ev);
+                if(ev.getR4()!=null){
+                    //Busca el programa educativo por clave
+                    dtoVocacional.setCarreraSelect(ejbProcesoInscripcion.buscaAreaByClave(resEn.getValor().getR4()));
+                    return ResultadoEJB.crearCorrecto(dtoVocacional,"Datos de la encuesta vocacional encontrados");
+                }else {
+                    dtoVocacional.setCarreraSelect(new AreasUniversidad());
+                     return ResultadoEJB.crearCorrecto(dtoVocacional,"Datos de la encuesta vocacional encontrados");
+                }
+            }else {return ResultadoEJB.crearErroneo(3,dtoVocacional,"No se encontraron datos de la encuesta vocacional");}
+        }catch (Exception e){return ResultadoEJB.crearErroneo(1, "No se pudo obtener la encuesta vocacional (EjbRegistroFichaAdmision.getEncuesraVocacionalbyPersona)", e, null); }
+
     }
 
     /**

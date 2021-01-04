@@ -105,6 +105,12 @@ public class EncuestaAspirante implements Serializable {
     @Size(max = 2)
     @Column(name = "r19_tratamientoMedico")
     private String r19tratamientoMedico;
+    @Size(max = 2)
+    @Column(name = "r20_hijos")
+    private String r20Hijos;
+    @Size(max = 10)
+    @Column(name = "r21_noHijos")
+    private String r21noHijos;
     @JoinColumn(name = "cve_aspirante", referencedColumnName = "id_aspirante", insertable = false, updatable = false)
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Aspirante aspirante;
@@ -313,6 +319,23 @@ public class EncuestaAspirante implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaAspirante[ cveAspirante=" + cveAspirante + " ]";
+    }
+
+
+    public String getR20Hijos() {
+        return r20Hijos;
+    }
+
+    public void setR20Hijos(String r20Hijos) {
+        this.r20Hijos = r20Hijos;
+    }
+
+    public String getR21noHijos() {
+        return r21noHijos;
+    }
+
+    public void setR21noHijos(String r21noHijos) {
+        this.r21noHijos = r21noHijos;
     }
     
 }
