@@ -1923,7 +1923,7 @@
                                                                                     <td>20.1</td>
                                                                                     <td style="text-align: justify;">Número de hijos</td>
                                                                                     <td class="danger text-center" style="min-width: 120px;">
-                                                                                        <p:spinner id="p21" value="#{registroFichaAdmisionAspirante.rol.encuesta.encuestaAspirante.r21noHijos}" valueChangeListener="#{registroFichaAdmisionAspirante.saveEncuesta}" min="0" >
+                                                                                        <p:spinner id="p21" value="#{registroFichaAdmisionAspirante.rol.encuesta.encuestaAspirante.r21noHijos}" valueChangeListener="#{registroFichaAdmisionAspirante.saveEncuesta}" min="1" >
                                                                                             <p:ajax update="@this,:tbv, :frmStep" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
 
                                                                                         </p:spinner>

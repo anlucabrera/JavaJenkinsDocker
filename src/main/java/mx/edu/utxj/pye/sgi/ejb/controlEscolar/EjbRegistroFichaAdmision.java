@@ -106,9 +106,7 @@ public class EjbRegistroFichaAdmision {
      */
     public ResultadoEJB<EventoEscolar> verificaEvento() {
         try {
-           // return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.REGISTRO_FICHAS_ADMISION);
-            EventoEscolar ev =em.createQuery("select e from EventoEscolar e where e.evento=58",EventoEscolar.class).getResultStream().findFirst().orElse(null);
-            return ResultadoEJB.crearCorrecto(ev,"");
+           return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.REGISTRO_FICHAS_ADMISION);
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para el registro de fichas de admision (EjbRegistroFichaAdmision.verificaEvento).", e, EventoEscolar.class);
         }
@@ -117,15 +115,13 @@ public class EjbRegistroFichaAdmision {
     public ResultadoEJB<ProcesosInscripcion> getProcesosInscripcionActivo() {
         try {
             ProcesosInscripcion procesosInscripcion = new ProcesosInscripcion();
-            procesosInscripcion = em.createQuery("SELECT p from  ProcesosInscripcion p where p.idProcesosInscripcion=8",ProcesosInscripcion.class).getResultStream().findFirst().orElse(null);
-            /*
             procesosInscripcion = em.createQuery("select p from ProcesosInscripcion p where :fecha between p.fechaInicio and p.fechaFin and p.activoNi=:tipo", ProcesosInscripcion.class)
                     .setParameter("fecha", new Date())
                     .setParameter("tipo",true)
                     .getResultStream()
                     .findFirst()
                     .orElse(null)
-            ;}*/
+            ;
             if (procesosInscripcion == null) {
                 return ResultadoEJB.crearErroneo(2, procesosInscripcion, "No se encontro proceso de inscripción");
             } else {
