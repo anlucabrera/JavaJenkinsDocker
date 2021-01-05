@@ -451,9 +451,12 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             if(rol.getEncuesta().getEncuestaAspirante().getR17Alergia()!= null){tt=tt+1;}
             if(rol.getEncuesta().getEncuestaAspirante().getR18padecesEnfermedad()!= null){tt=tt+1;}
             if(rol.getEncuesta().getEncuestaAspirante().getR19tratamientoMedico()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR20Hijos().equals("Si")){
-                if(rol.getEncuesta().getEncuestaAspirante().getR21noHijos()!=null){tt=tt+1;}
-            }else if(rol.getEncuesta().getEncuestaAspirante().getR20Hijos().equals("No")){tt=tt+1;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR20Hijos()!=null){
+                if(rol.getEncuesta().getEncuestaAspirante().getR20Hijos().equals("No")){ tt=tt+1;
+                }else if(rol.getEncuesta().getEncuestaAspirante().getR20Hijos().equals("Si")){
+                    if(rol.getEncuesta().getEncuestaAspirante().getR21noHijos()!=null){tt=tt+1;}
+                }
+            }
             if(rol.getEncuesta().getEncuestaAspirante().getR1Lenguaindigena().equals("Si") && tt==20){
                 rol.setFinalizado(Boolean.TRUE);
             }else if(rol.getEncuesta().getEncuestaAspirante().getR1Lenguaindigena().equals("No") && tt==19){
