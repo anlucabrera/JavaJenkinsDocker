@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.omnifaces.util.Messages;
 
 @Named
 @ViewScoped
@@ -237,13 +238,19 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
         @NonNull DtoCargaAcademica dtoCargaAcademica = (DtoCargaAcademica)event.getComponent().getAttributes().get("carga");
         @NonNull DtoEstudiante dtoEstudiante = (DtoEstudiante) event.getComponent().getAttributes().get("estudiante");
         @NonNull Double valor = Double.parseDouble(event.getNewValue().toString());
-        getContenedor(dtoCargaAcademica).getTareaIntegradoraPromedioMap().get(dtoEstudiante).setValor(valor);
-        ResultadoEJB<TareaIntegradoraPromedio> guardarCalificacion = ejb.guardarCalificacion(rol.getTareaIntegradoraMap().get(dtoCargaAcademica), getContenedor(dtoCargaAcademica), dtoEstudiante);
-        ResultadoEJB<BigDecimal> promediarAsignatura = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica), rol.getCargaAcademicaSeleccionada(), dtoEstudiante);
-        if(guardarCalificacion.getCorrecto() && promediarAsignatura.getCorrecto()) {
-            getContenedor(dtoCargaAcademica).getTareaIntegradoraPromedioMap().put(dtoEstudiante, guardarCalificacion.getValor());
+        Boolean validarReins = existeReinscripcion(dtoCargaAcademica, dtoEstudiante);
+        if (!validarReins) {
+            getContenedor(dtoCargaAcademica).getTareaIntegradoraPromedioMap().get(dtoEstudiante).setValor(valor);
+            ResultadoEJB<TareaIntegradoraPromedio> guardarCalificacion = ejb.guardarCalificacion(rol.getTareaIntegradoraMap().get(dtoCargaAcademica), getContenedor(dtoCargaAcademica), dtoEstudiante);
+            ResultadoEJB<BigDecimal> promediarAsignatura = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica), rol.getCargaAcademicaSeleccionada(), dtoEstudiante);
+            if (guardarCalificacion.getCorrecto() && promediarAsignatura.getCorrecto()) {
+                getContenedor(dtoCargaAcademica).getTareaIntegradoraPromedioMap().put(dtoEstudiante, guardarCalificacion.getValor());
+            } else {
+                mostrarMensajeResultadoEJB(guardarCalificacion);
+            }
+        } else {
+            Messages.addGlobalFatal("El estudiante ya se reinscribió al siguiente cuatrimestre, no se puede actualizar el resultado de tarea integradora");
         }
-        else mostrarMensajeResultadoEJB(guardarCalificacion);
     }
 
     public void guardarNivelacion(ValueChangeEvent event){
@@ -251,21 +258,26 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
 //        System.out.println("dtoCargaAcademica = " + dtoCargaAcademica);
         @NonNull DtoEstudiante dtoEstudiante = (DtoEstudiante) event.getComponent().getAttributes().get("estudiante");
 //        System.out.println("dtoEstudiante = " + dtoEstudiante);
-        if(event.getNewValue() instanceof Double){
-            Double valor = (Double)event.getNewValue();
-            if(getNivelacion(dtoCargaAcademica, dtoEstudiante) != null) {
-                getNivelacion(dtoCargaAcademica, dtoEstudiante).getCalificacionNivelacion().setValor(valor);
-                ResultadoEJB<CalificacionNivelacion> guardarNivelacion = ejb.guardarNivelacion(getContenedor(dtoCargaAcademica), dtoEstudiante);
-                if(!guardarNivelacion.getCorrecto()) mostrarMensajeResultadoEJB(guardarNivelacion);
-            }
-        }else if(event.getNewValue() instanceof  Indicador){
-            Indicador indicador = (Indicador)event.getNewValue();
+        Boolean validarReins = existeReinscripcion(dtoCargaAcademica, dtoEstudiante);
+        if(!validarReins){
+            if(event.getNewValue() instanceof Double){
+                Double valor = (Double)event.getNewValue();
+                if(getNivelacion(dtoCargaAcademica, dtoEstudiante) != null) {
+                    getNivelacion(dtoCargaAcademica, dtoEstudiante).getCalificacionNivelacion().setValor(valor);
+                    ResultadoEJB<CalificacionNivelacion> guardarNivelacion = ejb.guardarNivelacion(getContenedor(dtoCargaAcademica), dtoEstudiante);
+                    if(!guardarNivelacion.getCorrecto()) mostrarMensajeResultadoEJB(guardarNivelacion);
+                }
+            }else if(event.getNewValue() instanceof  Indicador){
+                Indicador indicador = (Indicador)event.getNewValue();
 //            System.out.println("indicador controller = " + indicador);
-            if(getNivelacion(dtoCargaAcademica, dtoEstudiante) != null) {
-                getNivelacion(dtoCargaAcademica, dtoEstudiante).setIndicador(indicador);
-                ResultadoEJB<CalificacionNivelacion> guardarNivelacion = ejb.guardarNivelacion(getContenedor(dtoCargaAcademica), dtoEstudiante);
-                if(!guardarNivelacion.getCorrecto()) mostrarMensajeResultadoEJB(guardarNivelacion);
+                if(getNivelacion(dtoCargaAcademica, dtoEstudiante) != null) {
+                    getNivelacion(dtoCargaAcademica, dtoEstudiante).setIndicador(indicador);
+                    ResultadoEJB<CalificacionNivelacion> guardarNivelacion = ejb.guardarNivelacion(getContenedor(dtoCargaAcademica), dtoEstudiante);
+                    if(!guardarNivelacion.getCorrecto()) mostrarMensajeResultadoEJB(guardarNivelacion);
+                }
             }
+        }else{
+            Messages.addGlobalFatal("El estudiante ya se reinscribió al siguiente cuatrimestre, no se puede actualizar el resultado de nivelación");
         }
 
     }
@@ -348,4 +360,13 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             return Boolean.TRUE;
         }
     }
+    
+    public Boolean existeReinscripcion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
+        ResultadoEJB<Boolean> estudianteReinscrito = ejbCapturaCalificaciones.existeReinscripcion(dtoCargaAcademica.getCargaAcademica().getEvento().getPeriodo(), dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula());
+        if(estudianteReinscrito.getValor()){
+                return Boolean.TRUE;
+            }else{
+                return Boolean.FALSE;
+            }
+        }
 }
