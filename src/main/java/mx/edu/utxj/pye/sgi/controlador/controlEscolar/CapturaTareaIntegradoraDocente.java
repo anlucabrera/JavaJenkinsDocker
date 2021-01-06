@@ -368,5 +368,5 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             }else{
                 return Boolean.FALSE;
             }
-        }
+    }
 }

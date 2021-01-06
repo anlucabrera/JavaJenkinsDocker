@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE resources PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Resource Definitions//EN" "http://glassfish.org/dtds/glassfish-resources_1_5.dtd">
 <resources>
-<!--    <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="auto-commit" datasource-classname="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="30000" max-wait-time-in-millis="60000" name="mysql_capital_humano_sgiPool" non-transactional-connections="false" pool-resize-quantity="2" res-type="javax.sql.DataSource" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="false">
+    <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="auto-commit" datasource-classname="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="30000" max-wait-time-in-millis="60000" name="mysql_capital_humano_sgiPool" non-transactional-connections="false" pool-resize-quantity="2" res-type="javax.sql.DataSource" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="false">
         <property name="serverName" value="localhost"/>
         <property name="portNumber" value="3306"/>
         <property name="databaseName" value="capital_humano"/>
@@ -83,114 +83,5 @@
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>
     <jdbc-resource enabled="true" jndi-name="java:app/jdbc/control_escolar" object-type="user" pool-name="mysql_control_escolar_sgiPool"/>
-    <jdbc-resource enabled="true" jndi-name="java:app/prontuario" object-type="user" pool-name="mysql_prontuario_sgiPool"/>-->
-    
-    <jdbc-connection-pool
-            allow-non-component-callers="false"
-            associate-with-thread="false"
-            connection-creation-retry-attempts="0"
-            connection-creation-retry-interval-in-seconds="10"
-            connection-leak-reclaim="false"
-            connection-leak-timeout-in-seconds="0"
-            connection-validation-method="auto-commit"
-            datasource-classname="com.mysql.jdbc.jdbc2.optional.MysqlDataSource"
-            fail-all-connections="false"
-            idle-timeout-in-seconds="300"
-            is-connection-validation-required="false"
-            is-isolation-level-guaranteed="true"
-            lazy-connection-association="false"
-            lazy-connection-enlistment="false"
-            match-connections="false"
-            max-connection-usage-count="0"
-            max-pool-size="30000"
-            max-wait-time-in-millis="60000"
-            name="mysql_capital_humano_rootPool"
-            non-transactional-connections="false"
-            pool-resize-quantity="2"
-            res-type="javax.sql.DataSource"
-            statement-timeout-in-seconds="-1"
-            steady-pool-size="8"
-            validate-atmost-once-period-in-seconds="0"
-            wrap-jdbc-objects="false">
-        <property name="serverName" value="localhost"/>
-        <property name="portNumber" value="3306"/>
-        <property name="databaseName" value="capital_humano"/>
-        <property name="User" value="root"/>
-        <property name="Password" value="pye2018"/>
-        <property name="URL" value="jdbc:mysql://localhost:3306/capital_humano?zeroDateTimeBehavior=convertToNull"/>
-        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-    </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="java:app/jdbc/capital_humano" object-type="user" pool-name="mysql_capital_humano_rootPool"/>
-    <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="auto-commit" datasource-classname="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="3000" max-wait-time-in-millis="60000" name="mysql_prontuario_rootPool" non-transactional-connections="false" pool-resize-quantity="2" res-type="javax.sql.DataSource" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="false">
-        <property name="serverName" value="localhost"/>
-        <property name="portNumber" value="3306"/>
-        <property name="databaseName" value="prontuario"/>
-        <property name="User" value="root"/>
-        <property name="Password" value="pye2018"/>
-        <property name="URL" value="jdbc:mysql://localhost:3306/prontuario?zeroDateTimeBehavior=convertToNull"/>
-        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-    </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="java:app/jdbc/prontuario" object-type="user" pool-name="mysql_prontuario_rootPool"/>
-    <!-- Comentar la siguiente conexión cuando falle saiiut -->
-    <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="auto-commit" datasource-classname="com.microsoft.sqlserver.jdbc.SQLServerDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="3000" max-wait-time-in-millis="60000" name="microsoft_sql_saiiut_planeacionPool2" non-transactional-connections="false" pool-resize-quantity="2" res-type="javax.sql.DataSource" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="false">
-        <property name="serverName" value="150.140.1.11"/>
-        <property name="databaseName" value="saiiut"/>
-        <property name="User" value="planeacion"/>
-        <property name="Password" value="piccoto$86$"/>
-        <property name="URL" value="jdbc:sqlserver://150.140.1.11;databaseName=saiiut"/>
-        <property name="driverClass" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-    </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="java:app/jdbc/saiiut" object-type="user" pool-name="microsoft_sql_saiiut_planeacionPool2"/>
-    <!--  Fin de conexión -->
-    <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="auto-commit" datasource-classname="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="3000" max-wait-time-in-millis="60000" name="mysql_sescolares_rootPool" non-transactional-connections="false" pool-resize-quantity="2" res-type="javax.sql.DataSource" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="false">
-        <property name="serverName" value="localhost"/>
-        <property name="portNumber" value="3306"/>
-        <property name="databaseName" value="sescolares"/>
-        <property name="User" value="root"/>
-        <property name="Password" value="pye2018"/>
-        <property name="URL" value="jdbc:mysql://localhost:3306/sescolares?zeroDateTimeBehavior=convertToNull"/>
-        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-    </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="java:app/jdbc/sescolares" object-type="user" pool-name="mysql_sescolares_rootPool"/>
-    <!--Se elimino coneccion duplicada a SAIIUT -->
-    <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="auto-commit" datasource-classname="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="3200" max-wait-time-in-millis="60000" name="mysql_pye2_rootPool" non-transactional-connections="false" pool-resize-quantity="2" res-type="javax.sql.DataSource" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="false">
-        <property name="serverName" value="localhost"/>
-        <property name="portNumber" value="3306"/>
-        <property name="databaseName" value="pye2"/>
-        <property name="User" value="root"/>
-        <property name="Password" value="pye2018"/>
-        <property name="URL" value="jdbc:mysql://localhost:3306/pye2?zeroDateTimeBehavior=convertToNull"/>
-        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-    </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="java:app/jdbc/pye2" object-type="user" pool-name="mysql_pye2_rootPool"/>
-    <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="auto-commit" datasource-classname="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="3200" max-wait-time-in-millis="60000" name="mysql_finanzas_rootPool" non-transactional-connections="false" pool-resize-quantity="2" res-type="javax.sql.DataSource" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="false">
-        <property name="serverName" value="localhost"/>
-        <property name="portNumber" value="3306"/>
-        <property name="databaseName" value="finanzas"/>
-        <property name="User" value="root"/>
-        <property name="Password" value="spellm@ster_rc4"/>
-        <property name="URL" value="jdbc:mysql://localhost:3306/finanzas?zeroDateTimeBehavior=convertToNull"/>
-        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-    </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="java:app/jdbc/finanzas" object-type="user" pool-name="mysql_finanzas_rootPool"/>
-    <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="auto-commit" datasource-classname="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="3200" max-wait-time-in-millis="60000" name="mysql_shiro_rootPool" non-transactional-connections="false" pool-resize-quantity="2" res-type="javax.sql.DataSource" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="false">
-        <property name="serverName" value="localhost"/>
-        <property name="portNumber" value="3306"/>
-        <property name="databaseName" value="shiro"/>
-        <property name="User" value="root"/>
-        <property name="Password" value="pye2018"/>
-        <property name="URL" value="jdbc:mysql://localhost:3306/shiro?zeroDateTimeBehavior=convertToNull"/>
-        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-    </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="java:app/jdbc/shiro" object-type="user" pool-name="mysql_shiro_rootPool"/>
-    <jdbc-connection-pool allow-non-component-callers="false" associate-with-thread="false" connection-creation-retry-attempts="0" connection-creation-retry-interval-in-seconds="10" connection-leak-reclaim="false" connection-leak-timeout-in-seconds="0" connection-validation-method="auto-commit" datasource-classname="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" fail-all-connections="false" idle-timeout-in-seconds="300" is-connection-validation-required="false" is-isolation-level-guaranteed="true" lazy-connection-association="false" lazy-connection-enlistment="false" match-connections="false" max-connection-usage-count="0" max-pool-size="3200" max-wait-time-in-millis="60000" name="mysql_control_escolar_rootPool" non-transactional-connections="false" pool-resize-quantity="2" res-type="javax.sql.DataSource" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="false">
-        <property name="serverName" value="localhost"/>
-        <property name="portNumber" value="3306"/>
-        <property name="databaseName" value="control_escolar"/>
-        <property name="User" value="root"/>
-        <property name="Password" value="pye2018"/>
-        <property name="URL" value="jdbc:mysql://localhost:3306/control_escolar?zeroDateTimeBehavior=convertToNull"/>
-        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-    </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="java:app/jdbc/control_escolar" object-type="user" pool-name="mysql_control_escolar_rootPool"/>
+    <jdbc-resource enabled="true" jndi-name="java:app/prontuario" object-type="user" pool-name="mysql_prontuario_sgiPool"/>
 </resources>
