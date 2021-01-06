@@ -239,7 +239,7 @@ public class ServicioArchivos implements Serializable{
         if(!extensiones.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())){
             throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
         }
-
+        
         String ruta = ServicioArchivos.genRutaRelativa(
                 String.valueOf(eventosRegistros.getEjercicioFiscal().getAnio()), //ejercicio fiscal
                 area.getSiglas(),

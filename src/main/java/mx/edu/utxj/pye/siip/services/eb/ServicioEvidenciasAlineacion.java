@@ -102,14 +102,18 @@ public class ServicioEvidenciasAlineacion implements EjbEvidenciasAlineacion{
         f.create(evidencias);
         f.flush();
         f.refresh(evidencias);
+        
+        Registros regBD = em.find(Registros.class, registro);
+        
+//        EventosRegistros eventRegBD = em.find(EventosRegistros.class, regBD.getEventoRegistro().getEventoRegistro());
 
         AreasUniversidad areaPOA = ejbFiscalizacion.getAreaConPOA((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
         RegistrosTipo tipo = f.getEntityManager().find(RegistrosTipo.class, registrosTipo.getRegistroTipo());
         f.refresh(tipo);
         archivos.forEach(archivo -> {
             try{
-                String rutaAbsoluta = ServicioArchivos.almacenarEvidenciaRegistroSII(areaPOA, registro, archivo, eventosRegistros, tipo);
-                EvidenciasDetalle ed = new EvidenciasDetalle(0, rutaAbsoluta, archivo.getContentType(), archivo.getSize(), eventosRegistros.getMes());
+                String rutaAbsoluta = ServicioArchivos.almacenarEvidenciaRegistroSII(areaPOA, registro, archivo, regBD.getEventoRegistro(), tipo);
+                EvidenciasDetalle ed = new EvidenciasDetalle(0, rutaAbsoluta, archivo.getContentType(), archivo.getSize(), regBD.getEventoRegistro().getMes());
                 evidencias.getEvidenciasDetalleList().add(ed);
                 ed.setEvidencia(evidencias);
                 f.create(ed);
