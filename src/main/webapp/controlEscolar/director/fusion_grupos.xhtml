@@ -109,7 +109,7 @@
                                         </div>
                                         <div class="#{casilla4}">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="grupo" value="#{fusionGruposDirector.rol.grupoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                <p:selectOneMenu id="grupo" value="#{fusionGruposDirector.rol.grupoSeleccionado}" converter="entityConverter" styleClass="form-control" onchange="">
                                                     <f:selectItem value="#{null}" itemLabel="Cambiar grupo"/>
                                                     <f:selectItems value="#{fusionGruposDirector.rol.grupos}" var="grupo" itemValue="#{grupo}"
                                                                    itemLabel="#{grupo.grado}° #{grupo.literal}" />
@@ -161,8 +161,8 @@
                                                                 class="#{true?'btn btn-info btn-sm':'btn btn-warning btn-sm'}"
                                                                 rendered="#{grupo ne fusionGruposDirector.rol.grupoSeleccionado}"
                                                                 actionListener="#{fusionGruposDirector.fusionarGrupo(grupo)}"
-                                                                title="Mover al grupo: #{grupo.literal}">
-                                                                Mover al grupo: #{grupo.literal}
+                                                                title="Mover al grupo: #{grupo.grado}° #{grupo.literal}">
+                                                                Mover al grupo: #{grupo.grado}° #{grupo.literal}
                                                             <p:confirm header="Mover al grupo: #{grupo.literal}"
                                                                        message="¿Está seguro que desea mover el/los estudiantes al grupo #{grupo.grado}° #{grupo.literal}?"/>
                                                         </p:commandLink>
