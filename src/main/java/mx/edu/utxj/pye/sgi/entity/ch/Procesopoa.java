@@ -6,7 +6,9 @@
 package mx.edu.utxj.pye.sgi.entity.ch;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,9 +19,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -89,6 +93,8 @@ public class Procesopoa implements Serializable {
     @NotNull
     @Column(name = "ejercicioFiscalEtapa2")
     private short ejercicioFiscalEtapa2;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "procesoPOA")
+    private List<Permisosevaluacionpoaex> permisosevaluacionpoaexList;
     @Column(name = "activaEtapa1")
     private Boolean activaEtapa1;
     @Column(name = "activaEtapa2")
@@ -129,13 +135,6 @@ public class Procesopoa implements Serializable {
         this.procesoPOA = procesoPOA;
     }
 
-    public short getArea() {
-        return area;
-    }
-
-    public void setArea(short area) {
-        this.area = area;
-    }
 
     public Integer getResponsable() {
         return responsable;
@@ -143,6 +142,64 @@ public class Procesopoa implements Serializable {
 
     public void setResponsable(Integer responsable) {
         this.responsable = responsable;
+    }
+
+
+    public Boolean getActivaEtapa1() {
+        return activaEtapa1;
+    }
+
+    public void setActivaEtapa1(Boolean activaEtapa1) {
+        this.activaEtapa1 = activaEtapa1;
+    }
+
+    public Boolean getActivaEtapa2() {
+        return activaEtapa2;
+    }
+
+    public void setActivaEtapa2(Boolean activaEtapa2) {
+        this.activaEtapa2 = activaEtapa2;
+    }
+
+    public Calendarioevaluacionpoa getEvaluacion() {
+        return evaluacion;
+    }
+
+    public void setEvaluacion(Calendarioevaluacionpoa evaluacion) {
+        this.evaluacion = evaluacion;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (procesoPOA != null ? procesoPOA.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Procesopoa)) {
+            return false;
+        }
+        Procesopoa other = (Procesopoa) object;
+        if ((this.procesoPOA == null && other.procesoPOA != null) || (this.procesoPOA != null && !this.procesoPOA.equals(other.procesoPOA))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "mx.edu.utxj.pye.sgi.entity.ch.Procesopoa[ procesoPOA=" + procesoPOA + " ]";
+    }
+
+    public short getArea() {
+        return area;
+    }
+
+    public void setArea(short area) {
+        this.area = area;
     }
 
     public boolean getRegistroAFinalizado() {
@@ -209,53 +266,13 @@ public class Procesopoa implements Serializable {
         this.ejercicioFiscalEtapa2 = ejercicioFiscalEtapa2;
     }
 
-    public Boolean getActivaEtapa1() {
-        return activaEtapa1;
+    @XmlTransient
+    public List<Permisosevaluacionpoaex> getPermisosevaluacionpoaexList() {
+        return permisosevaluacionpoaexList;
     }
 
-    public void setActivaEtapa1(Boolean activaEtapa1) {
-        this.activaEtapa1 = activaEtapa1;
-    }
-
-    public Boolean getActivaEtapa2() {
-        return activaEtapa2;
-    }
-
-    public void setActivaEtapa2(Boolean activaEtapa2) {
-        this.activaEtapa2 = activaEtapa2;
-    }
-
-    public Calendarioevaluacionpoa getEvaluacion() {
-        return evaluacion;
-    }
-
-    public void setEvaluacion(Calendarioevaluacionpoa evaluacion) {
-        this.evaluacion = evaluacion;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (procesoPOA != null ? procesoPOA.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Procesopoa)) {
-            return false;
-        }
-        Procesopoa other = (Procesopoa) object;
-        if ((this.procesoPOA == null && other.procesoPOA != null) || (this.procesoPOA != null && !this.procesoPOA.equals(other.procesoPOA))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.ch.Procesopoa[ procesoPOA=" + procesoPOA + " ]";
+    public void setPermisosevaluacionpoaexList(List<Permisosevaluacionpoaex> permisosevaluacionpoaexList) {
+        this.permisosevaluacionpoaexList = permisosevaluacionpoaexList;
     }
     
 }

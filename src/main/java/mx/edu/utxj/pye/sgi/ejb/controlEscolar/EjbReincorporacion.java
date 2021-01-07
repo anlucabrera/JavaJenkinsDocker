@@ -322,6 +322,7 @@ public class EjbReincorporacion {
 //------------------------------------------------------------------------Busquedas A------------------------------------------------------------------------//
     public ResultadoEJB<DtoReincorporacion.General> getDtoReincorporacion(String curp,Boolean esEscolares) {
         try {
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(1)");
             Boolean encontrado=Boolean.FALSE;
             DtoReincorporacion.PersonaR pr = new DtoReincorporacion.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE);
             DtoReincorporacion.AspiranteR ar = new DtoReincorporacion.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE);
@@ -334,32 +335,50 @@ public class EjbReincorporacion {
             List<DtoReincorporacion.EstudianteR> es = new ArrayList<>();
             List<DtoReincorporacion.AlineacionCalificaciones> al = new ArrayList<>();
             
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(2)");
+            
             ResultadoEJB<DtoReincorporacion.PersonaR> resPR = getPersonaR(curp);
             if (resPR.getCorrecto()) {
+                System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(3)");
                 pr = resPR.getValor();
                 if (pr.getEcontrado()) {
+                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(4)");
                     ResultadoEJB<DtoReincorporacion.AspiranteR> resAR = getAspiranteR(pr.getPersona());
                     if (resAR.getCorrecto()) {
+                        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(5)");
                         ar = resAR.getValor();
                         if (ar.getEcontrado()) {
+                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(6)");
                             ResultadoEJB<DtoReincorporacion.FamiliaresR> resFR = getFamiliaresR(ar.getAspirante());
                             ResultadoEJB<DtoReincorporacion.AcademicosR> resAC = getAcademicosR(ar.getAspirante());
+                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(7)");
                             ResultadoEJB<DtoReincorporacion.DomicilioR> resDR = getDomicilioR(ar.getAspirante());
+                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(8)");
                             ResultadoEJB<DtoReincorporacion.EncuestaR> resER = getEncuestaR(ar.getAspirante());
+                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(9)");
                             ResultadoEJB< List<DtoReincorporacion.EstudianteR>> resES = getEstudianteR(ar.getAspirante());
+                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(10)");
                             if (resFR.getCorrecto()) {fr = resFR.getValor();if(fr.getEcontrado()){tr=fr.getTutorR();}}
+                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(11)");
                             if (resAC.getCorrecto()) {ac = resAC.getValor();}
+                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(12)");
                             if (resDR.getCorrecto()) {dr = resDR.getValor();}
+                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(13)");
                             if (resER.getCorrecto()) {er = resER.getValor();}  
+                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(14)");
                             if (resES.getCorrecto()) {
+                                System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(15)");
                                 es = resES.getValor();
                                 if(!es.isEmpty()){
                                     ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> resAl = getAlineacionCalificaciones(ar.getAspirante(),esEscolares);
-                                    if (resAl.getCorrecto()) {al = resAl.getValor();}
+                                    if (resAl.getCorrecto()) {
+                                        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(16)");
+                                        al = resAl.getValor();}
                                 }
                             }      
                         }
                     }
+                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(17)");
                     ResultadoEJB<DtoReincorporacion.MedicosR> resMR = getMedicosR(pr.getPersona());
                        
                     if (resMR.getCorrecto()) {mr = resMR.getValor();}
@@ -573,67 +592,70 @@ public class EjbReincorporacion {
             List<DtoReincorporacion.AlineacionCalificaciones> rr = new ArrayList<>();
             if (!das.isEmpty()) {
                 das.forEach((t) -> {
-                    List<DtoReincorporacion.CalificacionesR> crs = new ArrayList<>();
-                    List<CargaAcademica> cas = new ArrayList<>();
-                    Boolean validar = Boolean.FALSE;
-                    if (!t.getGrupo().getCargaAcademicaList().isEmpty()) {
-                        cas = t.getGrupo().getCargaAcademicaList();
-                        cas.forEach((cg) -> {
-                            List<CalificacionPromedio> cps = em.createQuery("select d from CalificacionPromedio d INNER JOIN d.estudiante a INNER JOIN d.cargaAcademica c WHERE a.idEstudiante=:idEstudiante AND c.carga=:carga", CalificacionPromedio.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("carga", cg.getCarga()).getResultList();
-                            List<CalificacionNivelacion> cns = em.createQuery("select d from CalificacionNivelacion d INNER JOIN d.estudiante a INNER JOIN d.cargaAcademica c WHERE a.idEstudiante=:idEstudiante AND c.carga=:carga", CalificacionNivelacion.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("carga", cg.getCarga()).getResultList();
-                            Personal p = new Personal();
-                            CalificacionPromedio cp = new CalificacionPromedio();
-                            CalificacionNivelacion cn = new CalificacionNivelacion();
+                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getAlineacionCalificaciones()"+t.getTipoEstudiante().getIdTipoEstudiante());
+                    if (!t.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("2"))) {
+                        List<DtoReincorporacion.CalificacionesR> crs = new ArrayList<>();
+                        List<CargaAcademica> cas = new ArrayList<>();
+                        Boolean validar = Boolean.FALSE;
+                        if (!t.getGrupo().getCargaAcademicaList().isEmpty()) {
+                            cas = t.getGrupo().getCargaAcademicaList();
+                            cas.forEach((cg) -> {
+                                List<CalificacionPromedio> cps = em.createQuery("select d from CalificacionPromedio d INNER JOIN d.estudiante a INNER JOIN d.cargaAcademica c WHERE a.idEstudiante=:idEstudiante AND c.carga=:carga", CalificacionPromedio.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("carga", cg.getCarga()).getResultList();
+                                List<CalificacionNivelacion> cns = em.createQuery("select d from CalificacionNivelacion d INNER JOIN d.estudiante a INNER JOIN d.cargaAcademica c WHERE a.idEstudiante=:idEstudiante AND c.carga=:carga", CalificacionNivelacion.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("carga", cg.getCarga()).getResultList();
+                                Personal p = new Personal();
+                                CalificacionPromedio cp = new CalificacionPromedio();
+                                CalificacionNivelacion cn = new CalificacionNivelacion();
 
-                            try {
-                                p = ejbPersonal.mostrarPersonalLogeado(cg.getDocente());
-                            } catch (Throwable ex) {
-                                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-                            }
-                            Boolean editable = Boolean.TRUE;
-                            Boolean ordinaria = Boolean.TRUE;
-                            if (!cps.isEmpty()) {
-                                cp = cps.get(0);
-                                if (!cns.isEmpty()) {
-                                    cn = cns.get(0);
-                                    if (cp.getValor() > cn.getValor()) {
-                                        ordinaria = Boolean.TRUE;
+                                try {
+                                    p = ejbPersonal.mostrarPersonalLogeado(cg.getDocente());
+                                } catch (Throwable ex) {
+                                    Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+                                }
+                                Boolean editable = Boolean.TRUE;
+                                Boolean ordinaria = Boolean.TRUE;
+                                if (!cps.isEmpty()) {
+                                    cp = cps.get(0);
+                                    if (!cns.isEmpty()) {
+                                        cn = cns.get(0);
+                                        if (cp.getValor() > cn.getValor()) {
+                                            ordinaria = Boolean.TRUE;
+                                        } else {
+                                            cp.setValor(cn.getValor());
+                                            ordinaria = Boolean.FALSE;
+                                        }
                                     } else {
-                                        cp.setValor(cn.getValor());
-                                        ordinaria = Boolean.FALSE;
+                                        ordinaria = Boolean.TRUE;
                                     }
+                                    if (cp.getTipo().equals("Oficial")) {
+                                        editable = Boolean.FALSE;
+                                    } else if (esEscolares && (t.getTipoRegistro().equals("Equivalencia") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
+                                        editable = Boolean.FALSE;
+                                    } else if (!esEscolares && (t.getTipoRegistro().equals("Equivalencia") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
+                                        editable = Boolean.TRUE;
+                                    } else {
+                                        editable = esEscolares;
+                                    }
+                                    crs.add(new DtoReincorporacion.CalificacionesR(cg, cg.getIdPlanMateria(), cg.getIdPlanMateria().getIdMateria(), p, cp, editable, ordinaria, Operacion.PERSISTIR, Boolean.FALSE));
                                 } else {
-                                    ordinaria = Boolean.TRUE;
+
+                                    if (!esEscolares && (t.getTipoRegistro().equals("Equivalencia") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
+                                        editable = Boolean.TRUE;
+                                    } else if (t.getTipoRegistro().equals("Equivalencia") && esEscolares) {
+                                        editable = Boolean.FALSE;
+                                    } else {
+                                        editable = esEscolares;
+                                    }
+                                    crs.add(new DtoReincorporacion.CalificacionesR(cg, cg.getIdPlanMateria(), cg.getIdPlanMateria().getIdMateria(), p, new CalificacionPromedio(), editable, ordinaria, Operacion.ACTUALIZAR, Boolean.TRUE));
                                 }
-                                if (cp.getTipo().equals("Oficial")) {
-                                    editable = Boolean.FALSE;
-                                } else if (esEscolares && (t.getTipoRegistro().equals("Equivalencia") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
-                                    editable = Boolean.FALSE;
-                                } else if (!esEscolares && (t.getTipoRegistro().equals("Equivalencia") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
-                                    editable = Boolean.TRUE;
-                                } else {
-                                    editable = esEscolares;
-                                }
-                                crs.add(new DtoReincorporacion.CalificacionesR(cg, cg.getIdPlanMateria(), cg.getIdPlanMateria().getIdMateria(), p, cp, editable, ordinaria, Operacion.PERSISTIR, Boolean.FALSE));
-                            } else {
-                                
-                                if (!esEscolares && (t.getTipoRegistro().equals("Equivalencia") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
-                                    editable = Boolean.TRUE;
-                                } else if (t.getTipoRegistro().equals("Equivalencia") && esEscolares) {
-                                    editable = Boolean.FALSE;
-                                } else {
-                                    editable = esEscolares;
-                                }
-                                crs.add(new DtoReincorporacion.CalificacionesR(cg, cg.getIdPlanMateria(), cg.getIdPlanMateria().getIdMateria(), p, new CalificacionPromedio(), editable, ordinaria, Operacion.ACTUALIZAR, Boolean.TRUE));
-                            }
-                        });
+                            });
+                        }
+                        if (crs.stream().filter(cal -> cal.getCalificacionPromedio().getValor() < 8D).collect(Collectors.toList()).isEmpty()) {
+                            validar = Boolean.TRUE;
+                        } else {
+                            validar = Boolean.FALSE;
+                        }
+                        rr.add(new DtoReincorporacion.AlineacionCalificaciones(t, t.getGrupo(), crs, validar, Operacion.ACTUALIZAR, Boolean.TRUE));
                     }
-                    if (crs.stream().filter(cal -> cal.getCalificacionPromedio().getValor() < 8D).collect(Collectors.toList()).isEmpty()) {
-                        validar = Boolean.TRUE;
-                    } else {
-                        validar = Boolean.FALSE;
-                    }
-                    rr.add(new DtoReincorporacion.AlineacionCalificaciones(t, t.getGrupo(), crs, validar, Operacion.ACTUALIZAR, Boolean.TRUE));
                 });
             }
             return ResultadoEJB.crearCorrecto(rr, "EstudianteR Encontrados");

@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -67,6 +68,8 @@ public class Calendarioevaluacionpoa implements Serializable {
     @NotNull
     @Column(name = "justificacion")
     private boolean justificacion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluacionPOA")
+    private List<Permisosevaluacionpoaex> permisosevaluacionpoaexList;
     @OneToMany(mappedBy = "evaluacion", fetch = FetchType.LAZY)
     private List<Procesopoa> procesopoaList;
 
@@ -91,6 +94,41 @@ public class Calendarioevaluacionpoa implements Serializable {
 
     public void setEvaluacionPOA(Integer evaluacionPOA) {
         this.evaluacionPOA = evaluacionPOA;
+    }
+
+
+    @XmlTransient
+    public List<Procesopoa> getProcesopoaList() {
+        return procesopoaList;
+    }
+
+    public void setProcesopoaList(List<Procesopoa> procesopoaList) {
+        this.procesopoaList = procesopoaList;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (evaluacionPOA != null ? evaluacionPOA.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Calendarioevaluacionpoa)) {
+            return false;
+        }
+        Calendarioevaluacionpoa other = (Calendarioevaluacionpoa) object;
+        if ((this.evaluacionPOA == null && other.evaluacionPOA != null) || (this.evaluacionPOA != null && !this.evaluacionPOA.equals(other.evaluacionPOA))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa[ evaluacionPOA=" + evaluacionPOA + " ]";
     }
 
     public Date getFechaInicio() {
@@ -126,37 +164,12 @@ public class Calendarioevaluacionpoa implements Serializable {
     }
 
     @XmlTransient
-    public List<Procesopoa> getProcesopoaList() {
-        return procesopoaList;
+    public List<Permisosevaluacionpoaex> getPermisosevaluacionpoaexList() {
+        return permisosevaluacionpoaexList;
     }
 
-    public void setProcesopoaList(List<Procesopoa> procesopoaList) {
-        this.procesopoaList = procesopoaList;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (evaluacionPOA != null ? evaluacionPOA.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Calendarioevaluacionpoa)) {
-            return false;
-        }
-        Calendarioevaluacionpoa other = (Calendarioevaluacionpoa) object;
-        if ((this.evaluacionPOA == null && other.evaluacionPOA != null) || (this.evaluacionPOA != null && !this.evaluacionPOA.equals(other.evaluacionPOA))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa[ evaluacionPOA=" + evaluacionPOA + " ]";
+    public void setPermisosevaluacionpoaexList(List<Permisosevaluacionpoaex> permisosevaluacionpoaexList) {
+        this.permisosevaluacionpoaexList = permisosevaluacionpoaexList;
     }
     
 }

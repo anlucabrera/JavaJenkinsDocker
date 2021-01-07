@@ -173,6 +173,27 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         rol.setAreasAcademicasPo(ejb.getAreasUniversidad().getValor());
         rol.setAreasAcademicasSo(ejb.getAreasUniversidad().getValor());
         rol.setTipoEstudiantes(ejb.getTiposEstudiante().getValor());
+        rol.setComunicacion(new MedioComunicacion());
+        rol.setPersonaD(new DtoReincorporacion.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE));
+        rol.setAspirante(new DtoReincorporacion.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE));
+        rol.setDmedico(new DtoReincorporacion.MedicosR(new DatosMedicos(), new TipoSangre(), new TipoDiscapacidad(), Operacion.PERSISTIR, Boolean.FALSE));
+        rol.setTutor(new DtoReincorporacion.TutorR(new TutorFamiliar(), Operacion.PERSISTIR, Boolean.FALSE));
+        rol.setDfamiliares(new DtoReincorporacion.FamiliaresR(new DatosFamiliares(), rol.getTutor(), new Ocupacion(), new Ocupacion(), new Escolaridad(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE));
+        rol.setDdomicilios(new DtoReincorporacion.DomicilioR(new Domicilio(), Boolean.FALSE, Operacion.PERSISTIR, Boolean.FALSE));
+        rol.setDacademicos(new DtoReincorporacion.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE));
+        rol.setEncuesta(new DtoReincorporacion.EncuestaR(new EncuestaAspirante(), new LenguaIndigena(), new MedioDifusion(), Operacion.PERSISTIR, Boolean.FALSE));
+        rol.setRein(new DtoReincorporacion.ProcesoInscripcionRein("", "", 0, Boolean.TRUE, 0, "", new ArrayList<>(), new Documentosentregadosestudiante()));
+        rol.setEstudianteR(new ArrayList<>());
+        rol.setCalificacionesR(new ArrayList<>());
+        rol.setEstudiantesReincorporaciones(new ArrayList<>());
+        rol.setPaso(0);
+        rol.setTipo(0);
+        rol.setExtran(Boolean.FALSE);
+        rol.setFinalizado(Boolean.FALSE);
+        rol.setEditarCalificaciones(Boolean.FALSE);
+        rol.setNombreR("Seleccione Un Tipo");
+        rol.setTipoCal("Regulatoria");
+        rol.setPuedeValidar(Boolean.FALSE);
     }        
 
 // Validaciones Acceso
@@ -380,6 +401,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     }
 
      public void buscarRegistro(){
+         inicializarValoresEscolares();
         ResultadoEJB<DtoReincorporacion.General> resAcceso = ejb.getDtoReincorporacion(rol.getCurpBusqueda(),rol.getEsEscolares()); 
         if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}
         rol.setGeneral(resAcceso.getValor());        

@@ -1098,6 +1098,32 @@
                                                                                 </p:selectOneRadio >
                                                                             </td>
                                                                         </tr><!-- 19 -->
+
+                                                                        <!-- 20 -->
+                                                                        <tr>
+                                                                            <td>20.0</td>
+                                                                            <td style="text-align: justify;">¿Tienes hijos?</td>
+                                                                            <td class="danger text-center" style="min-width: 120px;">
+                                                                                <p:selectOneRadio id="p20" value="#{reincorporacionServiciosEscolares.rol.encuesta.encuestaAspirante.r20Hijos}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{reincorporacionServiciosEscolares.saveEncuesta}">
+                                                                                    <f:selectItem itemLabel="Si" itemValue="Si" />
+                                                                                    <f:selectItem itemLabel="No" itemValue="No" />
+                                                                                    <p:ajax update="@form" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                </p:selectOneRadio >
+                                                                            </td>
+                                                                        </tr>
+                                                                        <c:if test="#{reincorporacionServiciosEscolares.rol.encuesta.encuestaAspirante.r20Hijos eq 'Si'}">
+                                                                            <!-- 20.1 -->
+                                                                            <tr>
+                                                                                <td>20.1</td>
+                                                                                <td style="text-align: justify;">Número de hijos</td>
+                                                                                <td class="danger text-center" style="min-width: 120px;">
+                                                                                    <p:spinner id="p21" value="#{reincorporacionServiciosEscolares.rol.encuesta.encuestaAspirante.r21noHijos}" valueChangeListener="#{reincorporacionServiciosEscolares.saveEncuesta}" min="1" >
+                                                                                        <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+
+                                                                                    </p:spinner>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </c:if>
                                                                     </tbody>
                                                                 </table>
                                                             </div>

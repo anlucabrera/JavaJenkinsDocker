@@ -17,6 +17,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
 
 /**
@@ -57,5 +58,12 @@ public class EjbAdministrador {
         em.remove(nuevoConfiguracionPropiedades);
         em.flush();
         return nuevoConfiguracionPropiedades;
+    }
+    
+    public Calendarioevaluacionpoa actualizarCalendarioPoa(Calendarioevaluacionpoa calendarioevaluacionpoa){
+        facade.setEntityClass(Calendarioevaluacionpoa.class);
+        facade.edit(calendarioevaluacionpoa);
+        facade.flush();
+        return calendarioevaluacionpoa;
     }
 }
