@@ -393,4 +393,24 @@ public class EjbCapturaCalificaciones {
             return ResultadoEJB.crearErroneo(1, "No se pudo verificar si la captura de calificaciones por unidad está completa (EjbCapturaCalificaciones.verificarCapturaCompleta).", e, Boolean.TYPE);
         }
     }
+    
+     /**
+     * Permite comprobar si el estudiante ya se inscribió al siguiente cuatrimestre
+     * @param periodo periodo de la carga académica
+     * @param matricula matricula del estudiante
+     * @return Regresa TRUE/FALSE según la comprobación o código de error en caso de no poder realizar la comprobación
+     */
+    public ResultadoEJB<Boolean> existeReinscripcion(Integer periodo, Integer matricula){
+        try{
+            Integer periodoSig = periodo + 1;
+            //
+            Estudiante estudiante = em.createQuery("select e from Estudiante e where e.matricula =:matricula and e.periodo =:periodo", Estudiante.class)
+                    .setParameter("matricula", matricula)
+                    .setParameter("periodo", periodoSig)
+                    .getResultStream().findFirst().orElse(null);
+            return ResultadoEJB.crearCorrecto(estudiante != null, "Se comprobó que el estudiante ya se reinscribió al siguiente cuatrimestre");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
 }
