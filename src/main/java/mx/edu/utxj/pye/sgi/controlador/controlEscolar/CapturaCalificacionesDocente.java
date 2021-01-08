@@ -177,18 +177,23 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         captura.getCalificacion().setValor(valor);
         rol.getCalificacionMap().put(captura.getCalificacion().getCalificacion(), valor);
         Boolean validarReins = existeReinscripcion(dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoEstudiante());
+        Boolean validarNivelacion = existeNivelacion(dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoEstudiante());
         if (!validarReins) {
-            ResultadoEJB<Calificacion> res = ejb.guardarCapturaCalificacion(captura);
-            ResultadoEJB<BigDecimal> resPromedio = ejb.promediarUnidad(dtoCapturaCalificacion);
-            if(res.getCorrecto() && resPromedio.getCorrecto()) {
-                rol.getEstudiantesPorGrupo().actualizarCalificacion(res.getValor(), resPromedio.getValor());
-                dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
+            if (!validarNivelacion) {
+                ResultadoEJB<Calificacion> res = ejb.guardarCapturaCalificacion(captura);
+                ResultadoEJB<BigDecimal> resPromedio = ejb.promediarUnidad(dtoCapturaCalificacion);
+                    if(res.getCorrecto() && resPromedio.getCorrecto()) {
+                    rol.getEstudiantesPorGrupo().actualizarCalificacion(res.getValor(), resPromedio.getValor());
+                    dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
 
-                ResultadoEJB<DtoCasoCritico> registrarPorReprobacion = ejbCasoCritico.registrarPorReprobacion(dtoCapturaCalificacion);
-                if(registrarPorReprobacion.getCorrecto()) mostrarMensaje("Se generó un caso crítico automáticamente por promedio reprobatorio.");
-                else if(registrarPorReprobacion.getResultado() < 4) mostrarMensajeResultadoEJB(registrarPorReprobacion);
+                    ResultadoEJB<DtoCasoCritico> registrarPorReprobacion = ejbCasoCritico.registrarPorReprobacion(dtoCapturaCalificacion);
+                    if(registrarPorReprobacion.getCorrecto()) mostrarMensaje("Se generó un caso crítico automáticamente por promedio reprobatorio.");
+                    else if(registrarPorReprobacion.getResultado() < 4) mostrarMensajeResultadoEJB(registrarPorReprobacion);
+                    }
+                    else mostrarMensajeResultadoEJB(res);
+            } else {
+            Messages.addGlobalFatal("El estudiante ya tiene nivelación final registrada, no se puede actualizar una calificación ordinaria");
             }
-            else mostrarMensajeResultadoEJB(res);
         } else {
             Messages.addGlobalFatal("El estudiante ya se reinscribió al siguiente cuatrimestre, no se puede actualizar una calificación ordinaria");
         }
@@ -259,6 +264,15 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
     public Boolean existeReinscripcion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
         ResultadoEJB<Boolean> estudianteReinscrito = ejb.existeReinscripcion(dtoCargaAcademica.getCargaAcademica().getEvento().getPeriodo(), dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula());
         if(estudianteReinscrito.getValor()){
+                return Boolean.TRUE;
+            }else{
+                return Boolean.FALSE;
+            }
+    }
+    
+    public Boolean existeNivelacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
+        ResultadoEJB<Boolean> registroNivelacion = ejb.existeNivelacion(dtoCargaAcademica.getCargaAcademica(), dtoEstudiante.getInscripcionActiva().getInscripcion());
+        if(registroNivelacion.getValor()){
                 return Boolean.TRUE;
             }else{
                 return Boolean.FALSE;

@@ -413,4 +413,22 @@ public class EjbCapturaCalificaciones {
             return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
         }
     }
+    
+     /**
+     * Permite comprobar si el estudiante tiene resultado de nivelación final registrado
+     * @param cargaAcademica carga académica
+     * @param estudiante estudiante
+     * @return Regresa TRUE/FALSE según la comprobación o código de error en caso de no poder realizar la comprobación
+     */
+    public ResultadoEJB<Boolean> existeNivelacion(CargaAcademica cargaAcademica, Estudiante estudiante){
+        try{
+            CalificacionNivelacion nivelacion = em.createQuery("select c from CalificacionNivelacion c where c.cargaAcademica.carga =:carga and c.estudiante.idEstudiante =:estudiante", CalificacionNivelacion.class)
+                    .setParameter("carga", cargaAcademica.getCarga())
+                    .setParameter("estudiante", estudiante.getIdEstudiante())
+                    .getResultStream().findFirst().orElse(null);
+            return ResultadoEJB.crearCorrecto(nivelacion != null, "Se comprobó que el estudiante tiene resultado de nivelación registrado");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
 }
