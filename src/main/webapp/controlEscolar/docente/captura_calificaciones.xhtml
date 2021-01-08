@@ -140,7 +140,7 @@
                                                                             process="@this"
                                                                             actionListener="#{capturaCalificacionesDocente.iniciarRegistroCasoCritico(estudiante)}"
                                                                             oncomplete="PF('modalCasoCritico').show();"
-                                                                            title="Presione el botón para registrar caso crítico.">
+                                                                            title="Presione el botón para registrar caso crítico. #{estudiante.permisoExtInd}">
                                                                 <i class="fa fa-check-square"/>
                                                             </p:commandLink>
                                                         </p:column>
@@ -148,9 +148,13 @@
                                                             <c:forEach var="detalle" items="#{unidadConfiguracion.unidadMateriaConfiguracionDetalles[criterio]}">
                                                                 <p:column>
                                                                     <c:if test="#{!(unidadConfiguracion.activaPorFecha or unidadConfiguracion.activaPorAperturaExtemporanea)}">
-                                                                        <h:outputText value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.valor}" >
-                                                                            <f:convertNumber pattern="0.##" type="number" />
-                                                                        </h:outputText>
+                                                                        <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.calificacion]}"
+                                                                                       valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}" disabled="#{!estudiante.permisoExtInd}"
+                                                                                       inputStyle="text-align: center;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero="" >
+                                                                            <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />
+                                                                            <f:attribute name="captura" value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas)}" />
+                                                                            <f:attribute name="dtoCapturaCalificacion" value="#{estudiante}" />
+                                                                        </p:inputNumber>
                                                                     </c:if>
                                                                     <c:if test="#{unidadConfiguracion.activaPorFecha or unidadConfiguracion.activaPorAperturaExtemporanea}">
                                                                         <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.calificacion]}"
