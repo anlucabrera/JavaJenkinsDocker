@@ -74,7 +74,7 @@ public class ServiciosAreasLogeo implements EjbAreasLogeo {
     public AreasUniversidad mostrarAreasUniversidad(Short areaId) throws Throwable {
         AreasUniversidad pr = em.find(AreasUniversidad.class, areaId);
         if (pr == null) {
-            return null;
+            return new AreasUniversidad(areaId, "No se encintro área", "S/A", "1", true);
         } else {
             return pr;
         }

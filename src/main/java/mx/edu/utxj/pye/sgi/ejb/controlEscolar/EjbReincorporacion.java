@@ -350,6 +350,7 @@ public class EjbReincorporacion {
                         if (ar.getEcontrado()) {
                             System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(6)");
                             ResultadoEJB<DtoReincorporacion.FamiliaresR> resFR = getFamiliaresR(ar.getAspirante());
+                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(6.5)");
                             ResultadoEJB<DtoReincorporacion.AcademicosR> resAC = getAcademicosR(ar.getAspirante());
                             System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(7)");
                             ResultadoEJB<DtoReincorporacion.DomicilioR> resDR = getDomicilioR(ar.getAspirante());
@@ -516,7 +517,9 @@ public class EjbReincorporacion {
 
     public ResultadoEJB<DtoReincorporacion.AcademicosR> getAcademicosR(Aspirante a) {
         try {
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getAcademicosR(A)");
             List<DatosAcademicos> das = em.createQuery("select d from DatosAcademicos d INNER JOIN d.aspirante1 a WHERE a.idAspirante=:idAspirante", DatosAcademicos.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getAcademicosR(B)"+das.size());
             DtoReincorporacion.AcademicosR rr = new DtoReincorporacion.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE);
             if (!das.isEmpty()) {
                 DatosAcademicos da = das.get(0);
