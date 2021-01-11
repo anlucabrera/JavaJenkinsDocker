@@ -10,6 +10,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCasoCritico;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistraPromedioAsignatura;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
@@ -47,6 +48,7 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
     @Getter @Setter private CapturaCalificacionesRolDocente rol;
     @EJB EjbCapturaCalificaciones ejb;
     @EJB EjbCasoCritico ejbCasoCritico;
+    @EJB EjbRegistraPromedioAsignatura ejbRegistraPromedioAsignatura;
     @EJB EjbPacker packer;
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
@@ -187,7 +189,9 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
                     if(res.getCorrecto() && resPromedio.getCorrecto()) {
                     rol.getEstudiantesPorGrupo().actualizarCalificacion(res.getValor(), resPromedio.getValor());
                     dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
-
+                    
+                    registrarPromediosAsignatura(dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoEstudiante());
+                    
                     ResultadoEJB<DtoCasoCritico> registrarPorReprobacion = ejbCasoCritico.registrarPorReprobacion(dtoCapturaCalificacion);
                     if(registrarPorReprobacion.getCorrecto()) mostrarMensaje("Se generó un caso crítico automáticamente por promedio reprobatorio.");
                     else if(registrarPorReprobacion.getResultado() < 4) mostrarMensajeResultadoEJB(registrarPorReprobacion);
@@ -292,4 +296,12 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         }
     }
     
+    public void registrarPromediosAsignatura(DtoCargaAcademica dtoCargaAcademica, DtoEstudiante dtoEstudiante)
+    {
+        try {
+            ejbRegistraPromedioAsignatura.registrarPromediosAsignatura(dtoCargaAcademica, dtoEstudiante);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

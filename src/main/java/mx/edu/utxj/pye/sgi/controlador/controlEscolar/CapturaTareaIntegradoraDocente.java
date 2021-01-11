@@ -239,14 +239,19 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
         @NonNull DtoEstudiante dtoEstudiante = (DtoEstudiante) event.getComponent().getAttributes().get("estudiante");
         @NonNull Double valor = Double.parseDouble(event.getNewValue().toString());
         Boolean validarReins = existeReinscripcion(dtoCargaAcademica, dtoEstudiante);
+        Boolean validarNivelacion = existeNivelacion(dtoCargaAcademica, dtoEstudiante);
         if (!validarReins) {
-            getContenedor(dtoCargaAcademica).getTareaIntegradoraPromedioMap().get(dtoEstudiante).setValor(valor);
-            ResultadoEJB<TareaIntegradoraPromedio> guardarCalificacion = ejb.guardarCalificacion(rol.getTareaIntegradoraMap().get(dtoCargaAcademica), getContenedor(dtoCargaAcademica), dtoEstudiante);
-            ResultadoEJB<BigDecimal> promediarAsignatura = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica), rol.getCargaAcademicaSeleccionada(), dtoEstudiante);
-            if (guardarCalificacion.getCorrecto() && promediarAsignatura.getCorrecto()) {
-                getContenedor(dtoCargaAcademica).getTareaIntegradoraPromedioMap().put(dtoEstudiante, guardarCalificacion.getValor());
-            } else {
-                mostrarMensajeResultadoEJB(guardarCalificacion);
+            if (!validarNivelacion) {
+                getContenedor(dtoCargaAcademica).getTareaIntegradoraPromedioMap().get(dtoEstudiante).setValor(valor);
+                ResultadoEJB<TareaIntegradoraPromedio> guardarCalificacion = ejb.guardarCalificacion(rol.getTareaIntegradoraMap().get(dtoCargaAcademica), getContenedor(dtoCargaAcademica), dtoEstudiante);
+                ResultadoEJB<BigDecimal> promediarAsignatura = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica), rol.getCargaAcademicaSeleccionada(), dtoEstudiante);
+                if (guardarCalificacion.getCorrecto() && promediarAsignatura.getCorrecto()) {
+                    getContenedor(dtoCargaAcademica).getTareaIntegradoraPromedioMap().put(dtoEstudiante, guardarCalificacion.getValor());
+                } else {
+                    mostrarMensajeResultadoEJB(guardarCalificacion);
+                }
+           } else {
+            Messages.addGlobalFatal("El estudiante ya tiene nivelación final registrada, no se puede actualizar calificación tarea integradora");
             }
         } else {
             Messages.addGlobalFatal("El estudiante ya se reinscribió al siguiente cuatrimestre, no se puede actualizar el resultado de tarea integradora");
@@ -364,6 +369,15 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
     public Boolean existeReinscripcion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
         ResultadoEJB<Boolean> estudianteReinscrito = ejbCapturaCalificaciones.existeReinscripcion(dtoCargaAcademica.getCargaAcademica().getEvento().getPeriodo(), dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula());
         if(estudianteReinscrito.getValor()){
+                return Boolean.TRUE;
+            }else{
+                return Boolean.FALSE;
+            }
+    }
+    
+     public Boolean existeNivelacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
+        ResultadoEJB<Boolean> registroNivelacion = ejbCapturaCalificaciones.existeNivelacion(dtoCargaAcademica.getCargaAcademica(), dtoEstudiante.getInscripcionActiva().getInscripcion());
+        if(registroNivelacion.getValor()){
                 return Boolean.TRUE;
             }else{
                 return Boolean.FALSE;
