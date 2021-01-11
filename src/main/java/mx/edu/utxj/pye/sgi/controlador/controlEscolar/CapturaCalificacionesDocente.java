@@ -34,6 +34,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Messages;
@@ -50,7 +51,7 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
     @Inject Caster caster;
-    @Getter Boolean tieneAcceso = false;
+    @Getter @Setter Boolean tieneAcceso = false, existeAperturaInd = false;
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
@@ -166,6 +167,7 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         if(!resGrupo.getCorrecto()) mostrarMensajeResultadoEJB(resGrupo);
         else {
             rol.setEstudiantesPorGrupo(resGrupo.getValor());
+            setExisteAperturaInd(existeAperturaIndividual(rol.getEstudiantesPorGrupo().getEstudiantes()));
 //            System.out.println("resGrupo = " + resGrupo.getValor().getEstudiantes().size());
         }
     }
@@ -278,4 +280,16 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
                 return Boolean.FALSE;
             }
     }
+    
+    public Boolean existeAperturaIndividual(@NonNull List<DtoCapturaCalificacion> estudiantes){
+        
+        List<DtoCapturaCalificacion> listaAperturas = estudiantes.stream().filter(a -> a.getPermisoExtInd()).collect(Collectors.toList());
+        
+        if(listaAperturas.isEmpty()){
+            return Boolean.FALSE;
+        }else{
+            return Boolean.TRUE;
+        }
+    }
+    
 }

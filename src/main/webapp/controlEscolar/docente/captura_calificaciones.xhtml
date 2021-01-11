@@ -147,18 +147,23 @@
                                                         <c:forEach var="criterio" items="#{capturaCalificacionesDocente.rol.getCriteriosEnUnidad(unidadConfiguracion)}">
                                                             <c:forEach var="detalle" items="#{unidadConfiguracion.unidadMateriaConfiguracionDetalles[criterio]}">
                                                                 <p:column>
-                                                                    <c:if test="#{!(unidadConfiguracion.activaPorFecha or unidadConfiguracion.activaPorAperturaExtemporanea)}">
+                                                                    <c:if test="#{!(unidadConfiguracion.activaPorFecha or unidadConfiguracion.activaPorAperturaExtemporanea or capturaCalificacionesDocente.existeAperturaInd)}">
+                                                                       <h:outputText value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.valor}" >
+                                                                            <f:convertNumber pattern="0.##" type="number" />
+                                                                        </h:outputText>
+                                                                    </c:if>
+                                                                    <c:if test="#{unidadConfiguracion.activaPorFecha or unidadConfiguracion.activaPorAperturaExtemporanea}">
                                                                         <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.calificacion]}"
-                                                                                       valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}" disabled="#{!estudiante.permisoExtInd}"
+                                                                                       valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}"
                                                                                        inputStyle="text-align: center;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero="" >
                                                                             <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />
                                                                             <f:attribute name="captura" value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas)}" />
                                                                             <f:attribute name="dtoCapturaCalificacion" value="#{estudiante}" />
                                                                         </p:inputNumber>
                                                                     </c:if>
-                                                                    <c:if test="#{unidadConfiguracion.activaPorFecha or unidadConfiguracion.activaPorAperturaExtemporanea}">
+                                                                    <c:if test="#{capturaCalificacionesDocente.existeAperturaInd}">
                                                                         <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.calificacion]}"
-                                                                                       valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}"
+                                                                                       valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}" disabled="#{!estudiante.permisoExtInd}"
                                                                                        inputStyle="text-align: center;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero="" >
                                                                             <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />
                                                                             <f:attribute name="captura" value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas)}" />
