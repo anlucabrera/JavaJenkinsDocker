@@ -161,7 +161,7 @@
                                                                             <f:attribute name="dtoCapturaCalificacion" value="#{estudiante}" />
                                                                         </p:inputNumber>
                                                                     </c:if>
-                                                                    <c:if test="#{capturaCalificacionesDocente.existeAperturaInd}">
+                                                                    <c:if test="#{capturaCalificacionesDocente.existeAperturaInd and !unidadConfiguracion.activaPorFecha and !unidadConfiguracion.activaPorAperturaExtemporanea}">
                                                                         <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalle(detalle, estudiante.capturas).calificacion.calificacion]}"
                                                                                        valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}" disabled="#{!estudiante.permisoExtInd}"
                                                                                        inputStyle="text-align: center;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero="" >
