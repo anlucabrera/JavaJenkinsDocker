@@ -50,7 +50,7 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
     @Inject Caster caster;
-    @Getter @Setter Boolean tieneAcceso = false, existeAperIndNiv = false;
+    @Getter @Setter Boolean tieneAcceso = false, existeAperIndNiv = false, existeAperGrupalTI = false, existeAperIndTI = false;
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
@@ -201,7 +201,6 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
         ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica), dtoCargaAcademica, dtoEstudiante);
         if(res.getCorrecto()){
             setExisteAperIndNiv(existeAperIndNivelacion(dtoCargaAcademica, dtoEstudiante));
-            System.err.println("setExisteAperIndNiv - matricula: " + dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula() +" valor: "+ getExisteAperIndNiv() );
             return res.getValor();
         }else{
             mostrarMensaje(String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", dtoEstudiante.getPersona().getApellidoPaterno(), dtoEstudiante.getPersona().getApellidoMaterno(), dtoEstudiante.getPersona().getNombre(), dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula()));
@@ -396,4 +395,27 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
                 return Boolean.FALSE;
         }
     }
+    
+    public Boolean existeAperGrupalTareaInt(@NonNull DtoCargaAcademica dtoCargaAcademica){
+        
+        ResultadoEJB<Boolean> aperturaGrupTI = ejb.existeAperGrupalTI(dtoCargaAcademica);
+        
+        if(aperturaGrupTI.getValor()){
+                return Boolean.TRUE;
+            }else{
+                return Boolean.FALSE;
+        }
+    }
+    
+    public Boolean existeAperIndTareaInt(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
+        
+        ResultadoEJB<Boolean> aperturaIndTI = ejb.existeAperIndTI(dtoCargaAcademica, dtoEstudiante);
+        
+        if(aperturaIndTI.getValor()){
+                return Boolean.TRUE;
+            }else{
+                return Boolean.FALSE;
+        }
+    }
+    
 }

@@ -205,7 +205,7 @@ public class EjbPermisoAperturaExtemporanea {
      */
     public ResultadoEJB<List<String>> getTiposEvaluaciones(){
         try{
-            List<String> tiposEvaluaciones = Stream.of("Ordinaria", "Nivelación Final").collect(Collectors.toList());
+            List<String> tiposEvaluaciones = Stream.of("Ordinaria", "Tarea Integradora" ,"Nivelación Final").collect(Collectors.toList());
             return ResultadoEJB.crearCorrecto(tiposEvaluaciones, "Lista de tipos de evaluaciones.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de tipos de evaluaciones. (EjbPermisoAperturaExtemporanea.getTiposEvaluaciones)", e, null);
@@ -349,6 +349,44 @@ public class EjbPermisoAperturaExtemporanea {
             return ResultadoEJB.crearCorrecto(permisosCapturaExtemporaneaGrupal, "El permiso de captura extemporánea ordinaria se ha registrado correctamente.");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar el permiso de captura extemporánea ordinaria. (EjbPermisoAperturaExtemporanea.guardarPermisoCapturaOrdinaria)", e, null);
+        }
+    }
+    
+     /**
+     * Permite guardar el permiso de captura extemporánea para tarea integradora
+     * @param cargaAcademica Carga Académica para obtener parametros como: periodo, grupo, plan materia y docente.
+     * @param tipoEvaluacion Tipo de evaluación a registrar en este caso Nivelación Final
+     * @param fechaInicio Fecha inicio para el permiso de captura
+     * @param fechaFin Fecha fin para el permiso de captura
+     * @param justificacion Justificación por la que el docente solicita el permiso
+     * @param administrador Personal administrador que registra el permiso
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<PermisosCapturaExtemporaneaGrupal> guardarPermisoCapturaTI(DtoCargaAcademica cargaAcademica, String tipoEvaluacion, Date fechaInicio, Date fechaFin, JustificacionPermisosExtemporaneos justificacion, PersonalActivo administrador){
+        try{   
+            
+            Date fechaFinCompleta = obtenerFechaFin(fechaFin);
+            
+            PermisosCapturaExtemporaneaGrupal permisosCapturaExtemporaneaGrupal = new PermisosCapturaExtemporaneaGrupal();
+            permisosCapturaExtemporaneaGrupal.setPeriodo(cargaAcademica.getCargaAcademica().getEvento().getPeriodo());
+            permisosCapturaExtemporaneaGrupal.setIdGrupo(cargaAcademica.getGrupo());
+            permisosCapturaExtemporaneaGrupal.setIdPlanMateria(cargaAcademica.getPlanEstudioMateria());
+            permisosCapturaExtemporaneaGrupal.setDocente(cargaAcademica.getDocente().getPersonal().getClave());
+            permisosCapturaExtemporaneaGrupal.setTipoEvaluacion(tipoEvaluacion);
+            permisosCapturaExtemporaneaGrupal.setIdUnidadMateria(null);
+            permisosCapturaExtemporaneaGrupal.setFechaInicio(fechaInicio);
+            permisosCapturaExtemporaneaGrupal.setFechaFin(fechaFinCompleta);
+            permisosCapturaExtemporaneaGrupal.setJustificacionPermiso(justificacion);
+            permisosCapturaExtemporaneaGrupal.setPersonalGrabaPermiso(administrador.getPersonal().getClave());
+            permisosCapturaExtemporaneaGrupal.setFechaGrabaPermiso(new Date());
+            permisosCapturaExtemporaneaGrupal.setTipoApertura("Planeacion");
+            permisosCapturaExtemporaneaGrupal.setValidada(1);
+            em.persist(permisosCapturaExtemporaneaGrupal);
+            f.flush();
+            
+            return ResultadoEJB.crearCorrecto(permisosCapturaExtemporaneaGrupal, "El permiso de captura extemporánea de tarea integradora se ha registrado correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar el permiso de captura extemporánea de tarea integradora. (EjbPermisoAperturaExtemporanea.guardarPermisoCapturaTI)", e, null);
         }
     }
     

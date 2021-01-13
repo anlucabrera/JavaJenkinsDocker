@@ -138,7 +138,7 @@
                                                                         </c:forEach>
                                                                         <c:if test="#{capturaTareaIntegradoraDocente.tieneIntegradora(carga)}">
                                                                             <td role="gridcell">
-                                                                                <p:selectOneMenu
+                                                                                <p:selectOneMenu disabled="#{!capturaTareaIntegradoraDocente.existeAperGrupalTareaInt(carga) and !capturaTareaIntegradoraDocente.existeAperIndTareaInt(carga,estudiante)}"
                                                                                         value="#{capturaTareaIntegradoraDocente.getContenedor(carga).tareaIntegradoraPromedioMap[estudiante].valor}"
                                                                                         valueChangeListener="#{capturaTareaIntegradoraDocente.guardarCalificacion}">
                                                                                     <f:selectItems value="#{tareaIntegradoraParametro.parametros}" var="par" itemLabel="#{par.label}" itemValue="#{par.valor}" />
