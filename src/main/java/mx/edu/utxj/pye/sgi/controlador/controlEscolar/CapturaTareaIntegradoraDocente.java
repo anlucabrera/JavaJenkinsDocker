@@ -50,7 +50,7 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
     @Inject Caster caster;
-    @Getter Boolean tieneAcceso = false;
+    @Getter @Setter Boolean tieneAcceso = false, existeAperIndNiv = false;
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
@@ -121,14 +121,14 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             e.printStackTrace();
         }
 
-        try {
-            if(rol.getDocenteLogueado().getPersonal().getClave().intValue() == 169) {
-                ResultadoEJB<Point> registrarMasivamentePromedios = ejbRegistraPromedioAsignatura.registrarMasivamentePromedios();
-                System.out.println("registrarMasivamentePromedios = " + registrarMasivamentePromedios);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+//        try {
+//            if(rol.getDocenteLogueado().getPersonal().getClave().intValue() == 169) {
+//                ResultadoEJB<Point> registrarMasivamentePromedios = ejbRegistraPromedioAsignatura.registrarMasivamentePromedios();
+//                System.out.println("registrarMasivamentePromedios = " + registrarMasivamentePromedios);
+//            }
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
     }
 
     public void actualizar(){
@@ -200,6 +200,8 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
     public BigDecimal getPromedioAsignaturaEstudiante(@NonNull DtoEstudiante dtoEstudiante, @NonNull DtoCargaAcademica dtoCargaAcademica){
         ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica), dtoCargaAcademica, dtoEstudiante);
         if(res.getCorrecto()){
+            setExisteAperIndNiv(existeAperIndNivelacion(dtoCargaAcademica, dtoEstudiante));
+            System.err.println("setExisteAperIndNiv - matricula: " + dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula() +" valor: "+ getExisteAperIndNiv() );
             return res.getValor();
         }else{
             mostrarMensaje(String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", dtoEstudiante.getPersona().getApellidoPaterno(), dtoEstudiante.getPersona().getApellidoMaterno(), dtoEstudiante.getPersona().getNombre(), dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula()));
@@ -382,5 +384,16 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             }else{
                 return Boolean.FALSE;
             }
+    }
+     
+    public Boolean existeAperIndNivelacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
+        
+        ResultadoEJB<Boolean> aperturaIndNiv = ejb.existeAperIndNivelacion(dtoCargaAcademica, dtoEstudiante);
+        
+        if(aperturaIndNiv.getValor()){
+                return Boolean.TRUE;
+            }else{
+                return Boolean.FALSE;
+        }
     }
 }
