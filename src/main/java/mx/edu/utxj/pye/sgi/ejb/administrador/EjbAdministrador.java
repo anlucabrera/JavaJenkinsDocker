@@ -18,6 +18,7 @@ import javax.persistence.TypedQuery;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
+import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
 
 /**
@@ -65,5 +66,12 @@ public class EjbAdministrador {
         facade.edit(calendarioevaluacionpoa);
         facade.flush();
         return calendarioevaluacionpoa;
+    }
+    
+    public Procesopoa actualizarPorcesoPoa(Procesopoa procesopoa){
+        facade.setEntityClass(Procesopoa.class);
+        facade.edit(procesopoa);
+        facade.flush();
+        return procesopoa;
     }
 }

@@ -12,7 +12,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Zabdiel Pèrez Morale
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "calendarioevaluacionpoa", catalog = "capital_humano", schema = "")
@@ -40,7 +39,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Calendarioevaluacionpoa.findByFechaInicio", query = "SELECT c FROM Calendarioevaluacionpoa c WHERE c.fechaInicio = :fechaInicio")
     , @NamedQuery(name = "Calendarioevaluacionpoa.findByFechaFin", query = "SELECT c FROM Calendarioevaluacionpoa c WHERE c.fechaFin = :fechaFin")
     , @NamedQuery(name = "Calendarioevaluacionpoa.findByMesEvaluacion", query = "SELECT c FROM Calendarioevaluacionpoa c WHERE c.mesEvaluacion = :mesEvaluacion")
-    , @NamedQuery(name = "Calendarioevaluacionpoa.findByJustificacion", query = "SELECT c FROM Calendarioevaluacionpoa c WHERE c.justificacion = :justificacion")})
+    , @NamedQuery(name = "Calendarioevaluacionpoa.findByEstapa", query = "SELECT c FROM Calendarioevaluacionpoa c WHERE c.estapa = :estapa")
+    , @NamedQuery(name = "Calendarioevaluacionpoa.findByJustificacion", query = "SELECT c FROM Calendarioevaluacionpoa c WHERE c.justificacion = :justificacion")
+    , @NamedQuery(name = "Calendarioevaluacionpoa.findByEjercicioFiscal", query = "SELECT c FROM Calendarioevaluacionpoa c WHERE c.ejercicioFiscal = :ejercicioFiscal")})
 public class Calendarioevaluacionpoa implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -52,12 +53,12 @@ public class Calendarioevaluacionpoa implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "fechaInicio")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fechaInicio;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fechaFin")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fechaFin;
     @Basic(optional = false)
     @NotNull
@@ -66,11 +67,20 @@ public class Calendarioevaluacionpoa implements Serializable {
     private String mesEvaluacion;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 10)
+    @Column(name = "estapa")
+    private String estapa;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "justificacion")
     private boolean justificacion;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "ejercicioFiscal")
+    private short ejercicioFiscal;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluacionPOA")
     private List<Permisosevaluacionpoaex> permisosevaluacionpoaexList;
-    @OneToMany(mappedBy = "evaluacion", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "evaluacion")
     private List<Procesopoa> procesopoaList;
 
     public Calendarioevaluacionpoa() {
@@ -80,12 +90,14 @@ public class Calendarioevaluacionpoa implements Serializable {
         this.evaluacionPOA = evaluacionPOA;
     }
 
-    public Calendarioevaluacionpoa(Integer evaluacionPOA, Date fechaInicio, Date fechaFin, String mesEvaluacion, boolean justificacion) {
+    public Calendarioevaluacionpoa(Integer evaluacionPOA, Date fechaInicio, Date fechaFin, String mesEvaluacion, String estapa, boolean justificacion, short ejercicioFiscal) {
         this.evaluacionPOA = evaluacionPOA;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.mesEvaluacion = mesEvaluacion;
+        this.estapa = estapa;
         this.justificacion = justificacion;
+        this.ejercicioFiscal = ejercicioFiscal;
     }
 
     public Integer getEvaluacionPOA() {
@@ -96,6 +108,62 @@ public class Calendarioevaluacionpoa implements Serializable {
         this.evaluacionPOA = evaluacionPOA;
     }
 
+    public Date getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public Date getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(Date fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public String getMesEvaluacion() {
+        return mesEvaluacion;
+    }
+
+    public void setMesEvaluacion(String mesEvaluacion) {
+        this.mesEvaluacion = mesEvaluacion;
+    }
+
+    public String getEstapa() {
+        return estapa;
+    }
+
+    public void setEstapa(String estapa) {
+        this.estapa = estapa;
+    }
+
+    public boolean getJustificacion() {
+        return justificacion;
+    }
+
+    public void setJustificacion(boolean justificacion) {
+        this.justificacion = justificacion;
+    }
+
+    public short getEjercicioFiscal() {
+        return ejercicioFiscal;
+    }
+
+    public void setEjercicioFiscal(short ejercicioFiscal) {
+        this.ejercicioFiscal = ejercicioFiscal;
+    }
+
+    @XmlTransient
+    public List<Permisosevaluacionpoaex> getPermisosevaluacionpoaexList() {
+        return permisosevaluacionpoaexList;
+    }
+
+    public void setPermisosevaluacionpoaexList(List<Permisosevaluacionpoaex> permisosevaluacionpoaexList) {
+        this.permisosevaluacionpoaexList = permisosevaluacionpoaexList;
+    }
 
     @XmlTransient
     public List<Procesopoa> getProcesopoaList() {
@@ -129,47 +197,6 @@ public class Calendarioevaluacionpoa implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa[ evaluacionPOA=" + evaluacionPOA + " ]";
-    }
-
-    public Date getFechaInicio() {
-        return fechaInicio;
-    }
-
-    public void setFechaInicio(Date fechaInicio) {
-        this.fechaInicio = fechaInicio;
-    }
-
-    public Date getFechaFin() {
-        return fechaFin;
-    }
-
-    public void setFechaFin(Date fechaFin) {
-        this.fechaFin = fechaFin;
-    }
-
-    public String getMesEvaluacion() {
-        return mesEvaluacion;
-    }
-
-    public void setMesEvaluacion(String mesEvaluacion) {
-        this.mesEvaluacion = mesEvaluacion;
-    }
-
-    public boolean getJustificacion() {
-        return justificacion;
-    }
-
-    public void setJustificacion(boolean justificacion) {
-        this.justificacion = justificacion;
-    }
-
-    @XmlTransient
-    public List<Permisosevaluacionpoaex> getPermisosevaluacionpoaexList() {
-        return permisosevaluacionpoaexList;
-    }
-
-    public void setPermisosevaluacionpoaexList(List<Permisosevaluacionpoaex> permisosevaluacionpoaexList) {
-        this.permisosevaluacionpoaexList = permisosevaluacionpoaexList;
     }
     
 }

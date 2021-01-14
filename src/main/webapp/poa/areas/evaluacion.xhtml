@@ -46,6 +46,35 @@
 
         <adm:sidebar collapsed="true"/>
 
+        <h:form id="frmAreaEvaluada" prependId="false" class="form-inline">
+            <div class="box box-primary">
+                <div id="main-buttons">
+                    <p:panel header="Área y mes de evaluación">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-lg-3">            
+                                <p:autoUpdate/>
+                                <p:outputLabel value="Área:" />
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" id="area" value="#{areaPoaEvaluacion.claveArea}" valueChangeListener="#{areaPoaEvaluacion.asignarAreaEvaluada}">
+                                     <f:selectItems value="#{areaPoaEvaluacion.areasUniversidads}" var="areas" itemValue="#{areas.area}" itemLabel="#{areas.area} -- #{areas.nombre}" />
+                                       <p:ajax update="mesEvP :frmAlineacionEstratejica :frm" listener="#{areaPoaEvaluacion.imprimirValores()}"/>
+                                </p:selectOneMenu> 
+                            </div>
+                            <div class="col-sm-12 col-md-9 col-lg-9">
+                                <p:outputPanel id="mesEvP">
+                                    <p:autoUpdate/>
+                                    <p:outputLabel value="Mes de Evaluación" /> 
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="mesEv" value="#{areaPoaEvaluacion.celEva}" valueChangeListener="#{areaPoaEvaluacion.asignarAreaEvaluada}">
+                                        <f:selectItems value="#{areaPoaEvaluacion.calendarioevaluacionpoas}" var="evaluaciones" itemValue="#{evaluaciones.evaluacionPOA}" itemLabel="#{evaluaciones.mesEvaluacion} -- #{evaluaciones.justificacion?'Registro de Justificaciones':''}" />
+                                        <p:ajax update=":frmAlineacionEstratejica :frm" listener="#{areaPoaEvaluacion.imprimirValores()}"/>
+                                    </p:selectOneMenu>
+                                </p:outputPanel>
+                            </div>
+                        </div>
+                    </p:panel>                   
+                </div>
+            </div>
+        </h:form>
+        
         <h:form id="frmAlineacionEstratejica" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div id="main-buttons">
@@ -74,7 +103,6 @@
                 </div>
             </div>
         </h:form>
-
 
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
@@ -391,7 +419,7 @@
                                                                   areaPoaEvaluacion.mes eq 11?true:false):false}"/>
 
                                             <p:column rendered="#{poa.actividadesPoa.bandera eq 'y' ?true:false}">
-                                                <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center; visibility:#{areaPoaEvaluacion.periodoActivo?'visible':'hidden'}">
                                                     <a href="#" class="ui-row-editor-pencil">
                                                         <span class="ui-icon ui-icon-pencil"></span>
                                                     </a>
@@ -407,7 +435,8 @@
 
                                             <p:column rendered="#{poa.actividadesPoa.bandera eq 'y' ?true:false}">
                                                 <p:commandButton icon="fa fa-folder-open" styleClass="btn-primary" actionListener="#{areaPoaEvaluacion.consultarEvidencias(poa.actividadesPoa)}"
-                                                                 oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
+                                                                 oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario"
+                                                                 disabled="#{areaPoaEvaluacion.periodoActivo?false:true}">
                                                     <f:setPropertyActionListener target="#{areaPoaEvaluacion.actividadesPoaEditando}" value="#{poa.actividadesPoa}" />
                                                 </p:commandButton>
                                             </p:column>

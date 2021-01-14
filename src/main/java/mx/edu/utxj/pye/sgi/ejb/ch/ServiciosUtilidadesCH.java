@@ -18,6 +18,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisosadminstracion;
+import mx.edu.utxj.pye.sgi.entity.ch.Permisosevaluacionpoaex;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
@@ -94,14 +95,14 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
     }
 
     @Override
-    public Procesopoa mostrarEtapaPOAPersona(Integer responsable) throws Throwable {
+    public List<Procesopoa> mostrarEtapaPOAPersona(Integer responsable) throws Throwable {
         TypedQuery<Procesopoa> q = em.createQuery("SELECT p FROM Procesopoa p WHERE p.responsable=:responsable", Procesopoa.class);
         q.setParameter("responsable", responsable);
         List<Procesopoa> pr = q.getResultList();
         if (pr.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         } else {
-            return pr.get(0);
+            return pr;
         }
     }
 
@@ -122,6 +123,19 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
             return es;
         }
     }
+    
+    @Override
+    public List<Permisosevaluacionpoaex> mostrarPermisosEvaluacionExtemporaneaPOA(Date fecha,Procesopoa idP) throws Throwable {
+        TypedQuery<Permisosevaluacionpoaex> q = em.createQuery("SELECT cp FROM Permisosevaluacionpoaex cp WHERE cp.procesoPOA.procesoPOA=:idProceso AND (:fecha BETWEEN cp.fechaApertura AND cp.fechaCierre)", Permisosevaluacionpoaex.class);
+        q.setParameter("fecha", fecha);
+        q.setParameter("idProceso", idP.getProcesoPOA());
+        List<Permisosevaluacionpoaex> pr = q.getResultList();
+        if (pr.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return pr;
+        }
+    }
 
     @Override
     public Calendarioevaluacionpoa mostrarCalendarioEvaluacion(Date fecha) throws Throwable {
@@ -129,11 +143,24 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         q.setParameter("fecha", fecha);
         List<Calendarioevaluacionpoa> pr = q.getResultList();
         if (pr.isEmpty()) {
-            return null;
+            return new Calendarioevaluacionpoa();
         } else {
             return pr.get(0);
         }
-    }    
+    }  
+    
+        
+    @Override
+    public List<Calendarioevaluacionpoa> mostrarCalendariosEvaluacionActivos(Date fecha) throws Throwable {
+        TypedQuery<Calendarioevaluacionpoa> q = em.createQuery("SELECT cp FROM Calendarioevaluacionpoa cp WHERE :fecha BETWEEN cp.fechaInicio AND cp.fechaFin", Calendarioevaluacionpoa.class);
+        q.setParameter("fecha", fecha);
+        List<Calendarioevaluacionpoa> pr = q.getResultList();
+        if (pr.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return pr;
+        }
+    }  
     
     ////////////////////////////////////////////////////////////////////////////////Eventos Áreas
     @Override

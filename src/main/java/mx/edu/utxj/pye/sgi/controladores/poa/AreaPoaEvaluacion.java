@@ -43,6 +43,12 @@ import org.primefaces.model.StreamedContent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
+import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
+import mx.edu.utxj.pye.sgi.entity.ch.Permisosevaluacionpoaex;
+import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 @Named
@@ -60,12 +66,16 @@ public class AreaPoaEvaluacion implements Serializable {
     @Getter    @Setter    private List<ActividadesPoa> actividads=new ArrayList<>();
     @Getter    @Setter    private List<Evidencias> evidenciases=new ArrayList<>();
     @Getter    @Setter    private List<EvidenciasDetalle> evidenciasesDetalles=new ArrayList<>(),evidenciasesDe=new ArrayList<>();
+    @Getter    @Setter    private List<AreasUniversidad> areasUniversidads=new ArrayList<>();    
+    @Getter    @Setter    private List<Calendarioevaluacionpoa> calendarioevaluacionpoas=new ArrayList<>();
     
     @Getter    @Setter    private List<listaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
     @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
     
+    @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();
     @Getter    @Setter    private ActividadesPoa actividadesPoaEditando = new ActividadesPoa(),actividadMadre=new ActividadesPoa();
     @Getter    @Setter    private EjesRegistro ejes;
+    @Getter    @Setter    private Calendarioevaluacionpoa calendarioevaluacionpoa;
     @Getter    @Setter    private Estrategias estrategias;
     @Getter    @Setter    private Evidencias evidencias;
     @Getter    @Setter    private EvidenciasDetalle evidenciasDetalle;
@@ -74,9 +84,9 @@ public class AreaPoaEvaluacion implements Serializable {
     @Getter    @Setter    private Short claveArea = 0, ejercicioFiscal = 0;
     @Getter    @Setter    private Date fechaActual=new Date();
     @Getter    @Setter    private Iterator<actividad> poaActual;
-    @Getter    @Setter    private Integer claveEje=0,mes=0,cuatrimestre=0,mostradaL=0;
+    @Getter    @Setter    private Integer claveEje=0,mes=0,cuatrimestre=0,mostradaL=0,celEva=0;
     @Getter    @Setter    private Integer mes1=0,mes2=0,mes3=0,mes4=0,mes5=0,mes6=0,mes7=0,mes8=0,mes9=0,mes10=0,mes11=0,mes12=0;
-    @Getter    @Setter    private Boolean archivoSC=false,general=true;
+    @Getter    @Setter    private Boolean archivoSC=false,general=true,periodoActivo=Boolean.FALSE;
     @Getter    @Setter    private Part file;
     
     @Getter    @Setter    private Double totalPCuatrimestre=0D,totalACuatrimestre=0D,totalPCorte=0D,totalACorte=0D;
@@ -94,31 +104,22 @@ public class AreaPoaEvaluacion implements Serializable {
     @EJB    EjbEvidenciasPoa ejbEvidenciasPoa;
     @EJB    EjbCarga carga;
     @EJB    EjbAreasLogeo ejbAreasLogeo;
+    @EJB    EjbUtilidadesCH ejbUtilidadesCH;
 
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA pOAUtilidades;
     
     
 
-@Inject LogonMB logonMB;
-@Getter private Boolean cargado = false;
+    @Inject LogonMB logonMB;
+    @Getter private Boolean cargado = false;
 
-
-@PostConstruct
+    @PostConstruct
     public void init() {
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
-        ejeses.clear();
-        ejesesFiltrado.clear();
-        actividadesPoasAreas.clear();
-        actividadesPoasAreasEjes.clear();
-        ejes = new EjesRegistro(0);
-        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa2();
-        mes = controladorEmpleado.getProcesopoa().getEvaluacion().getFechaInicio().getMonth();
-        mesNombre = controladorEmpleado.getProcesopoa().getEvaluacion().getMesEvaluacion();
-        datosArea(controladorEmpleado.getProcesopoa().getArea());
-
-        consultarListas();
+        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+        cargado = true;       
+        consultrAreasEvaluacion();
+        datosPreviosConsultaPoa();
     }
 
     public void datosArea(Short clave) {
@@ -135,6 +136,65 @@ public class AreaPoaEvaluacion implements Serializable {
     }
 
     // ---------------------------------------------------------------- Listas -------------------------------------------------------------
+    public void consultrAreasEvaluacion() {
+        ejercicioFiscal=controladorEmpleado.getEf().getEjercicioFiscal();
+        areasUniversidads = new ArrayList<>();
+        controladorEmpleado.getProcesopoas().forEach((t) -> {
+            try {
+                areasUniversidads.add(ejbAreasLogeo.mostrarAreasUniversidad(t.getArea()));
+            } catch (Throwable ex) {
+                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+                Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        procesopoa = new Procesopoa();
+        procesopoa = controladorEmpleado.getProcesopoas().get(0);
+        calendarioevaluacionpoa = new Calendarioevaluacionpoa();
+        calendarioevaluacionpoa = pOAUtilidades.buscarCalendarioPOA(procesopoa, celEva,ejercicioFiscal);
+        celEva = calendarioevaluacionpoa.getEvaluacionPOA();
+    }
+
+    public void asignarAreaEvaluada(ValueChangeEvent event) {
+        switch (event.getComponent().getId()) {
+            case "area":
+                procesopoa = new Procesopoa();
+                controladorEmpleado.getProcesopoas().forEach((t) -> {
+                    if (t.getArea() == Short.parseShort(event.getNewValue().toString())) {
+                        procesopoa = t;
+                    }
+                });
+                break;
+            case "mesEv":
+                celEva = Integer.parseInt(event.getNewValue().toString());
+                break;
+        }
+        ejes = new EjesRegistro();
+        estrategias = new Estrategias();
+        resetearValores();
+        calendarioevaluacionpoa = new Calendarioevaluacionpoa();
+        calendarioevaluacionpoa = pOAUtilidades.buscarCalendarioPOA(procesopoa, celEva,ejercicioFiscal);
+        celEva = calendarioevaluacionpoa.getEvaluacionPOA();
+        datosPreviosConsultaPoa();
+    }
+
+    public void datosPreviosConsultaPoa() {
+        ejeses.clear();
+        ejesesFiltrado.clear();
+        actividadesPoasAreas.clear();
+        actividadesPoasAreasEjes.clear();
+        ejes = new EjesRegistro(0);
+        ejercicioFiscal = calendarioevaluacionpoa.getEjercicioFiscal();
+        mes = pOAUtilidades.obtenerMesNumero(calendarioevaluacionpoa.getMesEvaluacion());
+        mesNombre = pOAUtilidades.obtenerMesNombre(mes);
+        if (mes == 12) {
+            periodoActivo = Boolean.FALSE;
+        } else {
+            periodoActivo = Boolean.TRUE;
+        }
+        datosArea(procesopoa.getArea());
+        consultarListas();
+    }
+
     public void consultarListas() {
         ejesesFiltrado.clear();
         ejesesFiltrado.add(new EjesRegistro(0, "Seleccione uno", "Seleccione uno", "", ""));
@@ -172,7 +232,7 @@ public class AreaPoaEvaluacion implements Serializable {
                     if (ejes != null) {
                         estrategiases.clear();
                         estrategiases.add(new Estrategias(Short.parseShort("0"), Short.parseShort("0"), "Selecciones Uno"));
-                        ejbCatalogosPoa.getEstarategiasPorEje(ejes,ejercicioFiscal, controladorEmpleado.getProcesopoa().getArea()).forEach((t) -> {
+                        ejbCatalogosPoa.getEstarategiasPorEje(ejes, ejercicioFiscal, procesopoa.getArea()).forEach((t) -> {
                             estrategiases.add(t);
                         });
                     }
@@ -188,7 +248,7 @@ public class AreaPoaEvaluacion implements Serializable {
                         } else {
                             generaListaActividades();
                         }
-                    }                    
+                    }
                     break;
             }
         } else {
@@ -198,7 +258,7 @@ public class AreaPoaEvaluacion implements Serializable {
             consultarListas();
         }
     }
-    
+
     public void resetearValores() {
         actividadesPoaEditando = new ActividadesPoa();
         actividadMadre = new ActividadesPoa();
@@ -234,16 +294,21 @@ public class AreaPoaEvaluacion implements Serializable {
         listaEstrategiaActividadesesEje.clear();
         
         listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(ejbRegistroActividades.getActividadesPoasEstarategias(estrategias,ejes, ejercicioFiscal, claveArea))));
-              
-        if (mes <= 3) {
-            cuatrimestre = 1;
-        } else {
-            if (mes <= 7) {
-                cuatrimestre = 2;
-            } else {
-                cuatrimestre = 3;
-            }
+        Integer mNum=0;
+        if(mes==12){
+            mNum=new Date().getMonth();
+        }else{
+            mNum=mes;
         }
+        
+        if (mNum <= 3) {
+            cuatrimestre = 1;
+        } else if (mNum <= 7) {
+            cuatrimestre = 2;
+        } else if (mNum <= 11) {
+            cuatrimestre = 3;
+        }
+        
         
         listaEstrategiaActividadesesEje.forEach((t) -> {
             poaActual = t.getActividadesPoas().iterator();
@@ -353,7 +418,7 @@ public class AreaPoaEvaluacion implements Serializable {
         ejbRegistroActividades.actualizaActividadesPoa(modificada);
 
         if (modificada.getNumeroS() != 0) {
-            actividads = ejbRegistroActividades.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP(),controladorEmpleado.getProcesopoa().getArea());
+            actividads = ejbRegistroActividades.getActividadesEvaluacionMadre(modificada.getCuadroMandoInt(), modificada.getNumeroP(),procesopoa.getArea());
             if (!actividads.isEmpty()) {
                 actividads.forEach((t) -> {
                     if (t.getNumeroS() == 0) {
@@ -480,19 +545,15 @@ public class AreaPoaEvaluacion implements Serializable {
             ultimaEstrategiaExpandida = actividadesPoaEditando.getCuadroMandoInt().getEstrategia();
             archivoSC = true;
             evidencias = new Evidencias();
-
             if (files != null) {
                 if (files.size() == 1) {
                     evidencias.setCategoria("Única");
                 } else {
                     evidencias.setCategoria("Múltiple");
                 }
-
                 ejbEvidenciasPoa.agregarEvidenciases(evidencias, actividadesPoaEditando);
                 for (Part file : files) {
-
-                    ruta = carga.subir(file, new File(String.valueOf(pOAUtilidades.obtenerAnioRegistro(ejercicioFiscal).getAnio()).concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat("EVALUACION_POA").concat(File.separator)));
-
+                    ruta = carga.subirEvidenciaPOA(file, new File(String.valueOf(pOAUtilidades.obtenerAnioRegistro(ejercicioFiscal).getAnio()).concat(File.separator).concat("EVALUACION_POA").concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat(actividadesPoaEditando.getActividadPoa().toString()).concat(File.separator)));
                     if (!"Error: No se pudo leer el archivo".equals(ruta)) {
                         String name = Servlets.getSubmittedFileName(file);
                         String type = file.getContentType();

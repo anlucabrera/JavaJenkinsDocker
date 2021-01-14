@@ -274,5 +274,5 @@ public class Procesopoa implements Serializable {
     public void setPermisosevaluacionpoaexList(List<Permisosevaluacionpoaex> permisosevaluacionpoaexList) {
         this.permisosevaluacionpoaexList = permisosevaluacionpoaexList;
     }
-    
+
 }

@@ -6,8 +6,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,8 +24,10 @@ import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbRegistroActividades;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
+import mx.edu.utxj.pye.sgi.entity.ch.Permisosevaluacionpoaex;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
@@ -73,6 +77,17 @@ public class UtilidadesPOA implements Serializable {
             return 0;
         }
     }
+    
+    public Short obtenerejercicioFiscalActivo(String tipo, Integer resta) {
+        try {
+            
+            return ef;
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(UtilidadesPOA.class.getName()).log(Level.SEVERE, null, ex);
+            return 0;
+        }
+    }
 
     public Integer obtenerMes(String tipo) {
         try {
@@ -111,12 +126,39 @@ public class UtilidadesPOA implements Serializable {
                 case 9:                    nombre= "Octubre";                    break;
                 case 10:                    nombre= "Noviembre";                    break;
                 case 11:                    nombre= "Diciembre";                    break;
+                case 12:                    nombre= "Sin mes de evaluacion";                    break;
             }
             return nombre;
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
             return "";
+        }
+    }
+    
+    public Integer obtenerMesNumero(String mes) {
+        try {
+            Integer numeroM = 0;
+            switch (mes) {
+                case "Enero":                    numeroM = 0;                    break;
+                case "Febrero":                    numeroM = 1;                    break;
+                case "Marzo":                    numeroM = 2;                    break;
+                case "Abril":                    numeroM = 3;                    break;
+                case "Mayo":                    numeroM = 4;                    break;
+                case "Junio":                    numeroM = 5;                    break;
+                case "Julio":                    numeroM = 6;                    break;
+                case "Agosto":                    numeroM = 7;                    break;
+                case "Septiembre":                    numeroM = 8;                    break;
+                case "Octubre":                    numeroM = 9;                    break;
+                case "Noviembre":                    numeroM = 10;                    break;
+                case "Diciembre":                    numeroM = 11;                    break;
+                default:                    numeroM = 12;                    break;
+            }
+            return numeroM;
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            return 0;
         }
     }
 
@@ -430,9 +472,100 @@ public class UtilidadesPOA implements Serializable {
     public EjerciciosFiscales obtenerAnioRegistro(Short idC) {
         return ecp.mostrarEjercicioFiscaleses(idC);
     }
+    
+    public EjerciciosFiscales obtenerAnioRegistroActivo(Short anio) {
+        return ecp.mostrarEjercicioFiscalAnio(anio);
+    }
+
 
     public void recargarPag() {
         Faces.refresh();
     }
 
+    public Calendarioevaluacionpoa buscarCalendarioPOA(Procesopoa p,Integer celEva,Short ef) {
+        try {
+            Calendarioevaluacionpoa calendarioevaluacionpoa = new Calendarioevaluacionpoa();
+            List<Calendarioevaluacionpoa> calendarioPoaActivo = new ArrayList<>();
+            calendarioPoaActivo.clear();
+            calendarioPoaActivo = euch.mostrarCalendarioevaluacionpoas();
+            List<Calendarioevaluacionpoa> calendarioevaluacionpoas = new ArrayList<>();
+            calendarioevaluacionpoas.clear();
+            calendarioPoaActivo.forEach((t) -> {
+                if ((new Date().before(t.getFechaFin()) && new Date().after(t.getFechaInicio())) && t.getEstapa().equals("Evaluación")) {
+                    calendarioevaluacionpoas.add(t);
+                }
+            });
+            List<Permisosevaluacionpoaex> ps = euch.mostrarPermisosEvaluacionExtemporaneaPOA(new Date(), p);
+            ps.forEach((t) -> {
+                if (t.getEvaluacionPOA().getEvaluacionPOA() >= 3) {
+                    Calendarioevaluacionpoa c = new Calendarioevaluacionpoa();
+                    c = t.getEvaluacionPOA();
+                    c.setFechaInicio(t.getFechaApertura());
+                    c.setFechaFin(t.getFechaCierre());
+                    calendarioevaluacionpoas.add(c);
+                }
+            });
+            List<Calendarioevaluacionpoa> c = new ArrayList<>();
+            List<Calendarioevaluacionpoa> c2 = new ArrayList<>();
+            c = calendarioevaluacionpoas.stream().filter(t -> Objects.equals(t.getEvaluacionPOA(), celEva)).collect(Collectors.toList());
+            c2 = calendarioevaluacionpoas.stream().filter(t -> t.getEstapa().equals("Evaluación")).collect(Collectors.toList());
+            if (!c.isEmpty()) {
+                calendarioevaluacionpoa = c.get(0);
+            } else if (!c2.isEmpty()) {
+                calendarioevaluacionpoa = c2.get(0);
+            } else {
+                calendarioevaluacionpoa = new Calendarioevaluacionpoa(20, new Date(), new Date(), "No hay mes activo","Evaluación", false,ef);
+                calendarioevaluacionpoas.add(calendarioevaluacionpoa);
+            }
+            return calendarioevaluacionpoa;
+            
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(UtilidadesPOA.class.getName()).log(Level.SEVERE, null, ex);
+            return new Calendarioevaluacionpoa(20, new Date(), new Date(), "No hay mes activo","Evaluación", false,ef);
+        }
+    }
+
+    public Boolean buscarCalendarioPOA(String evento, Procesopoa p) {
+        try {
+            Boolean b =Boolean.FALSE;
+            Calendarioevaluacionpoa calendarioevaluacionpoa = new Calendarioevaluacionpoa();
+            List<Calendarioevaluacionpoa> calendarioPoaActivo = new ArrayList<>();
+            calendarioPoaActivo.clear();
+            calendarioPoaActivo = euch.mostrarCalendarioevaluacionpoas();
+            List<Calendarioevaluacionpoa> calendarioevaluacionpoas = new ArrayList<>();
+            calendarioevaluacionpoas.clear();
+            calendarioevaluacionpoas=calendarioPoaActivo.stream().filter(t -> Objects.equals(t.getMesEvaluacion(), evento)).collect(Collectors.toList());
+            List<Permisosevaluacionpoaex> ps = euch.mostrarPermisosEvaluacionExtemporaneaPOA(new Date(), p).stream().filter(t -> t.getEvaluacionPOA().getMesEvaluacion()==evento).collect(Collectors.toList());
+            
+            if(ps.isEmpty()){                
+                calendarioevaluacionpoa=calendarioevaluacionpoas.get(0);
+            } else {
+                Permisosevaluacionpoaex p1=new Permisosevaluacionpoaex();
+                p1=ps.get(0);
+                calendarioevaluacionpoa = calendarioevaluacionpoas.get(0);
+                calendarioevaluacionpoa.setFechaInicio(p1.getFechaApertura());
+                calendarioevaluacionpoa.setFechaFin(p1.getFechaCierre());
+            }
+            
+            if(periodoActivo(calendarioevaluacionpoa.getFechaInicio(),calendarioevaluacionpoa.getFechaFin())){
+                return Boolean.TRUE;
+            }else{
+                return Boolean.FALSE;
+            }
+                                
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(UtilidadesPOA.class.getName()).log(Level.SEVERE, null, ex);
+            return Boolean.FALSE;
+        }
+    }
+    
+    public Boolean periodoActivo(Date inicio, Date fin){
+        if ((new Date().before(fin) && new Date().after(inicio))) {
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
+    }
 }

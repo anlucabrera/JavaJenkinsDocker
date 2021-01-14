@@ -400,17 +400,12 @@
                                         </p:link>
                                     </li>
                                 </c:if>
-                                <c:if test="#{controladorEmpleado.poaProces.get(1) or controladorEmpleado.poaProces.get(2)}">
+                                <c:if test="#{controladorEmpleado.poaProces.get(1)}">
                                     <li>
                                         <p:link href="#{request.contextPath}/poa/areas/recursoActividad.xhtml"><i class="fa fa-usd"></i>
-                                            <span>Recurso</span>
+                                            <span>Recurso y Justificaciones</span>
                                         </p:link>
-                                    </li>
-                                    <li>
-                                        <p:link href="#{request.contextPath}/poa/areas/justificacion.xhtml"><i class="fa fa-wechat"></i>
-                                            <span>Justificación</span>
-                                        </p:link>
-                                    </li>
+                                    </li>                                    
                                 </c:if>
                             </c:if>
                             <c:if test="#{controladorEmpleado.procesopoa.activaEtapa2}">

@@ -233,6 +233,18 @@ public class ServiciosCatalogosPOA implements EjbCatalogosPoa {
     }
     
     @Override
+    public EjerciciosFiscales mostrarEjercicioFiscalAnio(Short anio) {
+        TypedQuery<EjerciciosFiscales> q = em.createQuery("SELECT r FROM EjerciciosFiscales r WHERE r.anio=:anio", EjerciciosFiscales.class);
+        q.setParameter("anio", anio);
+        List<EjerciciosFiscales> pr = q.getResultList();
+        if (pr.isEmpty()) {
+            return new EjerciciosFiscales();
+        } else {
+            return pr.get(0);
+        }
+    }
+    
+    @Override
     public List<EjerciciosFiscales> mostrarEjercicioFiscalesesTotales() {
         TypedQuery<EjerciciosFiscales> q = em.createQuery("SELECT e FROM EjerciciosFiscales e", EjerciciosFiscales.class);
         List<EjerciciosFiscales> pr = q.getResultList();

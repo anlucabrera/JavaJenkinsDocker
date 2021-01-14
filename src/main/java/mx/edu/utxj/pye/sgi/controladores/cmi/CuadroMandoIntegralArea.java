@@ -32,6 +32,7 @@ import org.primefaces.model.chart.MeterGaugeChartModel;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 @Named
@@ -55,7 +56,8 @@ public class CuadroMandoIntegralArea implements Serializable {
 
     @Getter    @Setter    private Integer programadasCorte = 0, realizadasCorte = 0, incremento = 0,prograRepoCorte = 0, realRepoCorte = 0;
     @Getter    @Setter    private Integer programadasMensual = 0, realizadasMensual = 0, numeroMes = 0,prograRepoMensual = 0, realRepoMensual = 0, numeroEje = 0;
-    @Getter    @Setter    private Short ejercicioFiscal = 0;
+    @Getter    @Setter    private EjerciciosFiscales ef = new EjerciciosFiscales();
+    @Getter    @Setter    private Short ejercicioFiscal = 0,anio=0;
     @Getter    @Setter    private Double avance = 0D,avanceSp = 0D,maximoValor=0D;
     @Getter    @Setter    private String mes = "", valores = "",extender;
     @Getter    @Setter    private DecimalFormat df = new DecimalFormat("#.00");
@@ -81,27 +83,40 @@ public class CuadroMandoIntegralArea implements Serializable {
 @Inject LogonMB logonMB;
 @Getter private Boolean cargado = false;
 
-
-@PostConstruct
+    @PostConstruct
     public void init() {
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
-        numeroMes = controladorEmpleado.getProcesopoa().getEvaluacion().getEvaluacionPOA()-1;
-        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa2();
-        
+        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+        cargado = true;
+        numeroMes = poau.obtenerMesNumero(controladorEmpleado.getCalendarioevaluacionpoa().getMesEvaluacion());
+        ef = controladorEmpleado.getEf();
+        ejercicioFiscal=ef.getEjercicioFiscal();
+        anio=ef.getAnio();
+        if ((new Date().getMonth() == 0) && numeroMes == 12) {
+            numeroMes = 11;
+            Integer ej = 0;
+            ej = Integer.parseInt(ejercicioFiscal.toString());
+            ej = ej - 1;
+            ejercicioFiscal = Short.parseShort(ej.toString());
+            ej = 0;
+            ej = Integer.parseInt(anio.toString());
+            ej = ej - 1;
+            anio = Short.parseShort(ej.toString());
+        } else {
+            numeroMes = new Date().getMonth();
+        }
         switch (numeroMes) {
-            case 0:                mes = "Avance al mes de: Enero";                break;
-            case 1:                mes = "Avance al mes de: Febrero";                break;
-            case 2:                mes = "Avance al mes de: Marzo";                break;
-            case 3:                mes = "Avance al mes de: Abril";                break;
-            case 4:                mes = "Avance al mes de: Mayo";                break;
-            case 5:                mes = "Avance al mes de: Junio";                break;
-            case 6:                mes = "Avance al mes de: Julio";                break;
-            case 7:                mes = "Avance al mes de: Agosto";                break;
-            case 8:                mes = "Avance al mes de: Septiembre";                break;
+            case 0:                mes = "Avance al mes de: Enero del "+anio;                break;
+            case 1:                mes = "Avance al mes de: Febrero del "+anio;                break;
+            case 2:                mes = "Avance al mes de: Marzo del "+anio;                break;
+            case 3:                mes = "Avance al mes de: Abril del "+anio;                break;
+            case 4:                mes = "Avance al mes de: Mayo del "+anio;                break;
+            case 5:                mes = "Avance al mes de: Junio del "+anio;                break;
+            case 6:                mes = "Avance al mes de: Julio del "+anio;                break;
+            case 7:                mes = "Avance al mes de: Agosto del "+anio;                break;
+            case 8:                mes = "Avance al mes de: Septiembre del "+anio;                break;
             case 9:                mes = "Avance al mes de: Octubre";                break;
-            case 10:                mes = "Avance al mes de: Noviembre";                break;
-            case 11:                mes = "Avance al mes de: Diciembre del 20" + (fechaActual.getYear() - 101);                break;
+            case 10:                mes = "Avance al mes de: Noviembre del "+anio;                break;
+            case 11:                mes = "Avance al mes de: Diciembre del "+anio;                break;
         }
         reseteador();
         cmiEnGeneral();
