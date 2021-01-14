@@ -286,4 +286,74 @@ public class EjbCapturaTareaIntegradora {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores de evaluación (EjbCapturaTareaIntegradora.generarContenedorCalificaciones)", e, null);
         }
     }
+    
+      /**
+     * Permite comprobar si existe apertura extemporánea de nivelación final de un estudiante
+     * @param dtoCargaAcademica carga académica
+     * @param dtoEstudiante estudiante
+     * @return Regresa TRUE/FALSE según la comprobación o código de error en caso de no poder realizar la comprobación
+     */
+    public ResultadoEJB<Boolean> existeAperIndNivelacion(DtoCargaAcademica dtoCargaAcademica, DtoEstudiante dtoEstudiante){
+        try{
+            String tipoEval ="Nivelación Final";
+            PermisosCapturaExtemporaneaEstudiante permiso = em.createQuery("select p from PermisosCapturaExtemporaneaEstudiante p inner join p.idPlanMateria pm inner join p.idGrupo g inner join p.estudiante e where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and e.idEstudiante =:estudiante and p.tipoEvaluacion=:tipo", PermisosCapturaExtemporaneaEstudiante.class)
+                    .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
+                    .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
+                    .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
+                    .setParameter("estudiante", dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante())
+                    .setParameter("tipo", tipoEval)
+                    .getResultStream()
+                    .findAny()
+                    .orElse(null);
+            return ResultadoEJB.crearCorrecto(permiso != null, "Se comprobó que el estudiante tiene apertura extemporánea de nivelación final");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
+    
+      /**
+     * Permite comprobar si existe apertura extemporánea de tarea integradora grupal
+     * @param dtoCargaAcademica carga académica
+     * @return Regresa TRUE/FALSE según la comprobación o código de error en caso de no poder realizar la comprobación
+     */
+    public ResultadoEJB<Boolean> existeAperGrupalTI(DtoCargaAcademica dtoCargaAcademica){
+        try{
+            String tipoEval ="Tarea Integradora";
+            PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.tipoEvaluacion=:tipo", PermisosCapturaExtemporaneaGrupal.class)
+                    .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
+                    .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
+                    .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
+                    .setParameter("tipo", tipoEval)
+                    .getResultStream()
+                    .findAny()
+                    .orElse(null);
+            return ResultadoEJB.crearCorrecto(permiso != null, "Se comprobó que el grupo tiene apertura extemporánea de tarea integradora");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
+    
+      /**
+     * Permite comprobar si existe apertura extemporánea de tarea integradora de un estudiante
+     * @param dtoCargaAcademica carga académica
+     * @param dtoEstudiante estudiante
+     * @return Regresa TRUE/FALSE según la comprobación o código de error en caso de no poder realizar la comprobación
+     */
+    public ResultadoEJB<Boolean> existeAperIndTI(DtoCargaAcademica dtoCargaAcademica, DtoEstudiante dtoEstudiante){
+        try{
+            String tipoEval ="Tarea Integradora";
+            PermisosCapturaExtemporaneaEstudiante permiso = em.createQuery("select p from PermisosCapturaExtemporaneaEstudiante p inner join p.idPlanMateria pm inner join p.idGrupo g inner join p.estudiante e where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and e.idEstudiante =:estudiante and p.tipoEvaluacion=:tipo", PermisosCapturaExtemporaneaEstudiante.class)
+                    .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
+                    .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
+                    .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
+                    .setParameter("estudiante", dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante())
+                    .setParameter("tipo", tipoEval)
+                    .getResultStream()
+                    .findAny()
+                    .orElse(null);
+            return ResultadoEJB.crearCorrecto(permiso != null, "Se comprobó que el estudiante tiene apertura extemporánea de tarea integradora");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
 }

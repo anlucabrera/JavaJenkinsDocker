@@ -138,7 +138,7 @@
                                                                         </c:forEach>
                                                                         <c:if test="#{capturaTareaIntegradoraDocente.tieneIntegradora(carga)}">
                                                                             <td role="gridcell">
-                                                                                <p:selectOneMenu
+                                                                                <p:selectOneMenu disabled="#{!capturaTareaIntegradoraDocente.existeAperGrupalTareaInt(carga) and !capturaTareaIntegradoraDocente.existeAperIndTareaInt(carga,estudiante)}"
                                                                                         value="#{capturaTareaIntegradoraDocente.getContenedor(carga).tareaIntegradoraPromedioMap[estudiante].valor}"
                                                                                         valueChangeListener="#{capturaTareaIntegradoraDocente.guardarCalificacion}">
                                                                                     <f:selectItems value="#{tareaIntegradoraParametro.parametros}" var="par" itemLabel="#{par.label}" itemValue="#{par.valor}" />
@@ -155,7 +155,7 @@
                                                                             </h:outputLabel>
                                                                         </td>
                                                                         <td role="gridcell" class="promedio">
-                                                                            <p:selectOneMenu disabled="#{capturaTareaIntegradoraDocente.deshabilitarCaptura(carga, valor)}" value="#{capturaTareaIntegradoraDocente.getNivelacion(carga, estudiante).calificacionNivelacion.valor}"
+                                                                            <p:selectOneMenu disabled="#{capturaTareaIntegradoraDocente.deshabilitarCaptura(carga, valor) and !capturaTareaIntegradoraDocente.existeAperIndNiv}" value="#{capturaTareaIntegradoraDocente.getNivelacion(carga, estudiante).calificacionNivelacion.valor}"
                                                                                              valueChangeListener="#{capturaTareaIntegradoraDocente.guardarNivelacion}">
                                                                                 <f:selectItems value="#{tareaIntegradoraParametro.parametros}" var="par" itemLabel="#{par.label}" itemValue="#{par.valor}" />
                                                                                 <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />
@@ -164,7 +164,7 @@
                                                                             </p:selectOneMenu>
                                                                         </td>
                                                                         <td role="gridcell" class="promedio">
-                                                                            <p:selectOneMenu disabled="#{capturaTareaIntegradoraDocente.deshabilitarCaptura(carga, valor)}" value="#{capturaTareaIntegradoraDocente.getNivelacion(carga, estudiante).indicador}" converter="entityConverter"
+                                                                            <p:selectOneMenu disabled="#{(capturaTareaIntegradoraDocente.deshabilitarCaptura(carga, valor) and !capturaTareaIntegradoraDocente.existeAperIndNiv)}" value="#{capturaTareaIntegradoraDocente.getNivelacion(carga, estudiante).indicador}" converter="entityConverter"
                                                                                              valueChangeListener="#{capturaTareaIntegradoraDocente.guardarNivelacion}">
                                                                                 <f:selectItems value="#{capturaTareaIntegradoraDocente.rol.indicadores}" var="indicador" itemLabel="#{indicador.nombre}" itemValue="#{indicador}" />
                                                                                 <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />

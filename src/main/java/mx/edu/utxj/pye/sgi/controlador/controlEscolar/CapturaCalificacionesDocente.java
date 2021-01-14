@@ -10,6 +10,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCasoCritico;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistraPromedioAsignatura;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
@@ -34,6 +35,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Messages;
@@ -46,11 +48,12 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
     @Getter @Setter private CapturaCalificacionesRolDocente rol;
     @EJB EjbCapturaCalificaciones ejb;
     @EJB EjbCasoCritico ejbCasoCritico;
+    @EJB EjbRegistraPromedioAsignatura ejbRegistraPromedioAsignatura;
     @EJB EjbPacker packer;
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
     @Inject Caster caster;
-    @Getter Boolean tieneAcceso = false;
+    @Getter @Setter Boolean tieneAcceso = false, existeAperturaInd = false;
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
@@ -166,6 +169,7 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         if(!resGrupo.getCorrecto()) mostrarMensajeResultadoEJB(resGrupo);
         else {
             rol.setEstudiantesPorGrupo(resGrupo.getValor());
+            setExisteAperturaInd(existeAperturaIndividual(rol.getEstudiantesPorGrupo().getEstudiantes()));
 //            System.out.println("resGrupo = " + resGrupo.getValor().getEstudiantes().size());
         }
     }
@@ -177,18 +181,25 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
         captura.getCalificacion().setValor(valor);
         rol.getCalificacionMap().put(captura.getCalificacion().getCalificacion(), valor);
         Boolean validarReins = existeReinscripcion(dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoEstudiante());
+        Boolean validarNivelacion = existeNivelacion(dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoEstudiante());
         if (!validarReins) {
-            ResultadoEJB<Calificacion> res = ejb.guardarCapturaCalificacion(captura);
-            ResultadoEJB<BigDecimal> resPromedio = ejb.promediarUnidad(dtoCapturaCalificacion);
-            if(res.getCorrecto() && resPromedio.getCorrecto()) {
-                rol.getEstudiantesPorGrupo().actualizarCalificacion(res.getValor(), resPromedio.getValor());
-                dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
-
-                ResultadoEJB<DtoCasoCritico> registrarPorReprobacion = ejbCasoCritico.registrarPorReprobacion(dtoCapturaCalificacion);
-                if(registrarPorReprobacion.getCorrecto()) mostrarMensaje("Se generó un caso crítico automáticamente por promedio reprobatorio.");
-                else if(registrarPorReprobacion.getResultado() < 4) mostrarMensajeResultadoEJB(registrarPorReprobacion);
+            if (!validarNivelacion) {
+                ResultadoEJB<Calificacion> res = ejb.guardarCapturaCalificacion(captura);
+                ResultadoEJB<BigDecimal> resPromedio = ejb.promediarUnidad(dtoCapturaCalificacion);
+                    if(res.getCorrecto() && resPromedio.getCorrecto()) {
+                    rol.getEstudiantesPorGrupo().actualizarCalificacion(res.getValor(), resPromedio.getValor());
+                    dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
+                    
+                    registrarPromediosAsignatura(dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoEstudiante());
+                    
+                    ResultadoEJB<DtoCasoCritico> registrarPorReprobacion = ejbCasoCritico.registrarPorReprobacion(dtoCapturaCalificacion);
+                    if(registrarPorReprobacion.getCorrecto()) mostrarMensaje("Se generó un caso crítico automáticamente por promedio reprobatorio.");
+                    else if(registrarPorReprobacion.getResultado() < 4) mostrarMensajeResultadoEJB(registrarPorReprobacion);
+                    }
+                    else mostrarMensajeResultadoEJB(res);
+            } else {
+            Messages.addGlobalFatal("El estudiante ya tiene nivelación final registrada, no se puede actualizar una calificación ordinaria");
             }
-            else mostrarMensajeResultadoEJB(res);
         } else {
             Messages.addGlobalFatal("El estudiante ya se reinscribió al siguiente cuatrimestre, no se puede actualizar una calificación ordinaria");
         }
@@ -263,5 +274,34 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
             }else{
                 return Boolean.FALSE;
             }
+    }
+    
+    public Boolean existeNivelacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
+        ResultadoEJB<Boolean> registroNivelacion = ejb.existeNivelacion(dtoCargaAcademica.getCargaAcademica(), dtoEstudiante.getInscripcionActiva().getInscripcion());
+        if(registroNivelacion.getValor()){
+                return Boolean.TRUE;
+            }else{
+                return Boolean.FALSE;
+            }
+    }
+    
+    public Boolean existeAperturaIndividual(@NonNull List<DtoCapturaCalificacion> estudiantes){
+        
+        List<DtoCapturaCalificacion> listaAperturas = estudiantes.stream().filter(a -> a.getPermisoExtInd()).collect(Collectors.toList());
+        
+        if(listaAperturas.isEmpty()){
+            return Boolean.FALSE;
+        }else{
+            return Boolean.TRUE;
+        }
+    }
+    
+    public void registrarPromediosAsignatura(DtoCargaAcademica dtoCargaAcademica, DtoEstudiante dtoEstudiante)
+    {
+        try {
+            ejbRegistraPromedioAsignatura.registrarPromediosAsignatura(dtoCargaAcademica, dtoEstudiante);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

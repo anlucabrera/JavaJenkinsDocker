@@ -164,8 +164,11 @@
                                         <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion eq 'Ordinaria'}">
                                         <p:commandButton id="btnGuardar1" value="Guardar" actionListener="#{permisoAperturaExtemporaneaAdministrador.guardarPermisoCapturaOrdinaria()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
                                         </c:if>
+                                        <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion eq 'Tarea Integradora'}">
+                                        <p:commandButton id="btnGuardar2" value="Guardar" actionListener="#{permisoAperturaExtemporaneaAdministrador.guardarPermisoCapturaTI()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                        </c:if>
                                         <c:if test="#{permisoAperturaExtemporaneaAdministrador.rol.tipoEvaluacion eq 'Nivelación Final'}">
-                                        <p:commandButton id="btnGuardar2" value="Guardar" actionListener="#{permisoAperturaExtemporaneaAdministrador.guardarPermisoCapturaNivFinal()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                        <p:commandButton id="btnGuardar3" value="Guardar" actionListener="#{permisoAperturaExtemporaneaAdministrador.guardarPermisoCapturaNivFinal()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
                                         </c:if>
                                     </center>   
                                     </div>
@@ -182,12 +185,12 @@
                                                             <p:column headerText="Opciones" />
                                                             <p:column headerText="Grupo" /> 
                                                             <p:column headerText="Materia" /> 
-                                                            <p:column headerText="Docente" />
                                                             <p:column headerText="Unidad" />
                                                             <p:column headerText="Tipo Evaluación" />
                                                             <p:column headerText="Fecha Inicio" />
                                                             <p:column headerText="Fecha Fin" />
                                                             <p:column headerText="Justificación" />
+                                                            <p:column headerText="Docente" />
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:ajax event="cellEdit" listener="#{permisoAperturaExtemporaneaAdministrador.onCellEdit}"/>
@@ -206,9 +209,6 @@
                                                     </p:column>
                                                     <p:column groupRow="true">
                                                         <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idPlanMateria.idMateria.nombre}" style="text-align: center;" />
-                                                    </p:column>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{aperturasExt.personal.nombre}"/>
                                                     </p:column>
                                                     <p:column groupRow="true">
                                                         <h:outputText value="#{aperturasExt.permisosCapturaExtemporaneaGrupal.idUnidadMateria.noUnidad}. #{aperturasExt.permisosCapturaExtemporaneaGrupal.idUnidadMateria.nombre}" style="text-align: center;"/>
@@ -238,6 +238,9 @@
                                                                  </p:selectOneMenu>
                                                              </f:facet>
                                                          </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column groupRow="true">
+                                                        <h:outputText value="#{aperturasExt.personal.nombre}"/>
                                                     </p:column>
                                                 </p:dataTable>
                                                 <p></p>

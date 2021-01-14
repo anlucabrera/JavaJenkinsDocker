@@ -351,7 +351,20 @@ public class EjbPacker {
                     .filter(ResultadoEJB::getCorrecto)
                     .map(ResultadoEJB::getValor)
                     .collect(Collectors.toList());
-            DtoCapturaCalificacion dtoCapturaCalificacion = new DtoCapturaCalificacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion, capturas);
+            
+            PermisosCapturaExtemporaneaEstudiante permiso = em.createQuery("select p from PermisosCapturaExtemporaneaEstudiante p inner join p.idPlanMateria pm inner join p.idGrupo g inner join p.estudiante e where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.idUnidadMateria=:unidad and e.idEstudiante =:estudiante", PermisosCapturaExtemporaneaEstudiante.class)
+                    .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
+                    .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
+                    .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
+                    .setParameter("unidad", dtoUnidadConfiguracion.getUnidadMateria())
+                    .setParameter("estudiante", dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante())
+                    .getResultStream()
+                    .findAny()
+                    .orElse(null);
+            
+            Boolean permisoExtInd = permiso != null;
+            
+            DtoCapturaCalificacion dtoCapturaCalificacion = new DtoCapturaCalificacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion, permisoExtInd, capturas);
             ResultadoEJB<BigDecimal> resPromedio = ejbCapturaCalificaciones.promediarUnidad(dtoCapturaCalificacion);
             if(resPromedio.getCorrecto()) {
                 dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
@@ -522,12 +535,13 @@ public class EjbPacker {
             ResultadoEJB<List<DtoEstudiante>> res = packDtoEstudiantesHistoricoGrupo(dtoCargaAcademica);
             if(res.getCorrecto()) {
                 List<DtoEstudiante> dtoEstudiantes = res.getValor();
-
+                String tipoEval ="Nivelación Final";
                 Boolean activaPorFecha = eventoEscolar == null?false:DateUtils.isBetweenWithRange(new Date(), eventoEscolar.getInicio(), eventoEscolar.getFin(), ejbCapturaCalificaciones.leerDiasRangoParaCapturarUnidad());
-                PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia", PermisosCapturaExtemporaneaGrupal.class)
+                PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.tipoEvaluacion=:tipo", PermisosCapturaExtemporaneaGrupal.class)
                         .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                         .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
                         .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
+                        .setParameter("tipo", tipoEval)
                         .getResultStream()
                         .findAny()
                         .orElse(null);

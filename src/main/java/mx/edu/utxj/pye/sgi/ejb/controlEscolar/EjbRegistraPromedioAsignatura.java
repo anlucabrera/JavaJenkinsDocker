@@ -131,4 +131,33 @@ public class EjbRegistraPromedioAsignatura {
             return ResultadoEJB.crearErroneo(1, "Ocurrió un error al intentar reportar que ya se realizó el registro masivo de promedios (EjbregistraPromedioAsignatura.reportarRegistro)", Integer.TYPE);
         }
     }
+    
+     /**
+     * Permite calcular y registrar promedios por asignatura de forma masiva correspondiendo al periodo indicado en la variable de configuración periodoRegistroMasivoPromedios
+     * @return Regresa un Point con la coordenada X indicando el total de promedios posibles y la coordenada Y indicando los que se pudieron registrar
+     */
+    public void registrarPromediosAsignatura(DtoCargaAcademica dtoCargaAcademica, DtoEstudiante dtoEstudiante){
+        try{
+//                ResultadoEJB<List<DtoEstudiante>> packDtoEstudiantesGrupo = ejbPacker.packDtoEstudiantesHistoricoGrupo(dtoCargaAcademica);
+//                if(packDtoEstudiantesGrupo.getCorrecto()){
+//                    @NonNull List<DtoEstudiante> dtoEstudiantes = packDtoEstudiantesGrupo.getValor();
+//                    dtoEstudiantes.parallelStream().forEach(dtoEstudiante -> {
+                        ResultadoEJB<List<DtoUnidadConfiguracion>> getConfiguraciones = ejbCapturaCalificaciones.getConfiguraciones(dtoCargaAcademica);
+                        if(getConfiguraciones.getCorrecto()){
+                            @NonNull List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones = getConfiguraciones.getValor();
+                            ResultadoEJB<DtoUnidadesCalificacion> packDtoUnidadesCalificacion = ejbPacker.packDtoUnidadesCalificacion(dtoCargaAcademica, dtoUnidadConfiguraciones, null);
+                            if(packDtoUnidadesCalificacion.getCorrecto()){
+                                @NonNull DtoUnidadesCalificacion dtoUnidadesCalificacion = packDtoUnidadesCalificacion.getValor();
+                                ResultadoEJB<BigDecimal> promediarAsignatura = ejbCapturaTareaIntegradora.promediarAsignatura(dtoUnidadesCalificacion, dtoCargaAcademica, dtoEstudiante);
+                               
+                            }else System.out.println("Error: EjbRegistraPromedioAsignatura.registrarPromediosAsignatura proceso > packDtoUnidadesCalificacion = " + packDtoUnidadesCalificacion);
+                        }else System.out.println("Error: EjbRegistraPromedioAsignatura.registrarPromediosAsignatura proceso > getConfiguraciones = " + getConfiguraciones);
+//                    });
+//                }else 
+//                System.out.println("Error: EjbRegistraPromedioAsignatura.registrarMasivamentePromedios proceso > packDtoEstudiantesGrupo = " + packDtoEstudiantesGrupo);
+                
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

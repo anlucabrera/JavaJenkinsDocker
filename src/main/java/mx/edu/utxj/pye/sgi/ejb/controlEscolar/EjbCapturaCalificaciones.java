@@ -12,7 +12,6 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
-import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.enums.converter.CasoCriticoEstadoConverter;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
@@ -21,10 +20,13 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupoEstudiante;
 
 @Stateless(name = "EjbCapturaCalificaciones")
 public class EjbCapturaCalificaciones {
@@ -409,6 +411,24 @@ public class EjbCapturaCalificaciones {
                     .setParameter("periodo", periodoSig)
                     .getResultStream().findFirst().orElse(null);
             return ResultadoEJB.crearCorrecto(estudiante != null, "Se comprobó que el estudiante ya se reinscribió al siguiente cuatrimestre");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
+    
+     /**
+     * Permite comprobar si el estudiante tiene resultado de nivelación final registrado
+     * @param cargaAcademica carga académica
+     * @param estudiante estudiante
+     * @return Regresa TRUE/FALSE según la comprobación o código de error en caso de no poder realizar la comprobación
+     */
+    public ResultadoEJB<Boolean> existeNivelacion(CargaAcademica cargaAcademica, Estudiante estudiante){
+        try{
+            CalificacionNivelacion nivelacion = em.createQuery("select c from CalificacionNivelacion c where c.cargaAcademica.carga =:carga and c.estudiante.idEstudiante =:estudiante", CalificacionNivelacion.class)
+                    .setParameter("carga", cargaAcademica.getCarga())
+                    .setParameter("estudiante", estudiante.getIdEstudiante())
+                    .getResultStream().findFirst().orElse(null);
+            return ResultadoEJB.crearCorrecto(nivelacion != null, "Se comprobó que el estudiante tiene resultado de nivelación registrado");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
         }
