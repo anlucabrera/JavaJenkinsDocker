@@ -62,6 +62,8 @@ public interface EjbCatalogosPoa {
 
 //  ------------------------------------------EjerciciosFiscales -----------------------------------------------
     public EjerciciosFiscales mostrarEjercicioFiscaleses(Short idE);
+    
+    public EjerciciosFiscales mostrarEjercicioFiscalAnio(Short anio);
 
     public List<EjerciciosFiscales> mostrarEjercicioFiscalesesTotales();
 

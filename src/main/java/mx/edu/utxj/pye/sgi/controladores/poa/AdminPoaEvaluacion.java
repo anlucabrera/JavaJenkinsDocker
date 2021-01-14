@@ -397,25 +397,21 @@ public class AdminPoaEvaluacion implements Serializable {
 
     public void subirEvidenciaPOA() {
         try {
-                        ultimaEstrategiaExpandida = new Estrategias();
+            ultimaEstrategiaExpandida = new Estrategias();
             ultimaEstrategiaExpandida = actividadesPoaEditando.getCuadroMandoInt().getEstrategia();
-                        archivoSC = true;
+            archivoSC = true;
             evidencias = new Evidencias();
-
             if (files != null) {
-                                if (files.size() == 1) {
+                if (files.size() == 1) {
                     evidencias.setCategoria("Única");
                 } else {
                     evidencias.setCategoria("Múltiple");
                 }
-
                 ejbEvidenciasPoa.agregarEvidenciases(evidencias, actividadesPoaEditando);
                 for (Part file : files) {
-
-                                        ruta = carga.subir(file, new File(String.valueOf(pOAUtilidades.obtenerAnioRegistro(ejercicioFiscal).getAnio()).concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat("EVALUACION_POA").concat(File.separator)));
-
+                    ruta = carga.subirEvidenciaPOA(file, new File(String.valueOf(pOAUtilidades.obtenerAnioRegistro(ejercicioFiscal).getAnio()).concat(File.separator).concat("EVALUACION_POA").concat(File.separator).concat(siglaArea).concat(File.separator).concat(mesNombre).concat(File.separator).concat(actividadesPoaEditando.getActividadPoa().toString()).concat(File.separator)));
                     if (!"Error: No se pudo leer el archivo".equals(ruta)) {
-                                                String name = Servlets.getSubmittedFileName(file);
+                        String name = Servlets.getSubmittedFileName(file);
                         String type = file.getContentType();
                         long size = file.getSize();
                         evidenciasDetalle = new EvidenciasDetalle();
@@ -425,8 +421,8 @@ public class AdminPoaEvaluacion implements Serializable {
                         evidenciasDetalle.setTamanioBytes(size);
                         evidenciasDetalle.setMes(mesNombre);
                         ejbEvidenciasPoa.agregarEvidenciasesEvidenciasDetalle(evidenciasDetalle);
-                                            } else {
-                                            }
+                    } else {
+                    }
                 }
                 consultarEvidencias(actividadesPoaEditando);
                 consultarListasValidacionFinal();

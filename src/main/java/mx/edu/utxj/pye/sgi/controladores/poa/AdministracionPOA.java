@@ -21,6 +21,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisosevaluacionpoaex;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -39,6 +40,9 @@ public class AdministracionPOA implements Serializable {
 
     @Getter    @Setter    private List<ProcesoDetallePoa> detallePoas = new ArrayList<>();  
     @Getter    @Setter    private List<Calendarioevaluacionpoa> calendarioevaluacionpoas = new ArrayList<>();
+    @Getter    @Setter    private List<Calendarioevaluacionpoa> calendarioPoaActivo = new ArrayList<>();
+    @Getter    @Setter    private List<Boolean> estatus = new ArrayList<>();
+    @Getter    @Setter    private List<ListaPersonal> personals = new ArrayList<>();
     
    
     
@@ -58,15 +62,40 @@ public class AdministracionPOA implements Serializable {
     public void init() {
         if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
         cargado = true;
+         
+        buscarCatalogosGenerales();
         buscarCalendarioPOA();
+        buscarProcesosPOA();
     }
     
 // -----------------------------------------------------------------------------Catalogos   
+    public void buscarCatalogosGenerales() {
+        try {
+            estatus = new ArrayList<>();
+            estatus.clear();
+            estatus.add(Boolean.FALSE);
+            estatus.add(Boolean.TRUE);
+            personals = new ArrayList<>();
+            personals.clear();
+            personals = ejbPersonal.mostrarListaDeEmpleados();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public void buscarCalendarioPOA() {
         try {
-            calendarioevaluacionpoas=new ArrayList<>();
+            calendarioevaluacionpoas = new ArrayList<>();
             calendarioevaluacionpoas.clear();
-            calendarioevaluacionpoas=ejbUtilidadesCH.mostrarCalendarioevaluacionpoas();
+            calendarioevaluacionpoas = ejbUtilidadesCH.mostrarCalendarioevaluacionpoas();
+            calendarioPoaActivo = new ArrayList<>();
+            calendarioPoaActivo.clear();
+            calendarioevaluacionpoas.forEach((t) -> {
+                if (new Date().before(t.getFechaFin()) && new Date().after(t.getFechaInicio())) {
+                    calendarioPoaActivo.add(t);
+                }
+            });
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);
@@ -77,19 +106,19 @@ public class AdministracionPOA implements Serializable {
         try {
             detallePoas = new ArrayList<>();
             detallePoas.clear();
-
+            
             List<Procesopoa> p = new ArrayList<>();
             p.clear();
             p = ejbUtilidadesCH.mostrarProcesopoa();
             p.forEach((t) -> {
                 try {
-                    Personal p1 = new Personal();
+                    ListaPersonal p1 = new ListaPersonal();
                     AreasUniversidad au = new AreasUniversidad();
                     if(t.getResponsable()!=0){
-                        p1 = ejbPersonal.mostrarPersonalLogeado(t.getResponsable());
+                        p1 = ejbPersonal.mostrarListaPersonal(t.getResponsable());
                     }                    
-                    au = areasLogeo.mostrarAreasUniversidad(t.getArea());                    
-                    detallePoas.add(new ProcesoDetallePoa(au, p1, t, t.getPermisosevaluacionpoaexList()));                    
+                    au = areasLogeo.mostrarAreasUniversidad(t.getArea()); 
+                    detallePoas.add(new ProcesoDetallePoa(au, p1, t, t.getPermisosevaluacionpoaexList(),t.getRegistroAFinalizado(),t.getAsiganacionRFinalizado(),t.getRegistroJustificacionFinalizado(),t.getValidacionRegistroA(),t.getValidacionRFFinalizado(),t.getValidacionJustificacion()));                    
                 } catch (Throwable ex) {
                     Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
                     Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);
@@ -131,7 +160,7 @@ public class AdministracionPOA implements Serializable {
 // -----------------------------------------------------------------------------Edicion    
     public void actualizarCalendarioPOA(RowEditEvent event) {
         try {
-             Calendarioevaluacionpoa e = (Calendarioevaluacionpoa) event.getObject();
+            Calendarioevaluacionpoa e = (Calendarioevaluacionpoa) event.getObject();
             administrador.actualizarCalendarioPoa(e);
             Messages.addGlobalInfo("¡Operación exitosa!");
             buscarCalendarioPOA();
@@ -144,12 +173,25 @@ public class AdministracionPOA implements Serializable {
   
     public void actualizarProcesosPOA(RowEditEvent event) {
         try {
-            
+            ProcesoDetallePoa ef = (ProcesoDetallePoa) event.getObject();
+            Procesopoa e = ef.getProcesopoa();
+            e.setResponsable(ef.getPersonal().getClave());
+            e.setRegistroAFinalizado(ef.getRact());
+            e.setAsiganacionRFinalizado(ef.getRrec());
+            e.setRegistroJustificacionFinalizado(ef.getRjus());
+            e.setValidacionRegistroA(ef.getVact());
+            e.setValidacionRFFinalizado(ef.getVrec());
+            e.setValidacionJustificacion(ef.getVjus());
+            administrador.actualizarPorcesoPoa(e);
+            Messages.addGlobalInfo("¡Operación exitosa!");
+            buscarProcesosPOA();
+            Ajax.update("frmPorceso");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
     public void actualizarPresupuestos(RowEditEvent event) {
         try {
             
@@ -216,15 +258,28 @@ public class AdministracionPOA implements Serializable {
     public static class ProcesoDetallePoa {
         
         @Getter        @Setter        private AreasUniversidad universidad;
-        @Getter        @Setter        private Personal personal;
+        @Getter        @Setter        private ListaPersonal personal;
         @Getter        @Setter        private Procesopoa procesopoa;        
         @Getter        @Setter        private List<Permisosevaluacionpoaex> permisosevaluacionpoaexs;
+        @Getter        @Setter        private Boolean ract;
+        @Getter        @Setter        private Boolean rrec;
+        @Getter        @Setter        private Boolean rjus;
+        @Getter        @Setter        private Boolean vact;
+        @Getter        @Setter        private Boolean vrec;
+        @Getter        @Setter        private Boolean vjus;
 
-        public ProcesoDetallePoa(AreasUniversidad universidad, Personal personal, Procesopoa procesopoa, List<Permisosevaluacionpoaex> permisosevaluacionpoaexs) {
+        public ProcesoDetallePoa(AreasUniversidad universidad, ListaPersonal personal, Procesopoa procesopoa, List<Permisosevaluacionpoaex> permisosevaluacionpoaexs, Boolean ract, Boolean rrec, Boolean rjus, Boolean vact, Boolean vrec, Boolean vjus) {
             this.universidad = universidad;
             this.personal = personal;
             this.procesopoa = procesopoa;
             this.permisosevaluacionpoaexs = permisosevaluacionpoaexs;
-        }
+            this.ract = ract;
+            this.rrec = rrec;
+            this.rjus = rjus;
+            this.vact = vact;
+            this.vrec = vrec;
+            this.vjus = vjus;
+        }       
+        
     }
 }

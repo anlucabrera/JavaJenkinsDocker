@@ -21,6 +21,8 @@ public interface EjbCarga extends Serializable {
 
     public String subirFotoPersonal(Part file, File rutaRelativa);
 
+    public String subirEvidenciaPOA(Part file, File rutaRelativa);
+    
     public byte[] descargar(File rutaRelativa);
 
     /**

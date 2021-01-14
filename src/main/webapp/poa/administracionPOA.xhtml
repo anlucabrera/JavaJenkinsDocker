@@ -11,10 +11,10 @@
         <ui:param name="renderBreadCrumb" value="false"/>
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
-            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         </c:if>  
         <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
-            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
         </c:if> 
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
@@ -107,6 +107,171 @@
                                                     <p:column style="width:32px;" class="noprint">
                                                         <p:rowEditor />
                                                     </p:column>   
+                                                </p:dataTable>  
+                                            </p:outputPanel>    
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Procesos">
+                                        <h:form id="frmPorceso"> 
+                                            <p:panel>
+                                                <c:forEach var="a" begin="0" end="#{administracionPOA.calendarioPoaActivo.size()-1}">
+                                                    <c:set var="b" value="#{administracionPOA.calendarioPoaActivo.get(a)}"/>
+                                                    <div class="col-lg-3 col-md-6 col-xs-12" style="text-height: max-size">
+                                                        <div class="small-box bg-green">
+                                                            <div class="inner">
+                                                                <c:if test="#{b.evaluacionPOA eq 1}">
+                                                                    <h3>Registro de <br/>actividades</h3>
+                                                                </c:if>
+                                                                <c:if test="#{b.evaluacionPOA eq 2}">
+                                                                    <h3>Asignacion de <br/>Recurso y registro <br/>de Justificaciones</h3>
+                                                                </c:if>
+                                                                <c:if test="#{b.evaluacionPOA ge 3}">
+                                                                    <h3>Evaluacion del <br/>mes de #{b.mesEvaluacion}</h3>
+                                                                </c:if>
+                                                            </div>
+                                                            <div class="icon">
+                                                                <i class="fa fa-calendar"/>
+                                                            </div>
+                                                            <a href="#" class="small-box-footer"></a>
+                                                        </div>
+                                                    </div> 
+                                                </c:forEach>
+                                            </p:panel>
+
+                                            <p:outputPanel id="incidenciasReporte">
+                                                <p:dataTable id="tblActividades"  value="#{administracionPOA.detallePoas}"  var="dPoa"
+                                                             editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true" 
+                                                             expandableRowGroups="true">
+
+                                                    <p:ajax event="rowEdit" listener="#{administracionPOA.actualizarProcesosPOA}" update="tblActividades" process="@this"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{administracionPOA.onRowCancel}" update="tblActividades" />
+
+
+                                                    <p:columnGroup type="header" class="hederTablesTitle">
+                                                        <p:row class="success">
+                                                            <p:column rowspan="2" style="width:20px" styleClass="hederTablesTitle"/>
+                                                            <p:column rowspan="2" headerText="Área" style="width: 20%;" styleClass="hederTablesTitle"/>
+                                                            <p:column rowspan="2" headerText="Responsable" style="width: 20%;" styleClass="hederTablesTitle"/>
+                                                            <p:column rowspan="2" headerText="Correo" style="width: 30%;" styleClass="hederTablesTitle"/>
+                                                            <p:column colspan="3" headerText="Registros" style="width: 20%" styleClass="hederTablesTitle"/>
+                                                            <p:column colspan="3" headerText="Validaciones" style="width: 20%;" styleClass="hederTablesTitle"/>
+                                                            <p:column rowspan="2" style="width: 32px;" styleClass="hederTablesTitle"/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Actividades"  styleClass="hederTablesTitle"/>
+                                                            <p:column headerText="Recurso"  styleClass="hederTablesTitle"/>
+                                                            <p:column headerText="Justificaciones"   styleClass="hederTablesTitle"/>
+                                                            <p:column headerText="Programacion"  styleClass="hederTablesTitle"/>
+                                                            <p:column headerText="Presupuesto"  styleClass="hederTablesTitle"/>
+                                                            <p:column headerText="Justificacion"   styleClass="hederTablesTitle"/>
+                                                        </p:row>
+                                                    </p:columnGroup>                                                    
+
+                                                    <p:column>
+                                                        <p:rowToggler rendered="#{dPoa.permisosevaluacionpoaexs.size() ne 0}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{dPoa.universidad.area} -- #{dPoa.universidad.nombre}" />
+                                                    </p:column>                                               
+
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{dPoa.personal.clave} --  #{dPoa.personal.nombre}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:selectOneMenu value="#{dPoa.personal.clave}" style="width:100%" filter="true" filterMatchMode="contains">
+                                                                    <f:selectItems value="#{administracionPOA.personals}" var="persona" itemLabel="#{persona.clave} -- #{persona.nombre}" itemValue="#{persona.clave}" />
+                                                                </p:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>                                                        
+                                                    </p:column> 
+                                                    <p:column>
+                                                        <h:outputText value="#{dPoa.universidad.correoInstitucional}" />
+                                                    </p:column> 
+
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{dPoa.ract?'Finalizado':'Pendiente'}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:selectOneMenu value="#{dPoa.ract}" style="width:100%">
+                                                                    <f:selectItems value="#{administracionPOA.estatus}" var="estatus" itemLabel="#{estatus?'Finalizado':'Pendiente'}" itemValue="#{estatus}" />
+                                                                </p:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{dPoa.rrec ?'Finalizado':'Pendiente'}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:selectOneMenu value="#{dPoa.rrec}" style="width:100%">
+                                                                    <f:selectItem itemLabel="Finalizado" itemValue="#{true}" />
+                                                                    <f:selectItem itemLabel="Pendiente" itemValue="#{false}" />
+                                                                </p:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{dPoa.rjus ?'Finalizado':'Pendiente'}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:selectOneMenu value="#{dPoa.rjus}" style="width:100%">
+                                                                    <f:selectItem itemLabel="Finalizado" itemValue="#{true}" />
+                                                                    <f:selectItem itemLabel="Pendiente" itemValue="#{false}" />
+                                                                </p:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{dPoa.vact ?'Aceptado':'Denegado'}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:selectOneMenu value="#{dPoa.vact}" style="width:100%">
+                                                                    <f:selectItem itemLabel="Finalizado" itemValue="#{true}" />
+                                                                    <f:selectItem itemLabel="Pendiente" itemValue="#{false}" />
+                                                                </p:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{dPoa.vrec ?'Aceptado':'Denegado'}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:selectOneMenu value="#{dPoa.vrec}" style="width:100%">
+                                                                    <f:selectItem itemLabel="Finalizado" itemValue="#{true}" />
+                                                                    <f:selectItem itemLabel="Pendiente" itemValue="#{false}" />
+                                                                </p:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{dPoa.vjus ?'Aceptado':'Denegado'}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:selectOneMenu value="#{dPoa.vjus}" style="width:100%">
+                                                                    <f:selectItem itemLabel="Finalizado" itemValue="#{true}" />
+                                                                    <f:selectItem itemLabel="Pendiente" itemValue="#{false}" />
+                                                                </p:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>  
+                                                    <p:column style="width:32px;" class="noprint">
+                                                        <p:rowEditor />
+                                                    </p:column>
+
+
+                                                    <p:rowExpansion>
+                                                        <p:dataTable id="tblActividades"  value="#{dPoa.permisosevaluacionpoaexs}"  var="per">
+                                                            <p:column headerText="Proceso">
+                                                                <h:outputText value="#{per.evaluacionPOA.mesEvaluacion}" />
+                                                            </p:column>
+                                                            <p:column headerText="Fecha Inicio">
+                                                                <h:outputLabel value="#{per.fechaApertura}"><f:convertDateTime pattern="dd/MM/yyyy hh:mm" timeZone="America/Mexico_City"/></h:outputLabel> 
+                                                            </p:column>
+                                                            <p:column headerText="Fecha Fin">
+                                                                <h:outputLabel value="#{per.fechaCierre}"><f:convertDateTime pattern="dd/MM/yyyy hh:mm" timeZone="America/Mexico_City"/></h:outputLabel> 
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                    </p:rowExpansion>
                                                 </p:dataTable>  
                                             </p:outputPanel>    
                                         </h:form>

@@ -12,6 +12,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
+import mx.edu.utxj.pye.sgi.entity.ch.Permisosevaluacionpoaex;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Reporteerrores;
@@ -32,13 +33,17 @@ public interface EjbUtilidadesCH {
 
     public Procesopoa mostrarEtapaPOAArea(Short calveArea) throws Throwable;
 
-    public Procesopoa mostrarEtapaPOAPersona(Integer responsable) throws Throwable;
+    public List<Procesopoa> mostrarEtapaPOAPersona(Integer responsable) throws Throwable;
 
     public Procesopoa actualizarEtapaPOA(Procesopoa procesopoa) throws Throwable;
 
     public List<Calendarioevaluacionpoa> mostrarCalendarioevaluacionpoas() throws Throwable;
     
+    public List<Permisosevaluacionpoaex> mostrarPermisosEvaluacionExtemporaneaPOA(Date fecha,Procesopoa idP) throws Throwable;
+    
     public Calendarioevaluacionpoa mostrarCalendarioEvaluacion(Date fecha) throws Throwable;
+        
+    public List<Calendarioevaluacionpoa> mostrarCalendariosEvaluacionActivos(Date fecha) throws Throwable;
 ////////////////////////////////////////////////////////////////////////////////Eventos Áreas
 
     public List<EventosAreas> mostrarEventosesAreases() throws Throwable;

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
@@ -35,8 +36,10 @@ import mx.edu.utxj.pye.sgi.entity.ch.Notificaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisosadminstracion;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
+import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 import org.omnifaces.util.Messages;
 
 @Named
@@ -49,15 +52,19 @@ public class ControladorEmpleado implements Serializable {
 ////////////////////////////////////////////////////////////////////////////////Datos Perosnales 
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
     @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal;
-    @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();
+    @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();    
+    @Getter    @Setter    private Calendarioevaluacionpoa calendarioevaluacionpoa=new Calendarioevaluacionpoa();
 
 ////////////////////////////////////////////////////////////////////////////////Listas complementarias
+    @Getter    @Setter    private List<Procesopoa> procesopoas=new ArrayList<>();
+    @Getter    @Setter    private List<Calendarioevaluacionpoa> calendarioevaluacionpoas=new ArrayList<>();
     @Getter    @Setter    private List<Docencias> listaDocencias = new ArrayList<>();
     @Getter    @Setter    private List<Notificaciones> listaNotificaciones = new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> incidenciases = new ArrayList<>();
 
 
     @Getter    @Setter    private Integer empleadoLogeado;
+    @Getter    @Setter    private EjerciciosFiscales ef;
     @Getter    @Setter    private List<Integer> administradores = new ArrayList();
     @Getter    @Setter    private List<Boolean> poaProces = new ArrayList();
     @Getter    @Setter    private String clavePersonalLogeado, mandos = "", fechaCVBencimiento, fechaFuncionesBencimiento, fechaLimiteCurriculumVitae = "", fechaLimiteRegistroFunciones = "",
@@ -89,6 +96,7 @@ public class ControladorEmpleado implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     
     @Inject    UtilidadesCH uch;
+    @Inject    UtilidadesPOA utilidadesPOA;
 
     @Inject LogonMB logonMB;
     @Getter private Boolean cargado = false;
@@ -221,8 +229,16 @@ public class ControladorEmpleado implements Serializable {
     public void areaPoa() {
         try {
             procesopoa = new Procesopoa();
-            procesopoa = ejbUtilidadesCH.mostrarEtapaPOAPersona(nuevoOBJListaPersonal.getClave());
-            if (procesopoa == null) {
+            procesopoas = new ArrayList<>();
+            
+            calendarioevaluacionpoas= new ArrayList<>();
+            calendarioevaluacionpoas=ejbUtilidadesCH.mostrarCalendariosEvaluacionActivos(new Date());            
+                
+            ef=new EjerciciosFiscales();
+            Integer i=LocalDate.now().getYear();
+            ef=utilidadesPOA.obtenerAnioRegistroActivo(Short.parseShort(i.toString()));
+            procesopoas = ejbUtilidadesCH.mostrarEtapaPOAPersona(nuevoOBJListaPersonal.getClave());
+            if (procesopoas.isEmpty()) {
                 if (administradores.contains(nuevoOBJListaPersonal.getClave())) {
                     procesopoa = ejbUtilidadesCH.mostrarEtapaPOAArea(nuevoOBJListaPersonal.getAreaOperativa());
                 }else{
@@ -231,56 +247,44 @@ public class ControladorEmpleado implements Serializable {
                     procesopoa.setActivaEtapa1(Boolean.FALSE);
                     procesopoa.setActivaEtapa2(Boolean.FALSE);
                 }
+                procesopoas.add(procesopoa);
             }
-            if (procesopoa != null) {
+            if (!procesopoas.isEmpty()) {
+                procesopoa=procesopoas.get(0);
                 if (Objects.equals(procesopoa.getActivaEtapa1(), Boolean.FALSE) && Objects.equals(procesopoa.getActivaEtapa2(), Boolean.FALSE)) {
                     tienePOA = false;
                     evaluable = false;
                 } else {
                     nuevaAreasUniversidad = ejbAreasLogeo.mostrarAreasUniversidad(procesopoa.getArea());
                     nuevaAreasUniversidadPOA = ejbAreasLogeo.mostrarAreasUniversidad(procesopoa.getArea());
+                    calendarioevaluacionpoa = new Calendarioevaluacionpoa();
+                    calendarioevaluacionpoa = utilidadesPOA.buscarCalendarioPOA(procesopoa, 0,ef.getEjercicioFiscal());
                     if (Objects.equals(procesopoa.getActivaEtapa2(), Boolean.TRUE)) {
-                        if (procesopoa.getEvaluacion() == null) {
-                            procesopoa.setEvaluacion(new Calendarioevaluacionpoa());
-                            Calendarioevaluacionpoa periodoEvaluacion = new Calendarioevaluacionpoa();
-                            periodoEvaluacion = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(fechaActual));
-                            if (periodoEvaluacion != null) {
-                                evaluable = true;
-                            } else {
-                                periodoEvaluacion = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(LocalDate.of(fechaActual.getYear(), fechaActual.getMonth(), 1)));
-                                if (periodoEvaluacion != null) {
-                                    periodoEvaluacion = ejbUtilidadesCH.mostrarCalendarioEvaluacion(uch.castearLDaD(LocalDate.of(fechaActual.getYear(), fechaActual.getMonth(), 25)));
-                                }
-                            }
-                            procesopoa.setEvaluacion(periodoEvaluacion);
-                        } else {
+                        if (!"No hay mes activo".equals(calendarioevaluacionpoa.getMesEvaluacion())) {
                             evaluable = true;
-                        }
-                        if (procesopoa.getEvaluacion() != null) {
-                            eventosRegistro();
-                        }else if(nuevoOBJListaPersonal.getAreaOperativa()==9 || nuevoOBJListaPersonal.getAreaOperativa()==6 || nuevoOBJListaPersonal.getAreaOperativa()==7){
-                            procesopoa=new Procesopoa();  
-                            Calendarioevaluacionpoa periodoEvaluacion = new Calendarioevaluacionpoa();
-                            Short ejeFE=0;
-                            Integer anio=0;
-                            DateFormat df = new SimpleDateFormat("yy");
-                            if(fechaActual.getMonth()==Month.JANUARY){
-                                anio=Integer.parseInt(df.format(new Date()))-2;
-                            }else{
-                                anio=Integer.parseInt(df.format(new Date()))-1;
-                            }
-                            ejeFE=Short.parseShort(anio.toString());
-                            periodoEvaluacion=new Calendarioevaluacionpoa(13, new Date(), new Date(), "Diciembre", Boolean.FALSE);
-                            procesopoa=new Procesopoa(0, nuevoOBJListaPersonal.getAreaOperativa(),nuevoOBJListaPersonal.getClave(), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, ejeFE, ejeFE, Boolean.TRUE, Boolean.TRUE, periodoEvaluacion);
-                        }
+                            eventosRegistro(calendarioevaluacionpoa);
+                        }                                          
+//                        if(nuevoOBJListaPersonal.getAreaOperativa()==9 || nuevoOBJListaPersonal.getAreaOperativa()==6 || nuevoOBJListaPersonal.getAreaOperativa()==7){
+//                            procesopoa=new Procesopoa();  
+//                            Calendarioevaluacionpoa periodoEvaluacion = new Calendarioevaluacionpoa();
+//                            Short ejeFE=0;
+//                            Integer anio=0;
+//                            DateFormat df = new SimpleDateFormat("yy");
+//                            if(fechaActual.getMonth()==Month.JANUARY){
+//                                anio=Integer.parseInt(df.format(new Date()))-2;
+//                            }else{
+//                                anio=Integer.parseInt(df.format(new Date()))-1;
+//                            }
+//                            ejeFE=Short.parseShort(anio.toString());
+//                            periodoEvaluacion=new Calendarioevaluacionpoa(13, new Date(), new Date(), "Diciembre", Boolean.FALSE);
+//                            procesopoa=new Procesopoa(0, nuevoOBJListaPersonal.getAreaOperativa(),nuevoOBJListaPersonal.getClave(), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, ejeFE, ejeFE, Boolean.TRUE, Boolean.TRUE, periodoEvaluacion);
+//                        }
                     }
                     if (Objects.equals(procesopoa.getActivaEtapa1(), Boolean.TRUE)) {
                         tienePOA = true;
-                        if(!procesopoa.getValidacionRegistroA() && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Registro").get(0))){poaProces.add(true);} else {poaProces.add(false);}
-                        if(procesopoa.getValidacionRegistroA() && (procesopoa.getValidacionRFFinalizado() == false) && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Recurso").get(0))){poaProces.add(true);} else {poaProces.add(false);}
-                        if(procesopoa.getValidacionRFFinalizado() && (procesopoa.getValidacionJustificacion() == false) && periodoActivoPOA(ejbUtilidadesCH.mostrarEventosRegistro("POA", "Justificacion").get(0))){poaProces.add(true);} else {poaProces.add(false);}
+                        if(!procesopoa.getValidacionRegistroA() && utilidadesPOA.buscarCalendarioPOA("Registro",procesopoa)){poaProces.add(true);} else {poaProces.add(false);}
+                        if(procesopoa.getValidacionRegistroA() && (procesopoa.getValidacionRFFinalizado() == false) && utilidadesPOA.buscarCalendarioPOA("Recurso",procesopoa)){poaProces.add(true);} else {poaProces.add(false);}
                     } else {
-                        poaProces.add(false);
                         poaProces.add(false);
                         poaProces.add(false);
                     }
@@ -295,20 +299,20 @@ public class ControladorEmpleado implements Serializable {
         }
     }
 
-    public void eventosRegistro() {
+    public void eventosRegistro(Calendarioevaluacionpoa c) {
         try {
             fechaActual = LocalDate.now();                              
             mensajeGeneral = false;
             estiloInfo = false;
-            Integer diasR = (int) ((procesopoa.getEvaluacion().getFechaFin().getTime() - uch.castearLDaD(fechaActual).getTime()) / 86400000);
-            Integer diasI = (int) ((uch.castearLDaD(fechaActual).getTime() - procesopoa.getEvaluacion().getFechaInicio().getTime()) / 86400000);
+            Integer diasR = (int) ((c.getFechaFin().getTime() - uch.castearLDaD(fechaActual).getTime()) / 86400000);
+            Integer diasI = (int) ((uch.castearLDaD(fechaActual).getTime() - c.getFechaInicio().getTime()) / 86400000);
             if (diasI <= 2) {
-                mensajeIndex1 = "Inicio del periodo para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + procesopoa.getEvaluacion().getMesEvaluacion();
+                mensajeIndex1 = "Inicio del periodo para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + c.getMesEvaluacion();
                 estiloInfo = true;
                 mensajeGeneral = true;
             }
             if (diasR <= 5) {
-                mensajeIndex1 = "La fecha límite para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + procesopoa.getEvaluacion().getMesEvaluacion() + " ¡Está por vencer!";
+                mensajeIndex1 = "La fecha límite para la Evaluación de actividades, Carga de Evidencia, y Registro en Sistema del mes de " + c.getMesEvaluacion() + " ¡Está por vencer!";
                 mensajeIndex2 = "Restan " + diasR + " días";
                 estiloInfo = false;
                 mensajeGeneral = true;
