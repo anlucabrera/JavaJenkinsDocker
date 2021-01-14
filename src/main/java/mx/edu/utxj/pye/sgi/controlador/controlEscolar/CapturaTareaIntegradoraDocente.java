@@ -120,15 +120,15 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             System.out.println("CapturaTareaIntegradoraDocente.init: Error controlado en método inicializador");
             e.printStackTrace();
         }
-
-//        try {
-//            if(rol.getDocenteLogueado().getPersonal().getClave().intValue() == 169) {
-//                ResultadoEJB<Point> registrarMasivamentePromedios = ejbRegistraPromedioAsignatura.registrarMasivamentePromedios();
-//                System.out.println("registrarMasivamentePromedios = " + registrarMasivamentePromedios);
-//            }
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
+        //Se tiene que comentar antes de que inicie el próximo cuatrimestre
+        try {
+            if(rol.getDocenteLogueado().getPersonal().getClave().intValue() == 169) {
+                ResultadoEJB<Point> registrarMasivamentePromedios = ejbRegistraPromedioAsignatura.registrarMasivamentePromedios();
+                System.out.println("registrarMasivamentePromedios = " + registrarMasivamentePromedios);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void actualizar(){
