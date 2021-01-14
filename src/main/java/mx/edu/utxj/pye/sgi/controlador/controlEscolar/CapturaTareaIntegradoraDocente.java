@@ -386,9 +386,7 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
     }
      
     public Boolean existeAperIndNivelacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
-        
         ResultadoEJB<Boolean> aperturaIndNiv = ejb.existeAperIndNivelacion(dtoCargaAcademica, dtoEstudiante);
-        
         if(aperturaIndNiv.getValor()){
                 return Boolean.TRUE;
             }else{
@@ -397,9 +395,7 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
     }
     
     public Boolean existeAperGrupalTareaInt(@NonNull DtoCargaAcademica dtoCargaAcademica){
-        
         ResultadoEJB<Boolean> aperturaGrupTI = ejb.existeAperGrupalTI(dtoCargaAcademica);
-        
         if(aperturaGrupTI.getValor()){
                 return Boolean.TRUE;
             }else{
@@ -408,9 +404,7 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
     }
     
     public Boolean existeAperIndTareaInt(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
-        
         ResultadoEJB<Boolean> aperturaIndTI = ejb.existeAperIndTI(dtoCargaAcademica, dtoEstudiante);
-        
         if(aperturaIndTI.getValor()){
                 return Boolean.TRUE;
             }else{
