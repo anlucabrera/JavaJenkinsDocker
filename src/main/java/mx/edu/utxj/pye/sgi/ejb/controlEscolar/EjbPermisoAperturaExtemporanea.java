@@ -201,11 +201,18 @@ public class EjbPermisoAperturaExtemporanea {
     
      /**
      * Permite obtener la lista de tipos de evaluación activas para solicitar permiso
+     * @param dtoCargaAcademica
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<String>> getTiposEvaluaciones(){
+    public ResultadoEJB<List<String>> getTiposEvaluaciones(DtoCargaAcademica dtoCargaAcademica){
         try{
-            List<String> tiposEvaluaciones = Stream.of("Ordinaria", "Tarea Integradora" ,"Nivelación Final").collect(Collectors.toList());
+            Boolean existeTI =  existeTareaIntegradora(dtoCargaAcademica).getValor();
+            List<String> tiposEvaluaciones = new ArrayList<>();
+            if(existeTI){
+                tiposEvaluaciones = Stream.of("Ordinaria", "Tarea Integradora" ,"Nivelación Final").collect(Collectors.toList());
+            }else{
+                tiposEvaluaciones = Stream.of("Ordinaria","Nivelación Final").collect(Collectors.toList());
+            }
             return ResultadoEJB.crearCorrecto(tiposEvaluaciones, "Lista de tipos de evaluaciones.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de tipos de evaluaciones. (EjbPermisoAperturaExtemporanea.getTiposEvaluaciones)", e, null);
@@ -1088,4 +1095,22 @@ public class EjbPermisoAperturaExtemporanea {
 //        }
 //    
 //    }
+     
+     /**
+     * Permite comprobar si existe tarea integradora configurada para la carga académica seleccionada
+     * @param dtoCargaAcademica carga académica
+     * @return Regresa TRUE/FALSE según la comprobación o código de error en caso de no poder realizar la comprobación
+     */
+    public ResultadoEJB<Boolean> existeTareaIntegradora(DtoCargaAcademica dtoCargaAcademica){
+        try{
+            TareaIntegradora tareaInt = em.createQuery("SELECT t FROM TareaIntegradora t where t.carga.carga=:carga", TareaIntegradora.class)
+                    .setParameter("carga", dtoCargaAcademica.getCargaAcademica().getCarga())
+                    .getResultStream()
+                    .findAny()
+                    .orElse(null);
+            return ResultadoEJB.crearCorrecto(tareaInt != null, "Se comprobó que la carga académica tiene tarea integradora configurada");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
 }

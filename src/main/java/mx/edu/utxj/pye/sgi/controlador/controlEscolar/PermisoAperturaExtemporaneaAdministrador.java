@@ -181,7 +181,7 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
         if(res.getCorrecto()){
             rol.setCargasPeriodo(res.getValor());
             rol.setCarga(rol.getCargasPeriodo().get(0));
-            tiposEvaluaciones();
+            tiposEvaluaciones(rol.getCarga());
             actualizarUnidadesMateria();
             justificacionesPermiso();
             actualizarListaEstudiantes();
@@ -191,10 +191,11 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
     
      /**
      * Permite obtener la lista de tipos de evaluaciones disponibles para realizar permiso
+     * @param dtoCargaAcademica
      */
-    public void tiposEvaluaciones(){
+    public void tiposEvaluaciones(DtoCargaAcademica dtoCargaAcademica){
         if(rol.getCarga()== null) return;
-        ResultadoEJB<List<String>> res = ejb.getTiposEvaluaciones();
+        ResultadoEJB<List<String>> res = ejb.getTiposEvaluaciones(dtoCargaAcademica);
         if(res.getCorrecto()){
             rol.setTiposEvaluacion(res.getValor());
             rol.setTipoEvaluacion(rol.getTiposEvaluacion().get(0));
