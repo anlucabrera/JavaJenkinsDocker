@@ -741,7 +741,7 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         }
         return exp;
     }
-    
+        
     @Override
     public DocumentosExpediente buscarFotografiaExpedienteTSU(ExpedientesTitulacion expedientesTitulacion) {
         //verificar que el parametro no sea nulo

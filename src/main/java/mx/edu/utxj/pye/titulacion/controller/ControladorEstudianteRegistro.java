@@ -111,6 +111,7 @@ public class ControladorEstudianteRegistro implements Serializable{
         try {
             matricula = logonMB.getCurrentUser();
             estudiante = ejbEstudianteRegistro.obtenerInformacionAlumno(matricula);
+            System.err.println("estudiante - grado: " + estudiante.getGradoActual() + " periodo: "+ estudiante.getGrupos().getGruposPK().getCvePeriodo());
             selectGeneros();
 //            if (estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11) {
 //                procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
@@ -136,7 +137,7 @@ public class ControladorEstudianteRegistro implements Serializable{
             
             
             //if (estudiante.getGradoActual() == 5 || estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11 || estudiante.getGradoActual() == 10) {
-            if (estudiante.getGradoActual() == 5 || estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11) {
+            if (estudiante.getGradoActual() == 5 || estudiante.getGradoActual() == 6 || (estudiante.getGradoActual() == 11 && estudiante.getGrupos().getGruposPK().getCvePeriodo() !=56)) {
                 procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
 
                 if (procesosIntexp == null) {
@@ -155,7 +156,7 @@ public class ControladorEstudianteRegistro implements Serializable{
                 }
             } else if (estudiante.getGradoActual() == 7 || estudiante.getGradoActual() == 8 || estudiante.getGradoActual() == 9) {
                 estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
-                
+                System.err.println("obtenerInformacionTSUAlumno " + estudiante.getAlumnosPK().getCveAlumno());
                 if (estudiante == null) {
                     cargada = false;
                 } else {
@@ -179,7 +180,7 @@ public class ControladorEstudianteRegistro implements Serializable{
                 
             } 
             
-            else if (estudiante.getGradoActual() == 10 && estudiante.getGrupos().getGruposPK().getCvePeriodo() == 55) {
+            else if (estudiante.getGradoActual() == 11 && estudiante.getGrupos().getGruposPK().getCvePeriodo() == 56) {
                 expedienteRegistrado = ejbEstudianteRegistro.buscarExpedienteTSU(estudiante);
                 if(expedienteRegistrado == null) {
                     estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
