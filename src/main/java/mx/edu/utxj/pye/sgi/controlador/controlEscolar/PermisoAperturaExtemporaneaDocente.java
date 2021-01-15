@@ -297,6 +297,21 @@ public class PermisoAperturaExtemporaneaDocente extends ViewScopedRol implements
         }else Messages.addGlobalWarn("No puede solicitar permisos de periodos anteriores");
     }
     
+     /**
+     * Permite guardar el permiso de captura extemporánea de tarea integradora, para ello el usuario debió haber llenado todos los datos correspondientes y haber 
+     * seleccionado en tipo de evaluacion "Tarea Integradora"
+     */
+    public void guardarPermisoCapturaTI(){
+        ResultadoEJB<PermisosCapturaExtemporaneaGrupal> res = ejb.guardarPermisoCapturaTIDocente(rol.getCarga(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
+        if(res.getCorrecto()){
+            rol.setPermisosCapturaExtemporaneaGrupal(res.getValor());
+            mostrarMensajeResultadoEJB(res);
+            existenPermisosCapturasVigentes(rol.getDocente());
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(res);
+        
+    }
+    
     /**
      * Permite guardar el permiso de captura extemporánea de nivelación final, para ello el usuario debió haber llenado todos los datos correspondientes y haber 
      * seleccionado en tipo de evaluacion "Nivelación Final"

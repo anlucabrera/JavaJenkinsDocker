@@ -209,11 +209,12 @@ public class EjbPacker {
                 if(detalleListMap.containsKey(detalle.getCriterio())) detalleListMap.get(detalle.getCriterio()).add(detalle);
             });
             Boolean activaPorFecha = DateUtils.isBetweenWithRange(new Date(), unidadMateriaConfiguracionBD.getFechaInicio(), unidadMateriaConfiguracionBD.getFechaFin(), ejbCapturaCalificaciones.leerDiasRangoParaCapturarUnidad());
-            PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.idUnidadMateria=:unidad", PermisosCapturaExtemporaneaGrupal.class)
+            PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.idUnidadMateria=:unidad and p.validada=:valor", PermisosCapturaExtemporaneaGrupal.class)
                     .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                     .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
                     .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
                     .setParameter("unidad", unidadMateria)
+                    .setParameter("valor", (int)1)
                     .getResultStream()
                     .findAny()
                     .orElse(null);
@@ -352,12 +353,13 @@ public class EjbPacker {
                     .map(ResultadoEJB::getValor)
                     .collect(Collectors.toList());
             
-            PermisosCapturaExtemporaneaEstudiante permiso = em.createQuery("select p from PermisosCapturaExtemporaneaEstudiante p inner join p.idPlanMateria pm inner join p.idGrupo g inner join p.estudiante e where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.idUnidadMateria=:unidad and e.idEstudiante =:estudiante", PermisosCapturaExtemporaneaEstudiante.class)
+            PermisosCapturaExtemporaneaEstudiante permiso = em.createQuery("select p from PermisosCapturaExtemporaneaEstudiante p inner join p.idPlanMateria pm inner join p.idGrupo g inner join p.estudiante e where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.idUnidadMateria=:unidad and e.idEstudiante =:estudiante and p.validada=:valor", PermisosCapturaExtemporaneaEstudiante.class)
                     .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                     .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
                     .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
                     .setParameter("unidad", dtoUnidadConfiguracion.getUnidadMateria())
                     .setParameter("estudiante", dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante())
+                    .setParameter("valor", (int)1)
                     .getResultStream()
                     .findAny()
                     .orElse(null);
@@ -537,11 +539,12 @@ public class EjbPacker {
                 List<DtoEstudiante> dtoEstudiantes = res.getValor();
                 String tipoEval ="Nivelación Final";
                 Boolean activaPorFecha = eventoEscolar == null?false:DateUtils.isBetweenWithRange(new Date(), eventoEscolar.getInicio(), eventoEscolar.getFin(), ejbCapturaCalificaciones.leerDiasRangoParaCapturarUnidad());
-                PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.tipoEvaluacion=:tipo", PermisosCapturaExtemporaneaGrupal.class)
+                PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.tipoEvaluacion=:tipo and p.validada=:valor", PermisosCapturaExtemporaneaGrupal.class)
                         .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                         .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
                         .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
                         .setParameter("tipo", tipoEval)
+                        .setParameter("valor", (int)1)
                         .getResultStream()
                         .findAny()
                         .orElse(null);

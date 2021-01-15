@@ -151,8 +151,11 @@
                                         <c:if test="#{permisoAperturaExtemporaneaDocente.rol.tipoEvaluacion eq 'Ordinaria'}">
                                         <p:commandButton id="btnGuardar1" value="Guardar" actionListener="#{permisoAperturaExtemporaneaDocente.guardarPermisoCapturaOrdinaria()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
                                         </c:if>
+                                        <c:if test="#{permisoAperturaExtemporaneaDocente.rol.tipoEvaluacion eq 'Tarea Integradora'}">
+                                            <p:commandButton id="btnGuardar2" value="Guardar" actionListener="#{permisoAperturaExtemporaneaDocente.guardarPermisoCapturaTI()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                        </c:if>
                                         <c:if test="#{permisoAperturaExtemporaneaDocente.rol.tipoEvaluacion eq 'Nivelación Final'}">
-                                        <p:commandButton id="btnGuardar2" value="Guardar" actionListener="#{permisoAperturaExtemporaneaDocente.guardarPermisoCapturaNivFinal()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                        <p:commandButton id="btnGuardar3" value="Guardar" actionListener="#{permisoAperturaExtemporaneaDocente.guardarPermisoCapturaNivFinal()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
                                         </c:if>
                                     </center>   
                                     </div>

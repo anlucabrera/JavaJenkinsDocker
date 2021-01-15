@@ -296,12 +296,13 @@ public class EjbCapturaTareaIntegradora {
     public ResultadoEJB<Boolean> existeAperIndNivelacion(DtoCargaAcademica dtoCargaAcademica, DtoEstudiante dtoEstudiante){
         try{
             String tipoEval ="Nivelación Final";
-            PermisosCapturaExtemporaneaEstudiante permiso = em.createQuery("select p from PermisosCapturaExtemporaneaEstudiante p inner join p.idPlanMateria pm inner join p.idGrupo g inner join p.estudiante e where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and e.idEstudiante =:estudiante and p.tipoEvaluacion=:tipo", PermisosCapturaExtemporaneaEstudiante.class)
+            PermisosCapturaExtemporaneaEstudiante permiso = em.createQuery("select p from PermisosCapturaExtemporaneaEstudiante p inner join p.idPlanMateria pm inner join p.idGrupo g inner join p.estudiante e where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and e.idEstudiante =:estudiante and p.tipoEvaluacion=:tipo and p.validada=:valor", PermisosCapturaExtemporaneaEstudiante.class)
                     .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                     .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
                     .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
                     .setParameter("estudiante", dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante())
                     .setParameter("tipo", tipoEval)
+                    .setParameter("valor", (int)1)
                     .getResultStream()
                     .findAny()
                     .orElse(null);
@@ -319,11 +320,12 @@ public class EjbCapturaTareaIntegradora {
     public ResultadoEJB<Boolean> existeAperGrupalTI(DtoCargaAcademica dtoCargaAcademica){
         try{
             String tipoEval ="Tarea Integradora";
-            PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.tipoEvaluacion=:tipo", PermisosCapturaExtemporaneaGrupal.class)
+            PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.tipoEvaluacion=:tipo and p.validada=:valor", PermisosCapturaExtemporaneaGrupal.class)
                     .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                     .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
                     .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
                     .setParameter("tipo", tipoEval)
+                    .setParameter("valor", (int)1)
                     .getResultStream()
                     .findAny()
                     .orElse(null);
@@ -342,12 +344,13 @@ public class EjbCapturaTareaIntegradora {
     public ResultadoEJB<Boolean> existeAperIndTI(DtoCargaAcademica dtoCargaAcademica, DtoEstudiante dtoEstudiante){
         try{
             String tipoEval ="Tarea Integradora";
-            PermisosCapturaExtemporaneaEstudiante permiso = em.createQuery("select p from PermisosCapturaExtemporaneaEstudiante p inner join p.idPlanMateria pm inner join p.idGrupo g inner join p.estudiante e where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and e.idEstudiante =:estudiante and p.tipoEvaluacion=:tipo", PermisosCapturaExtemporaneaEstudiante.class)
+            PermisosCapturaExtemporaneaEstudiante permiso = em.createQuery("select p from PermisosCapturaExtemporaneaEstudiante p inner join p.idPlanMateria pm inner join p.idGrupo g inner join p.estudiante e where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and e.idEstudiante =:estudiante and p.tipoEvaluacion=:tipo and p.validada=:valor", PermisosCapturaExtemporaneaEstudiante.class)
                     .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                     .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
                     .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
                     .setParameter("estudiante", dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante())
                     .setParameter("tipo", tipoEval)
+                    .setParameter("valor", (int)1)
                     .getResultStream()
                     .findAny()
                     .orElse(null);
