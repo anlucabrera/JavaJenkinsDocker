@@ -48,6 +48,11 @@ public enum ControlEscolarVistaControlador {
     PRESTAMO_DOCUMENTOS("/controlEscolar/se/prestamoDocumentos.xhtml", PrestamoDocumentoServiciosEscolares.class),
     REINSCRIPCION_SEGUIMIENTO("/controlEscolar/se/reinscripcionSeguimientoSE.xhtml",ReinscripcionExtemporaneaSE.class),
     CONCENTRADO_BAJAS("/controlEscolar/se/concentradorBajas.xhtml",  ConcentradoBajasAreasVarias.class),
+    
+    SEGUIMIENTO_EXPEDIENTE_GENERACION("/controlEscolar/titulacion/seguimientoMatricula.xhtml", SeguimientoExpedienteMatriculaTitulacion.class),
+    SEGUIMIENTO_EXPEDIENTE_MATRICULA("/controlEscolar/titulacion/seguimientoGeneracion.xhtml", SeguimientoExpedienteGeneracionTitulacion.class),
+    REGISTRO_EXPEDIENTE_TITULACION("/controlEscolar/titulacion/registroExpediente.xhtml", RegistroExpedienteTitulacion.class),
+    FECHAS_TERMINACION_TITULACION("/controlEscolar/titulacion/fechasTerminacion.xhtml", FechasTerminacionTitulacion.class),
 
     DICTAMEN_BAJAS("/controlEscolar/psicopedagogia/dictamenBaja.xhtml",  DictamenBajaPsicopedagogia.class),
     CEDULA_IDENTIFICACION("/controlEscolar/psicopedagogia/cedulaIdentificacion.xhtml",cedulaIdentificacionPsicopedagogia.class),
@@ -98,6 +103,7 @@ public enum ControlEscolarVistaControlador {
     CONSULTA_CASOS_CRITICOS("/controlEscolar/estudiante/casosCriticos.xhtml",CasosCriticosEstudiante.class),
     EVALAUCION_TUTOR_NUEVA("/evaluaciones/evaluacion/nuevaTutor.xhtml", EvaluacionTutorEstudiante.class),
     EVALUACION_DOCENTE2("/evaluaciones/evaluacion/evaluacionDocente.xhtml", EvaluacionDocentesMateriaResultados2.class),
+    INTEGRACION_EXPEDIENTE_TITULACION("/controlEscolar/estudiante/expedienteTitulacion.xhtml",IntegracionExpedienteTitulacionEstudiante.class),
 
     REGISTRO_FICHA_ASPIRANTE("/controlEscolar/aspirante/registroFichaAspirante.xhtml", RegistroFichaAdmisionAspirante.class),
     CARGA_DOCUMENTOS_ASPIRANTE("/controlEscolar/aspirante/cargaDocumentos.xhtml", CargaDocumentosAspirante.class),

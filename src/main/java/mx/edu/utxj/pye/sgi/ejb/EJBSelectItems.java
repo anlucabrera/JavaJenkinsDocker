@@ -51,6 +51,8 @@ public interface EJBSelectItems {
     public List<Asentamiento> itemAsentamiento();
 
     public List<SelectItem> itemAsentamientoByClave(Integer Estado, Integer munipio);
+    
+    public List<SelectItem> itemLocalidadesIEMSByClave(Integer estado, Integer municipio);
 
     public List<SelectItem> itemPaises();
 

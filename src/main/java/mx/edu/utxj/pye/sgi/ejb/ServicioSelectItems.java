@@ -296,7 +296,34 @@ public class ServicioSelectItems implements EJBSelectItems {
 
         return lsl;
     }
+    
+    public List<Localidad> getLocalidadIEMSPorMunicipio(Integer estado, Integer municipio){
+         
+        List<Localidad> ll = f.getEntityManager().createQuery("SELECT l FROM Localidad l INNER JOIN l.iemsList i WHERE i.localidad.localidadPK.claveEstado = :estado AND i.localidad.localidadPK.claveMunicipio = :municipio ORDER BY l.nombre ASC",Localidad.class)
+        .setParameter("estado",estado)
+        .setParameter("municipio",municipio)
+        .getResultStream().distinct().collect(Collectors.toList());
+       
+        if (ll.isEmpty() || ll == null) {
+            System.err.println("no se encontraron localidades ligados a este municipio");
+            return null;
+        }else{
+            return  ll;
+        }
+    }
 
+    @Override
+    public List<SelectItem> itemLocalidadesIEMSByClave(Integer estado, Integer municipio) {
+        List<SelectItem> lsl = new ArrayList<>();
+        getLocalidadIEMSPorMunicipio(estado,municipio).stream()
+                .map((l)-> new SelectItem(l.getLocalidadPK().getClaveLocalidad(),l.getNombre()))
+                .forEachOrdered((selectItem -> {
+                    lsl.add(selectItem);
+                }));
+
+        return lsl;
+    }
+    
     @Override
     public List<Asentamiento> itemAsentamiento() {
         return f.getEntityManager().createQuery("SELECT a FROM Asentamiento a",Asentamiento.class)
@@ -309,7 +336,7 @@ public class ServicioSelectItems implements EJBSelectItems {
                 .setParameter("cveMunicipio", munipio)
                 .getResultList();
     }
-
+    
     @Override
     public List<SelectItem> itemAsentamientoByClave(Integer Estado, Integer munipio) {
         List<SelectItem> lsa = new ArrayList<>();

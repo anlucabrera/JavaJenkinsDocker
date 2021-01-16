@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+        <h:outputScript library="js" name="calendario.js" />
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{registroExpedienteTitulacion.cargado}">
+        <adm:breadcrumb title="Registro de Expediente de Titulación"/>
+        <c:if test="#{registroExpedienteTitulacion.tieneAcceso}">
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="index.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div> 
+                                    <br />
+                                    <br />
+                                          <div class="col-lg-12 col-xs-12">
+                                            </div> 
+                                </div>
+                                        <p:panel id="ET" >
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <h:form id="formGuardarExpediente">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h1><strong>Nuevo Expediente de Titulación</strong></h1>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos Personales y Académicos</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="generacionE" style="font-size: medium" value="Generación"/>                     
+                                                                                            <p:selectOneMenu id="generacionE" value="#{registroExpedienteTitulacion.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{registroExpedienteTitulacion.cambiarGeneracion}">
+                                                                                                <f:selectItems value="#{registroExpedienteTitulacion.rol.generaciones}" var="generacionE" itemValue="#{generacionE}" itemLabel="#{caster.generacionToString(generacionE)}"/>
+                                                                                                        <p:ajax process="@this" update="@this"/>
+                                                                                                        <p:autoUpdate />
+                                                                                                    </p:selectOneMenu>
+                                                                                                    <p:message for="generacionE" />  
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="nivelE" style="font-size: medium" value="Nivel Educativo"/>                     
+                                                                                            <p:selectOneMenu id="nivelE" value="#{registroExpedienteTitulacion.rol.nivelEducativo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{registroExpedienteTitulacion.cambiarNivelEducativo}">
+                                                                                                <f:selectItems value="#{registroExpedienteTitulacion.rol.nivelesEducativos}" var="nivelE" itemValue="#{nivelE}" itemLabel="#{nivelE.nombre}" />
+                                                                                                        <p:ajax process="@this" update="@this"/>
+                                                                                                        <p:autoUpdate />
+                                                                                                    </p:selectOneMenu>
+                                                                                                    <p:message for="nivelE" />
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="procesoIntegracion" style="font-size: medium" value="Proceso de Integración"/>  
+                                                                                            <p:selectOneMenu id="procesoIntegracion" value="#{registroExpedienteTitulacion.rol.procesoIntegracion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{registroExpedienteTitulacion.cambiarProcesoIntegracion}">
+                                                                                                <f:selectItems value="#{registroExpedienteTitulacion.rol.procesosIntegracion}" var="procesoIntegracion" itemValue="#{procesoIntegracion}" itemLabel="#{procesoIntegracion.numProceso}. Del #{caster.convertirFormatoFecha(procesoIntegracion.fechaInicio)} al #{caster.convertirFormatoFecha(procesoIntegracion.fechaFin)}" />
+                                                                                                        <p:ajax process="@this" update="@this"/>
+                                                                                                        <p:autoUpdate />
+                                                                                                    </p:selectOneMenu>
+                                                                                                    <p:message for="procesoIntegracion" />
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                                <p:autoComplete id="estudiante" value="#{registroExpedienteTitulacion.rol.estudianteSeleccionado}" completeMethod="#{registroExpedienteTitulacion.completeEstudiantes}" queryDelay="800"
+                                                                                                                valueChangeListener="#{registroExpedienteTitulacion.cambiarEstudiante}"
+                                                                                                                var="estudiante" itemValue="#{estudiante}" itemLabel="#{estudiante.datosComplete}" converter="entityConverter" forceSelection="true" size="70">
+                                                                                                    <p:column>#{estudiante.datosComplete}</p:column>
+                                                                                                    <p:column>#{estudiante.periodoEscolar}</p:column>
+                                                                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                                                                </p:autoComplete>
+                                                                                                <p:outputLabel value="Estudiante - Matricula" for="estudiante" style="font-weight: bold; font-size: 14px;"/>
+                                                                                                <p:message for="estudiante" />
+                                                                                        </div>
+                                                                                        </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                                                        
+                                                            <c:if test="#{registroExpedienteTitulacion.rol.datosNuevoExpediente ne null}">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos Personales y Académicos</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="fechaET" style="font-size: medium" value="Fecha"/>  
+                                                                                            <p class="text-muted">
+                                                                                                <p:calendar locale="es" id="fechaET" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.expediente.fechaRegistro}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="Es necesario que ingrese fecha"/>
+                                                                                                    <p:message for="fechaET" display="tooltip" />  
+                                                                                             </p>
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="matriculaE" style="font-size: medium" value="Matricula"/>                        
+                                                                                            <h:outputText id="matriculaE" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.estudiante.matricula}"/>
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="programaE" style="font-size: medium" value="Programa Educativo"/>                        
+                                                                                            <h:outputText id="programaE" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.programaEducativo.nombre}"/>
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                        
+                                                                                        
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="nombreE" style="font-size: medium" value="Nombre"/>                            
+                                                                                            <h:outputText id="nombreE" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.estudiante.aspirante.idPersona.nombre}"/>
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="apellidoPatE" style="font-size: medium" value="Apellido Paterno"/>   
+                                                                                            <h:outputText id="apellidoPatE" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.estudiante.aspirante.idPersona.apellidoPaterno}"/>
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="apellidoMatE" style="font-size: medium" value="Apellido Materno"/>   
+                                                                                            <h:outputText id="apellidoMatE" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.estudiante.aspirante.idPersona.apellidoMaterno}"/>
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                        
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="curpE" style="font-size: medium" value="CURP"/>                          
+                                                                                            <h:outputText id="curpE" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.estudiante.aspirante.idPersona.curp}"/>
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="fechaNacE" style="font-size: medium" value="Fecha de Nacimiento"/>
+                                                                                            <h:outputText id="curpE" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.fechaNacimiento}"/>
+                                                                                            <hr/> 
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <p:outputLabel for="generoE" style="font-size: medium" value="Género"/>
+                                                                                            <h:outputText id="generoE" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.genero.abreviacion}"/>
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- Pegar aquí -->
+                                                            
+                                                            </c:if>
+                                                            </h:form>
+                                                            <c:if test="#{!empty registroExpedienteTitulacion.alertas || true}">
+                                                                <div class="box box-info">
+                                                                    <div class="box-header">
+                                                                        <ui:include src="/includes/alertas.xhtml">
+                                                                            <ui:param name="alertas" value="#{registroExpedienteTitulacion.alertas}"></ui:param>
+                                                                        </ui:include>
+                                                                    </div>
+                                                                </div>
+                                                            </c:if>
+                                                            <!-- Zona de cuadros de diálogo -->
+                                                            <p:dialog id="modalAyuda"
+                                                                      widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                                                                      modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                                                                <div class="box box-primary">
+                                                                    <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para registrar fechas de terminación</h3></div>
+                                                                    <div class="box-body">
+                                                                        <ul class="todo-list">
+                                                                            <c:forEach items="#{registroExpedienteTitulacion.rol.instrucciones}" var="instruccion">
+                                                                                <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                                                            </c:forEach>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                                                                </div>
+                                                            </p:dialog>
+                                                            <hr/>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        </p:panel>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+        </p:panel>
+        </c:if>
+        <c:if test="#{!registroExpedienteTitulacion.tieneAcceso}">
+            <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                <h:panelGrid columns="2" cellpadding="10">
+                    <h:outputText value="El acceso solo está autorizado a personal del área de psicopedagogía."/>
+                </h:panelGrid>
+                <f:facet name="footer"></f:facet>
+            </p:panel>
+        </c:if>
+        </c:if>
+    </ui:define> 
+    <h:outputScript library="js" name="funciones.js" />
+
+</ui:composition>

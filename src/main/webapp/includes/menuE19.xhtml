@@ -39,6 +39,10 @@
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Asesorías y Tutorías</li>
             <c:if test="#{validacionTutoriaGrupalEstudiante.mostrarEnDesarrollo(request) and validacionTutoriaGrupalEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/tutorias_grupales.xhtml"><i class="fa fa-slideshare"></i><span>Tutorías</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
+            <c:if test="#{integracionExpedienteTitulacionEstudiante.mostrarEnDesarrollo(request) and integracionExpedienteTitulacionEstudiante.tieneAcceso}">
+            <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Titulación</li>
+            <c:if test="#{integracionExpedienteTitulacionEstudiante.mostrarEnDesarrollo(request) and integracionExpedienteTitulacionEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/expedienteTitulacion.xhtml"><i class="fa fa-file-text-o"></i><span>Integración de Expediente</span></p:link></li></c:if>
+            </c:if>
         </c:if>
         <li>
             <p:link href="#{request.contextPath}/soporteTecnico.xhtml">

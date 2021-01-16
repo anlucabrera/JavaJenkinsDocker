@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento Expediente por Generación
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{seguimientoExpedienteGeneracionTitulacion.cargado}">
+        <adm:breadcrumb title="Seguimiento Expediente por Generación"/>
+        <div class="contenedor">
+            <c:if test="#{seguimientoExpedienteGeneracionTitulacion.tieneAcceso}">
+                <c:if test="#{seguimientoExpedienteGeneracionTitulacion.rol.generaciones ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(seguimientoExpedienteGeneracionTitulacion.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-4'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" converter="entityConverter"
+                                                                 value="#{seguimientoExpedienteGeneracionTitulacion.rol.generacion}" valueChangeListener="#{seguimientoExpedienteGeneracionTitulacion.cambiarGeneracion}"
+                                                                 class="form-control" style="padding-top: 0px;">
+                                                    <f:selectItems value="#{seguimientoExpedienteGeneracionTitulacion.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" itemDescription="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this" update="@this"/>
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generación" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{seguimientoExpedienteGeneracionTitulacion.rol.nivelEducativo}" converter="entityConverter" class="form-control" style="padding-top: 0px;" valueChangeListener="#{seguimientoExpedienteGeneracionTitulacion.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{seguimientoExpedienteGeneracionTitulacion.rol.nivelesEducativos}" var="nivGen" itemValue="#{nivGen}" itemLabel="#{nivGen}" itemDescription="#{nivGen}"  />
+                                                    <p:ajax process="@this" update="@this" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel Educativo" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla3}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="programa" value="#{seguimientoExpedienteGeneracionTitulacion.rol.programaEducativo}" converter="entityConverter" class="form-control" style="padding-top: 0px;" valueChangeListener="#{seguimientoExpedienteGeneracionTitulacion.cambiarProgramaEducativo}">
+                                                    <f:selectItems value="#{seguimientoExpedienteGeneracionTitulacion.rol.programasEducativos}" var="progGenNiv" itemValue="#{progGenNiv}" itemLabel="#{progGenNiv.nombre}" itemDescription="#{progGenNiv.nombre}"  />
+                                                    <p:ajax process="@this" update="@this" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Programa" for="programa"/>
+                                                <p:message for="programa" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12">
+                                                 <center>
+                                                         <p:remoteCommand name="actualizar" update="@form:dtbExpTitGenPE" />
+                                                         <p:dataTable id="dtbExpTitGenPE" emptyMessage="Sin datos en la generación seleccionada." value="#{seguimientoExpedienteGeneracionTitulacion.rol.expedientesTitulacionPE}" var="expTit"
+                                                                      paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                      resizeMode="expand"
+                                                                      tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                             <p:column headerText="Opciones" style="width: 200px; text-align: center;">
+                                                                 <p:commandButton actionListener="#{seguimientoExpedienteIndividualTitulacion.consultarExpediente(expTit)}" action="/controlEscolar/titulacion/seguimientoGeneracionIndividual?faces-redirect=true" 
+                                                                                  class="btn btn-sm btn-primary" 
+                                                                                  icon="fa fa-search"
+                                                                                  title="Consultar Expediente Titulación"/>  
+                                                                 <p:commandButton actionListener="#{seguimientoExpedienteGeneracionTitulacion.validarExpediente(expTit.expediente)}"
+                                                                                  class="btn btn-sm #{expTit.expediente.validado?'btn-info':'btn-danger'}" icon="#{expTit.expediente.validado?'fa fa-close':'fa fa-check'}"
+                                                                                  title="#{expTit.expediente.validado?'Invalidar expediente.':'Validar expediente.'}" onsuccess="actualizar();"/>
+                                                                 <p:commandButton actionListener="#{seguimientoExpedienteGeneracionTitulacion.consultarListaPagos(expTit.expediente.matricula.matricula)}" 
+                                                                                  class="btn btn-sm btn-success" 
+                                                                                  icon="fa fa-usd"
+                                                                                  title="Consultar Lista de Pagos"/>  
+                                                             </p:column>
+                                                             <p:column headerText="No. Expediente" style="width: 150px; text-align: center;" sortBy="#{expTit.expediente.expediente}" filterBy="#{expTit.expediente.expediente}" filterMatchMode="contains">
+                                                                 <h:outputText value="#{expTit.expediente.expediente}"/>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Situación Expediente" style="width: 200px; text-align: center;" sortBy="#{expTit.expediente.validado?'Validado':'Sin validar'}">
+                                                                 <h:outputText value="#{expTit.expediente.validado?'Validado':'Sin validar'}" />
+                                                             </p:column>
+
+                                                             <p:column headerText="Fecha" style="width: 100px; text-align: center;" sortBy="#{expTit.expediente.fechaRegistro}">
+                                                                 <h:outputText value="#{expTit.expediente.fechaRegistro}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                             </p:column>
+
+                                                             <p:column headerText="Matricula" style="width: 150px; text-align: center;" sortBy="#{expTit.expediente.matricula.matricula}" filterBy="#{expTit.expediente.matricula.matricula}" filterMatchMode="contains">
+                                                                 <h:outputText value="#{expTit.expediente.matricula.matricula}"/>
+                                                             </p:column>
+
+                                                             <p:column headerText="Nombre" style="width: 250px; text-align: center;" sortBy="#{expTit.expediente.matricula.aspirante.idPersona.apellidoPaterno} #{expTit.expediente.matricula.aspirante.idPersona.apellidoMaterno} #{expTit.expediente.matricula.aspirante.idPersona.nombre} " filterBy="#{expTit.expediente.matricula.aspirante.idPersona.apellidoPaterno} #{expTit.expediente.matricula.aspirante.idPersona.apellidoMaterno} #{expTit.expediente.matricula.aspirante.idPersona.nombre} " filterMatchMode="contains">
+                                                                 <h:outputText value="#{expTit.expediente.matricula.aspirante.idPersona.apellidoPaterno} #{expTit.expediente.matricula.aspirante.idPersona.apellidoMaterno} #{expTit.expediente.matricula.aspirante.idPersona.nombre} "/>
+                                                             </p:column>
+
+                                                             <p:column headerText="Programa Educativo" style="width: 300px; text-align: center;">
+                                                                 <h:outputText value="#{expTit.programaEducativo.nombre}"/>
+                                                             </p:column>
+
+                                                             <p:column headerText="Generación" style="width: 200px; text-align: center;">
+                                                                 <h:outputText value="#{expTit.generacion.inicio} - #{expTit.generacion.fin}"/>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Situación Académica" style="width: 200px; text-align: center;" sortBy="#{expTit.expediente.matricula.tipoEstudiante.descripcion}">
+                                                                 <h:outputText value="#{expTit.situacionAcademica}"/>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Fecha Pago de Titulo" style="width: 200px; text-align: center;" sortBy="#{expTit.pagEstFinanzas.fechaPago}">
+                                                                 <h:outputText value="#{expTit.pagEstFinanzas.fechaPago}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Carta de No Adeudo" style="width: 200px; text-align: center;" sortBy="#{expTit.pagEstFinanzas.valcartanoadueudoTSU}">
+                                                                 <h:outputText value="#{expTit.pagEstFinanzas.valcartanoadueudoTSU == 1?'Si':'No'}"/>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Documentos" style="width: 200px; text-align: center;" sortBy="#{expTit.docsExp} de #{expTit.docsTotalExp}">
+                                                                 <h:outputText value="#{expTit.docsExp} de #{expTit.docsTotalExp}" />
+                                                             </p:column>
+                                                             
+                                                            <p:column headerText="Paso de Integración" style="width: 200px; text-align: center;" sortBy="#{expTit.expediente.pasoRegistro}">
+                                                                 <h:outputText value="#{expTit.expediente.pasoRegistro}" />
+                                                            </p:column>
+
+                                                            <p:column headerText="Validado/Invalidado por" style="width: 200px; text-align: center;" sortBy="#{expTit.personal}">
+                                                                 <h:outputText value="#{expTit.personal}"/>
+                                                             </p:column>
+                                                             
+                                                             <p:column headerText="Fecha Validado/Invalidado" style="width: 200px; text-align: center;" sortBy="#{expTit.expediente.fechaValidacion}">
+                                                                 <h:outputText value="#{expTit.expediente.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                             </p:column>
+                                                             
+                                                         </p:dataTable>
+                                                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                             <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
+                                                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                                         </p:confirmDialog>
+                                                 </center>
+                                             </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty seguimientoExpedienteGeneracionTitulacion.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                           Pasos de integración del expediente de titulación:
+                           1. Inicio Integración
+                           2. Datos Personales
+                           3. Domicilio y Comunicaciones
+                           4. Antecedentes Académicos
+                           5. Fotografía Titulación
+                           6. Fin Integración
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                 <!-- Modal para consultar pagos del estudiante seleccionado -->
+                    <p:dialog id="modalPagos" 
+                              widgetVar="modalPagos" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{seguimientoExpedienteGeneracionTitulacion.rol.aperturaPagos}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              header="Listado de Pagos"
+                              modal="true" 
+                              draggable="true" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <h:form id="frmModalPagos" enctype="multipart/form-data"> 
+                                 <p:dataTable id="dtbListaPagos" emptyMessage="No cuenta con pagos el estudiante seleccionado." value="#{seguimientoExpedienteGeneracionTitulacion.rol.listaPagosEstudianteFinanzas}" var="listPag"
+                                                      paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                      resizeMode="expand"
+                                                      tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                             <p:column headerText="Clave registro" style="width: 100px; text-align: center;" sortBy="#{listPag.cveRegistro}">
+                                                 <h:outputText value="#{listPag.cveRegistro}"/>
+                                             </p:column>
+                                             
+                                             <p:column headerText="Concepto" style="width: 150px; text-align: center;" sortBy="#{listPag.concepto}">
+                                                 <h:outputText value="#{listPag.concepto}" />
+                                             </p:column>
+                                             
+                                             <p:column headerText="Fecha" style="width: 100px; text-align: center;" sortBy="#{listPag.fechaPago}">
+                                                 <h:outputText value="#{listPag.fechaPago}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                             </p:column>
+                                             
+                                             <p:column headerText="Matricula" style="width: 150px; text-align: center;">
+                                                 <h:outputText value="#{listPag.matricula}" />
+                                             </p:column>
+
+                                             <p:column headerText="Descripción" style="width: 150px; text-align: center;" sortBy="#{listPag.descripcion}">
+                                                 <h:outputText value="#{listPag.descripcion}"/>
+                                             </p:column>
+
+                                             <p:column headerText="Monto" style="width: 100px; text-align: center;" sortBy="#{listPag.monto}">
+                                                 <h:outputText value="#{listPag.monto}"><f:convertNumber minFractionDigits = "2" currencySymbol="$" type="currency"/></h:outputText>
+                                             </p:column>
+                                         </p:dataTable>
+                                    </h:form>
+                    </p:dialog>
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para dar seguimiento a un expediente de titulación</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{seguimientoExpedienteGeneracionTitulacion.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{seguimientoExpedienteGeneracionTitulacion.rol.generaciones eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay expedientes de titulación registrados."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!seguimientoExpedienteGeneracionTitulacion.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal del área de titulación."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento Expediente Individual
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{seguimientoExpedienteGeneracionTitulacion.cargado}">
+        <adm:breadcrumb title="Seguimiento Expediente Individual"/>
+        <div class="contenedor" id="contenedor">
+            <c:if test="#{seguimientoExpedienteGeneracionTitulacion.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="seguimientoGeneracion.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a concentrado</span>
+                                        </p:link>
+                                    </div> 
+                                    <br />
+                                    <br />
+                                          <div class="col-lg-12 col-xs-12">
+                                            </div> 
+                                </div>
+                                        <p:panel id="ET" >
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <h:form id="formMuestraExpediente">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h1><strong>Expediente Titulación</strong></h1>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div id="tituloCV" class="col-sm-12">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <c:set var="expTit" value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion}"/>
+                                                                        <!--<c:set var="status" value="# {controladorTitSegGen.consultarStatus(expTitExp)}" />-->
+                                                                        <h4>No. Expediente: #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.expediente}</h4>
+                                                                        <h4><p:commandButton actionListener="#{seguimientoExpedienteIndividualTitulacion.validarExpediente()}"
+                                                                                         class="btn btn-sm #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.validado?'btn-info':'btn-danger'}" icon="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.validado?'fa fa-close':'fa fa-check'}"
+                                                                                         title="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.validado?'Invalidar expediente.':'Validar expediente.'}" 
+                                                                                         value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.validado?'Invalidar expediente.':'Validar expediente.'}"/></h4>
+                                                                        <div class="description-block" style="text-align: center" >
+                                                                            <p:graphicImage cache="false" height="255" id="dimage" title="Fotografía del expediente" value="#{seguimientoExpedienteIndividualTitulacion.graphicImage}" width="170"></p:graphicImage>
+                                                                        </div> 
+                                                                        <h4>#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.situacionAcademica}</h4>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos personales</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Nombre</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.nombre}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Apellido Paterno</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.apellidoPaterno}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Apellido Materno</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.apellidoMaterno} 
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>CURP</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.curp}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Fecha de Nacimiento</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <h:outputText value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.fechaNacimiento}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Género</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.genero.nombre}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos de Contacto</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Teléfono Fijo</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.medioComunicacion.telefonoFijo}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Teléfono Móvil</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.medioComunicacion.telefonoMovil}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Correo Electrónico</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.medioComunicacion.email}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Domicilio</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Calle</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.domicilio.calle}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Número</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.domicilio.numero}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Código Postal</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.asentDom.codigoPostal}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Asentamiento</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.asentDom.nombreAsentamiento}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Municipio</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.munDom.nombre}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Estado</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.estadoDom.nombre}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Antecedentes Académicos</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                             <strong>Grado Académico</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    Bachillerato
+                                                                                                </p>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                             <strong>Nombre del Instituto de Educación Media Superior</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.iems.nombre}
+                                                                                                </p>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                            <strong>Estado</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.iems.localidad.municipio.estado.nombre}
+                                                                                                </p>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                            <strong>Fecha Terminación</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <p:calendar id="fechaTerminacion" locale="es" value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.datosAcademicos.fechaTerminacion}" pattern="dd-MM-yyyy" mask="true" />
+                                                                                                </p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong></strong>
+                                                                        <p class="text-muted"></p>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <p:commandButton id="btnGuardarFechaTerminacion" value="Actualizar informacion" actionListener="#{seguimientoExpedienteIndividualTitulacion.actualizarFechaTerminacion()}" 
+                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3"  update="@form"  process="@form" />
+                                                                    </div>
+                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong></strong>
+                                                                        <p class="text-muted"></p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                             <hr/>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Datos de Titulación</strong></h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>
+                                                             <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="box box-primary">
+                                                                            <div class="box-header with-border">                                                                    
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Nivel Académico</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.nivelEducativo}                                                                                       </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                             <strong>Programa Académico</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.programaEducativo.nombre}
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Modalidad de Titulación</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    Por Reporte de Estadía 
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <c:set var="fecIni" value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.fechaTerminacionTitulacion.fechaInicio}" />
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Fecha Inicio</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <c:if test="#{fecIni ne null}">
+                                                                                                    <h:outputText value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.fechaTerminacionTitulacion.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                                    </c:if>
+                                                                                                    <c:if test="#{fecIni eq null}">
+                                                                                                    <h:outputText value="Sin fecha" style="background-color: red; color: white;"/>
+                                                                                                    </c:if>
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                        <c:set var="fecTer" value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.fechaTerminacionTitulacion.fechaFin}" />
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Fecha Terminación</strong>
+                                                                                            <p class="text-muted">
+                                                                                                <c:if test="#{fecTer ne null}">
+                                                                                                    <h:outputText value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.fechaTerminacionTitulacion.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                                </c:if>
+                                                                                                <c:if test="#{fecTer eq null}">
+                                                                                                    <h:outputText value="Sin fecha" style="background-color: red; color: white;"/>
+                                                                                                </c:if>
+                                                                                            </p>
+                                                                                            <hr/>
+                                                                                        </div>
+                                                                                        <c:set var="fecActa" value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.fechaTerminacionTitulacion.actaExencion}" />
+                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Fecha Acta Exención</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <c:if test="#{fecActa ne null}">
+                                                                                                        <h:outputText value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.fechaTerminacionTitulacion.actaExencion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                                    </c:if>
+                                                                                                    <c:if test="#{fecActa eq null}">
+                                                                                                        <h:outputText value="Sin fecha" style="background-color: red; color: white;"/>
+                                                                                                    </c:if>
+                                                                                                </p>
+                                                                                                <hr/>
+                                                                                        </div>
+                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>Promedio Final</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <p:inputNumber id="promedio" class="form-control" decimalPlaces="1"  required="true" decimalSeparator="." style="border: none;" size="5" value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.promedio}"/> 
+                                                                                                </p>
+                                                                                        </div>
+                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                            <strong>¿Cumplió Servicio Social?</strong>
+                                                                                                <p class="text-muted">
+                                                                                                    <p:selectOneMenu id="servSoc" value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.servicioSocial}" required="true" requiredMessage="Es necesario que seleccione una opción">
+                                                                                                        <f:selectItem itemLabel="Si" itemValue="true" />
+                                                                                                        <f:selectItem itemLabel="No" itemValue="false" />
+                                                                                                    </p:selectOneMenu>
+                                                                                                    <p:message for="servSoc"><p:autoUpdate/></p:message>
+                                                                                                </p>
+                                                                                        </div>
+                                                                                        <c:set var="promedio" value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.promedio}" />
+                                                                                        <c:if test="#{promedio eq 0}">
+                                                                                            <div class="col-sm-12 col-md-12 col-lg-4" style="background: red;">
+                                                                                            <strong>Aviso:</strong>
+                                                                                            <p class="text-muted" style="color: white;">
+                                                                                                Registre Promedio Final e indique si <br />cumplió con Servicio Social 
+                                                                                            </p>
+                                                                                            </div>
+                                                                                        </c:if>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong></strong>
+                                                                        <p class="text-muted"></p>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <p:commandButton id="btnGuardarDatExpTit" value="Actualizar informacion" actionListener="#{seguimientoExpedienteIndividualTitulacion.guardarDatosTitulacion()}" 
+                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3"  update="@form"  process="@form" />
+                                                                    </div>
+                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong></strong>
+                                                                        <p class="text-muted"></p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            </h:form>
+                                                            <hr/>
+                                                             <div class="row">
+                                                                    <div class="description-block">
+                                                                    <!-- Carga de documentos para Nivel Técnico Superior Universitario -->
+                                                                    <c:if test="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.programaEducativo.nivelEducativo.nivel eq 'TSU'}">    
+                                                                    <div class="box box-widget widget-user-2">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block" style="text-align: center">
+                                                                        <h3><strong>Documentos del Expediente</strong></h3>
+                                                                        </div>
+                                                                                <o:form id="frmDocExp" enctype="multipart/form-data">
+                                                                                    <c:set var="existeCURP" value="#{cargaDocumentosExpSegGeneracionTitulacion.docExiste(14)}"/>
+                                                                                    <c:if test="#{!existeCURP}">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                            <p:outputPanel>            
+                                                                                                <p:autoUpdate/>
+                                                                                                <p:outputLabel style="text-align:center; height:100%; width: 100%; object-fit: contain; font-size: large" value="CURP" />
+                                                                                                <h5 style="text-align: center;">Nuevo Formato<br/> (<a style="color: #3385b0;" href="https://www.gob.mx/curp/" target="_blank">https://www.gob.mx/curp/</a>)</h5>
+                                                                                            </p:outputPanel>
+                                                                                            <br/>
+                                                                                            <center><o:inputFile id="fileC" value="#{cargaDocumentosExpSegGeneracionTitulacion.fileCURP}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." />
+                                                                                            <br/>
+                                                                                            <h:message id="messageForFileC" for="fileC" />
+                                                                                            <br/>
+                                                                                            <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cargaDocumentosExpSegGeneracionTitulacion.subirDocumentoCURP}" />
+                                                                                            </center>
+                                                                                            <br/>
+                                                                                            <br/>
+                                                                                        </div>
+                                                                                    </c:if>
+                                                                                    <c:set var="existeAN" value="#{cargaDocumentosExpSegGeneracionTitulacion.docExiste(15)}"/>
+                                                                                    <c:if test="#{!existeAN}">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                            <p:outputPanel>            
+                                                                                                <p:autoUpdate/>
+                                                                                                <p:outputLabel style="text-align:center; height:100%; width: 100%; object-fit: contain; font-size: large" value="Acta de Nacimiento" />
+                                                                                                <h5 style="text-align: center;">Formato Actualizado<br/> La fecha de registro de nacimiento no debe ser mayor a 10 años</h5>
+                                                                                            </p:outputPanel>
+                                                                                            <br/>
+                                                                                            <center><o:inputFile id="fileAN" value="#{cargaDocumentosExpSegGeneracionTitulacion.fileAN}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." />
+                                                                                            <br/>
+                                                                                            <h:message id="messageForFileAN" for="fileAN" />
+                                                                                            <br/>
+                                                                                            <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cargaDocumentosExpSegGeneracionTitulacion.subirDocumentoActNac}" />
+                                                                                            </center>
+                                                                                            <br/>
+                                                                                            <br/>
+                                                                                        </div>
+                                                                                    </c:if>
+                                                                                    <c:set var="existeCB" value="#{cargaDocumentosExpSegGeneracionTitulacion.docExiste(16)}"/>
+                                                                                    <c:if test="#{!existeCB}">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                            <p:outputPanel>            
+                                                                                                <p:autoUpdate/>
+                                                                                                <p:outputLabel style="text-align:center; height:100%; width: 100%; object-fit: contain; font-size: large" value="Certificado de Bachillerato" />
+                                                                                                <h5 style="text-align: center;">Digitalizar ambos lados (Anverso y Reverso)<br/> Digitalizar legalización por separado sin que se muestren las calificaciones</h5>
+                                                                                            </p:outputPanel>
+                                                                                            <br/>
+                                                                                            <center><o:inputFile id="fileCB" value="#{cargaDocumentosExpSegGeneracionTitulacion.fileCB}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." />
+                                                                                            <br/>
+                                                                                            <h:message id="messageForFileCB" for="fileCB" />
+                                                                                            <br/>
+                                                                                            <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cargaDocumentosExpSegGeneracionTitulacion.subirDocumentoCertBach}" />
+                                                                                            </center>
+                                                                                            <br/>
+                                                                                            <br/>
+                                                                                        </div>
+                                                                                    </c:if>
+<!--                                                                                    <c:set var="existeAEst" value="# {cargaDocumentosExpSegGeneracionTitulacion.docExiste(11, expediente)}"/>
+                                                                                    <c:if test="# {!existeAEst}">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                            <p:outputPanel>            
+                                                                                                <p:autoUpdate/>
+                                                                                                <p:outputLabel style="text-align:center; height:100%; width: 100%; object-fit: contain; font-size: large" value="Acreditación de Estadia Ing. o Lic." />
+                                                                                                <h5 style="text-align: center;">Original con sellos de recibido de:<br/> Vinculación y Servicios Escolares</h5>
+                                                                                            </p:outputPanel>
+                                                                                            <br/>
+                                                                                            <center><o:inputFile id="fileAE" value="# {cargaDocumentosExpSegGeneracionTitulacion.fileAE}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="# {caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son # {caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." /></center>
+                                                                                            <br/>
+                                                                                            <h:message id="messageForFileAE" for="fileAE" />
+                                                                                            <br/>
+                                                                                            <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="# {cargaDocumentosExpSegGeneracionTitulacion.subirDocumentoAcredEstIL}" />
+                                                                                            <br/>
+                                                                                            <br/>
+                                                                                        </div>
+                                                                                    </c:if>-->
+                                                                                    <c:set var="existeAEET" value="#{cargaDocumentosExpSegGeneracionTitulacion.docExiste(19)}"/>
+                                                                                    <c:if test="#{!existeAEET}">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                            <p:outputPanel>            
+                                                                                                <p:autoUpdate/>
+                                                                                                <p:outputLabel style="text-align:center; height:100%; width: 100%; object-fit: contain; font-size: large" value="Acta de Exención de Examen T.S.U." />
+                                                                                                <h5 style="text-align: center;">Original, este documento es entregado por<br/> el Departamento de Servicios Escolares</h5>
+                                                                                            </p:outputPanel>
+                                                                                            <br/>
+                                                                                            <center><o:inputFile id="fileAEET" value="#{cargaDocumentosExpSegGeneracionTitulacion.fileAEET}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." />
+                                                                                            <br/>
+                                                                                            <h:message id="messageForFileAEET" for="fileAEET" />
+                                                                                            <br/>
+                                                                                            <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cargaDocumentosExpSegGeneracionTitulacion.subirDocumentoActExenTSU}" />
+                                                                                            </center>
+                                                                                            <br/>
+                                                                                            <br/>
+                                                                                        </div>
+                                                                                    </c:if>
+                                                                                    <c:set var="existeCSST" value="#{cargaDocumentosExpSegGeneracionTitulacion.docExiste(20)}"/>
+                                                                                    <c:if test="#{!existeCSST}">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                            <p:outputPanel>            
+                                                                                                <p:autoUpdate/>
+                                                                                                <p:outputLabel style="text-align:center; height:100%; width: 100%; object-fit: contain; font-size: large" value="Constancia de Servicio Social T.S.U." />
+                                                                                                <h5 style="text-align: center;">Original, este documento es entregado por<br/> el Departamento de Servicios Escolares</h5>
+                                                                                            </p:outputPanel>
+                                                                                            <br/>
+                                                                                            <center><o:inputFile id="fileCSST" value="#{cargaDocumentosExpSegGeneracionTitulacion.fileCSST}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." />
+                                                                                            <br/>
+                                                                                            <h:message id="messageForFileCSST" for="fileCSST" />
+                                                                                            <br/>
+                                                                                            <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cargaDocumentosExpSegGeneracionTitulacion.subirDocumentoConsServTSU}" />
+                                                                                            </center>
+                                                                                            <br/>
+                                                                                            <br/>
+                                                                                        </div>
+                                                                                    </c:if>
+                                                                                    <c:set var="existeCET" value="#{cargaDocumentosExpSegGeneracionTitulacion.docExiste(21)}"/>
+                                                                                    <c:if test="#{!existeCET}">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                            <p:outputPanel>            
+                                                                                                <p:autoUpdate/>
+                                                                                                <p:outputLabel style="text-align:center; height:100%; width: 100%; object-fit: contain; font-size: large" value="Certificado de Estudios T.S.U." />
+                                                                                                <h5 style="text-align: center;">Original, este documento es entregado por<br/> el Departamento de Servicios Escolares</h5>
+                                                                                            </p:outputPanel>
+                                                                                            <br/>
+                                                                                            <center><o:inputFile id="fileCET" value="#{cargaDocumentosExpSegGeneracionTitulacion.fileCET}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." />
+                                                                                            <br/>
+                                                                                            <h:message id="messageForFileCET" for="fileCET" />
+                                                                                            <br/>
+                                                                                            <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cargaDocumentosExpSegGeneracionTitulacion.subirDocumentoCertEstTSU}" />
+                                                                                            </center>
+                                                                                            <br/>
+                                                                                            <br/>
+                                                                                        </div>
+                                                                                    </c:if>
+                                                                                </o:form>
+                                                                         </div>
+                                                                            </div>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12 border-right">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                            <o:form id="frmFotoExp" enctype="multipart/form-data">
+                                                                                <c:set var="existeFT" value="#{cargaDocumentosExpSegGeneracionTitulacion.docExiste(18)}"/>
+                                                                                <c:if test="#{!existeFT}">
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12" style="border-color: #3385b0; border-width: 2px; border-style: solid;">
+                                                                                    <p:outputPanel>            
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:outputLabel style="text-align:center; height:100%; width: 100%; object-fit: contain; font-size: large" value="Fotografía T.S.U." />
+                                                                                        <h5 style="text-align: justify;">La fotografía debe ser de estudio, no descolorida y con las características correspondientes:</h5>
+                                                                                        <ul style="text-align: justify;">
+                                                                                            <li>La fotografía debe ser a COLOR con FONDO BLANCO y SIN SOMBRAS.</li>
+                                                                                            <li>Se recomienda un tamaño de 6x9 cm.</li>
+                                                                                            <li>La fotografía deberá ser una en la que el solicitante esté mirando directamente a la cámara</li>
+                                                                                            <li>El solicitante no puede estar mirando hacia abajo o a los lados</li>
+                                                                                            <li>La cabeza del solicitante, incluyendo tanto la cara como el cabello, deben ser mostrados en su totalidad con la frente y las orejas descubiertas</li>
+                                                                                            <li>El solicitante no deberá usar gorras ni ningún otro accesorio que cubra total o parcialmente su cara</li>
+                                                                                            <li>La imagen no debe ser tratada con "filtros" o "retoques"</li>
+                                                                                        </ul>
+                                                                                    </p:outputPanel>
+                                                                                    <br/>
+                                                                                    <center><o:inputFile id="fileFotoT" value="#{cargaDocumentosExpSegGeneracionTitulacion.fileFotoT}" accept="image/png,image/jpg,image/jpeg" acceptMessage="Sólo se permiten imágenes JPG/PNG." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." />
+                                                                                    <br/>
+                                                                                    <h:message id="messageForFileFotoT" for="fileFotoT" />
+                                                                                    <br/>
+                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{cargaDocumentosExpSegGeneracionTitulacion.subirDocumentoFotoTSU}" />
+                                                                                    </center>
+                                                                                    <br/>
+                                                                                    <br/>
+                                                                                </div>
+                                                                            </c:if>
+                                                                            </o:form>
+                                                                        </div>
+                                                                                </div>
+                                                                        </div>
+                                                                    </c:if>
+                                                                        
+                                                                         <br/>
+                                                                                <br/>
+<!--                                                                                <c:if test="# {seguimientoExpedienteIndividualTitulacion.listaDocsExp.size() > 0}">       -->
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-12 border-right">
+                                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                                <h:form id="frmDocsExp">
+                                                                                                    <p:dataTable id="tblDocsExp" emptyMessage="No se ha agregado ningún documento al expediente." value="#{seguimientoExpedienteIndividualTitulacion.listaDocsExp}" var="docsExp"
+                                                                                                                 resizeMode="expand"
+                                                                                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                                                                        <p:columnGroup type="header">
+                                                                                                            <p:row>
+                                                                                                                <p:column headerText="Opciones" width="120"/>
+                                                                                                                <p:column headerText="Archivo" width="200" />
+                                                                                                                <p:column headerText="Fecha de Carga" width="100" />
+                                                                                                                <p:column headerText="Validado" width="80" />
+                                                                                                                <p:column headerText="Observaciones" width="200" />
+                                                                                                                <p:column headerText="Fecha de Validación" width="100" />
+                                                                                                            </p:row>
+                                                                                                        </p:columnGroup>
+                                                                                                        <p:column style="text-align: center;">
+                                                                                                            <div class="btn-group">
+                                                                                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{cargaDocumentosExpSegGeneracionTitulacion.eliminarDocumento(docsExp)}" update="@form"  process="@form" title="Eliminar documento." disabled="#{docsExp.validado}">
+                                                                                                                <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento #{caster.rutaToArchivoNombre(docsExp.ruta)}?" icon="ui-icon-alert" />
+                                                                                                                <p:ajax/>
+                                                                                                                </p:commandButton>
+                                                                                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                                                                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                                                                                                                </p:confirmDialog>  
+                                                                                                                <!--<p:commandButton actionListener="# {controladorTitSegGen.editarRegistro(docsExp)}"
+                                                                                                                class="btn btn-sm btn-primary" 
+                                                                                                                icon="fa fa-edit"
+                                                                                                                title="Editar"/>-->
+                                                                                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{cargaDocumentosExpSegGeneracionTitulacion.descargarDocumento(docsExp)}" target="_blank" title="Descargar documento."><i class="fa fa-download" /></p:commandLink>
+                                                                                                            </div>
+                                                                                                        </p:column>
+                                                                                                        <p:column style="text-align: justify;"><h:outputText value="#{caster.rutaToArchivoNombre(docsExp.ruta)}" /></p:column>
+                                                                                                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
+                                                                                                        <p:column style="text-align: center;"><h:outputText value="#{!docsExp.validado?'Si':'No'}"/></p:column>
+                                                                                                        <p:column style="text-align: justify;"><h:outputText value="#{docsExp.observaciones}" /></p:column>
+                                                                                                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                                                                                        <f:facet name="footer">
+                                                                                                            <span style="font-size: smaller; font-weight: bold;">Total de Archivos cargados: #{fn:length(seguimientoExpedienteIndividualTitulacion.listaDocsExp)} de #{cargaDocumentosExpSegGeneracionTitulacion.dtoExpedienteTitulacion.docsTotalExp}.</span>
+                                                                                                        </f:facet>
+                                                                                                    </p:dataTable>
+                                                                                                </h:form>  
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+<!--                                                                                </c:if>        -->
+                                                                        </div>
+                                                                     </div>   
+                                                             </div>
+                                                                    </div>
+                                                                </div>
+                                        </p:panel>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            <!-- Modal para editar registro seleccionado -->
+                   
+        </p:panel>
+            </c:if>
+            <c:if test="#{!seguimientoExpedienteGeneracionTitulacion.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal del área de titulación."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>
