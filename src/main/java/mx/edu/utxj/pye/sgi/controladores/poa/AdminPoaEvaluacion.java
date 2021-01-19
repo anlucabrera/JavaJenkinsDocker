@@ -118,9 +118,9 @@ public class AdminPoaEvaluacion implements Serializable {
                 
         ejes=new EjesRegistro(0);
         
-        ejercicioFiscal = controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa2();
-        mes = controladorEmpleado.getProcesopoa().getEvaluacion().getFechaInicio().getMonth();
-        mesNombre = controladorEmpleado.getProcesopoa().getEvaluacion().getMesEvaluacion();
+        ejercicioFiscal = controladorEmpleado.getCalendarioevaluacionpoa().getEjercicioFiscal();
+        mes = pOAUtilidades.obtenerMesNumero(controladorEmpleado.getCalendarioevaluacionpoa().getMesEvaluacion());
+        mesNombre = pOAUtilidades.obtenerMesNombre(mes);
         
         claveArea = controladorEmpleado.getProcesopoa().getArea();
         
