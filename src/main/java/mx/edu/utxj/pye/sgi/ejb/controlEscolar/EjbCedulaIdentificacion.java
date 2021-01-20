@@ -39,6 +39,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.StoredProcedureQuery;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -111,7 +112,7 @@ public class EjbCedulaIdentificacion {
             List<PeriodosEscolares> l = spq.getResultList();
 
             if (l == null || l.isEmpty()) {
-               return ResultadoEJB.crearErroneo(2,p,"No hay periodo activo");
+                return ResultadoEJB.crearErroneo(2,p,"No hay periodo activo");
             } else {
                 p=l.get(0);
                 return ResultadoEJB.crearCorrecto(p,"Periodo activo ");
@@ -132,7 +133,7 @@ public class EjbCedulaIdentificacion {
             //TODO: Obtiene la lista de estudiantes general
             List<Estudiante> estudiantes = new ArrayList<>();
             estudiantes =em.createQuery("select e from Estudiante e group by e.matricula",Estudiante.class)
-            .getResultList()
+                    .getResultList()
             ;
             if(estudiantes ==null ){return  ResultadoEJB.crearErroneo(2,estudiantes,"No existen estudiantes");}
             if(estudiantes.isEmpty()){return ResultadoEJB.crearErroneo(3,estudiantes,"No existen estudiantes");}
@@ -328,10 +329,10 @@ public class EjbCedulaIdentificacion {
             if(matricula==null){return ResultadoEJB.crearErroneo(2,estudiante, "La matricula no debe ser nula");}
             else {
                 estudiante = em.createQuery("select e from Estudiante e where  e.matricula=:matricula order by e.periodo desc", Estudiante.class)
-                .setParameter("matricula", matricula)
-                .getResultStream()
-                .findFirst()
-                .orElse(null)
+                        .setParameter("matricula", matricula)
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null)
                 ;
                 if(estudiante!=null){ return ResultadoEJB.crearCorrecto(estudiante,"El usuario autenticado ha sido validado como estudiante");}
                 else {return ResultadoEJB.crearErroneo(3,estudiante,"No se ha encontrado al estudiannte en la base");}
@@ -353,10 +354,10 @@ public class EjbCedulaIdentificacion {
             else {
                 //TODO: Se buscan los datos de la encuesta
                 resultadoEncuestaAspirante = em.createQuery("select  e from EncuestaAspirante  e where e.cveAspirante=:clave",EncuestaAspirante.class)
-                .setParameter("clave",estudiante.getAspirante().getIdAspirante())
-                .getResultStream()
-                .findFirst()
-                .orElse(null)
+                        .setParameter("clave",estudiante.getAspirante().getIdAspirante())
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null)
                 ;
                 if(resultadoEncuestaAspirante ==null){return ResultadoEJB.crearErroneo(2,resultadoEncuestaAspirante,"El estudiante no respondió la encuesta");}
                 else {return ResultadoEJB.crearCorrecto( resultadoEncuestaAspirante,"Se han encontrado resultados de encuesta de estudiante");}
@@ -379,10 +380,10 @@ public class EjbCedulaIdentificacion {
             else {
                 //TODO: Se buscan los datos del area del estudiante
                 carrera = em.createQuery("select a from AreasUniversidad  a where a.area=:area", AreasUniversidad.class)
-                .setParameter("area",estudiante.getCarrera())
-                .getResultStream()
-                .findFirst()
-                .orElse(null)
+                        .setParameter("area",estudiante.getCarrera())
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null)
                 ;
                 if(carrera==null){return ResultadoEJB.crearErroneo(3,carrera,"No se ha encontrado la carrera del estudiante");}
                 else{return ResultadoEJB.crearCorrecto( carrera,"Se ha encontrado la carrera del estudiante");}
@@ -407,7 +408,7 @@ public class EjbCedulaIdentificacion {
                         .getResultStream()
                         .findFirst()
                         .orElse(null)
-                        ;
+                ;
                 if(area!=null){
                     return ResultadoEJB.crearCorrecto(area, "Se encontro el area del estudiante");
                 }
@@ -457,10 +458,10 @@ public class EjbCedulaIdentificacion {
             PeriodosEscolares periodo = new PeriodosEscolares();
             if(estudiante==null){return ResultadoEJB.crearErroneo(2,periodo,"El estudiante no debe ser nulo");}
             periodo = em.createQuery("select p from PeriodosEscolares p where p.periodo=:periodo",PeriodosEscolares.class)
-            .setParameter("periodo",estudiante.getPeriodo())
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("periodo",estudiante.getPeriodo())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(periodo==null){return ResultadoEJB.crearErroneo(3,periodo,"No se ha encontrado el periodo");}
             else {return ResultadoEJB.crearCorrecto(periodo,"Periodo escolar encontrado correctamente");}
@@ -479,10 +480,10 @@ public class EjbCedulaIdentificacion {
             Generaciones generacion = new Generaciones();
             if(estudiante==null){return ResultadoEJB.crearErroneo(2,generacion,"El estudiante no debe ser nulo");}
             generacion = em.createQuery("select g from Generaciones g where g.generacion=:generacion",Generaciones.class)
-            .setParameter("generacion",estudiante.getGrupo().getGeneracion())
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("generacion",estudiante.getGrupo().getGeneracion())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(generacion==null){return ResultadoEJB.crearErroneo(3,generacion,"No se ha encontrado la generacion");}
             else{ return ResultadoEJB.crearCorrecto(generacion,"Generacion encontrada con exito"); }
@@ -498,19 +499,19 @@ public class EjbCedulaIdentificacion {
      */
     public ResultadoEJB<Generos> getGenero (Estudiante estudiante){
         try {
-           Generos genero = new Generos();
-           if(estudiante==null){return ResultadoEJB.crearErroneo(2, genero, "El estudiante no debe ser nulo");}
-           else{
-               //TODO: Se hace la consulta en la tabla de generos
-               genero = (Generos) em.createQuery("SELECT g FROM Generos g WHERE g.genero=:genero", Generos.class )
-                       .setParameter("genero",estudiante.getAspirante().getIdPersona().getGenero())
-                       .getResultStream()
-                       .findFirst()
-                       .orElse(null)
-                       ;
-               if(genero!=null){return ResultadoEJB.crearCorrecto(genero, "Se ha encontrado el genero del estudiante");}
-               else {return  ResultadoEJB.crearErroneo(3, genero, "No se encontro el genero");}
-           }
+            Generos genero = new Generos();
+            if(estudiante==null){return ResultadoEJB.crearErroneo(2, genero, "El estudiante no debe ser nulo");}
+            else{
+                //TODO: Se hace la consulta en la tabla de generos
+                genero = (Generos) em.createQuery("SELECT g FROM Generos g WHERE g.genero=:genero", Generos.class )
+                        .setParameter("genero",estudiante.getAspirante().getIdPersona().getGenero())
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null)
+                ;
+                if(genero!=null){return ResultadoEJB.crearCorrecto(genero, "Se ha encontrado el genero del estudiante");}
+                else {return  ResultadoEJB.crearErroneo(3, genero, "No se encontro el genero");}
+            }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "Error al buscar el genero del estudiante (EjbCedulaIdentificacion.getGenero)", e, null);
         }
@@ -526,15 +527,16 @@ public class EjbCedulaIdentificacion {
             String edad = "";
             if(estudiante==null){return ResultadoEJB.crearErroneo(2, edad, "El estudiante no debe ser nulo");}
             else{
-            Date fecha = estudiante.getAspirante().getIdPersona().getFechaNacimiento();
-            LocalDate fechaNac = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalDate fechaActual = LocalDate.now();
-            int anios = fechaActual.getYear() - fechaNac.getYear();
-            edad = anios+ " años";
-            return  ResultadoEJB.crearCorrecto(edad,"Se ha obtenido la edad");
+                Date fecha = estudiante.getAspirante().getIdPersona().getFechaNacimiento();
+                LocalDate fechaNac = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate fechaActual = LocalDate.now();
+                Period per = Period.between(fechaNac,fechaActual);
+                // int anios = fechaActual.getYear() - fechaNac.getYear();
+                edad = per.getYears()+ " años "+ per.getMonths() + " meses";
+                return  ResultadoEJB.crearCorrecto(edad,"Se ha obtenido la edad");
             }
         } catch (Exception e) {
-             return ResultadoEJB.crearErroneo(1, "Error al calcular la edad del estudiante(EjbCedulaIdentificacion.getEdad)", e, null);
+            return ResultadoEJB.crearErroneo(1, "Error al calcular la edad del estudiante(EjbCedulaIdentificacion.getEdad)", e, null);
         }
 
     }
@@ -550,12 +552,12 @@ public class EjbCedulaIdentificacion {
             if(estudiante==null){return ResultadoEJB.crearErroneo(2,localidad,"El estudiante no debe ser nulo");}
 
             localidad = em.createQuery("select l from Localidad l where l.localidadPK.claveLocalidad=:localidad and l.localidadPK.claveMunicipio=:municipio and l.localidadPK.claveEstado=:estado",Localidad.class)
-                .setParameter("localidad",estudiante.getAspirante().getIdPersona().getLocalidad())
+                    .setParameter("localidad",estudiante.getAspirante().getIdPersona().getLocalidad())
                     .setParameter("municipio", estudiante.getAspirante().getIdPersona().getMunicipio())
                     .setParameter("estado",estudiante.getAspirante().getIdPersona().getEstado())
-                .getResultStream()
-                .findFirst()
-            .orElse(null)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(localidad==null){return ResultadoEJB.crearErroneo(3,localidad,"No se encontro el lugar de nacimiento del estudiante");}
             else {return  ResultadoEJB.crearCorrecto(localidad,"Se ecnontro el lugar de nacimiento del estudiante");}
@@ -577,13 +579,13 @@ public class EjbCedulaIdentificacion {
             Iems iems = new Iems();
             if(estudiante==null){return ResultadoEJB.crearErroneo(2,iems,"El estudiante no debe ser nulo");}
             iems = em.createQuery("select i from Iems i where i.iems=:iems",Iems.class)
-            .setParameter("iems", estudiante.getAspirante().getDatosAcademicos().getInstitucionAcademica())
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("iems", estudiante.getAspirante().getDatosAcademicos().getInstitucionAcademica())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(iems==null){
-               // System.out.println("Imes: " +iems);
+                // System.out.println("Imes: " +iems);
                 return ResultadoEJB.crearErroneo(3,iems,"No se encontro al bachillerato");}
             else {return ResultadoEJB.crearCorrecto(iems,"IEMS encontrado con éxito");}
         }catch (Exception e){
@@ -602,45 +604,45 @@ public class EjbCedulaIdentificacion {
             if (claveAsentamiento==0){return ResultadoEJB.crearErroneo(2,domiclio,"La clave del Asentamiento no debe ser nula");}
             //TODO: Se hace la busqueda del domicilio completo
             Asentamiento asentamiento = new Asentamiento();
-                asentamiento = em.createQuery("select a from Asentamiento a where a.asentamientoPK.asentamiento=:asentamiento",Asentamiento.class)
-                .setParameter("asentamiento",claveAsentamiento)
-                .getResultStream()
-                .findFirst()
-                .orElse(null)
-                ;
-                if(asentamiento==null){return ResultadoEJB.crearErroneo(3,domiclio,"No se encontro el Asentamiento");}
-                else {
-                    //System.out.println("Asentamiento: " + asentamiento);
-                    Municipio municipio = new Municipio();
-                    municipio = em.createQuery("select m from Municipio m where m.municipioPK.claveMunicipio=:municipio and m.municipioPK.claveEstado=:estado",Municipio.class)
-                    .setParameter("municipio",asentamiento.getAsentamientoPK().getMunicipio())
-                            .setParameter("estado",asentamiento.getAsentamientoPK().getEstado())
+            asentamiento = em.createQuery("select a from Asentamiento a where a.asentamientoPK.asentamiento=:asentamiento",Asentamiento.class)
+                    .setParameter("asentamiento",claveAsentamiento)
                     .getResultStream()
                     .findFirst()
                     .orElse(null)
-                    ;
-                    if(municipio==null){return ResultadoEJB.crearErroneo(4,domiclio,"No se ha encontrado el Municipio");}
-                    else {
-                        //System.out.println("Municipio: " +municipio);
-                        Estado estado = new Estado();
-                        estado= em.createQuery("select e from Estado e where e.idestado=:estado",Estado.class)
+            ;
+            if(asentamiento==null){return ResultadoEJB.crearErroneo(3,domiclio,"No se encontro el Asentamiento");}
+            else {
+                //System.out.println("Asentamiento: " + asentamiento);
+                Municipio municipio = new Municipio();
+                municipio = em.createQuery("select m from Municipio m where m.municipioPK.claveMunicipio=:municipio and m.municipioPK.claveEstado=:estado",Municipio.class)
+                        .setParameter("municipio",asentamiento.getAsentamientoPK().getMunicipio())
                         .setParameter("estado",asentamiento.getAsentamientoPK().getEstado())
                         .getResultStream()
                         .findFirst()
                         .orElse(null)
-                        ;
-                        if(estado==null){return ResultadoEJB.crearErroneo(5,domiclio,"No se ha encontrado el Estado");}
-                        else {
-                            //System.out.println("Estado:" + estado);
-                           domiclio.setAsentamiento(asentamiento);
-                           domiclio.setMunicipio(municipio);
-                           domiclio.setEstado(estado);
-                           domiclio.setPais(estado.getIdpais());
+                ;
+                if(municipio==null){return ResultadoEJB.crearErroneo(4,domiclio,"No se ha encontrado el Municipio");}
+                else {
+                    //System.out.println("Municipio: " +municipio);
+                    Estado estado = new Estado();
+                    estado= em.createQuery("select e from Estado e where e.idestado=:estado",Estado.class)
+                            .setParameter("estado",asentamiento.getAsentamientoPK().getEstado())
+                            .getResultStream()
+                            .findFirst()
+                            .orElse(null)
+                    ;
+                    if(estado==null){return ResultadoEJB.crearErroneo(5,domiclio,"No se ha encontrado el Estado");}
+                    else {
+                        //System.out.println("Estado:" + estado);
+                        domiclio.setAsentamiento(asentamiento);
+                        domiclio.setMunicipio(municipio);
+                        domiclio.setEstado(estado);
+                        domiclio.setPais(estado.getIdpais());
 
-                           return ResultadoEJB.crearCorrecto(domiclio,"Se ha encontrado el domiclio");
-                        }
+                        return ResultadoEJB.crearCorrecto(domiclio,"Se ha encontrado el domiclio");
                     }
                 }
+            }
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Error al obtener el domicilio(EjbCedulaIdentificacion.getDomicilio)", e, null);
         }
@@ -651,44 +653,44 @@ public class EjbCedulaIdentificacion {
      * @param estudiante
      * @return Resultado del proceso
      */
-   public ResultadoEJB<Baja> buscarBaja(Estudiante estudiante){
+    public ResultadoEJB<Baja> buscarBaja(Estudiante estudiante){
         try{
             Baja baja = new Baja();
             if(estudiante ==null){return ResultadoEJB.crearErroneo(2,baja,"El estudiante no debe ser nulo");}
             baja = em.createQuery("select b from Baja b where b.estudiante.idEstudiante=:id", Baja.class)
-            .setParameter("id", estudiante.getIdEstudiante())
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("id", estudiante.getIdEstudiante())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(baja==null) {return ResultadoEJB.crearErroneo(3,baja,"No se encontro registro de baja del estudiante");}
             else {return ResultadoEJB.crearCorrecto(baja,"Se encontro registro de baja del estudiante");}
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Comporbar si esta dado de baja(EjbCedulaIdentificacion.buscarBaja)", e, null);
         }
-   }
+    }
 
     /**
      * Obtiene al tutor del estudiante
      * @param estudiante
      * @return Resultado del proceso (Tutor)
      */
-   public  ResultadoEJB<Personal> getTutor(Estudiante estudiante){
-       try{
-           Personal tutor= new Personal();
-           if(estudiante==null){return ResultadoEJB.crearErroneo(2,tutor,"El estudiante no debe ser nulo");}
-           tutor = em.createQuery("select p from Personal  p where p.clave=:clave",Personal.class)
-           .setParameter("clave", estudiante.getGrupo().getTutor())
-           .getResultStream()
-           .findFirst()
-           .orElse(null)
-           ;
-           if(tutor==null){return ResultadoEJB.crearErroneo(3,tutor,"No se ha encontrado al tutor del estudiante");}
-           else { return ResultadoEJB.crearCorrecto(tutor,"Se ha encontrado al tutor");}
+    public  ResultadoEJB<Personal> getTutor(Estudiante estudiante){
+        try{
+            Personal tutor= new Personal();
+            if(estudiante==null){return ResultadoEJB.crearErroneo(2,tutor,"El estudiante no debe ser nulo");}
+            tutor = em.createQuery("select p from Personal  p where p.clave=:clave",Personal.class)
+                    .setParameter("clave", estudiante.getGrupo().getTutor())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+            ;
+            if(tutor==null){return ResultadoEJB.crearErroneo(3,tutor,"No se ha encontrado al tutor del estudiante");}
+            else { return ResultadoEJB.crearCorrecto(tutor,"Se ha encontrado al tutor");}
 
-       }catch (Exception e){return ResultadoEJB.crearErroneo(1, "Comporbar si esta dado de baja(EjbCedulaIdentificacion.buscarBaja)", e, null); }
+        }catch (Exception e){return ResultadoEJB.crearErroneo(1, "Comporbar si esta dado de baja(EjbCedulaIdentificacion.buscarBaja)", e, null); }
 
-   }
+    }
     /**
      * Obtiene todos los datos socioeconomicos del estudiante con los que se cuentan en base
      * @param estudiante
@@ -805,22 +807,22 @@ public class EjbCedulaIdentificacion {
             //Datos de la encuesta
             EncuestaAspirante datosEncuesta = new EncuestaAspirante();
             ResultadoEJB<EncuestaAspirante> resDatosAspirante = getDatosAspirante(estudiante);
-           if(resDatosAspirante.getCorrecto()==true){
-               //Si el estudiante respondio la encuesta del aspirantes se agregan valores a datos que dependen de la encuestra (85,87,90,101)
-               datosEncuesta = resDatosAspirante.getValor();
-               datosEscolares.setP85(datosEncuesta.getR13utxjPrimeraOpcion());// Primera opcion de educacion superior
-               datosEscolares.setP87(datosEncuesta.getR14examenAdmisionOU());//Examen de admision en otra Universidad
-               datosEscolares.setP90(datosEncuesta.getR15medioImpacto().getDescripcion());//Medio de impacto para su inscripcion
-               datosEscolares.setP101(datosEncuesta.getR16segundaCarrera());//Estudiante de modalidad 2x3
-           }
-           else {
-               //System.out.println("-->");
-               //Los datos que dependen a la encuesta se manan vacios
-               datosEscolares.setP85("");// Primera opcion de educacion superior
-               datosEscolares.setP87("");//Examen de admision en otra Universidad
-               datosEscolares.setP90("");//Medio de impacto para su inscripcion
-               datosEscolares.setP101("");//Estudiante de modalidad 2x3
-           }
+            if(resDatosAspirante.getCorrecto()==true){
+                //Si el estudiante respondio la encuesta del aspirantes se agregan valores a datos que dependen de la encuestra (85,87,90,101)
+                datosEncuesta = resDatosAspirante.getValor();
+                datosEscolares.setP85(datosEncuesta.getR13utxjPrimeraOpcion());// Primera opcion de educacion superior
+                datosEscolares.setP87(datosEncuesta.getR14examenAdmisionOU());//Examen de admision en otra Universidad
+                datosEscolares.setP90(datosEncuesta.getR15medioImpacto().getDescripcion());//Medio de impacto para su inscripcion
+                datosEscolares.setP101(datosEncuesta.getR16segundaCarrera());//Estudiante de modalidad 2x3
+            }
+            else {
+                //System.out.println("-->");
+                //Los datos que dependen a la encuesta se manan vacios
+                datosEscolares.setP85("");// Primera opcion de educacion superior
+                datosEscolares.setP87("");//Examen de admision en otra Universidad
+                datosEscolares.setP90("");//Medio de impacto para su inscripcion
+                datosEscolares.setP101("");//Estudiante de modalidad 2x3
+            }
             //datosEscolares.setP86();//Otra opcion de educacion superior No se tiene respuesta
             //TODO: Carrera primera opcion
             AreasUniversidad primeraO = new AreasUniversidad();
@@ -833,11 +835,11 @@ public class EjbCedulaIdentificacion {
             AreasUniversidad segundaO = new AreasUniversidad();
             ResultadoEJB<AreasUniversidad> resSegundaO = getAreaOpcion(estudiante.getAspirante().getDatosAcademicos().getSegundaOpcion());
             //if(resSegundaO.getCorrecto()==true){segundaO= resSegundaO.getValor(); }
-           // else {return ResultadoEJB.crearCorrecto(datosEscolares,"No se pudo obtener la carrera de segunda opción del estudiante");}
+            // else {return ResultadoEJB.crearCorrecto(datosEscolares,"No se pudo obtener la carrera de segunda opción del estudiante");}
             segundaO= resSegundaO.getValor();
             datosEscolares.setP89(segundaO.getNombre());//Segunda opcion carrera
             //datosEscolares.setP91(datosEncuesta.get16); //Razon por la que eligio la universidad -- No esta la informacion
-           //TODO: Bachillerato
+            //TODO: Bachillerato
             Iems iems = new Iems();
             ResultadoEJB<Iems> resIems = getIems(estudiante);
             if(resIems.getCorrecto()==true){iems = resIems.getValor();}
@@ -855,7 +857,7 @@ public class EjbCedulaIdentificacion {
             datosEscolares.setP100(estudiante.getAspirante().getDatosAcademicos().getEspecialidadIems().getNombre());//Optativa bachillerato
             datosEscolares.setP102(estudiante.getTipoEstudiante().getDescripcion());//Estatus
             //TODO: Baja
-           Baja baja = new Baja();
+            Baja baja = new Baja();
             ResultadoEJB<Baja> resBaja = buscarBaja(estudiante);
 
             if(resBaja.getCorrecto()==true){
@@ -900,7 +902,7 @@ public class EjbCedulaIdentificacion {
                     .getResultStream()
                     .findFirst()
                     .orElse(null)
-                ;
+            ;
             if(causaBaja==null){return  ResultadoEJB.crearErroneo(3,causaBaja,"No se encontro la causa de la baja");}
             else {return  ResultadoEJB.crearCorrecto(causaBaja,"Causa de la baja encotrada");}
 
@@ -916,7 +918,7 @@ public class EjbCedulaIdentificacion {
      */
     public ResultadoEJB<DtoCedulaIdentifiacionDatosDeSalud> getDatosSalud(Estudiante estudiante){
         try {
-           // System.out.println("Entro a datos de salud");
+            // System.out.println("Entro a datos de salud");
             DtoCedulaIdentifiacionDatosDeSalud datosDeSalud = new DtoCedulaIdentifiacionDatosDeSalud();
             if (estudiante==null){return  ResultadoEJB.crearErroneo(2,datosDeSalud,"El estudiante no debe ser nulo");}
             datosDeSalud.setP110(estudiante.getAspirante().getIdPersona().getDatosMedicos().getEstatura());//Estatura
@@ -963,112 +965,112 @@ public class EjbCedulaIdentificacion {
      * @return Resultado del proceso(Cedula de identificación)
      */
     public ResultadoEJB<DtoCedulaIdentificacion> getCedulaIdentificacion(Integer matricula){
-       try{
-           DtoCedulaIdentificacion cedulaIdentificacion= new DtoCedulaIdentificacion();
-           if(matricula==null){return ResultadoEJB.crearErroneo(2,cedulaIdentificacion, "La matricula no debe ser nula");}
-           else{
-               Estudiante estudiante= new Estudiante();
-               AreasUniversidad carrera = new AreasUniversidad();
-               //TODO: Se busca al estudiante
-               ResultadoEJB<Estudiante> resEstudiante = validaEstudiante(matricula);
-               if(resEstudiante.getCorrecto()==true){
-                   //Se empiezan a buscar el resto de los datos y a llenar el
-                   estudiante = resEstudiante.getValor();
-                   //TODO:Llenado de dto
-                   //TODO:DATOS GENERALES DEL ESTUDIANTE
-                   dtoCedulaIdentificacionDatosGenerales datosGenerales= new dtoCedulaIdentificacionDatosGenerales();
-                   datosGenerales.setP1(estudiante.getMatricula());//Matricula
-                   datosGenerales.setP2(estudiante.getAspirante().getIdPersona().getNombre().concat(" ").concat(estudiante.getAspirante().getIdPersona().getApellidoPaterno()).concat(" ").concat(estudiante.getAspirante().getIdPersona().getApellidoMaterno()));//NombreCompleto
-                   ResultadoEJB<AreasUniversidad> resCarrera = getAreabyClave(estudiante);
-                   if(resCarrera.getCorrecto()==true){datosGenerales.setP3(resCarrera.getValor().getNombre());}//Carrera
-                   //else{return ResultadoEJB.crearErroneo(3, cedulaIdentificacion, "No se pudo obtener la carrera del estudiante");}
-                   datosGenerales.setP4(estudiante.getGrupo().getIdSistema().getNombre());//Sistema
-                   datosGenerales.setP5(estudiante.getGrupo().getGrado());//Grado
-                   datosGenerales.setP6(Character.toString(estudiante.getGrupo().getLiteral()));//Grupo
-                   cedulaIdentificacion.setDatosGenerales(datosGenerales);
-                   //TODO:DATOS PERSONALES
-                   dtoCedulaIdentificacionDatosPersonales datosPersonales = new dtoCedulaIdentificacionDatosPersonales();
-                   datosPersonales.setP7(utilidadesCH.castearDaLD(estudiante.getAspirante().getIdPersona().getFechaNacimiento()).toString());//Fecha de nacimiento
-                   ResultadoEJB<String> resEdad= getEdad(estudiante);
-                   if(resEdad.getCorrecto()==true){datosPersonales.setP8(resEdad.getValor());} //Edad
-                   //else{return  ResultadoEJB.crearErroneo(4, cedulaIdentificacion, "No se pudo calcular la edad del estudiante");}
-                   ResultadoEJB<Generos> resGenero= getGenero(estudiante);
-                   if(resGenero.getCorrecto()==true){datosPersonales.setP9(resGenero.getValor().getNombre());}//Sexo
-                  // else {return ResultadoEJB.crearErroneo(4,cedulaIdentificacion,"No se pudo obtener el sexo del estudiante");}
-                   datosPersonales.setP10(estudiante.getAspirante().getIdPersona().getCurp());//CURP
-                   datosPersonales.setP11(estudiante.getAspirante().getIdPersona().getEstadoCivil());//Estado civil
-                   //datosPersonales.setP13();// Hijos (Pregunta de trayectoria educativa
-                   datosPersonales.setP13(estudiante.getAspirante().getIdPersona().getMedioComunicacion().getEmail());//Correo
-                   datosPersonales.setP14(estudiante.getAspirante().getIdPersona().getMedioComunicacion().getTelefonoFijo());//Telefono fijo
-                   datosPersonales.setP15(estudiante.getAspirante().getIdPersona().getMedioComunicacion().getTelefonoMovil());//Telefono movil
-                   //TODO: Domicilio Residencia
-                   datosPersonales.setP16(estudiante.getAspirante().getDomicilio().getCalle());//Calle
-                   datosPersonales.setP17(estudiante.getAspirante().getDomicilio().getNumero());//Número
-                   DtoDomicilio domicilioResidencia = new DtoDomicilio();//Dto para almacenar el domicilio de Residencia
-                   ResultadoEJB<DtoDomicilio> resDomicilioP = getDomicilio(estudiante.getAspirante().getDomicilio().getIdAsentamiento());
-                   if (resDomicilioP.getCorrecto()==true){domicilioResidencia = resDomicilioP.getValor();}
-                   //else {return ResultadoEJB.crearErroneo(6,cedulaIdentificacion,"No se pudo obtener el domicilio de residencia del estudiante");}
-                   datosPersonales.setP18(domicilioResidencia.getAsentamiento().getNombreAsentamiento());//Colonia
-                   datosPersonales.setP19(domicilioResidencia.getAsentamiento().getNombreAsentamiento());//Localidad
-                   datosPersonales.setP20(domicilioResidencia.getMunicipio().getNombre());//Municipio
-                   datosPersonales.setP21(domicilioResidencia.getEstado().getNombre());//Estado
-                   datosPersonales.setP22(domicilioResidencia.getAsentamiento().getCodigoPostal());//Código Postal
-                   datosPersonales.setP23(domicilioResidencia.getPais().getNombre());//País
-                   datosPersonales.setP24(estudiante.getAspirante().getDomicilio().getTiempoResidencia());//Tiempo Residencia
-                   //TODO: Domicilio Procedencia
-                   DtoDomicilio domicilioProcedencia= new DtoDomicilio();
-                   ResultadoEJB<DtoDomicilio> resDomicilioR= getDomicilio(estudiante.getAspirante().getDomicilio().getAsentamientoProcedencia());
-                   if(resDomicilioR.getCorrecto()==true){domicilioProcedencia=resDomicilioR.getValor();}
-                  // else{return ResultadoEJB.crearErroneo(7,cedulaIdentificacion,"No se pudo obtener el domicilio de procedencia del estudiante");}
-                   datosPersonales.setP25(estudiante.getAspirante().getDomicilio().getCalleProcedencia());//Calle Procedencia
-                   datosPersonales.setP26(estudiante.getAspirante().getDomicilio().getNumeroProcedencia());//Número Procedencia
-                   datosPersonales.setP27(domicilioProcedencia.getAsentamiento().getNombreAsentamiento());//Colonia Procedencia
-                   datosPersonales.setP28(domicilioProcedencia.getAsentamiento().getNombreAsentamiento());//Localidad
-                   datosPersonales.setP29(domicilioProcedencia.getMunicipio().getNombre());//Municipio Procedencia
-                   datosPersonales.setP30(domicilioProcedencia.getEstado().getNombre()); //Estado Procedencia
-                   datosPersonales.setP31(domicilioProcedencia.getAsentamiento().getCodigoPostal());//Código Postal Procedencia
-                   datosPersonales.setP32(domicilioProcedencia.getPais().getNombre());//Código Postal Procedencia
-                   cedulaIdentificacion.setDatosPersonales(datosPersonales);
-                   //TODO: Lugar de nacimiento
-                   Localidad lugarNac= new Localidad();
-                   ResultadoEJB<Localidad> resLugarNac = getLugarNac(estudiante);
-                   if(resLugarNac.getCorrecto()==true){lugarNac= resLugarNac.getValor();}
-                   else {return ResultadoEJB.crearErroneo(8,cedulaIdentificacion,"No se pudo obtener el lugar de nacimiento del estudiante");}
-                   datosPersonales.setP33(lugarNac.getNombre());//Localidad de Nacimiento
-                   datosPersonales.setP34(lugarNac.getMunicipio().getNombre());//Municipio de Nacimiento
-                   datosPersonales.setP35(lugarNac.getMunicipio().getEstado().getNombre());//Estado de Nacimiento
-                   datosPersonales.setP36(lugarNac.getMunicipio().getEstado().getIdpais().getNombre());//Pais de Nacimiento
-                   datosPersonales.setP37(estudiante.getAspirante().getDomicilio().getVivesCon());//Actualmente vive con..
-                   //TODO: Datos socioeconomicos
-                   DtoCedulaIdentificacionDatosSocioeconomicos datosSocioeconomicos = new DtoCedulaIdentificacionDatosSocioeconomicos();
-                   ResultadoEJB<DtoCedulaIdentificacionDatosSocioeconomicos> resDatosS = getDatosSocioeconomicos(estudiante);
-                   if(resDatosS.getCorrecto()==true){datosSocioeconomicos = resDatosS.getValor();cedulaIdentificacion.setDatosSocioeconomicos(datosSocioeconomicos);}
-                 //  else {return ResultadoEJB.crearErroneo(9,cedulaIdentificacion,"No se pudo obtener los datos socioeconomicos");}
-                   //TODO: Datos familiares
-                   ResultadoEJB<DtoCedulaIdentificacionDatosFamiliares> resDatosFamiliares = getDatosFamiliares(estudiante);
-                   if(resDatosFamiliares.getCorrecto()==true){cedulaIdentificacion.setDatosFamiliares(resDatosFamiliares.getValor());}
-                   //else {return ResultadoEJB.crearErroneo(10,cedulaIdentificacion,"No se pudo obtener los datos familiares del estudiante");}
-                   //TODO: Datos escolares
-                   ResultadoEJB<DtoCedulaIdentidicacionDatosEscolares> resDatosEscolares= getDatosEscolares(estudiante);
-                   if(resDatosEscolares.getCorrecto()==true){cedulaIdentificacion.setDatosEscolares(resDatosEscolares.getValor());}
-                   cedulaIdentificacion.setDatosEscolares(resDatosEscolares.getValor());
-                  // else {return ResultadoEJB.crearErroneo(11,cedulaIdentificacion,"No se pudo obtener los datos escolares del estudiante");}
+        try{
+            DtoCedulaIdentificacion cedulaIdentificacion= new DtoCedulaIdentificacion();
+            if(matricula==null){return ResultadoEJB.crearErroneo(2,cedulaIdentificacion, "La matricula no debe ser nula");}
+            else{
+                Estudiante estudiante= new Estudiante();
+                AreasUniversidad carrera = new AreasUniversidad();
+                //TODO: Se busca al estudiante
+                ResultadoEJB<Estudiante> resEstudiante = validaEstudiante(matricula);
+                if(resEstudiante.getCorrecto()==true){
+                    //Se empiezan a buscar el resto de los datos y a llenar el
+                    estudiante = resEstudiante.getValor();
+                    //TODO:Llenado de dto
+                    //TODO:DATOS GENERALES DEL ESTUDIANTE
+                    dtoCedulaIdentificacionDatosGenerales datosGenerales= new dtoCedulaIdentificacionDatosGenerales();
+                    datosGenerales.setP1(estudiante.getMatricula());//Matricula
+                    datosGenerales.setP2(estudiante.getAspirante().getIdPersona().getNombre().concat(" ").concat(estudiante.getAspirante().getIdPersona().getApellidoPaterno()).concat(" ").concat(estudiante.getAspirante().getIdPersona().getApellidoMaterno()));//NombreCompleto
+                    ResultadoEJB<AreasUniversidad> resCarrera = getAreabyClave(estudiante);
+                    if(resCarrera.getCorrecto()==true){datosGenerales.setP3(resCarrera.getValor().getNombre());}//Carrera
+                    //else{return ResultadoEJB.crearErroneo(3, cedulaIdentificacion, "No se pudo obtener la carrera del estudiante");}
+                    datosGenerales.setP4(estudiante.getGrupo().getIdSistema().getNombre());//Sistema
+                    datosGenerales.setP5(estudiante.getGrupo().getGrado());//Grado
+                    datosGenerales.setP6(Character.toString(estudiante.getGrupo().getLiteral()));//Grupo
+                    cedulaIdentificacion.setDatosGenerales(datosGenerales);
+                    //TODO:DATOS PERSONALES
+                    dtoCedulaIdentificacionDatosPersonales datosPersonales = new dtoCedulaIdentificacionDatosPersonales();
+                    datosPersonales.setP7(utilidadesCH.castearDaLD(estudiante.getAspirante().getIdPersona().getFechaNacimiento()).toString());//Fecha de nacimiento
+                    ResultadoEJB<String> resEdad= getEdad(estudiante);
+                    if(resEdad.getCorrecto()==true){datosPersonales.setP8(resEdad.getValor());} //Edad
+                    //else{return  ResultadoEJB.crearErroneo(4, cedulaIdentificacion, "No se pudo calcular la edad del estudiante");}
+                    ResultadoEJB<Generos> resGenero= getGenero(estudiante);
+                    if(resGenero.getCorrecto()==true){datosPersonales.setP9(resGenero.getValor().getNombre());}//Sexo
+                    // else {return ResultadoEJB.crearErroneo(4,cedulaIdentificacion,"No se pudo obtener el sexo del estudiante");}
+                    datosPersonales.setP10(estudiante.getAspirante().getIdPersona().getCurp());//CURP
+                    datosPersonales.setP11(estudiante.getAspirante().getIdPersona().getEstadoCivil());//Estado civil
+                    //datosPersonales.setP13();// Hijos (Pregunta de trayectoria educativa
+                    datosPersonales.setP13(estudiante.getAspirante().getIdPersona().getMedioComunicacion().getEmail());//Correo
+                    datosPersonales.setP14(estudiante.getAspirante().getIdPersona().getMedioComunicacion().getTelefonoFijo());//Telefono fijo
+                    datosPersonales.setP15(estudiante.getAspirante().getIdPersona().getMedioComunicacion().getTelefonoMovil());//Telefono movil
+                    //TODO: Domicilio Residencia
+                    datosPersonales.setP16(estudiante.getAspirante().getDomicilio().getCalle());//Calle
+                    datosPersonales.setP17(estudiante.getAspirante().getDomicilio().getNumero());//Número
+                    DtoDomicilio domicilioResidencia = new DtoDomicilio();//Dto para almacenar el domicilio de Residencia
+                    ResultadoEJB<DtoDomicilio> resDomicilioP = getDomicilio(estudiante.getAspirante().getDomicilio().getIdAsentamiento());
+                    if (resDomicilioP.getCorrecto()==true){domicilioResidencia = resDomicilioP.getValor();}
+                    //else {return ResultadoEJB.crearErroneo(6,cedulaIdentificacion,"No se pudo obtener el domicilio de residencia del estudiante");}
+                    datosPersonales.setP18(domicilioResidencia.getAsentamiento().getNombreAsentamiento());//Colonia
+                    datosPersonales.setP19(domicilioResidencia.getAsentamiento().getNombreAsentamiento());//Localidad
+                    datosPersonales.setP20(domicilioResidencia.getMunicipio().getNombre());//Municipio
+                    datosPersonales.setP21(domicilioResidencia.getEstado().getNombre());//Estado
+                    datosPersonales.setP22(domicilioResidencia.getAsentamiento().getCodigoPostal());//Código Postal
+                    datosPersonales.setP23(domicilioResidencia.getPais().getNombre());//País
+                    datosPersonales.setP24(estudiante.getAspirante().getDomicilio().getTiempoResidencia());//Tiempo Residencia
+                    //TODO: Domicilio Procedencia
+                    DtoDomicilio domicilioProcedencia= new DtoDomicilio();
+                    ResultadoEJB<DtoDomicilio> resDomicilioR= getDomicilio(estudiante.getAspirante().getDomicilio().getAsentamientoProcedencia());
+                    if(resDomicilioR.getCorrecto()==true){domicilioProcedencia=resDomicilioR.getValor();}
+                    // else{return ResultadoEJB.crearErroneo(7,cedulaIdentificacion,"No se pudo obtener el domicilio de procedencia del estudiante");}
+                    datosPersonales.setP25(estudiante.getAspirante().getDomicilio().getCalleProcedencia());//Calle Procedencia
+                    datosPersonales.setP26(estudiante.getAspirante().getDomicilio().getNumeroProcedencia());//Número Procedencia
+                    datosPersonales.setP27(domicilioProcedencia.getAsentamiento().getNombreAsentamiento());//Colonia Procedencia
+                    datosPersonales.setP28(domicilioProcedencia.getAsentamiento().getNombreAsentamiento());//Localidad
+                    datosPersonales.setP29(domicilioProcedencia.getMunicipio().getNombre());//Municipio Procedencia
+                    datosPersonales.setP30(domicilioProcedencia.getEstado().getNombre()); //Estado Procedencia
+                    datosPersonales.setP31(domicilioProcedencia.getAsentamiento().getCodigoPostal());//Código Postal Procedencia
+                    datosPersonales.setP32(domicilioProcedencia.getPais().getNombre());//Código Postal Procedencia
+                    cedulaIdentificacion.setDatosPersonales(datosPersonales);
+                    //TODO: Lugar de nacimiento
+                    Localidad lugarNac= new Localidad();
+                    ResultadoEJB<Localidad> resLugarNac = getLugarNac(estudiante);
+                    if(resLugarNac.getCorrecto()==true){lugarNac= resLugarNac.getValor();}
+                    else {return ResultadoEJB.crearErroneo(8,cedulaIdentificacion,"No se pudo obtener el lugar de nacimiento del estudiante");}
+                    datosPersonales.setP33(lugarNac.getNombre());//Localidad de Nacimiento
+                    datosPersonales.setP34(lugarNac.getMunicipio().getNombre());//Municipio de Nacimiento
+                    datosPersonales.setP35(lugarNac.getMunicipio().getEstado().getNombre());//Estado de Nacimiento
+                    datosPersonales.setP36(lugarNac.getMunicipio().getEstado().getIdpais().getNombre());//Pais de Nacimiento
+                    datosPersonales.setP37(estudiante.getAspirante().getDomicilio().getVivesCon());//Actualmente vive con..
+                    //TODO: Datos socioeconomicos
+                    DtoCedulaIdentificacionDatosSocioeconomicos datosSocioeconomicos = new DtoCedulaIdentificacionDatosSocioeconomicos();
+                    ResultadoEJB<DtoCedulaIdentificacionDatosSocioeconomicos> resDatosS = getDatosSocioeconomicos(estudiante);
+                    if(resDatosS.getCorrecto()==true){datosSocioeconomicos = resDatosS.getValor();cedulaIdentificacion.setDatosSocioeconomicos(datosSocioeconomicos);}
+                    //  else {return ResultadoEJB.crearErroneo(9,cedulaIdentificacion,"No se pudo obtener los datos socioeconomicos");}
+                    //TODO: Datos familiares
+                    ResultadoEJB<DtoCedulaIdentificacionDatosFamiliares> resDatosFamiliares = getDatosFamiliares(estudiante);
+                    if(resDatosFamiliares.getCorrecto()==true){cedulaIdentificacion.setDatosFamiliares(resDatosFamiliares.getValor());}
+                    //else {return ResultadoEJB.crearErroneo(10,cedulaIdentificacion,"No se pudo obtener los datos familiares del estudiante");}
+                    //TODO: Datos escolares
+                    ResultadoEJB<DtoCedulaIdentidicacionDatosEscolares> resDatosEscolares= getDatosEscolares(estudiante);
+                    if(resDatosEscolares.getCorrecto()==true){cedulaIdentificacion.setDatosEscolares(resDatosEscolares.getValor());}
+                    cedulaIdentificacion.setDatosEscolares(resDatosEscolares.getValor());
+                    // else {return ResultadoEJB.crearErroneo(11,cedulaIdentificacion,"No se pudo obtener los datos escolares del estudiante");}
 
-                   //TODO: Datos de salud
-                   ResultadoEJB<DtoCedulaIdentifiacionDatosDeSalud> resDatosSalud = getDatosSalud(estudiante);
-                   if(resDatosSalud.getCorrecto()==true){cedulaIdentificacion.setDatosDeSalud(resDatosSalud.getValor());}
-                  // else {return ResultadoEJB.crearErroneo(12,cedulaIdentificacion,"No se pudieron obtener los datos de salud del estudiante");}
-                   cedulaIdentificacion.setDatosDeSalud(resDatosSalud.getValor());
+                    //TODO: Datos de salud
+                    ResultadoEJB<DtoCedulaIdentifiacionDatosDeSalud> resDatosSalud = getDatosSalud(estudiante);
+                    if(resDatosSalud.getCorrecto()==true){cedulaIdentificacion.setDatosDeSalud(resDatosSalud.getValor());}
+                    // else {return ResultadoEJB.crearErroneo(12,cedulaIdentificacion,"No se pudieron obtener los datos de salud del estudiante");}
+                    cedulaIdentificacion.setDatosDeSalud(resDatosSalud.getValor());
 
-                   return ResultadoEJB.crearCorrecto(cedulaIdentificacion,"Datos de Cédula de Identificación cargados correctamente");
+                    return ResultadoEJB.crearCorrecto(cedulaIdentificacion,"Datos de Cédula de Identificación cargados correctamente");
 
-               }
-               else{return ResultadoEJB.crearErroneo(3, cedulaIdentificacion, "No se encontro al estudiante");}
-           }
+                }
+                else{return ResultadoEJB.crearErroneo(3, cedulaIdentificacion, "No se encontro al estudiante");}
+            }
 
-       }catch(Exception e){
-           return ResultadoEJB.crearErroneo(1, "Error al buscar el generar la cédula de Identificacíon(EjbCedulaIdentificacion.getCedulaIdentificacion)", e, null);
-       }
+        }catch(Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al buscar el generar la cédula de Identificacíon(EjbCedulaIdentificacion.getCedulaIdentificacion)", e, null);
+        }
     }
     //TODO: Busca el periodo del estudiante segun su grupo
     public ResultadoEJB<PeriodosEscolares> getPeriodoEstudiante (Estudiante estudiante){
@@ -1077,10 +1079,10 @@ public class EjbCedulaIdentificacion {
             if(estudiante==null){return  ResultadoEJB.crearErroneo(2,periodo,"El estudiante no debe ser nulo");}
             //TODO: Haca la consulta
             periodo = em.createQuery("select p from PeriodosEscolares  p where p.periodo=:periodo",PeriodosEscolares.class)
-            .setParameter("periodo", estudiante.getGrupo().getPeriodo())
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("periodo", estudiante.getGrupo().getPeriodo())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(periodo==null){return ResultadoEJB.crearErroneo(3,periodo,"No se encontro el periodo");}
             else {return ResultadoEJB.crearCorrecto(periodo,"Periodo escolar del estudiante, encontrado");}

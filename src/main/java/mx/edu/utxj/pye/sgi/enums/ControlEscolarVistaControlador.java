@@ -48,7 +48,9 @@ public enum ControlEscolarVistaControlador {
     PRESTAMO_DOCUMENTOS("/controlEscolar/se/prestamoDocumentos.xhtml", PrestamoDocumentoServiciosEscolares.class),
     REINSCRIPCION_SEGUIMIENTO("/controlEscolar/se/reinscripcionSeguimientoSE.xhtml",ReinscripcionExtemporaneaSE.class),
     CONCENTRADO_BAJAS("/controlEscolar/se/concentradorBajas.xhtml",  ConcentradoBajasAreasVarias.class),
-    
+    REGISTRO_FICHA_SE("/controlEscolar/aspirante/registroFichaSE.xhtml", RegistroFichaAdmisionSE.class),
+
+
     SEGUIMIENTO_EXPEDIENTE_GENERACION("/controlEscolar/titulacion/seguimientoMatricula.xhtml", SeguimientoExpedienteMatriculaTitulacion.class),
     SEGUIMIENTO_EXPEDIENTE_MATRICULA("/controlEscolar/titulacion/seguimientoGeneracion.xhtml", SeguimientoExpedienteGeneracionTitulacion.class),
     REGISTRO_EXPEDIENTE_TITULACION("/controlEscolar/titulacion/registroExpediente.xhtml", RegistroExpedienteTitulacion.class),

@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import com.github.adminfaces.starter.infra.model.Filter;
 import com.google.zxing.NotFoundException;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
@@ -8,11 +9,14 @@ import edu.mx.utxj.pye.seut.util.dto.Dto;
 import edu.mx.utxj.pye.seut.util.preguntas.Tipo;
 import jdk.nashorn.internal.ir.ReturnNode;
 import lombok.NonNull;
+import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAspirante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
+import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -20,6 +24,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.pye2.*;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
+import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
@@ -66,6 +71,8 @@ public class EjbRegistroFichaAdmision {
     @EJB Facade f;
     @EJB EjbPersonal ejbPersonal;
     @EJB EjbEventoEscolar ejbEventoEscolar;
+    @EJB EjbPersonalBean ejbPersonalBean;
+    @EJB EjbPropiedades ep;
     @EJB EjbEncuestaVocacional ejbEncuestaVocacional;
     @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
     @EJB EjbAreasLogeo ejbAreasLogeo;
@@ -98,6 +105,23 @@ public class EjbRegistroFichaAdmision {
             return ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para el registro de fichas de admision (EjbRegistroFichaAdmision.verificaEvento).", e, Boolean.class);
         }
     }
+    /**
+     * Verifica que el personal logueado sea de Servicios Escolares
+     * @param clave Clave del trabajador logueado
+     * @return Resultado del Proceso
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validaSE(Integer clave){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalAreaOperativa").orElse(10)));
+            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal de servicios escolares.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbAdministracionEstudiantesSE.validaSE)", e, null);
+        }
+
+    }
 
     /**
      * Verifica que haya un evento aperturado para el registro de fichas de admision
@@ -106,7 +130,7 @@ public class EjbRegistroFichaAdmision {
      */
     public ResultadoEJB<EventoEscolar> verificaEvento() {
         try {
-           return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.REGISTRO_FICHAS_ADMISION);
+            return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.REGISTRO_FICHAS_ADMISION);
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento escolar para el registro de fichas de admision (EjbRegistroFichaAdmision.verificaEvento).", e, EventoEscolar.class);
         }
@@ -690,7 +714,7 @@ public class EjbRegistroFichaAdmision {
 
             String identificador = "Registro de Ficha de Admisión 2021 UTXJ";
             String asunto = "Registro Exitoso";
-            System.out.println(medioComunicacion.getEmail());
+           // System.out.println(medioComunicacion.getEmail());
             if(medioComunicacion.getEmail() != null){
                 System.out.println("Correo "+ medioComunicacion.getEmail());
                 try {
@@ -711,6 +735,211 @@ public class EjbRegistroFichaAdmision {
     // ------------------ ---------------------------- BUSQUEDAS ESPECIFICAS------------------------------------------------------------
 
     /**
+     * leé el QR del archivo pdf de la CURP
+     * (Hecho por Juan)
+     * Mod. Tatis
+     * @param file
+     * @return
+     */
+    public Persona leerCurp(Part file) {
+        Persona p = new Persona();
+        SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
+        String rutaRelativa = "";
+        try{
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.ServicioFichaAdmision");
+            //Almacenamiento del archivo de la curp de la persona
+            String ruta = ServicioArchivos.genRutaRelativa("curps");
+            String rutaR = ServicioArchivos.carpetaRaiz.concat(ruta);
+            String rutaArchivo = ruta.concat(file.getSubmittedFileName());
+            ServicioArchivos.addCarpetaRelativa(rutaR);
+            ServicioArchivos.eliminarArchivo(rutaArchivo);
+            rutaRelativa = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
+            file.write(rutaArchivo);
+
+            //Leer codigo QR de archivo de la Curp
+
+            QrPdf pdf = new QrPdf(Paths.get(rutaR.concat(file.getSubmittedFileName())));
+            String qrCode = pdf.getQRCode(1, true, true);
+            String fecha_nacimiento = "";
+            String[] parts = qrCode.split("\\|");
+            if(buscaPersonaByCurp(parts[0]) != null){
+                //System.out.println("0");
+                p = buscaPersonaByCurp(parts[0]);
+                //System.out.println("per" + p);
+
+            }else{
+                if((parts != null && (parts.length == 8 || parts.length == 9))) {
+                    if(parts.length == 9){
+                        p.setCurp(parts[0]);
+                        p.setApellidoPaterno(ucFirst(parts[2]).trim());
+                        p.setApellidoMaterno(ucFirst(parts[3]).trim());
+                        p.setNombre(ucFirst(parts[4]));
+                        if(parts[5].equals("HOMBRE"))
+                            p.setGenero((short) 2);
+                        if(parts[5].equals("MUJER"))
+                            p.setGenero((short) 1);
+                        fecha_nacimiento = parts[6].replace("/","-");
+                        p.setFechaNacimiento(sm.parse(fecha_nacimiento));
+                        String claveEstado = parts[0].substring(11, 13);
+                        if(claveEstado.equals("NE")){
+                            ResultadoEJB<Estado> resEstado = getExtranjero();
+                            if(resEstado.getCorrecto()){
+                                p.setEstado(resEstado.getValor().getIdestado());
+                            }
+                        }else {
+                            Estado estado = em.createNamedQuery("Estado.findByClave", Estado.class)
+                                    .setParameter("clave",claveEstado)
+                                    .getResultList()
+                                    .stream().findFirst().orElse(null);
+                            p.setEstado(estado.getIdestado());
+                        }
+                        p.setUrlCurp(rutaRelativa);
+                    }else if(parts.length == 8){
+                        p.setCurp(parts[0]);
+                        p.setApellidoPaterno(ucFirst(parts[2]));
+                        p.setApellidoMaterno(ucFirst(parts[3]));
+                        p.setNombre(ucFirst(parts[4]));
+                        p.setGenero((short) 1);
+                        if(parts[5].equals("HOMBRE"))
+                            p.setGenero((short) 2);
+                        if(parts[5].equals("MUJER"))
+                            p.setGenero((short) 1);
+                        fecha_nacimiento = parts[6].replace("/","-");
+                        p.setFechaNacimiento(sm.parse(fecha_nacimiento));
+                        p.setUrlCurp(rutaRelativa);
+                    }else{
+                        ServicioArchivos.eliminarArchivo(rutaRelativa);
+                        p = new Persona();
+                    }
+                }
+            }
+        }catch (IOException ex){
+            Logger.getLogger(ServicioFichaAdmision.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(ServicioFichaAdmision.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (NotFoundException ex){
+            ServicioArchivos.eliminarArchivo(rutaRelativa);
+            Logger.getLogger(ServicioFichaAdmision.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return p;
+    }
+
+    /**
+     * Busca persona por CURP
+     * @param curpBusqueda
+     * @return
+     */
+    public Persona buscaPersonaByCurp(String curpBusqueda) {
+        Persona  persona = new Persona();
+        TypedQuery<Persona> p = em.createNamedQuery("Persona.findByCurp",Persona.class)
+                .setParameter("curp",curpBusqueda);
+        List<Persona> personas = p.getResultList();
+
+        if(personas.isEmpty()){
+            persona = null;
+        }else{
+            persona = personas.get(0);
+        }
+
+        return  persona;
+    }
+    public static String ucFirst(String str){
+        String strTemp = "";
+
+        if (str == null || str.isEmpty()) {
+            return str;
+        } else {
+            for (String palabra : str.split(" ")) {
+                strTemp += palabra.substring(0, 1).toUpperCase() + palabra.substring(1, palabra.length()).toLowerCase() + " ";
+                strTemp.trim();
+            }
+            return  strTemp;
+        }
+    }
+
+    ResultadoEJB<Estado> getExtranjero (){
+        try{
+            Estado e = em.createQuery("select e from Estado e where e.idpais.idpais=:idPais and e.idestado=:estado",Estado.class)
+                    .setParameter("idPais",247)
+                    .setParameter("estado",2204)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+                    ;
+            if(e!=null){return ResultadoEJB.crearCorrecto(e,"Estado extrangero encontrado");}
+            else {return ResultadoEJB.crearErroneo(2,e,"Error al obtener el estado extranjero");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener datos extranjeros (EjbRegistroFichaAdmision.getExtranjero).", e, null);
+
+        }
+    }
+
+    /**
+     * Obtiene el dto de Persona (Exculsivo para Servicios escolares)
+     * Busca un registro por curp, en caso de que encuentre alguno, obitiene sus datos (Medios de comunicación, datos médicos)
+     * Si no encuentra registro de la persona regresa dto listo para registrarlo
+     *
+     * @param persona Persona que devuelve la lectura del QR
+     * @return Resultaldo del proceso
+     */
+    public ResultadoEJB<DtoAspirante.PersonaR> getPersonaRSE(@NonNull Persona persona) {
+        try {
+            DtoAspirante.PersonaR rr = new DtoAspirante.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE);
+            // System.out.println("1");
+            if (persona.getNombre() == null) {
+                return ResultadoEJB.crearErroneo(2, rr, "La curp no debe ser nula");
+            }
+            //System.out.println("2");
+            //System.out.println("3" +persona.getEstado()+ " " + persona.getCurp());
+            ResultadoEJB<Persona> resPersona = getPersonabyCurp(persona.getCurp());
+            ResultadoEJB<Pais> resPaisO = getPaisOrigenByEstado(persona.getEstado());
+            if (resPaisO.getCorrecto() != false) {
+                rr.setPaisOr(resPaisO.getValor());
+            }
+            if (resPersona.getCorrecto() == true) {
+                //Se buscan datos de medio de comunicacion
+                ResultadoEJB<MedioComunicacion> resMc = getMedioCbyPersona(resPersona.getValor());
+                if (resMc.getCorrecto() == true) {
+                    rr.setMedioComunicacion(resMc.getValor());
+                    rr.setOperacionMC(Operacion.ACTUALIZAR);
+                } else {
+                    //No se encontraron los datos se mandan nuevos
+                    rr.setMedioComunicacion(new MedioComunicacion());
+                    rr.setOperacionMC(Operacion.PERSISTIR);
+                }
+                //Existe un registro de la persona(se recuperan sus datos)
+                rr.setPersona(resPersona.getValor());
+                rr.setOperacionGeneral(Operacion.ACTUALIZAR);
+                rr.setEcontrado(true);
+                return ResultadoEJB.crearCorrecto(rr, "La persona ya se encuentra registrada");
+            } else {
+                //No existe registro de la persona se toma como registro nuevo
+                Persona newPersona = new Persona();
+                newPersona.setNombre(persona.getNombre());
+                newPersona.setApellidoPaterno(persona.getApellidoPaterno());
+                newPersona.setApellidoMaterno(persona.getApellidoMaterno());
+                newPersona.setApellidoPaterno(persona.getApellidoPaterno());
+                newPersona.setFechaNacimiento(persona.getFechaNacimiento());
+                newPersona.setCurp(persona.getCurp());
+                newPersona.setGenero(persona.getGenero());
+                newPersona.setEstado(persona.getEstado());
+                newPersona.setMunicipio(persona.getMunicipio());
+                newPersona.setLocalidad(persona.getLocalidad());
+                newPersona.setUrlCurp(persona.getUrlCurp());
+                rr.setEcontrado(false);
+                rr.setPersona(newPersona);
+                rr.setPaisOr(resPaisO.getValor());
+                rr.setMedioComunicacion(new MedioComunicacion());
+                rr.setOperacionGeneral(Operacion.PERSISTIR);
+                rr.setOperacionMC(Operacion.PERSISTIR);
+                return ResultadoEJB.crearCorrecto(rr, "No existe registro anterior de la persona");
+            }
+
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbRegistroFichaAdmision.getPersonaR).", e, null);
+        }
+    }  /**
      * Obtiene el dto de Persona
      * Busca un registro por curp, en caso de que encuentre alguno, obitiene sus datos (Medios de comunicación, datos médicos)
      * Si no encuentra registro de la persona regresa dto listo para registrarlo
@@ -727,7 +956,6 @@ public class EjbRegistroFichaAdmision {
             }
             //System.out.println("2");
             if (persona.getEstado() > 32) {
-                //System.out.println("E");
                 return ResultadoEJB.crearErroneo(5, rr, "Usted es nacido en el extranjero, favor de dirigirse al Departamento de servicios escolares");
             }
             else {
@@ -856,7 +1084,7 @@ public class EjbRegistroFichaAdmision {
                     return ResultadoEJB.crearCorrecto(dtoVocacional,"Datos de la encuesta vocacional encontrados");
                 }else {
                     dtoVocacional.setCarreraSelect(new AreasUniversidad());
-                     return ResultadoEJB.crearCorrecto(dtoVocacional,"Datos de la encuesta vocacional encontrados");
+                    return ResultadoEJB.crearCorrecto(dtoVocacional,"Datos de la encuesta vocacional encontrados");
                 }
             }else {return ResultadoEJB.crearErroneo(3,dtoVocacional,"No se encontraron datos de la encuesta vocacional");}
         }catch (Exception e){return ResultadoEJB.crearErroneo(1, "No se pudo obtener la encuesta vocacional (EjbRegistroFichaAdmision.getEncuesraVocacionalbyPersona)", e, null); }
@@ -874,10 +1102,10 @@ public class EjbRegistroFichaAdmision {
             DtoAspirante.MedicosR dtoDm = new DtoAspirante.MedicosR(dm,new TipoSangre(), new TipoDiscapacidad(), Operacion.PERSISTIR,false);
             if(personaR ==null){ return ResultadoEJB.crearErroneo(2,dtoDm,"El dto no debe ser nulo");}
             dm = em.createQuery("select d from DatosMedicos d where  d.persona.idpersona=:persona",DatosMedicos.class)
-            .setParameter("persona", personaR.getPersona().getIdpersona())
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("persona", personaR.getPersona().getIdpersona())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(dm == null){return ResultadoEJB.crearErroneo(3,dtoDm, "No se encontraron datos medicos de la persona");}
             else {
@@ -905,11 +1133,11 @@ public class EjbRegistroFichaAdmision {
             if(persona==null){return ResultadoEJB.crearErroneo(4,aspirante,"La persona no debe ser nulo");}
             Aspirante aspirante1 = new Aspirante();
             aspirante1 = em.createQuery("select a from Aspirante a where a.idPersona.idpersona=:idPersona and a.idProcesoInscripcion.idProcesosInscripcion=:proceso",Aspirante.class)
-            .setParameter("idPersona",persona.getIdpersona())
-            .setParameter("proceso", procesosInscripcion.getIdProcesosInscripcion())
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("idPersona",persona.getIdpersona())
+                    .setParameter("proceso", procesosInscripcion.getIdProcesosInscripcion())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(aspirante1 ==null){
                 DtoAspirante.AspiranteR nuevoAspirante = new DtoAspirante.AspiranteR(new Aspirante(),new TipoAspirante(),procesosInscripcion,Operacion.PERSISTIR,false);
@@ -939,10 +1167,10 @@ public class EjbRegistroFichaAdmision {
             if(aspiranteR.getAspirante() ==null){return  ResultadoEJB.crearErroneo(2,domicilioR,"El aspirante no debe ser nulo");}
             Domicilio domicilio = new Domicilio();
             domicilio = em.createQuery("select d from Domicilio d where d.aspirante=:aspirante",Domicilio.class)
-            .setParameter("aspirante",aspiranteR.getAspirante().getIdAspirante())
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("aspirante",aspiranteR.getAspirante().getIdAspirante())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(domicilio ==null){ return ResultadoEJB.crearErroneo(3,domicilioR,"No se encontró domicilio del aspirante"); }
             else {
@@ -1093,10 +1321,10 @@ public class EjbRegistroFichaAdmision {
             if(clave==null){return ResultadoEJB.crearErroneo(2,new TipoSangre(),"La clave no debe ser nula");}
             TipoSangre ts = new TipoSangre();
             ts = em.createQuery("select t from TipoSangre t where t.idTipoSangre=:tipoSangre",TipoSangre.class)
-            .setParameter("tipoSangre",clave)
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("tipoSangre",clave)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(ts ==null){return ResultadoEJB.crearErroneo(3,ts,"No se encontro el tipo de sangre");}
             else {return ResultadoEJB.crearCorrecto(ts,"Tipo de sangre encontrado");}
@@ -1131,9 +1359,9 @@ public class EjbRegistroFichaAdmision {
         try{
             TipoAspirante tipoAspirante = new TipoAspirante();
             tipoAspirante = em.createQuery("select t from TipoAspirante t where t.idTipoAspirante=1",TipoAspirante.class)
-            .getResultStream()
-            .findFirst()
-            .orElse(null);
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
             if(tipoAspirante==null){return ResultadoEJB.crearErroneo(2,tipoAspirante,"No se encontro el tipo de aspirante.");}
             else {return ResultadoEJB.crearCorrecto(tipoAspirante,"Tipo de aspirante");}
         }catch (Exception e){
@@ -1562,7 +1790,7 @@ public class EjbRegistroFichaAdmision {
                     .findFirst()
                     .orElse(null);
             if(iemses!=null){
-               return ResultadoEJB.crearCorrecto(iemses,"Iems encontrada");
+                return ResultadoEJB.crearCorrecto(iemses,"Iems encontrada");
             }
             else {return ResultadoEJB.crearErroneo(3,new Iems(),"No se encontró el Iems");}
         } catch (Exception e) {
