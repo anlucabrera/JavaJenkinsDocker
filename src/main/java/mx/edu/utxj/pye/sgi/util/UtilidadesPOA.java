@@ -534,9 +534,10 @@ public class UtilidadesPOA implements Serializable {
             calendarioPoaActivo.clear();
             calendarioPoaActivo = euch.mostrarCalendarioevaluacionpoas();
             List<Calendarioevaluacionpoa> calendarioevaluacionpoas = new ArrayList<>();
-            calendarioevaluacionpoas.clear(); 
+            calendarioevaluacionpoas.clear();
             calendarioevaluacionpoas=calendarioPoaActivo.stream().filter(t -> Objects.equals(t.getMesEvaluacion(), evento)).collect(Collectors.toList());
-            List<Permisosevaluacionpoaex> ps = euch.mostrarPermisosEvaluacionExtemporaneaPOA(new Date(), p).stream().filter(t -> t.getEvaluacionPOA().getMesEvaluacion().equals(evento)).collect(Collectors.toList());
+            List<Permisosevaluacionpoaex> ps = euch.mostrarPermisosEvaluacionExtemporaneaPOA(new Date(), p).stream().filter(t -> t.getEvaluacionPOA().getMesEvaluacion()==evento).collect(Collectors.toList());
+            
             if(ps.isEmpty()){                
                 calendarioevaluacionpoa=calendarioevaluacionpoas.get(0);
             } else {
@@ -552,8 +553,8 @@ public class UtilidadesPOA implements Serializable {
             }else{
                 return Boolean.FALSE;
             }
-                                               x
-        } catch (Throwable ex) {J.K HJ,  TFR S
+                                
+        } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(UtilidadesPOA.class.getName()).log(Level.SEVERE, null, ex);
             return Boolean.FALSE;
