@@ -102,6 +102,7 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
             rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
 //            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosCargaAcademica(rol.getDocente(), rol.getPeriodoActivo());
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
+            ResultadoEJB<List<PeriodosEscolares>> resPeriodos2 = ejb.getPeriodosCargaAcademica(docente, rol.getPeriodoActivo());
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
             rol.setPeriodo(ejb.getPeriodoActual());
@@ -110,8 +111,19 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
             ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(docente, rol.getPeriodo());
             ResultadoEJB<List<DtoCargaAcademica>> resCarga2 = ejb.getCargaAcademicaDocente(docente, rol.getPeriodos().get(0));
             
-            if(!resCarga.getCorrecto() || !resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);            
-            if(resCarga.getValor().isEmpty() && resCarga2.getValor().isEmpty()) tieneAcceso = Boolean.FALSE;
+            if(!resCarga.getCorrecto() || !resCarga2.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);            
+            if (resCarga.getValor().isEmpty() && resCarga2.getValor().isEmpty()) {
+                tieneAcceso = Boolean.FALSE;
+                if(!resPeriodos2.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos2);                
+                if (!resPeriodos2.getValor().isEmpty()) {
+                    rol.setPeriodos(resPeriodos2.getValor());
+                    tieneAcceso = Boolean.TRUE;
+                }
+            }
+            
+            resCarga = ejb.getCargaAcademicaDocente(docente, rol.getPeriodo());
+            resCarga2 = ejb.getCargaAcademicaDocente(docente, rol.getPeriodos().get(0));
+
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
             if (!resCarga.getValor().isEmpty()) {
                 rol.setCargas(resCarga.getValor());

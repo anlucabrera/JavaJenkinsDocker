@@ -38,7 +38,7 @@ public class ConsultaAvanceProgramaticoDocente extends AbstractRol{
     @Getter @NonNull private PersonalActivo docente;    
     @Getter @NonNull private List<PeriodosEscolares> periodos;
     @Getter @NonNull private PeriodosEscolares periodo;
-    @Getter @NonNull private Integer periodoActivo;
+    @Getter @Setter @NonNull private Integer periodoActivo;
     @Getter    @NonNull    private AreasUniversidad programa;
     @Getter    @NonNull    private PlanEstudio planEstudio;
     @Getter @Setter private Date fechaInpresion;

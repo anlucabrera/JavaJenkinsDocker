@@ -536,7 +536,7 @@ public class UtilidadesPOA implements Serializable {
             List<Calendarioevaluacionpoa> calendarioevaluacionpoas = new ArrayList<>();
             calendarioevaluacionpoas.clear();
             calendarioevaluacionpoas=calendarioPoaActivo.stream().filter(t -> Objects.equals(t.getMesEvaluacion(), evento)).collect(Collectors.toList());
-            List<Permisosevaluacionpoaex> ps = euch.mostrarPermisosEvaluacionExtemporaneaPOA(new Date(), p).stream().filter(t -> t.getEvaluacionPOA().getMesEvaluacion()==evento).collect(Collectors.toList());
+            List<Permisosevaluacionpoaex> ps = euch.mostrarPermisosEvaluacionExtemporaneaPOA(new Date(), p).stream().filter(t -> t.getEvaluacionPOA().getMesEvaluacion().equals(evento)).collect(Collectors.toList());
             
             if(ps.isEmpty()){                
                 calendarioevaluacionpoa=calendarioevaluacionpoas.get(0);

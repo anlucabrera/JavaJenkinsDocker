@@ -125,10 +125,12 @@ public class AvanceProgramaticoDocente extends ViewScopedRol implements Desarrol
             rol.setDocente(docente);
             rol.setNivelRol(NivelRol.OPERATIVO);
             
-            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosRegistros(rol.getDocente());
+            rol.setPeriodo(ejb.getPeriodoActual());
+            rol.setPeriodoActivo(rol.getPeriodo().getPeriodo());
+            ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejbAsignacionIndicadoresCriterios.getPeriodosCargaAcademica(docente, rol.getPeriodoActivo());
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
-            rol.setPeriodo(ea.getPeriodoActual());
+            rol.setPeriodo(rol.getPeriodos().get(0));
             
             ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan = ejb.getProgramasEducativosDocenteCargasAcademicas(rol.getDocente(),rol.getPeriodo());
             if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);

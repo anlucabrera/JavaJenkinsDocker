@@ -93,7 +93,7 @@ public class ImpresionPlaneacionCuatrimestral extends AbstractRol{
     /**
      * Periodos escolares para seleccionar
      */
-    @Getter @NonNull private List<PeriodosEscolares> periodos;
+    @Getter @NonNull private List<PeriodosEscolares> periodos;    
 
     /**
      * Lista de cargas académicas realizadas al docente seleccionado

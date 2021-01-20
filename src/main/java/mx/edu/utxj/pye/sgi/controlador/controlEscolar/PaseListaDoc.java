@@ -138,7 +138,19 @@ public class PaseListaDoc extends ViewScopedRol implements Desarrollable {
             rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
             ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(docente, rol.getPeriodo());
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
-            if(resCarga.getValor().isEmpty()) tieneAcceso = Boolean.FALSE;
+            ResultadoEJB<List<PeriodosEscolares>> resPeriodos2 = ejbAsignacionIndicadoresCriterios.getPeriodosCargaAcademica(docente, rol.getPeriodoActivo());
+            if (resCarga.getValor().isEmpty()) {
+                tieneAcceso = Boolean.FALSE;
+                if(!resPeriodos2.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos2);  
+                if (!resPeriodos2.getValor().isEmpty()) {
+                    rol.setPeriodos(resPeriodos2.getValor());
+                    rol.setPeriodo(rol.getPeriodos().get(0));
+                    rol.setPeriodoActivo(rol.getPeriodo().getPeriodo());
+                    tieneAcceso = Boolean.TRUE;
+                }
+            }
+            resCarga = ejb.getCargaAcademicaDocente(docente, rol.getPeriodo());
+            if(resCarga.getValor().isEmpty()) tieneAcceso = Boolean.FALSE;            
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
             
             rol.setCargas(resCarga.getValor());
