@@ -1,6 +1,8 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import com.sun.org.apache.regexp.internal.RE;
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteGeneralFichas;
@@ -439,12 +441,13 @@ public class EjbFichaAdmisionReporte {
      * Obtiene la matricula registrada
      * @return Resultado del proceso
      */
-    public ResultadoEJB<DtoReporteGeneralFichas> getMatriculaInscrita(){
+    public ResultadoEJB<DtoReporteGeneralFichas> getMatriculaInscrita(@NonNull ProcesosInscripcion procesosInscripcion){
         try{
             DtoReporteGeneralFichas dto = new DtoReporteGeneralFichas();
+            if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(2,dto,"El proceso de inscripción no debe ser nulo");}
             dto.setTipo("Matricula Inscrita");
             //Se obtiene el total de la matricula inscrita
-            ResultadoEJB<List<Estudiante>> resInscritos =getEstudiantesInscritos();
+            ResultadoEJB<List<Estudiante>> resInscritos =getEstudiantesInscritos(procesosInscripcion);
            // System.out.println("Lista estudiantes inscritos" + resInscritos.getValor().size());
             if(resInscritos.getCorrecto()==true){
                // System.out.println("Correcto" + resInscritos.getValor().size());
@@ -523,14 +526,13 @@ public class EjbFichaAdmisionReporte {
      * periodoProcesoInscripcion --> Se obtiene de confriguracion propiedades (Cambiar anualmente)
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Estudiante>> getEstudiantesInscritos (){
+    public ResultadoEJB<List<Estudiante>> getEstudiantesInscritos (@NonNull ProcesosInscripcion procesosInscripcion){
         try {
+            if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El proceso de inscripción no debe ser nulo");}
             //Periodo del proceso de inscripcion programado
-            Integer periodoInscripcion = ep.leerPropiedadEntera("periodoProcesoInscripcion").orElse(0);
-            //System.out.println("Periodo Inscripcion ->" +periodoInscripcion);
-            //Se obtienen los estudiantes que se han inscrito en ese periodo
-            List<Estudiante> estudiantesInscritos = em.createQuery("select e from Estudiante e where e.periodo=:periodo and e.tipoRegistro=:tipo",Estudiante.class)
-                    .setParameter("periodo",periodoInscripcion)
+
+            List<Estudiante> estudiantesInscritos = em.createQuery("select e from Estudiante e where e.aspirante.idProcesoInscripcion.idProcesosInscripcion=:proceso and e.tipoRegistro=:tipo",Estudiante.class)
+                    .setParameter("proceso",procesosInscripcion.getIdProcesosInscripcion())
                     .setParameter("tipo","Inscripción")
                     .getResultList()
                     ;
@@ -552,21 +554,18 @@ public class EjbFichaAdmisionReporte {
      * Obtiene la lista de aspirantes de nuevo ingreso del ultimo periodo de proceso de registro de fichas
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Aspirante>> getAspirantes(){
+    public ResultadoEJB<List<Aspirante>> getAspirantes(@NonNull ProcesosInscripcion procesosInscripcion){
         try{
             List<Aspirante> aspirantes = new ArrayList<>() ;
-            //Obtiene el ultimo periodo de inscripcion (Registro de fichas)
-            ResultadoEJB<ProcesosInscripcion> resInscripcion= getUltimoProcesoInscripcion();
-            if(resInscripcion.getCorrecto()==true){
+            if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(2,aspirantes,"El proceso de inscripción no debe ser nulo");}
+           else {
                 aspirantes = em.createQuery("select a from Aspirante a where a.idProcesoInscripcion.idProcesosInscripcion=:procesoInscripcion and a.tipoAspirante.idTipoAspirante=:tipo and a.datosAcademicos<> null and a.folioAspirante <> null order by a.folioAspirante",Aspirante.class)
-                .setParameter("procesoInscripcion",resInscripcion.getValor().getIdProcesosInscripcion())
-                .setParameter("tipo",1)
-                .getResultList()
+                        .setParameter("procesoInscripcion",procesosInscripcion.getIdProcesosInscripcion())
+                        .setParameter("tipo",1)
+                        .getResultList()
                 ;
                 if(aspirantes ==null || aspirantes.isEmpty()){return ResultadoEJB.crearErroneo(3,aspirantes,"No se encontraron aspirantes");}
                 else {return ResultadoEJB.crearCorrecto(aspirantes,"Lista de aspirantes");}
-            }else {
-                return ResultadoEJB.crearErroneo(2,aspirantes,"Error al obtener el ultimo periodo de registro de fichas");
             }
 
         }catch (Exception e){
@@ -637,12 +636,13 @@ public class EjbFichaAdmisionReporte {
      * Obtiene la matricula inscritaa y la proyectada
      * @return Resultado del proceso
      */
-    public ResultadoEJB<DtoReporteProyeccionFichas> getMatricula (){
+    public ResultadoEJB<DtoReporteProyeccionFichas> getMatricula (@NonNull ProcesosInscripcion procesosInscripcion){
         try{
             DtoReporteProyeccionFichas dto = new DtoReporteProyeccionFichas();
+            if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(2,dto, "El proceso de inscripción no debe ser nulo");}
             dto.setNombre("Matricula");
             //Obtiene la lista estudiantes inscritos en el ultimo periodo de inscripcion
-            ResultadoEJB<DtoReporteGeneralFichas> resMatricula =getMatriculaInscrita();
+            ResultadoEJB<DtoReporteGeneralFichas> resMatricula =getMatriculaInscrita(procesosInscripcion);
             //System.out.println("Matricula Inscrita -> " + resMatricula.getValor());
             if(resMatricula.getCorrecto()==true){
                 dto.setRegistradas(resMatricula.getValor());
@@ -664,11 +664,12 @@ public class EjbFichaAdmisionReporte {
      * Obtiene el reporte general
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoReporteProyeccionFichas>> getReporte() {
+    public ResultadoEJB<List<DtoReporteProyeccionFichas>> getReporte(@NonNull ProcesosInscripcion procesosInscripcion) {
         try {
+            if(procesosInscripcion== null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El proceso de inscripción no debe ser nulo");}
             List<DtoReporteProyeccionFichas> reporte = new ArrayList<>();
             //Obtiene la lista de aspirantes registrados
-            ResultadoEJB<List<Aspirante>> resAspirantes = getAspirantes();
+            ResultadoEJB<List<Aspirante>> resAspirantes = getAspirantes(procesosInscripcion);
             if(resAspirantes.getCorrecto()==true){
                 //Obtiene el registro de fichas
                 ResultadoEJB<DtoReporteProyeccionFichas> resFichasR = getFichasR(resAspirantes.getValor());
@@ -679,7 +680,7 @@ public class EjbFichaAdmisionReporte {
                     if (resFichasVal.getCorrecto()==true){
                         reporte.add(resFichasVal.getValor());
                         //Obtiene la matricula
-                        ResultadoEJB<DtoReporteProyeccionFichas> resMatricula = getMatricula();
+                        ResultadoEJB<DtoReporteProyeccionFichas> resMatricula = getMatricula(procesosInscripcion);
                         if(resMatricula.getCorrecto()==true){
                             reporte.add(resMatricula.getValor());
                             return ResultadoEJB.crearCorrecto(reporte,"Reporte");

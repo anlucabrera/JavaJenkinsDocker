@@ -126,7 +126,7 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
     }
     public void getReporte(){
         try{
-            ResultadoEJB<List<DtoReporteProyeccionFichas>> resReporte = ejb.getReporte();
+            ResultadoEJB<List<DtoReporteProyeccionFichas>> resReporte = ejb.getReporte(rol.getProcesosInscripcion());
             if(resReporte.getCorrecto()==true){
                 rol.setReporte(resReporte.getValor());
             }else {mostrarMensajeResultadoEJB(resReporte);}
