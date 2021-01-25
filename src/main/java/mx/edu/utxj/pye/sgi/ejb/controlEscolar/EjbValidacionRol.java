@@ -213,6 +213,28 @@ public class EjbValidacionRol {
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal del área de psicopedagogía.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El personal del área no se pudo validar. (EjbValidacionRol.validarPsicopedagogia)", e, null);
+        }    
+    }
+    
+    public ResultadoEJB<Filter<PersonalActivo>> validarConsultaPlanAccionTutorialCompleto(Integer clave){   
+        try {
+            String pista = ",".concat(String.valueOf(clave).trim()).concat(",").trim();
+            ConfiguracionPropiedades claveConfiguracionPropiedad = Objects.requireNonNull(em.createQuery("SELECT c FROM ConfiguracionPropiedades c WHERE c.tipo = :tipo AND c.clave = :clave AND c.valorCadena LIKE CONCAT('%',:pista,'%')", ConfiguracionPropiedades.class)
+                    .setParameter("tipo", "Cadena")
+                    .setParameter("pista", pista)
+                    .setParameter("clave", "consultarTutorias")
+                    .getResultStream()
+                    .findFirst().orElse(new ConfiguracionPropiedades()));
+            if (claveConfiguracionPropiedad.getClave() == null || claveConfiguracionPropiedad.getClave().equals("") || claveConfiguracionPropiedad.getClave().isEmpty()) {
+                return ResultadoEJB.crearErroneo(2, null, "No se ha encontrado la clave del trabajador, no tiene asignado el módulo");
+            } else {
+                PersonalActivo p = ejbPersonalBean.pack(clave);
+                Filter<PersonalActivo> filtro = new Filter<>();
+                filtro.setEntity(p);
+                return ResultadoEJB.crearCorrecto(filtro, "Se ha encontrado la clave de trabajador asignada a este módulo");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido realizar correctamente la validación. (EjbValidacionRol.validarPsicopedagogia)", e, null);
         }
     }
     public ResultadoEJB<Filter<PersonalActivo>> validarFortalecimiento(Integer clave){
@@ -230,9 +252,10 @@ public class EjbValidacionRol {
     public ResultadoEJB<Filter<PersonalActivo>> validarTrabajador(Integer clave) {
         try {
             String pista = ",".concat(String.valueOf(clave).trim()).concat(",").trim();
-            ConfiguracionPropiedades claveConfiguracionPropiedad = Objects.requireNonNull(em.createQuery("SELECT c FROM ConfiguracionPropiedades c WHERE c.tipo = :tipo AND c.valorCadena LIKE CONCAT('%',:pista,'%')", ConfiguracionPropiedades.class)
+            ConfiguracionPropiedades claveConfiguracionPropiedad = Objects.requireNonNull(em.createQuery("SELECT c FROM ConfiguracionPropiedades c WHERE c.tipo = :tipo AND c.clave = :clave AND c.valorCadena LIKE CONCAT('%',:pista,'%')", ConfiguracionPropiedades.class)
                     .setParameter("tipo", "Cadena")
                     .setParameter("pista", pista)
+                    .setParameter("clave", "registrarNotificaciones")
                     .getResultStream()
                     .findFirst().orElse(new ConfiguracionPropiedades()));
             if (claveConfiguracionPropiedad.getClave() == null || claveConfiguracionPropiedad.getClave().equals("") || claveConfiguracionPropiedad.getClave().isEmpty()) {
