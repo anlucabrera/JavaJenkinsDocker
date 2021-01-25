@@ -1491,6 +1491,29 @@ public class EjbRegistroAsesoriaTutoria {
         }
     }
     
+    public ResultadoEJB<List<PersonalActivo>> buscarDocentePAT(String pista, PersonalActivo personalActivo){
+        try{
+            if(personalActivo.getAreaOperativa().getCategoria().getCategoria() == 8){
+                List<PersonalActivo> docentes = em.createQuery("select p from Personal p where p.estado <> 'B' and p.areaSuperior = :areaSuperior and concat(p.nombre, p.clave) like concat('%',:pista,'%')  ", Personal.class)
+                        .setParameter("areaSuperior", personalActivo.getAreaOperativa().getArea())
+                        .setParameter("pista", pista)
+                        .getResultStream()
+                        .map(p -> ejbPersonalBean.pack(p))
+                        .collect(Collectors.toList());
+                return ResultadoEJB.crearCorrecto(docentes, "Lista para mostrar en autocomplete");
+            }else{
+                List<PersonalActivo> docentes = em.createQuery("select p from Personal p where p.estado <> 'B' and concat(p.nombre, p.clave) like concat('%',:pista,'%')  ", Personal.class)
+                        .setParameter("pista", pista)
+                        .getResultStream()
+                        .map(p -> ejbPersonalBean.pack(p))
+                        .collect(Collectors.toList());
+                return ResultadoEJB.crearCorrecto(docentes, "Lista para mostrar en autocomplete");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo localizar la lista de docentes activos. (EjbAsignacionAcademica.buscarDocente)", e, null);
+        }
+    }
+    
     public ResultadoEJB<List<PeriodosEscolares>> getPeriodosConCasosCriticoRegistrados(PersonalActivo especialista) {
         return ejbValidadorDocente.getPeriodosConCasosCriticoRegistrados(especialista);
     }
@@ -1645,20 +1668,24 @@ public class EjbRegistroAsesoriaTutoria {
         }
     }
     
-    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativosConPlanAccionTutorialPsicopedagogia(PeriodosEscolares periodoEscolar) {
-        try {
+    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativosConPlanAccionTutorialPsicopedagogia(PeriodosEscolares periodoEscolar, PersonalActivo personal) {
+        try {    
+            if(personal.getAreaOperativa().getCategoria().getCategoria() == 8){
+                return getProgramasEducativosConPlanAccionTutorialCoordinadorTutores(personal.getAreaOperativa().getArea(), periodoEscolar);
+            }else{
             List<AreasUniversidad> programasEducativosPAT = em.createQuery("SELECT g.idPe FROM PlanAccionTutorial p INNER JOIN p.grupo g WHERE g.periodo = :periodo", Short.class)
                     .setParameter("periodo", periodoEscolar.getPeriodo())
                     .getResultStream()
                     .map(pe -> em.find(AreasUniversidad.class, pe))
                     .distinct()
                     .sorted(Comparator.comparingInt(AreasUniversidad::getAreaSuperior).reversed())
-                    .collect(Collectors.toList());
-            if(programasEducativosPAT.isEmpty()){
+                    .collect(Collectors.toList());    
+            if(programasEducativosPAT.isEmpty()){    
                 return ResultadoEJB.crearErroneo(4, Collections.EMPTY_LIST, "Los grupos aún no contienen planes de accion tutorial registrados");
             }else{
                 return ResultadoEJB.crearCorrecto(programasEducativosPAT, "Lista de programas educativos registrados con plan de acción tutorial");
-            }      
+            }   
+            }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de programas educativos con planes de acción tutorial (EjbRegistroAsesoriaTutoria.getProgramasEducativosConPlanAccionTutorial).", e, null);
         }

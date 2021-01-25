@@ -413,7 +413,8 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
                 List<ParticipantesTutoriaGrupal> partFaltantes = new ArrayList<>();
                 part.stream().forEach((t) -> {
                     if (!t.getAceptacionAcuerdos().equals(ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel())) {
-                        partFaltantes.add(t);
+                        if(!t.getEstudiante1().getTipoEstudiante().getIdTipoEstudiante().equals(2) || !t.getEstudiante1().getTipoEstudiante().getIdTipoEstudiante().equals(3))
+                            partFaltantes.add(t);
                     }
                 });
                 double participantesDouble = part.size();
