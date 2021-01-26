@@ -536,7 +536,7 @@ public class EjbRegistroFichaAdmision {
                     datosAcademicos.getAcademicos().setAspirante1(a);
 
                     em.persist(datosAcademicos.getAcademicos()); f.setEntityClass(DatosAcademicos.class); f.flush(); datosAcademicos.setOperacion(Operacion.ACTUALIZAR); break;
-                case ACTUALIZAR: em.merge(datosAcademicos.getAcademicos());  f.setEntityClass(DatosAcademicos.class); f.flush(); break;
+                case ACTUALIZAR: em.merge(datosAcademicos.getAcademicos());  f.setEntityClass(DatosAcademicos.class); f.flush();datosAcademicos.setOperacion(Operacion.ACTUALIZAR); break;
             }
             return ResultadoEJB.crearCorrecto(datosAcademicos, "DTODatosAcademicos guardados/actualizados");
         } catch (Exception e) {
@@ -733,6 +733,75 @@ public class EjbRegistroFichaAdmision {
 
 
     // ------------------ ---------------------------- BUSQUEDAS ESPECIFICAS------------------------------------------------------------
+
+    public ResultadoEJB<DtoAspirante.General> getDtoApiranteGeneral(Persona  persona,ProcesosInscripcion procesosInscripcion) {
+        try {
+           // System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(1)");
+            Boolean encontrado=Boolean.FALSE;
+            DtoAspirante.PersonaR pr = new DtoAspirante.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.AspiranteR ar = new DtoAspirante.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.MedicosR mr = new DtoAspirante.MedicosR(new DatosMedicos(), new TipoSangre(), new TipoDiscapacidad(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.TutorR tr = new DtoAspirante.TutorR(new TutorFamiliar(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.FamiliaresR fr = new DtoAspirante.FamiliaresR(new DatosFamiliares(), tr, new Ocupacion(), new Ocupacion(), new Escolaridad(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.DomicilioR dr = new DtoAspirante.DomicilioR(new Domicilio(), Boolean.FALSE, Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.AcademicosR ac = new DtoAspirante.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.EncuestaR er = new DtoAspirante.EncuestaR(new EncuestaAspirante(), new LenguaIndigena(), new MedioDifusion(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.EncuestaVocacionalR ev= new DtoAspirante.EncuestaVocacionalR(new EncuestaVocacional(), new AreasUniversidad(),Operacion.PERSISTIR,Boolean.FALSE);
+            DtoAspirante.General rr=new DtoAspirante.General(pr, ar, mr, fr, tr, dr, ac, er,ev, encontrado);
+           // System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(2)");
+            if(persona==null){return ResultadoEJB.crearErroneo(2,rr,"El CURP no debe ser nulo");}
+            if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(3,rr,"El proceso de inscripción no debe ser nulo");}
+            // Obtiene persona por curp
+            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(2.2)"+ persona);
+                ResultadoEJB<DtoAspirante.PersonaR> resPR = getPersonaR(persona);
+                //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(2.3)");
+
+                if (resPR.getCorrecto()) {
+                    //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(3)");
+                    pr = resPR.getValor();
+                    if (pr.getEcontrado()) {
+                        //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(4)");
+                        ResultadoEJB<DtoAspirante.AspiranteR> resAR = getAspirantebyPersona(persona,procesosInscripcion);
+                        if (resAR.getCorrecto()) {
+                            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(5)");
+                            ar = resAR.getValor();
+                            if (ar.getEcontrado()) {
+                                ResultadoEJB<DtoAspirante.EncuestaVocacionalR> resEn = getEncuestaVocacionalbyPersona(persona);
+                               // System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(6)");
+                                ResultadoEJB<DtoAspirante.FamiliaresR> resFR = getFamiliaresR(ar.getAspirante());
+                                //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(6.5)");
+                                ResultadoEJB<DtoAspirante.AcademicosR> resAC = getAcademicos(ar.getAspirante());
+                                //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(7)");
+                                ResultadoEJB<DtoAspirante.DomicilioR> resDR = getDomiciliobyAspirante(ar.getAspirante());
+                                //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(8)");
+                                ResultadoEJB<DtoAspirante.EncuestaR> resER = getEncuesta(ar.getAspirante());
+                                //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(9)");
+                                //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(10)");
+                                if(resEn.getCorrecto()){ev= resEn.getValor();}else {return ResultadoEJB.crearErroneo(3,rr,"Error al obtener los datos de la encuesta vocacional");}
+                                if (resFR.getCorrecto()) {fr = resFR.getValor();if(fr.getEcontrado()){tr=fr.getTutorR();}}else {return ResultadoEJB.crearErroneo(3,rr,"Error al obtener los datos familiares");}
+                                //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(11)");
+                                if (resAC.getCorrecto()) {ac = resAC.getValor();}else {return ResultadoEJB.crearErroneo(3,rr,"Error al obtener los datos académicos");}
+                                //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(12)");
+                                if (resDR.getCorrecto()) {dr = resDR.getValor();}else {return ResultadoEJB.crearErroneo(3,rr,"Error al obtener los datos del domicilio");}
+                                //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(13)");
+                                if (resER.getCorrecto()) {er = resER.getValor();}else {return ResultadoEJB.crearErroneo(3,rr,"Error al obtener la encuesta del aspirante");}
+                                //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(14)");
+
+                            }
+                        }
+                        //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(17)");
+                        ResultadoEJB<DtoAspirante.MedicosR> resMR = getDatosMedicosbyPersona(pr);
+
+                        if (resMR.getCorrecto()) {mr = resMR.getValor();}else {return ResultadoEJB.crearErroneo(3,rr,"Error al obtener los datos médicos");}
+                        encontrado=Boolean.TRUE;
+                    }
+                }else {return ResultadoEJB.crearErroneo(4,rr,"Error al obtener los datos de la persona");}
+            return ResultadoEJB.crearCorrecto(rr,"Dto Aspirante");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+
 
     /**
      * leé el QR del archivo pdf de la CURP
@@ -1028,7 +1097,6 @@ public class EjbRegistroFichaAdmision {
             if (persona == null) {
                 return ResultadoEJB.crearErroneo(3, persona, "No existe la persona con el CURP solicitado");
             } else {
-
                 return ResultadoEJB.crearCorrecto(persona, "Persona encontrada");
             }
         } catch (Exception e) {
@@ -1066,12 +1134,12 @@ public class EjbRegistroFichaAdmision {
      * @param personaR Dto de la persona
      * @return Resultado del proceso
      */
-    public ResultadoEJB<DtoAspirante.EncuestaVocacionalR> getEncuestaVocacionalbyPersona(@NonNull DtoAspirante.PersonaR personaR){
+    public ResultadoEJB<DtoAspirante.EncuestaVocacionalR> getEncuestaVocacionalbyPersona(@NonNull Persona personaR){
         try{
             EncuestaVocacional ev= new EncuestaVocacional();
             DtoAspirante.EncuestaVocacionalR dtoVocacional = new DtoAspirante.EncuestaVocacionalR(ev,new AreasUniversidad(),Operacion.PERSISTIR,false);
             if(personaR==null){return ResultadoEJB.crearErroneo(2,dtoVocacional,"La persona no debe ser nulo");}
-            ResultadoEJB<EncuestaVocacional> resEn = ejbEncuestaVocacional.getResultados(personaR.getPersona());
+            ResultadoEJB<EncuestaVocacional> resEn = ejbEncuestaVocacional.getResultados(personaR);
             ev= resEn.getValor();
 
             if(resEn.getCorrecto()){
@@ -1121,16 +1189,15 @@ public class EjbRegistroFichaAdmision {
 
     /**
      * Busca a un aspirante por id de persona y el proceso de de inscripción activo
-     * @param aspirante Dto del aspirante
      * @param persona Persona registrada
      * @param procesosInscripcion Proceso de inscripción activo
      * @return Resultados del proceso (C-> Dto Aspirante)
      */
-    public ResultadoEJB<DtoAspirante.AspiranteR> getAspirantebyPersona(@NonNull DtoAspirante.AspiranteR aspirante, @NonNull Persona persona,@NonNull ProcesosInscripcion procesosInscripcion){
+    public ResultadoEJB<DtoAspirante.AspiranteR> getAspirantebyPersona(@NonNull Persona persona,@NonNull ProcesosInscripcion procesosInscripcion){
         try{
-            if(aspirante==null){return ResultadoEJB.crearErroneo(2,aspirante,"El aspirante no debe ser nulo");}
-            if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(3,aspirante,"El proceso de inscripción no debe ser nulo");}
-            if(persona==null){return ResultadoEJB.crearErroneo(4,aspirante,"La persona no debe ser nulo");}
+            DtoAspirante.AspiranteR ar = new DtoAspirante.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE);
+            if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(3,ar,"El proceso de inscripción no debe ser nulo");}
+            if(persona==null){return ResultadoEJB.crearErroneo(4,ar,"La persona no debe ser nulo");}
             Aspirante aspirante1 = new Aspirante();
             aspirante1 = em.createQuery("select a from Aspirante a where a.idPersona.idpersona=:idPersona and a.idProcesoInscripcion.idProcesosInscripcion=:proceso",Aspirante.class)
                     .setParameter("idPersona",persona.getIdpersona())
@@ -1158,16 +1225,16 @@ public class EjbRegistroFichaAdmision {
 
     /**
      * Busca domicilio por aspirante
-     * @param aspiranteR Aspirante
+     * @param aspirante Aspirante
      * @return Resultado del proceso
      */
-    public ResultadoEJB<DtoAspirante.DomicilioR> getDomiciliobyAspirante (@NonNull DtoAspirante.AspiranteR aspiranteR){
+    public ResultadoEJB<DtoAspirante.DomicilioR> getDomiciliobyAspirante (@NonNull Aspirante aspirante){
         try{
             DtoAspirante.DomicilioR domicilioR = new DtoAspirante.DomicilioR(new Domicilio(),false,Operacion.PERSISTIR,false);
-            if(aspiranteR.getAspirante() ==null){return  ResultadoEJB.crearErroneo(2,domicilioR,"El aspirante no debe ser nulo");}
+            if(aspirante==null){return  ResultadoEJB.crearErroneo(2,domicilioR,"El aspirante no debe ser nulo");}
             Domicilio domicilio = new Domicilio();
             domicilio = em.createQuery("select d from Domicilio d where d.aspirante=:aspirante",Domicilio.class)
-                    .setParameter("aspirante",aspiranteR.getAspirante().getIdAspirante())
+                    .setParameter("aspirante",aspirante.getIdAspirante())
                     .getResultStream()
                     .findFirst()
                     .orElse(null)

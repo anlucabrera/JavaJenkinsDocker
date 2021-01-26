@@ -291,8 +291,8 @@
                         <c:if test="#{utilidadesAdministracionEvaluaciones.personal}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionPersonalSA.xhtml" ><i class="fa fa-clipboard"></i><span>Resultados generales</span></p:link></li></c:if>
 
                         <!--Seguimiento a egresados-->
-                        <c:if test="#{logonMB.personal.clave eq 518 or logonMB.personal.clave eq 394}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/estudioEgresadosAdministrador.xhtml" ><i class="fa fa-clipboard"></i><span>Estudio egresado</span></p:link></li></c:if>
-                        <c:if test="#{logonMB.personal.clave eq 518 or logonMB.personal.clave eq 394}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/estudioEgresadosReportes.xhtml" ><i class="fa fa-clipboard"></i><span>Reporte egresados</span></p:link></li></c:if>
+                        <c:if test="#{estudioEgresados.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/estudioEgresadosAdministrador.xhtml" ><i class="fa fa-clipboard"></i><span>Estudio egresado</span></p:link></li></c:if>
+                        <c:if test="#{estudioEgresados.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/estudioEgresadosReportes.xhtml" ><i class="fa fa-clipboard"></i><span>Reporte egresados</span></p:link></li></c:if>
                         <!--Visible para todos los trabajadores-->
                         <li><p:link href="#{request.contextPath}/capitalHumano/perfilEmpleadoEvaluaciones.xhtml"><i class="fa fa-exclamation"></i><span>Resultados de evaluaciones</span></p:link></li>
                     </ul>

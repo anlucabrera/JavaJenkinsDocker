@@ -130,7 +130,7 @@ public class EstudioEgresados implements Serializable {
 //            }
 
         } else if (logonMB.getUsuarioTipo() == UsuarioTipo.TRABAJADOR) {
-            if (logonMB.getPersonal().getCategoriaOperativa().getCategoria() == 19 || logonMB.getPersonal().getClave()==394) {
+            if (logonMB.getPersonal().getCategoriaOperativa().getCategoria() == 19) {
                 validaReporte();
                 if(evaluacion!=null){cargada=true;
                 Messages.addGlobalInfo("Bienvenido a la administración de egresados...");}

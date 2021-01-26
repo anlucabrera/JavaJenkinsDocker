@@ -144,14 +144,17 @@ public class RegistroFichaAdmisionSE extends ViewScopedRol implements Desarrolla
         if(rol.getFileCurp() != null){
             //Lee el QR
             Persona per = ejbRegistroFicha.leerCurp(rol.getFileCurp());
-            System.out.println("Persona ->" +per.getNombre());
+            //System.out.println("Persona ->" +per.getNombre());
             if(per.getNombre() !=null){
                 ResultadoEJB<DtoAspirante.PersonaR> resPersona =  ejbRegistroFicha.getPersonaRSE(per);
                 if(resPersona.getCorrecto()==true){
                     rol.setPersonaD(resPersona.getValor());
-                    getRegistro();
-                    mostrarMensajeResultadoEJB(resPersona);
-
+                    ResultadoEJB<DtoAspirante.General> resGen = ejbRegistroFicha.getDtoApiranteGeneral(rol.getPersonaD().getPersona(),rol.getProcesosInscripcion());
+                    if(resGen.getCorrecto()){
+                        rol.setGeneral(resGen.getValor());
+                        getRegistro();
+                        mostrarMensajeResultadoEJB(resPersona);
+                    }else {mostrarMensajeResultadoEJB(resGen);}
                 }else {mostrarMensajeResultadoEJB(resPersona);}
             }else {Messages.addGlobalError("El documento es incorrecto");}
         } else {
@@ -237,7 +240,7 @@ public class RegistroFichaAdmisionSE extends ViewScopedRol implements Desarrolla
                 ResultadoEJB<List<Localidad>> resLocalidades = ejbRegistroFicha.getLocalidadByMunicipio(rol.getPersonaD().getPersona().getEstado(),rol.getPersonaD().getPersona().getMunicipio());
                 if(resLocalidades.getCorrecto()==true){rol.setLocalidadsOr(resLocalidades.getValor());}
                 //Se buscan los datos de su encuesta vocacional
-                ResultadoEJB<DtoAspirante.EncuestaVocacionalR> resEncuestaVoc= ejbRegistroFicha.getEncuestaVocacionalbyPersona(rol.getPersonaD());
+                ResultadoEJB<DtoAspirante.EncuestaVocacionalR> resEncuestaVoc= ejbRegistroFicha.getEncuestaVocacionalbyPersona(rol.getPersonaD().getPersona());
                 if(resEncuestaVoc.getCorrecto()==true){
                     rol.getEncuestaVocacional().setEncuestaAspirante(new EncuestaVocacional());
                     //Tiene datos de la encuesta vocacional
@@ -260,13 +263,13 @@ public class RegistroFichaAdmisionSE extends ViewScopedRol implements Desarrolla
                             rol.setTab4(false);
                             rol.setStep(4);
                             //Se busca Aspirante
-                            ResultadoEJB<DtoAspirante.AspiranteR> resAspirante = ejbRegistroFicha.getAspirantebyPersona(rol.getAspirante(),rol.getPersonaD().getPersona(),rol.getProcesosInscripcion());
+                            ResultadoEJB<DtoAspirante.AspiranteR> resAspirante = ejbRegistroFicha.getAspirantebyPersona(rol.getPersonaD().getPersona(),rol.getProcesosInscripcion());
                             if(resAspirante.getCorrecto()==true){
                                 //Se verifica que haya entontrado al aspirante
                                 if(resAspirante.getValor().getEcontrado()==false){saveAspirante();}
                                 else {rol.setAspirante(resAspirante.getValor());}
                                 //Se buscan datos de domicilio
-                                ResultadoEJB<DtoAspirante.DomicilioR> resDomicilio = ejbRegistroFicha.getDomiciliobyAspirante(rol.getAspirante());
+                                ResultadoEJB<DtoAspirante.DomicilioR> resDomicilio = ejbRegistroFicha.getDomiciliobyAspirante(rol.getAspirante().getAspirante());
                                 if(resDomicilio.getCorrecto()==true){
                                     //System.out.println("Municipio" + resDomicilio.getValor().getDomicilio().getIdMunicipio());
                                     rol.setDdomicilios(resDomicilio.getValor());
