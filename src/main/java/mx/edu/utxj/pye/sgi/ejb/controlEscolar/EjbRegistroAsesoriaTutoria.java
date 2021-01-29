@@ -1670,8 +1670,10 @@ public class EjbRegistroAsesoriaTutoria {
     
     public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativosConPlanAccionTutorialPsicopedagogia(PeriodosEscolares periodoEscolar, PersonalActivo personal) {
         try {    
-            if(personal.getAreaOperativa().getCategoria().getCategoria() == 8){
-                return getProgramasEducativosConPlanAccionTutorialCoordinadorTutores(personal.getAreaOperativa().getArea(), periodoEscolar);
+            if(personal.getAreaOperativa().getCategoria().getCategoria() == 8 || personal.getAreaOperativa().getCategoria().getCategoria() == 9){
+                if(personal.getAreaOperativa().getCategoria().getCategoria() == 9){
+                    return getProgramasEducativosConPlanAccionTutorialCoordinadorTutores(personal.getAreaSuperior().getArea(), periodoEscolar);
+                }else{return getProgramasEducativosConPlanAccionTutorialCoordinadorTutores(personal.getAreaOperativa().getArea(), periodoEscolar);}
             }else{
             List<AreasUniversidad> programasEducativosPAT = em.createQuery("SELECT g.idPe FROM PlanAccionTutorial p INNER JOIN p.grupo g WHERE g.periodo = :periodo", Short.class)
                     .setParameter("periodo", periodoEscolar.getPeriodo())

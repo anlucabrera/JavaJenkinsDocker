@@ -15,7 +15,6 @@ import javax.persistence.NoResultException;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asesoria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesoriasEstudiantes;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanAccionTutorial;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TutoriasGrupales;
@@ -61,14 +60,14 @@ public class EjbConsultaTutoriasAsesorias {
     } 
     
     /**
-     * Consulta el listado de asesorías por docente y evento de registro
+     * Consulta de Asesorías de tipo grupal filtradas por docente y evento de registro
      * @param docente
      * @param eventoRegistro
      * @return 
      */
-    public ResultadoEJB<List<Asesoria>> buscaAsesoriasPorDocenteEventoRegistro(int docente, Integer eventoRegistro){
+    public ResultadoEJB<List<Asesoria>> buscaAsesoriasGrupalesPorDocenteEventoRegistro(int docente, Integer eventoRegistro){
         try {
-            List<Asesoria> asesorias = em.createQuery("SELECT a FROM Asesoria a WHERE a.configuracion.carga.docente = :docente AND a.eventoRegistro = :eventoRegistro ORDER BY a.idAsesoria DESC", Asesoria.class)
+            List<Asesoria> asesorias = em.createQuery("SELECT a FROM Asesoria a WHERE a.configuracion.carga.docente = :docente AND a.tipo = 'Grupal' AND a.eventoRegistro = :eventoRegistro ORDER BY a.idAsesoria DESC", Asesoria.class)
                     .setParameter("docente", docente)
                     .setParameter("eventoRegistro", eventoRegistro)
                     .getResultList();
@@ -84,23 +83,30 @@ public class EjbConsultaTutoriasAsesorias {
         }
     }
     
-    public ResultadoEJB<List<Asesoria>> buscaAsesoriasInvidualesPorGrupoEventoRegistro(Grupo grupo, Integer eventoRegistro){
+    /**
+     * Consulta de Asesorías de tipo individual filtradas por docente y evento de registro
+     * @param docente
+     * @param eventoRegistro
+     * @return 
+     */
+    public ResultadoEJB<List<Asesoria>> buscaAsesoriasIndividualesPorDocenteEventoRegistro(int docente, Integer eventoRegistro){
         try {
-            List<Asesoria> asesorias = em.createQuery("SELECT a FROM Asesoria a WHERE a.configuracion.carga.cveGrupo.idGrupo = :idGrupo AND a.eventoRegistro = :eventoRegistro AND a.tipo = 'Individual' ORDER BY a.idAsesoria DESC", Asesoria.class)
-                    .setParameter("idGrupo", grupo.getIdGrupo())
+            List<Asesoria> asesorias = em.createQuery("SELECT a FROM Asesoria a WHERE a.configuracion.carga.docente = :docente AND a.tipo = 'Individual' AND a.eventoRegistro = :eventoRegistro ORDER BY a.idAsesoria DESC", Asesoria.class)
+                    .setParameter("docente", docente)
                     .setParameter("eventoRegistro", eventoRegistro)
                     .getResultList();
             if(asesorias.isEmpty()){
                 return ResultadoEJB.crearErroneo(3, null, "No se han registrado previamente asesorías");
             }else{
-                return ResultadoEJB.crearCorrecto(asesorias, "Asesorías encontradas del grupo y evento de registro seleccionado");
+                return ResultadoEJB.crearCorrecto(asesorias, "Asesorías encontradas del docente y evento de registro seleccionada");
             }
         } catch (NoResultException e) {
-            return ResultadoEJB.crearErroneo(2, "No se pudo realizar la búsqueda de la asesorías (EjbConsultaTutorias.buscaAsesoriasPorGrupoEventoRegistro.NoResultException).", e, null);
+            return ResultadoEJB.crearErroneo(2, "No se pudo realizar la búsqueda de la asesorías (EjbConsultaTutorias.buscaAsesoriasPorDocenteEventoRegistro.NoResultException).", e, null);
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de la asesorías (EjbConsultaTutorias.buscaAsesoriasPorGrupoEventoRegistro.Exception).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de la asesorías (EjbConsultaTutorias.buscaAsesoriasPorDocenteEventoRegistro.Exception).", e, null);
         }
     }
+    
     
     public ResultadoEJB<List<Asesoria>> buscaAsesoriasGrupalesPorGrupoEventoRegistro(Grupo grupo, Integer eventoRegistro){
         try {
@@ -119,7 +125,24 @@ public class EjbConsultaTutoriasAsesorias {
             return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de la asesorías (EjbConsultaTutorias.buscaAsesoriasPorGrupoEventoRegistro.Exception).", e, null);
         }
     }
-
+    
+    public ResultadoEJB<List<Asesoria>> buscaAsesoriasInvidualesPorGrupoEventoRegistro(Grupo grupo, Integer eventoRegistro){
+        try {
+            List<Asesoria> asesorias = em.createQuery("SELECT a FROM Asesoria a WHERE a.configuracion.carga.cveGrupo.idGrupo = :idGrupo AND a.eventoRegistro = :eventoRegistro AND a.tipo = 'Individual' ORDER BY a.idAsesoria DESC", Asesoria.class)
+                    .setParameter("idGrupo", grupo.getIdGrupo())
+                    .setParameter("eventoRegistro", eventoRegistro)
+                    .getResultList();
+            if(asesorias.isEmpty()){
+                return ResultadoEJB.crearErroneo(3, null, "No se han registrado previamente asesorías");
+            }else{
+                return ResultadoEJB.crearCorrecto(asesorias, "Asesorías encontradas del grupo y evento de registro seleccionado");
+            }
+        } catch (NoResultException e) {
+            return ResultadoEJB.crearErroneo(2, "No se pudo realizar la búsqueda de la asesorías (EjbConsultaTutorias.buscaAsesoriasInvidualesPorGrupoEventoRegistro.NoResultException).", e, null);
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de la asesorías (EjbConsultaTutorias.buscaAsesoriasInvidualesPorGrupoEventoRegistro.Exception).", e, null);
+        }
+    }
     
     public ResultadoEJB<List<AsesoriasEstudiantes>> buscaAsesoriasIndividualesEstudiantesPorGrupoEventoRegistro(Grupo grupo, Integer eventoRegistro){
         try {

@@ -164,6 +164,42 @@ public class EjbRegistroAsesoriaEstudiante {
         }
     }
     
+    public ResultadoEJB<List<AsesoriasEstudiantes>> buscaAsesoriasEstudiantesGrupalPorPersonalEventoRegistro(Integer personal, Integer eventoRegistro){
+        try {
+            List<AsesoriasEstudiantes> asesoriasEstudiante = em.createQuery("SELECT a FROM AsesoriasEstudiantes a WHERE a.personal = :personal AND a.tipo = 'Grupal' AND a.eventoRegistro = :eventoRegistro ORDER BY a.asesoriaEstudiante DESC", AsesoriasEstudiantes.class)
+                    .setParameter("personal", personal)
+                    .setParameter("eventoRegistro", eventoRegistro)
+                    .getResultList();
+            if(asesoriasEstudiante.isEmpty()){
+                return ResultadoEJB.crearErroneo(3, null, "No se han registrado previamente tutorías geneales en el evento seleccionado");
+            }else{
+                return ResultadoEJB.crearCorrecto(asesoriasEstudiante, "Asesorías generales encontradas del docente y evento de registro seleccionado");
+            }
+        } catch (NoResultException e) {
+            return ResultadoEJB.crearErroneo(2, "No se pudo realizar la búsqueda de las asesorías, favor de verificar la siguiente información: (EjbRegistroAsesoriaEstudiante.buscaAsesoriasEstudiantesPorPersonalEventoRegistro.NoResultException).", e, null);
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de las asesorías, favor de verificar la siguiente información: (EjbRegistroAsesoriaEstudiante.buscaAsesoriasEstudiantesPorPersonalEventoRegistro.Exception).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<AsesoriasEstudiantes>> buscaAsesoriasEstudiantesIndividualPorPersonalEventoRegistro(Integer personal, Integer eventoRegistro){
+        try {
+            List<AsesoriasEstudiantes> asesoriasEstudiante = em.createQuery("SELECT a FROM AsesoriasEstudiantes a WHERE a.personal = :personal AND a.tipo = 'Individual' AND a.eventoRegistro = :eventoRegistro ORDER BY a.asesoriaEstudiante DESC", AsesoriasEstudiantes.class)
+                    .setParameter("personal", personal)
+                    .setParameter("eventoRegistro", eventoRegistro)
+                    .getResultList();
+            if(asesoriasEstudiante.isEmpty()){
+                return ResultadoEJB.crearErroneo(3, null, "No se han registrado previamente tutorías geneales en el evento seleccionado");
+            }else{
+                return ResultadoEJB.crearCorrecto(asesoriasEstudiante, "Asesorías generales encontradas del docente y evento de registro seleccionado");
+            }
+        } catch (NoResultException e) {
+            return ResultadoEJB.crearErroneo(2, "No se pudo realizar la búsqueda de las asesorías, favor de verificar la siguiente información: (EjbRegistroAsesoriaEstudiante.buscaAsesoriasEstudiantesPorPersonalEventoRegistro.NoResultException).", e, null);
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de las asesorías, favor de verificar la siguiente información: (EjbRegistroAsesoriaEstudiante.buscaAsesoriasEstudiantesPorPersonalEventoRegistro.Exception).", e, null);
+        }
+    }
+    
     public ResultadoEJB<Boolean> verificarParticipanteAsesoria(AsesoriasEstudiantes asesoria, Integer estudiante){
         try {
             AsesoriasEstudiantes a = em.find(AsesoriasEstudiantes.class, asesoria.getAsesoriaEstudiante());

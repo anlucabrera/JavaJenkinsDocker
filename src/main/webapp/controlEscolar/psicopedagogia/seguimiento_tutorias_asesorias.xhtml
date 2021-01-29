@@ -37,7 +37,7 @@
 
     <ui:define name="body">
         <c:if test="#{validacionPlanAccionTutorialPsicopedagogia.cargado}">
-            <adm:breadcrumb title="Planes de Acción Tutorial"/>
+            <adm:breadcrumb title="Seguimiento de tutorías y asesorías"/>
             <adm:sidebar collapsed="true"/>
             <div class="contenedor">
                 <c:if test="#{validacionPlanAccionTutorialPsicopedagogia.tieneAcceso}">
@@ -87,7 +87,7 @@
                                                 <div class="ui-material">
                                                     <p:selectOneMenu id="periodo" value="#{validacionPlanAccionTutorialPsicopedagogia.rol.periodoSeleccionado}" converter="entityConverter" styleClass="form-control" >
                                                         <f:selectItems value="#{validacionPlanAccionTutorialPsicopedagogia.rol.periodosConPlanAccionTutorial}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
-                                                        <p:ajax process="@this" update="@this programaEducativo contenedor contenedorAsesorias contenedorConcentradoEstadistico modalFuncionesPlanAccionTutorial modalSesionesPlanAccionTutorial modalTutoriasGrupales modalTutoriasIndividuales modalAsesorias modalAsesoriasGenerales modalAsesoriasDocenteSinPat modalAsesoriasGeneralesDocenteSinPat" listener="#{validacionPlanAccionTutorialPsicopedagogia.cambiarPeriodo}" />
+                                                        <p:ajax process="@this" update="@this programaEducativo contenedorConcentradoEstadistico contenedor contenedorAsesorias contenedorAsesoriasPorGrupo modalFuncionesPlanAccionTutorial modalSesionesPlanAccionTutorial modalTutoriasGrupales modalTutoriasIndividuales modalAsesorias modalAsesoriasGenerales modalAsesoriasDocenteSinPat modalAsesoriasGeneralesDocenteSinPat" listener="#{validacionPlanAccionTutorialPsicopedagogia.cambiarPeriodo}" />
                                                     </p:selectOneMenu>
                                                     <p:outputLabel value="Periodo" for="periodo"/>
                                                     <p:message for="periodo" />
@@ -98,7 +98,7 @@
                                                 <div class="ui-material">
                                                     <p:selectOneMenu id="programaEducativo" value="#{validacionPlanAccionTutorialPsicopedagogia.rol.programaEducativo}" converter="entityConverter" styleClass="form-control" filter="true" filterMatchMode="contains" >
                                                         <f:selectItems value="#{validacionPlanAccionTutorialPsicopedagogia.rol.programasEducativos}" var="programaEducativo" itemValue="#{programaEducativo}" itemLabel="#{programaEducativo.nombre}" />
-                                                        <p:ajax process="@this" update="@this contenedor contenedorAsesorias contenedorConcentradoEstadistico modalFuncionesPlanAccionTutorial modalSesionesPlanAccionTutorial modalTutoriasGrupales modalTutoriasIndividuales modalAsesorias modalAsesoriasGenerales modalAsesoriasDocenteSinPat modalAsesoriasGeneralesDocenteSinPat" listener="#{validacionPlanAccionTutorialPsicopedagogia.cambiarProgramaEducativo}" />
+                                                        <p:ajax process="@this" update="@this contenedorConcentradoEstadistico contenedor contenedorAsesorias contenedorAsesoriasPorGrupo modalFuncionesPlanAccionTutorial modalSesionesPlanAccionTutorial modalTutoriasGrupales modalTutoriasIndividuales modalAsesorias modalAsesoriasGenerales modalAsesoriasDocenteSinPat modalAsesoriasGeneralesDocenteSinPat" listener="#{validacionPlanAccionTutorialPsicopedagogia.cambiarProgramaEducativo}" />
                                                     </p:selectOneMenu>
                                                     <p:outputLabel value="Programa Educativo" for="programaEducativo"/>
                                                     <p:message for="programaEducativo" ><p:autoUpdate/></p:message>
@@ -108,211 +108,234 @@
                                         </div>
                                     </h:form>
                                     
-                                    <!-- Concentrados Estadísticos -->
-                                    
+                                    <!-- Concentrados Estadísticos mensuales -->
+
                                     <!-- Mes y Programa Educativo Seleccionados -->
                                     <h:form id="frmConcentradoProgramaEducativo" prependId="false" class="form-inline">
-                                        <br></br>
                                         <p:remoteCommand id="actualizarConcentradoProgramaEducativo" name="actualizarConcentradoProgramaEducativo" actionListener="#{validacionPlanAccionTutorialPsicopedagogia.actualizar}" process="@this" update="contenedorConcentradoEstadistico" />
                                         <div class="row">
-                                            <div class="col-lg-12 col-md-12 text-info">
-                                                <p:outputPanel id="contenedorConcentradoEstadistico">
-                                                    <div class="row margin-bottom" style="margin-bottom: 10px;">
-                                                        <p:toolbar>
-                                                            <f:facet name="left">
-                                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                                <p:outputLabel value="Concentrado mensual de registro de tutorías y asesorías del programa educativo: #{validacionPlanAccionTutorialPsicopedagogia.rol.programaEducativo.nombre}" style="padding-top: 5px;" />
-                                                                <p></p>
-                                                                <p></p>
-                                                                
-                                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                                <p:outputLabel value="Seleccione un mes de registro: " style="padding-bottom: 10px;" />
-                                                                <br/>
-                                                                
-                                                                <div class="ui-material">
-                                                                    <p:selectOneMenu id="mesConcentradoMensual" value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado}" converter="entityConverter" styleClass="form-control">
-                                                                        <f:selectItems value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" />
-                                                                        <p:ajax process="@this" update="@this dtConcentradoEstadisticoProgramaEducativo" listener="#{validacionPlanAccionTutorialPsicopedagogia.cambiarEventoConcentradoTutoriasAsesoriasMensual()}" />
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="mesConcentradoMensual" />
-                                                                </div>
+                                            <div class="box box-primary">
+                                                <div class="col-lg-12 col-md-12 text-info">
+                                                    <p:outputPanel id="contenedorConcentradoEstadistico">
+                                                        <div class="row margin-bottom" style="margin-bottom: 10px;">
+                                                            <p:toolbar>
+                                                                <f:facet name="left">
+                                                                    <h4 style="padding-top: 5px;font-weight: 600;"><p:spacer width="20" height="20"/>1.- Concentrado mensual de registro de tutorías y asesorías del programa educativo: #{validacionPlanAccionTutorialPsicopedagogia.rol.programaEducativo.nombre}</h4>
 
-                                                                <p></p>
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Asesorias Generales: Son registradas cuando uno ó varios estudiantes solicitan a docentes de diferentes programas educativos apoyo con asesorías de algún tema en especifico." style="padding-top: 5px;" />
+                                                                    <p></p>
+                                                                    <p></p>
 
-                                                            </f:facet>
-                                                        </p:toolbar>
-                                                        
-                                                        
-                                                        <center>
-                                                            
-                                                            <p:dataTable id="dtConcentradoEstadisticoProgramaEducativo" 
-                                                                         widgetVar="dtConcentradoEstadisticoProgramaEducativo"
-                                                                         var="dtoGrupo" 
-                                                                         value="#{validacionPlanAccionTutorialPsicopedagogia.rol.listaDtoPlanAccionTutorial}"
-                                                                         filteredValue="#{validacionPlanAccionTutorialPsicopedagogia.rol.listaDtoPlanAccionTutorialFiltro}"
-                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
-                                                                         resizeMode="expand"
-                                                                         emptyMessage="Aún no se han registrado planes de acción tutorial en el periodo y programa educativo seleccionado"
-                                                                         >
-                                                                <p:columnGroup type="header">
-                                                                    <p:row class="sucess">
-                                                                        <p:column rowspan="4"   headerText="Grupo"                                        width="20"/>
-                                                                        <p:column rowspan="4"   headerText="Sistema"                                      width="20"/>
-                                                                        <p:column rowspan="2"   colspan="3"   headerText="Tutorias Grupales"                width="50"/>
-                                                                        <p:column rowspan="2"   colspan="3"   headerText="Tutorías Individuales"            width="50"/>
-                                                                        <p:column colspan="6"   headerText="Asesorías"                                    width="100"/>
-                                                                        <p:column colspan="6"   headerText="Asesorías Generales"              width="100"/>
-                                                                    </p:row>
-                                                                    
-                                                                    <p:row class="sucess">
-                                                                        <p:column colspan="3"   headerText="Individual"                                   width="50"/>
-                                                                        <p:column colspan="3"   headerText="Grupal"                                       width="50"/>
-                                                                        
-                                                                        <p:column colspan="3"   headerText="Individual"                                   width="50"/>
-                                                                        <p:column colspan="3"   headerText="Grupal"                                       width="50"/>
-                                                                    </p:row>
-                                                                    
-                                                                    <p:row class="sucess">
-                                                                        <p:column headerText="No"/>
-                                                                        <p:column headerText="Mujeres"/>
-                                                                        <p:column headerText="Hombres"/>
-                                                                        
-                                                                        <p:column headerText="No"/>
-                                                                        <p:column headerText="Mujeres"/>
-                                                                        <p:column headerText="Hombres"/>
-                                                                        
-                                                                        <p:column headerText="No"/>
-                                                                        <p:column headerText="Mujeres"/>
-                                                                        <p:column headerText="Hombres" />
-                                                                        
-                                                                        <p:column headerText="No"/>
-                                                                        <p:column headerText="Mujeres"/>
-                                                                        <p:column headerText="Hombres"/>
-                                                                        
-                                                                        <p:column headerText="No"/>
-                                                                        <p:column headerText="Mujeres"/>
-                                                                        <p:column headerText="Hombres"/>
-                                                                        
-                                                                        <p:column headerText="No"/>
-                                                                        <p:column headerText="Mujeres"/>
-                                                                        <p:column headerText="Hombres"/>
-                                                                    </p:row>
-                                                                </p:columnGroup>
-                                                                
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{dtoGrupo.planAccionTutorial.grupo.grado}° #{dtoGrupo.planAccionTutorial.grupo.literal}" />
-                                                                </p:column>
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Seleccione un mes de registro: " style="padding-bottom: 10px;" />
+                                                                    <p></p>
 
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{dtoGrupo.planAccionTutorial.grupo.idSistema.nombre}" />
-                                                                </p:column>
-                                                                
-                                                                <!--Tutorias Grupales-->
-
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noTutoriasGrupalesConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesMujeresTutoriaGrupalConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesHombresTutoriaGrupalConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                
-                                                                <!--Tutorias Individuales-->
-                                                                
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noTutoriasIndividualesConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesMujeresTutoriaIndividualConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesHombresTutoriaIndividualConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                
-                                                                <!--Asesorías Individuales-->
-                                                                
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsesoriasIndividualesConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesMujeresAsesoriaIndividualConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesHombresAsesoriaIndividualConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                
-                                                                <!--Asesorías Grupales-->
-                                                                
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsesoriasGrupalesConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesMujeresAsesoriaGrupalConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesHombresAsesoriaGrupalConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                
-                                                                <!--Asesorías Generales Individuales-->
-                                                                
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsesoriasIndividualesGeneralesConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesMujeresAsesoriaGeneralConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesHombresAsesoriaGeneralConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                
-                                                                <!--Asesorías Generales Grupales-->
-                                                                
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsesoriasGrupalesGeneralesConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesMujeresAsesoriaGrupalGeneralConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                
-                                                                <p:column style="align-content: center;text-align: center">
-                                                                    <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesHombresAsesoriaGrupalGeneralConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
-                                                                </p:column>
-                                                                
-                                                                <f:facet name="footer">
-                                                                    <div style="text-align: left">
-                                                                        <p:column style="text-align: left;">
-                                                                            Existen un total de: #{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.listaDtoPlanAccionTutorial)} grupo(s) activo(s).
-                                                                        </p:column>
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="mesConcentradoMensual" value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado}" converter="entityConverter" styleClass="form-control">
+                                                                            <f:selectItems value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento" itemValue="#{evento}" itemLabel="#{evento.mes}" />
+                                                                            <p:ajax process="@this" update="@this dtConcentradoEstadisticoProgramaEducativo" listener="#{validacionPlanAccionTutorialPsicopedagogia.cambiarEventoConcentradoTutoriasAsesoriasMensual()}" />
+                                                                        </p:selectOneMenu>
+                                                                        <p:message for="mesConcentradoMensual" />
                                                                     </div>
+                                                                    <p></p>
+
                                                                 </f:facet>
-                                                            </p:dataTable>
-                                                        </center>
-                                                        
-                                                    </div>
-                                                </p:outputPanel>
+                                                            </p:toolbar>
+                                                            <center>
+                                                                <p:dataTable id="dtConcentradoEstadisticoProgramaEducativo" 
+                                                                             widgetVar="dtConcentradoEstadisticoProgramaEducativo"
+                                                                             var="dtoGrupo" 
+                                                                             value="#{validacionPlanAccionTutorialPsicopedagogia.rol.listaDtoPlanAccionTutorial}"
+                                                                             filteredValue="#{validacionPlanAccionTutorialPsicopedagogia.rol.listaDtoPlanAccionTutorialFiltro}"
+                                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                             resizeMode="expand"
+                                                                             emptyMessage="Aún no se han registrado planes de acción tutorial en el periodo y programa educativo seleccionado"
+                                                                             >
+                                                                    <p:columnGroup type="header">
+                                                                        <p:row class="sucess">
+                                                                            <p:column rowspan="4"   headerText="Grupo"                                        width="20"/>
+                                                                            <p:column rowspan="4"   headerText="Sistema"                                      width="20"/>
+                                                                            <p:column colspan="12"  headerText="Tutorías"                                     width="100"/>
+                                                                            <p:column colspan="6"   headerText="Asesorías"                                    width="100"/>
+                                                                            <p:column colspan="6"   headerText="Asesorías Generales"                          width="100"/>
+                                                                        </p:row>
+
+                                                                        <p:row class="sucess">
+                                                                            <p:column colspan="6"   headerText="Grupales"                                       width="50"/>
+
+                                                                            <p:column colspan="6"   headerText="Individuales"                                   width="50"/>
+
+                                                                            <p:column colspan="3"   headerText="Grupales"                                       width="50"/>
+                                                                            <p:column colspan="3"   headerText="Individuales"                                   width="50"/>
+
+                                                                            <p:column colspan="3"   headerText="Grupales"                                       width="50"/>
+                                                                            <p:column colspan="3"   headerText="Individuales"                                   width="50"/>
+                                                                        </p:row>
+
+                                                                        <p:row class="sucess">
+                                                                            <p:column colspan="2"   headerText="No"/>
+                                                                            <p:column colspan="2"   headerText="Mujeres"/>
+                                                                            <p:column colspan="2"   headerText="Hombres"/>
+
+                                                                            <p:column colspan="2"   headerText="No"/>
+                                                                            <p:column colspan="2"   headerText="Mujeres"/>
+                                                                            <p:column colspan="2"   headerText="Hombres"/>
+
+                                                                            <p:column headerText="No"/>
+                                                                            <p:column headerText="Mujeres"/>
+                                                                            <p:column headerText="Hombres" />
+
+                                                                            <p:column headerText="No"/>
+                                                                            <p:column headerText="Mujeres"/>
+                                                                            <p:column headerText="Hombres"/>
+
+                                                                            <p:column headerText="No"/>
+                                                                            <p:column headerText="Mujeres"/>
+                                                                            <p:column headerText="Hombres"/>
+
+                                                                            <p:column headerText="No"/>
+                                                                            <p:column headerText="Mujeres"/>
+                                                                            <p:column headerText="Hombres"/>
+                                                                        </p:row>
+                                                                    </p:columnGroup>
+
+                                                                    <!--Grado y grupo-->
+
+                                                                    <p:column style="align-content: center;text-align: center;">
+                                                                        <h:outputText value="#{dtoGrupo.planAccionTutorial.grupo.grado}° #{dtoGrupo.planAccionTutorial.grupo.literal}" />
+                                                                    </p:column>
+
+                                                                    <!--Sistema-->
+
+                                                                    <p:column style="align-content: center;text-align: center">
+                                                                        <h:outputText value="#{dtoGrupo.planAccionTutorial.grupo.idSistema.nombre}" />
+                                                                    </p:column>
+
+                                                                    <!--Tutorias Grupales-->
+                                                                    
+                                                                    <c:set var="notg" value="#{validacionPlanAccionTutorialPsicopedagogia.noTutoriasGrupalesConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}"/>
+                                                                    <p:column style="align-content: center;text-align: center;#{notg > 0 ? '' : 'background-color:#FFE0DA'}" colspan="2">
+                                                                        <h:outputText value="#{notg}" />
+                                                                    </p:column>
+                                                                    <p:column style="align-content: center;text-align: center;" colspan="2">
+                                                                        <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesMujeresTutoriaGrupalConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
+                                                                    </p:column>
+                                                                    <p:column style="align-content: center;text-align: center" colspan="2">
+                                                                        <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesHombresTutoriaGrupalConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
+                                                                    </p:column>
+
+                                                                    <!--Tutorias Individuales-->
+                                                                    
+                                                                    <c:set var="noti" value="#{validacionPlanAccionTutorialPsicopedagogia.noTutoriasIndividualesConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}"/>
+                                                                    <p:column style="align-content: center;text-align: center;#{noti > 0 ? '' : 'background-color:#FFE0DA'}" colspan="2">
+                                                                        <h:outputText value="#{noti}" />
+                                                                    </p:column>
+                                                                    <p:column style="align-content: center;text-align: center" colspan="2">
+                                                                        <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesMujeresTutoriaIndividualConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
+                                                                    </p:column>
+                                                                    <p:column style="align-content: center;text-align: center" colspan="2">
+                                                                        <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesHombresTutoriaIndividualConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
+                                                                    </p:column>
+
+                                                                    <!--Asesorías Grupales-->
+                                                                    
+                                                                    <c:set var="noag" value="#{validacionPlanAccionTutorialPsicopedagogia.noAsesoriasGrupalesConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}"/>
+                                                                    <p:column style="align-content: center;text-align: center;#{noag > 0 ? '' : 'background-color:#FFE0DA'}">
+                                                                        <h:outputText value="#{noag}" />
+                                                                    </p:column>
+                                                                    <p:column style="align-content: center;text-align: center">
+                                                                        <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesMujeresAsesoriaGrupalConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
+                                                                    </p:column>
+                                                                    <p:column style="align-content: center;text-align: center">
+                                                                        <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesHombresAsesoriaGrupalConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
+                                                                    </p:column>
+
+                                                                    <!--Asesorías Individuales-->
+                                                                    
+                                                                    <c:set var="noai" value="#{validacionPlanAccionTutorialPsicopedagogia.noAsesoriasIndividualesConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}"/>
+                                                                    <p:column style="align-content: center;text-align: center;#{noai > 0 ? '' : 'background-color:#FFE0DA'}">
+                                                                        <h:outputText value="#{noai}" />
+                                                                    </p:column>
+                                                                    <p:column style="align-content: center;text-align: center">
+                                                                        <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesMujeresAsesoriaIndividualConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
+                                                                    </p:column>
+                                                                    <p:column style="align-content: center;text-align: center">
+                                                                        <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesHombresAsesoriaIndividualConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
+                                                                    </p:column>
+
+                                                                    <!--Asesorías Generales Grupales-->
+                                                                    
+                                                                    <c:set var="noagg" value="#{validacionPlanAccionTutorialPsicopedagogia.noAsesoriasGrupalesGeneralesConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}"/>
+                                                                    <p:column style="align-content: center;text-align: center;#{noagg > 0 ? '' : 'background-color:#FFE0DA'}">
+                                                                        <h:outputText value="#{noagg}" />
+                                                                    </p:column>
+
+                                                                    <p:column style="align-content: center;text-align: center">
+                                                                        <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesMujeresAsesoriaGrupalGeneralConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
+                                                                    </p:column>
+
+                                                                    <p:column style="align-content: center;text-align: center">
+                                                                        <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesHombresAsesoriaGrupalGeneralConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
+                                                                    </p:column>
+
+                                                                    <!--Asesorías Generales Individuales-->
+                                                                    
+                                                                    <c:set var="noagi" value="#{validacionPlanAccionTutorialPsicopedagogia.noAsesoriasIndividualesGeneralesConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}"/>
+                                                                    <p:column style="align-content: center;text-align: center;#{noagi > 0 ? '' : 'background-color:#FFE0DA'}">
+                                                                        <h:outputText value="#{noagi}" />
+                                                                    </p:column>
+
+                                                                    <p:column style="align-content: center;text-align: center">
+                                                                        <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesMujeresAsesoriaGeneralConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
+                                                                    </p:column>
+
+                                                                    <p:column style="align-content: center;text-align: center">
+                                                                        <h:outputText value="#{validacionPlanAccionTutorialPsicopedagogia.noAsistentesHombresAsesoriaGeneralConcentradoMensual(dtoGrupo, validacionPlanAccionTutorialPsicopedagogia.rol.eventoSeleccionado)}" />
+                                                                    </p:column>
+
+                                                                    <f:facet name="footer">
+                                                                        <div style="text-align: left">
+                                                                            <p:column style="text-align: left;">
+                                                                                Existen un total de: #{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.listaDtoPlanAccionTutorial)} grupo(s) activo(s).
+                                                                            </p:column>
+                                                                        </div>
+                                                                    </f:facet>
+                                                                </p:dataTable>
+                                                            </center>
+
+                                                        </div>
+                                                    </p:outputPanel>
+                                                </div>
                                             </div>
                                         </div>
                                     </h:form>
                                     
+                                    <p:separator/>
+                                    
+                                    <!-- Tutorias grupales, Tutorias individuales, Asesorías Grupales, Asesorias Individuales, Asesorías Generales Grupales, Asesorías Generales Individuales por docente -->
                                     <h:form id="frmRegistro" prependId="false" class="form-inline">
                                         <p:remoteCommand id="actualizarPlanesAccionTutorial" name="actualizarPlanesAccionTutorial" actionListener="#{validacionPlanAccionTutorialPsicopedagogia.actualizar}" process="@this" update="contenedor modalFuncionesPlanAccionTutorial modalSesionesPlanAccionTutorial modalTutoriasGrupales modalTutoriasIndividuales modalAsesorias modalAsesoriasGenerales" />
                                         <div class="row">
+                                            <div class="box box-primary">
                                             <div class="col-lg-12 col-md-12 text-info">
 
                                                 <p:outputPanel id="contenedor">
                                                     <div class="row margin-bottom" style="margin-bottom: 10px;">
                                                         <p:toolbar>
                                                             <f:facet name="left">
+                                                                <h4 style="padding-top: 5px;font-weight: 600;"><p:spacer width="20" height="20"/>2.- Listado de tutorías y asesorías registradas por los tutores.</h4>
+                                                                
                                                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                                <p:outputLabel value="Listado de planes de acción tutorial registrados por los tutores." style="padding-top: 5px;" />
+                                                                <p:outputLabel value="La consulta de asesorías y asesorías generales muestra los datos que ha registrado el tutor como su función de docente." style="padding-top: 5px;" />
                                                                 <p></p>
+                                                                
                                                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                                <p:outputLabel value="El estado de registro se basa en la comparación del evento de registro activo." style="padding-top: 5px;" />
+                                                                <p:outputLabel value="Si desea consultar únicamente las asesorías impartidas a los grupos del programa educativo seleccionado favor de consultar la sección No.3 de esta página." style="padding-top: 5px;" />
+                                                                <p></p>
+                                                                
+                                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                <p:outputLabel value="La semaforización de registro se basa en la comparación del evento de registro activo, si el periodo es cambiado la semaforización es omitida" style="padding-top: 5px;" />
                                                                 <p></p>
                                                             </f:facet>
                                                         </p:toolbar>
@@ -328,18 +351,24 @@
                                                                          >
                                                                 <p:columnGroup type="header">
                                                                     <p:row class="sucess">
-                                                                        <p:column headerText="Plan de Acción Tutorial"                          width="70"/>
-                                                                        
-                                                                        <p:column headerText="Grupo"                                            width="50"/>
-                                                                        <p:column headerText="Sistema"                                          width="60"/>
-                                                                        <p:column   filterBy="#{dtoPlanAccionTutorial.tutor.personal.nombre}"   headerText="Tutor"  filterMatchMode="contains"  width="300" style="text-align:  center"/>
-                                                                        
-                                                                        <p:column headerText="Tutorias Grupales"                                width="150"/>
-                                                                        <p:column headerText="Tutorías Individuales"                            width="150"/>
-                                                                        <p:column headerText="Asesorías"                                        width="100"/>
-                                                                        <p:column headerText="Asesorías Generales"                              width="150"/>
-                                                                        
+                                                                        <p:column   rowspan="2"     headerText="Plan de Acción Tutorial"                            width="70"/>
+                                                                        <p:column   rowspan="2"     headerText="Grupo"                                              width="50"/>
+                                                                        <p:column   rowspan="2"     headerText="Sistema"                                            width="60"/>
+                                                                        <p:column   rowspan="2"     headerText="Tutor"                                              width="100"     style="text-align:  center"     filterBy="#{dtoPlanAccionTutorial.tutor.personal.nombre}"     filterMatchMode="contains"/>
+                                                                        <p:column   colspan="2"     headerText="Tutorías"                                           width="150"/>
+                                                                        <p:column   colspan="2"     headerText="Asesorías"                                          width="150"/>
+                                                                        <p:column   colspan="2"     headerText="Asesorías Generales"                                width="150"/>
                                                                     </p:row>
+                                                                    
+                                                                    <p:row class="sucess">
+                                                                        <p:column headerText="Grupales"/>
+                                                                        <p:column headerText="Individuales"/>
+                                                                        <p:column headerText="Grupales"/>
+                                                                        <p:column headerText="Individuales"/>
+                                                                        <p:column headerText="Grupales"/>
+                                                                        <p:column headerText="Individuales"/>
+                                                                    </p:row>
+                                                                    
                                                                 </p:columnGroup>
                                                                 
                                                                 <p:column style="width:16px;align-content: center;text-align: center">
@@ -358,49 +387,91 @@
                                                                     <h:outputText value="#{dtoPlanAccionTutorial.tutor.personal.clave} - #{dtoPlanAccionTutorial.tutor.personal.nombre}" />
                                                                 </p:column>
                                                                 
-                                                                <p:column>
+                                                                <!--Tutorías Grupales-->
+                                                                
+                                                                <c:set var="verificarTutoriasGrupales" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarTutoriasGrupales(dtoPlanAccionTutorial)}" />
+                                                                <p:column style="align-content: center;text-align: center">
                                                                                 <p:commandButton id="btnConsultarTutorias"
                                                                                                  actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoTutoriasGrupales(dtoPlanAccionTutorial)}"
-                                                                                                 class="btn btn-sm #{validacionPlanAccionTutorialPsicopedagogia.verficarTutoriasGrupales(dtoPlanAccionTutorial)?'btn-info':'btn-danger'}"
+                                                                                                 class="btn btn-sm #{verificarTutoriasGrupales?'btn-info':'btn-danger'}"
                                                                                                  icon="fa fa-search"
-                                                                                                 value="Consultar Tutorias Grupales"
+                                                                                                 value="Consultar"
                                                                                                  title="Dar clic aquí para consultar tutorias grupales"
                                                                                                  process="@this"
                                                                                                  global="false"
                                                                                                  />      
                                                                 </p:column>
                                                                 
-                                                                <p:column>
+                                                                <!--Tutorías Individuales-->
+                                                                
+                                                                <c:set var="verificarTutoriasIndividuales" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarTutoriasIndividuales(dtoPlanAccionTutorial)}" />
+                                                                <p:column style="align-content: center;text-align: center">
                                                                     <p:commandButton id="btnConsultarTutoriasIndividuales"
                                                                                      actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoTutoriasIndividuales(dtoPlanAccionTutorial)}"
-                                                                                                 class="btn btn-sm #{validacionPlanAccionTutorialPsicopedagogia.verficarTutoriasIndividuales(dtoPlanAccionTutorial)?'btn-info':'btn-danger'}"
+                                                                                                 class="btn btn-sm #{verificarTutoriasIndividuales?'btn-info':'btn-danger'}"
                                                                                                  icon="fa fa-search"
-                                                                                                 value="Consultar Tutorias Individuales"
+                                                                                                 value="Consultar"
                                                                                                  title="Dar clic aquí para consultar tutorias individuales"
                                                                                                  process="@this"
                                                                                                  global="false"
                                                                                                  />      
                                                                 </p:column>
                                                                 
-                                                                <p:column>
-                                                                    <p:commandButton id="btnConsultarAsesorias"
-                                                                                                 actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesorias(dtoPlanAccionTutorial)}"
-                                                                                                 class="btn btn-sm #{validacionPlanAccionTutorialPsicopedagogia.verficarRegistroDeAsesorias(dtoPlanAccionTutorial)?'btn-info':'btn-danger'}" 
+                                                                <!--Asesorías Grupales-->
+                                                                
+                                                                <c:set var="verificarAsesoriasGrupales" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarRegistroDeAsesoriasGrupales(dtoPlanAccionTutorial)}" />
+                                                                <p:column style="align-content: center;text-align: center">
+                                                                    <p:commandButton id="btnConsultarAsesoriasGrupales"
+                                                                                                 actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasGrupales(dtoPlanAccionTutorial)}"
+                                                                                                 class="btn btn-sm #{verificarAsesoriasGrupales?'btn-info':'btn-danger'}" 
                                                                                                  icon="fa fa-search"
-                                                                                                 value="Consultar Asesorías"
-                                                                                                 title="Dar clic aquí para consultar asesorías"
+                                                                                                 value="Consultar"
+                                                                                                 title="Dar clic aquí para consultar asesorías grupales"
                                                                                                  process="@this"
                                                                                                  global="false"
                                                                                                  />      
                                                                 </p:column>
                                                                 
-                                                                <p:column>
-                                                                    <p:commandButton id="btnConsultarAsesoriasGenerales"
-                                                                                                 actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasGenerales(dtoPlanAccionTutorial)}"
-                                                                                                 class="btn btn-sm #{validacionPlanAccionTutorialPsicopedagogia.verficarRegistroDeAsesoriasGenerales(dtoPlanAccionTutorial)?'btn-info':'btn-danger'}" 
+                                                                <!--Asesorías Individuales-->
+                                                                
+                                                                <c:set var="verificarAsesoriasIndividuales" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarRegistroDeAsesoriasIndividuales(dtoPlanAccionTutorial)}" />
+                                                                <p:column style="align-content: center;text-align: center">
+                                                                    <p:commandButton id="btnConsultarAsesoriasIndividuales"
+                                                                                                 actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasIndividuales(dtoPlanAccionTutorial)}"
+                                                                                                 class="btn btn-sm #{verificarAsesoriasIndividuales?'btn-info':'btn-danger'}" 
                                                                                                  icon="fa fa-search"
-                                                                                                 value="Consultar Asesorías Generales"
-                                                                                                 title="Dar clic aquí para consultar asesorías generales"
+                                                                                                 value="Consultar"
+                                                                                                 title="Dar clic aquí para consultar asesorías individuales"
+                                                                                                 process="@this"
+                                                                                                 global="false"
+                                                                                                 />      
+                                                                </p:column>
+                                                                
+                                                                <!--Asesorías Generales Grupales-->
+                                                                
+                                                                <c:set var="verificarAsesoriasGeneralesGrupales" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarRegistroDeAsesoriasGeneralesGrupales(dtoPlanAccionTutorial)}" />
+                                                                <p:column style="align-content: center;text-align: center">
+                                                                    <p:commandButton id="btnConsultarAsesoriasGeneralesGrupales"
+                                                                                                 actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasGeneralesGrupales(dtoPlanAccionTutorial)}"
+                                                                                                 class="btn btn-sm #{verificarAsesoriasGeneralesGrupales?'btn-info':'btn-danger'}" 
+                                                                                                 icon="fa fa-search"
+                                                                                                 value="Consultar"
+                                                                                                 title="Dar clic aquí para consultar asesorías generales grupales"
+                                                                                                 process="@this"
+                                                                                                 global="false"
+                                                                                                 />
+                                                                </p:column>
+                                                                
+                                                                <!--Asesorías Generales Individuales-->
+                                                                
+                                                                <c:set var="verificarAsesoriasGeneralesIndividuales" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarRegistroDeAsesoriasIndividualesGenerales(dtoPlanAccionTutorial)}" />
+                                                                <p:column style="align-content: center;text-align: center">
+                                                                    <p:commandButton id="btnConsultarAsesoriasGeneralesIndividuales"
+                                                                                                 actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasIndividualesGeneralesGrupales(dtoPlanAccionTutorial)}"
+                                                                                                 class="btn btn-sm #{verificarAsesoriasGeneralesIndividuales?'btn-info':'btn-danger'}" 
+                                                                                                 icon="fa fa-search"
+                                                                                                 value="Consultar"
+                                                                                                 title="Dar clic aquí para consultar asesorías generales grupales"
                                                                                                  process="@this"
                                                                                                  global="false"
                                                                                                  />
@@ -510,7 +581,7 @@
                                                                 <f:facet name="footer">
                                                                     <div style="text-align: left">
                                                                         <p:column style="text-align: left;">
-                                                                            Existen un total de: #{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.listaDtoPlanAccionTutorial)} plan(es) de acción tutorial registrado(s).
+                                                                            Existen un total de: #{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.listaDtoPlanAccionTutorial)} tutores(as) asignados(as) en el periodo y programa educativo seleccionados.
                                                                         </p:column>
                                                                     </div>
                                                                 </f:facet>
@@ -519,7 +590,8 @@
                                                     </div>
                                                 </p:outputPanel>
                                             </div>
-                                        </div>    
+                                            </div>
+                                        </div>
                                     </h:form>
 
                                     <!--Modal de funciones del tutor-->
@@ -1032,7 +1104,7 @@
                                                                                 <h:outputText value="Comentarios del tutor: " style="font-weight: 600;"/>
                                                                             </p:column>
                                                                             <p:column colspan="4" style="font-weight: 600;">
-                                                                                <h:outputText value="#{ti.casoCritico.casoCritico.comentariosTutor eq null ? 'No se han registrado comentarios':ti.casoCritico.casoCritico.comentariosTutor}"/>
+                                                                                <h:outputText value="#{ti.casoCritico.casoCritico.comentariosTutor eq null ? 'No se han registrado comentarios':'El estudiante está siendo atendido por el tutor'}"/>
                                                                             </p:column>
                                                                         </p:row>
                                                                         
@@ -1050,7 +1122,7 @@
                                                                                 <h:outputText value="Comentarios del especialista: " style="font-weight: 600;"/>
                                                                             </p:column>
                                                                             <p:column colspan="4" style="font-weight: 600;">
-                                                                                <h:outputText value="#{ti.casoCritico.casoCritico.comentariosEspecialista eq null ? 'No se han registrado comentarios':ti.casoCritico.casoCritico.comentariosEspecialista}"/>
+                                                                                <h:outputText value="#{ti.casoCritico.casoCritico.comentariosEspecialista eq null ? 'No se han registrado comentarios':'El estudiante está siendo atendido por el especialista'}"/>
                                                                             </p:column>
                                                                         </p:row>
                                                                         
@@ -1256,7 +1328,7 @@
                                               hideEffect="fade" 
                                               modal="true" 
                                               draggable="true" 
-                                              header="Consulta de asesorías genrales registradas por el tutor" 
+                                              header="Consulta de asesorías generales registradas por el tutor" 
                                               onHide="actualizarPlanesAccionTutorial();"
                                               styleClass="panel panel-primary" 
                                               responsive="true" 
@@ -1392,122 +1464,355 @@
                                             </div>
                                         </h:form>
                                     </p:dialog>
-
-                                    <!--Asesorias y Asesorías generales de docentes sin grupo tutorado-->
-                                    <h:form id="frmConsultaAsesoriasDocentes" prependId="false" class="form-inline">
-                                        <br></br>
-                                        <p:remoteCommand id="actualizarConsultaAsesoriasDocentes" name="actualizarConsultaAsesoriasDocentes" actionListener="#{validacionPlanAccionTutorialPsicopedagogia.actualizar}" process="@this" update="contenedorAsesorias modalAsesoriasDocenteSinPat modalAsesoriasGeneralesDocenteSinPat" />
+                                    
+                                    
+                                    <!-- Sección de código para asesorías por grupo -->
+                                    <p:separator/>
+                                    <h:form id="frmConsultaAsesoriasPorGrupo" prependId="false" class="form-inline">
+                                        <p:remoteCommand id="actualizarConsultaAsesoriasPorGrupo" name="actualizarConsultaAsesoriasPorGrupo" actionListener="#{validacionPlanAccionTutorialPsicopedagogia.actualizar}" process="@this" update="contenedorAsesoriasPorGrupo" />
                                         <div class="row">
-                                            <div class="col-lg-12 col-md-12 text-info">
-                                                <p:outputPanel id="contenedorAsesorias">
-                                                    <div class="row margin-bottom" style="margin-bottom: 10px;">
-                                                        <p:toolbar>
-                                                            <f:facet name="left">
-                                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                                <p:outputLabel value="Asesorías y asesorías generales registrados por docente sin grupo tutorado." style="padding-top: 5px;" />
-                                                                <p></p>
-                                                                <p></p>
-                                                                
-                                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                                <p:outputLabel value="Ingrese clave ó nombre del docente: " style="padding-bottom: 10px;" />
-                                                                <br/>
-                                                                <br/>
-                                                                <div class="ui-material">
-                                                                    <p:autoComplete id="autcomDocenteAsesorias" 
-                                                                                    value="#{validacionPlanAccionTutorialPsicopedagogia.rol.docente}" 
-                                                                                    valueChangeListener="#{validacionPlanAccionTutorialPsicopedagogia.seleccionarDocenteAsesorias}"
-                                                                                    completeMethod="#{validacionPlanAccionTutorialPsicopedagogia.completeDocentes}" 
-                                                                                    queryDelay="800"
-                                                                                    var="docente"
-                                                                                    itemValue="#{docente}" 
-                                                                                    itemLabel="#{docente.personal.nombre}"
-                                                                                    converter="entityConverter" 
-                                                                                    forceSelection="true"
-                                                                                    size="35"
-                                                                                    styleClass="campoAutocompleteDocente"
-                                                                                    scrollHeight="300"
-                                                                                    title="Ingrese clave ó nombre del docente"
-                                                                                    >
-                                                                        <p:column>#{docente.personal.clave}</p:column>
-                                                                        <p:column>#{docente.personal.nombre}</p:column>
-                                                                        <p:column>#{docente.areaOperativa.nombre}</p:column>
-                                                                        <p:ajax event="itemSelect" 
-                                                                                process="@this" 
-                                                                                update="frmConsultaAsesoriasDocentes"
-                                                                                />
-                                                                    </p:autoComplete>
-                                                                    <p:outputLabel value="Ingrese clave ó nombre del docente:" for="autcomDocenteAsesorias" />
-                                                                </div>
-                                                                <p:watermark for="autcomDocenteAsesorias" value="341 ó García Romero Norma" />
-                                                                <p:message for="autcomDocenteAsesorias" />
-                                                                <p></p>
-                                                            </f:facet>
-                                                        </p:toolbar>
-                                                        
-                                                        <center>
-                                                            <!--Tabla de contenido de las asesorías a consultar-->
-                                                            <p:dataTable id="dtAsesoriasDocentes" 
-                                                                         widgetVar="dtAsesoriasDocentes"
-                                                                         var="docente" 
-                                                                         value="#{validacionPlanAccionTutorialPsicopedagogia.rol.docentes}"
-                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
-                                                                         resizeMode="expand"
-                                                                         emptyMessage="Aún no se ha seleccionado un docente"
-                                                                         >
-                                                                <p:columnGroup type="header">
-                                                                    <p:row class="sucess">
-                                                                        <p:column   rowspan="2"     headerText="Docente"  width="200" style="text-align:  center"/>
-                                                                        <p:column   colspan="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo)}" headerText="Asesorías"                                        width="200"/>
-                                                                        <p:column   colspan="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo)}" headerText="Asesorías Generales"                              width="250"/>
-                                                                    </p:row>
+                                            <c:set var="validact" value="#{validacionPlanAccionTutorialPsicopedagogia.rol.validaCT}" />
+                                            <div class="box box-primary" style="display: #{validact?'none;':''}}">
+                                                <div class="col-lg-12 col-md-12 text-info">
+                                                    <p:outputPanel id="contenedorAsesoriasPorGrupo">
+                                                        <div class="row margin-bottom" style="margin-bottom: 10px;">
+                                                            <p:toolbar>
+                                                                <f:facet name="left">
+                                                                    <h4 style="padding-top: 5px;font-weight: 600;"><p:spacer width="20" height="20"/>3.- Consulta de Asesorías y Asesorías Generales del programa educativo: #{validacionPlanAccionTutorialPsicopedagogia.rol.programaEducativo.nombre}</h4>
+                                                                    
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Asesorías y Asesorías Generales Registradas por grupo" style="padding-bottom: 10px;" />
+                                                                    <p></p>
+                                                                    <p></p>
+                                                                    
+                                                                </f:facet>
+                                                            </p:toolbar>
 
-                                                                    <p:row>
-                                                                        <ui:repeat value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento">
-                                                                            <p:column headerText="#{evento.mes}"/>
-                                                                        </ui:repeat>
-                                                                        
-                                                                        <ui:repeat value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento">
-                                                                            <p:column headerText="#{evento.mes}"/>
-                                                                        </ui:repeat>
-                                                                    </p:row>
+                                                            <center>
+                                                                <!--Tabla de contenido de las asesorías a consultar-->
+                                                                <p:dataTable id="dtAsesoriasGrupo" 
+                                                                             widgetVar="dtAsesoriasGrupo"
+                                                                             var="grupo" 
+                                                                             value="#{validacionPlanAccionTutorialPsicopedagogia.rol.listaDtoPlanAccionTutorial}"
+                                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                             resizeMode="expand"
+                                                                             emptyMessage="Aún no hay grupos en el periodo y programa educativo seleccionados"
+                                                                             >
+                                                                    <p:columnGroup type="header">
+                                                                        <p:row class="sucess">
+                                                                            <p:column   rowspan="4"     headerText="Grupo"                               width="50"/>
+                                                                            <p:column   rowspan="4"     headerText="Sistema"                             width="60"/>                                              
 
-                                                                </p:columnGroup>
-                                                                
-                                                                <p:column>
-                                                                    <h:outputText value="#{docente.personal.clave} - #{docente.personal.nombre}" />
-                                                                </p:column>
-                                                                
-                                                                <p:columns value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento" style="align-content: center;text-align: center">
-                                                                    <p:commandButton id="btnConsultarAsesoriasDocenteSinPat"
-                                                                                     actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasDocenteSinPat(evento)}"
-                                                                                     class="btn btn-sm #{validacionPlanAccionTutorialPsicopedagogia.verficarAsesoriasDocenteSinPatEventoRegistro(evento)?'btn-info':'btn-danger'}"
-                                                                                     icon="fa fa-search"
-                                                                                     value="Consultar"
-                                                                                     title="Dar clic aquí para consultar asesorias"
-                                                                                     process="@this"
-                                                                                     global="false"
-                                                                                     />      
-                                                                </p:columns>
-                                                                
-                                                                <p:columns value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento" style="align-content: center;text-align: center">
-                                                                    <p:commandButton id="btnConsultarAsesoriasGeneralesDocenteSinPat"
-                                                                                     actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasGeneralesDocenteSinPat(evento)}"
-                                                                                     class="btn btn-sm #{validacionPlanAccionTutorialPsicopedagogia.verficarAsesoriasGeneralesDocenteSinPatEventoRegistro(evento)?'btn-info':'btn-danger'}"
-                                                                                     icon="fa fa-search"
-                                                                                     value="Consultar"
-                                                                                     title="Dar clic aquí para consultar asesorias generales"
-                                                                                     process="@this"
-                                                                                     global="false"
-                                                                                     />      
-                                                                </p:columns>
-                                                            </p:dataTable>
-                                                        </center>
-                                                    </div>
-                                                </p:outputPanel>
+                                                                            <c:if test="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo) == 1}">
+                                                                                <p:column   colspan="2"     headerText="Asesorías"                      width="200"/>
+                                                                                <p:column   colspan="2"     headerText="Asesorías Generales"            width="250"/>
+                                                                            </c:if>
+
+                                                                            <c:if test="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo) == 2}">
+                                                                                <p:column   colspan="4"     headerText="Asesorías"                      width="200"/>
+                                                                                <p:column   colspan="4"     headerText="Asesorías Generales"            width="250"/>
+                                                                            </c:if>
+
+                                                                            <c:if test="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo) == 3}">
+                                                                                <p:column   colspan="6"     headerText="Asesorías"                      width="200"/>
+                                                                                <p:column   colspan="6"     headerText="Asesorías Generales"            width="250"/>
+                                                                            </c:if>
+
+                                                                            <c:if test="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo) == 4}">
+                                                                                <p:column   colspan="8"     headerText="Asesorías"                      width="200"/>
+                                                                                <p:column   colspan="8"     headerText="Asesorías Generales"            width="250"/>
+                                                                            </c:if>
+                                                                        </p:row>
+
+                                                                        <p:row class="sucess">
+                                                                            <p:column   colspan="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo)}" headerText="Grupales"                                          width="200"/>
+                                                                            <p:column   colspan="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo)}" headerText="Individuales"                                      width="250"/>
+                                                                            <p:column   colspan="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo)}" headerText="Grupales"                                          width="200"/>
+                                                                            <p:column   colspan="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo)}" headerText="Individuales"                                      width="250"/>
+                                                                        </p:row>
+
+
+                                                                        <p:row>
+                                                                            <ui:repeat value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento">
+                                                                                <p:column headerText="#{evento.mes}"/>
+                                                                            </ui:repeat>
+
+                                                                            <ui:repeat value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento">
+                                                                                <p:column headerText="#{evento.mes}"/>
+                                                                            </ui:repeat>
+
+                                                                            <ui:repeat value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento">
+                                                                                <p:column headerText="#{evento.mes}"/>
+                                                                            </ui:repeat>
+
+                                                                            <ui:repeat value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento">
+                                                                                <p:column headerText="#{evento.mes}"/>
+                                                                            </ui:repeat>
+                                                                        </p:row>
+
+                                                                    </p:columnGroup>
+
+                                                                    <p:column style="align-content: center;text-align: center">
+                                                                        <h:outputText value="#{grupo.planAccionTutorial.grupo.grado}° #{grupo.planAccionTutorial.grupo.literal}" />
+                                                                    </p:column>
+
+                                                                    <p:column style="align-content: center;text-align: center">
+                                                                        <h:outputText value="#{grupo.planAccionTutorial.grupo.idSistema.nombre}" />
+                                                                    </p:column>
+                                                                    
+                                                                    <c:set var="ag" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarRegistroDeAsesoriasGrupalesPorGrupoEventoRegistro(grupo,evento)}" />
+                                                                    <p:columns value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento" style="align-content: center;text-align: center">
+                                                                        <p:commandButton id="btnConsultarAsesoriasDocenteSinPat"
+                                                                                         actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasGrupalesPorEvento(grupo,evento)}"
+                                                                                         class="btn btn-xs #{ag?'btn-info':'btn-danger'}"
+                                                                                         icon="fa fa-search"
+                                                                                         title="Dar clic aquí para consultar asesorias grupales #{evento.eventoRegistro}"
+                                                                                         process="@this"
+                                                                                         global="false"
+                                                                                         disabled="#{!ag}"
+                                                                                         />      
+                                                                    </p:columns>
+                                                                    
+                                                                    <c:set var="ai" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarRegistroDeAsesoriasIndividualesPorGrupoEventoRegistro(grupo,evento)}" />
+                                                                    <p:columns value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento" style="align-content: center;text-align: center">
+                                                                        <p:commandButton id="btnConsultarAsesoriasDocenteSinPat"
+                                                                                         actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasIndividualesPorGrupoEventoRegistro(grupo,evento)}"
+                                                                                         class="btn btn-xs #{ai?'btn-info':'btn-danger'}"
+                                                                                         icon="fa fa-search"
+                                                                                         title="Dar clic aquí para consultar asesorias individuales #{evento.eventoRegistro}"
+                                                                                         process="@this"
+                                                                                         global="false"
+                                                                                         disabled="#{!ai}"
+                                                                                         />      
+                                                                    </p:columns>
+                                                                    
+                                                                    <c:set var="agg" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarRegistroDeAsesoriasGrupalesGeneralesPorGrupoEventoRegistro(grupo,evento)}" />
+                                                                    <p:columns value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento" style="align-content: center;text-align: center">
+                                                                        <p:commandButton id="btnConsultarAsesoriasGeneralesDocenteSinPat"
+                                                                                         actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasGrupalesGeneralesPorGrupoEventoRegistro(grupo,evento)}"
+                                                                                         class="btn btn-xs #{agg?'btn-info':'btn-danger'}"
+                                                                                         icon="fa fa-search"
+                                                                                         title="Dar clic aquí para consultar asesorias generales grupales #{evento.eventoRegistro}"
+                                                                                         process="@this"
+                                                                                         global="false"
+                                                                                         disabled="#{!agg}"
+                                                                                         />      
+                                                                    </p:columns>
+                                                                    
+                                                                    <c:set var="agi" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarRegistroDeAsesoriasIndividualesGeneralesPorGrupoEventoRegistro(grupo,evento)}" />
+                                                                    <p:columns value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento" style="align-content: center;text-align: center">
+                                                                        <p:commandButton id="btnConsultarAsesoriasGeneralesDocenteSinPat"
+                                                                                         actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasIndividualesGeneralesPorGrupoEventoRegistro(grupo,evento)}"
+                                                                                         class="btn btn-xs #{agi?'btn-info':'btn-danger'}"
+                                                                                         icon="fa fa-search"
+                                                                                         title="Dar clic aquí para consultar asesorias generales individuales #{evento.eventoRegistro}"
+                                                                                         process="@this"
+                                                                                         global="false"
+                                                                                         disabled="#{!agi}"
+                                                                                         />      
+                                                                    </p:columns>
+
+                                                                    <f:facet name="footer">
+                                                                        <div style="text-align: left">
+                                                                            <p:column style="text-align: left;">
+                                                                                Existen un total de: #{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.listaDtoPlanAccionTutorial)} grupo(s) activo(s).
+                                                                            </p:column>
+                                                                        </div>
+                                                                    </f:facet>
+                                                                </p:dataTable>
+                                                            </center>
+                                                        </div>
+                                                    </p:outputPanel>
+                                                </div>
                                             </div>
                                         </div>
                                     </h:form>
+
+                                    <p:separator/>
+
+                                    <!--Asesorias y Asesorías generales de docentes sin grupo tutorado-->
                                     
+                                    <h:form id="frmConsultaAsesoriasDocentes" prependId="false" class="form-inline">
+                                        <p:remoteCommand id="actualizarConsultaAsesoriasDocentes" name="actualizarConsultaAsesoriasDocentes" actionListener="#{validacionPlanAccionTutorialPsicopedagogia.actualizar}" process="@this" update="contenedorAsesorias modalAsesoriasDocenteSinPat modalAsesoriasGeneralesDocenteSinPat" />
+                                        <div class="row">
+                                            <c:set var="validact" value="#{validacionPlanAccionTutorialPsicopedagogia.rol.validaCT}" />
+                                            <div class="box box-primary" style="display: #{validact?'none;':''}}">
+                                                <div class="col-lg-12 col-md-12 text-info">
+                                                    <p:outputPanel id="contenedorAsesorias">
+                                                        <div class="row margin-bottom" style="margin-bottom: 10px;">
+                                                            <p:toolbar>
+                                                                <f:facet name="left">
+                                                                    <h4 style="padding-top: 5px;font-weight: 600;"><p:spacer width="20" height="20"/>4.- Consulta de Asesorías y Asesorías Generales registrados por docentes con ó sin grupo tutorado</h4>
+                                                                    
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="La consulta contempla solo el filtro del periodo seleccionado, puede consultar registros de docentes de diferentes programas educativos" style="padding-bottom: 10px;" />
+                                                                    <p></p>
+                                                                    <p></p>
+                                                                    
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Ingrese clave ó nombre del docente: " style="padding-bottom: 10px;" />
+                                                                    <br></br>
+                                                                    <br></br>
+                                                                    
+                                                                    <div class="ui-material">
+                                                                        <p:autoComplete id="autcomDocenteAsesorias" 
+                                                                                        value="#{validacionPlanAccionTutorialPsicopedagogia.rol.docente}" 
+                                                                                        valueChangeListener="#{validacionPlanAccionTutorialPsicopedagogia.seleccionarDocenteAsesorias}"
+                                                                                        completeMethod="#{validacionPlanAccionTutorialPsicopedagogia.completeDocentes}" 
+                                                                                        queryDelay="800"
+                                                                                        var="docente"
+                                                                                        itemValue="#{docente}" 
+                                                                                        itemLabel="#{docente.personal.nombre}"
+                                                                                        converter="entityConverter" 
+                                                                                        forceSelection="true"
+                                                                                        size="35"
+                                                                                        styleClass="campoAutocompleteDocente"
+                                                                                        scrollHeight="300"
+                                                                                        title="Ingrese clave ó nombre del docente"
+                                                                                        >
+                                                                            <p:column>#{docente.personal.clave}</p:column>
+                                                                            <p:column>#{docente.personal.nombre}</p:column>
+                                                                            <p:column>#{docente.areaOperativa.nombre}</p:column>
+                                                                            <p:ajax event="itemSelect" 
+                                                                                    process="@this" 
+                                                                                    update="frmConsultaAsesoriasDocentes"
+                                                                                    />
+                                                                        </p:autoComplete>
+                                                                        <p:outputLabel value="Ingrese clave ó nombre del docente:" for="autcomDocenteAsesorias" />
+                                                                    </div>
+                                                                    <p:watermark for="autcomDocenteAsesorias" value="341 ó García Romero Norma" />
+                                                                    <p:message for="autcomDocenteAsesorias" />
+                                                                    <p></p>
+                                                                </f:facet>
+                                                            </p:toolbar>
+
+                                                            <center>
+                                                                <!--Tabla de contenido de las asesorías a consultar-->
+                                                                <p:dataTable id="dtAsesoriasDocentes" 
+                                                                             widgetVar="dtAsesoriasDocentes"
+                                                                             var="docente" 
+                                                                             value="#{validacionPlanAccionTutorialPsicopedagogia.rol.docentes}"
+                                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                             resizeMode="expand"
+                                                                             emptyMessage="Aún no se ha seleccionado un docente"
+                                                                             >
+                                                                    <p:columnGroup type="header">
+                                                                        <p:row class="sucess">
+                                                                            <p:column   rowspan="4"     headerText="Docente"  width="100" style="text-align:  center"/>
+
+                                                                            <c:if test="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo) == 1}">
+                                                                                <p:column   colspan="2"     headerText="Asesorías"                      width="200"/>
+                                                                                <p:column   colspan="2"     headerText="Asesorías Generales"            width="250"/>
+                                                                            </c:if>
+
+                                                                            <c:if test="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo) == 2}">
+                                                                                <p:column   colspan="4"     headerText="Asesorías"                      width="200"/>
+                                                                                <p:column   colspan="4"     headerText="Asesorías Generales"            width="250"/>
+                                                                            </c:if>
+
+                                                                            <c:if test="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo) == 3}">
+                                                                                <p:column   colspan="6"     headerText="Asesorías"                      width="200"/>
+                                                                                <p:column   colspan="6"     headerText="Asesorías Generales"            width="250"/>
+                                                                            </c:if>
+
+                                                                            <c:if test="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo) == 4}">
+                                                                                <p:column   colspan="8"     headerText="Asesorías"                      width="200"/>
+                                                                                <p:column   colspan="8"     headerText="Asesorías Generales"            width="250"/>
+                                                                            </c:if>
+                                                                        </p:row>
+
+                                                                        <p:row class="sucess">
+                                                                            <p:column   colspan="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo)}" headerText="Grupales"                                          width="200"/>
+                                                                            <p:column   colspan="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo)}" headerText="Individuales"                                      width="250"/>
+                                                                            <p:column   colspan="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo)}" headerText="Grupales"                                          width="200"/>
+                                                                            <p:column   colspan="#{fn:length(validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo)}" headerText="Individuales"                                      width="250"/>
+                                                                        </p:row>
+
+
+                                                                        <p:row>
+                                                                            <ui:repeat value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento">
+                                                                                <p:column headerText="#{evento.mes}"/>
+                                                                            </ui:repeat>
+
+                                                                            <ui:repeat value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento">
+                                                                                <p:column headerText="#{evento.mes}"/>
+                                                                            </ui:repeat>
+
+                                                                            <ui:repeat value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento">
+                                                                                <p:column headerText="#{evento.mes}"/>
+                                                                            </ui:repeat>
+
+                                                                            <ui:repeat value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento">
+                                                                                <p:column headerText="#{evento.mes}"/>
+                                                                            </ui:repeat>
+                                                                        </p:row>
+
+                                                                    </p:columnGroup>
+
+                                                                    <p:column>
+                                                                        <h:outputText value="#{docente.personal.clave} - #{docente.personal.nombre}" />
+                                                                    </p:column>
+                                                                    
+                                                                    <c:set var="agdsp" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarAsesoriasGrupalesDocenteSinPatEventoRegistro(evento)}" />
+                                                                    <p:columns value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento" style="align-content: center;text-align: center">
+                                                                        <p:commandButton id="btnConsultarAsesoriasDocenteSinPat"
+                                                                                         actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasGrupalesDocenteSinPat(evento)}"
+                                                                                         class="btn btn-xs #{agdsp?'btn-info':'btn-danger'}"
+                                                                                         icon="fa fa-search"
+                                                                                         title="Dar clic aquí para consultar asesorias grupales"
+                                                                                         process="@this"
+                                                                                         global="false"
+                                                                                         disabled="#{!agdsp}"
+                                                                                         />      
+                                                                    </p:columns>
+                                                                    
+                                                                    <c:set var="aidsp" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarAsesoriasIndividualesDocenteSinPatEventoRegistro(evento)}" />
+                                                                    <p:columns value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento" style="align-content: center;text-align: center">
+                                                                        <p:commandButton id="btnConsultarAsesoriasDocenteSinPat"
+                                                                                         actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasIndividualesDocenteSinPat(evento)}"
+                                                                                         class="btn btn-xs #{aidsp?'btn-info':'btn-danger'}"
+                                                                                         icon="fa fa-search"
+                                                                                         title="Dar clic aquí para consultar asesorias individuales"
+                                                                                         process="@this"
+                                                                                         global="false"
+                                                                                         disabled="#{!aidsp}"
+                                                                                         />      
+                                                                    </p:columns>
+                                                                    
+                                                                    <c:set var="aggdsp" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarAsesoriasGrupalesGeneralesDocenteSinPatEventoRegistro(evento)}" />
+                                                                    <p:columns value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento" style="align-content: center;text-align: center">
+                                                                        <p:commandButton id="btnConsultarAsesoriasGeneralesDocenteSinPat"
+                                                                                         actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasGrupalesGeneralesDocenteSinPat(evento)}"
+                                                                                         class="btn btn-xs #{aggdsp?'btn-info':'btn-danger'}"
+                                                                                         icon="fa fa-search"
+                                                                                         title="Dar clic aquí para consultar asesorias generales grupales"
+                                                                                         process="@this"
+                                                                                         global="false"
+                                                                                         disabled="#{!aggdsp}"
+                                                                                         />      
+                                                                    </p:columns>
+                                                                    
+                                                                    <c:set var="agidsp" value="#{validacionPlanAccionTutorialPsicopedagogia.verficarAsesoriasIndividualesGeneralesDocenteSinPatEventoRegistro(evento)}" />
+                                                                    <p:columns value="#{validacionPlanAccionTutorialPsicopedagogia.rol.eventosPorPeriodo}" var="evento" style="align-content: center;text-align: center">
+                                                                        <p:commandButton id="btnConsultarAsesoriasGeneralesDocenteSinPat"
+                                                                                         actionListener="#{validacionPlanAccionTutorialPsicopedagogia.abrirCuadroDeDialogoAsesoriasIndividualesGeneralesDocenteSinPat(evento)}"
+                                                                                         class="btn btn-xs #{agidsp?'btn-info':'btn-danger'}"
+                                                                                         icon="fa fa-search"
+                                                                                         title="Dar clic aquí para consultar asesorias generales individuales"
+                                                                                         process="@this"
+                                                                                         global="false"
+                                                                                         disabled="#{!agidsp}"
+                                                                                         />      
+                                                                    </p:columns>
+                                                                </p:dataTable>
+                                                            </center>
+                                                        </div>
+                                                    </p:outputPanel>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </h:form>
+
                                     <!-- Modal de Asesorías Por Docente Sin Pat -->
                                     <p:dialog id="modalAsesoriasDocenteSinPat" 
                                               widgetVar="modalAsesoriasDocenteSinPat" 
@@ -1676,7 +1981,7 @@
                                               hideEffect="fade" 
                                               modal="true" 
                                               draggable="true" 
-                                              header="Consulta de asesorías genrales registradas por el docente" 
+                                              header="Consulta de asesorías generales registradas por el docente" 
                                               onHide="actualizarConsultaAsesoriasDocentes();"
                                               styleClass="panel panel-primary" 
                                               responsive="true" 
