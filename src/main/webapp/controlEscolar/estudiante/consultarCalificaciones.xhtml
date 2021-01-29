@@ -77,7 +77,7 @@
                                                                         <f:convertNumber type="number" pattern="#.##"/>
                                                                     </h:outputText>
                                                                     <p:commandButton icon="fa fa-download" value="Descargar kardex" styleClass="btn btn-primary" ajax="false"
-                                                                                     actionListener="#{generacionKardex.generarPdf(consultaCalificacionesEstudiante.rol.estudiante, consultaCalificacionesEstudiante.rol.estudianteK)}">
+                                                                                     actionListener="#{generacionKardex.controlPDF(consultaCalificacionesEstudiante.rol.estudiante)}">
                                                                         <p:fileDownload value="#{generacionKardex.download}" />
                                                                     </p:commandButton>
                                                                 </p:panelGrid>
