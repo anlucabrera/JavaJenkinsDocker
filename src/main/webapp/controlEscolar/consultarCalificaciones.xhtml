@@ -213,11 +213,10 @@
                                                                         <td rowspan="3" colspan="3" style="font-size: x-small; font-weight: bold; align-content: center">
                                                                             <c:if test="#{consultaCalificaciones.rol.estudiante ne null}">
                                                                                 <p:commandButton icon="fa fa-download" value="Descargar kardex" styleClass="btn btn-primary" ajax="false"
-                                                                                                 actionListener="#{generacionKardex.generarPdf(consultaCalificaciones.rol.estudiante, consultaCalificaciones.rol.estudianteK)}">
+                                                                                                 actionListener="#{generacionKardex.controlPDF(consultaCalificaciones.rol.estudiante)}">
                                                                                     <p:fileDownload value="#{generacionKardex.download}" />
                                                                                 </p:commandButton>
                                                                             </c:if>
-
                                                                         </td>
                                                                         <td rowspan="6" style="font-size: x-small; font-weight: bold; width: 70px; text-align: center">
                                                                             <div class="widget-user-header bg-aqua-active">

@@ -116,6 +116,7 @@ public class FusionGruposDirector extends ViewScopedRol implements Desarrollable
         rol.setTutor(ejb.getPersonalTutorGrupo(rol.getGrupoSeleccionado()).getValor());
         rol.setListaEstudiantesDestino(new ArrayList<>());
         rol.setListaEstudiantes(ejb.getEstudiantesGrupoSeleccionado(rol.getGrupoSeleccionado(), rol.getPrograma()).getValor());
+        rol.setGruposDestino(rol.getGrupos().stream().filter(grupo -> grupo.getGrado() == rol.getGrupoSeleccionado().getGrado()).collect(Collectors.toList()));
         rol.setDualListModelEstudent(new DualListModel<>(rol.getListaEstudiantes(), rol.getListaEstudiantesDestino()));
     }
 

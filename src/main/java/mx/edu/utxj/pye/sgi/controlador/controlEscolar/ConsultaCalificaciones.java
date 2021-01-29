@@ -96,10 +96,10 @@ public class ConsultaCalificaciones extends ViewScopedRol implements Desarrollab
             List<DtoCalificacionEstudiante.MapUnidadesTematicas> map = new ArrayList<>();
             DtoEstudianteComplete estudiante = (DtoEstudianteComplete) event.getNewValue();
             ResultadoEJB<DtoEstudiante> estudianteEncontrado = ejbC.validadEstudiante(estudiante.getEstudiantes().getMatricula());
-            ResultadoEJB<DtoEstudiante> estudianteK = ejbC.validadEstudianteK(estudiante.getEstudiantes().getMatricula());
+            //ResultadoEJB<DtoEstudiante> estudianteK = ejbC.validadEstudianteK(estudiante.getEstudiantes().getMatricula());
             if(estudianteEncontrado.getCorrecto()){
                 rol.setEstudiante(estudianteEncontrado.getValor());
-                rol.setEstudianteK(estudianteK.getValor());
+                //rol.setEstudianteK(estudianteK.getValor());
                 if(rol.getEstudiante().getInscripcionActiva().getGrupo().getCargaAcademicaList().isEmpty())return;
                 rol.setDtoInscripciones(rol.getEstudiante().getInscripciones());
                 
