@@ -149,8 +149,10 @@ public class RegistroFichaAdmisionSE extends ViewScopedRol implements Desarrolla
                 ResultadoEJB<DtoAspirante.PersonaR> resPersona =  ejbRegistroFicha.getPersonaRSE(per);
                 if(resPersona.getCorrecto()==true){
                     rol.setPersonaD(resPersona.getValor());
-                    ResultadoEJB<DtoAspirante.General> resGen = ejbRegistroFicha.getDtoApiranteGeneral(rol.getPersonaD().getPersona(),rol.getProcesosInscripcion());
+
+                    ResultadoEJB<DtoAspirante.General> resGen = ejbRegistroFicha.getDtoApiranteGeneralSE(rol.getPersonaD().getPersona(),rol.getProcesosInscripcion());
                     if(resGen.getCorrecto()){
+                        //System.out.println("General" + resGen.getValor());
                         rol.setGeneral(resGen.getValor());
                         getRegistro();
                         mostrarMensajeResultadoEJB(resPersona);

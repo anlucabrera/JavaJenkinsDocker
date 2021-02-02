@@ -220,7 +220,7 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                         //Se busca datos medicos y medio de comunicación
                         ResultadoEJB<DtoAspirante.MedicosR> resDM = ejbRegistroFicha.getDatosMedicosbyPersona(rol.getPersonaD());
                         ResultadoEJB<MedioComunicacion>resMedC = ejbRegistroFicha.getMedioCbyPersona(rol.getPersonaD().getPersona());
-                        if(resDM.getCorrecto() ==true & resMedC.getCorrecto()==true){
+                        if(resDM.getValor().getEcontrado() ==true & resMedC.getCorrecto()==true){
                             rol.setDmedico(resDM.getValor());
                             rol.getPersonaD().setMedioComunicacion(resMedC.getValor());
                             rol.setTab1(true);
