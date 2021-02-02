@@ -67,14 +67,15 @@ public class ServicioSesionesPsicopedagogia implements EjbSesionesPsicopedagogia
     }
 
     @Override
-    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogia(SesionIndividualMensualPsicopedogia simPsicopedagogia) {
+    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogia(SesionIndividualMensualPsicopedogia simPsicopedagogia, Short ejercicioFiscal) {
         List<SesionIndividualMensualPsicopedogia> listaSesionIndividual = new ArrayList<>();
         try {
-            listaSesionIndividual = facade.getEntityManager().createQuery("SELECT s FROM SesionIndividualMensualPsicopedogia s WHERE s.areaConflicto.areaConflicto = :areaConflicto AND s.otroTipoSesion.otroTipoSesionPsicopedagogia = :otroTipoSesion AND s.programaEducativo = :programaEducativo AND s.mes = :mes", SesionIndividualMensualPsicopedogia.class)
+            listaSesionIndividual = facade.getEntityManager().createQuery("SELECT s FROM SesionIndividualMensualPsicopedogia s WHERE s.areaConflicto.areaConflicto = :areaConflicto AND s.otroTipoSesion.otroTipoSesionPsicopedagogia = :otroTipoSesion AND s.programaEducativo = :programaEducativo AND s.mes = :mes AND s.registros.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal", SesionIndividualMensualPsicopedogia.class)
                     .setParameter("areaConflicto", simPsicopedagogia.getAreaConflicto().getAreaConflicto())
                     .setParameter("otroTipoSesion", simPsicopedagogia.getOtroTipoSesion().getOtroTipoSesionPsicopedagogia())
                     .setParameter("programaEducativo", simPsicopedagogia.getProgramaEducativo())
                     .setParameter("mes", simPsicopedagogia.getMes())
+                    .setParameter("ejercicio", ejercicioFiscal)
                     .getResultList();
             listaSesionIndividual.stream().forEach((t) -> {
 //                System.err.println(t.getRegistro());
@@ -93,13 +94,14 @@ public class ServicioSesionesPsicopedagogia implements EjbSesionesPsicopedagogia
     }
     
     @Override
-    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaSPE(SesionIndividualMensualPsicopedogia simPsicopedagogia) {
+    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaSPE(SesionIndividualMensualPsicopedogia simPsicopedagogia, Short ejercicioFiscal) {
         List<SesionIndividualMensualPsicopedogia> listaSesionIndividual = new ArrayList<>();
         try {
-            listaSesionIndividual = facade.getEntityManager().createQuery("SELECT s FROM SesionIndividualMensualPsicopedogia s WHERE s.areaConflicto.areaConflicto = :areaConflicto AND s.otroTipoSesion.otroTipoSesionPsicopedagogia = :otroTipoSesion AND s.mes = :mes AND s.programaEducativo IS NULL", SesionIndividualMensualPsicopedogia.class)
+            listaSesionIndividual = facade.getEntityManager().createQuery("SELECT s FROM SesionIndividualMensualPsicopedogia s WHERE s.areaConflicto.areaConflicto = :areaConflicto AND s.otroTipoSesion.otroTipoSesionPsicopedagogia = :otroTipoSesion AND s.mes = :mes AND s.registros.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal AND s.programaEducativo IS NULL", SesionIndividualMensualPsicopedogia.class)
                     .setParameter("areaConflicto", simPsicopedagogia.getAreaConflicto().getAreaConflicto())
                     .setParameter("otroTipoSesion", simPsicopedagogia.getOtroTipoSesion().getOtroTipoSesionPsicopedagogia())
-                    .setParameter("mes", simPsicopedagogia.getMes())    
+                    .setParameter("mes", simPsicopedagogia.getMes()) 
+                    .setParameter("ejercicioFiscal", ejercicioFiscal)
                     .getResultList();
             listaSesionIndividual.stream().forEach((t) -> {
 //                System.err.println(t.getRegistro());
@@ -118,14 +120,15 @@ public class ServicioSesionesPsicopedagogia implements EjbSesionesPsicopedagogia
     }
     
     @Override
-    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaParaEdicion(SesionIndividualMensualPsicopedogia simPsicopedagogia) {
+    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaParaEdicion(SesionIndividualMensualPsicopedogia simPsicopedagogia, Short ejercicioFiscal) {
         List<SesionIndividualMensualPsicopedogia> listaSesionIndividual = new ArrayList<>();
         try {
-            listaSesionIndividual = facade.getEntityManager().createQuery("SELECT s FROM SesionIndividualMensualPsicopedogia s WHERE s.areaConflicto.areaConflicto = :areaConflicto AND s.otroTipoSesion.otroTipoSesionPsicopedagogia = :otroTipoSesion AND s.programaEducativo = :programaEducativo AND s.mes = :mes AND s.registro <> :registro", SesionIndividualMensualPsicopedogia.class)
+            listaSesionIndividual = facade.getEntityManager().createQuery("SELECT s FROM SesionIndividualMensualPsicopedogia s WHERE s.areaConflicto.areaConflicto = :areaConflicto AND s.otroTipoSesion.otroTipoSesionPsicopedagogia = :otroTipoSesion AND s.programaEducativo = :programaEducativo AND s.mes = :mes AND s.registros.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal AND s.registro <> :registro", SesionIndividualMensualPsicopedogia.class)
                     .setParameter("areaConflicto", simPsicopedagogia.getAreaConflicto().getAreaConflicto())
                     .setParameter("otroTipoSesion", simPsicopedagogia.getOtroTipoSesion().getOtroTipoSesionPsicopedagogia())
                     .setParameter("programaEducativo", simPsicopedagogia.getProgramaEducativo())
                     .setParameter("mes", simPsicopedagogia.getMes())
+                    .setParameter("ejercicioFiscal", ejercicioFiscal)
                     .setParameter("registro", simPsicopedagogia.getRegistro())
                     .getResultList();
             listaSesionIndividual.stream().forEach((t) -> {
@@ -145,13 +148,14 @@ public class ServicioSesionesPsicopedagogia implements EjbSesionesPsicopedagogia
     }
 
     @Override
-    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaSPEParaEdicion(SesionIndividualMensualPsicopedogia simPsicopedagogia) {
+    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaSPEParaEdicion(SesionIndividualMensualPsicopedogia simPsicopedagogia, Short ejercicioFiscal) {
         List<SesionIndividualMensualPsicopedogia> listaSesionIndividual = new ArrayList<>();
         try {
-            listaSesionIndividual = facade.getEntityManager().createQuery("SELECT s FROM SesionIndividualMensualPsicopedogia s WHERE s.areaConflicto.areaConflicto = :areaConflicto AND s.otroTipoSesion.otroTipoSesionPsicopedagogia = :otroTipoSesion AND s.mes = :mes AND s.programaEducativo IS NULL AND s.registro <> :registro", SesionIndividualMensualPsicopedogia.class)
+            listaSesionIndividual = facade.getEntityManager().createQuery("SELECT s FROM SesionIndividualMensualPsicopedogia s WHERE s.areaConflicto.areaConflicto = :areaConflicto AND s.otroTipoSesion.otroTipoSesionPsicopedagogia = :otroTipoSesion AND s.mes = :mes AND s.registros.eventoRegistro.ejercicioFiscal.anio = :ejercicioFiscal AND s.programaEducativo IS NULL AND s.registro <> :registro", SesionIndividualMensualPsicopedogia.class)
                     .setParameter("areaConflicto", simPsicopedagogia.getAreaConflicto().getAreaConflicto())
                     .setParameter("otroTipoSesion", simPsicopedagogia.getOtroTipoSesion().getOtroTipoSesionPsicopedagogia())
-                    .setParameter("mes", simPsicopedagogia.getMes())  
+                    .setParameter("mes", simPsicopedagogia.getMes())
+                    .setParameter("ejercicioFiscal", ejercicioFiscal)
                     .setParameter("registro", simPsicopedagogia.getRegistro())
                     .getResultList();
             listaSesionIndividual.stream().forEach((t) -> {

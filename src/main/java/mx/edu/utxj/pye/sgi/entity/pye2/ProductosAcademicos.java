@@ -60,7 +60,7 @@ public class ProductosAcademicos implements Serializable {
     private Integer registro;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 15)
+    @Size(min = 1, max = 50)
     @Column(name = "producto_academico")
     private String productoAcademico;
     @Basic(optional = false)
