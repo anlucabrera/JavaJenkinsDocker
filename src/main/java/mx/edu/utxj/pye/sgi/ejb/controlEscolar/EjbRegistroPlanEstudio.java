@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.StoredProcedureQuery;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaMetasPropuestas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaRegistro;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaUnidades;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPlanEstudioMateriaCompetencias;
@@ -30,6 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.MetasPropuestas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
@@ -97,7 +99,7 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(1, "Imposible obtener el listado de áreas de conocimiento", e, null);
         }
     }
-
+    
     /**
      * Permite obtener el listado de competencias del plan de estudios
      * seleccionado
@@ -340,6 +342,31 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar La Unidad Materia (EjbRegistroPlanEstudio)", e, null);
         }
     }
+    
+    public ResultadoEJB<MetasPropuestas> registrarMetaMateria(DtoMateriaMetasPropuestas dmu,PlanEstudioMateria estudioMateria, Operacion operacion) {
+        try {
+            f.setEntityClass(MetasPropuestas.class);
+            switch (operacion) {
+                case PERSISTIR:
+                    dmu.getMetasPropuestas().setIdPlanMateria(estudioMateria);
+                    em.persist(dmu.getMetasPropuestas());
+                    f.flush();
+                    return ResultadoEJB.crearCorrecto(dmu.getMetasPropuestas(), "Se registró correctamente La Unidad Materia");
+                case ACTUALIZAR:
+                    em.merge(dmu.getMetasPropuestas());
+                    f.flush();
+                    return ResultadoEJB.crearCorrecto(dmu.getMetasPropuestas(), "Se actualizo correctamente La Unidad Materia");
+                case ELIMINAR:
+                    f.remove(dmu.getMetasPropuestas());
+                    f.flush();
+                    return ResultadoEJB.crearCorrecto(null, "Se elimino correctamente La Unidad Materia");
+                default:
+                    return ResultadoEJB.crearErroneo(2, "Operación no autorizada.", MetasPropuestas.class);
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar La Unidad Materia (EjbRegistroPlanEstudio)", e, null);
+        }
+    }
 
     /**
      * Permite registrar materias al plan de estudios seleccionado
@@ -470,9 +497,32 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de unidades(EjbRegistroPlanEstudio)", e, null);
         }
     }
-
+    
     public List<UnidadMateria> generarunidadesMaterias(Materia materia) {
         List<UnidadMateria> p = em.createQuery("SELECT um FROM UnidadMateria um INNER JOIN um.idMateria ma WHERE ma.idMateria = :idMateria", UnidadMateria.class)
+                .setParameter("idMateria", materia.getIdMateria())
+                .getResultList();
+        if (p.isEmpty()) {
+            p = new ArrayList<>();
+        }
+        return p;
+    }
+    
+    public ResultadoEJB<Map<Materia, List<MetasPropuestas>>> getListaMetasMateria() {
+        try {
+            List<Materia> ms = em.createQuery("select ma from Materia  ma", Materia.class).getResultList();
+
+            Map<Materia, List<MetasPropuestas>> UnidadesMa = ms.stream()
+                    .collect(Collectors.toMap(materia -> materia, materia -> generarMetasMaterias(materia)));
+
+            return ResultadoEJB.crearCorrecto(UnidadesMa, "Listado de materias registrados para este Plan de estudios");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de unidades(EjbRegistroPlanEstudio)", e, null);
+        }
+    }
+
+    public List<MetasPropuestas> generarMetasMaterias(Materia materia) {
+        List<MetasPropuestas> p = em.createQuery("SELECT um FROM MetasPropuestas um INNER JOIN um.idPlanMateria ma INNER JOIN ma.idMateria mat WHERE mat.idMateria = :idMateria", MetasPropuestas.class)
                 .setParameter("idMateria", materia.getIdMateria())
                 .getResultList();
         if (p.isEmpty()) {

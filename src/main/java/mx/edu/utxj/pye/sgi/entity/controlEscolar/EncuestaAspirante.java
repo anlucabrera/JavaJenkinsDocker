@@ -47,7 +47,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "EncuestaAspirante.findByR16segundaCarrera", query = "SELECT e FROM EncuestaAspirante e WHERE e.r16segundaCarrera = :r16segundaCarrera")
     , @NamedQuery(name = "EncuestaAspirante.findByR17Alergia", query = "SELECT e FROM EncuestaAspirante e WHERE e.r17Alergia = :r17Alergia")
     , @NamedQuery(name = "EncuestaAspirante.findByR18padecesEnfermedad", query = "SELECT e FROM EncuestaAspirante e WHERE e.r18padecesEnfermedad = :r18padecesEnfermedad")
-    , @NamedQuery(name = "EncuestaAspirante.findByR19tratamientoMedico", query = "SELECT e FROM EncuestaAspirante e WHERE e.r19tratamientoMedico = :r19tratamientoMedico")})
+    , @NamedQuery(name = "EncuestaAspirante.findByR19tratamientoMedico", query = "SELECT e FROM EncuestaAspirante e WHERE e.r19tratamientoMedico = :r19tratamientoMedico")
+    , @NamedQuery(name = "EncuestaAspirante.findByR20Hijos", query = "SELECT e FROM EncuestaAspirante e WHERE e.r20Hijos = :r20Hijos")
+    , @NamedQuery(name = "EncuestaAspirante.findByR21noHijos", query = "SELECT e FROM EncuestaAspirante e WHERE e.r21noHijos = :r21noHijos")})
 public class EncuestaAspirante implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -272,6 +274,22 @@ public class EncuestaAspirante implements Serializable {
         this.r19tratamientoMedico = r19tratamientoMedico;
     }
 
+    public String getR20Hijos() {
+        return r20Hijos;
+    }
+
+    public void setR20Hijos(String r20Hijos) {
+        this.r20Hijos = r20Hijos;
+    }
+
+    public String getR21noHijos() {
+        return r21noHijos;
+    }
+
+    public void setR21noHijos(String r21noHijos) {
+        this.r21noHijos = r21noHijos;
+    }
+
     public Aspirante getAspirante() {
         return aspirante;
     }
@@ -319,23 +337,6 @@ public class EncuestaAspirante implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaAspirante[ cveAspirante=" + cveAspirante + " ]";
-    }
-
-
-    public String getR20Hijos() {
-        return r20Hijos;
-    }
-
-    public void setR20Hijos(String r20Hijos) {
-        this.r20Hijos = r20Hijos;
-    }
-
-    public String getR21noHijos() {
-        return r21noHijos;
-    }
-
-    public void setR21noHijos(String r21noHijos) {
-        this.r21noHijos = r21noHijos;
     }
     
 }

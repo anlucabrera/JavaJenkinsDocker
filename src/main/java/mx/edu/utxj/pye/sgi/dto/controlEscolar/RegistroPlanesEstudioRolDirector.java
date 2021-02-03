@@ -20,10 +20,12 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AreaConocimiento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Competencia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.MetasPropuestas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
  *
@@ -61,6 +63,8 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     @Getter    @Setter    private DtoMateriaRegistro materiaRegistro1;
     // Representa la referencia entre una Unidad Materia(control escolar) y una Materia(control escolar)
     @Getter    @Setter    private DtoMateriaUnidades materiaUnidades1;
+    // Representa la referencia entre una Meta propuesta(control escolar) y una Materia(control escolar)
+    @Getter    @Setter    private DtoMateriaMetasPropuestas materiaMetasPropuestas;
     // Representa la referencia entre un Plan de Estudio Materia(control escolar) con una Plan de Estudio(control escolar) y una Materia(control escolar)
     @Getter    @Setter    private DtoMateriaPlanEstudio materiaPlanEstudio1;
     // Representa la referencia entre una Competencia(control escolar) con una Plan de EstudioMateria(control escolar) y un Plan Estudio(control escolar)
@@ -71,6 +75,8 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     @Getter    @NonNull    private List<AreasUniversidad> programas;
     // Representa el listado de las áreas de conocimiento
     @Getter    @NonNull    private List<AreaConocimiento> conocimientos;
+    // Representa el listado de los periodos escolares
+    @Getter    @Setter     @NonNull    private List<PeriodosEscolares> periodosEscolareses;
     // Representa el listado de las Competencias
     @Getter    @NonNull    private List<Competencia> competencias;
     // Representa el listado de planes de estudios de un programa de estudio
@@ -79,6 +85,8 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     @Getter    @NonNull    private List<Materia> materias;
     // Representa el listado de unidades de una materia
     @Getter    @NonNull    private List<UnidadMateria> unidadesMateria;
+    // Representa el listado de Metas de una materia
+    @Getter    @NonNull    private List<MetasPropuestas> metasPropuestases;
     // Representa el listado de Plan Estudio Materia de un Plan de Estudio
     @Getter    @NonNull    private List<PlanEstudioMateria> planEstudioMaterias;
 // Variables de tipo de List DTO's
@@ -86,6 +94,7 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
 // Variables de tipo de Map
     // Mapeo de materias con sus unidades de acuerdo al plan de estudios seleccionado
     @Getter    @NonNull    private Map<Materia, List<UnidadMateria>> materiasUnidadesMap;
+    @Getter    @NonNull    private Map<Materia, List<MetasPropuestas>> materiasMetasMap;
     // Mapeo de Areas Universidad con sus Planes de Estudio de acuerdo al director logeado
     @Getter    @NonNull    private Map<AreasUniversidad, List<PlanEstudio>> areaPlanEstudioMap;
     
@@ -170,6 +179,23 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
             });
         } else {
             this.unidadesMateria = new ArrayList<>();
+        }
+    }
+    
+    public void setmateriasMetasMap(Map<Materia, List<MetasPropuestas>> materiasMetasMap) {
+        this.materiasMetasMap = materiasMetasMap;
+        if (materiasMetasMap != null) {
+//            this.materias = materiasUnidadesMap.keySet().stream().sorted(Comparator.comparing(Materia::getNombre)).collect(Collectors.toList());
+        }
+        if (materiasMetasMap != null) {
+            this.metasPropuestases = new ArrayList<>();
+            materiasMetasMap.forEach((t, u) -> {                
+                if (Objects.equals(t.getIdMateria(), materiaMetasPropuestas.getMateria().getIdMateria())) {
+                    this.metasPropuestases.addAll(u);
+                }
+            });
+        } else {
+            this.metasPropuestases = new ArrayList<>();
         }
     }
 

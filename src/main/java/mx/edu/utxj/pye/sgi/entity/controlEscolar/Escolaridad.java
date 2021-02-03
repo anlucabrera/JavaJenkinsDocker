@@ -52,6 +52,8 @@ public class Escolaridad implements Serializable {
     private List<DatosFamiliares> datosFamiliaresList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadPadre", fetch = FetchType.LAZY)
     private List<DatosFamiliares> datosFamiliaresList1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridad", fetch = FetchType.LAZY)
+    private List<IntegrantesFamilia> integrantesFamiliaList;
 
     public Escolaridad() {
     }
@@ -97,6 +99,15 @@ public class Escolaridad implements Serializable {
 
     public void setDatosFamiliaresList1(List<DatosFamiliares> datosFamiliaresList1) {
         this.datosFamiliaresList1 = datosFamiliaresList1;
+    }
+
+    @XmlTransient
+    public List<IntegrantesFamilia> getIntegrantesFamiliaList() {
+        return integrantesFamiliaList;
+    }
+
+    public void setIntegrantesFamiliaList(List<IntegrantesFamilia> integrantesFamiliaList) {
+        this.integrantesFamiliaList = integrantesFamiliaList;
     }
 
     @Override

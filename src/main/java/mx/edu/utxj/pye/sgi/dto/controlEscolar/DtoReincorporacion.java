@@ -7,9 +7,13 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.ContactoEmergenciasEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosAcademicos;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosAcademicosComplementarios;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosFamiliares;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosLaborales;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosMedicos;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosSocioeconomicos;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Domicilio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaAspirante;
@@ -17,6 +21,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.IntegrantesFamilia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.LenguaIndigena;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioComunicacion;
@@ -32,6 +37,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TutorFamiliar;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
@@ -54,6 +60,17 @@ public class DtoReincorporacion {
         @Getter        @Setter        @NonNull       EncuestaR er;     
         @Getter        @Setter        @NonNull       List<EstudianteR> ers;    
         @Getter        @Setter        @NonNull       List<AlineacionCalificaciones> acs;        
+        @Getter        @Setter        @NonNull       Boolean econtrado; 
+    }
+    
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class RegistroEstudiante {     
+        @Getter        @Setter        @NonNull       EstudianteR esact;    
+        @Getter        @Setter        @NonNull       List<RcontactoEmergencia> res;
+        @Getter        @Setter        @NonNull       AcademicosCR dac;
+        @Getter        @Setter        @NonNull       RegDatosLaborales labo;
+        @Getter        @Setter        @NonNull       SosioeconomicosR sr;
+        @Getter        @Setter        @NonNull       List<Familia> fs;
         @Getter        @Setter        @NonNull       Boolean econtrado; 
     }
     
@@ -182,5 +199,51 @@ public class DtoReincorporacion {
         @Getter        @Setter        @NonNull        String tipoRegistro;  
         @Getter        @Setter        @NonNull        List<Grupo> grupos;
         @Getter        @Setter        @NonNull        Documentosentregadosestudiante documentosentregadosestudiante; 
+    }
+    
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
+    public static class RcontactoEmergencia {
+        @Getter        @Setter        @NonNull        ContactoEmergenciasEstudiante emergenciasEstudiante;
+        @Getter        @Setter        @NonNull        Operacion operacion;  
+        @Getter        @Setter        @NonNull        Boolean econtrado; 
+    }
+    
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
+    public static class Familia {
+        @Getter        @Setter        @NonNull        IntegrantesFamilia familia;
+        @Getter        @Setter        @NonNull        Ocupacion ocupacion;
+        @Getter        @Setter        @NonNull        Escolaridad escolaridad;
+        @Getter        @Setter        @NonNull        Operacion operacion;  
+        @Getter        @Setter        @NonNull        Boolean econtrado; 
+    }
+    
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
+    public static class AcademicosCR {
+        @Getter        @Setter        @NonNull        DatosAcademicosComplementarios complementarios;
+        @Getter        @Setter        @NonNull        Operacion operacion;  
+        @Getter        @Setter        @NonNull       Boolean econtrado; 
+    }
+    
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
+    public static class SosioeconomicosR {
+        @Getter        @Setter        @NonNull        DatosSocioeconomicos socioeconomicos;
+        @Getter        @Setter        @NonNull        Operacion operacion;  
+        @Getter        @Setter        @NonNull       Boolean econtrado; 
+    }
+    
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
+    public static class RegDatosLaborales {
+        @Getter        @Setter        @NonNull        DatosLaborales datosLaborales;
+        @Getter        @Setter        @NonNull        Operacion operacion;  
+        @Getter        @Setter        @NonNull        Boolean econtrado; 
+    }
+    
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
+    public static class Ubicaciones {
+        @Getter        @Setter        @NonNull        Pais pais;
+        @Getter        @Setter        @NonNull        Estado estado;
+        @Getter        @Setter        @NonNull        Municipio municipio;
+        @Getter        @Setter        Localidad localidad;
+        @Getter        @Setter        Asentamiento asentamiento;
     }
 }

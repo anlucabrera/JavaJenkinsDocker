@@ -70,6 +70,8 @@ public class Documento implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "documento", fetch = FetchType.LAZY)
     private List<DocumentoExpedienteTitulacion> documentoExpedienteTitulacionList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "documento", fetch = FetchType.LAZY)
+    private List<DocumentoSeguimientoEstadia> documentoSeguimientoEstadiaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "documento", fetch = FetchType.LAZY)
     private List<DocumentoProceso> documentoProcesoList;
 
     public Documento() {
@@ -143,6 +145,15 @@ public class Documento implements Serializable {
 
     public void setDocumentoExpedienteTitulacionList(List<DocumentoExpedienteTitulacion> documentoExpedienteTitulacionList) {
         this.documentoExpedienteTitulacionList = documentoExpedienteTitulacionList;
+    }
+
+    @XmlTransient
+    public List<DocumentoSeguimientoEstadia> getDocumentoSeguimientoEstadiaList() {
+        return documentoSeguimientoEstadiaList;
+    }
+
+    public void setDocumentoSeguimientoEstadiaList(List<DocumentoSeguimientoEstadia> documentoSeguimientoEstadiaList) {
+        this.documentoSeguimientoEstadiaList = documentoSeguimientoEstadiaList;
     }
 
     @XmlTransient

@@ -104,6 +104,7 @@ public enum ControlEscolarVistaControlador {
     EVALAUCION_TUTOR_NUEVA("/evaluaciones/evaluacion/nuevaTutor.xhtml", EvaluacionTutorEstudiante.class),
     EVALUACION_DOCENTE2("/evaluaciones/evaluacion/evaluacionDocente.xhtml", EvaluacionDocentesMateriaResultados2.class),
     INTEGRACION_EXPEDIENTE_TITULACION("/controlEscolar/estudiante/expedienteTitulacion.xhtml",IntegracionExpedienteTitulacionEstudiante.class),
+    REGISTRO_DEL_ESTUDIANTE("/controlEscolar/estudiante/registroEstudiante.xhtml", RegistrolDelEstudiante.class),
 
     REGISTRO_FICHA_ASPIRANTE("/controlEscolar/aspirante/registroFichaAspirante.xhtml", RegistroFichaAdmisionAspirante.class),
     CARGA_DOCUMENTOS_ASPIRANTE("/controlEscolar/aspirante/cargaDocumentos.xhtml", CargaDocumentosAspirante.class),
@@ -112,7 +113,7 @@ public enum ControlEscolarVistaControlador {
     SEGUIMIENTO_CASO_CRITICO_ESPECIALISTA("/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml", SeguimientoCasoCriticoEspecialista.class),
 
     CONSULTA_CALIFICACION("/controlEscolar/consultarCalificaciones.xhtml", ConsultaCalificaciones.class),
-
+    RESULTADOS_PLANEACIONES("/controlEscolar/resultadosPlaneaciones.xhtml", ResultadosPlaneacionesConsulta.class),
     FICHA_ADMISION_REPORTE("/controlEscolar/reporteFichaAdmision.xhtml",FichaAdmisionReporte.class),
 
     EVALUACION_CONOCIMIENTO_CUMPLIMIENTO("/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml", EvaluacionConocimientoCodigoEtica.class),

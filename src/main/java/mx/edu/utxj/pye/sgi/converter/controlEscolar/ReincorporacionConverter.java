@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.sgi.converter.controlEscolar;
 
-import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -17,7 +16,6 @@ import javax.faces.convert.FacesConverter;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
-import org.omnifaces.util.Faces;
 
 /**
  *
@@ -35,19 +33,25 @@ public class ReincorporacionConverter implements Converter{
             throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Debe elegir un valor."));
         }
         try {
-            switch(component.getId()){
+            switch (component.getId()) {
                 case "ocupacionPadre":
                     Short claveOP = Short.parseShort(value);
-                    return facadeCE.getEntityManager().find(Ocupacion.class,claveOP);
+                    return facadeCE.getEntityManager().find(Ocupacion.class, claveOP);
                 case "ocupacionMadre":
                     Short claveOM = Short.parseShort(value);
-                    return facadeCE.getEntityManager().find(Ocupacion.class,claveOM);
+                    return facadeCE.getEntityManager().find(Ocupacion.class, claveOM);
+                case "ocupacionFamiliar":
+                    Short claveOF = Short.parseShort(value);
+                    return facadeCE.getEntityManager().find(Ocupacion.class, claveOF);
                 case "escolaridadPadre":
                     Short claveEP = Short.parseShort(value);
-                    return facadeCE.getEntityManager().find(Escolaridad.class,claveEP);
+                    return facadeCE.getEntityManager().find(Escolaridad.class, claveEP);
                 case "escolaridadMadre":
                     Short claveEM = Short.parseShort(value);
-                    return facadeCE.getEntityManager().find(Escolaridad.class,claveEM);
+                    return facadeCE.getEntityManager().find(Escolaridad.class, claveEM);
+                case "escolaridadFamiliar":
+                    Short claveEF = Short.parseShort(value);
+                    return facadeCE.getEntityManager().find(Escolaridad.class, claveEF);
                 case "eb":
                     Integer claveEC = Integer.valueOf(value);
                     return facadeCE.getEntityManager().find(EspecialidadCentro.class,claveEC);

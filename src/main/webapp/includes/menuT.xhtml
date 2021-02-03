@@ -168,6 +168,7 @@
 
                     <!-- Consulta multiples -->
                     <c:if test="#{consultaCalificaciones.mostrarEnDesarrollo(request) and consultaCalificaciones.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/consultarCalificaciones.xhtml"><i class="fa fa-list-ol"></i><span>Consultar calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{resultadosPlaneacionesConsulta.mostrarEnDesarrollo(request) and resultadosPlaneacionesConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/resultadosPlaneaciones.xhtml"><i class="fa fa-list-ol"></i><span>Resultado de Planeaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
                 </c:if>
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluaciones y encuestas</li>

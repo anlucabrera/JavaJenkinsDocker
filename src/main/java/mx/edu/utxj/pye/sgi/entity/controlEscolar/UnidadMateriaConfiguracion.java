@@ -67,6 +67,8 @@ public class UnidadMateriaConfiguracion implements Serializable {
     @NotNull
     @Column(name = "porcentaje")
     private double porcentaje;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion", fetch = FetchType.LAZY)
+    private List<AccionesDeMejora> accionesDeMejoraList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion", fetch = FetchType.LAZY)
     private List<UnidadMateriaConfiguracionCriterio> unidadMateriaConfiguracionCriterioList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion", fetch = FetchType.LAZY)
@@ -232,6 +234,15 @@ public class UnidadMateriaConfiguracion implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion[ configuracion=" + configuracion + " ]";
+    }
+
+    @XmlTransient
+    public List<AccionesDeMejora> getAccionesDeMejoraList() {
+        return accionesDeMejoraList;
+    }
+
+    public void setAccionesDeMejoraList(List<AccionesDeMejora> accionesDeMejoraList) {
+        this.accionesDeMejoraList = accionesDeMejoraList;
     }
     
 }

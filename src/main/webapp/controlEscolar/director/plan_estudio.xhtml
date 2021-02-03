@@ -440,6 +440,126 @@
                                         </p:confirmDialog>  
                                     </h:form>
                                 </p:tab>
+                                <p:tab title="Metas">
+                                    <h:form id="metasFrm">
+                                        <div id="main-buttons-asignatura" class="hidden-sm hidden-xs">
+                                            <p:toolbar id="tb-asignatura">
+                                                <f:facet name="left">
+
+                                                    <p:spacer width="5" />
+
+                                                </f:facet>
+                                                <f:facet name="right">
+                                                    <p:commandButton title="Guardar Meta" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarMeta()}"/>
+                                                </f:facet>
+                                            </p:toolbar>
+                                        </div>
+
+                                        <div class="ui-g ui-fluid" style="margin-top: 20px;">
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="planEstudioRM" value="#{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetencias1.planEstudio}" converter="entityConverter">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItems value="#{administracionPlanEstudioDirector.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                        <p:ajax listener="#{administracionPlanEstudioDirector.materiasPorPlanEstudioConsulta()}" update="materiaRM" process="@this"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="planEstudioRM" value="Plan de estudios"/>
+                                                    <p:message for="planEstudioRM"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="materiaRM" value="#{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.materia}" converter="entityConverter">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItems value="#{administracionPlanEstudioDirector.rol.materias}" var="materiasR" itemValue="#{materiasR}" itemLabel="#{materiasR.nombre}" />
+                                                        <p:ajax listener="#{administracionPlanEstudioDirector.metasPorMateriaConsulta()}" update="metasFrm:metasResultados" process="@this"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="materiaRM" value="Materia"/>
+                                                    <p:message for="materiaRM"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:inputNumber id="metaP" placeholder="Meta propuesta" value="#{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.metasPropuestas.valorPropuesto}"/>
+                                                    <p:outputLabel for="metaP" value="Nombre"/>
+                                                    <p:message for="metaP"/>
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="ui-g-6 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="periodoA" value="#{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.metasPropuestas.periodo}">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItems value="#{administracionPlanEstudioDirector.rol.periodosEscolareses}" var="periodo" itemValue="#{periodo.periodo}" itemLabel="#{caster.periodoToString(periodo)}"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel for="periodoA" value="Periodo de aplicacion"/>
+                                                    <p:message for="periodoA"/>
+                                                    <br/>
+                                                </div>
+                                            </div>                                           
+                                            
+                                            <div class="ui-g-12 ui-sm-12">
+                                                <div class="ui-material">
+                                                    <p:dataTable id="metasResultados" var="um" value="#{administracionPlanEstudioDirector.rol.metasPropuestases}" editable="true" editMode="row">
+                                                        <f:facet name="header">
+                                                            Unidades
+                                                        </f:facet>
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column headerText="" style="width: 40px;"/> 
+                                                                <p:column headerText="Clave materia"/> 
+                                                                <p:column headerText="Materia"/>
+                                                                <p:column headerText="Cuatrimestre"/>
+                                                                <p:column headerText="Meta Propuesta"/>
+                                                                <p:column headerText="Meta alcanzada"/>
+                                                                <p:column headerText="" style="width: 32px;"/> 
+                                                            </p:row>
+                                                            <p:row class="success">
+                                                            </p:row>
+                                                        </p:columnGroup>
+
+                                                        <p:ajax event="rowEdit" listener="#{administracionPlanEstudioDirector.onRowEditUnidad}" oncomplete="metasResultados" />
+                                                        <p:ajax event="rowEditCancel" listener="#{administracionPlanEstudioDirector.onRowCancel}" oncomplete="metasResultados" />
+
+                                                        <p:column>
+                                                            <p:commandButton actionListener="#{administracionPlanEstudioDirector.eliminarMetaMateria(um)}" update="metasResultados" process="@this" icon="fa fa-trash" 
+                                                                             styleClass="btn-primary" title="Eliminar Unidades">
+                                                                <p:confirm header="Confirmación" message="¿Confirma la eliminación de la Meta #{um.valorPropuesto} de la materia #{administracionPlanEstudioDirector.rol.materiaUnidades1.materia.nombre}?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{um.idPlanMateria.claveMateria}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{um.idPlanMateria.idMateria.nombre}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{um.idPlanMateria.grado}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{um.valorPropuesto}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{um.valorAlcanzado}" />
+                                                        </p:column>
+                                                        <p:column style="width:32px">
+                                                            <p:rowEditor />
+                                                        </p:column>
+                                                    </p:dataTable> 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p:confirmDialog global="false" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>  
+                                    </h:form>
+                                </p:tab>
                                 <p:tab title="Competencias">
                                     <h:form id="competenciasFrm">
                                         <div id="main-buttons-asignatura" class="hidden-sm hidden-xs">

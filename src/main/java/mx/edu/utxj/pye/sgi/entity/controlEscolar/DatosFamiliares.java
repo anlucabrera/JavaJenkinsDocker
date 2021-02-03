@@ -34,7 +34,18 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "DatosFamiliares.findByNombrePadre", query = "SELECT d FROM DatosFamiliares d WHERE d.nombrePadre = :nombrePadre")
     , @NamedQuery(name = "DatosFamiliares.findByTelefonoPadre", query = "SELECT d FROM DatosFamiliares d WHERE d.telefonoPadre = :telefonoPadre")
     , @NamedQuery(name = "DatosFamiliares.findByNombreMadre", query = "SELECT d FROM DatosFamiliares d WHERE d.nombreMadre = :nombreMadre")
-    , @NamedQuery(name = "DatosFamiliares.findByTelefonoMadre", query = "SELECT d FROM DatosFamiliares d WHERE d.telefonoMadre = :telefonoMadre")})
+    , @NamedQuery(name = "DatosFamiliares.findByTelefonoMadre", query = "SELECT d FROM DatosFamiliares d WHERE d.telefonoMadre = :telefonoMadre")
+    , @NamedQuery(name = "DatosFamiliares.findByTutor", query = "SELECT d FROM DatosFamiliares d WHERE d.tutor = :tutor")
+    , @NamedQuery(name = "DatosFamiliares.findByCallePadre", query = "SELECT d FROM DatosFamiliares d WHERE d.callePadre = :callePadre")
+    , @NamedQuery(name = "DatosFamiliares.findByNumeroPadre", query = "SELECT d FROM DatosFamiliares d WHERE d.numeroPadre = :numeroPadre")
+    , @NamedQuery(name = "DatosFamiliares.findByEstadoPadre", query = "SELECT d FROM DatosFamiliares d WHERE d.estadoPadre = :estadoPadre")
+    , @NamedQuery(name = "DatosFamiliares.findByMunicipioPadre", query = "SELECT d FROM DatosFamiliares d WHERE d.municipioPadre = :municipioPadre")
+    , @NamedQuery(name = "DatosFamiliares.findByAsentamientoPadre", query = "SELECT d FROM DatosFamiliares d WHERE d.asentamientoPadre = :asentamientoPadre")
+    , @NamedQuery(name = "DatosFamiliares.findByCalleMadre", query = "SELECT d FROM DatosFamiliares d WHERE d.calleMadre = :calleMadre")
+    , @NamedQuery(name = "DatosFamiliares.findByNumeroMadre", query = "SELECT d FROM DatosFamiliares d WHERE d.numeroMadre = :numeroMadre")
+    , @NamedQuery(name = "DatosFamiliares.findByEstadoMadre", query = "SELECT d FROM DatosFamiliares d WHERE d.estadoMadre = :estadoMadre")
+    , @NamedQuery(name = "DatosFamiliares.findByMunicipioMadre", query = "SELECT d FROM DatosFamiliares d WHERE d.municipioMadre = :municipioMadre")
+    , @NamedQuery(name = "DatosFamiliares.findByAsentamientoMadre", query = "SELECT d FROM DatosFamiliares d WHERE d.asentamientoMadre = :asentamientoMadre")})
 public class DatosFamiliares implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,6 +70,30 @@ public class DatosFamiliares implements Serializable {
     @Size(max = 20)
     @Column(name = "telefono_madre")
     private String telefonoMadre;
+    @Size(max = 150)
+    @Column(name = "calle_padre")
+    private String callePadre;
+    @Size(max = 10)
+    @Column(name = "numero_padre")
+    private String numeroPadre;
+    @Column(name = "estado_padre")
+    private Integer estadoPadre;
+    @Column(name = "municipio_padre")
+    private Integer municipioPadre;
+    @Column(name = "asentamiento_padre")
+    private Integer asentamientoPadre;
+    @Size(max = 150)
+    @Column(name = "calle_madre")
+    private String calleMadre;
+    @Size(max = 10)
+    @Column(name = "numero_madre")
+    private String numeroMadre;
+    @Column(name = "estado_madre")
+    private Integer estadoMadre;
+    @Column(name = "municipio_madre")
+    private Integer municipioMadre;
+    @Column(name = "asentamiento_madre")
+    private Integer asentamientoMadre;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante", insertable = false, updatable = false)
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Aspirante aspirante1;
@@ -129,6 +164,86 @@ public class DatosFamiliares implements Serializable {
 
     public void setTelefonoMadre(String telefonoMadre) {
         this.telefonoMadre = telefonoMadre;
+    }
+
+    public String getCallePadre() {
+        return callePadre;
+    }
+
+    public void setCallePadre(String callePadre) {
+        this.callePadre = callePadre;
+    }
+
+    public String getNumeroPadre() {
+        return numeroPadre;
+    }
+
+    public void setNumeroPadre(String numeroPadre) {
+        this.numeroPadre = numeroPadre;
+    }
+
+    public Integer getEstadoPadre() {
+        return estadoPadre;
+    }
+
+    public void setEstadoPadre(Integer estadoPadre) {
+        this.estadoPadre = estadoPadre;
+    }
+
+    public Integer getMunicipioPadre() {
+        return municipioPadre;
+    }
+
+    public void setMunicipioPadre(Integer municipioPadre) {
+        this.municipioPadre = municipioPadre;
+    }
+
+    public Integer getAsentamientoPadre() {
+        return asentamientoPadre;
+    }
+
+    public void setAsentamientoPadre(Integer asentamientoPadre) {
+        this.asentamientoPadre = asentamientoPadre;
+    }
+
+    public String getCalleMadre() {
+        return calleMadre;
+    }
+
+    public void setCalleMadre(String calleMadre) {
+        this.calleMadre = calleMadre;
+    }
+
+    public String getNumeroMadre() {
+        return numeroMadre;
+    }
+
+    public void setNumeroMadre(String numeroMadre) {
+        this.numeroMadre = numeroMadre;
+    }
+
+    public Integer getEstadoMadre() {
+        return estadoMadre;
+    }
+
+    public void setEstadoMadre(Integer estadoMadre) {
+        this.estadoMadre = estadoMadre;
+    }
+
+    public Integer getMunicipioMadre() {
+        return municipioMadre;
+    }
+
+    public void setMunicipioMadre(Integer municipioMadre) {
+        this.municipioMadre = municipioMadre;
+    }
+
+    public Integer getAsentamientoMadre() {
+        return asentamientoMadre;
+    }
+
+    public void setAsentamientoMadre(Integer asentamientoMadre) {
+        this.asentamientoMadre = asentamientoMadre;
     }
 
     public Aspirante getAspirante1() {
