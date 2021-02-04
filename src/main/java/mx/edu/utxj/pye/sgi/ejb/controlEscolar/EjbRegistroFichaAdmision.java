@@ -716,7 +716,7 @@ public class EjbRegistroFichaAdmision {
             String asunto = "Registro Exitoso";
            // System.out.println(medioComunicacion.getEmail());
             if(medioComunicacion.getEmail() != null){
-                System.out.println("Correo "+ medioComunicacion.getEmail());
+               // System.out.println("Correo "+ medioComunicacion.getEmail());
                 try {
                     DataSource source = new ByteArrayDataSource(baos.toByteArray(), "application/pdf");
                     EnvioCorreos.EnviarCorreoArchivos(correoEnvia, claveCorreo,identificador,asunto,persona.getMedioComunicacion().getEmail(),mensaje,source,String.valueOf(aspirante.getFolioAspirante()));
@@ -734,9 +734,9 @@ public class EjbRegistroFichaAdmision {
 
     // ------------------ ---------------------------- BUSQUEDAS ESPECIFICAS------------------------------------------------------------
 
-    public ResultadoEJB<DtoAspirante.General> getDtoApiranteGeneral(Persona  persona,ProcesosInscripcion procesosInscripcion) {
+    public ResultadoEJB<DtoAspirante.General> getDtoApiranteGeneralSE(Persona  persona,ProcesosInscripcion procesosInscripcion) {
         try {
-           // System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(1)");
+           //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(1)");
             Boolean encontrado=Boolean.FALSE;
             DtoAspirante.PersonaR pr = new DtoAspirante.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE);
             DtoAspirante.AspiranteR ar = new DtoAspirante.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE);
@@ -748,16 +748,16 @@ public class EjbRegistroFichaAdmision {
             DtoAspirante.EncuestaR er = new DtoAspirante.EncuestaR(new EncuestaAspirante(), new LenguaIndigena(), new MedioDifusion(), Operacion.PERSISTIR, Boolean.FALSE);
             DtoAspirante.EncuestaVocacionalR ev= new DtoAspirante.EncuestaVocacionalR(new EncuestaVocacional(), new AreasUniversidad(),Operacion.PERSISTIR,Boolean.FALSE);
             DtoAspirante.General rr=new DtoAspirante.General(pr, ar, mr, fr, tr, dr, ac, er,ev, encontrado);
-           // System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(2)");
-            if(persona==null){return ResultadoEJB.crearErroneo(2,rr,"El CURP no debe ser nulo");}
+            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(2)");
+            if(persona.getCurp()==null){return ResultadoEJB.crearErroneo(2,rr,"El CURP no debe ser nulo");}
             if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(3,rr,"El proceso de inscripción no debe ser nulo");}
             // Obtiene persona por curp
             //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(2.2)"+ persona);
-                ResultadoEJB<DtoAspirante.PersonaR> resPR = getPersonaR(persona);
+                ResultadoEJB<DtoAspirante.PersonaR> resPR = getPersonaRSE(persona);
                 //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(2.3)");
 
                 if (resPR.getCorrecto()) {
-                    //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(3)");
+                  //  System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(3)");
                     pr = resPR.getValor();
                     if (pr.getEcontrado()) {
                         //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(4)");
@@ -767,7 +767,7 @@ public class EjbRegistroFichaAdmision {
                             ar = resAR.getValor();
                             if (ar.getEcontrado()) {
                                 ResultadoEJB<DtoAspirante.EncuestaVocacionalR> resEn = getEncuestaVocacionalbyPersona(persona);
-                               // System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(6)");
+                               //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(6)");
                                 ResultadoEJB<DtoAspirante.FamiliaresR> resFR = getFamiliaresR(ar.getAspirante());
                                 //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(6.5)");
                                 ResultadoEJB<DtoAspirante.AcademicosR> resAC = getAcademicos(ar.getAspirante());
@@ -801,6 +801,73 @@ public class EjbRegistroFichaAdmision {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
         }
     }
+    public ResultadoEJB<DtoAspirante.General> getDtoApiranteGeneral(Persona  persona,ProcesosInscripcion procesosInscripcion) {
+        try {
+           // System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(1)");
+            Boolean encontrado=Boolean.FALSE;
+            DtoAspirante.PersonaR pr = new DtoAspirante.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.AspiranteR ar = new DtoAspirante.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.MedicosR mr = new DtoAspirante.MedicosR(new DatosMedicos(), new TipoSangre(), new TipoDiscapacidad(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.TutorR tr = new DtoAspirante.TutorR(new TutorFamiliar(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.FamiliaresR fr = new DtoAspirante.FamiliaresR(new DatosFamiliares(), tr, new Ocupacion(), new Ocupacion(), new Escolaridad(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.DomicilioR dr = new DtoAspirante.DomicilioR(new Domicilio(), Boolean.FALSE, Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.AcademicosR ac = new DtoAspirante.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.EncuestaR er = new DtoAspirante.EncuestaR(new EncuestaAspirante(), new LenguaIndigena(), new MedioDifusion(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoAspirante.EncuestaVocacionalR ev= new DtoAspirante.EncuestaVocacionalR(new EncuestaVocacional(), new AreasUniversidad(),Operacion.PERSISTIR,Boolean.FALSE);
+            DtoAspirante.General rr=new DtoAspirante.General(pr, ar, mr, fr, tr, dr, ac, er,ev, encontrado);
+           // System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(2)");
+            if(persona.getCurp()==null){return ResultadoEJB.crearErroneo(2,rr,"El CURP no debe ser nulo");}
+            if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(3,rr,"El proceso de inscripción no debe ser nulo");}
+            // Obtiene persona por curp
+            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(2.2)"+ persona);
+            ResultadoEJB<DtoAspirante.PersonaR> resPR = getPersonaRSE(persona);
+            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(2.3)");
+
+            if (resPR.getCorrecto()) {
+                //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(3)");
+                pr = resPR.getValor();
+                if (pr.getEcontrado()) {
+                    //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(4)");
+                    ResultadoEJB<DtoAspirante.AspiranteR> resAR = getAspirantebyPersona(persona,procesosInscripcion);
+                    if (resAR.getCorrecto()) {
+                        //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(5)");
+                        ar = resAR.getValor();
+                        if (ar.getEcontrado()) {
+                            ResultadoEJB<DtoAspirante.EncuestaVocacionalR> resEn = getEncuestaVocacionalbyPersona(persona);
+                            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(6)");
+                            ResultadoEJB<DtoAspirante.FamiliaresR> resFR = getFamiliaresR(ar.getAspirante());
+                            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(6.5)");
+                            ResultadoEJB<DtoAspirante.AcademicosR> resAC = getAcademicos(ar.getAspirante());
+                            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(7)");
+                            ResultadoEJB<DtoAspirante.DomicilioR> resDR = getDomiciliobyAspirante(ar.getAspirante());
+                            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(8)");
+                            ResultadoEJB<DtoAspirante.EncuestaR> resER = getEncuesta(ar.getAspirante());
+                            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(9)");
+                            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(10)");
+                            if(resEn.getCorrecto()){ev= resEn.getValor();}else {return ResultadoEJB.crearErroneo(3,rr,"Error al obtener los datos de la encuesta vocacional");}
+                            if (resFR.getCorrecto()) {fr = resFR.getValor();if(fr.getEcontrado()){tr=fr.getTutorR();}}else {return ResultadoEJB.crearErroneo(3,rr,"Error al obtener los datos familiares");}
+                            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(11)");
+                            if (resAC.getCorrecto()) {ac = resAC.getValor();}else {return ResultadoEJB.crearErroneo(3,rr,"Error al obtener los datos académicos");}
+                            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(12)");
+                            if (resDR.getCorrecto()) {dr = resDR.getValor();}else {return ResultadoEJB.crearErroneo(3,rr,"Error al obtener los datos del domicilio");}
+                            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(13)");
+                            if (resER.getCorrecto()) {er = resER.getValor();}else {return ResultadoEJB.crearErroneo(3,rr,"Error al obtener la encuesta del aspirante");}
+                            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(14)");
+
+                        }
+                    }
+                    //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(17)");
+                    ResultadoEJB<DtoAspirante.MedicosR> resMR = getDatosMedicosbyPersona(pr);
+
+                    if (resMR.getCorrecto()) {mr = resMR.getValor();}else {return ResultadoEJB.crearErroneo(3,rr,"Error al obtener los datos médicos");}
+                    encontrado=Boolean.TRUE;
+                }
+            }else {return ResultadoEJB.crearErroneo(4,rr,"Error al obtener los datos de la persona");}
+            return ResultadoEJB.crearCorrecto(rr,"Dto Aspirante");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
 
 
     /**
@@ -815,7 +882,7 @@ public class EjbRegistroFichaAdmision {
         SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
         String rutaRelativa = "";
         try{
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.ServicioFichaAdmision");
+            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.ServicioFichaAdmision");
             //Almacenamiento del archivo de la curp de la persona
             String ruta = ServicioArchivos.genRutaRelativa("curps");
             String rutaR = ServicioArchivos.carpetaRaiz.concat(ruta);
@@ -955,7 +1022,7 @@ public class EjbRegistroFichaAdmision {
     public ResultadoEJB<DtoAspirante.PersonaR> getPersonaRSE(@NonNull Persona persona) {
         try {
             DtoAspirante.PersonaR rr = new DtoAspirante.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE);
-            // System.out.println("1");
+             //System.out.println("1");
             if (persona.getNombre() == null) {
                 return ResultadoEJB.crearErroneo(2, rr, "La curp no debe ser nula");
             }
@@ -983,6 +1050,8 @@ public class EjbRegistroFichaAdmision {
                 rr.setEcontrado(true);
                 return ResultadoEJB.crearCorrecto(rr, "La persona ya se encuentra registrada");
             } else {
+                //System.out.println("4");
+
                 //No existe registro de la persona se toma como registro nuevo
                 Persona newPersona = new Persona();
                 newPersona.setNombre(persona.getNombre());
@@ -1002,6 +1071,8 @@ public class EjbRegistroFichaAdmision {
                 rr.setMedioComunicacion(new MedioComunicacion());
                 rr.setOperacionGeneral(Operacion.PERSISTIR);
                 rr.setOperacionMC(Operacion.PERSISTIR);
+                //System.out.println("5" + rr.getPersona());
+
                 return ResultadoEJB.crearCorrecto(rr, "No existe registro anterior de la persona");
             }
 
@@ -1175,15 +1246,19 @@ public class EjbRegistroFichaAdmision {
                     .findFirst()
                     .orElse(null)
             ;
-            if(dm == null){return ResultadoEJB.crearErroneo(3,dtoDm, "No se encontraron datos medicos de la persona");}
-            else {
+            if(dm!=null) {
                 dtoDm.setDatosMedicos(dm);
                 dtoDm.setDiscapacidad(dm.getCveDiscapacidad());
                 dtoDm.setSangre(dm.getCveTipoSangre());
                 dtoDm.setOperacion(Operacion.ACTUALIZAR);
                 dtoDm.setEcontrado(true);
                 return ResultadoEJB.crearCorrecto(dtoDm,"Datos medios encontrados");
+
+            }else {
+                dtoDm.setEcontrado(Boolean.FALSE);
+                return ResultadoEJB.crearCorrecto(dtoDm,"No cuenta con datos médicos");
             }
+
         }catch (Exception e){return ResultadoEJB.crearErroneo(1, "No se pudo obeneter los datos medicos de la persona(EjbRegistroFichaAdmision.getDatosMedicosbyPersona).", e, null); }
     }
 
