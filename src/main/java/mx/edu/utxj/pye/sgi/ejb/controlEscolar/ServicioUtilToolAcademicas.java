@@ -7,7 +7,6 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 import mx.edu.utxj.pye.sgi.util.Encrypted;
 
 import javax.ejb.EJB;
@@ -18,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import mx.edu.utxj.pye.sgi.facade.Facade;
 
 /**
  *
@@ -26,12 +26,12 @@ import javax.persistence.EntityManager;
 @Stateless
 public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
 
-    @EJB    FacadeCE facadeCE;
+    @EJB    Facade f;
     private EntityManager em;
 
     @PostConstruct
     public void init() {
-        em = facadeCE.getEntityManager();
+        em = f.getEntityManager();
     }
     
     @Override
@@ -58,10 +58,10 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
             grupoNew.setIdSistema(grupo.getIdSistema());
             grupoNew.setLiteral((abecedario[i]));
             em.persist(grupoNew);
-            facadeCE.flush();
-            facadeCE.setEntityClass(Grupo.class);
+            f.flush();
+            f.setEntityClass(Grupo.class);
             em.merge(grupoNew);
-            facadeCE.flush();
+            f.flush();
         }
     }
 
@@ -74,15 +74,15 @@ public class ServicioUtilToolAcademicas implements EjbUtilToolAcademicas {
 
     @Override
     public void actualizaGrupo(Grupo grupo) {
-        facadeCE.setEntityClass(Grupo.class);
+        f.setEntityClass(Grupo.class);
         em.merge(grupo);
-        facadeCE.flush();
+        f.flush();
     }
 
     @Override
     public void eliminaGrupo(Grupo grupo) {
         em.remove(grupo);
-        facadeCE.flush();
+        f.flush();
     }
 
     @Override

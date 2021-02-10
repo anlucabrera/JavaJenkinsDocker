@@ -8,7 +8,6 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
-import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +18,7 @@ import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.facade.Facade;
 
 /**
  *
@@ -27,12 +27,12 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 @Stateless
 public class ServicioSelectItemCE implements EjbSelectItemCE {
 
-    @EJB FacadeCE facadeCE;
+    @EJB Facade f;
     private EntityManager em;
 
     @PostConstruct
     public void init() {
-        em = facadeCE.getEntityManager();
+        em = f.getEntityManager();
     }
     
     public List<TipoSangre> getTipoSangre(){

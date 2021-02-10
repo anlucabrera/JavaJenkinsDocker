@@ -64,6 +64,9 @@ public class Aspirante implements Serializable {
     @Column(name = "fechaRegistro")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRegistro;
+    @Column(name = "fechaValidacion")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaValidacion;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
     private DatosAcademicos datosAcademicos;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante", fetch = FetchType.LAZY)
@@ -256,6 +259,16 @@ public class Aspirante implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante[ idAspirante=" + idAspirante + " ]";
+    }
+
+
+
+    public Date getFechaValidacion() {
+        return fechaValidacion;
+    }
+
+    public void setFechaValidacion(Date fechaValidacion) {
+        this.fechaValidacion = fechaValidacion;
     }
     
 }

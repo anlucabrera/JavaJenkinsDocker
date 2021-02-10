@@ -21,7 +21,6 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.pye2.*;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import nl.lcs.qrscan.core.QrPdf;
 
@@ -52,6 +51,7 @@ import javax.servlet.http.HttpServletResponse;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
 
@@ -63,7 +63,7 @@ import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
 @MultipartConfig()
 public class ServicioFichaAdmision implements EjbFichaAdmision {
 
-    @EJB FacadeCE facadeCE;
+    @EJB Facade f;
     @EJB EjbPersonal ejbPersonal;
     @EJB EjbEventoEscolar ejbEventoEscolar;
     @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
@@ -72,7 +72,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @PostConstruct
     public void init() {
-        em = facadeCE.getEntityManager();
+        em = f.getEntityManager();
     }
 
 
@@ -105,9 +105,9 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @Override
     public Persona actualizaPersona(Persona persona) {
-        facadeCE.setEntityClass(Persona.class);
+        f.setEntityClass(Persona.class);
         em.merge(persona);
-        facadeCE.flush();
+        f.flush();
         return persona;
     }
 
@@ -236,9 +236,9 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @Override
     public void actualizaDatosMedicos(DatosMedicos datosMedicos) {
-        facadeCE.setEntityClass(DatosMedicos.class);
+        f.setEntityClass(DatosMedicos.class);
         em.merge(datosMedicos);
-        facadeCE.flush();
+        f.flush();
     }
 
     @Override
@@ -248,9 +248,9 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @Override
     public void actualizaComunicacion(MedioComunicacion comunicacion) {
-        facadeCE.setEntityClass(MedioComunicacion.class);
+        f.setEntityClass(MedioComunicacion.class);
         em.merge(comunicacion);
-        facadeCE.flush();
+        f.flush();
     }
 
     @Override
@@ -258,7 +258,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         TipoAspirante tipoAspirante = new TipoAspirante((short)1, "Nuevo Ingreso");
         aspirante.setTipoAspirante(tipoAspirante);
         em.persist(aspirante);
-        facadeCE.flush();
+        f.flush();
         return aspirante;
     }
 
@@ -271,9 +271,9 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @Override
     public void actualizaAspirante(Aspirante aspirante) {
-        facadeCE.setEntityClass(Aspirante.class);
+        f.setEntityClass(Aspirante.class);
         em.merge(aspirante);
-        facadeCE.flush();
+        f.flush();
     }
 
     @Override
@@ -307,9 +307,9 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     public void actualizaDomicilio(Domicilio domicilio) {
         domicilio.setCalle(ucFirst(domicilio.getCalle().trim()));
         domicilio.setCalleProcedencia(ucFirst(domicilio.getCalleProcedencia().trim()));
-        facadeCE.setEntityClass(Domicilio.class);
+        f.setEntityClass(Domicilio.class);
         em.merge(domicilio);
-        facadeCE.flush();
+        f.flush();
     }
 
     @Override
@@ -328,9 +328,9 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         tutorFamiliar.setApellidoMaterno(ucFirst(tutorFamiliar.getApellidoMaterno().trim()));
         tutorFamiliar.setCalle(ucFirst(tutorFamiliar.getCalle().trim()));
         tutorFamiliar.setParentesco(ucFirst(tutorFamiliar.getParentesco().trim()));
-        facadeCE.setEntityClass(TutorFamiliar.class);
+        f.setEntityClass(TutorFamiliar.class);
         em.merge(tutorFamiliar);
-        facadeCE.flush();
+        f.flush();
     }
 
 
@@ -345,9 +345,9 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     public void actualizaDatosFamiliares(DatosFamiliares datosFamiliares) {
         datosFamiliares.setNombrePadre(ucFirst(datosFamiliares.getNombrePadre().trim()));
         datosFamiliares.setNombreMadre(ucFirst(datosFamiliares.getNombreMadre().trim()));
-        facadeCE.setEntityClass(DatosFamiliares.class);
+        f.setEntityClass(DatosFamiliares.class);
         em.merge(datosFamiliares);
-        facadeCE.flush();
+        f.flush();
     }
 
     @Override
@@ -357,9 +357,9 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @Override
     public void actualizaDatosAcademicos(DatosAcademicos datosAcademicos) {
-        facadeCE.setEntityClass(DatosAcademicos.class);
+        f.setEntityClass(DatosAcademicos.class);
         em.merge(datosAcademicos);
-        facadeCE.flush();
+        f.flush();
     }
 
     @Override
@@ -405,7 +405,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
                 documentoAspirante.setEvidenciaHistorialAcademico(rutaRelativa);
             }
             em.merge(documentoAspirante);
-            facadeCE.flush();
+            f.flush();
         }
 
         
@@ -429,9 +429,9 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
 
     @Override
     public void actualizaDocumentosAspirante(DocumentoAspirante documentoAspirante) {
-        facadeCE.setEntityClass(DocumentoAspirante.class);
+        f.setEntityClass(DocumentoAspirante.class);
         em.merge(documentoAspirante);
-        facadeCE.flush();
+        f.flush();
     }
     
     @Override
