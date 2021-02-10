@@ -5,14 +5,10 @@ import com.google.zxing.NotFoundException;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.*;
-import edu.mx.utxj.pye.seut.util.dto.Dto;
-import edu.mx.utxj.pye.seut.util.preguntas.Tipo;
-import jdk.nashorn.internal.ir.ReturnNode;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAspirante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
@@ -20,21 +16,15 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.pye2.*;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 import mx.edu.utxj.pye.sgi.util.EnvioCorreos;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import nl.lcs.qrscan.core.QrPdf;
-import org.apache.poi.ss.formula.functions.T;
-import org.apache.xmlbeans.impl.regex.REUtil;
-import org.omg.CORBA.PUBLIC_MEMBER;
-import org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect;
 
 import javax.activation.DataSource;
 import javax.annotation.PostConstruct;
@@ -47,13 +37,11 @@ import javax.persistence.TypedQuery;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import javax.xml.transform.sax.SAXSource;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.rmi.server.ExportException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,6 +52,7 @@ import java.util.logging.Logger;
 
 /**
  * Ejb para el registro de fichas de admision para aspirantes
+ *
  * @author Taatisz :P
  */
 @Stateless(name = "EjbRegistroFichaAdmision")
@@ -701,7 +690,7 @@ public class EjbRegistroFichaAdmision {
         if(uso.equals("Alumno")){
             // El correo gmail de envío
             String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-            String claveCorreo = "DServiciosEscolares19";
+            String claveCorreo = "DeptoEscolares21";
             String mensaje = "Estimado(a) "+persona.getNombre()+"\n\n Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior." +
                     "\n\n Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entregar la documentación necesaria\n\n"
                     + "* Formato de Ficha de Admisión.\n"

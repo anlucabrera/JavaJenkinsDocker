@@ -37,7 +37,6 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 import mx.edu.utxj.pye.sgi.funcional.Validador;
 import mx.edu.utxj.pye.sgi.funcional.ValidadorPlaneacionCuatrimestralLAB;
 import mx.edu.utxj.pye.sgi.funcional.ValidadorPlaneacionCuatrimestralPA;
@@ -57,7 +56,6 @@ public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestr
     
     @EJB    Facade f;
     @EJB    Facade2 f2;  
-    @EJB    FacadeCE facadeCE;
     @EJB    EjbPropiedades ep;
     
     @Resource    ManagedExecutorService exe;
@@ -158,7 +156,7 @@ public class ServicioPlaneacionCuatrimestral implements EjbPlaneacionCuatrimestr
         pla.forEach((t) -> {
             planesDeEstudio.add(t.getArea());
         });
-        List<CargaAcademica> ca = facadeCE.getEntityManager().createQuery("SELECT ca FROM CargaAcademica ca "
+        List<CargaAcademica> ca = f.getEntityManager().createQuery("SELECT ca FROM CargaAcademica ca "
                 + "INNER JOIN ca.cveMateria ma "
                 + "INNER JOIN ma.idPlan pa "
                 + "INNER JOIN ca.cveGrupo g "
