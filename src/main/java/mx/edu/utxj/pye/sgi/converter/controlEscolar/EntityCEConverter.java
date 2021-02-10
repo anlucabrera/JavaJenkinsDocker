@@ -16,7 +16,7 @@ import javax.faces.convert.FacesConverter;
 
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
+import mx.edu.utxj.pye.sgi.facade.Facade;
 import org.omnifaces.util.Faces;
 
 /**
@@ -27,7 +27,7 @@ import org.omnifaces.util.Faces;
 public class EntityCEConverter implements Converter{
     
     @EJB
-    FacadeCE facadeCE;
+    Facade f;
     
     @Override
     public Object getAsObject(FacesContext fc, UIComponent component, String value) {
@@ -58,13 +58,13 @@ public class EntityCEConverter implements Converter{
                     return especialidadCentroList.get(especialidadCentroList.indexOf(especilaidad));
                 case "grupo":
                     Integer clave = Integer.valueOf(value);
-                    return facadeCE.getEntityManager().find(Grupo.class,clave);
+                    return f.getEntityManager().find(Grupo.class,clave);
                 case "tipoS":
                     Short claveTS = Short.parseShort(value);
-                    return facadeCE.getEntityManager().find(TipoSangre.class,claveTS);
+                    return f.getEntityManager().find(TipoSangre.class,claveTS);
                 case "tipoDiscapacidad":
                     Short claveTD = Short.parseShort(value);
-                    return facadeCE.getEntityManager().find(TipoDiscapacidad.class, claveTD);
+                    return f.getEntityManager().find(TipoDiscapacidad.class, claveTD);
                 case "sistema1":
                     List<Sistema> sistemaList = Faces.getSessionAttribute("listaSistema");
                     Sistema turno = new Sistema(Short.valueOf(value));
@@ -87,13 +87,13 @@ public class EntityCEConverter implements Converter{
                     return turnoList.get(turnoList.indexOf(turnoGrupo));
                 case "planEstudio":
                     Integer clavePlan = Integer.valueOf(value);
-                    return facadeCE.getEntityManager().find(PlanEstudio.class,clavePlan);
+                    return f.getEntityManager().find(PlanEstudio.class,clavePlan);
                 case "matricula":
                     Integer estudiante = Integer.valueOf(value);
-                    return facadeCE.getEntityManager().find(Estudiante.class,estudiante);
+                    return f.getEntityManager().find(Estudiante.class,estudiante);
                 case "nombreBusqueda":
                     Integer estudianteName = Integer.valueOf(value);
-                    return facadeCE.getEntityManager().find(Estudiante.class,estudianteName);
+                    return f.getEntityManager().find(Estudiante.class,estudianteName);
                 default:
                     throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", component.getClientId() + " no es un componente válido."));
             }

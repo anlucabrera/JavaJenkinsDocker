@@ -12,7 +12,6 @@ import com.itextpdf.text.pdf.*;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupo;
-import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -20,8 +19,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
-import mx.edu.utxj.pye.sgi.saiiut.entity.Grupos;
 import mx.edu.utxj.pye.sgi.util.Encrypted;
 
 import javax.ejb.EJB;

@@ -21,7 +21,7 @@ import mx.edu.utxj.pye.sgi.dto.TipoCuestionario;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.LenguaIndigena;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioDifusion;
-import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
+import mx.edu.utxj.pye.sgi.facade.Facade;
 
 /**
  *
@@ -30,12 +30,12 @@ import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 @Stateless
 public class EjbEncuestaIngreso implements Serializable{
     
-    @EJB FacadeCE facadeCE;
+    @EJB Facade f;
     private EntityManager em;
 
     @PostConstruct
     public  void init(){
-        em = facadeCE.getEntityManager();
+        em = f.getEntityManager();
     }
     
     public ResultadoEJB<EncuestaAspirante> actualizar(String id, Object valor, EncuestaAspirante resultado){
