@@ -31,7 +31,6 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.entity.pye2.MatriculaPeriodosEscolares;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-import mx.edu.utxj.pye.sgi.facade.controlEscolar.FacadeCE;
 import mx.edu.utxj.pye.sgi.saiiut.entity.*;
 
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
@@ -48,7 +47,6 @@ import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;
 public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
     
     @EJB  Facade f;
-    @EJB FacadeCE fce;
     @EJB Facade2 fs;
     @EJB EjbPropiedades ep;
     @Inject EjbAdministracionTutores ejbAdmin;

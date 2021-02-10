@@ -149,14 +149,13 @@ public class RegistroFichaAdmisionSE extends ViewScopedRol implements Desarrolla
                 ResultadoEJB<DtoAspirante.PersonaR> resPersona =  ejbRegistroFicha.getPersonaRSE(per);
                 if(resPersona.getCorrecto()==true){
                     rol.setPersonaD(resPersona.getValor());
-
-                    ResultadoEJB<DtoAspirante.General> resGen = ejbRegistroFicha.getDtoApiranteGeneralSE(rol.getPersonaD().getPersona(),rol.getProcesosInscripcion());
-                    if(resGen.getCorrecto()){
+                   // ResultadoEJB<DtoAspirante.General> resGen = ejbRegistroFicha.getDtoApiranteGeneralSE(rol.getPersonaD().getPersona(),rol.getProcesosInscripcion());
+                   // if(resGen.getCorrecto()){
                         //System.out.println("General" + resGen.getValor());
-                        rol.setGeneral(resGen.getValor());
+                       // rol.setGeneral(resGen.getValor());
                         getRegistro();
                         mostrarMensajeResultadoEJB(resPersona);
-                    }else {mostrarMensajeResultadoEJB(resGen);}
+                    //}else {mostrarMensajeResultadoEJB(resGen);}
                 }else {mostrarMensajeResultadoEJB(resPersona);}
             }else {Messages.addGlobalError("El documento es incorrecto");}
         } else {

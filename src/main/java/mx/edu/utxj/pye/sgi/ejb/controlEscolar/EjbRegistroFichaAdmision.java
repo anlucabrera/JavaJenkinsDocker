@@ -803,7 +803,7 @@ public class EjbRegistroFichaAdmision {
     }
     public ResultadoEJB<DtoAspirante.General> getDtoApiranteGeneral(Persona  persona,ProcesosInscripcion procesosInscripcion) {
         try {
-           // System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(1)");
+            //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(1)");
             Boolean encontrado=Boolean.FALSE;
             DtoAspirante.PersonaR pr = new DtoAspirante.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE);
             DtoAspirante.AspiranteR ar = new DtoAspirante.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE);
@@ -1372,7 +1372,7 @@ public class EjbRegistroFichaAdmision {
             DtoAspirante.AcademicosR dtoDa = new DtoAspirante.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE);
             if(a==null){return ResultadoEJB.crearErroneo(2,dtoDa,"El aspirante no debe ser nulo");}
             DatosAcademicos da = new DatosAcademicos();
-            da = em.createQuery("select d from DatosAcademicos d INNER JOIN d.aspirante1 a WHERE a.idAspirante=:idAspirante", DatosAcademicos.class)
+            da = em.createQuery("select d from DatosAcademicos d where d.aspirante=:idAspirante", DatosAcademicos.class)
                     .setParameter("idAspirante", a.getIdAspirante())
                     .getResultStream()
                     .findFirst()
