@@ -194,6 +194,8 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         rol.setNombreR("Seleccione Un Tipo");
         rol.setTipoCal("Regulatoria");
         rol.setPuedeValidar(Boolean.FALSE);
+        rol.setGeneraciones(ejb.getgeneracion().getValor());
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares.inicializarValoresEscolares()"+rol.getGeneraciones());
     }        
 
 // Validaciones Acceso
@@ -331,7 +333,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         List<Grupo> gs = new ArrayList<>();
         if (!rol.getEstudianteR().isEmpty()) {
             DtoReincorporacion.EstudianteR er = rol.getEstudianteR().get(rol.getEstudianteR().size() - 1);
-            rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera()).getValor());
+            rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera(),rol.getGeneraciones()).getValor());
             primeraOp = er.getEstudiante().getOpcionIncripcion();
             matr = er.getEstudiante().getMatricula();
             if (er.getEstudiante().getTipoRegistro().equals("Equivalencia")) {
@@ -343,7 +345,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             });
             gs = gs2;
         } else {
-            rol.setGrupos(ejb.getGrupos(rol.getDacademicos().getAcademicos().getPrimeraOpcion()).getValor());
+            rol.setGrupos(ejb.getGrupos(rol.getDacademicos().getAcademicos().getPrimeraOpcion(),rol.getGeneraciones()).getValor());
             primeraOp = Boolean.TRUE;
             matr = 0;
             gs = new ArrayList<>();
@@ -365,7 +367,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         op1 = arP.getNombre() + "--" + rol.getDacademicos().getSistemaPo().getNombre();
         op2 = arS.getNombre() + "--" + rol.getDacademicos().getSistemaSo().getNombre();
 
-        rol.setRein(new DtoReincorporacion.ProcesoInscripcionRein(op1, op2, matr, primeraOp, rol.getPersonalActivoSe().getPersonal().getClave(), rol.getNombreR(), gs, new Documentosentregadosestudiante()));
+        rol.setRein(new DtoReincorporacion.ProcesoInscripcionRein(op1, op2, matr, primeraOp, rol.getPersonalActivoSe().getPersonal().getClave(), rol.getNombreR(), new ArrayList<Grupo>(), new Documentosentregadosestudiante()));
     }
 
     public void opcionInscripcion() {
@@ -376,14 +378,16 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         } else {
             carrera = rol.getDacademicos().getAcademicos().getSegundaOpcion();
         }
-        if(!rol.getEstudianteR().isEmpty()){
+        if (!rol.getEstudianteR().isEmpty()) {
             rol.getEstudianteR().forEach((t) -> {
-                if(Objects.equals(rol.getRein().getOpcionIncripcion(), t.getPrimeraOpcion())){
-                    rol.getRein().getGrupos().add(t.getGrupo());
+                if (Objects.equals(rol.getRein().getOpcionIncripcion(), t.getPrimeraOpcion())) {
+                    if (t.getTipoEstudiante().getIdTipoEstudiante() != 2 && t.getTipoEstudiante().getIdTipoEstudiante() != 3) {
+                        rol.setUltimoGrupoActivo(t.getGrupo());
+                    }
                 }
             });
         }
-        rol.setGrupos(ejb.getGrupos(carrera).getValor());
+        rol.setGrupos(ejb.getGrupos(carrera, rol.getGeneraciones()).getValor());
     }
     
 
@@ -446,7 +450,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             }
             if (!rol.getEstudianteR().isEmpty()) {
                 DtoReincorporacion.EstudianteR er = rol.getEstudianteR().get(rol.getEstudianteR().size() - 1);
-                rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera()).getValor());
+                rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera(),rol.getGeneraciones()).getValor());
                 llenarProceso();
             }
             if (!rol.getCalificacionesR().isEmpty()) {

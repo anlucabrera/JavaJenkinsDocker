@@ -15,6 +15,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import java.util.List;
 import javax.servlet.http.Part;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
@@ -35,6 +36,7 @@ public class ReincorporacionRolServiciosEscolares extends AbstractRol {
      * Periodo escolar en el que se hara la reincorporación
      */
     @Getter @NonNull private PeriodosEscolares periodo;
+    @Getter @Setter  @NonNull private Generaciones generaciones;
 
     /**
      * Representa el area que pertenece
@@ -47,6 +49,7 @@ public class ReincorporacionRolServiciosEscolares extends AbstractRol {
     
     @Getter @Setter private Boolean extran,finalizado,editarCalificaciones,puedeValidar,esEscolares;
     @Getter @Setter private Estudiante estudiante;
+    @Getter @Setter @NonNull private Grupo ultimoGrupoActivo;
     
     @Getter @Setter @NonNull private DtoReincorporacion.General general;
     @Getter @Setter @NonNull private MedioComunicacion comunicacion;

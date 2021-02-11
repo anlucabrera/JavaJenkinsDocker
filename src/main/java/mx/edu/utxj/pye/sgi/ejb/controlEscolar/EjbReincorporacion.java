@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,13 +49,16 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.LenguaIndigena;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioComunicacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioDifusion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedioPK;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante;
@@ -62,6 +66,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TutorFamiliar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
@@ -141,6 +146,26 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearCorrecto(sangres, "Tipos de sangre Encontrados");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Sangre(EjbReincorporacion.getTiposSangre).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Generaciones> getgeneracion() {
+        try {
+            LocalDate ld = LocalDate.now();
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getgeneracion(anio)" + ld.getYear());
+            List<Generaciones> gener = em.createQuery("select t from Generaciones t WHERE t.inicio=:inicio", Generaciones.class)
+                    .setParameter("inicio", ld.getYear())
+                    .getResultList();
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getgeneracion(1)" + gener.size());
+            if (gener.isEmpty()) {
+                gener = em.createQuery("select t from Generaciones t ORDER BY t.generacion DESC", Generaciones.class)
+                        .getResultList();
+            }
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getgeneracion(2)" + gener.size());
+            Generaciones generacion = gener.get(0);
+            return ResultadoEJB.crearCorrecto(generacion, "Tipos de sangre Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar las Generaciones(EjbReincorporacion.getgeneracion).", e, null);
         }
     }
 
@@ -225,9 +250,11 @@ public class EjbReincorporacion {
         }
     }
     
-    public ResultadoEJB<List<Grupo>> getGrupos(Short pe) {
+    public ResultadoEJB<List<Grupo>> getGrupos(Short pe, Generaciones g) {
         try {
-            List<Grupo> grupos = em.createQuery("select t from Grupo t WHERE t.idPe=:idPe", Grupo.class).setParameter("idPe", pe).getResultList();
+            List<Grupo> grupos = em.createQuery("select t from Grupo t WHERE t.idPe=:idPe AND t.generacion=:generacion", Grupo.class)
+                    .setParameter("idPe", pe)
+                    .setParameter("generacion", g.getGeneracion()).getResultList();
             return ResultadoEJB.crearCorrecto(grupos, "Grupo Encontrados");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Grupo(EjbReincorporacion.getGrupos).", e, null);
@@ -596,7 +623,7 @@ public class EjbReincorporacion {
             if (!das.isEmpty()) {
                 das.forEach((t) -> {
                     System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getAlineacionCalificaciones()"+t.getTipoEstudiante().getIdTipoEstudiante());
-                    if (!t.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("2"))) {
+                    if (!t.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("2")) && !t.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("3"))) {
                         List<DtoReincorporacion.CalificacionesR> crs = new ArrayList<>();
                         List<CargaAcademica> cas = new ArrayList<>();
                         Boolean validar = Boolean.FALSE;
@@ -1065,6 +1092,7 @@ public class EjbReincorporacion {
         try {
             if (!rr.getGrupos().isEmpty()) {              
                 rr.getGrupos().forEach((t) -> {
+                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.operacionesEstudianteR()"+t.getIdGrupo());
                     Operacion operacion;
                     List<Estudiante> es = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN e.grupo g WHERE a.idAspirante=:idAspirante AND e.periodo=:periodo", Estudiante.class).setParameter("idAspirante", a.getIdAspirante()).setParameter("periodo", t.getPeriodo()).getResultList();
                     Estudiante e = new Estudiante();
@@ -1118,6 +1146,7 @@ public class EjbReincorporacion {
 //                    asistenciasRegistradas(e, Operacion.PERSISTIR);
                 }
                 operacionesDocumentosentregadosestudiante(rr);
+                operacionesLogin(e);
             }
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
@@ -1160,6 +1189,44 @@ public class EjbReincorporacion {
         }
     }
     
+    public ResultadoEJB<Login> operacionesLogin(Estudiante et) {
+        try {
+            Persona p=new Persona();
+            p=et.getAspirante().getIdPersona();
+            List<Login> es = em.createQuery("select e from Login e INNER JOIN e.persona1 p WHERE p.idpersona=:idpersona", Login.class).setParameter("idpersona", p.getIdpersona()).getResultList();
+            Login l = new Login();
+            Operacion operacion;
+            if (!es.isEmpty()) {
+                l = es.get(es.size() - 1);
+                operacion = Operacion.ACTUALIZAR;
+            } else {
+                operacion = Operacion.PERSISTIR;
+            }
+            l.setActivo(Boolean.TRUE);
+            l.setModificado(Boolean.FALSE);
+            l.setPassword("3TASB6Q9S5bFbobwCXGD9A==");
+            l.setUsuario(String.valueOf(et.getMatricula()));
+            switch (operacion) {
+                case PERSISTIR:
+                    l.setPersona1(new Persona());
+                    l.setPersona1(p);                    
+                    l.setPersona(p.getIdpersona());
+                    em.persist(l);
+                    f.setEntityClass(Login.class);
+                    f.flush();
+                    break;
+                case ACTUALIZAR:
+                    em.merge(l);
+                    f.setEntityClass(Login.class);
+                    f.flush();
+                    break;
+            }
+            return ResultadoEJB.crearCorrecto(l, "Login Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Login (EjbReincorporacion.operacionesLogin).", e, null);
+        }
+    }
+    
     public ResultadoEJB<CalificacionPromedio> registrarCalificacionesPorPromedio(Integer idEstudiante, Integer idCarga, Double calificacion, String tipo) {
         try {
             Operacion opera;
@@ -1167,6 +1234,7 @@ public class EjbReincorporacion {
             CargaAcademica cargaAcademica = em.find(CargaAcademica.class, idCarga);
             List<CalificacionPromedio> cps = em.createQuery("select calP from CalificacionPromedio calP INNER JOIN calP.cargaAcademica c INNER JOIN calP.estudiante est WHERE c.carga=:carga AND est.idEstudiante=:idEstudiante", CalificacionPromedio.class).setParameter("carga", cargaAcademica.getCarga()).setParameter("idEstudiante", estudiante.getIdEstudiante()).getResultList();
             List<UnidadMateriaConfiguracionDetalle> cs = em.createQuery("select cs from UnidadMateriaConfiguracionDetalle cs INNER JOIN cs.configuracion con INNER JOIN con.carga c WHERE c.carga=:carga", UnidadMateriaConfiguracionDetalle.class).setParameter("carga", cargaAcademica.getCarga()).getResultList();
+            List<TareaIntegradora> tps = em.createQuery("select t from TareaIntegradora t INNER JOIN t.carga c WHERE c.carga=:carga ", TareaIntegradora.class).setParameter("carga", cargaAcademica.getCarga()).getResultList();
         
             CalificacionPromedio promedio = new CalificacionPromedio();
             if (!cps.isEmpty()) {
@@ -1230,6 +1298,46 @@ public class EjbReincorporacion {
                     }
                 });
             }
+            
+            if (!tps.isEmpty()) {
+                tps.forEach((t) -> {
+                    Operacion op;
+                    List<TareaIntegradoraPromedio> cal = em.createQuery("select tp from TareaIntegradoraPromedio tp INNER JOIN tp.tareaIntegradora t INNER JOIN tp.estudiante est WHERE t.idTareaIntegradora=:idTareaIntegradora AND est.idEstudiante=:idEstudiante", TareaIntegradoraPromedio.class).setParameter("idTareaIntegradora", t.getIdTareaIntegradora()).setParameter("idEstudiante", estudiante.getIdEstudiante()).getResultList();
+                    TareaIntegradoraPromedio c = new TareaIntegradoraPromedio();
+                    if (!cal.isEmpty()) {
+                        op = Operacion.PERSISTIR;
+                        c = cal.get(0);
+                    } else {
+                        op = Operacion.PERSISTIR;
+                        c = new TareaIntegradoraPromedio();
+
+                        TareaIntegradoraPromedioPK pK = new TareaIntegradoraPromedioPK();
+                        pK.setIdTareaIntegradora(t.getIdTareaIntegradora());
+                        pK.setIdEstudiante(idEstudiante);
+
+                        c.setTareaIntegradoraPromedioPK(new TareaIntegradoraPromedioPK());
+                        c.setTareaIntegradora(new TareaIntegradora());
+                        c.setEstudiante(new Estudiante());
+
+                        c.setTareaIntegradoraPromedioPK(pK);
+                        c.setTareaIntegradora(t);
+                        c.setEstudiante(estudiante);
+                    }
+                    c.setValor(calificacion);
+                    switch (op) {
+                        case PERSISTIR:
+                            em.persist(c);
+                            em.flush();
+                            break;
+                        case ACTUALIZAR:
+                            em.merge(c);
+                            em.flush();
+                            break;
+                    }
+                });
+            }
+            
+            
             
         return ResultadoEJB.crearCorrecto(promedio, "DTOPersona Encontrados");
         } catch (Exception e) {

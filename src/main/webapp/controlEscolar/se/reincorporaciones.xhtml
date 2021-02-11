@@ -1254,9 +1254,9 @@
 
                                                                         <p:columnGroup type="header">
                                                                             <p:row>
-                                                                                <p:column colspan="4" headerText="Datos de Estudiante" />
-                                                                                <p:column rowspan="2" headerText="Grupo" />
-                                                                                <p:column colspan="2" headerText="Datos de Carrera" />
+                                                                                <p:column colspan="4" style="width: 40%;" headerText="Datos de Estudiante" />
+                                                                                <p:column rowspan="2" headerText="Carrera" />
+                                                                                <p:column colspan="2" style="width: 20%;" headerText="Datos de Carrera" />
                                                                                 <p:column rowspan="2" headerText="" style="width: 32px;"/> 
                                                                             </p:row>
                                                                             <p:row>
@@ -1264,7 +1264,7 @@
                                                                                 <p:column headerText="Estatus" />
                                                                                 <p:column headerText="Tipo de Registro" />
                                                                                 <p:column headerText="¿Inscrito en Primera Opcion?" />
-                                                                                <p:column headerText="Carrera" />
+                                                                                <p:column headerText="Grupo" />
                                                                                 <p:column headerText="Modalidad" />
                                                                             </p:row>
                                                                         </p:columnGroup>
@@ -1282,7 +1282,7 @@
                                                                             <h:outputText value="#{est.estudiante.tipoRegistro}" />
                                                                         </p:column>
                                                                         <p:column>
-                                                                            <h:outputText value="#{est.primeraOpcion}" />
+                                                                            <h:outputText value="#{est.primeraOpcion ?'Si':'No'}" />
                                                                         </p:column>
                                                                         <p:column>
                                                                             <h:outputText value="#{est.nombrePe}" />
@@ -1396,13 +1396,15 @@
                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                     <p:outputPanel>
                                         <p:autoUpdate/>
-                                        <p:outputLabel style="font-size: large" value="Primera Opción de Inscripción: #{reincorporacionServiciosEscolares.rol.rein.primeraOp}"/>
+                                        <p:outputLabel style="font-size: large" value="Opción uno: #{reincorporacionServiciosEscolares.rol.rein.primeraOp}"/>
                                         <hr/>
-                                        <p:outputLabel style="font-size: large" value="Segunda Opción de Inscripción: #{reincorporacionServiciosEscolares.rol.rein.segundaOP}"/>
+                                        <p:outputLabel style="font-size: large" value="Opción dos: #{reincorporacionServiciosEscolares.rol.rein.segundaOP}"/>
+                                        <hr/>
+                                         <p:outputLabel style="font-size: large" value="Ultimo grupo activo: #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.grado}° #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.literal}, #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.periodo}"/>
                                         <hr/>
                                     </p:outputPanel>
                                 </div>
-                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="col-sm-12 col-md-12 col-lg-4">
                                     <p:outputLabel for="prgP" style="font-size: large" value="Selecciona Opción de Inscripción"/>
                                     <p:selectOneRadio id="prgP" layout="responsive" columns="2" value="#{reincorporacionServiciosEscolares.rol.rein.opcionIncripcion}">
                                         <f:selectItem itemValue="#{true}" itemLabel="Primera Opción"/>
@@ -1410,11 +1412,11 @@
                                         <p:ajax listener="#{reincorporacionServiciosEscolares.opcionInscripcion()}" update=":frmActualizaActividad:grupo" process="@this" global="false"/>
                                     </p:selectOneRadio>
                                 </div>
-                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                <div class="col-sm-6 col-md-6 col-lg-4">
                                     <p:outputLabel for="matricula" style="font-size: large;text-align: right;" value="Matrícula" />
                                     <p:inputText id="matricula" class="form-control" value="#{reincorporacionServiciosEscolares.rol.rein.matricula}"/>
                                 </div>
-                                <div class="col-sm-8 col-md-8 col-lg-8">
+                                <div class="col-sm-6 col-md-6 col-lg-4">
                                     <p:outputPanel>
                                         <p:autoUpdate/>
                                         <p:outputLabel for="grupo"  style="font-size: large;text-align: right;" value="Grupo" />
