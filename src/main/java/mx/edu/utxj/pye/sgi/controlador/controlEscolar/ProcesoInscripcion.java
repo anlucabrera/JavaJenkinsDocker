@@ -187,14 +187,16 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
     }
 
     public void validarFichaAdmision(){
+        Date fechaval= new Date();
+        aspirante.setFechaValidacion(fechaval);
         ejbFichaAdmision.actualizaAspirante(aspirante);
         String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-        String claveCorreo = "DServiciosEscolares19";
+        String claveCorreo = "DeptoEscolares21";
         String mensaje = "Estimado(a) "+persona.getNombre()+"\n\n Se le informa que su ficha de admisión ha sido validada correctamente, para continuar con el tu proceso de inscripción se le pide de favor que continúes con tu exámen institucional y ceneval.\n\n" +
                 "Los datos de acceso se les enviará vía correo electrónico. \n\n"
                 + "ATENTAMENTE \n" +
                 "Departamento de Servicios Escolares";
-        String identificador = "Registro de Ficha de Admisión 2020 UTXJ";
+        String identificador = "Registro de Ficha de Admisión 2021 UTXJ";
         String asunto = "Validación Ficha de Admisión";
         if(aspirante.getIdPersona().getMedioComunicacion().getEmail() != null){
             EnvioCorreos.EnviarCorreoTxt(correoEnvia, claveCorreo, identificador,asunto,aspirante.getIdPersona().getMedioComunicacion().getEmail(),mensaje);

@@ -52,6 +52,7 @@ import java.util.logging.Logger;
 
 /**
  * Ejb para el registro de fichas de admision para aspirantes
+ *
  * @author Taatisz :P
  */
 @Stateless(name = "EjbRegistroFichaAdmision")
@@ -689,7 +690,7 @@ public class EjbRegistroFichaAdmision {
         if(uso.equals("Alumno")){
             // El correo gmail de envío
             String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-            String claveCorreo = "DServiciosEscolares19";
+            String claveCorreo = "DeptoEscolares21";
             String mensaje = "Estimado(a) "+persona.getNombre()+"\n\n Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior." +
                     "\n\n Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entregar la documentación necesaria\n\n"
                     + "* Formato de Ficha de Admisión.\n"
