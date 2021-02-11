@@ -1289,8 +1289,9 @@ public class EjbRegistroBajas {
      */
     public ResultadoEJB<List<DtoConcentradoBajas>> generarConcentradoBajasPorCategoria(PeriodosEscolares periodo){
          try{
-            List<Baja> bajas = em.createQuery("SELECT b FROM Baja b WHERE b.periodoEscolar =:periodo ORDER BY b.fechaBaja DESC", Baja.class)
+            List<Baja> bajas = em.createQuery("SELECT b FROM Baja b WHERE b.periodoEscolar =:periodo AND b.validada=:valor ORDER BY b.fechaBaja DESC", Baja.class)
                     .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("valor", (int)1)
                     .getResultList();
             
             List<DtoConcentradoBajas> listaDtoConcentradoBajasCat = new ArrayList<>();
@@ -1327,8 +1328,9 @@ public class EjbRegistroBajas {
      */
     public ResultadoEJB<List<DtoConcentradoBajas>> generarConcentradoBajasPorTipo(PeriodosEscolares periodo){
          try{
-            List<Baja> bajas = em.createQuery("SELECT b FROM Baja b WHERE b.periodoEscolar =:periodo ORDER BY b.fechaBaja DESC", Baja.class)
+            List<Baja> bajas = em.createQuery("SELECT b FROM Baja b WHERE b.periodoEscolar =:periodo AND b.validada=:valor ORDER BY b.fechaBaja DESC", Baja.class)
                     .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("valor", (int)1)
                     .getResultList();
             
             List<DtoConcentradoBajas> listaDtoConcentradoBajasCat = new ArrayList<>();
@@ -1363,8 +1365,9 @@ public class EjbRegistroBajas {
      */
     public ResultadoEJB<List<DtoConcentradoBajas>> generarConcentradoBajasPorCausa(PeriodosEscolares periodo){
          try{
-            List<Baja> bajas = em.createQuery("SELECT b FROM Baja b WHERE b.periodoEscolar =:periodo ORDER BY b.fechaBaja DESC", Baja.class)
+            List<Baja> bajas = em.createQuery("SELECT b FROM Baja b WHERE b.periodoEscolar =:periodo AND b.validada=:valor ORDER BY b.fechaBaja DESC", Baja.class)
                     .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("valor", (int)1)
                     .getResultList();
             
             List<DtoConcentradoBajas> listaDtoConcentradoBajasCat = new ArrayList<>();
