@@ -93,7 +93,8 @@ public class EjbCargaDocumentosAspirante {
     public ResultadoEJB<ProcesosInscripcion> getProcesosInscripcionActivo() {
         try {
             ProcesosInscripcion procesosInscripcion = new ProcesosInscripcion();
-            procesosInscripcion = em.createQuery("select p from ProcesosInscripcion p where :fecha between p.fechaInicio and p.fechaFin", ProcesosInscripcion.class)
+            procesosInscripcion = em.createQuery("select p from ProcesosInscripcion p where p.activoNi=:valor AND :fecha between p.fechaInicio and p.fechaFin", ProcesosInscripcion.class)
+                    .setParameter("valor", Boolean.TRUE)
                     .setParameter("fecha", new Date())
                     .getResultStream()
                     .findFirst()
