@@ -209,9 +209,10 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
     @Override
     public ReconocimientoProdepRegistros getRegistroReconocimientoProdepRegistros(ReconocimientoProdepRegistros reconocimientoProdepRegistros) {
         if(reconocimientoProdepRegistros.getCuerpAcad() != null){
-            TypedQuery<ReconocimientoProdepRegistros> query = f.getEntityManager().createQuery("SELECT r FROM ReconocimientoProdepRegistros r JOIN r.cuerpAcad c JOIN r.tipoApoyo t WHERE r.docente = :docente AND c.cuerpoAcademico = :cuerpAcad AND t.tipo = :tipoApoyo", ReconocimientoProdepRegistros.class);
+            TypedQuery<ReconocimientoProdepRegistros> query = f.getEntityManager().createQuery("SELECT r FROM ReconocimientoProdepRegistros r JOIN r.cuerpAcad c JOIN r.tipoApoyo t WHERE r.docente = :docente AND c.cuerpoAcademico = :cuerpAcad AND c.registros.eventoRegistro=:evento AND t.tipo = :tipoApoyo", ReconocimientoProdepRegistros.class);
             query.setParameter("docente", reconocimientoProdepRegistros.getDocente());
             query.setParameter("cuerpAcad", reconocimientoProdepRegistros.getCuerpAcad().getCuerpoAcademico());
+            query.setParameter("evento", reconocimientoProdepRegistros.getRegistros().getEventoRegistro());
             query.setParameter("tipoApoyo", reconocimientoProdepRegistros.getTipoApoyo().getTipo());
             try {
                 reconocimientoProdepRegistros = query.getSingleResult();
@@ -268,8 +269,9 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
                 Personal personal = f.getEntityManager().find(Personal.class, x.getDocente());
                 ReconocimientoProdepTiposApoyo reconocimientoProdepTiposApoyo = f.getEntityManager().find(ReconocimientoProdepTiposApoyo.class, x.getTipoApoyo().getTipo());
                 if(x.getCuerpAcad() !=null){
-                    TypedQuery<CuerposAcademicosRegistro> cuerposAcad = f.getEntityManager().createQuery("SELECT ca FROM CuerposAcademicosRegistro ca WHERE ca.cuerpoAcademico = :cuerpoAcademico", CuerposAcademicosRegistro.class);
+                    TypedQuery<CuerposAcademicosRegistro> cuerposAcad = f.getEntityManager().createQuery("SELECT ca FROM CuerposAcademicosRegistro ca WHERE ca.cuerpoAcademico = :cuerpoAcademico AND ca.registros.eventoRegistro=:evento", CuerposAcademicosRegistro.class);
                     cuerposAcad.setParameter("cuerpoAcademico", x.getCuerpAcad().getCuerpoAcademico());
+                    cuerposAcad.setParameter("evento", x.getRegistros().getEventoRegistro());
                     CuerposAcademicosRegistro cuerposAcademicosRegistro = f.getEntityManager().find(CuerposAcademicosRegistro.class, cuerposAcad.getSingleResult().getRegistro());
                     AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
                     ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null : registro.getActividadesPoaList().get(0);
@@ -317,8 +319,9 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
                 Personal personal = f.getEntityManager().find(Personal.class, x.getDocente());
                 ReconocimientoProdepTiposApoyo reconocimientoProdepTiposApoyo = f.getEntityManager().find(ReconocimientoProdepTiposApoyo.class, x.getTipoApoyo().getTipo());
                 if (x.getCuerpAcad() != null) {
-                    TypedQuery<CuerposAcademicosRegistro> cuerposAcad = f.getEntityManager().createQuery("SELECT ca FROM CuerposAcademicosRegistro ca WHERE ca.cuerpoAcademico = :cuerpoAcademico", CuerposAcademicosRegistro.class);
+                    TypedQuery<CuerposAcademicosRegistro> cuerposAcad = f.getEntityManager().createQuery("SELECT ca FROM CuerposAcademicosRegistro ca WHERE ca.cuerpoAcademico = :cuerpoAcademico AND ca.registros.eventoRegistro=:evento", CuerposAcademicosRegistro.class);
                     cuerposAcad.setParameter("cuerpoAcademico", x.getCuerpAcad().getCuerpoAcademico());
+                    cuerposAcad.setParameter("evento", x.getRegistros().getEventoRegistro());
                     CuerposAcademicosRegistro cuerposAcademicosRegistro = f.getEntityManager().find(CuerposAcademicosRegistro.class, cuerposAcad.getSingleResult().getRegistro());
                     AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
                     ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null : registro.getActividadesPoaList().get(0);
