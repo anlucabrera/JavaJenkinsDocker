@@ -1,5 +1,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import com.github.adminfaces.starter.infra.model.Filter;
+import com.sun.org.apache.regexp.internal.RE;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
@@ -7,18 +9,30 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteGeneralFichas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteProyeccionFichas;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProyeccionAreas;
+import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
+import mx.edu.utxj.pye.sgi.enums.TramiteTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 /**
  * Consulta de registro de fichas de admisión  por carrera
@@ -67,7 +81,7 @@ public class EjbFichaAdmisionReporte {
                     else {
                         ResultadoEJB<PersonalActivo> resDirPlaneacion= validarDirPlaneacion(personalActivo);
                         if(resDirPlaneacion.getCorrecto()==true){
-                           // System.out.println("Director de planeación" +resDirPlaneacion.getValor() );
+                            // System.out.println("Director de planeación" +resDirPlaneacion.getValor() );
                             return ResultadoEJB.crearCorrecto(resDirPlaneacion.getValor(),"Validado como Director/a de Planeacion");
                         }
                         else {
@@ -95,7 +109,7 @@ public class EjbFichaAdmisionReporte {
                                         else {
                                             ResultadoEJB<PersonalActivo> resPrensa = validarPrensa(personalActivo);
                                             if(resPrensa.getCorrecto()==true){
-                                               // System.out.println("Prensa" +resPrensa.getValor() );
+                                                // System.out.println("Prensa" +resPrensa.getValor() );
                                                 return ResultadoEJB.crearCorrecto(resPrensa.getValor(),"Validado como personal de prensa");
                                             }else {
                                                 return ResultadoEJB.crearErroneo(5,resPrensa.getValor(),"No tiene acceso");
@@ -152,9 +166,9 @@ public class EjbFichaAdmisionReporte {
      */
 
     public ResultadoEJB<PersonalActivo> validarSA (PersonalActivo personalActivo){
-            try {
-                //System.out.println("Sec Ac--->" );
-                //PersonalActivo personalActivo = new PersonalActivo();
+        try {
+            //System.out.println("Sec Ac--->" );
+            //PersonalActivo personalActivo = new PersonalActivo();
             if(personalActivo ==null){return ResultadoEJB.crearErroneo(2,new PersonalActivo(),"La clave no debe ser nula");}
             if(personalActivo.getAreaOperativa().getArea()== 2 & personalActivo.getPersonal().getCategoriaOperativa().getCategoria()==38 & personalActivo.getAreaSuperior().getArea()==1){
                 //Es SA
@@ -310,6 +324,23 @@ public class EjbFichaAdmisionReporte {
 
         }
     }
+    /**
+     * Obtiene la lista de procesos de inscripcion, segun los proceso de inscripcion para nuevo ingreso
+     * @return
+     */
+    public ResultadoEJB<List<ProcesosInscripcion>> getProcesosInscripcion(){
+        try{
+            List<ProcesosInscripcion> procesosInscripcions = new ArrayList<>();
+            procesosInscripcions = em.createQuery("select p from ProcesosInscripcion p where p.activoNi=true",ProcesosInscripcion.class)
+                    .getResultList()
+            ;
+            if(procesosInscripcions.isEmpty()|| procesosInscripcions==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"No existen procesos de inscripción");}
+            else {return ResultadoEJB.crearCorrecto(procesosInscripcions,"Lista de procesos de inscripcion");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener el último proceso de inscripción. (EjbFichaAdmisionReporte.getUltimoProcesoInscripcion)", e, null);
+
+        }
+    }
 
 
 
@@ -317,14 +348,14 @@ public class EjbFichaAdmisionReporte {
      * Obtiene el ultimo periodo de inscripción
      * @return Resultado del proceso
      */
-  public ResultadoEJB<ProcesosInscripcion> getUltimoProcesoInscripcion (){
+    public ResultadoEJB<ProcesosInscripcion> getUltimoProcesoInscripcion (){
         try {
             ProcesosInscripcion procesosInscripcion = new ProcesosInscripcion();
             procesosInscripcion = em.createQuery("select p from ProcesosInscripcion p where p.activoNi=:ni order by p.idProcesosInscripcion desc",ProcesosInscripcion.class)
-            .setParameter("ni",true)
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("ni",true)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(procesosInscripcion ==null){return ResultadoEJB.crearErroneo(2,procesosInscripcion,"No se ecnontro proceso de inscripcion");}
             else {
@@ -343,9 +374,9 @@ public class EjbFichaAdmisionReporte {
         try{
             List<AreasUniversidad> areas = new ArrayList<>();
             areas = em.createQuery("select a from AreasUniversidad  a where a.nivelEducativo.nivel=:nivel and a.vigente=:vigente", AreasUniversidad.class)
-            .setParameter("nivel","TSU")
-            .setParameter("vigente","1")
-            .getResultList()
+                    .setParameter("nivel","TSU")
+                    .setParameter("vigente","1")
+                    .getResultList()
             ;
             if(areas==null || areas.isEmpty()){return ResultadoEJB.crearErroneo(2,areas,"No se encontraron areas vigentes");}
             else {return ResultadoEJB.crearCorrecto(areas,"Areas vigentes");}
@@ -367,9 +398,9 @@ public class EjbFichaAdmisionReporte {
             if(pe == null ){return ResultadoEJB.crearErroneo(2, aspirantes,"El programa educativo no debe ser nulo");}
             if(procesoInscripcion==null){return ResultadoEJB.crearErroneo(3,aspirantes,"El proceso de inscripción no debe ser nulo");}
             aspirantes = em.createQuery("SELECT a FROM Aspirante a WHERE a.idProcesoInscripcion.idProcesosInscripcion = :idpi AND a.tipoAspirante.idTipoAspirante = 1 AND a.datosAcademicos.primeraOpcion = :po AND a.datosAcademicos <> null and a.folioAspirante <> null ORDER BY a.folioAspirante",Aspirante.class)
-            .setParameter("idpi",procesoInscripcion.getIdProcesosInscripcion())
-            .setParameter("po",pe.getArea())
-            .getResultList()
+                    .setParameter("idpi",procesoInscripcion.getIdProcesosInscripcion())
+                    .setParameter("po",pe.getArea())
+                    .getResultList()
             ;
             if(aspirantes ==null || aspirantes.isEmpty()){return ResultadoEJB.crearErroneo(4,aspirantes,"No se encontraron aspirantes");}
             else {return ResultadoEJB.crearCorrecto(aspirantes,"Lista de aspirantes");}
@@ -379,6 +410,58 @@ public class EjbFichaAdmisionReporte {
 
         }
 
+    }
+
+    /**
+     * Obtiene una lista de estudiantes incritos por programa educativo
+     * @param pe Programa educativo
+     * @param procesosInscripcion Proceso de inscripcion seleccionado
+     * @return Resultado del proceso
+     */
+
+    public ResultadoEJB<List<Estudiante>> getInscritosbyPE(@NonNull AreasUniversidad pe,@NonNull ProcesosInscripcion procesosInscripcion){
+        try{
+            if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El proceso de inscripci+on no debe ser nulo");}
+            if(pe==null){return  ResultadoEJB.crearErroneo(3,new ArrayList<>(),"El programa educativo no debe ser nulo");}
+            List<Estudiante> estudiantesInscritos = em.createQuery("select e from Estudiante e where e.aspirante.idProcesoInscripcion.idProcesosInscripcion=:proceso and e.tipoRegistro=:tipo and e.carrera=:pe",Estudiante.class)
+                    .setParameter("proceso",procesosInscripcion.getIdProcesosInscripcion())
+                    .setParameter("tipo","Inscripción")
+                    .setParameter("pe",pe.getArea())
+                    .getResultList()
+                    ;
+            if(estudiantesInscritos.isEmpty() || estudiantesInscritos==null){return ResultadoEJB.crearErroneo(4,new ArrayList<>(),"No hay estudiantes inscritos");}
+            else {return  ResultadoEJB.crearCorrecto(estudiantesInscritos,"Estudiantes incritos por programa educativo");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener los estudiantes inscritos por pe. (EjbFichaAdmisionReporte.getInscritosbyPE)", e, null);
+
+        }
+    }
+
+    /**
+     * Obtiene la proyeccion por area
+     * @param procesosInscripcion Proceso de inscripcion seleccionado
+     * @param area Programa educativo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<ProyeccionAreas> getProyeccionbyArea(@NonNull ProcesosInscripcion procesosInscripcion,@NonNull AreasUniversidad area){
+        try{
+            if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(2,new ProyeccionAreas(),"El proceso de inscripci+on no debe ser nulo");}
+            if(area==null){return  ResultadoEJB.crearErroneo(3,new ProyeccionAreas(),"El programa educativo no debe ser nulo");}
+            ProyeccionAreas pa= new ProyeccionAreas();
+            pa= em.createQuery("select p from ProyeccionAreas p where p.proyeccionAreasPK.procesoInscripcion=:proceso and p.proyeccionAreasPK.pe=:pe",ProyeccionAreas.class)
+                    .setParameter("proceso",procesosInscripcion.getIdProcesosInscripcion())
+                    .setParameter("pe",area.getArea())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+            ;
+            if(pa==null){return  ResultadoEJB.crearErroneo(4,new ProyeccionAreas(),"No se encontró proyección del área en el proceso de inscripción seleccionado");}
+            else {return  ResultadoEJB.crearCorrecto(pa,"Proyección encontrada");}
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener la proyeccion por area. (EjbFichaAdmisionReporte.getProyeccionbyArea)", e, null);
+
+        }
     }
 
     /**
@@ -437,9 +520,9 @@ public class EjbFichaAdmisionReporte {
             dto.setTipo("Matricula Inscrita");
             //Se obtiene el total de la matricula inscrita
             ResultadoEJB<List<Estudiante>> resInscritos =getEstudiantesInscritos(procesosInscripcion);
-           // System.out.println("Lista estudiantes inscritos" + resInscritos.getValor().size());
+            // System.out.println("Lista estudiantes inscritos" + resInscritos.getValor().size());
             if(resInscritos.getCorrecto()==true){
-               // System.out.println("Correcto" + resInscritos.getValor().size());
+                // System.out.println("Correcto" + resInscritos.getValor().size());
                 dto.setTotal(resInscritos.getValor().size());
                 dto.setTotalSemanal((int) resInscritos.getValor().stream()
                         .filter(x -> x.getGrupo().getIdSistema().getNombre().equals("Semanal"))
@@ -454,7 +537,7 @@ public class EjbFichaAdmisionReporte {
                 dto.setTotal(0);
                 dto.setTotalSemanal(0);
                 dto.setTotalSabatino(0);
-               // System.out.println("Error-> getListaEstudiantesInscritos");
+                // System.out.println("Error-> getListaEstudiantesInscritos");
                 return ResultadoEJB.crearCorrecto(dto,"Lista vacia");}
 
         }catch (Exception e){
@@ -471,14 +554,14 @@ public class EjbFichaAdmisionReporte {
             if(aspirantes ==null){return ResultadoEJB.crearErroneo(2,new DtoReporteGeneralFichas(),"La lista de estudiantes no debe ser nula");}
             DtoReporteGeneralFichas dto = new DtoReporteGeneralFichas();
             dto.setTipo("Registro de Fichas");
-                dto.setTotal(aspirantes.size());
-                dto.setTotalSemanal((int)aspirantes.stream()
-                        .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Semanal"))
-                        .count());
-                dto.setTotalSabatino((int)aspirantes.stream()
-                        .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Sabatino"))
-                        .count());
-                return ResultadoEJB.crearCorrecto(dto,"Registro de Fichas");
+            dto.setTotal(aspirantes.size());
+            dto.setTotalSemanal((int)aspirantes.stream()
+                    .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Semanal"))
+                    .count());
+            dto.setTotalSabatino((int)aspirantes.stream()
+                    .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Sabatino"))
+                    .count());
+            return ResultadoEJB.crearCorrecto(dto,"Registro de Fichas");
 
 
         }catch (Exception e){
@@ -547,7 +630,7 @@ public class EjbFichaAdmisionReporte {
         try{
             List<Aspirante> aspirantes = new ArrayList<>() ;
             if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(2,aspirantes,"El proceso de inscripción no debe ser nulo");}
-           else {
+            else {
                 aspirantes = em.createQuery("select a from Aspirante a where a.idProcesoInscripcion.idProcesosInscripcion=:procesoInscripcion and a.tipoAspirante.idTipoAspirante=:tipo and a.datosAcademicos<> null and a.folioAspirante <> null order by a.folioAspirante",Aspirante.class)
                         .setParameter("procesoInscripcion",procesosInscripcion.getIdProcesosInscripcion())
                         .setParameter("tipo",1)
@@ -639,7 +722,7 @@ public class EjbFichaAdmisionReporte {
                 ResultadoEJB<DtoReporteGeneralFichas>resMatriculaProyectada =getProyeccionMatricula();
                 if(resMatriculaProyectada.getCorrecto()==true){
                     dto.setProyectadas(resMatriculaProyectada.getValor());
-                   // System.out.println("------->"+dto);
+                    // System.out.println("------->"+dto);
                     return ResultadoEJB.crearCorrecto(dto,"Matricula");
                 }
                 else {return ResultadoEJB.crearErroneo(3,dto,"Error al obtener la matricula proyectada");}

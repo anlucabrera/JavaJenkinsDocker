@@ -53,7 +53,7 @@ public class controladorDirectorioCorreos implements Serializable {
     }
     public List<dtoCorreosAreas> correosAreas(){
         listCorrreosAreas = new ArrayList<>();
-        listCorrreosAreas.add(new dtoCorreosAreas("Rectoría","rectoria@utxicotepec.edu.mx","gerardo.vargas@utxicotepec.edu.mx"));
+        listCorrreosAreas.add(new dtoCorreosAreas("Rectoría","rectoria@utxicotepec.edu.mx","altagracia.carrillo@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Administración y Finanzas","administracion.finanzas@utxicotepec.edu.mx","alba.maldonado@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Área Jurídica","area.juridica@utxicotepec.edu.mx","zoila.salazar@utxicotepec.edu.mx"));
         listCorrreosAreas.add(new dtoCorreosAreas("Planeación y Evaluación","planeacion.evaluacion@utxicotepec.edu.mx","miguel.sanchez@utxicotepec.edu.mx"));

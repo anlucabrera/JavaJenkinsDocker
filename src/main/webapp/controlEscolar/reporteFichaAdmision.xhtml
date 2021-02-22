@@ -13,89 +13,190 @@
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
-        </c:if>  
+        </c:if>
         <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
         </c:if>
-         
+
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
     <ui:define name="title">
-       Aspirantes
+        Aspirantes
     </ui:define>
-    
+
     <ui:define name="description">
-       Reporte de aspirantes por programa eduactivo
+        Reporte de aspirantes por programa eduactivo
     </ui:define>
 
     <ui:define name="body">
 
         <c:if test="#{fichaAdmisionReporte.cargado}">
-        <adm:sidebar collapsed="true"/> 
-        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
-            <h1>
-                Esta página está disponible solo para pantallas superiores a 1024px.
-            </h1>
-        </p:panel>
+            <adm:sidebar collapsed="true"/>
+            <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+                <h1>
+                    Esta página está disponible solo para pantallas superiores a 1024px.
+                </h1>
+            </p:panel>
             <c:if test="#{fichaAdmisionReporte.tieneAcceso}">
                 <p:panel id="informacion" class="hidden-xs hidden-sm">
-                            <section class="content">
-                                <h:form id="frmConcentrado">
-                                    <p:dataTable var="concentrado" id="concentradoFichas" value="#{fichaAdmisionReporte.rol.concentradoFichas}" styleClass="box-primary 'no-border':''" reflow="true"
-                                                 paginator="false" rows="15" emptyMessage="No se encontraron registros" paginatorPosition="top"
-                                    >
-                                        <f:facet name="header">
-                                            Aspirantes por programa educativo
-                                            <br></br>
+                    <section class="content">
+                        <h:form id="frmConcentrado">
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="proceso" value="#{fichaAdmisionReporte.rol.procesoSelect}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{fichaAdmisionReporte.rol.listProcesosInsc}" var="p" itemValue="#{p}" itemLabel="#{caster.anioFecha(p.fechaInicio)}" />
+                                                    <p:ajax listener="#{fichaAdmisionReporte.getConcentrado}" process="@this" update="@form,:frmConcentrado:concentradoFichas" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Año" for="proceso"/>
+                                                <p:message for="proceso" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p:dataTable var="concentrado" id="concentradoFichas" value="#{fichaAdmisionReporte.rol.concentradoFichas}" styleClass="box-primary 'no-border':''" reflow="true"
+                                         paginator="false" rows="15" emptyMessage="No se encontraron registros" paginatorPosition="top"
+                            >
+                                <f:facet name="header">
+                                    Aspirantes por programa educativo
+                                    <br></br>
 
-                                            <p:commandLink  ajax="false">
-                                                <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
-                                                <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="concentradoFichas"
-                                                                fileName="aspirantes_pe"/>
-                                            </p:commandLink>
-                                        </f:facet>
+                                    <p:commandLink  ajax="false">
+                                        <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                        <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="concentradoFichas"
+                                                        fileName="aspirantes_pe"/>
+                                    </p:commandLink>
+                                </f:facet>
 
-                                        <p:columnGroup type="header">
-                                            <p:row>
-                                                <p:column rowspan="2" headerText="Programa Educativo" />
-                                                <p:column style="width: 300px;" colspan="3" headerText="Registro Fichas" />
-                                                <p:column style="width: 300px;" colspan="3" headerText="Fichas Validadas" />
-                                            </p:row>
-                                            <p:row>
-                                                <p:column headerText="Semanal"/>
-                                                <p:column headerText="Sabatino"/>
-                                                <p:column headerText="Total"/>
-                                                <p:column headerText="Semanal"/>
-                                                <p:column headerText="Sabatino"/>
-                                                <p:column headerText="Total"/>
-                                            </p:row>
-                                        </p:columnGroup>
-                                        <p:column>
-                                            <h:outputText value="#{concentrado.pe.nombre}"/>
-                                        </p:column>
-                                        <p:column style="text-align: center;">
-                                            <h:outputText value="#{concentrado.totalRegistroSemanal}"/>
-                                        </p:column>
-                                        <p:column style="text-align: center;">
-                                            <h:outputText value="#{concentrado.totalRegistroSabatino}"/>
-                                        </p:column>
-                                        <p:column style="text-align: center;">
-                                            <h:outputText value="#{concentrado.totalRegistros}"/>
-                                        </p:column>
-                                        <p:column style="text-align: center;">
-                                            <h:outputText value="#{concentrado.totalRegistroSemanalValido}"/>
-                                        </p:column>
-                                        <p:column style="text-align: center;">
-                                            <h:outputText value="#{concentrado.totalRegistroSabatinoValido}"/>
-                                        </p:column>
-                                        <p:column style="text-align: center;">
-                                            <h:outputText value="#{concentrado.totalRegistrosValidados}"/>
-                                        </p:column>
-                                    </p:dataTable>
-                                </h:form>
-                                <hr/>
-                            </section>
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column rowspan="3" headerText="Programa Educativo" />
+                                        <p:column style="width: 300px; border-style: solid black"  rowspan="2" colspan="2" headerText="Proyección #{caster.anioFecha(fichaAdmisionReporte.rol.procesosInscripcion.fechaInicio)}" />
+                                        <p:column style="width: 700px;"  colspan="9" headerText="Avance de metas #{caster.anioFecha(fichaAdmisionReporte.rol.procesosInscripcion.fechaInicio)}" />
+                                        <p:column style="width: 150px;" headerText="% de avance de fichas validadas" rowspan="3"/>
+                                        <p:column style="width: 150px;" headerText="% de avance de inscripción a nuevo ingreso" rowspan="3"/>
+                                    </p:row>
+
+                                    <p:row>
+
+                                        <p:column style="width: 600px;" colspan="3" headerText="Fichas registradas" />
+                                        <p:column style="width: 600px;" colspan="3" headerText="Fichas Validadas" />
+                                        <p:column style="width: 600px;" colspan="3" headerText="Inscripción" />
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="width: 200px;" headerText="Fichas validadas"/>
+                                        <p:column style="width: 200px;" headerText="Nuevo ingreso"/>
+                                        <p:column style="width: 200px;" headerText="Semanal"/>
+                                        <p:column style="width: 200px;" headerText="Sabatino"/>
+                                        <p:column style="width: 200px;" headerText="Total"/>
+                                        <p:column style="width: 200px;" headerText="Semanal"/>
+                                        <p:column style="width: 200px;" headerText="Sabatino"/>
+                                        <p:column style="width: 200px;" headerText="Total"/>
+                                        <p:column style="width: 200px;" headerText="Semanal"/>
+                                        <p:column style="width: 200px;" headerText="Sabatino"/>
+                                        <p:column style="width: 200px;" headerText="Total"/>
+                                    </p:row>
+                                </p:columnGroup>
+                                <p:columnGroup type="footer">
+                                    <p:row>
+                                        <p:column colspan="1" style="text-align:right"   footerText="TOTAL:"/>
+                                        <p:column style="text-align:center" footerText="#{fichaAdmisionReporte.rol.totalfichasProyectadasInstitucional}"/>
+                                        <p:column style="text-align:center" footerText="#{fichaAdmisionReporte.rol.totalInscritosProyectadasInstitucional}"/>
+                                        <p:column style="text-align:center" footerText="#{fichaAdmisionReporte.rol.totalFichasRegistradasSemanalInstitucional}"/>
+                                        <p:column style="text-align:center" footerText="#{fichaAdmisionReporte.rol.totalFichasRegistradasSabatinoInstitucional}"/>
+                                        <p:column style="text-align:center" footerText="#{fichaAdmisionReporte.rol.totalFichasRegistradasInstitucional}"/>
+                                        <p:column style="text-align:center" footerText="#{fichaAdmisionReporte.rol.totalFichasValidadasSemanalInstitucional}"/>
+                                        <p:column style="text-align:center" footerText="#{fichaAdmisionReporte.rol.totalFichasValidadasSabatinoInstitucional}"/>
+                                        <p:column style="text-align:center" footerText="#{fichaAdmisionReporte.rol.totalFichasValidadasInstitucional}"/>
+                                        <p:column style="text-align:center" footerText="#{fichaAdmisionReporte.rol.totalInscripcionSemanalInstitucional}"/>
+                                        <p:column style="text-align:center" footerText="#{fichaAdmisionReporte.rol.totalInscripcionSabatinoInstitucioanal}"/>
+                                        <p:column style="text-align:center" footerText="#{fichaAdmisionReporte.rol.totalInscripcionInstitucional}"/>
+                                        <p:column style="text-align:center" footerText="#{fichaAdmisionReporte.rol.porcentajeFichasValidadasInstitucional}%"/>
+                                        <p:column style="text-align:center" footerText="#{fichaAdmisionReporte.rol.porcentajeInscritosInstitucional}%"/>
+
+
+                                    </p:row>
+                                </p:columnGroup>
+                                <p:column>
+                                    <h:outputText value="#{concentrado.pe.nombre}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{concentrado.proyeccionFichasValidadas}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{concentrado.proyeccionMatricula}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{concentrado.totalRegistroSemanal}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{concentrado.totalRegistroSabatino}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{concentrado.totalRegistros}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{concentrado.totalRegistroSemanalValido}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{concentrado.totalRegistroSabatinoValido}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{concentrado.totalRegistrosValidados}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{concentrado.totalInscritosSemanal}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{concentrado.totalInscritosSabatino}"/>
+                                </p:column>
+                                <p:column style="text-align: center;">
+                                    <h:outputText value="#{concentrado.totalInscritos}"/>
+                                </p:column>
+
+
+
+                                <p:column headerText="Porcentaje: Meta 100%" exportable="false">
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                             aria-valuenow="#{concentrado.porcentajeAlcanceFichas}" aria-valuemin="0" aria-valuemax="100"
+                                             style="background-color: #00a65a; width:#{concentrado.porcentajeAlcanceFichas}%">
+                                                        <span class="progress-completed">
+                                                        <h:outputText value="#{concentrado.porcentajeAlcanceFichas}" style="color: #0E0000; font-weight: bold">
+                                                            <f:convertNumber type="number" pattern="0.00"/>
+                                                        </h:outputText>
+                                                    </span>
+                                        </div>
+
+                                    </div>
+                                </p:column>
+                                <p:column headerText="Porcentaje: Meta 100%" exportable="false">
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                             aria-valuenow="#{concentrado.porcentajeAlcanceMatricula}" aria-valuemin="0" aria-valuemax="100"
+                                             style="background-color: #00a65a; width:#{concentrado.porcentajeAlcanceMatricula}%">
+                                                        <span class="progress-completed">
+                                                        <h:outputText value="#{concentrado.porcentajeAlcanceMatricula}" style="color: #0E0000; font-weight: bold">
+                                                            <f:convertNumber type="number" pattern="0.00"/>
+                                                        </h:outputText>
+                                                    </span>
+                                        </div>
+
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                        <hr/>
+                    </section>
+                    <!--
                     <section class="content">
                         <h:form id="frmComparativo">
                             <p:dataTable var="reporte" id="comparativo" value="#{fichaAdmisionReporte.rol.reporte}" styleClass="box-primary 'no-border':''" reflow="true"
@@ -152,6 +253,7 @@
                         </h:form>
                         <hr/>
                     </section>
+                    -->
                 </p:panel>
             </c:if>
             <c:if test="#{!fichaAdmisionReporte.tieneAcceso}">

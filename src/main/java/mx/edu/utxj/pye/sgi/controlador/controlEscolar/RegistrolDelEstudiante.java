@@ -347,7 +347,7 @@ public class RegistrolDelEstudiante extends ViewScopedRol implements Desarrollab
                 }
             });
         }
-        rol.setGrupos(ejb.getGrupos(carrera).getValor());
+        rol.setGrupos(ejb.getGruposCarrera(carrera).getValor());
     }
     
 
@@ -405,7 +405,7 @@ public class RegistrolDelEstudiante extends ViewScopedRol implements Desarrollab
             }
             if (!rol.getEstudianteR().isEmpty()) {
                 DtoReincorporacion.EstudianteR er = rol.getEstudianteR().get(rol.getEstudianteR().size() - 1);
-                rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera()).getValor());
+                rol.setGrupos(ejb.getGruposCarrera(er.getEstudiante().getCarrera()).getValor());
             }
             if (!rol.getCalificacionesR().isEmpty()) {
                 if (rol.getCalificacionesR().stream().filter(t -> Objects.equals(t.getPuedeValidar(), Boolean.FALSE)).collect(Collectors.toList()).isEmpty()) {

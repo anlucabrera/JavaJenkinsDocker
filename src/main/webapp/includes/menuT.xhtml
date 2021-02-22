@@ -52,7 +52,7 @@
                 <c:if test="#{controlEscolarMenu.tieneElementos()}">
                     <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Control escolar</li>
                     <!--Usuarios especiales -->
-                    <c:if test="#{fichaAdmisionReporte.mostrarEnDesarrollo(request) and fichaAdmisionReporte.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reporteFichaAdmision.xhtml"><i class="fa fa-clipboard"></i><span>Reporte de Aspirantes <small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{fichaAdmisionReporte.mostrarEnDesarrollo(request) and fichaAdmisionReporte.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reporteFichaAdmision.xhtml"><i class="fa fa-clipboard"></i><span>Reporte de Aspirantes <small class="label pull-right bg-green">Actualizado</small></span></p:link></li></c:if>
 
                     <!-- Administrador -->
                     <c:if test="#{permisoAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaAdministrador.tieneAcceso}">

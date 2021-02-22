@@ -291,6 +291,13 @@ public class Aspirante implements Serializable {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante[ idAspirante=" + idAspirante + " ]";
     }
 
+    public Date getFechaValidacion() {
+        return fechaValidacion;
+    }
+
+    public void setFechaValidacion(Date fechaValidacion) {
+        this.fechaValidacion = fechaValidacion;
+    }
     @XmlTransient
     public List<ContactoEmergenciasEstudiante> getContactoEmergenciasEstudianteList() {
         return contactoEmergenciasEstudianteList;
