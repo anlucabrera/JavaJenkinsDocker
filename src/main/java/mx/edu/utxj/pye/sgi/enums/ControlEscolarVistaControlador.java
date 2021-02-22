@@ -113,8 +113,9 @@ public enum ControlEscolarVistaControlador {
     SEGUIMIENTO_CASO_CRITICO_ESPECIALISTA("/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml", SeguimientoCasoCriticoEspecialista.class),
 
     CONSULTA_CALIFICACION("/controlEscolar/consultarCalificaciones.xhtml", ConsultaCalificaciones.class),
-    RESULTADOS_PLANEACIONES("/controlEscolar/resultadosPlaneaciones.xhtml", ResultadosPlaneacionesConsulta.class),
+    RESULTADOS_PLANEACIONES("/controlEscolar/reportesMu/resultadosPlaneaciones.xhtml", ResultadosPlaneacionesConsulta.class),
     FICHA_ADMISION_REPORTE("/controlEscolar/reporteFichaAdmision.xhtml",FichaAdmisionReporte.class),
+    REGISTRO_ESTUDIANTE_CONSULTA("/controlEscolar/reportesMu/registroEstudianteConsulta.xhtml", RegistroDeEstudianteConsulta.class),
 
     EVALUACION_CONOCIMIENTO_CUMPLIMIENTO("/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml", EvaluacionConocimientoCodigoEtica.class),
     CUESTIONARIO_COMPLEMENTARIO_INF_PERSONAL("/cuestionarios/cuestionarioComplemenarioInfPersonal.xhtml", CuestionarioComplementarioInfPersonal.class),

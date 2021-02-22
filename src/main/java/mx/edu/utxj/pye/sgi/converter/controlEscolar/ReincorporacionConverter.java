@@ -52,6 +52,12 @@ public class ReincorporacionConverter implements Converter{
                 case "escolaridadFamiliar":
                     Short claveEF = Short.parseShort(value);
                     return facadeCE.getEntityManager().find(Escolaridad.class, claveEF);
+                case "ocupacionT":
+                    Short claveOT = Short.parseShort(value);
+                    return facadeCE.getEntityManager().find(Ocupacion.class, claveOT);
+                case "escolaridadt":
+                    Short claveET = Short.parseShort(value);
+                    return facadeCE.getEntityManager().find(Escolaridad.class, claveET);
                 case "eb":
                     Integer claveEC = Integer.valueOf(value);
                     return facadeCE.getEntityManager().find(EspecialidadCentro.class,claveEC);

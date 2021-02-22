@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Ocupacion.findByIdOcupacion", query = "SELECT o FROM Ocupacion o WHERE o.idOcupacion = :idOcupacion")
     , @NamedQuery(name = "Ocupacion.findByDescripcion", query = "SELECT o FROM Ocupacion o WHERE o.descripcion = :descripcion")})
 public class Ocupacion implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,6 +54,8 @@ public class Ocupacion implements Serializable {
     private List<DatosFamiliares> datosFamiliaresList1;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ocupacion", fetch = FetchType.LAZY)
     private List<IntegrantesFamilia> integrantesFamiliaList;
+    @OneToMany(mappedBy = "ocupacion")
+    private List<TutorFamiliar> tutorFamiliarList;
 
     public Ocupacion() {
     }
@@ -75,13 +77,6 @@ public class Ocupacion implements Serializable {
         this.idOcupacion = idOcupacion;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
 
     @XmlTransient
     public List<DatosFamiliares> getDatosFamiliaresList() {
@@ -133,6 +128,23 @@ public class Ocupacion implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion[ idOcupacion=" + idOcupacion + " ]";
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    @XmlTransient
+    public List<TutorFamiliar> getTutorFamiliarList() {
+        return tutorFamiliarList;
+    }
+
+    public void setTutorFamiliarList(List<TutorFamiliar> tutorFamiliarList) {
+        this.tutorFamiliarList = tutorFamiliarList;
     }
     
 }

@@ -15,6 +15,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -99,6 +101,12 @@ public class TutorFamiliar implements Serializable {
     private String parentesco;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tutor", fetch = FetchType.LAZY)
     private List<DatosFamiliares> datosFamiliaresList;
+    @JoinColumn(name = "ocupacion", referencedColumnName = "id_ocupacion")
+    @ManyToOne
+    private Ocupacion ocupacion;
+    @JoinColumn(name = "escolaridad", referencedColumnName = "id_escolaridad")
+    @ManyToOne
+    private Escolaridad escolaridad;
 
     public TutorFamiliar() {
     }
@@ -212,9 +220,25 @@ public class TutorFamiliar implements Serializable {
     public List<DatosFamiliares> getDatosFamiliaresList() {
         return datosFamiliaresList;
     }
-
+    
     public void setDatosFamiliaresList(List<DatosFamiliares> datosFamiliaresList) {
         this.datosFamiliaresList = datosFamiliaresList;
+    }
+    
+    public Ocupacion getOcupacion() {
+        return ocupacion;
+    }
+
+    public void setOcupacion(Ocupacion ocupacion) {
+        this.ocupacion = ocupacion;
+    }
+
+    public Escolaridad getEscolaridad() {
+        return escolaridad;
+    }
+
+    public void setEscolaridad(Escolaridad escolaridad) {
+        this.escolaridad = escolaridad;
     }
 
     @Override

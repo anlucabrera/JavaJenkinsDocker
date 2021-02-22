@@ -34,7 +34,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "DatosSocioeconomicos.findByTransporte", query = "SELECT d FROM DatosSocioeconomicos d WHERE d.transporte = :transporte")
     , @NamedQuery(name = "DatosSocioeconomicos.findByRentaViviendaActual", query = "SELECT d FROM DatosSocioeconomicos d WHERE d.rentaViviendaActual = :rentaViviendaActual")
     , @NamedQuery(name = "DatosSocioeconomicos.findByCostoRenta", query = "SELECT d FROM DatosSocioeconomicos d WHERE d.costoRenta = :costoRenta")
-    , @NamedQuery(name = "DatosSocioeconomicos.findByDependienteEconomico", query = "SELECT d FROM DatosSocioeconomicos d WHERE d.dependienteEconomico = :dependienteEconomico")
     , @NamedQuery(name = "DatosSocioeconomicos.findByReParaEstudiar", query = "SELECT d FROM DatosSocioeconomicos d WHERE d.reParaEstudiar = :reParaEstudiar")})
 public class DatosSocioeconomicos implements Serializable {
 
@@ -54,9 +53,6 @@ public class DatosSocioeconomicos implements Serializable {
     private Boolean rentaViviendaActual;
     @Column(name = "costo_renta")
     private Integer costoRenta;
-    @Size(max = 7)
-    @Column(name = "dependiente_economico")
-    private String dependienteEconomico;
     @Size(max = 13)
     @Column(name = "re_para__estudiar")
     private String reParaEstudiar;
@@ -109,14 +105,6 @@ public class DatosSocioeconomicos implements Serializable {
 
     public void setCostoRenta(Integer costoRenta) {
         this.costoRenta = costoRenta;
-    }
-
-    public String getDependienteEconomico() {
-        return dependienteEconomico;
-    }
-
-    public void setDependienteEconomico(String dependienteEconomico) {
-        this.dependienteEconomico = dependienteEconomico;
     }
 
     public String getReParaEstudiar() {

@@ -35,19 +35,35 @@ public class UtilidadesCH implements Serializable {
     private EjbUtilidadesCH ejbDatosUsuarioLogeado;
 
     public LocalDate castearDaLD(Date fecha) {
-        return fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if (fecha != null) {
+            return fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        } else {
+            return LocalDate.now();
+        }
     }
 
     public Date castearLDaD(LocalDate fecha) {
-        return Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        if (fecha != null) {
+            return Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        } else {
+            return new Date();
+        }
     }
 
     public LocalDateTime castearDaLDT(Date fecha) {
-        return LocalDateTime.ofInstant(fecha.toInstant(), ZoneId.systemDefault());
+        if (fecha != null) {
+            return LocalDateTime.ofInstant(fecha.toInstant(), ZoneId.systemDefault());
+        } else {
+            return LocalDateTime.now();
+        }
     }
 
     public Date castearLDTaD(LocalDateTime fecha) {
-        return Date.from(fecha.atZone(ZoneId.systemDefault()).toInstant());
+        if (fecha != null) {
+            return Date.from(fecha.atZone(ZoneId.systemDefault()).toInstant());
+        } else {
+            return new Date();
+        }
     }
 
     public Boolean editarIncidencias(LocalDate fechaActual, Date fechaComparacion, Integer tipo) {
@@ -86,19 +102,22 @@ public class UtilidadesCH implements Serializable {
 
     public Integer obtenerEdad(Date fechaNa) {
         try {
-            LocalDate fechaActual = LocalDate.now();
-            LocalDate fechaNacimi = castearDaLD(fechaNa);
+            if (fechaNa != null) {
+                LocalDate fechaActual = LocalDate.now();
+                LocalDate fechaNacimi = castearDaLD(fechaNa);
 
-            if (fechaActual.getMonthValue() >= fechaNacimi.getMonthValue()) {
-                if (fechaActual.getDayOfMonth() >= fechaNacimi.getDayOfMonth()) {
-                    return (fechaActual.getYear() - fechaNacimi.getYear());
+                if (fechaActual.getMonthValue() >= fechaNacimi.getMonthValue()) {
+                    if (fechaActual.getDayOfMonth() >= fechaNacimi.getDayOfMonth()) {
+                        return (fechaActual.getYear() - fechaNacimi.getYear());
+                    } else {
+                        return ((fechaActual.getYear() - fechaNacimi.getYear()) - 1);
+                    }
                 } else {
                     return ((fechaActual.getYear() - fechaNacimi.getYear()) - 1);
                 }
-            } else {
-                return ((fechaActual.getYear() - fechaNacimi.getYear()) - 1);
+            } else {    
+                return 0;
             }
-
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(UtilidadesCH.class.getName()).log(Level.SEVERE, null, ex);

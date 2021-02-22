@@ -357,9 +357,14 @@
                                                                     <div class="row">
                                                                         <div class="form-group">
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
-                                                                                <p:outputLabel for="telFijo" style="font-size: large" value="Teléfono fijo"/>
+                                                                                <p:outputLabel for="telFijo" style="font-size: large" value="Teléfono fijo procedencia"/>
                                                                                 <p:inputMask mask="(99)(999)999-9999" id="telFijo" class="form-control" placeholder="(99)(999)-999-9999" value="#{registrolDelEstudiante.rol.comunicacion.telefonoFijo}"/>
                                                                                 <p:message for="telFijo"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                                <p:outputLabel for="telRenta" style="font-size: large" value="Teléfono fijo residencia"/>
+                                                                                <p:inputMask mask="(99)(999)999-9999" id="telRenta" class="form-control" placeholder="(99)(999)-999-9999" value="#{registrolDelEstudiante.rol.comunicacion.telefonoRenta}"/>
+                                                                                <p:message for="telRenta"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="telMovil" style="font-size: large" value="Teléfono Móvil"/>
@@ -373,6 +378,7 @@
                                                                                 </p:inputText>
                                                                                 <p:message for="email"><p:autoUpdate/></p:message>
                                                                             </div>
+
                                                                         </div>
                                                                     </div>
                                                                     <hr/>
@@ -394,7 +400,7 @@
                                         </h:form>
                                     </p:tab>
                                     <p:tab title="Domicilio de residencia y procedencia" >
-                                        <h:form>
+                                        <o:form id="frmForAc"  enctype="multipart/form-data"> 
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <div class="col-md-12">
                                                     <div class="box box-widget widget-user-2">
@@ -406,17 +412,17 @@
                                                                         <div class="form-group">
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:outputLabel for="calle" style="font-size: large" value="Calle*"/>
-                                                                                <p:inputText id="calle" class="form-control" placeholder="Calle" value="#{registrolDelEstudiante.rol.ddomicilios.domicilio.calle}" required="true" requiredMessage="La calle de recidencia es requerida"/>
+                                                                                <p:inputText id="calle" class="form-control" placeholder="Calle" value="#{registrolDelEstudiante.rol.ddomicilios.domicilio.calle}" required="true" requiredMessage="La calle de residencia es requerida"/>
                                                                                 <p:message for="calle"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:outputLabel for="numero" style="font-size: large" value="Número*"/>
-                                                                                <p:inputText id="numero" class="form-control" placeholder="14,14-B"  value="#{registrolDelEstudiante.rol.ddomicilios.domicilio.numero}" required="true" requiredMessage="El numero de casa de recidencia es requerido"/>
+                                                                                <p:inputText id="numero" class="form-control" placeholder="14,14-B"  value="#{registrolDelEstudiante.rol.ddomicilios.domicilio.numero}" required="true" requiredMessage="El numero de casa de residencia es requerido"/>
                                                                                 <p:message for="numero"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:outputLabel for="estadoR" style="font-size: large" value="Estado*"/>
-                                                                                <p:selectOneMenu id="estadoR" value="#{registrolDelEstudiante.rol.ddomicilios.domicilio.idEstado}" required="true" requiredMessage="El estado de recidencia es requerido">
+                                                                                <p:selectOneMenu id="estadoR" value="#{registrolDelEstudiante.rol.ddomicilios.domicilio.idEstado}" required="true" requiredMessage="El estado de residencia es requerido">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{registrolDelEstudiante.rol.estadosDo}" var="estado" itemValue="#{estado.idestado}" itemLabel="#{estado.nombre}" />
                                                                                     <p:ajax listener="#{registrolDelEstudiante.municipiosPorEstadoResidencia()}" update="municipioR" process="@this"/>
@@ -425,7 +431,7 @@
                                                                             </div>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:outputLabel for="municipioR" style="font-size: large" value="Municipio*"/>
-                                                                                <p:selectOneMenu id="municipioR" value="#{registrolDelEstudiante.rol.ddomicilios.domicilio.idMunicipio}" required="true" requiredMessage="El municipio de recidencia es requerid">
+                                                                                <p:selectOneMenu id="municipioR" value="#{registrolDelEstudiante.rol.ddomicilios.domicilio.idMunicipio}" required="true" requiredMessage="El municipio de residencia es requerid">
                                                                                     <f:selectItem itemValue="" itemLabel=""/>
                                                                                     <f:selectItems value="#{registrolDelEstudiante.rol.municipiosDo}" var="municipio" itemValue="#{municipio.municipioPK.claveMunicipio}" itemLabel="#{municipio.nombre}" />
                                                                                     <p:ajax listener="#{registrolDelEstudiante.asentamientosPorMunicipioResidencia()}" update="asentamientoR"/>
@@ -435,7 +441,7 @@
 
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:outputLabel for="asentamientoR" style="font-size: large" value="Asentamiento*"/>
-                                                                                <p:selectOneMenu id="asentamientoR" value="#{registrolDelEstudiante.rol.ddomicilios.domicilio.idAsentamiento}" filter="true" filterMatchMode="startsWith" required="true" requiredMessage="El asentamiento de recidencia es requerido">
+                                                                                <p:selectOneMenu id="asentamientoR" value="#{registrolDelEstudiante.rol.ddomicilios.domicilio.idAsentamiento}" filter="true" filterMatchMode="startsWith" required="true" requiredMessage="El asentamiento de residencia es requerido">
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{registrolDelEstudiante.rol.asentamientosDo}" var="asen" itemValue="#{asen.asentamientoPK.asentamiento}" itemLabel="#{asen.codigoPostal}--#{asen.nombreAsentamiento}" />
                                                                                     <p:ajax/>
@@ -446,7 +452,7 @@
                                                                                 <p:outputLabel for="tiempoResidencoa" style="font-size: large" value="Tiempo de residencia*"/>
                                                                                 <p:inputText id="tiempoResidencoa" styleClass="form-control" placeholder="Ejem: 1 año" value="#{registrolDelEstudiante.rol.ddomicilios.domicilio.tiempoResidencia}" required="true" requiredMessage="El tiempo de recidenca es requerido"/>
                                                                                 <p:message for="tiempoResidencoa"><p:autoUpdate/></p:message>
-                                                                            </div>                                                                            
+                                                                            </div> 
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -506,6 +512,27 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <p:outputLabel for="messages" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Croquis de:" />
+                                                                                <br/>
+                                                                                <p:outputPanel >
+                                                                                    <p:autoUpdate/>
+                                                                                    <p:selectOneRadio id="rutas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{registrolDelEstudiante.rol.evidencia}" 
+                                                                                                      layout="responsive" columns="2" required="true" requiredMessage="El tipo de evidencia es necesrio para acargar la evidencia"> 
+                                                                                        <f:selectItem itemValue = "Procedencia" itemLabel = "Domicilio de Procedencia #{registrolDelEstudiante.rol.ddomicilios.domicilio.croquisParticular eq null?'':'(: ya cuenta con el archivo cargado)'}" /> 
+                                                                                        <f:selectItem itemValue = "Residencia" itemLabel = "Domicilio de Residencia #{registrolDelEstudiante.rol.ddomicilios.domicilio.croquisRenta eq null?'':'(: ya cuenta con el archivo cargado)'}" />
+                                                                                    </p:selectOneRadio> 
+                                                                                </p:outputPanel>
+                                                                                <o:inputFile id="file" value="#{registrolDelEstudiante.rol.croquis}" accept="image/png||image/jpeg||image/pjpeg|" acceptMessage="Solo se permiten Imagenes." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                <br/>
+                                                                                <h:message id="messageForFile" for="file" />
+                                                                                <br/>
+                                                                                <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{registrolDelEstudiante.agregarCroquis}"/>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                     <hr/>
                                                                     <div class="row">
                                                                         <div class="form-group">
@@ -516,13 +543,16 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
+                                                                    <p:blockUI block="frmForAc" widgetVar="bloqueoCargaFile">
+                                                                        Cargando archivo espere por favor.<br />
+                                                                    </p:blockUI>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </h:form>
+                                        </o:form>
                                     </p:tab>
                                     <p:tab title="Familia" >
                                         <p:tabView id="tabw2" activeIndex="#{registrolDelEstudiante.rol.subpaso}">
@@ -552,6 +582,22 @@
                                                                                         <p:inputText id="amTutor" class="form-control" placeholder="Apellido Materno del Tutor" value="#{registrolDelEstudiante.rol.tutor.tutorFamiliar.apellidoMaterno}" required="true" requiredMessage="Debe de indicar el apellido materno del tutor familiar"/>
                                                                                         <p:message for="amTutor"><p:autoUpdate/></p:message>
                                                                                     </div>
+                                                                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                        <p:outputLabel for="ocupacionT" style="font-size: large" value="Ocupación*"/>
+                                                                                        <p:selectOneMenu id="ocupacionT" value="#{registrolDelEstudiante.rol.tutor.ocupacion}" converter="reincorporacionConverter" required="true" requiredMessage="Debe de indicar la ocupación de tu padre">
+                                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                                            <f:selectItems value="#{registrolDelEstudiante.rol.ocupacions}" var="oc" itemValue="#{oc}" itemLabel="#{oc.descripcion}"/>
+                                                                                        </p:selectOneMenu>
+                                                                                        <p:message for="ocupacionT"><p:autoUpdate/></p:message>
+                                                                                    </div>
+                                                                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                        <p:outputLabel for="escolaridadt" style="font-size: large" value="Escolaridad*"/>
+                                                                                        <p:selectOneMenu id="escolaridadt" value="#{registrolDelEstudiante.rol.tutor.escolaridad}" converter="reincorporacionConverter" required="true" requiredMessage="Debe de indicar la escolaridad de tu padre">
+                                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                                            <f:selectItems value="#{registrolDelEstudiante.rol.escolaridads}" var="esm" itemValue="#{esm}" itemLabel="#{esm.descripcion}"/>
+                                                                                        </p:selectOneMenu>
+                                                                                        <p:message for="escolaridadt"><p:autoUpdate/></p:message>
+                                                                                    </div>
                                                                                     <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                         <p:outputLabel for="calleTutor" style="font-size: large" value="Calle*"/>
                                                                                         <p:inputText id="calleTutor" class="form-control" placeholder="Calle" value="#{registrolDelEstudiante.rol.tutor.tutorFamiliar.calle}" required="true" requiredMessage="Debe de indicar la calle de su tutor familiar"/>
@@ -564,7 +610,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="estadoT" style="font-size: large" value="Estado*"/>
-                                                                                        <p:selectOneMenu id="estadoT" value="#{registrolDelEstudiante.rol.tutor.tutorFamiliar.estado}" required="true" requiredMessage="Debe de indicar el estado de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="estadoT" value="#{registrolDelEstudiante.rol.tutor.tutorFamiliar.estado}" required="true" requiredMessage="Debe de indicar el estado de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.estadosTt}" var="estado" itemValue="#{estado.idestado}" itemLabel="#{estado.nombre}" />
                                                                                             <p:ajax listener="#{registrolDelEstudiante.municipiosPorEstadoTutor()}" update="municipioT" process="@this"/>
@@ -573,7 +619,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="municipioT" style="font-size: large" value="Municipio*"/>
-                                                                                        <p:selectOneMenu id="municipioT" value="#{registrolDelEstudiante.rol.tutor.tutorFamiliar.municipio}" required="true" requiredMessage="Debe de indicar el municipio de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="municipioT" value="#{registrolDelEstudiante.rol.tutor.tutorFamiliar.municipio}" required="true" requiredMessage="Debe de indicar el municipio de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.municipiosTt}" var="mun" itemValue="#{mun.municipioPK.claveMunicipio}" itemLabel="#{mun.nombre}" />
                                                                                             <p:ajax listener="#{registrolDelEstudiante.asentamientosPorMunicipioTutor()}" update="asentamientoT"/>
@@ -582,7 +628,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="asentamientoT" style="font-size: large" value="Asentamiento*"/>
-                                                                                        <p:selectOneMenu id="asentamientoT" value="#{registrolDelEstudiante.rol.tutor.tutorFamiliar.asentamiento}" filter="true" filterMatchMode="startsWith"  required="true" requiredMessage="Debe de indicar el asentamiento de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="asentamientoT" value="#{registrolDelEstudiante.rol.tutor.tutorFamiliar.asentamiento}" filter="true" filterMatchMode="startsWith"  required="true" requiredMessage="Debe de indicar el asentamiento de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.asentamientosTt}" var="ase" itemValue="#{ase.asentamientoPK.asentamiento}" itemLabel="#{ase.nombreAsentamiento}" />
                                                                                         </p:selectOneMenu>
@@ -661,7 +707,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="estadoP" style="font-size: large" value="Estado*"/>
-                                                                                        <p:selectOneMenu id="estadoP" value="#{registrolDelEstudiante.rol.dfamiliares.datosFamiliares.estadoPadre}" required="true" requiredMessage="Debe de indicar el estado de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="estadoP" value="#{registrolDelEstudiante.rol.dfamiliares.datosFamiliares.estadoPadre}" required="true" requiredMessage="Debe de indicar el estado de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.estadosPa}" var="estado" itemValue="#{estado.idestado}" itemLabel="#{estado.nombre}" />
                                                                                             <p:ajax listener="#{registrolDelEstudiante.municipiosPorEstadoPadre()}" update="municipioP" process="@this"/>
@@ -670,7 +716,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="municipioP" style="font-size: large" value="Municipio*"/>
-                                                                                        <p:selectOneMenu id="municipioP" value="#{registrolDelEstudiante.rol.dfamiliares.datosFamiliares.municipioPadre}" required="true" requiredMessage="Debe de indicar el municipio de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="municipioP" value="#{registrolDelEstudiante.rol.dfamiliares.datosFamiliares.municipioPadre}" required="true" requiredMessage="Debe de indicar el municipio de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.municipiosPa}" var="mun" itemValue="#{mun.municipioPK.claveMunicipio}" itemLabel="#{mun.nombre}" />
                                                                                             <p:ajax listener="#{registrolDelEstudiante.asentamientosPorMunicipioPadre()}" update="asentamientoP"/>
@@ -679,7 +725,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="asentamientoP" style="font-size: large" value="Asentamiento*"/>
-                                                                                        <p:selectOneMenu id="asentamientoP" value="#{registrolDelEstudiante.rol.dfamiliares.datosFamiliares.asentamientoPadre}" filter="true" filterMatchMode="startsWith"  required="true" requiredMessage="Debe de indicar el asentamiento de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="asentamientoP" value="#{registrolDelEstudiante.rol.dfamiliares.datosFamiliares.asentamientoPadre}" filter="true" filterMatchMode="startsWith"  required="true" requiredMessage="Debe de indicar el asentamiento de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.asentamientosPa}" var="ase" itemValue="#{ase.asentamientoPK.asentamiento}" itemLabel="#{ase.nombreAsentamiento}" />
                                                                                         </p:selectOneMenu>
@@ -749,7 +795,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="estadoM" style="font-size: large" value="Estado*"/>
-                                                                                        <p:selectOneMenu id="estadoM" value="#{registrolDelEstudiante.rol.dfamiliares.datosFamiliares.estadoMadre}" required="true" requiredMessage="Debe de indicar el estado de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="estadoM" value="#{registrolDelEstudiante.rol.dfamiliares.datosFamiliares.estadoMadre}" required="true" requiredMessage="Debe de indicar el estado de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.estadosMa}" var="estado" itemValue="#{estado.idestado}" itemLabel="#{estado.nombre}" />
                                                                                             <p:ajax listener="#{registrolDelEstudiante.municipiosPorEstadoMadre()}" update="municipioM" process="@this"/>
@@ -758,7 +804,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="municipioM" style="font-size: large" value="Municipio*"/>
-                                                                                        <p:selectOneMenu id="municipioM" value="#{registrolDelEstudiante.rol.dfamiliares.datosFamiliares.municipioMadre}" required="true" requiredMessage="Debe de indicar el municipio de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="municipioM" value="#{registrolDelEstudiante.rol.dfamiliares.datosFamiliares.municipioMadre}" required="true" requiredMessage="Debe de indicar el municipio de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.municipiosMa}" var="mun" itemValue="#{mun.municipioPK.claveMunicipio}" itemLabel="#{mun.nombre}" />
                                                                                             <p:ajax listener="#{registrolDelEstudiante.asentamientosPorMunicipioMadre()}" update="asentamientoM"/>
@@ -767,7 +813,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="asentamientoM" style="font-size: large" value="Asentamiento*"/>
-                                                                                        <p:selectOneMenu id="asentamientoM" value="#{registrolDelEstudiante.rol.dfamiliares.datosFamiliares.asentamientoMadre}" filter="true" filterMatchMode="startsWith"  required="true" requiredMessage="Debe de indicar el asentamiento de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="asentamientoM" value="#{registrolDelEstudiante.rol.dfamiliares.datosFamiliares.asentamientoMadre}" filter="true" filterMatchMode="startsWith"  required="true" requiredMessage="Debe de indicar el asentamiento de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.asentamientosMa}" var="ase" itemValue="#{ase.asentamientoPK.asentamiento}" itemLabel="#{ase.nombreAsentamiento}" />
                                                                                         </p:selectOneMenu>
@@ -847,7 +893,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="estadoF" style="font-size: large" value="Estado*"/>
-                                                                                        <p:selectOneMenu id="estadoF" value="#{registrolDelEstudiante.rol.familiaR.familia.estado}" required="true" requiredMessage="Debe de indicar el estado de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="estadoF" value="#{registrolDelEstudiante.rol.familiaR.familia.estado}" required="true" requiredMessage="Debe de indicar el estado de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.estadosFa}" var="estado" itemValue="#{estado.idestado}" itemLabel="#{estado.nombre}" />
                                                                                             <p:ajax listener="#{registrolDelEstudiante.municipiosPorEstadoFamiliar()}" update="municipioF" process="@this"/>
@@ -856,7 +902,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="municipioF" style="font-size: large" value="Municipio*"/>
-                                                                                        <p:selectOneMenu id="municipioF" value="#{registrolDelEstudiante.rol.familiaR.familia.municipio}" required="true" requiredMessage="Debe de indicar el municipio de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="municipioF" value="#{registrolDelEstudiante.rol.familiaR.familia.municipio}" required="true" requiredMessage="Debe de indicar el municipio de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.municipiosFa}" var="mun" itemValue="#{mun.municipioPK.claveMunicipio}" itemLabel="#{mun.nombre}" />
                                                                                             <p:ajax listener="#{registrolDelEstudiante.asentamientosPorMunicipioFamiliar()}" update="asentamientoF"/>
@@ -865,7 +911,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="asentamientoF" style="font-size: large" value="Asentamiento*"/>
-                                                                                        <p:selectOneMenu id="asentamientoF" value="#{registrolDelEstudiante.rol.familiaR.familia.asentamiento}" filter="true" filterMatchMode="startsWith"  required="true" requiredMessage="Debe de indicar el asentamiento de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="asentamientoF" value="#{registrolDelEstudiante.rol.familiaR.familia.asentamiento}" filter="true" filterMatchMode="startsWith"  required="true" requiredMessage="Debe de indicar el asentamiento de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.asentamientosFa}" var="ase" itemValue="#{ase.asentamientoPK.asentamiento}" itemLabel="#{ase.nombreAsentamiento}" />
                                                                                         </p:selectOneMenu>
@@ -971,7 +1017,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="estadoCe" style="font-size: large" value="Estado*"/>
-                                                                                        <p:selectOneMenu id="estadoCe" value="#{registrolDelEstudiante.rol.rcontactoEmergencia.emergenciasEstudiante.estado}" required="true" requiredMessage="Debe de indicar el estado de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="estadoCe" value="#{registrolDelEstudiante.rol.rcontactoEmergencia.emergenciasEstudiante.estado}" required="true" requiredMessage="Debe de indicar el estado de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.estadosCe}" var="estado" itemValue="#{estado.idestado}" itemLabel="#{estado.nombre}" />
                                                                                             <p:ajax listener="#{registrolDelEstudiante.municipiosPorEstadoContactoEmergencias()}" update="municipioCe" process="@this"/>
@@ -980,7 +1026,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="municipioCe" style="font-size: large" value="Municipio*"/>
-                                                                                        <p:selectOneMenu id="municipioCe" value="#{registrolDelEstudiante.rol.rcontactoEmergencia.emergenciasEstudiante.municipio}" required="true" requiredMessage="Debe de indicar el municipio de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="municipioCe" value="#{registrolDelEstudiante.rol.rcontactoEmergencia.emergenciasEstudiante.municipio}" required="true" requiredMessage="Debe de indicar el municipio de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.municipiosCe}" var="mun" itemValue="#{mun.municipioPK.claveMunicipio}" itemLabel="#{mun.nombre}" />
                                                                                             <p:ajax listener="#{registrolDelEstudiante.asentamientosPorMunicipioContactoEmergencias()}" update="asentamientoCe"/>
@@ -989,7 +1035,7 @@
                                                                                     </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:outputLabel for="asentamientoCe" style="font-size: large" value="Asentamiento*"/>
-                                                                                        <p:selectOneMenu id="asentamientoCe" value="#{registrolDelEstudiante.rol.rcontactoEmergencia.emergenciasEstudiante.asentamiento}" filter="true" filterMatchMode="startsWith"  required="true" requiredMessage="Debe de indicar el asentamiento de recidencia de su tutor familiar">
+                                                                                        <p:selectOneMenu id="asentamientoCe" value="#{registrolDelEstudiante.rol.rcontactoEmergencia.emergenciasEstudiante.asentamiento}" filter="true" filterMatchMode="startsWith"  required="true" requiredMessage="Debe de indicar el asentamiento de residencia de su tutor familiar">
                                                                                             <f:selectItem itemValue="#{null}"/>
                                                                                             <f:selectItems value="#{registrolDelEstudiante.rol.asentamientosCe}" var="ase" itemValue="#{ase.asentamientoPK.asentamiento}" itemLabel="#{ase.nombreAsentamiento}" />
                                                                                         </p:selectOneMenu>
@@ -1086,17 +1132,17 @@
                                                                             <div class="form-group">
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="ingresoM" style="font-size: large" value="Ingreso mensual Aproximado*"/>
-                                                                                    <p:inputNumber id="ingresoM" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.ingresoMensual}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de recidencia es requerida"/>
+                                                                                    <p:inputNumber id="ingresoM" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.ingresoMensual}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de residencia es requerida"/>
                                                                                     <p:message for="ingresoM"><p:autoUpdate/></p:message>
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="nomEmP" style="font-size: large" value="Nombre de la empresa*"/>
-                                                                                    <p:inputText id="nomEmP" class="form-control" placeholder="Empresa" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.nombreEmpresa}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de recidencia es requerida"/>
+                                                                                    <p:inputText id="nomEmP" class="form-control" placeholder="Empresa" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.nombreEmpresa}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de residencia es requerida"/>
                                                                                     <p:message for="nomEmP"><p:autoUpdate/></p:message>
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="puestoO" style="font-size: large" value="Puesto*"/>
-                                                                                    <p:inputText id="puestoO" class="form-control" placeholder="Puesto" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.puesto}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de recidencia es requerida"/>
+                                                                                    <p:inputText id="puestoO" class="form-control" placeholder="Puesto" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.puesto}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de residencia es requerida"/>
                                                                                     <p:message for="puestoO"><p:autoUpdate/></p:message>
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
@@ -1106,17 +1152,17 @@
 
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="calle" style="font-size: large" value="Calle*"/>
-                                                                                    <p:inputText id="calle" class="form-control" placeholder="Calle" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.calle}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de recidencia es requerida"/>
+                                                                                    <p:inputText id="calle" class="form-control" placeholder="Calle" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.calle}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de residencia es requerida"/>
                                                                                     <p:message for="calle"><p:autoUpdate/></p:message>
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="numero" style="font-size: large" value="Número*"/>
-                                                                                    <p:inputText id="numero" class="form-control" placeholder="14,14-B"  value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.numero}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="El numero de casa de recidencia es requerido"/>
+                                                                                    <p:inputText id="numero" class="form-control" placeholder="14,14-B"  value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.numero}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="El numero de casa de residencia es requerido"/>
                                                                                     <p:message for="numero"><p:autoUpdate/></p:message>
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="estadoR" style="font-size: large" value="Estado*"/>
-                                                                                    <p:selectOneMenu id="estadoR" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.estado}" required="true" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" requiredMessage="El estado de recidencia es requerido">
+                                                                                    <p:selectOneMenu id="estadoR" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.estado}" required="true" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" requiredMessage="El estado de residencia es requerido">
                                                                                         <f:selectItem itemValue="#{null}"/>
                                                                                         <f:selectItems value="#{registrolDelEstudiante.rol.estadosDl}" var="estado" itemValue="#{estado.idestado}" itemLabel="#{estado.nombre}" />
                                                                                         <p:ajax listener="#{registrolDelEstudiante.municipiosPorEstadoDatosLaborales()}" update="municipioR" process="@this"/>
@@ -1125,7 +1171,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="municipioR" style="font-size: large" value="Municipio*"/>
-                                                                                    <p:selectOneMenu id="municipioR" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.municipio}" required="true" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" requiredMessage="El municipio de recidencia es requerid">
+                                                                                    <p:selectOneMenu id="municipioR" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.municipio}" required="true" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" requiredMessage="El municipio de residencia es requerid">
                                                                                         <f:selectItem itemValue="" itemLabel=""/>
                                                                                         <f:selectItems value="#{registrolDelEstudiante.rol.municipiosDl}" var="municipio" itemValue="#{municipio.municipioPK.claveMunicipio}" itemLabel="#{municipio.nombre}" />
                                                                                         <p:ajax listener="#{registrolDelEstudiante.asentamientosPorMunicipioDatosLaborales()}" update="asentamientoR"/>
@@ -1134,7 +1180,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="asentamientoR" style="font-size: large" value="Asentamiento*"/>
-                                                                                    <p:selectOneMenu id="asentamientoR" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.asentamiento}" filter="true" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" filterMatchMode="startsWith" required="true" requiredMessage="El asentamiento de recidencia es requerido">
+                                                                                    <p:selectOneMenu id="asentamientoR" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.asentamiento}" filter="true" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" filterMatchMode="startsWith" required="true" requiredMessage="El asentamiento de residencia es requerido">
                                                                                         <f:selectItem itemValue="#{null}"/>
                                                                                         <f:selectItems value="#{registrolDelEstudiante.rol.asentamientosDl}" var="asen" itemValue="#{asen.asentamientoPK.asentamiento}" itemLabel="#{asen.codigoPostal}--#{asen.nombreAsentamiento}" />
                                                                                         <p:ajax/>
@@ -1143,7 +1189,7 @@
                                                                                 </div>   
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="razonTra" style="font-size: large" value="Razon por la que Trabaja*"/>
-                                                                                    <p:inputTextarea id="razonTra" class="form-control" placeholder="Razon por la que Trabaja" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.razonDeTrabajo}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de recidencia es requerida"/>
+                                                                                    <p:inputTextarea id="razonTra" class="form-control" placeholder="Razon por la que Trabaja" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.razonDeTrabajo}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de residencia es requerida"/>
                                                                                     <p:message for="razonTra"><p:autoUpdate/></p:message>
                                                                                 </div>       
                                                                                 <div class="col-sm-3 col-md-3 col-lg-3">
@@ -1206,14 +1252,6 @@
                                                                                 <p:message for="transporteR"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                <p:outputLabel for="depenEco" style="font-size: large" value="¿de quien dependes principalmente economicamente?*"/>
-                                                                                <p:selectOneMenu id="depenEco" value="#{registrolDelEstudiante.rol.sosioeconomicosR.socioeconomicos.dependienteEconomico}" filter="true" filterMatchMode="startsWith" required="true" requiredMessage="El asentamiento de recidencia es requerido">
-                                                                                    <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{registrolDelEstudiante.rol.dependientes}" var="dep" itemValue="#{dep}" itemLabel="#{dep}" />
-                                                                                </p:selectOneMenu>
-                                                                                <p:message for="depenEco"><p:autoUpdate/></p:message>
-                                                                            </div>  
-                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:outputLabel for="recEst" style="font-size: large" value="¿Cómo consideras tus recursos económicos para estudiar?*"/>
                                                                                 <p:selectOneMenu id="recEst" value="#{registrolDelEstudiante.rol.sosioeconomicosR.socioeconomicos.reParaEstudiar}" filter="true" filterMatchMode="startsWith" required="true" requiredMessage="El asentamiento de procedencia es requerido">
                                                                                     <f:selectItem itemValue="#{null}"/>
@@ -1256,12 +1294,6 @@
                                                                                 <p:outputLabel for="intRen" style="font-size: large" value="¿Tienes acceso a internet donde renta o vive actualmente?*"/>
                                                                                 <p:selectBooleanButton id="intRen" value="#{registrolDelEstudiante.rol.academicosCR.complementarios.internetRenta}" onLabel="Si" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px"/>
                                                                             </div>
-                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
-                                                                                <p:outputLabel for="otCarrera" style="font-size: large" value="En caso de que la carrea que escogiste no haya sido tu primera opción ¿Qué deseabas estudiar?*"/>
-                                                                                <p:inputText id="otCarrera" class="form-control" placeholder="Carrera" value="#{registrolDelEstudiante.rol.academicosCR.complementarios.otraAcrrera}"/>
-                                                                                <p:message for="otCarrera"><p:autoUpdate/></p:message>
-                                                                            </div>
-
                                                                         </div>
                                                                     </div>
                                                                     <hr/>
@@ -1283,7 +1315,7 @@
                                         </h:form>
                                     </p:tab>
 
-                                    <p:tab title="Descarga tu ficha de admisión" >
+                                    <p:tab title="Datos Complementarios" >
                                         <h:form prependId="false" class="form-horizontal">
                                             <div class="box box-primary">
                                                 <div class="box-header with-border">
@@ -1343,7 +1375,7 @@
                                                                                                   requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
                                                                                     <f:selectItem itemLabel="Si" itemValue="Si" />
                                                                                     <f:selectItem itemLabel="No" itemValue="No" />
-                                                                                    <p:ajax update="@form" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                    <p:ajax update="@form" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                 </p:selectOneRadio >
                                                                             </td>
                                                                         </tr><!-- 1 -->
@@ -1356,7 +1388,7 @@
                                                                                     <p:selectOneMenu id="li" value="#{registrolDelEstudiante.rol.encuesta.lenguaIndigena}" converter="reincorporacionConverter" disabled="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r1Lenguaindigena eq 'Si'?false:true}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
                                                                                         <f:selectItem itemValue="#{null}"/>
                                                                                         <f:selectItems value="#{registrolDelEstudiante.rol.lenguaIndigenas}" var="li" itemLabel="#{li.nombre}" itemValue="#{li}"/>                                                                                        
-                                                                                        <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                        <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                     </p:selectOneMenu>
                                                                                 </p:outputPanel>
                                                                             </td>
@@ -1368,65 +1400,106 @@
                                                                                 <p:selectOneRadio id="p3" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r3comunidadIndigena}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
                                                                                     <f:selectItem itemLabel="Si" itemValue="Si" />
                                                                                     <f:selectItem itemLabel="No" itemValue="No" />                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                    <p:ajax update="@form" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                 </p:selectOneRadio >
                                                                             </td>
                                                                         </tr><!-- 3 -->
+                                                                        <c:if test="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r3comunidadIndigena eq 'Si'}">
+                                                                            <tr>
+                                                                                <td>4.0</td>
+                                                                                <td style="text-align: justify;">¿Cuál? especifique</td>
+                                                                                <td class="danger text-center" style="min-width: 120px;">
+                                                                                    <p:outputPanel>
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:inputText id="p22" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r22comunidadCual}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
+                                                                                            <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
+                                                                                        </p:inputText>
+                                                                                    </p:outputPanel>
+                                                                                </td>
+                                                                            </tr><!-- 4 -->
+                                                                        </c:if>
                                                                         <tr>
-                                                                            <td>4.0</td>
-                                                                            <td style="text-align: justify;">¿Cuentas con beca del Programa Bienestar (Prospera)?</td>
+                                                                            <td>5.0</td>
+                                                                            <td style="text-align: justify;">¿Cuentas con algún programa gubernamental como bienestar (antes prospera)?</td>
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <p:selectOneRadio id="p4" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r4programaBienestar}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
                                                                                     <f:selectItem itemLabel="Si" itemValue="Si" />
-                                                                                    <f:selectItem itemLabel="No" itemValue="No" />                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                    <f:selectItem itemLabel="No" itemValue="No" />   
+                                                                                    <f:selectItem itemLabel="Otro" itemValue="Otro" />                                                                                   
+                                                                                    <p:ajax update="@form" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                 </p:selectOneRadio >
                                                                             </td>
-                                                                        </tr><!-- 4 -->
+                                                                        </tr><!-- 5 -->
+                                                                        <c:if test="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r4programaBienestar eq 'Otro'}">
+                                                                            <tr>
+                                                                                <td>6.0</td>
+                                                                                <td style="text-align: justify;">¿Cuál? especifique</td>
+                                                                                <td class="danger text-center" style="min-width: 120px;">
+                                                                                    <p:outputPanel>
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:inputText id="p23" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r23programaCual}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
+                                                                                            <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
+                                                                                        </p:inputText>
+                                                                                    </p:outputPanel>
+                                                                                </td>
+                                                                            </tr><!-- 6 -->
+                                                                        </c:if>
                                                                         <tr>
-                                                                            <td>5.0</td>
+                                                                            <td>7.0</td>
                                                                             <td style="text-align: justify;">¿Cuál es tu ingreso mensual aproximado?</td>
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <p:inputNumber id="p5" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r5ingresoMensual}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
-                                                                                </p:inputNumber>
-                                                                            </td>
-                                                                        </tr><!-- 5 -->
-                                                                        <tr>
-                                                                            <td>6.0</td>
-                                                                            <td style="text-align: justify;">¿De quien dependes Económicamente?</td>
-                                                                            <td class="danger text-center" style="min-width: 120px;">
-                                                                                <p:selectOneButton id="p6" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r6dependesEconomicamnete}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
-                                                                                    <f:selectItem itemLabel="Padres" itemValue="Padres" />
-                                                                                    <f:selectItem itemLabel="hermanas o hermanos" itemValue="hermanas o hermanos" />
-                                                                                    <f:selectItem itemLabel="otro familiar" itemValue="otro familiar" />
-                                                                                    <f:selectItem itemLabel="Ninguno" itemValue="Ninguno" />                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
-                                                                                </p:selectOneButton>
-                                                                            </td>
-                                                                        </tr><!-- 6 -->
-                                                                        <tr>
-                                                                            <td>7.0</td>
-                                                                            <td style="text-align: justify;">¿Cuál es el ingreso mensual famliar aproximado?</td>
-                                                                            <td class="danger text-center" style="min-width: 120px;">
-                                                                                <p:inputNumber id="p7" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r7ingresoFamiliar}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                    <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                 </p:inputNumber>
                                                                             </td>
                                                                         </tr><!-- 7 -->
                                                                         <tr>
                                                                             <td>8.0</td>
+                                                                            <td style="text-align: justify;">¿De quien dependes Económicamente?</td>
+                                                                            <td class="danger text-center" style="min-width: 120px;">
+                                                                                <p:selectOneButton id="p6" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r6dependesEconomicamnete}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
+                                                                                    <f:selectItem itemLabel="Padres" itemValue="Padres" />
+                                                                                    <f:selectItem itemLabel="Padre" itemValue="Padre" />
+                                                                                    <f:selectItem itemLabel="Madre" itemValue="Madre" />
+                                                                                    <f:selectItem itemLabel="hermanas o hermanos" itemValue="hermanas o hermanos" />
+                                                                                    <f:selectItem itemLabel="otro familiar" itemValue="otro familiar" />
+                                                                                    <f:selectItem itemLabel="Conyuge" itemValue="Conyuge" />
+                                                                                    <f:selectItem itemLabel="Mi sueldo" itemValue="Mi sueldo" />                                                                                    
+                                                                                    <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
+                                                                                </p:selectOneButton>
+                                                                            </td>
+                                                                        </tr><!-- 8 -->
+                                                                        <tr>
+                                                                            <td>12.0</td>
+                                                                            <td style="text-align: justify;">Número de hermanos (dependientes económicamente del gasto familiar)</td>
+                                                                            <td class="danger text-center" style="min-width: 120px;">
+                                                                                <p:spinner id="p10" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r10numeroDependientes}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">                                                                                    
+                                                                                    <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
+                                                                                </p:spinner>
+                                                                            </td>
+                                                                        </tr><!-- 12 -->
+                                                                        <tr>
+                                                                            <td>9.0</td>
+                                                                            <td style="text-align: justify;">¿Cuál es el ingreso mensual famliar aproximado?</td>
+                                                                            <td class="danger text-center" style="min-width: 120px;">
+                                                                                <p:inputNumber id="p7" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r7ingresoFamiliar}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">                                                                                    
+                                                                                    <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
+                                                                                </p:inputNumber>
+                                                                            </td>
+                                                                        </tr><!-- 9 -->
+                                                                        <tr>
+                                                                            <td>10.0</td>
                                                                             <td style="text-align: justify;">¿Eres el primer miembro de tu familia en estudiar una carrera universitaria?</td>
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <p:selectOneRadio id="p8" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r8primerEstudiar}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
                                                                                     <f:selectItem itemLabel="Si" itemValue="Si" />
                                                                                     <f:selectItem itemLabel="No" itemValue="No" />                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                    <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                 </p:selectOneRadio >
                                                                             </td>
-                                                                        </tr><!-- 8 -->
+                                                                        </tr><!-- 10 -->
                                                                         <tr>
-                                                                            <td>9.0</td>
+                                                                            <td>11.0</td>
                                                                             <td style="text-align: justify;">¿Cuál es el nivel máximo de estudios que aspiras tener?</td>
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <p:selectOneButton id="p9" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r9nivelMaximoEstudios}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
@@ -1435,145 +1508,163 @@
                                                                                     <f:selectItem itemLabel="Especialidad" itemValue="Especialidad" />
                                                                                     <f:selectItem itemLabel="Maestría" itemValue="Maestría"/>
                                                                                     <f:selectItem itemLabel="Doctorado" itemValue="Doctorado"/>                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
-                                                                                </p:selectOneButton>
-                                                                            </td>
-                                                                        </tr><!-- 9 -->
-                                                                        <tr>
-                                                                            <td>10.0</td>
-                                                                            <td style="text-align: justify;">Número de hermanos (dependientes económicamente del gasto familiar)</td>
-                                                                            <td class="danger text-center" style="min-width: 120px;">
-                                                                                <p:spinner id="p10" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r10numeroDependientes}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
-                                                                                </p:spinner>
-                                                                            </td>
-                                                                        </tr><!-- 10 -->
-                                                                        <tr>
-                                                                            <td>11.0</td>
-                                                                            <td style="text-align: justify;">De acuerdo con el ingreso mensual total de tu hogar ¿cuál es tu situación socioeconómica?</td>
-                                                                            <td class="danger text-center" style="min-width: 120px;">
-                                                                                <p:selectOneButton id="p11" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r11situacionEconomica}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
-                                                                                    <f:selectItem itemValue="Alta" itemLabel="Alta"/>
-                                                                                    <f:selectItem itemValue="Media" itemLabel="Media"/>
-                                                                                    <f:selectItem itemValue="Baja" itemLabel="Baja"/>                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                    <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                 </p:selectOneButton>
                                                                             </td>
                                                                         </tr><!-- 11 -->
-                                                                        <tr>
-                                                                            <td>12.0</td>
-                                                                            <td style="text-align: justify;">¿Eres hijo o trabajador de PEMEX y pertenence a la Sección 39?</td>
-                                                                            <td class="danger text-center" style="min-width: 120px;">
-                                                                                <p:selectOneRadio id="p12" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r12hijoPemex}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
-                                                                                    <f:selectItem itemLabel="Si" itemValue="Si" />
-                                                                                    <f:selectItem itemLabel="No" itemValue="No" />                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
-                                                                                </p:selectOneRadio >
-                                                                            </td>
-                                                                        </tr><!-- 12 -->
+
                                                                         <tr>
                                                                             <td>13.0</td>
-                                                                            <td style="text-align: justify;">¿Consideraste a la UTXJ como primera opción para realizar tus estudios profesionales?	</td>
+                                                                            <td style="text-align: justify;">¿Consideraste a la UTXJ como primera opción para realizar tus estudios profesionales?</td>
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <p:selectOneRadio id="p13" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r13utxjPrimeraOpcion}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
                                                                                     <f:selectItem itemLabel="Si" itemValue="Si" />
                                                                                     <f:selectItem itemLabel="No" itemValue="No" />                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                    <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                 </p:selectOneRadio >
                                                                             </td>
                                                                         </tr><!-- 13 -->
                                                                         <tr>
+                                                                            <td>21</td>
+                                                                            <td style="text-align: justify;">¿Por qué elegiste estudiar en la Universidad Tecnológica de Xicotepec?</td>
+                                                                            <td class="danger text-center" style="min-width: 120px;">
+                                                                                <p:selectOneRadio id="pv1" value="#{registrolDelEstudiante.rol.encuestaVocacional.encuestaAspirante.r1}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuestaVocacional}">
+                                                                                    <f:selectItem itemLabel="Por la cercanía a mi localidad" itemValue="Por la cercanía a mi localidad" />    	
+                                                                                    <f:selectItem itemLabel="Por cuestiones de economía" itemValue="Por cuestiones de economía" />    	
+                                                                                    <f:selectItem itemLabel="Porque aquí estudiaron familiares o conocidos" itemValue="Porque aquí estudiaron familiares o conocidos" />    	
+                                                                                    <f:selectItem itemLabel="Se me hace muy buena universidad" itemValue="Se me hace muy buena universidad" />    	
+                                                                                    <f:selectItem itemLabel="Por la infraestructura con que cuenta" itemValue="Por la infraestructura con que cuenta" />    	
+                                                                                    <f:selectItem itemLabel="Cuenta con la carrera que deseo estudiar" itemValue="Cuenta con la carrera que deseo estudiar" />    	
+                                                                                    <f:selectItem itemLabel="No acredite el examen en otra universidad" itemValue="No acredite el examen en otra universidad" />    	
+                                                                                    <f:selectItem itemLabel="Otros motivos" itemValue="Otros motivos" />    	                                                                                  
+                                                                                    <p:ajax update="@form" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
+                                                                                </p:selectOneRadio >
+                                                                            </td>
+                                                                        </tr>
+                                                                        <c:if test="#{registrolDelEstudiante.rol.encuestaVocacional.encuestaAspirante.r1 eq 'Otros motivos'}">
+                                                                            <tr>
+                                                                                <td>22.0</td>
+                                                                                <td style="text-align: justify;">¿Cuál? especifique</td>
+                                                                                <td class="danger text-center" style="min-width: 120px;">
+                                                                                    <p:outputPanel>
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:inputText id="pv2" value="#{registrolDelEstudiante.rol.encuestaVocacional.encuestaAspirante.r2}" valueChangeListener="#{registrolDelEstudiante.guardaEncuestaVocacional}">
+                                                                                            <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
+                                                                                        </p:inputText>
+                                                                                    </p:outputPanel>
+                                                                                </td>
+                                                                            </tr><!-- 22 -->
+                                                                        </c:if>
+                                                                        <tr>
+                                                                            <td>23</td>
+                                                                            <td style="text-align: justify;">¿La carrera que elegiste, es tu primera opción?</td>
+                                                                            <td class="danger text-center" style="min-width: 120px;">
+                                                                                <p:selectOneRadio id="pv5" value="#{registrolDelEstudiante.rol.encuestaVocacional.encuestaAspirante.r5}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuestaVocacional}">
+                                                                                    <f:selectItem itemLabel="Si" itemValue="Si" />
+                                                                                    <f:selectItem itemLabel="No" itemValue="No" />                                                    
+                                                                                    <p:ajax update="@form" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
+                                                                                </p:selectOneRadio >
+                                                                            </td>
+                                                                        </tr>
+                                                                        <c:if test="#{registrolDelEstudiante.rol.encuestaVocacional.encuestaAspirante.r5 eq 'No'}">
+                                                                            <tr>
+                                                                                <td>24.0</td>
+                                                                                <td style="text-align: justify;">¿Cuál? especifique</td>
+                                                                                <td class="danger text-center" style="min-width: 120px;">
+                                                                                    <p:outputPanel>
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:inputText id="otCarrera" value="#{registrolDelEstudiante.rol.academicosCR.complementarios.otraAcrrera}" valueChangeListener="#{registrolDelEstudiante.guardaSocioeconomicosAcademicos}">
+                                                                                            <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
+                                                                                        </p:inputText>
+                                                                                    </p:outputPanel>
+                                                                                </td>
+                                                                            </tr><!-- 17 -->
+                                                                        </c:if>
+                                                                        <tr>
                                                                             <td>14.0</td>
-                                                                            <td style="text-align: justify;">¿Realizaste exámenes de admisión en otras universidades?</td>
-                                                                            <td class="danger text-center" style="min-width: 120px;">
-                                                                                <p:selectOneRadio id="p14" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r14examenAdmisionOU}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
-                                                                                    <f:selectItem itemLabel="Si" itemValue="Si" />
-                                                                                    <f:selectItem itemLabel="No" itemValue="No" />                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
-                                                                                </p:selectOneRadio >
-                                                                            </td>
-                                                                        </tr><!-- 14 -->
-                                                                        <tr>
-                                                                            <td>15.0</td>
-                                                                            <td style="text-align: justify;">De la siguiente lista, elige la opción que más influyó para que te decidieras a inscribirte en la UTXJ</td>
-                                                                            <td class="danger text-center" style="min-width: 120px;">
-                                                                                <p:selectOneMenu value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r15medioImpacto}" id="md" converter="reincorporacionConverter" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
-                                                                                    <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{registrolDelEstudiante.rol.medioDifusions}" var="mdifusion" itemLabel="#{mdifusion.descripcion}" itemValue="#{mdifusion}"/>                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
-                                                                                </p:selectOneMenu>
-                                                                            </td>
-                                                                        </tr><!-- 15 -->
-                                                                        <tr>
-                                                                            <td>16.0</td>
-                                                                            <td style="text-align: justify;">¿Estudias una segunda carrera a través de la modalidad 2x3?</td>
-                                                                            <td class="danger text-center" style="min-width: 120px;">
-                                                                                <p:selectOneRadio id="p16" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r16segundaCarrera}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
-                                                                                    <f:selectItem itemLabel="Si" itemValue="Si" />
-                                                                                    <f:selectItem itemLabel="No" itemValue="No" />                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
-                                                                                </p:selectOneRadio >
-                                                                            </td>
-                                                                        </tr><!-- 16 -->
-                                                                        <tr>
-                                                                            <td>17.0</td>
                                                                             <td style="text-align: justify;">¿Eres alérgica(o) a algún medicamento o alimento?</td>
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <p:selectOneRadio id="p17" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r17Alergia}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
                                                                                     <f:selectItem itemLabel="Si" itemValue="Si" />
                                                                                     <f:selectItem itemLabel="No" itemValue="No" />                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                    <p:ajax update="@form" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                 </p:selectOneRadio >
                                                                             </td>
-                                                                        </tr><!-- 17 -->
+                                                                        </tr><!-- 14 -->
+                                                                        <c:if test="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r17Alergia eq 'Si'}">
+                                                                            <tr>
+                                                                                <td>15.0</td>
+                                                                                <td style="text-align: justify;">¿Cuál? especifique</td>
+                                                                                <td class="danger text-center" style="min-width: 120px;">
+                                                                                    <p:outputPanel>
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:inputText id="p24" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r24alergiaCual}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
+                                                                                            <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
+                                                                                        </p:inputText>
+                                                                                    </p:outputPanel>
+                                                                                </td>
+                                                                            </tr><!-- 15 -->
+                                                                        </c:if>
                                                                         <tr>
-                                                                            <td>18.0</td>
+                                                                            <td>16.0</td>
                                                                             <td style="text-align: justify;">¿Padeces alguna enfermedad?</td>
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <p:selectOneRadio id="p18" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r18padecesEnfermedad}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
                                                                                     <f:selectItem itemLabel="Si" itemValue="Si" />
                                                                                     <f:selectItem itemLabel="No" itemValue="No" />                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                    <p:ajax update="@form" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                 </p:selectOneRadio >
                                                                             </td>
-                                                                        </tr><!-- 18 -->
+                                                                        </tr><!-- 16 -->
+                                                                        <c:if test="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r18padecesEnfermedad eq 'Si'}">
+                                                                            <tr>
+                                                                                <td>17.0</td>
+                                                                                <td style="text-align: justify;">¿Cuál? especifique</td>
+                                                                                <td class="danger text-center" style="min-width: 120px;">
+                                                                                    <p:outputPanel>
+                                                                                        <p:autoUpdate/>
+                                                                                        <p:inputText id="p25" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r25enfermedadCual}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
+                                                                                            <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
+                                                                                        </p:inputText>
+                                                                                    </p:outputPanel>
+                                                                                </td>
+                                                                            </tr><!-- 17 -->
+                                                                        </c:if>
                                                                         <tr>
-                                                                            <td>19.0</td>
+                                                                            <td>18.0</td>
                                                                             <td style="text-align: justify;">¿Estás en tratamiento médico?</td>
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <p:selectOneRadio id="p19" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r19tratamientoMedico}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
                                                                                     <f:selectItem itemLabel="Si" itemValue="Si" />
                                                                                     <f:selectItem itemLabel="No" itemValue="No" />                                                                                    
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                    <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                 </p:selectOneRadio >
                                                                             </td>
-                                                                        </tr><!-- 19 -->
-
-                                                                        <!-- 20 -->
+                                                                        </tr><!-- 18 -->
                                                                         <tr>
-                                                                            <td>20.0</td>
+                                                                            <td>19.0</td>
                                                                             <td style="text-align: justify;">¿Tienes hijos?</td>
                                                                             <td class="danger text-center" style="min-width: 120px;">
                                                                                 <p:selectOneRadio id="p20" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r20Hijos}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.saveEncuesta}">
                                                                                     <f:selectItem itemLabel="Si" itemValue="Si" />
                                                                                     <f:selectItem itemLabel="No" itemValue="No" />
-                                                                                    <p:ajax update="@form" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                    <p:ajax update="@form" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                 </p:selectOneRadio >
                                                                             </td>
                                                                         </tr>
                                                                         <c:if test="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r20Hijos eq 'Si'}">
-                                                                            <!-- 20.1 -->
+                                                                            <!-- 20 -->
                                                                             <tr>
                                                                                 <td>20.1</td>
                                                                                 <td style="text-align: justify;">Número de hijos</td>
                                                                                 <td class="danger text-center" style="min-width: 120px;">
                                                                                     <p:spinner id="p21" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r21noHijos}" valueChangeListener="#{registrolDelEstudiante.saveEncuesta}" min="1" >
-                                                                                        <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
-
+                                                                                        <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                     </p:spinner>
                                                                                 </td>
                                                                             </tr>
                                                                         </c:if>
+
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -1581,188 +1672,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!--c:if test="# {registrolDelEstudiante.rol.finalizado}">
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
-                                                        <div class="col-sm-4 col-md-4 col-lg-4">
-                                                            <p>Estimado(a) # {registrolDelEstudiante.rol.persona.nombre}</p>
-
-                                                            <p style="text-align:  justify">Gracias por elegir a la Universidad Tecnológica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior.</p>
-                                                            <p style="text-align:  justify">Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entrega la documentación necesaria</p>
-                                                            <br />
-                                                            <ul>
-                                                                <li>Formato de Ficha de Admisión.</li>
-                                                                <li>Copia de CURP (nuevo formato).</li>
-                                                                <li>Copia de Acta de Nacimiento.</li>
-                                                                <li>Copia de Certificado de Nivel Medio Superior o Constancia de Estudios Original reciente con tira de materias y calificaciones (aprobatorias) del 1o. al 5o. semestre; indicando el promedio general y firmado por el titular de la Institución</li>
-                                                                <li>Referencia bancaria del pago de ficha y examen de admisión.</li>
-                                                            </ul>
-                                                            <br/>
-                                                            <p style="text-align:  justify">Se enviará su ficha de admisión al correo <strong># {registrolDelEstudiante.rol.medioComunicacion.email}</strong> al dar clic en el botón Descargar Formato de Ficha</p>
-                                                            <p:commandButton id="btnDatosAca" value="Descargar Formato de Ficha" icon="fa fa-download"
-                                                                             class="btn-primary btn-block col-md-3" update=":tabw1" action="# {registrolDelEstudiante.rol.downloadFichaAdmin()}" ajax="false"/>
-                                                            <p:commandButton id="btnDatoClear" value="Nuevo Registro" icon="fa fa-address-card"
-                                                                             class="btn-primary btn-block col-md-3" update=":tabw1" action="# {registrolDelEstudiante.rol.nuevoRegistro()}"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </c:if-->
-                                        </h:form>
-                                    </p:tab>
-                                    <p:tab title="Inscripcion Oficial" >
-                                        <h:form id="insCrip">
-                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                <div class="col-md-12">
-                                                    <div class="box box-widget widget-user-2">
-                                                        <div class="row">
-                                                            <div class="form-group">
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="folioI" style="font-size: large;text-align: right;" value="Folio ficha de admisión:" />
-                                                                    <p:inputText id="folioI" class="form-control" value="#{registrolDelEstudiante.rol.aspirante.aspirante.folioAspirante}"  placeholder="Ingresa tu folio de ficha de admisión" required="true" requiredMessage="Es necesario que ingrese su el folio de ficha de admisión" readonly="true"/>
-                                                                    <p:message for="folioI"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="nombre" style="font-size: large;text-align: right;" value="Nombre:" />
-                                                                    <p:inputText id="nombre" class="form-control" value="#{registrolDelEstudiante.rol.personaD.persona.nombre}" readonly="true"/>
-                                                                </div>
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="ap" style="font-size: large;text-align: right;" value="Apellido Paterno" />
-                                                                    <p:inputText id="ap" class="form-control" value="#{registrolDelEstudiante.rol.personaD.persona.apellidoPaterno}" readonly="true"/>
-                                                                </div>
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="am" style="font-size: large;text-align: right;" value="Apellido Materno" />
-                                                                    <p:inputText id="am" class="form-control" value="#{registrolDelEstudiante.rol.personaD.persona.apellidoMaterno}" readonly="true"/>
-                                                                </div>
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="promedio" style="font-size: large" value="Promedio:*"/>
-                                                                    <p:inputText id="promedio" class="form-control" placeholder="0.0" value="#{registrolDelEstudiante.rol.dacademicos.academicos.promedio}" readonly="true" required="true" requiredMessage="Dede de indicar el promedio de su bachillerato">
-                                                                        <f:convertNumber pattern="#0.00" />
-                                                                        <f:validateDoubleRange maximum="10.00" minimum="6.00"/>
-                                                                    </p:inputText>
-                                                                    <p:message for="promedio"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="tipoS" style="font-size: large" value="Tipo Sangre*"/>                                                                                
-                                                                    <p:selectOneMenu id="tipoS" value="#{registrolDelEstudiante.rol.dmedico.sangre}" disabled="true" converter="entityConverter" required="true" requiredMessage="Es nesesario que ingrese su tipo de sangre">
-                                                                        <f:selectItem itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{registrolDelEstudiante.rol.tipoSangres}" var="sangre" itemValue="#{sangre}" itemLabel="#{sangre.nombre}" />
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="tipoS"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-8 col-md-8 col-lg-8">
-                                                                    <p:outputLabel for="pe1" style="font-size: large" value="Carrera Principal*"/>
-                                                                    <p:selectOneMenu id="pe1" required="true" value="#{registrolDelEstudiante.rol.dacademicos.academicos.primeraOpcion}" disabled="true" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
-                                                                        <f:selectItem itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{registrolDelEstudiante.rol.programasEducativosPo}"  var="pe" itemValue="#{pe.area}" itemLabel="#{pe.nombre}"/>
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="pe1"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                    <p:outputLabel for="sistema1" style="font-size: large" value="Sistema Principal*"/>
-                                                                    <p:selectOneMenu id="sistema1" required="true" value="#{registrolDelEstudiante.rol.dacademicos.sistemaPo}" disabled="true" converter="reincorporacionConverter" requiredMessage="Debe de indicar el turno del programa educativo">
-                                                                        <f:selectItem itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{registrolDelEstudiante.rol.sistemas}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaPO.idSistema == 2 and registrolDelEstudiante.rol.dacademicos.universidad1.area == 25)}"/>
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="sistema1"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-8 col-md-8 col-lg-8">
-                                                                    <p:outputLabel for="pe2" style="font-size: large" value="Carrera Opcional*"/>
-                                                                    <p:selectOneMenu id="pe2" required="true" value="#{registrolDelEstudiante.rol.dacademicos.academicos.segundaOpcion}" disabled="true" requiredMessage="Debe de indicar el programa educativo de la carrera de segunda opción">
-                                                                        <f:selectItem itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{registrolDelEstudiante.rol.programasEducativosSo}"  var="pe" itemValue="#{pe.area}" itemLabel="#{pe.nombre}"/>
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="pe2"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                    <p:outputLabel for="sistema2" style="font-size: large" value="Sistema Opcional*"/>
-                                                                    <p:selectOneMenu id="sistema2" required="true" value="#{registrolDelEstudiante.rol.dacademicos.sistemaSo}" disabled="true" converter="reincorporacionConverter" requiredMessage="Debe de indicar el turno del programa educativo">
-                                                                        <f:selectItem itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{registrolDelEstudiante.rol.sistemas}" var="sistemaSO" itemValue="#{sistemaSO}" itemLabel="#{sistemaSO.nombre}" itemDisabled="#{(sistemaSO.idSistema == 2 and registrolDelEstudiante.rol.dacademicos.universidad1.area == 25)}"/>
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="sistema2"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                    <p:outputLabel for="tipoRegistro" style="font-size: large" value="Sub tipo de estudiante*"/>
-                                                                    <p:selectOneMenu id="tipoRegistro" required="true" value="#{registrolDelEstudiante.rol.tipo}" requiredMessage="Debe de indicar el turno del programa educativo">
-                                                                        <f:selectItem itemValue="0" itemLabel="Seleccione Un Tipo"/>
-                                                                        <f:selectItem itemValue="1" itemLabel="Cambio de grupo"/>
-                                                                        <f:selectItem itemValue="2" itemLabel="Cambio de carrera"/>
-                                                                        <f:selectItem itemValue="3" itemLabel="Reincorporación otra UT"/>
-                                                                        <f:selectItem itemValue="4" itemLabel="Equivalencia"/>
-                                                                        <f:selectItem itemValue="5" itemLabel="Reincorporación otra generación"/>
-                                                                        <p:ajax listener="#{registrolDelEstudiante.tipoDeRegistro()}" update="histoEst"/>
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="tipoRegistro"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <br/>
-                                                                <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                    <p:dataTable id="histoEst" var="est" value="#{registrolDelEstudiante.rol.estudianteR}" editable="true" editMode="row">
-                                                                        <f:facet name="header">
-                                                                            Historial del Estudiante
-                                                                        </f:facet>
-
-                                                                        <p:columnGroup type="header">
-                                                                            <p:row>
-                                                                                <p:column colspan="4" headerText="Datos de Estudiante" />
-                                                                                <p:column rowspan="2" headerText="Grupo" />
-                                                                                <p:column colspan="2" headerText="Datos de Carrera" />
-                                                                                <p:column rowspan="2" headerText="" style="width: 32px;"/> 
-                                                                            </p:row>
-                                                                            <p:row>
-                                                                                <p:column headerText="Matrícula" />
-                                                                                <p:column headerText="Estatus" />
-                                                                                <p:column headerText="Tipo de Registro" />
-                                                                                <p:column headerText="¿Inscrito en Primera Opcion?" />
-                                                                                <p:column headerText="Carrera" />
-                                                                                <p:column headerText="Modalidad" />
-                                                                            </p:row>
-                                                                        </p:columnGroup>
-
-                                                                        <p:ajax event="rowEdit" listener="#{registrolDelEstudiante.actualizarUltimoGrupo}" update="histoEst" />
-                                                                        <p:ajax event="rowEditCancel" listener="#{registrolDelEstudiante.onRowCancel}" update="histoEst" />
-
-                                                                        <p:column>
-                                                                            <h:outputText value="#{est.estudiante.matricula}" />
-                                                                        </p:column>
-                                                                        <p:column>
-                                                                            <h:outputText value="#{est.tipoEstudiante.descripcion}" />
-                                                                        </p:column>
-                                                                        <p:column>
-                                                                            <h:outputText value="#{est.estudiante.tipoRegistro}" />
-                                                                        </p:column>
-                                                                        <p:column>
-                                                                            <h:outputText value="#{est.primeraOpcion}" />
-                                                                        </p:column>
-                                                                        <p:column>
-                                                                            <h:outputText value="#{est.nombrePe}" />
-                                                                        </p:column>
-                                                                        <p:column>
-                                                                            <p:cellEditor>
-                                                                                <f:facet name="output"><h:outputText value="#{est.grupo.grado}° #{est.grupo.literal}" /></f:facet>
-                                                                                <f:facet name="input">
-                                                                                    <p:selectOneMenu id="grupo" value="#{est.grupo}" style="width:100%" converter="reincorporacionConverter">
-                                                                                        <f:selectItems value="#{registrolDelEstudiante.rol.grupos}" var="grup" itemValue="#{grup}" itemLabel="#{grup.grado}°#{grup.literal}, #{grup.periodo}--#{grup.idSistema.nombre}"/>
-                                                                                    </p:selectOneMenu>
-                                                                                </f:facet>
-                                                                            </p:cellEditor>   
-                                                                        </p:column>
-                                                                        <p:column>
-                                                                            <h:outputText value="#{est.grupo.idSistema.nombre}" />
-                                                                        </p:column>
-                                                                        <p:column style="width:32px">
-                                                                            <p:rowEditor rendered="#{est.editable}"/>
-                                                                        </p:column>
-                                                                    </p:dataTable>
-                                                                    <p:blockUI widgetVar="bui" block="histoEst" blocked="true">
-                                                                        Seleccione la acción a realizar
-                                                                    </p:blockUI>
-                                                                </div>                                                                
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>                                                                                                                                                                                                
                                         </h:form>
                                     </p:tab>
                                 </p:tabView>

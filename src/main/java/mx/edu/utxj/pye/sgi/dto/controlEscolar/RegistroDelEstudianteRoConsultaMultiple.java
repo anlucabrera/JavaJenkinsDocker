@@ -1,5 +1,9 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
+import com.github.adminfaces.starter.infra.model.Filter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import lombok.Getter;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
@@ -10,44 +14,63 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.servlet.http.Part;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.dto.AbstractRol;
+import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 
-public class RegistroDelEstudianteRolEstudiante{
+public class RegistroDelEstudianteRoConsultaMultiple extends AbstractRol{
 
-    /**
-     * Representa la referencia al personal de servicios escolares
-     */
-    @Getter @NonNull private Estudiante estudianteConsulta;
-    /**
-     * Representa la referencia al rol que hace uso del modulo
-     */
+    @Getter    @NonNull    private PersonalActivo director;    
+    @Getter    @NonNull    private PersonalActivo docente;    
+    @Getter    @NonNull    private PersonalActivo academica; 
+    @Getter    @NonNull    private PersonalActivo estudiantiles; 
+    @Getter    @NonNull    private PersonalActivo psicopedadogico;
+    
+    @Getter    @NonNull    private AreasUniversidad programa;
+    @Getter    @NonNull    private PlanEstudio planEstudio;
+    
     @Getter @Setter @NonNull protected NivelRol nivelRol = NivelRol.OPERATIVO;
-    /**
-     * Representa la referencia al evento activo de reincorporación
-     */
+    
     @Getter @Setter @NonNull private EventoEscolar eventoActivo;
-
-    /**
-     * Periodo escolar en el que se hara la reincorporación
-     */
+    
     @Getter @NonNull private PeriodosEscolares periodo;
-
-    /**
-     * Representa el area que pertenece
-     */
-    @Getter @NonNull private AreasUniversidad areaSe;
+    @Getter @NonNull private List<PeriodosEscolares> periodos;
+    @Getter @NonNull private Integer periodoActivo;
+    
+    @Getter @Setter private Boolean esDi;
+    @Getter @Setter private Boolean esDo;
+    @Getter @Setter private Boolean esEn;
+    @Getter @Setter private Boolean esSa;  
+    @Getter @Setter private Boolean esSe;   
+    @Getter @Setter private Boolean esPs;     
+    @Getter @Setter private Integer tipoUser;
     
     @Getter @Setter private String curpBusqueda,nombreR,tipoCal,mensaje,evidencia;
+    @Getter @Setter private String mensajeV;
     @Getter @Setter private Integer paso,tipo,subpaso;
     @Getter @Setter private Part fileCurp,croquis;
     
+    @Getter @Setter private Date fechaInpresion;
+    
     @Getter @Setter private Boolean extran,finalizado,editarCalificaciones,puedeValidar,respuestaTrabaja;
+    
+    @Getter    @NonNull    private Map<AreasUniversidad, List<PlanEstudio>> areaPlanEstudioMap;
+    @Getter    @NonNull    private List<AreasUniversidad> programas;
+    @Getter    @NonNull    private List<PlanEstudio> planesEstudios;
+    @Getter    @Setter    private Grupo grupoSelec;
+    @Getter    @Setter    private List<Grupo> gruposA;
+    
+    @Getter @NonNull private List<Estudiante> estudiantes;
+    @Getter @NonNull private Estudiante estudiante;
     
     //--------------------------------------------------------------------------  Datos primera face de desarrollo
     @Getter @Setter @NonNull private DtoReincorporacion.General general;
@@ -73,8 +96,8 @@ public class RegistroDelEstudianteRolEstudiante{
     @Getter @Setter @NonNull private DtoReincorporacion.RegDatosLaborales regDatosLaborales;
     @Getter @Setter @NonNull private DtoReincorporacion.SosioeconomicosR sosioeconomicosR;
     @Getter @Setter @NonNull private DtoReincorporacion.Familia familiaR;
-    @Getter @Setter @NonNull private DtoReincorporacion.VocacionalR encuestaVocacional;
     @Getter @Setter @NonNull private List<DtoReincorporacion.Familia> familias;
+    @Getter @Setter @NonNull private DtoReincorporacion.VocacionalR rVocacional;
     
     //--------------------------------------------------------------------------  Ubicaciones
     @Getter @Setter @NonNull private DtoReincorporacion.Ubicaciones ubicacionNacimiento;
@@ -86,7 +109,7 @@ public class RegistroDelEstudianteRolEstudiante{
     @Getter @Setter @NonNull private List<TipoAspirante> tipoAspirantes;
     @Getter @Setter @NonNull private List<TipoEstudiante> tipoEstudiantes;
     @Getter @Setter @NonNull private List<Ocupacion> ocupacions;
-    @Getter @Setter @NonNull private List<Grupo> grupos;
+//    @Getter @Setter @NonNull private List<Grupo> grupos;
     @Getter @Setter @NonNull private List<Grupo> gruposRegistros;
     @Getter @Setter @NonNull private List<Escolaridad> escolaridads;
     @Getter @Setter @NonNull private List<LenguaIndigena> lenguaIndigenas;
@@ -112,18 +135,74 @@ public class RegistroDelEstudianteRolEstudiante{
     @Getter @Setter @NonNull private List<String> recursos;
     @Getter @Setter @NonNull private List<String> viviendas;
     @Getter @Setter @NonNull private List<String> transportes;
+    @Getter @Setter @NonNull private List<String> dependientes;
 
-    public Boolean tieneAccesoEs(Estudiante estudiante, UsuarioTipo usuarioTipo){
-        if(estudiante == null) return false;
-        if(!usuarioTipo.equals(UsuarioTipo.ESTUDIANTE19)) return false;
-        setEstudiante(estudiante);
-        return true;
+
+    public RegistroDelEstudianteRoConsultaMultiple(Filter<PersonalActivo> filtro, PersonalActivo director, AreasUniversidad programa) {
+        super(filtro);
+        this.director = director;
+        this.programa = programa;
     }
-
-    public void setEstudiante(Estudiante estudiante) {
-        this.estudianteConsulta = estudiante;
-        this.curpBusqueda=estudiante.getAspirante().getIdPersona().getCurp();
-    }
-
     
+    public void setDirector(PersonalActivo director) {
+        this.director = director;
+    }
+    public void setDocente(PersonalActivo docente) {
+        this.docente = docente;
+    }
+    public void setAcademica(PersonalActivo academica) {
+        this.academica = academica;
+    }
+    public void setEstudiantiles(PersonalActivo estudiantiles) {
+        this.estudiantiles = estudiantiles;
+    }
+    public void setPsicopedadogico(PersonalActivo psicopedadogico) {
+        this.psicopedadogico = psicopedadogico;
+    }
+     public void setPeriodoActivo(Integer periodoActivo) {
+        this.periodoActivo = periodoActivo;
+    }
+    
+    public void setPeriodos(List<PeriodosEscolares> periodos) {
+        this.periodos = periodos;
+        if(periodos != null && !periodos.isEmpty()){
+            this.setPeriodo(periodos.get(0));
+        }
+    }
+    public void setPeriodo(PeriodosEscolares periodo) {
+        this.periodo = periodo;
+         if(periodoActivo != null) soloLectura = !Objects.equals(periodo.getPeriodo(), periodoActivo);
+    }
+    
+    public void setEstudiantes(List<Estudiante> des) {
+        this.estudiantes = des;
+        if (estudiantes != null && !des.isEmpty()) {
+            this.setEstudiante(des.get(0));
+        }
+    }
+    
+    public void setEstudiante(Estudiante de) {
+        this.estudiante = de;
+    }
+    
+    public void setPlanEstudio(PlanEstudio planEstudio) {
+        this.planEstudio = planEstudio;
+    }
+    
+    public void setAreaPlanEstudioMap(Map<AreasUniversidad, List<PlanEstudio>> areaPlanEstudioMap) {
+        this.areaPlanEstudioMap = areaPlanEstudioMap;
+        this.planesEstudios = new ArrayList<>();
+        if (areaPlanEstudioMap != null) {
+            this.programas = areaPlanEstudioMap.keySet().stream().sorted(Comparator.comparing(AreasUniversidad::getNombre)).collect(Collectors.toList());
+            areaPlanEstudioMap.forEach((t, u) -> {
+                this.planesEstudios.addAll(u);
+            });
+        }
+        if (areaPlanEstudioMap != null && programa != null && areaPlanEstudioMap.containsKey(programa)) {
+            this.planesEstudios = areaPlanEstudioMap.get(programa);
+            if (planesEstudios != null) {
+                planesEstudios.get(0);
+            }
+        }
+    }
 }

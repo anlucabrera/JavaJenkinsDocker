@@ -85,27 +85,27 @@
                                                 </div>
                                                 <br/>
                                             </div>
-                                            <div class="#{casilla2}">
+                                            <div class="#{casilla2}" style="visibility:#{registroDelEstudianteConsulta.rol.tipoUser eq 3?'hidden':'visible'}">
                                                 <div class="ui-material">
-                                                    <p:selectOneMenu id="planEstudio" value="#{resultadosPlaneacionesConsulta.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{resultadosPlaneacionesConsulta.cambiarPlanestudio}" rendered="#{resultadosPlaneacionesConsulta.rol.tipoUser eq 3?false:true}">
+                                                    <p:selectOneMenu id="planEstudio" value="#{resultadosPlaneacionesConsulta.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{resultadosPlaneacionesConsulta.cambiarPlanestudio}">
                                                         <f:selectItem itemValue="#{null}"/>
                                                         <f:selectItems value="#{resultadosPlaneacionesConsulta.rol.planesEstudios}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
                                                         <p:ajax update="@this" process="@this"/>
                                                     </p:selectOneMenu>
-                                                    <p:outputLabel value="Programa Educativo" for="planEstudio" rendered="#{resultadosPlaneacionesConsulta.rol.tipoUser eq 3?false:true}"/>
+                                                    <p:outputLabel value="Programa Educativo" for="planEstudio"/>
                                                     <p:message for="planEstudio" />
                                                 </div>
                                                 <br/>
                                             </div>
-                                            <div class="#{casilla3}">
+                                            <div class="#{casilla}" style="visibility:#{registroDelEstudianteConsulta.rol.tipoUser eq 3?'hidden':'visible'}">
                                                 <div class="ui-material">
-                                                    <p:selectOneMenu id="grupo" value="#{resultadosPlaneacionesConsulta.rol.grupoSelec}" converter="entityConverter" valueChangeListener="#{resultadosPlaneacionesConsulta.cambiarGrupo}" rendered="#{resultadosPlaneacionesConsulta.rol.tipoUser eq 3?false:true}">
+                                                    <p:selectOneMenu id="grupo" value="#{resultadosPlaneacionesConsulta.rol.grupoSelec}" converter="entityConverter" valueChangeListener="#{resultadosPlaneacionesConsulta.cambiarGrupo}">
                                                         <f:selectItems value="#{resultadosPlaneacionesConsulta.rol.grupos}" var="grupo"
                                                                        itemValue="#{grupo}" itemLabel="#{grupo.grado}° #{grupo.literal} #{grupo.idSistema.nombre}"/>
                                                         <p:ajax update="@this" process="@this"/>
                                                         <p:autoUpdate />
                                                     </p:selectOneMenu>
-                                                    <p:outputLabel value="Grupo - Programa Educativo" for="grupo" rendered="#{resultadosPlaneacionesConsulta.rol.tipoUser eq 3?false:true}"/>
+                                                    <p:outputLabel value="Grupo - Programa Educativo" for="grupo"/>
                                                     <p:message for="grupo" />
                                                 </div>
                                             </div>
@@ -247,7 +247,7 @@
                                                                             <h:outputText value="#{asignacionIndCA.metaAlacanzadaunidad}" style="text-align: center;"><f:convertNumber pattern="#,##0.00" currencySymbol="%" /></h:outputText>
                                                                         </p:column> 
                                                                         <p:column>
-                                                                            <img src="../resources/img/#{asignacionIndCA.semaforo}.png" alt="#{asignacionIndCA.semaforo}"/>
+                                                                            <img src="../../resources/img/#{asignacionIndCA.semaforo}.png" alt="#{asignacionIndCA.semaforo}"/>
                                                                         </p:column>  
                                                                         <p:column groupRow="true" style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}">
                                                                             

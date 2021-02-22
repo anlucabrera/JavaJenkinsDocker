@@ -17,6 +17,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosSocioeconomicos;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Domicilio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaAspirante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaVocacional;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
@@ -70,6 +71,7 @@ public class DtoReincorporacion {
         @Getter        @Setter        @NonNull       AcademicosCR dac;
         @Getter        @Setter        @NonNull       RegDatosLaborales labo;
         @Getter        @Setter        @NonNull       SosioeconomicosR sr;
+        @Getter        @Setter        @NonNull       VocacionalR vr;
         @Getter        @Setter        @NonNull       List<Familia> fs;
         @Getter        @Setter        @NonNull       Boolean econtrado; 
     }
@@ -105,6 +107,8 @@ public class DtoReincorporacion {
     @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
     public static class TutorR {
         @Getter        @Setter        @NonNull        TutorFamiliar tutorFamiliar;
+        @Getter        @Setter        @NonNull        Ocupacion ocupacion;
+        @Getter        @Setter        @NonNull        Escolaridad escolaridad;
         @Getter        @Setter        @NonNull        Operacion operacion;  
         @Getter        @Setter        @NonNull       Boolean econtrado; 
     }
@@ -245,5 +249,13 @@ public class DtoReincorporacion {
         @Getter        @Setter        @NonNull        Municipio municipio;
         @Getter        @Setter        Localidad localidad;
         @Getter        @Setter        Asentamiento asentamiento;
+    }
+    
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode
+    public static class VocacionalR {
+        @Getter        @Setter        @NonNull        EncuestaVocacional encuestaAspirante;
+        @Getter        @Setter        @NonNull        AreasUniversidad carreraSelect;
+        @Getter        @Setter        @NonNull        Operacion operacion;
+        @Getter        @Setter        @NonNull        Boolean econtrado;
     }
 }

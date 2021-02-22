@@ -102,12 +102,6 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
             ResultadoEJB<Filter<PersonalActivo>> resValidacionSa = evr.validarSecretariaAcademica(logon.getPersonal().getClave());//validar si es director                        
             ResultadoEJB<Filter<PersonalActivo>> resValidacionDo = evr.validarDocente(logon.getPersonal().getClave());//validar si es director                        
             
-            
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(resValidacionDi)"+resValidacionDi.getCorrecto());            
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(resValidacionEn)"+resValidacionEn.getCorrecto());
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(resValidacionSa)"+resValidacionSa.getCorrecto());
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(resValidacionDo)"+resValidacionDo.getCorrecto());
-            
             if (!resValidacionDi.getCorrecto() && !resValidacionEn.getCorrecto() && !resValidacionSa.getCorrecto() && !resValidacionDo.getCorrecto()) {
                 rol.setMensajeV("El acceso solo está autorizado a Personla Académico.");
                 mostrarMensajeResultadoEJB(resValidacionDi);
@@ -115,33 +109,18 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
                 mostrarMensajeResultadoEJB(resValidacionEn);
                 mostrarMensajeResultadoEJB(resValidacionSa);
                 return;
-            }
-            
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(resValidacionDi)"+resValidacionDi.getValor());            
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(resValidacionEn)"+resValidacionEn.getValor());
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(resValidacionSa)"+resValidacionSa.getValor());
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(resValidacionDo)"+resValidacionDo.getValor());
+            }            
             
             Filter<PersonalActivo> filtroEn = resValidacionEn.getValor();//se obtiene el filtro resultado de la validación         
             Filter<PersonalActivo> filtroDi = resValidacionDi.getValor();//se obtiene el filtro resultado de la validación         
             Filter<PersonalActivo> filtroDo = resValidacionDo.getValor();//se obtiene el filtro resultado de la validación         
             Filter<PersonalActivo> filtroSa = resValidacionSa.getValor();//se obtiene el filtro resultado de la validación   
-            
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(filtroDi)"+filtroDi.getEntity());            
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(filtroEn)"+filtroEn.getEntity());
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(filtroSa)"+filtroSa.getEntity());
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(filtroDo)"+filtroDo.getEntity());
-            
+                        
             PersonalActivo activoEn = filtroEn.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
             PersonalActivo activoDo = filtroDo.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
             PersonalActivo activoDi = filtroDi.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
             PersonalActivo activoSa = filtroSa.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
-            
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(filtroDi)"+activoEn);            
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(filtroEn)"+activoEn);
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(filtroSa)"+activoEn);
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(filtroDo)"+activoEn);
-            
+                        
             rol = new ResultadosPlaneacionesMultipleConsulta(filtroEn, activoEn, activoEn.getAreaOperativa());
             rol.setEsEn(rol.tieneAcceso(activoEn));            
             if(rol.getEsEn()==null)rol.setEsEn(Boolean.FALSE);
@@ -185,12 +164,6 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
                     }
                 }
             }
-            
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(getEsEn)"+rol.getEsEn());            
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(getEsDi)"+rol.getEsDi());
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(getEsDo)"+rol.getEsDo());
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.init(getEsSa)"+rol.getEsSa());
-            
            
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso           
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
@@ -282,7 +255,6 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
     }    
     
     public void cambiarPeriodo() {
-////        System.out.println("rol.getPeriodoSeleccionado() = " + caster.periodoToString(rol.getPeriodoSeleccionado()));
         if (rol.getPeriodo() == null) {
             mostrarMensaje("No hay periodo escolar seleccionado.");
             rol.setGrupos(Collections.EMPTY_LIST);
@@ -384,7 +356,6 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         }
         ResultadoEJB<List<Informeplaneacioncuatrimestraldocenteprint>> res = ejb.buscarInforme(rol.getCarga());
         rol.setInformeplaneacioncuatrimestraldocenteprints(new ArrayList<>());
-//        System.err.println("existeAsignacion - res " + res.getValor().size());
         if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
             rol.setExisteAsignacionIndicadores(true);
             rol.setInformeplaneacioncuatrimestraldocenteprints(res.getValor());
