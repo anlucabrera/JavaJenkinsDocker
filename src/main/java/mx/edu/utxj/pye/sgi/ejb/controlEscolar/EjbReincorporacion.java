@@ -156,7 +156,7 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Sangre(EjbReincorporacion.getTiposSangre).", e, null);
         }
     }
-    
+
     public ResultadoEJB<Generaciones> getgeneracion() {
         try {
             LocalDate ld = LocalDate.now();
@@ -269,6 +269,15 @@ public class EjbReincorporacion {
         }
     }
 
+    public ResultadoEJB<List<Grupo>> getGruposCarrera(Short pe) {
+        try {
+            List<Grupo> grupos = em.createQuery("select t from Grupo t WHERE t.idPe=:idPe AND t.generacion=:generacion", Grupo.class)
+                    .setParameter("idPe", pe).getResultList();
+            return ResultadoEJB.crearCorrecto(grupos, "Grupo Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Grupo(EjbReincorporacion.getGrupos).", e, null);
+        }
+    }
 //-----------------------------------------------------------------------Catalogos PYE-----------------------------------------------------------------------//
     public ResultadoEJB<List<Pais>> getPais() {
         try {
@@ -634,7 +643,7 @@ public class EjbReincorporacion {
             if (!das.isEmpty()) {
                 das.forEach((t) -> {
                     if (!t.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("2")) && !t.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("3"))) {
-                    List<DtoReincorporacion.CalificacionesR> crs = new ArrayList<>();
+                        List<DtoReincorporacion.CalificacionesR> crs = new ArrayList<>();
                         List<CargaAcademica> cas = new ArrayList<>();
                         Boolean validar = Boolean.FALSE;
                         if (!t.getGrupo().getCargaAcademicaList().isEmpty()) {
@@ -1142,7 +1151,6 @@ public class EjbReincorporacion {
         try {
             if (!rr.getGrupos().isEmpty()) {              
                 rr.getGrupos().forEach((t) -> {
-                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.operacionesEstudianteR()"+t.getIdGrupo());
                     Operacion operacion;
                     List<Estudiante> es = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN e.grupo g WHERE a.idAspirante=:idAspirante AND e.periodo=:periodo", Estudiante.class).setParameter("idAspirante", a.getIdAspirante()).setParameter("periodo", t.getPeriodo()).getResultList();
                     Estudiante e = new Estudiante();
