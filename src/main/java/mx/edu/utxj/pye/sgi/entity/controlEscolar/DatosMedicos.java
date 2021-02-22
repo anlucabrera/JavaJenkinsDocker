@@ -38,7 +38,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "DatosMedicos.findByFCardiaco", query = "SELECT d FROM DatosMedicos d WHERE d.fCardiaco = :fCardiaco")
     , @NamedQuery(name = "DatosMedicos.findByFCancer", query = "SELECT d FROM DatosMedicos d WHERE d.fCancer = :fCancer")
     , @NamedQuery(name = "DatosMedicos.findByNssVigente", query = "SELECT d FROM DatosMedicos d WHERE d.nssVigente = :nssVigente")
-    , @NamedQuery(name = "DatosMedicos.findByNss", query = "SELECT d FROM DatosMedicos d WHERE d.nss = :nss")})
+    , @NamedQuery(name = "DatosMedicos.findByNss", query = "SELECT d FROM DatosMedicos d WHERE d.nss = :nss")
+    , @NamedQuery(name = "DatosMedicos.findByLateralidad", query = "SELECT d FROM DatosMedicos d WHERE d.lateralidad = :lateralidad")})
 public class DatosMedicos implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -78,6 +79,9 @@ public class DatosMedicos implements Serializable {
     @Size(max = 20)
     @Column(name = "nss")
     private String nss;
+    @Size(max = 8)
+    @Column(name = "lateralidad")
+    private String lateralidad;
     @JoinColumn(name = "cve_persona", referencedColumnName = "idpersona", insertable = false, updatable = false)
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Persona persona;
@@ -176,6 +180,14 @@ public class DatosMedicos implements Serializable {
 
     public void setNss(String nss) {
         this.nss = nss;
+    }
+
+    public String getLateralidad() {
+        return lateralidad;
+    }
+
+    public void setLateralidad(String lateralidad) {
+        this.lateralidad = lateralidad;
     }
 
     public Persona getPersona() {

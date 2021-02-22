@@ -52,6 +52,10 @@ public class Escolaridad implements Serializable {
     private List<DatosFamiliares> datosFamiliaresList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadPadre", fetch = FetchType.LAZY)
     private List<DatosFamiliares> datosFamiliaresList1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridad", fetch = FetchType.LAZY)
+    private List<IntegrantesFamilia> integrantesFamiliaList;
+    @OneToMany(mappedBy = "escolaridad")
+    private List<TutorFamiliar> tutorFamiliarList;
 
     public Escolaridad() {
     }
@@ -99,6 +103,15 @@ public class Escolaridad implements Serializable {
         this.datosFamiliaresList1 = datosFamiliaresList1;
     }
 
+    @XmlTransient
+    public List<IntegrantesFamilia> getIntegrantesFamiliaList() {
+        return integrantesFamiliaList;
+    }
+
+    public void setIntegrantesFamiliaList(List<IntegrantesFamilia> integrantesFamiliaList) {
+        this.integrantesFamiliaList = integrantesFamiliaList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -122,6 +135,15 @@ public class Escolaridad implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad[ idEscolaridad=" + idEscolaridad + " ]";
+    }
+
+    @XmlTransient
+    public List<TutorFamiliar> getTutorFamiliarList() {
+        return tutorFamiliarList;
+    }
+
+    public void setTutorFamiliarList(List<TutorFamiliar> tutorFamiliarList) {
+        this.tutorFamiliarList = tutorFamiliarList;
     }
     
 }

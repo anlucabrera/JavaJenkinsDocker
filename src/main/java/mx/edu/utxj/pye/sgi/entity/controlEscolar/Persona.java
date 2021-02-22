@@ -108,7 +108,7 @@ public class Persona implements Serializable {
     private Login login;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersona", fetch = FetchType.LAZY)
     private List<Aspirante> aspiranteList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona", fetch = FetchType.LAZY)
     private EncuestaVocacional encuestaVocacional;
 
     public Persona() {
@@ -290,4 +290,4 @@ public class Persona implements Serializable {
     public void setEncuestaVocacional(EncuestaVocacional encuestaVocacional) {
         this.encuestaVocacional = encuestaVocacional;
     }
-}
+    }

@@ -47,7 +47,13 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "EncuestaAspirante.findByR16segundaCarrera", query = "SELECT e FROM EncuestaAspirante e WHERE e.r16segundaCarrera = :r16segundaCarrera")
     , @NamedQuery(name = "EncuestaAspirante.findByR17Alergia", query = "SELECT e FROM EncuestaAspirante e WHERE e.r17Alergia = :r17Alergia")
     , @NamedQuery(name = "EncuestaAspirante.findByR18padecesEnfermedad", query = "SELECT e FROM EncuestaAspirante e WHERE e.r18padecesEnfermedad = :r18padecesEnfermedad")
-    , @NamedQuery(name = "EncuestaAspirante.findByR19tratamientoMedico", query = "SELECT e FROM EncuestaAspirante e WHERE e.r19tratamientoMedico = :r19tratamientoMedico")})
+    , @NamedQuery(name = "EncuestaAspirante.findByR19tratamientoMedico", query = "SELECT e FROM EncuestaAspirante e WHERE e.r19tratamientoMedico = :r19tratamientoMedico")
+    , @NamedQuery(name = "EncuestaAspirante.findByR20Hijos", query = "SELECT e FROM EncuestaAspirante e WHERE e.r20Hijos = :r20Hijos")
+    , @NamedQuery(name = "EncuestaAspirante.findByR21noHijos", query = "SELECT e FROM EncuestaAspirante e WHERE e.r21noHijos = :r21noHijos")
+    , @NamedQuery(name = "EncuestaAspirante.findByR22comunidadCual", query = "SELECT e FROM EncuestaAspirante e WHERE e.r22comunidadCual = :r22comunidadCual")
+    , @NamedQuery(name = "EncuestaAspirante.findByR23programaCual", query = "SELECT e FROM EncuestaAspirante e WHERE e.r23programaCual = :r23programaCual")
+    , @NamedQuery(name = "EncuestaAspirante.findByR24alergiaCual", query = "SELECT e FROM EncuestaAspirante e WHERE e.r24alergiaCual = :r24alergiaCual")
+    , @NamedQuery(name = "EncuestaAspirante.findByR25enfermedadCual", query = "SELECT e FROM EncuestaAspirante e WHERE e.r25enfermedadCual = :r25enfermedadCual")})
 public class EncuestaAspirante implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -62,7 +68,7 @@ public class EncuestaAspirante implements Serializable {
     @Size(max = 2)
     @Column(name = "r3_comunidadIndigena")
     private String r3comunidadIndigena;
-    @Size(max = 2)
+    @Size(max = 4)
     @Column(name = "r4_programaBienestar")
     private String r4programaBienestar;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -111,6 +117,18 @@ public class EncuestaAspirante implements Serializable {
     @Size(max = 10)
     @Column(name = "r21_noHijos")
     private String r21noHijos;
+    @Size(max = 50)
+    @Column(name = "r22_comunidadCual")
+    private String r22comunidadCual;
+    @Size(max = 50)
+    @Column(name = "r23_programaCual")
+    private String r23programaCual;
+    @Size(max = 50)
+    @Column(name = "r24_alergiaCual")
+    private String r24alergiaCual;
+    @Size(max = 50)
+    @Column(name = "r25_enfermedadCual")
+    private String r25enfermedadCual;
     @JoinColumn(name = "cve_aspirante", referencedColumnName = "id_aspirante", insertable = false, updatable = false)
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Aspirante aspirante;
@@ -272,6 +290,54 @@ public class EncuestaAspirante implements Serializable {
         this.r19tratamientoMedico = r19tratamientoMedico;
     }
 
+    public String getR20Hijos() {
+        return r20Hijos;
+    }
+
+    public void setR20Hijos(String r20Hijos) {
+        this.r20Hijos = r20Hijos;
+    }
+
+    public String getR21noHijos() {
+        return r21noHijos;
+    }
+
+    public void setR21noHijos(String r21noHijos) {
+        this.r21noHijos = r21noHijos;
+    }
+
+    public String getR22comunidadCual() {
+        return r22comunidadCual;
+    }
+
+    public void setR22comunidadCual(String r22comunidadCual) {
+        this.r22comunidadCual = r22comunidadCual;
+    }
+
+    public String getR23programaCual() {
+        return r23programaCual;
+    }
+
+    public void setR23programaCual(String r23programaCual) {
+        this.r23programaCual = r23programaCual;
+    }
+
+    public String getR24alergiaCual() {
+        return r24alergiaCual;
+    }
+
+    public void setR24alergiaCual(String r24alergiaCual) {
+        this.r24alergiaCual = r24alergiaCual;
+    }
+
+    public String getR25enfermedadCual() {
+        return r25enfermedadCual;
+    }
+
+    public void setR25enfermedadCual(String r25enfermedadCual) {
+        this.r25enfermedadCual = r25enfermedadCual;
+    }
+
     public Aspirante getAspirante() {
         return aspirante;
     }
@@ -319,23 +385,6 @@ public class EncuestaAspirante implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaAspirante[ cveAspirante=" + cveAspirante + " ]";
-    }
-
-
-    public String getR20Hijos() {
-        return r20Hijos;
-    }
-
-    public void setR20Hijos(String r20Hijos) {
-        this.r20Hijos = r20Hijos;
-    }
-
-    public String getR21noHijos() {
-        return r21noHijos;
-    }
-
-    public void setR21noHijos(String r21noHijos) {
-        this.r21noHijos = r21noHijos;
     }
     
 }

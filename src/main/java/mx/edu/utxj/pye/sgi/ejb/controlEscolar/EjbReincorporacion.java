@@ -25,6 +25,8 @@ import javax.mail.internet.MimeMultipart;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInscripcion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReincorporacion;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
@@ -37,17 +39,23 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedioPK;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.ContactoEmergenciasEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosAcademicos;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosAcademicosComplementarios;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosFamiliares;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosLaborales;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosMedicos;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosSocioeconomicos;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Domicilio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaAspirante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaVocacional;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.IntegrantesFamilia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.LenguaIndigena;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioComunicacion;
@@ -349,12 +357,11 @@ public class EjbReincorporacion {
 //------------------------------------------------------------------------Busquedas A------------------------------------------------------------------------//
     public ResultadoEJB<DtoReincorporacion.General> getDtoReincorporacion(String curp,Boolean esEscolares) {
         try {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(1)");
             Boolean encontrado=Boolean.FALSE;
             DtoReincorporacion.PersonaR pr = new DtoReincorporacion.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE);
             DtoReincorporacion.AspiranteR ar = new DtoReincorporacion.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE);
             DtoReincorporacion.MedicosR mr = new DtoReincorporacion.MedicosR(new DatosMedicos(), new TipoSangre(), new TipoDiscapacidad(), Operacion.PERSISTIR, Boolean.FALSE);
-            DtoReincorporacion.TutorR tr = new DtoReincorporacion.TutorR(new TutorFamiliar(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoReincorporacion.TutorR tr = new DtoReincorporacion.TutorR(new TutorFamiliar(), new Ocupacion(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE);
             DtoReincorporacion.FamiliaresR fr = new DtoReincorporacion.FamiliaresR(new DatosFamiliares(), tr, new Ocupacion(), new Ocupacion(), new Escolaridad(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE);
             DtoReincorporacion.DomicilioR dr = new DtoReincorporacion.DomicilioR(new Domicilio(), Boolean.FALSE, Operacion.PERSISTIR, Boolean.FALSE);
             DtoReincorporacion.AcademicosR ac = new DtoReincorporacion.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE);
@@ -362,51 +369,35 @@ public class EjbReincorporacion {
             List<DtoReincorporacion.EstudianteR> es = new ArrayList<>();
             List<DtoReincorporacion.AlineacionCalificaciones> al = new ArrayList<>();
             
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(2)");
             
             ResultadoEJB<DtoReincorporacion.PersonaR> resPR = getPersonaR(curp);
             if (resPR.getCorrecto()) {
-                System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(3)");
                 pr = resPR.getValor();
                 if (pr.getEcontrado()) {
-                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(4)");
                     ResultadoEJB<DtoReincorporacion.AspiranteR> resAR = getAspiranteR(pr.getPersona());
                     if (resAR.getCorrecto()) {
-                        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(5)");
                         ar = resAR.getValor();
                         if (ar.getEcontrado()) {
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(6)");
                             ResultadoEJB<DtoReincorporacion.FamiliaresR> resFR = getFamiliaresR(ar.getAspirante());
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(6.5)");
                             ResultadoEJB<DtoReincorporacion.AcademicosR> resAC = getAcademicosR(ar.getAspirante());
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(7)");
                             ResultadoEJB<DtoReincorporacion.DomicilioR> resDR = getDomicilioR(ar.getAspirante());
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(8)");
                             ResultadoEJB<DtoReincorporacion.EncuestaR> resER = getEncuestaR(ar.getAspirante());
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(9)");
                             ResultadoEJB< List<DtoReincorporacion.EstudianteR>> resES = getEstudianteR(ar.getAspirante());
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(10)");
-                            if (resFR.getCorrecto()) {fr = resFR.getValor();if(fr.getEcontrado()){tr=fr.getTutorR();}}
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(11)");
+                            if (resFR.getCorrecto()) {fr = resFR.getValor();
+                            if(fr.getEcontrado()){tr=fr.getTutorR();}}
                             if (resAC.getCorrecto()) {ac = resAC.getValor();}
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(12)");
                             if (resDR.getCorrecto()) {dr = resDR.getValor();}
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(13)");
                             if (resER.getCorrecto()) {er = resER.getValor();}  
-                            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(14)");
                             if (resES.getCorrecto()) {
-                                System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(15)");
                                 es = resES.getValor();
                                 if(!es.isEmpty()){
                                     ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> resAl = getAlineacionCalificaciones(ar.getAspirante(),esEscolares);
                                     if (resAl.getCorrecto()) {
-                                        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(16)");
                                         al = resAl.getValor();}
                                 }
                             }      
                         }
                     }
-                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoReincorporacion(17)");
                     ResultadoEJB<DtoReincorporacion.MedicosR> resMR = getMedicosR(pr.getPersona());
                        
                     if (resMR.getCorrecto()) {mr = resMR.getValor();}
@@ -484,7 +475,7 @@ public class EjbReincorporacion {
     public ResultadoEJB<DtoReincorporacion.FamiliaresR> getFamiliaresR(Aspirante a) {
         try {
             List<DatosFamiliares> datosFamiliareses = em.createQuery("select a from DatosFamiliares a INNER JOIN a.aspirante1 p WHERE p.idAspirante=:idAspirante", DatosFamiliares.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
-            DtoReincorporacion.TutorR tr = new DtoReincorporacion.TutorR(new TutorFamiliar(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoReincorporacion.TutorR tr = new DtoReincorporacion.TutorR(new TutorFamiliar(), new Ocupacion(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE);
             DtoReincorporacion.FamiliaresR rr = new DtoReincorporacion.FamiliaresR(new DatosFamiliares(), tr, new Ocupacion(), new Ocupacion(), new Escolaridad(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE);
             if (!datosFamiliareses.isEmpty()) {
                 DatosFamiliares df = datosFamiliareses.get(0);
@@ -509,11 +500,17 @@ public class EjbReincorporacion {
 
     public ResultadoEJB<DtoReincorporacion.TutorR> getTutorR(DatosFamiliares tutor) {
         try {
-            List<TutorFamiliar> familiars = em.createQuery("select t from DatosFamiliares d INNER JOIN d.tutor t WHERE d.aspirante=:aspirante", TutorFamiliar.class).setParameter("aspirante", tutor.getAspirante()).getResultList();
-            DtoReincorporacion.TutorR rr = new DtoReincorporacion.TutorR(new TutorFamiliar(), Operacion.PERSISTIR, Boolean.FALSE);
+            List<TutorFamiliar> familiars = em.createQuery("select t from DatosFamiliares d INNER JOIN d.tutor t INNER JOIN d.aspirante1 a WHERE a.idAspirante=:idAspirante", TutorFamiliar.class).setParameter("idAspirante", tutor.getAspirante()).getResultList();
+            DtoReincorporacion.TutorR rr = new DtoReincorporacion.TutorR(new TutorFamiliar(), new Ocupacion(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE);
             if (!familiars.isEmpty()) {
                 TutorFamiliar tf = familiars.get(0);
                 rr.setTutorFamiliar(tf);
+                if(null != tf.getEscolaridad()){
+                    rr.setEscolaridad(tf.getEscolaridad());
+                }
+                if(null != tf.getOcupacion()){
+                    rr.setOcupacion(tf.getOcupacion());
+                }                
                 rr.setOperacion(Operacion.ACTUALIZAR);
                 rr.setEcontrado(Boolean.TRUE);
             }
@@ -544,9 +541,7 @@ public class EjbReincorporacion {
 
     public ResultadoEJB<DtoReincorporacion.AcademicosR> getAcademicosR(Aspirante a) {
         try {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getAcademicosR(A)");
             List<DatosAcademicos> das = em.createQuery("select d from DatosAcademicos d INNER JOIN d.aspirante1 a WHERE a.idAspirante=:idAspirante", DatosAcademicos.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getAcademicosR(B)"+das.size());
             DtoReincorporacion.AcademicosR rr = new DtoReincorporacion.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE);
             if (!das.isEmpty()) {
                 DatosAcademicos da = das.get(0);
@@ -589,6 +584,22 @@ public class EjbReincorporacion {
         }
     }
     
+    public ResultadoEJB<DtoReincorporacion.VocacionalR> getEncuestaRVocacional(Persona a) {
+        try {
+            DtoReincorporacion.VocacionalR rr = new DtoReincorporacion.VocacionalR(new EncuestaVocacional(),new AreasUniversidad(), Operacion.PERSISTIR, Boolean.FALSE);
+            List<EncuestaVocacional> encuestaVocacionals = em.createQuery("select e from EncuestaVocacional e INNER JOIN e.persona a WHERE a.idpersona=:idpersona", EncuestaVocacional.class).setParameter("idpersona", a.getIdpersona()).getResultList();
+            if(!encuestaVocacionals.isEmpty()) {
+                EncuestaVocacional ea = encuestaVocacionals.get(0);
+                rr.setEncuestaAspirante(ea);
+                rr.setOperacion(Operacion.ACTUALIZAR);
+                rr.setEcontrado(Boolean.TRUE);
+            }                        
+            return ResultadoEJB.crearCorrecto(rr, "VocacionalR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar VocacionalR (EjbReincorporacion.getEncuestaRVocacional).", e, null);
+        }
+    }
+    
     public ResultadoEJB<List<DtoReincorporacion.EstudianteR>> getEstudianteR(Aspirante a){
         try {
             List<Estudiante> das = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a WHERE a.idAspirante=:idAspirante ORDER BY e.periodo", Estudiante.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
@@ -622,9 +633,8 @@ public class EjbReincorporacion {
             List<DtoReincorporacion.AlineacionCalificaciones> rr = new ArrayList<>();
             if (!das.isEmpty()) {
                 das.forEach((t) -> {
-                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getAlineacionCalificaciones()"+t.getTipoEstudiante().getIdTipoEstudiante());
                     if (!t.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("2")) && !t.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("3"))) {
-                        List<DtoReincorporacion.CalificacionesR> crs = new ArrayList<>();
+                    List<DtoReincorporacion.CalificacionesR> crs = new ArrayList<>();
                         List<CargaAcademica> cas = new ArrayList<>();
                         Boolean validar = Boolean.FALSE;
                         if (!t.getGrupo().getCargaAcademicaList().isEmpty()) {
@@ -688,9 +698,9 @@ public class EjbReincorporacion {
                     }
                 });
             }
-            return ResultadoEJB.crearCorrecto(rr, "EstudianteR Encontrados");
+            return ResultadoEJB.crearCorrecto(rr, "AlineacionCalificaciones Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar EstudianteR (EjbReincorporacion.getAlineacionCalificaciones).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar AlineacionCalificaciones (EjbReincorporacion.getAlineacionCalificaciones).", e, null);
         }
     }
     
@@ -816,6 +826,10 @@ public class EjbReincorporacion {
 
     public ResultadoEJB<DtoReincorporacion.TutorR> operacionesTutorR(DtoReincorporacion.TutorR rr) {
         try {
+            rr.getTutorFamiliar().setEscolaridad(new Escolaridad());
+            rr.getTutorFamiliar().setOcupacion(new Ocupacion());
+            rr.getTutorFamiliar().setEscolaridad(rr.getEscolaridad());
+            rr.getTutorFamiliar().setOcupacion(rr.getOcupacion());
             switch (rr.getOperacion()) {
                 case PERSISTIR:  em.persist(rr.getTutorFamiliar());    f.setEntityClass(TutorFamiliar.class); f.flush(); rr.setOperacion(Operacion.ACTUALIZAR);break;
                 case ACTUALIZAR: em.merge(rr.getTutorFamiliar());  f.setEntityClass(TutorFamiliar.class); f.flush();  break;
@@ -958,6 +972,42 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearCorrecto(b.getValor(), "DTOPersona Encontrados");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<DtoReincorporacion.VocacionalR> operacionesEncuestaVocacional(Persona p,String valor, Integer numP) {
+        try {
+            Operacion operacion;
+            List<EncuestaVocacional> es = em.createQuery("select e from EncuestaVocacional e INNER JOIN e.persona a WHERE a.idpersona=:idpersona", EncuestaVocacional.class).setParameter("idpersona", p.getIdpersona()).getResultList();
+            EncuestaVocacional e = new EncuestaVocacional();
+            if (!es.isEmpty()) {
+                e = es.get(0);
+                operacion=Operacion.ACTUALIZAR;
+            } else {
+                e.setPersona(new Persona());                
+                e.setPersona(p);
+                e.setIdPersona(p.getIdpersona());
+                operacion=Operacion.PERSISTIR;
+            }
+            switch (numP) {
+                case 1:                    e.setR1(valor);                    break;
+                case 2:                    e.setR2(valor);                    break;
+                case 5:                    e.setR5(valor);                    break;
+            }            
+            switch (operacion) {
+                case PERSISTIR:
+                    em.persist(e);
+                    em.flush();
+                    break;
+                case ACTUALIZAR:
+                    em.merge(e);
+                    em.flush();
+                    break;
+            }
+            ResultadoEJB<DtoReincorporacion.VocacionalR> b= getEncuestaRVocacional(p);
+            return ResultadoEJB.crearCorrecto(b.getValor(), "VocacionalR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar VocacionalR (EjbReincorporacion.operacionesEncuestaVocacional).", e, null);
         }
     }
     
@@ -1384,6 +1434,312 @@ public class EjbReincorporacion {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+    
+    //------------------------------------------------------------------------Busquedas A------------------------------------------------------------------------//
+    public ResultadoEJB<DtoReincorporacion.RegistroEstudiante> getDtoRegistroEstudiante(Aspirante a, Persona p) {
+        try {
+            Boolean encontrado = Boolean.FALSE;
+            DtoReincorporacion.RegDatosLaborales rdl = new DtoReincorporacion.RegDatosLaborales(new DatosLaborales(), Operacion.PERSISTIR, Boolean.FALSE);
+            DtoReincorporacion.EstudianteR er = new DtoReincorporacion.EstudianteR(new Estudiante(), new Documentosentregadosestudiante(), "", new TipoEstudiante(), new Grupo(), Boolean.FALSE, Boolean.FALSE, Operacion.PERSISTIR);
+            DtoReincorporacion.AcademicosCR dac=new DtoReincorporacion.AcademicosCR(new DatosAcademicosComplementarios(),Operacion.PERSISTIR, Boolean.FALSE);
+            DtoReincorporacion.SosioeconomicosR ds = new DtoReincorporacion.SosioeconomicosR(new DatosSocioeconomicos(),Operacion.PERSISTIR, Boolean.FALSE);
+            DtoReincorporacion.VocacionalR vr = new DtoReincorporacion.VocacionalR(new EncuestaVocacional(),new AreasUniversidad(),Operacion.PERSISTIR, Boolean.FALSE);
+            List<DtoReincorporacion.RcontactoEmergencia> rem = new ArrayList<>();
+            List<DtoReincorporacion.Familia> fam = new ArrayList<>();
+            
+            ResultadoEJB<DtoReincorporacion.RegDatosLaborales> resRdl = getRegDatosLaborales(a);
+            ResultadoEJB<DtoReincorporacion.EstudianteR> resEsr = getEstudianteRRes(a);
+            ResultadoEJB<DtoReincorporacion.AcademicosCR> resDac = getRegDatosAcademicosC(a);
+            ResultadoEJB<DtoReincorporacion.SosioeconomicosR> resDso = getRegDatosSoEconomicos(a);
+            ResultadoEJB<List<DtoReincorporacion.RcontactoEmergencia>> resRce = getRegContactoEm(a);
+            ResultadoEJB<List<DtoReincorporacion.Familia>> resFam = getRegFamiliares(a);
+            ResultadoEJB<DtoReincorporacion.VocacionalR> resVoc = getRegVocacional(p);
+            
+            if (resEsr.getCorrecto()) {er = resEsr.getValor();}
+            if (resRdl.getCorrecto()) {rdl = resRdl.getValor();}
+            if (resDac.getCorrecto()) {dac = resDac.getValor();}
+            if (resDso.getCorrecto()) {ds = resDso.getValor();}
+            if (resRce.getCorrecto()) {rem = resRce.getValor();}
+            if (resFam.getCorrecto()) {fam = resFam.getValor();}
+            if (resVoc.getCorrecto()) {vr = resVoc.getValor();}      
+            
+            DtoReincorporacion.RegistroEstudiante rr=new DtoReincorporacion.RegistroEstudiante(er, rem, dac, rdl, ds, vr, fam, Boolean.TRUE);
+            return ResultadoEJB.crearCorrecto(rr, "RegistroEstudiante Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar RegistroEstudiante (EjbReincorporacion.getDtoRegistroEstudiante).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<DtoReincorporacion.EstudianteR> getEstudianteRRes(Aspirante a) {
+        try {
+            List<Estudiante> das = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a WHERE a.idAspirante=:idAspirante ORDER BY e.periodo", Estudiante.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            DtoReincorporacion.EstudianteR ers = new DtoReincorporacion.EstudianteR(new Estudiante(), new Documentosentregadosestudiante(), "", new TipoEstudiante(), new Grupo(), Boolean.FALSE, Boolean.FALSE, Operacion.ACTUALIZAR);
+            if (!das.isEmpty()) {
+                Estudiante estudiante = das.get(das.size() - 1);
+                List<Documentosentregadosestudiante> ds = em.createQuery("select d from Documentosentregadosestudiante d INNER JOIN d.estudiante1 a WHERE a.idEstudiante=:idEstudiante ORDER BY a.periodo", Documentosentregadosestudiante.class).setParameter("idEstudiante", estudiante.getIdEstudiante()).getResultList();
+                Documentosentregadosestudiante d = new Documentosentregadosestudiante();                
+                Boolean editable = Boolean.FALSE;
+                if (!ds.isEmpty()) {
+                    d = ds.get(0);
+                    editable = Boolean.TRUE;
+                }
+                ers = new DtoReincorporacion.EstudianteR(estudiante, d, getAreaSeleccionada(estudiante.getCarrera()), estudiante.getTipoEstudiante(), estudiante.getGrupo(), estudiante.getOpcionIncripcion(), editable, Operacion.ACTUALIZAR);
+            }
+            return ResultadoEJB.crearCorrecto(ers, "EstudianteR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar EstudianteR (EjbReincorporacion.getEstudianteRRes).", e, null);
+        }
+    }
+
+    public ResultadoEJB<DtoReincorporacion.RegDatosLaborales> getRegDatosLaborales(Aspirante a) {
+        try {
+            List<DatosLaborales> das = em.createQuery("select e from DatosLaborales e INNER JOIN e.aspirante a WHERE a.idAspirante=:idAspirante", DatosLaborales.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            DtoReincorporacion.RegDatosLaborales ers = new DtoReincorporacion.RegDatosLaborales(new DatosLaborales(), Operacion.PERSISTIR, Boolean.FALSE);
+            if (!das.isEmpty()) {
+                DatosLaborales dl = das.get(das.size() - 1);
+                ResultadoEJB<Asentamiento> a1 = getAsentamiento(dl.getAsentamiento());
+                Asentamiento a2 = new Asentamiento();
+                if (a1.getCorrecto()) {
+                    a2 = a1.getValor();
+                }
+                ers = new DtoReincorporacion.RegDatosLaborales(dl, Operacion.ACTUALIZAR,Boolean.TRUE);
+            }
+            return ResultadoEJB.crearCorrecto(ers, "RegDatosLaborales Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar RegDatosLaborales (EjbReincorporacion.getRegDatosLaborales).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<DtoReincorporacion.AcademicosCR> getRegDatosAcademicosC(Aspirante a) {
+        try {
+            List<DatosAcademicosComplementarios> das = em.createQuery("select e from DatosAcademicosComplementarios e INNER JOIN e.aspirante1 a WHERE a.idAspirante=:idAspirante", DatosAcademicosComplementarios.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            DtoReincorporacion.AcademicosCR dac=new DtoReincorporacion.AcademicosCR(new DatosAcademicosComplementarios(),Operacion.PERSISTIR, Boolean.FALSE);
+            if (!das.isEmpty()) {
+                DatosAcademicosComplementarios dl = das.get(das.size() - 1);                
+                dac = new DtoReincorporacion.AcademicosCR(dl,Operacion.ACTUALIZAR, Boolean.TRUE);
+            }
+            return ResultadoEJB.crearCorrecto(dac, "AcademicosCR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar AcademicosCR (EjbReincorporacion.getRegDatosAcademicosC).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<DtoReincorporacion.SosioeconomicosR> getRegDatosSoEconomicos(Aspirante a) {
+        try {
+            List<DatosSocioeconomicos> das = em.createQuery("select e from DatosSocioeconomicos e INNER JOIN e.aspirante1 a WHERE a.idAspirante=:idAspirante", DatosSocioeconomicos.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            DtoReincorporacion.SosioeconomicosR ds = new DtoReincorporacion.SosioeconomicosR(new DatosSocioeconomicos(),Operacion.PERSISTIR, Boolean.FALSE);
+            if (!das.isEmpty()) {
+                DatosSocioeconomicos dl = das.get(das.size() - 1);                
+                ds =new DtoReincorporacion.SosioeconomicosR(dl,Operacion.ACTUALIZAR, Boolean.TRUE);
+            }
+            return ResultadoEJB.crearCorrecto(ds, "SosioeconomicosR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar SosioeconomicosR (EjbReincorporacion.getRegDatosSoEconomicos).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<DtoReincorporacion.RcontactoEmergencia>> getRegContactoEm(Aspirante a) {
+        try {
+            List<ContactoEmergenciasEstudiante> das = em.createQuery("select e from ContactoEmergenciasEstudiante e INNER JOIN e.aspirante a WHERE a.idAspirante=:idAspirante", ContactoEmergenciasEstudiante.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            List<DtoReincorporacion.RcontactoEmergencia> rem = new ArrayList<>();
+            if (!das.isEmpty()) {
+                das.forEach((t) -> {
+                    rem.add(new DtoReincorporacion.RcontactoEmergencia(t, Operacion.ACTUALIZAR, Boolean.TRUE));
+                });
+            }
+            return ResultadoEJB.crearCorrecto(rem, "RcontactoEmergencia Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar RcontactoEmergencia (EjbReincorporacion.getRegContactoEm).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<DtoReincorporacion.Familia>> getRegFamiliares(Aspirante a) {
+        try {
+            List<IntegrantesFamilia> das = em.createQuery("select e from IntegrantesFamilia e INNER JOIN e.aspirante a WHERE a.idAspirante=:idAspirante", IntegrantesFamilia.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            List<DtoReincorporacion.Familia> fam = new ArrayList<>();
+            if (!das.isEmpty()) {
+                das.forEach((t) -> {                    
+                fam.add(new DtoReincorporacion.Familia(t, t.getOcupacion(),t.getEscolaridad(),Operacion.ACTUALIZAR, Boolean.TRUE));
+                });
+            }
+            return ResultadoEJB.crearCorrecto(fam, "Familia Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Familia (EjbReincorporacion.getRegFamiliares).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<DtoReincorporacion.VocacionalR> getRegVocacional(Persona p) {
+        try {
+            List<EncuestaVocacional> das = em.createQuery("select e from EncuestaVocacional e INNER JOIN e.persona p WHERE p.idpersona=:idpersona", EncuestaVocacional.class).setParameter("idpersona", p.getIdpersona()).getResultList();
+            DtoReincorporacion.VocacionalR vrs = new DtoReincorporacion.VocacionalR(new EncuestaVocacional(), new AreasUniversidad(), Operacion.PERSISTIR, Boolean.FALSE);
+            if (!das.isEmpty()) {
+                EncuestaVocacional ev=das.get(0);
+                AreasUniversidad au=getOpcionArea(ev.getR4()).getValor();
+                vrs = new DtoReincorporacion.VocacionalR(ev, au, Operacion.PERSISTIR, Boolean.TRUE);            
+            }
+            return ResultadoEJB.crearCorrecto(vrs, "VocacionalR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar VocacionalR (EjbReincorporacion.getRegVocacional).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Asentamiento> getAsentamiento(Integer ase) {
+        try {
+            List<Asentamiento> das = em.createQuery("select e from Asentamiento e WHERE e.asentamientoPK.asentamiento=:asentamiento", Asentamiento.class).setParameter("asentamiento", ase).getResultList();
+            Asentamiento dl = das.get(das.size() - 1);
+            return ResultadoEJB.crearCorrecto(dl, "Asentamiento Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Asentamiento (EjbReincorporacion.getAsentamiento).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Localidad> getLocalidadUn(Integer ase) {
+        try {
+            List<Localidad> das = em.createQuery("select e from Localidad e WHERE e.localidadPK.claveLocalidad=:claveLocalidad", Localidad.class).setParameter("claveLocalidad", ase).getResultList();
+            Localidad dl = das.get(das.size() - 1);
+            return ResultadoEJB.crearCorrecto(dl, "Localidad Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Localidad (EjbReincorporacion.getLocalidad).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Localidad> getLocalidadDireccion(Integer est,Integer mun,Integer loc) {
+        try {
+            List<Localidad> das = em.createQuery("select e from Localidad e WHERE e.localidadPK.claveLocalidad=:claveLocalidad AND e.localidadPK.claveEstado=:claveEstado AND e.localidadPK.claveMunicipio=:claveMunicipio", Localidad.class)
+                    .setParameter("claveEstado", est)
+                    .setParameter("claveMunicipio", mun)
+                    .setParameter("claveLocalidad", loc)
+                    .getResultList();
+            Localidad dl = das.get(das.size() - 1);
+            return ResultadoEJB.crearCorrecto(dl, "Localidad Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Localidad (EjbReincorporacion.getLocalidad).", e, null);
+        }
+    }
+    
+    
+    public ResultadoEJB<DtoReincorporacion.Familia> operacionesFamiliaR(DtoReincorporacion.Familia rr, Aspirante a) {
+        try {
+            rr.getFamilia().setEscolaridad(new Escolaridad());
+            rr.getFamilia().setOcupacion(new Ocupacion());
+            rr.getFamilia().setEscolaridad(rr.getEscolaridad());
+            rr.getFamilia().setOcupacion(rr.getOcupacion());
+            switch (rr.getOperacion()) {
+                case PERSISTIR:
+                    rr.getFamilia().setAspirante(new Aspirante());
+                    rr.getFamilia().setAspirante(a);
+                    em.persist(rr.getFamilia());
+                    f.setEntityClass(DatosFamiliares.class);
+                    f.flush();
+                    rr.setOperacion(Operacion.ACTUALIZAR);
+                    break;
+                case ACTUALIZAR:                    em.merge(rr.getFamilia());
+                    f.setEntityClass(DatosFamiliares.class);                    f.flush();
+                    break;
+            }
+            return ResultadoEJB.crearCorrecto(rr, "Familia Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Familia (EjbReincorporacion.operacionesFamiliaR).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<DtoReincorporacion.RcontactoEmergencia> operacionesContactoEmR(DtoReincorporacion.RcontactoEmergencia rr, Aspirante a) {
+        try {
+            switch (rr.getOperacion()) {
+                case PERSISTIR:
+                    rr.getEmergenciasEstudiante().setAspirante(new Aspirante());
+                    rr.getEmergenciasEstudiante().setAspirante(a);
+                    em.persist(rr.getEmergenciasEstudiante());
+                    f.setEntityClass(DatosFamiliares.class);
+                    f.flush();
+                    rr.setOperacion(Operacion.ACTUALIZAR);
+                    break;
+                case ACTUALIZAR:                    em.merge(rr.getEmergenciasEstudiante());
+                    f.setEntityClass(DatosFamiliares.class);                    f.flush();
+                    break;
+            }
+            return ResultadoEJB.crearCorrecto(rr, "RcontactoEmergencia Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar RcontactoEmergencia (EjbReincorporacion.operacionesContactoEmR).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<DtoReincorporacion.RegDatosLaborales> operacionesLaborales(DtoReincorporacion.RegDatosLaborales rr, Aspirante a) {
+        try {
+            switch (rr.getOperacion()) {
+                case PERSISTIR:
+                    rr.getDatosLaborales().setAspirante(new Aspirante());
+                    rr.getDatosLaborales().setAspirante(a);
+                    em.persist(rr.getDatosLaborales());
+                    f.setEntityClass(DatosFamiliares.class);
+                    f.flush();
+                    rr.setOperacion(Operacion.ACTUALIZAR);
+                    break;
+                case ACTUALIZAR:                    em.merge(rr.getDatosLaborales());
+                    f.setEntityClass(DatosFamiliares.class);                    f.flush();
+                    break;
+            }
+            return ResultadoEJB.crearCorrecto(rr, "RegDatosLaborales Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar RegDatosLaborales (EjbReincorporacion.operacionesLaborales).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<DtoReincorporacion.SosioeconomicosR> operacionesSocioeconomicos(DtoReincorporacion.SosioeconomicosR rr, Aspirante a) {
+        try {
+            switch (rr.getOperacion()) {
+                case PERSISTIR:
+                    rr.getSocioeconomicos().setAspirante1(new Aspirante());
+                    rr.getSocioeconomicos().setAspirante1(a);
+                    rr.getSocioeconomicos().setAspirante(a.getIdAspirante());
+                    em.persist(rr.getSocioeconomicos());
+                    f.setEntityClass(DatosFamiliares.class);
+                    f.flush();
+                    rr.setOperacion(Operacion.ACTUALIZAR);
+                    break;
+                case ACTUALIZAR:                    em.merge(rr.getSocioeconomicos());
+                    f.setEntityClass(DatosFamiliares.class);                    f.flush();
+                    break;
+            }
+            return ResultadoEJB.crearCorrecto(rr, "SosioeconomicosR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar SosioeconomicosR (EjbReincorporacion.operacionesSocioeconomicos).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<DtoReincorporacion.AcademicosCR> operacionesAcademicosConplementarios(DtoReincorporacion.AcademicosCR rr, Aspirante a) {
+        try {
+            switch (rr.getOperacion()) {
+                case PERSISTIR:
+                    rr.getComplementarios().setAspirante1(new Aspirante());                    
+                    rr.getComplementarios().setAspirante1(a);
+                    rr.getComplementarios().setAspirante(a.getIdAspirante());
+                    em.persist(rr.getComplementarios());
+                    f.setEntityClass(DatosFamiliares.class);
+                    f.flush();
+                    rr.setOperacion(Operacion.ACTUALIZAR);
+                    break;
+                case ACTUALIZAR:                    em.merge(rr.getComplementarios());
+                    f.setEntityClass(DatosFamiliares.class);                    f.flush();
+                    break;
+            }
+            return ResultadoEJB.crearCorrecto(rr, "AcademicosCR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar AcademicosCR (EjbReincorporacion.operacionesAcademicosConplementarios).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<Estudiante>> getEstudiantesGrupo(Grupo g) {
+        try {
+            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e INNER JOIN e.grupo g WHERE g.idGrupo=:idGrupo", Estudiante.class).setParameter("idGrupo", g.getIdGrupo()).getResultList();
+            if (estudiantes.isEmpty()) {
+                estudiantes =new ArrayList<>();
+            }
+            return ResultadoEJB.crearCorrecto(estudiantes, "Estudiante Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Estudiante (EjbReincorporacion.getEstudiantesGrupo).", e, null);
         }
     }
 }

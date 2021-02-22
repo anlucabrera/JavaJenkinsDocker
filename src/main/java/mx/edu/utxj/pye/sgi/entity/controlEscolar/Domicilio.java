@@ -41,7 +41,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Domicilio.findByEstadoProcedencia", query = "SELECT d FROM Domicilio d WHERE d.estadoProcedencia = :estadoProcedencia")
     , @NamedQuery(name = "Domicilio.findByMunicipioProcedencia", query = "SELECT d FROM Domicilio d WHERE d.municipioProcedencia = :municipioProcedencia")
     , @NamedQuery(name = "Domicilio.findByAsentamientoProcedencia", query = "SELECT d FROM Domicilio d WHERE d.asentamientoProcedencia = :asentamientoProcedencia")
-    , @NamedQuery(name = "Domicilio.findByVivesCon", query = "SELECT d FROM Domicilio d WHERE d.vivesCon = :vivesCon")})
+    , @NamedQuery(name = "Domicilio.findByVivesCon", query = "SELECT d FROM Domicilio d WHERE d.vivesCon = :vivesCon")
+    , @NamedQuery(name = "Domicilio.findByCroquisParticular", query = "SELECT d FROM Domicilio d WHERE d.croquisParticular = :croquisParticular")
+    , @NamedQuery(name = "Domicilio.findByCroquisRenta", query = "SELECT d FROM Domicilio d WHERE d.croquisRenta = :croquisRenta")})
 public class Domicilio implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -104,6 +106,12 @@ public class Domicilio implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "vives_con")
     private String vivesCon;
+    @Size(max = 255)
+    @Column(name = "croquis_particular")
+    private String croquisParticular;
+    @Size(max = 255)
+    @Column(name = "croquis_renta")
+    private String croquisRenta;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante", insertable = false, updatable = false)
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Aspirante aspirante1;
@@ -233,6 +241,22 @@ public class Domicilio implements Serializable {
 
     public void setVivesCon(String vivesCon) {
         this.vivesCon = vivesCon;
+    }
+
+    public String getCroquisParticular() {
+        return croquisParticular;
+    }
+
+    public void setCroquisParticular(String croquisParticular) {
+        this.croquisParticular = croquisParticular;
+    }
+
+    public String getCroquisRenta() {
+        return croquisRenta;
+    }
+
+    public void setCroquisRenta(String croquisRenta) {
+        this.croquisRenta = croquisRenta;
     }
 
     public Aspirante getAspirante1() {

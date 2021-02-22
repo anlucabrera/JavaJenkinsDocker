@@ -33,19 +33,31 @@ public class ReincorporacionConverter implements Converter{
             throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Debe elegir un valor."));
         }
         try {
-            switch(component.getId()){
+            switch (component.getId()) {
                 case "ocupacionPadre":
                     Short claveOP = Short.parseShort(value);
-                    return f.getEntityManager().find(Ocupacion.class,claveOP);
+                    return f.getEntityManager().find(Ocupacion.class, claveOP);
                 case "ocupacionMadre":
                     Short claveOM = Short.parseShort(value);
-                    return f.getEntityManager().find(Ocupacion.class,claveOM);
+                    return f.getEntityManager().find(Ocupacion.class, claveOM);
+                case "ocupacionFamiliar":
+                    Short claveOF = Short.parseShort(value);
+                    return f.getEntityManager().find(Ocupacion.class, claveOF);
                 case "escolaridadPadre":
                     Short claveEP = Short.parseShort(value);
-                    return f.getEntityManager().find(Escolaridad.class,claveEP);
+                    return f.getEntityManager().find(Escolaridad.class, claveEP);
                 case "escolaridadMadre":
                     Short claveEM = Short.parseShort(value);
-                    return f.getEntityManager().find(Escolaridad.class,claveEM);
+                    return f.getEntityManager().find(Escolaridad.class, claveEM);
+                case "escolaridadFamiliar":
+                    Short claveEF = Short.parseShort(value);
+                    return f.getEntityManager().find(Escolaridad.class, claveEF);
+                case "ocupacionT":
+                    Short claveOT = Short.parseShort(value);
+                    return f.getEntityManager().find(Ocupacion.class, claveOT);
+                case "escolaridadt":
+                    Short claveET = Short.parseShort(value);
+                    return f.getEntityManager().find(Escolaridad.class, claveET);
                 case "eb":
                     Integer claveEC = Integer.valueOf(value);
                     return f.getEntityManager().find(EspecialidadCentro.class,claveEC);

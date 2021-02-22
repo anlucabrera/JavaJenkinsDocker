@@ -6,9 +6,7 @@
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,41 +17,39 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Desarrollo
  */
 @Entity
-@Table(name = "tutor_familiar", catalog = "control_escolar", schema = "")
+@Table(name = "integrantes_familia", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "TutorFamiliar.findAll", query = "SELECT t FROM TutorFamiliar t")
-    , @NamedQuery(name = "TutorFamiliar.findByIdTutorFamiliar", query = "SELECT t FROM TutorFamiliar t WHERE t.idTutorFamiliar = :idTutorFamiliar")
-    , @NamedQuery(name = "TutorFamiliar.findByNombre", query = "SELECT t FROM TutorFamiliar t WHERE t.nombre = :nombre")
-    , @NamedQuery(name = "TutorFamiliar.findByApellidoPaterno", query = "SELECT t FROM TutorFamiliar t WHERE t.apellidoPaterno = :apellidoPaterno")
-    , @NamedQuery(name = "TutorFamiliar.findByApellidoMaterno", query = "SELECT t FROM TutorFamiliar t WHERE t.apellidoMaterno = :apellidoMaterno")
-    , @NamedQuery(name = "TutorFamiliar.findByCalle", query = "SELECT t FROM TutorFamiliar t WHERE t.calle = :calle")
-    , @NamedQuery(name = "TutorFamiliar.findByNumero", query = "SELECT t FROM TutorFamiliar t WHERE t.numero = :numero")
-    , @NamedQuery(name = "TutorFamiliar.findByEstado", query = "SELECT t FROM TutorFamiliar t WHERE t.estado = :estado")
-    , @NamedQuery(name = "TutorFamiliar.findByMunicipio", query = "SELECT t FROM TutorFamiliar t WHERE t.municipio = :municipio")
-    , @NamedQuery(name = "TutorFamiliar.findByAsentamiento", query = "SELECT t FROM TutorFamiliar t WHERE t.asentamiento = :asentamiento")
-    , @NamedQuery(name = "TutorFamiliar.findByNoTelefono", query = "SELECT t FROM TutorFamiliar t WHERE t.noTelefono = :noTelefono")
-    , @NamedQuery(name = "TutorFamiliar.findByParentesco", query = "SELECT t FROM TutorFamiliar t WHERE t.parentesco = :parentesco")})
-public class TutorFamiliar implements Serializable {
+    @NamedQuery(name = "IntegrantesFamilia.findAll", query = "SELECT i FROM IntegrantesFamilia i")
+    , @NamedQuery(name = "IntegrantesFamilia.findByIdIntegrantesFamilia", query = "SELECT i FROM IntegrantesFamilia i WHERE i.idIntegrantesFamilia = :idIntegrantesFamilia")
+    , @NamedQuery(name = "IntegrantesFamilia.findByNombre", query = "SELECT i FROM IntegrantesFamilia i WHERE i.nombre = :nombre")
+    , @NamedQuery(name = "IntegrantesFamilia.findByApellidoPaterno", query = "SELECT i FROM IntegrantesFamilia i WHERE i.apellidoPaterno = :apellidoPaterno")
+    , @NamedQuery(name = "IntegrantesFamilia.findByApellidoMaterno", query = "SELECT i FROM IntegrantesFamilia i WHERE i.apellidoMaterno = :apellidoMaterno")
+    , @NamedQuery(name = "IntegrantesFamilia.findByTelefono", query = "SELECT i FROM IntegrantesFamilia i WHERE i.telefono = :telefono")
+    , @NamedQuery(name = "IntegrantesFamilia.findByCalle", query = "SELECT i FROM IntegrantesFamilia i WHERE i.calle = :calle")
+    , @NamedQuery(name = "IntegrantesFamilia.findByNumero", query = "SELECT i FROM IntegrantesFamilia i WHERE i.numero = :numero")
+    , @NamedQuery(name = "IntegrantesFamilia.findByEstado", query = "SELECT i FROM IntegrantesFamilia i WHERE i.estado = :estado")
+    , @NamedQuery(name = "IntegrantesFamilia.findByMunicipio", query = "SELECT i FROM IntegrantesFamilia i WHERE i.municipio = :municipio")
+    , @NamedQuery(name = "IntegrantesFamilia.findByAsentamiento", query = "SELECT i FROM IntegrantesFamilia i WHERE i.asentamiento = :asentamiento")
+    , @NamedQuery(name = "IntegrantesFamilia.findByParentesco", query = "SELECT i FROM IntegrantesFamilia i WHERE i.parentesco = :parentesco")})
+public class IntegrantesFamilia implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_tutor_familiar")
-    private Integer idTutorFamiliar;
+    @Column(name = "id_integrantes_familia")
+    private Integer idIntegrantesFamilia;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 150)
@@ -69,14 +65,13 @@ public class TutorFamiliar implements Serializable {
     @Size(min = 1, max = 150)
     @Column(name = "apellido_materno")
     private String apellidoMaterno;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 150)
+    @Size(max = 20)
+    @Column(name = "telefono")
+    private String telefono;
+    @Size(max = 150)
     @Column(name = "calle")
     private String calle;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 10)
+    @Size(max = 10)
     @Column(name = "numero")
     private String numero;
     @Basic(optional = false)
@@ -91,49 +86,45 @@ public class TutorFamiliar implements Serializable {
     @NotNull
     @Column(name = "asentamiento")
     private int asentamiento;
-    @Size(max = 20)
-    @Column(name = "no_telefono")
-    private String noTelefono;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
+    @Size(min = 1, max = 9)
     @Column(name = "parentesco")
     private String parentesco;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tutor", fetch = FetchType.LAZY)
-    private List<DatosFamiliares> datosFamiliaresList;
+    @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Aspirante aspirante;
     @JoinColumn(name = "ocupacion", referencedColumnName = "id_ocupacion")
-    @ManyToOne
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Ocupacion ocupacion;
     @JoinColumn(name = "escolaridad", referencedColumnName = "id_escolaridad")
-    @ManyToOne
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Escolaridad escolaridad;
 
-    public TutorFamiliar() {
+    public IntegrantesFamilia() {
     }
 
-    public TutorFamiliar(Integer idTutorFamiliar) {
-        this.idTutorFamiliar = idTutorFamiliar;
+    public IntegrantesFamilia(Integer idIntegrantesFamilia) {
+        this.idIntegrantesFamilia = idIntegrantesFamilia;
     }
 
-    public TutorFamiliar(Integer idTutorFamiliar, String nombre, String apellidoPaterno, String apellidoMaterno, String calle, String numero, int estado, int municipio, int asentamiento, String parentesco) {
-        this.idTutorFamiliar = idTutorFamiliar;
+    public IntegrantesFamilia(Integer idIntegrantesFamilia, String nombre, String apellidoPaterno, String apellidoMaterno, int estado, int municipio, int asentamiento, String parentesco) {
+        this.idIntegrantesFamilia = idIntegrantesFamilia;
         this.nombre = nombre;
         this.apellidoPaterno = apellidoPaterno;
         this.apellidoMaterno = apellidoMaterno;
-        this.calle = calle;
-        this.numero = numero;
         this.estado = estado;
         this.municipio = municipio;
         this.asentamiento = asentamiento;
         this.parentesco = parentesco;
     }
 
-    public Integer getIdTutorFamiliar() {
-        return idTutorFamiliar;
+    public Integer getIdIntegrantesFamilia() {
+        return idIntegrantesFamilia;
     }
 
-    public void setIdTutorFamiliar(Integer idTutorFamiliar) {
-        this.idTutorFamiliar = idTutorFamiliar;
+    public void setIdIntegrantesFamilia(Integer idIntegrantesFamilia) {
+        this.idIntegrantesFamilia = idIntegrantesFamilia;
     }
 
     public String getNombre() {
@@ -158,6 +149,14 @@ public class TutorFamiliar implements Serializable {
 
     public void setApellidoMaterno(String apellidoMaterno) {
         this.apellidoMaterno = apellidoMaterno;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
     public String getCalle() {
@@ -200,14 +199,6 @@ public class TutorFamiliar implements Serializable {
         this.asentamiento = asentamiento;
     }
 
-    public String getNoTelefono() {
-        return noTelefono;
-    }
-
-    public void setNoTelefono(String noTelefono) {
-        this.noTelefono = noTelefono;
-    }
-
     public String getParentesco() {
         return parentesco;
     }
@@ -216,15 +207,14 @@ public class TutorFamiliar implements Serializable {
         this.parentesco = parentesco;
     }
 
-    @XmlTransient
-    public List<DatosFamiliares> getDatosFamiliaresList() {
-        return datosFamiliaresList;
+    public Aspirante getAspirante() {
+        return aspirante;
     }
-    
-    public void setDatosFamiliaresList(List<DatosFamiliares> datosFamiliaresList) {
-        this.datosFamiliaresList = datosFamiliaresList;
+
+    public void setAspirante(Aspirante aspirante) {
+        this.aspirante = aspirante;
     }
-    
+
     public Ocupacion getOcupacion() {
         return ocupacion;
     }
@@ -244,18 +234,18 @@ public class TutorFamiliar implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idTutorFamiliar != null ? idTutorFamiliar.hashCode() : 0);
+        hash += (idIntegrantesFamilia != null ? idIntegrantesFamilia.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof TutorFamiliar)) {
+        if (!(object instanceof IntegrantesFamilia)) {
             return false;
         }
-        TutorFamiliar other = (TutorFamiliar) object;
-        if ((this.idTutorFamiliar == null && other.idTutorFamiliar != null) || (this.idTutorFamiliar != null && !this.idTutorFamiliar.equals(other.idTutorFamiliar))) {
+        IntegrantesFamilia other = (IntegrantesFamilia) object;
+        if ((this.idIntegrantesFamilia == null && other.idIntegrantesFamilia != null) || (this.idIntegrantesFamilia != null && !this.idIntegrantesFamilia.equals(other.idIntegrantesFamilia))) {
             return false;
         }
         return true;
@@ -263,7 +253,7 @@ public class TutorFamiliar implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.TutorFamiliar[ idTutorFamiliar=" + idTutorFamiliar + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.IntegrantesFamilia[ idIntegrantesFamilia=" + idIntegrantesFamilia + " ]";
     }
     
 }

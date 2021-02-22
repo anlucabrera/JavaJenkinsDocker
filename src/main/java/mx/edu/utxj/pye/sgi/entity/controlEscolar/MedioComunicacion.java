@@ -32,7 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "MedioComunicacion.findByPersona", query = "SELECT m FROM MedioComunicacion m WHERE m.persona = :persona")
     , @NamedQuery(name = "MedioComunicacion.findByTelefonoFijo", query = "SELECT m FROM MedioComunicacion m WHERE m.telefonoFijo = :telefonoFijo")
     , @NamedQuery(name = "MedioComunicacion.findByTelefonoMovil", query = "SELECT m FROM MedioComunicacion m WHERE m.telefonoMovil = :telefonoMovil")
-    , @NamedQuery(name = "MedioComunicacion.findByEmail", query = "SELECT m FROM MedioComunicacion m WHERE m.email = :email")})
+    , @NamedQuery(name = "MedioComunicacion.findByEmail", query = "SELECT m FROM MedioComunicacion m WHERE m.email = :email")
+    , @NamedQuery(name = "MedioComunicacion.findByTelefonoRenta", query = "SELECT m FROM MedioComunicacion m WHERE m.telefonoRenta = :telefonoRenta")})
 public class MedioComunicacion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,6 +52,9 @@ public class MedioComunicacion implements Serializable {
     @Size(max = 250)
     @Column(name = "email")
     private String email;
+    @Size(max = 25)
+    @Column(name = "telefono_renta")
+    private String telefonoRenta;
     @JoinColumn(name = "persona", referencedColumnName = "idpersona", insertable = false, updatable = false)
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Persona persona1;
@@ -92,6 +96,14 @@ public class MedioComunicacion implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getTelefonoRenta() {
+        return telefonoRenta;
+    }
+
+    public void setTelefonoRenta(String telefonoRenta) {
+        this.telefonoRenta = telefonoRenta;
     }
 
     public Persona getPersona1() {

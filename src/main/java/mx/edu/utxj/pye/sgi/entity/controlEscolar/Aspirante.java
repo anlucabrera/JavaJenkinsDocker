@@ -46,6 +46,14 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Aspirante.findByFechaRegistro", query = "SELECT a FROM Aspirante a WHERE a.fechaRegistro = :fechaRegistro")})
 public class Aspirante implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "estatus")
+    private boolean estatus;
+    @Size(max = 15)
+    @Column(name = "folioCeneval")
+    private String folioCeneval;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,13 +62,6 @@ public class Aspirante implements Serializable {
     private Integer idAspirante;
     @Column(name = "folio_aspirante")
     private Integer folioAspirante;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "estatus")
-    private boolean estatus;
-    @Size(max = 15)
-    @Column(name = "folioCeneval")
-    private String folioCeneval;
     @Column(name = "fechaRegistro")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRegistro;
@@ -92,6 +93,16 @@ public class Aspirante implements Serializable {
     @JoinColumn(name = "tipo_aspirante", referencedColumnName = "id_tipo_aspirante")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TipoAspirante tipoAspirante;
+    @OneToMany(mappedBy = "aspirante", fetch = FetchType.LAZY)
+    private List<IntegrantesFamilia> integrantesFamiliaList;
+    @OneToMany(mappedBy = "aspirante", fetch = FetchType.LAZY)
+    private List<DatosLaborales> datosLaboralesList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
+    private DatosSocioeconomicos datosSocioeconomicos;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
+    private DatosAcademicosComplementarios datosAcademicosComplementarios;
+    @OneToMany(mappedBy = "aspirante", fetch = FetchType.LAZY)
+    private List<ContactoEmergenciasEstudiante> contactoEmergenciasEstudianteList;
 
     public Aspirante() {
     }
@@ -121,21 +132,6 @@ public class Aspirante implements Serializable {
         this.folioAspirante = folioAspirante;
     }
 
-    public boolean getEstatus() {
-        return estatus;
-    }
-
-    public void setEstatus(boolean estatus) {
-        this.estatus = estatus;
-    }
-
-    public String getFolioCeneval() {
-        return folioCeneval;
-    }
-
-    public void setFolioCeneval(String folioCeneval) {
-        this.folioCeneval = folioCeneval;
-    }
 
     public Date getFechaRegistro() {
         return fechaRegistro;
@@ -236,6 +232,40 @@ public class Aspirante implements Serializable {
         this.tipoAspirante = tipoAspirante;
     }
 
+    @XmlTransient
+    public List<IntegrantesFamilia> getIntegrantesFamiliaList() {
+        return integrantesFamiliaList;
+    }
+
+    public void setIntegrantesFamiliaList(List<IntegrantesFamilia> integrantesFamiliaList) {
+        this.integrantesFamiliaList = integrantesFamiliaList;
+    }
+
+    @XmlTransient
+    public List<DatosLaborales> getDatosLaboralesList() {
+        return datosLaboralesList;
+    }
+
+    public void setDatosLaboralesList(List<DatosLaborales> datosLaboralesList) {
+        this.datosLaboralesList = datosLaboralesList;
+    }
+
+    public DatosSocioeconomicos getDatosSocioeconomicos() {
+        return datosSocioeconomicos;
+    }
+
+    public void setDatosSocioeconomicos(DatosSocioeconomicos datosSocioeconomicos) {
+        this.datosSocioeconomicos = datosSocioeconomicos;
+    }
+
+    public DatosAcademicosComplementarios getDatosAcademicosComplementarios() {
+        return datosAcademicosComplementarios;
+    }
+
+    public void setDatosAcademicosComplementarios(DatosAcademicosComplementarios datosAcademicosComplementarios) {
+        this.datosAcademicosComplementarios = datosAcademicosComplementarios;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -261,14 +291,29 @@ public class Aspirante implements Serializable {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante[ idAspirante=" + idAspirante + " ]";
     }
 
-
-
-    public Date getFechaValidacion() {
-        return fechaValidacion;
+    @XmlTransient
+    public List<ContactoEmergenciasEstudiante> getContactoEmergenciasEstudianteList() {
+        return contactoEmergenciasEstudianteList;
     }
 
-    public void setFechaValidacion(Date fechaValidacion) {
-        this.fechaValidacion = fechaValidacion;
+    public void setContactoEmergenciasEstudianteList(List<ContactoEmergenciasEstudiante> contactoEmergenciasEstudianteList) {
+        this.contactoEmergenciasEstudianteList = contactoEmergenciasEstudianteList;
+    }
+
+    public boolean getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(boolean estatus) {
+        this.estatus = estatus;
+    }
+
+    public String getFolioCeneval() {
+        return folioCeneval;
+    }
+
+    public void setFolioCeneval(String folioCeneval) {
+        this.folioCeneval = folioCeneval;
     }
     
 }

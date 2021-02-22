@@ -54,6 +54,8 @@ public class PlanEstudioMateria implements Serializable {
     @NotNull
     @Column(name = "grado")
     private int grado;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
+    private List<MetasPropuestas> metasPropuestasList;
     @ManyToMany(mappedBy = "planEstudioMateriaList", fetch = FetchType.LAZY)
     private List<Competencia> competenciaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
@@ -180,6 +182,15 @@ public class PlanEstudioMateria implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria[ idPlanMateria=" + idPlanMateria + " ]";
+    }
+
+    @XmlTransient
+    public List<MetasPropuestas> getMetasPropuestasList() {
+        return metasPropuestasList;
+    }
+
+    public void setMetasPropuestasList(List<MetasPropuestas> metasPropuestasList) {
+        this.metasPropuestasList = metasPropuestasList;
     }
     
 }

@@ -114,7 +114,7 @@
                     <c:if test="#{seguimientoExpedienteMatriculaTitulacion.mostrarEnDesarrollo(request) and seguimientoExpedienteMatriculaTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/seguimientoMatricula.xhtml"><i class="fa fa-user"></i><span>Expedientes por Matricula</span></p:link></li></c:if>
                     <c:if test="#{registroExpedienteTitulacion.mostrarEnDesarrollo(request) and registroExpedienteTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/registrarExpediente.xhtml"><i class="fa fa-user-plus"></i><span>Registrar Expediente</span></p:link></li></c:if>
                     <c:if test="#{fechasTerminacionTitulacion.mostrarEnDesarrollo(request) and fechasTerminacionTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/fechasTerminacion.xhtml"><i class="fa fa-calendar"></i><span>Fechas Terminación</span></p:link></li></c:if>
-                    
+
                     <!-- Psicopedagogía -->
                     <c:if test="#{dictamenBajaPsicopedagogia.mostrarEnDesarrollo(request) and dictamenBajaPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/dictamenBaja.xhtml"><i class="fa fa-edit"></i><span>Dictamen Baja</span></p:link></li></c:if>
                     <c:if test="#{cedulaIdentificacionPsicopedagogia.mostrarEnDesarrollo(request) and cedulaIdentificacionPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/cedulaIdentificacion.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
@@ -170,6 +170,8 @@
 
                     <!-- Consulta multiples -->
                     <c:if test="#{consultaCalificaciones.mostrarEnDesarrollo(request) and consultaCalificaciones.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/consultarCalificaciones.xhtml"><i class="fa fa-list-ol"></i><span>Consultar calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{resultadosPlaneacionesConsulta.mostrarEnDesarrollo(request) and resultadosPlaneacionesConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesMu/resultadosPlaneaciones.xhtml"><i class="fa fa-list-ol"></i><span>Resultado de Planeaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{registroDeEstudianteConsulta.mostrarEnDesarrollo(request) and registroDeEstudianteConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesMu/registroEstudianteConsulta.xhtml"><i class="fa fa-list-ol"></i><span>Resultado Registro del estudiante</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
                 </c:if>
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluaciones y encuestas</li>

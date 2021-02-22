@@ -1,14 +1,11 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
-import com.github.adminfaces.starter.infra.model.Filter;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
-import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
-import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
@@ -21,6 +18,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,29 +26,31 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReincorporacion;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.ReincorporacionRolServiciosEscolares;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.RegistroDelEstudianteRolEstudiante;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmision;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPerfilEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.entity.pye2.Localidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.Pais;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
 
 
-
 @Named
 @ViewScoped
-public class ReincorporacionServiciosEscolares extends ViewScopedRol implements Desarrollable {
+public class RegistrolDelEstudiante extends ViewScopedRol implements Desarrollable {
     
-    @Getter @Setter ReincorporacionRolServiciosEscolares rol;
+    @Getter @Setter RegistroDelEstudianteRolEstudiante rol= new RegistroDelEstudianteRolEstudiante();
     @Getter Boolean tieneAcceso = false;
     @Getter private Boolean cargado = false;
     
@@ -58,81 +58,39 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     @EJB EjbValidacionRol evr;
     @EJB EjbFichaAdmision efa;
     @EJB EjbPropiedades ep;
-    
+    @EJB    EjbCarga carga;
+    @EJB EjbPerfilEstudiante ejbPerfilEstudiante;
     @Inject LogonMB logonMB;
-
-    
-
-
 
 @PostConstruct
     public void init(){
         try {
-            if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+            if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19)) return;
             cargado = true;
-            setVistaControlador(ControlEscolarVistaControlador.REINCORPORACION);
-            ResultadoEJB<Filter<PersonalActivo>> resAccesoEs = ejb.validarServiciosEscolares(logonMB.getPersonal().getClave()); //Validar si pertenece departamento de Servicios Escolares
-            ResultadoEJB<Filter<PersonalActivo>> resAccesoDi = evr.validarDirector(logonMB.getPersonal().getClave());
-            ResultadoEJB<Filter<PersonalActivo>> resAccesoEd = evr.validarEncargadoDireccion(logonMB.getPersonal().getClave());//validar si es director           
-                                  
-            if (!resAccesoDi.getCorrecto() && !resAccesoEd.getCorrecto() && !resAccesoEs.getCorrecto()) {                
-                mostrarMensajeResultadoEJB(resAccesoDi);
-                mostrarMensajeResultadoEJB(resAccesoEd);
-                mostrarMensajeResultadoEJB(resAccesoEs);
-                return;
-            }
-            
-            Filter<PersonalActivo> filtroEs = resAccesoEs.getValor();//se obtiene el filtro resultado de la validación         
-            Filter<PersonalActivo> filtroDi = resAccesoDi.getValor();//se obtiene el filtro resultado de la validación         
-            Filter<PersonalActivo> filtroEd = resAccesoEd.getValor();//se obtiene el filtro resultado de la validación         
-            
-            PersonalActivo activoEs = filtroEs.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
-            PersonalActivo activoDi = filtroDi.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
-            PersonalActivo activoEd = filtroEd.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
-            
-            rol = new ReincorporacionRolServiciosEscolares(filtroEs, activoEs, activoEs.getAreaOperativa());
-            tieneAcceso = rol.tieneAcceso(activoEs);
-            if (tieneAcceso) {
-                rol.setEsEscolares(Boolean.TRUE);
-                rol.setPersonalActivoSe(activoEs);
-            } else {
-                rol = new ReincorporacionRolServiciosEscolares(filtroDi, activoDi, activoDi.getAreaOperativa());
-                tieneAcceso = rol.tieneAcceso(activoDi);
-                if (tieneAcceso) {
-                    rol.setEsEscolares(Boolean.FALSE);
-                    rol.setPersonalActivoSe(activoDi);
-                } else {
-                    rol = new ReincorporacionRolServiciosEscolares(filtroEd, activoEd, activoEd.getAreaOperativa());
-                    tieneAcceso = rol.tieneAcceso(activoEd);
-                    if (tieneAcceso) {
-                        rol.setEsEscolares(Boolean.FALSE);
-                        rol.setPersonalActivoSe(activoEd);
-                    } else {
-                        mostrarMensajeNoAcceso();
-                        return;
-                    }
-                }
-            }
-            
-            ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEvento();
-            if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
-            // ----------------------------------------------------------------------------------------------------------------------------------------------------------
+            setVistaControlador(ControlEscolarVistaControlador.REGISTRO_DEL_ESTUDIANTE);
+            ResultadoEJB<Estudiante> resAcceso = ejbPerfilEstudiante.validaEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
+            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
+            ResultadoEJB<Estudiante> resValidacion = ejbPerfilEstudiante.validaEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
+            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
+            Estudiante estudiante = resValidacion.getValor();
+            tieneAcceso = rol.tieneAccesoEs(estudiante,UsuarioTipo.ESTUDIANTE19);
+            tieneAcceso = Boolean.TRUE;
+            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            //----------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
             if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
-            if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
             rol.setNivelRol(NivelRol.OPERATIVO);
-            rol.setEventoActivo(resEvento.getValor());
-            
             
             rol.setComunicacion(new MedioComunicacion());
             rol.setPersonaD(new DtoReincorporacion.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE));
             rol.setAspirante(new DtoReincorporacion.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE));
             rol.setDmedico(new DtoReincorporacion.MedicosR(new DatosMedicos(), new TipoSangre(), new TipoDiscapacidad(), Operacion.PERSISTIR, Boolean.FALSE));
-            rol.setTutor(new DtoReincorporacion.TutorR(new TutorFamiliar(), new Ocupacion(),new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE));
+            rol.setTutor(new DtoReincorporacion.TutorR(new TutorFamiliar(), new Ocupacion(), new Escolaridad(),Operacion.PERSISTIR, Boolean.FALSE));
             rol.setDfamiliares(new DtoReincorporacion.FamiliaresR(new DatosFamiliares(), rol.getTutor(), new Ocupacion(), new Ocupacion(), new Escolaridad(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE));
             rol.setDdomicilios(new DtoReincorporacion.DomicilioR(new Domicilio(), Boolean.FALSE, Operacion.PERSISTIR, Boolean.FALSE));
             rol.setDacademicos(new DtoReincorporacion.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE));
             rol.setEncuesta(new DtoReincorporacion.EncuestaR(new EncuestaAspirante(), new LenguaIndigena(), new MedioDifusion(), Operacion.PERSISTIR, Boolean.FALSE));
+            rol.setEncuestaVocacional(new DtoReincorporacion.VocacionalR(new EncuestaVocacional(), new AreasUniversidad(), Operacion.PERSISTIR, Boolean.FALSE));
             rol.setRein(new DtoReincorporacion.ProcesoInscripcionRein("", "", 0, Boolean.TRUE, 0, "", new ArrayList<>(), new Documentosentregadosestudiante()));
             rol.setEstudianteR(new ArrayList<>());
             rol.setCalificacionesR(new ArrayList<>());
@@ -144,12 +102,10 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             rol.setEditarCalificaciones(Boolean.FALSE);     
             rol.setNombreR("Seleccione Un Tipo");
             rol.setTipoCal("Regulatoria");
-            rol.setPuedeValidar(Boolean.FALSE); 
-            if(!rol.getEsEscolares()){
-                buscarReincorporacionPorDirector();
-            }else{
-                inicializarValoresEscolares();
-            }
+            rol.setPuedeValidar(Boolean.FALSE);
+            inicializarValoresEscolares();
+            buscarRegistro();
+            buscarRegistroEstudiante();
         }catch (Exception e){
             mostrarExcepcion(e);
         }
@@ -169,7 +125,12 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         rol.setEstadosDo(ejb.getEstado(new Pais(42, "Mexico")).getValor());
         rol.setEstadosPo(ejb.getEstado(new Pais(42, "Mexico")).getValor());
         rol.setEstadosTt(ejb.getEstado(new Pais(42, "Mexico")).getValor());
-        rol.setEstadosIe(ejb.getEstado(new Pais(42, "Mexico")).getValor());
+        rol.setEstadosIe(ejb.getEstado(new Pais(42, "Mexico")).getValor());        
+        rol.setEstadosPa(ejb.getEstado(new Pais(42, "Mexico")).getValor());
+        rol.setEstadosMa(ejb.getEstado(new Pais(42, "Mexico")).getValor());
+        rol.setEstadosFa(ejb.getEstado(new Pais(42, "Mexico")).getValor());
+        rol.setEstadosCe(ejb.getEstado(new Pais(42, "Mexico")).getValor());
+        rol.setEstadosDl(ejb.getEstado(new Pais(42, "Mexico")).getValor());
         rol.setAreasAcademicasPo(ejb.getAreasUniversidad().getValor());
         rol.setAreasAcademicasSo(ejb.getAreasUniversidad().getValor());
         rol.setTipoEstudiantes(ejb.getTiposEstudiante().getValor());
@@ -177,31 +138,66 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         rol.setPersonaD(new DtoReincorporacion.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE));
         rol.setAspirante(new DtoReincorporacion.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE));
         rol.setDmedico(new DtoReincorporacion.MedicosR(new DatosMedicos(), new TipoSangre(), new TipoDiscapacidad(), Operacion.PERSISTIR, Boolean.FALSE));
-        rol.setTutor(new DtoReincorporacion.TutorR(new TutorFamiliar(), new Ocupacion(),new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE));
+        rol.setTutor(new DtoReincorporacion.TutorR(new TutorFamiliar(), new Ocupacion(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE));
         rol.setDfamiliares(new DtoReincorporacion.FamiliaresR(new DatosFamiliares(), rol.getTutor(), new Ocupacion(), new Ocupacion(), new Escolaridad(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE));
         rol.setDdomicilios(new DtoReincorporacion.DomicilioR(new Domicilio(), Boolean.FALSE, Operacion.PERSISTIR, Boolean.FALSE));
         rol.setDacademicos(new DtoReincorporacion.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE));
         rol.setEncuesta(new DtoReincorporacion.EncuestaR(new EncuestaAspirante(), new LenguaIndigena(), new MedioDifusion(), Operacion.PERSISTIR, Boolean.FALSE));
+        rol.setEncuestaVocacional(new DtoReincorporacion.VocacionalR(new EncuestaVocacional(), new AreasUniversidad(), Operacion.PERSISTIR, Boolean.FALSE));
         rol.setRein(new DtoReincorporacion.ProcesoInscripcionRein("", "", 0, Boolean.TRUE, 0, "", new ArrayList<>(), new Documentosentregadosestudiante()));
+        rol.setFamiliaR(new DtoReincorporacion.Familia(new IntegrantesFamilia(),new Ocupacion(), new Escolaridad(),Operacion.PERSISTIR, Boolean.TRUE));
+        rol.setRcontactoEmergencia(new DtoReincorporacion.RcontactoEmergencia(new ContactoEmergenciasEstudiante(),Operacion.PERSISTIR, Boolean.TRUE));
+        rol.setRegDatosLaborales(new DtoReincorporacion.RegDatosLaborales(new DatosLaborales(), Operacion.PERSISTIR, cargado));
+        rol.setAcademicosCR(new DtoReincorporacion.AcademicosCR(new DatosAcademicosComplementarios(), Operacion.PERSISTIR, cargado));
+        rol.setSosioeconomicosR(new DtoReincorporacion.SosioeconomicosR(new DatosSocioeconomicos(), Operacion.PERSISTIR, cargado));
         rol.setEstudianteR(new ArrayList<>());
         rol.setCalificacionesR(new ArrayList<>());
         rol.setEstudiantesReincorporaciones(new ArrayList<>());
         rol.setPaso(0);
+        rol.setSubpaso(0);
         rol.setTipo(0);
         rol.setExtran(Boolean.FALSE);
         rol.setFinalizado(Boolean.FALSE);
-        rol.setEditarCalificaciones(Boolean.FALSE);
+        rol.setRespuestaTrabaja(Boolean.FALSE);
+        rol.setEditarCalificaciones(Boolean.FALSE);        
         rol.setNombreR("Seleccione Un Tipo");
         rol.setTipoCal("Regulatoria");
         rol.setPuedeValidar(Boolean.FALSE);
-        rol.setGeneraciones(ejb.getgeneracion().getValor());
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares.inicializarValoresEscolares()"+rol.getGeneraciones());
-    }        
+        rol.setEvidencia("");
+        llenarCatalogos();
+    } 
+    
+    public void llenarCatalogos() {
+        rol.setLateralidades(new ArrayList<>());
+        rol.getLateralidades().add("Zurdo");        
+        rol.getLateralidades().add("Diestro");
+        rol.setParentescos(new ArrayList<>());
+        rol.getParentescos().add("CONYUGE");
+        rol.getParentescos().add("HERMANO/A");        
+        rol.getParentescos().add("HIJO/A"); 
+        rol.setPrioridades(new ArrayList<>());
+        rol.getPrioridades().add("Muy Alta");  
+        rol.getPrioridades().add("Alta");   
+        rol.getPrioridades().add("Media");   
+        rol.getPrioridades().add("Baja");   
+        rol.getPrioridades().add("Muy Baja");   
+        rol.setRecursos(new ArrayList<>());
+        rol.getRecursos().add("Óptimos");  
+        rol.getRecursos().add("Suficientes");   
+        rol.getRecursos().add("Insuficientes");          
+        rol.setViviendas(new ArrayList<>());
+        rol.getViviendas().add("Propia");  
+        rol.getViviendas().add("Rentada");   
+        rol.getViviendas().add("Prestada");          
+        rol.setTransportes(new ArrayList<>());
+        rol.getTransportes().add("Público");  
+        rol.getTransportes().add("Propio");        
+    }
 
 // Validaciones Acceso
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
-        String valor = "reincorporaciones";
+        String valor = "registroEstudiante";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
     }
@@ -247,6 +243,51 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         rol.setAsentamientosTt(ejb.getAsentamiento(rol.getTutor().getTutorFamiliar().getEstado(), rol.getTutor().getTutorFamiliar().getMunicipio()).getValor());
     }
 
+    // Padre
+
+    public void municipiosPorEstadoPadre() {
+        rol.setMunicipiosPa(ejb.getMunicipio(rol.getDfamiliares().getDatosFamiliares().getEstadoPadre()).getValor());
+    }
+
+    public void asentamientosPorMunicipioPadre() {
+        rol.setAsentamientosPa(ejb.getAsentamiento(rol.getDfamiliares().getDatosFamiliares().getEstadoPadre(), rol.getDfamiliares().getDatosFamiliares().getMunicipioPadre()).getValor());
+    }
+    // Madre
+
+    public void municipiosPorEstadoMadre() {
+        rol.setMunicipiosMa(ejb.getMunicipio(rol.getDfamiliares().getDatosFamiliares().getEstadoMadre()).getValor());
+    }
+
+    public void asentamientosPorMunicipioMadre() {
+        rol.setAsentamientosMa(ejb.getAsentamiento(rol.getDfamiliares().getDatosFamiliares().getEstadoMadre(), rol.getDfamiliares().getDatosFamiliares().getMunicipioMadre()).getValor());
+    }
+    // Familiar
+
+    public void municipiosPorEstadoFamiliar() {
+        rol.setMunicipiosFa(ejb.getMunicipio(rol.getFamiliaR().getFamilia().getEstado()).getValor());
+    }
+
+    public void asentamientosPorMunicipioFamiliar() {
+        rol.setAsentamientosFa(ejb.getAsentamiento(rol.getFamiliaR().getFamilia().getEstado(), rol.getFamiliaR().getFamilia().getMunicipio()).getValor());
+    }
+    // Familiar
+
+    public void municipiosPorEstadoContactoEmergencias() {
+        rol.setMunicipiosCe(ejb.getMunicipio(rol.getRcontactoEmergencia().getEmergenciasEstudiante().getEstado()).getValor());
+    }
+
+    public void asentamientosPorMunicipioContactoEmergencias() {
+        rol.setAsentamientosCe(ejb.getAsentamiento(rol.getRcontactoEmergencia().getEmergenciasEstudiante().getEstado(), rol.getRcontactoEmergencia().getEmergenciasEstudiante().getMunicipio()).getValor());
+    }
+    // Laborales
+
+    public void municipiosPorEstadoDatosLaborales() {
+        rol.setMunicipiosDl(ejb.getMunicipio(rol.getRegDatosLaborales().getDatosLaborales().getEstado()).getValor());
+    }
+
+    public void asentamientosPorMunicipioDatosLaborales() {
+        rol.setAsentamientosDl(ejb.getAsentamiento(rol.getRegDatosLaborales().getDatosLaborales().getEstado(), rol.getRegDatosLaborales().getDatosLaborales().getMunicipio()).getValor());
+    }
     //Iems
     public void municipiosPorEstadoIems() {
         rol.setMunicipiosIe(ejb.getMunicipio(rol.getDacademicos().getEstado().getIdestado()).getValor());
@@ -282,94 +323,15 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         }
     }
     
-    public void tipoDeRegistro() {
-        switch (rol.getTipo()) {
-            case 0:
-                rol.setNombreR("Seleccione Un Tipo");
-                rol.setEditarCalificaciones(Boolean.FALSE);
-                break;
-            case 1:
-                rol.setNombreR("Cambio de grupo");
-                rol.setEditarCalificaciones(Boolean.FALSE);
-                rol.setTipoCal("Regulatoria");
-                llenarProceso();
-                Ajax.oncomplete("PF('bui').hide();");
-                break;
-            case 2:
-                rol.setNombreR("Cambio de carrera");
-                rol.setEditarCalificaciones(Boolean.TRUE);
-                rol.setTipoCal("Regulatoria");
-                llenarProceso();
-                Ajax.oncomplete("PF('dlgActualizacionActividad').show();");
-                break;
-            case 3:
-                rol.setNombreR("Reincorporación otra UT");
-                rol.setEditarCalificaciones(Boolean.TRUE);
-                rol.setTipoCal("Regulatoria");
-                llenarProceso();
-                Ajax.oncomplete("PF('dlgActualizacionActividad').show();");
-                break;
-            case 4:
-                rol.setNombreR("Equivalencia");
-                rol.setEditarCalificaciones(Boolean.FALSE);
-                rol.setTipoCal("Equivalencia");
-                llenarProceso();
-                Ajax.oncomplete("PF('dlgActualizacionActividad').show();");
-                break;
-            case 5:
-                rol.setNombreR("Reincorporación otra generación");
-                rol.setEditarCalificaciones(Boolean.TRUE);
-                rol.setTipoCal("Regulatoria");
-                llenarProceso();
-                Ajax.oncomplete("PF('dlgActualizacionActividad').show();");
-                break;
-        }
-        opcionInscripcion();
-    }
-    
-    public void llenarProceso() {
-        Boolean primeraOp;
-        Integer matr = 0;
-        List<Grupo> gs = new ArrayList<>();
-        if (!rol.getEstudianteR().isEmpty()) {
-            DtoReincorporacion.EstudianteR er = rol.getEstudianteR().get(rol.getEstudianteR().size() - 1);
-            rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera(),rol.getGeneraciones()).getValor());
-            primeraOp = er.getEstudiante().getOpcionIncripcion();
-            matr = er.getEstudiante().getMatricula();
-            if (er.getEstudiante().getTipoRegistro().equals("Equivalencia")) {
-                rol.setTipoCal("Equivalencia");
-            }
-            List<Grupo> gs2 = new ArrayList<>();
-            rol.getEstudianteR().forEach((t) -> {
-                gs2.add(t.getGrupo());
-            });
-            gs = gs2;
+    public void viviendadT() {
+        if (rol.getSosioeconomicosR().getSocioeconomicos().getVivienda().equals("Rentada")) {
+            rol.getSosioeconomicosR().getSocioeconomicos().setRentaViviendaActual(Boolean.TRUE);
         } else {
-            rol.setGrupos(ejb.getGrupos(rol.getDacademicos().getAcademicos().getPrimeraOpcion(),rol.getGeneraciones()).getValor());
-            primeraOp = Boolean.TRUE;
-            matr = 0;
-            gs = new ArrayList<>();
+            rol.getSosioeconomicosR().getSocioeconomicos().setRentaViviendaActual(Boolean.FALSE);
         }
 
-        List<AreasUniversidad> areP = new ArrayList<>();
-        List<AreasUniversidad> areS = new ArrayList<>();
-        AreasUniversidad arP = new AreasUniversidad();
-        AreasUniversidad arS = new AreasUniversidad();
-
-        String op1 = "";
-        String op2 = "";
-        areP = rol.getProgramasEducativosPo().stream().filter(t -> t.getArea() == rol.getDacademicos().getAcademicos().getPrimeraOpcion()).collect(Collectors.toList());
-        arP = areP.get(0);
-
-        areS = rol.getProgramasEducativosSo().stream().filter(t -> t.getArea() == rol.getDacademicos().getAcademicos().getSegundaOpcion()).collect(Collectors.toList());
-        arS = areS.get(0);
-
-        op1 = arP.getNombre() + "--" + rol.getDacademicos().getSistemaPo().getNombre();
-        op2 = arS.getNombre() + "--" + rol.getDacademicos().getSistemaSo().getNombre();
-
-        rol.setRein(new DtoReincorporacion.ProcesoInscripcionRein(op1, op2, matr, primeraOp, rol.getPersonalActivoSe().getPersonal().getClave(), rol.getNombreR(), new ArrayList<Grupo>(), new Documentosentregadosestudiante()));
     }
-
+        
     public void opcionInscripcion() {
         Short carrera = 0;
         rol.getRein().setGrupos(new ArrayList<>());
@@ -378,35 +340,21 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         } else {
             carrera = rol.getDacademicos().getAcademicos().getSegundaOpcion();
         }
-        if (!rol.getEstudianteR().isEmpty()) {
+        if(!rol.getEstudianteR().isEmpty()){
             rol.getEstudianteR().forEach((t) -> {
-                if (Objects.equals(rol.getRein().getOpcionIncripcion(), t.getPrimeraOpcion())) {
-                    if (t.getTipoEstudiante().getIdTipoEstudiante() != 2 && t.getTipoEstudiante().getIdTipoEstudiante() != 3) {
-                        rol.setUltimoGrupoActivo(t.getGrupo());
-                    }
+                if(Objects.equals(rol.getRein().getOpcionIncripcion(), t.getPrimeraOpcion())){
+                    rol.getRein().getGrupos().add(t.getGrupo());
                 }
             });
         }
-        rol.setGrupos(ejb.getGrupos(carrera, rol.getGeneraciones()).getValor());
+        rol.setGrupos(ejb.getGrupos(carrera).getValor());
     }
     
 
 // Busquedas registros
-    public void buscarReincorporacionPorDirector() {
-        ResultadoEJB<List<Estudiante>> resAcceso = ejb.getEstudiantes(rol.getAreaSe(),rol.getEventoActivo()); 
-        if (!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}   
-        if (!resAcceso.getValor().isEmpty()) {
-            resAcceso.getValor().forEach((t) -> {
-                if (!(t.getTipoRegistro().equals("Inscripción") || t.getTipoRegistro().equals("Reinscripción") || t.getTipoRegistro().equals("Reinscripcion Autónoma"))) {
-                    rol.getEstudiantesReincorporaciones().add(t);
-                }
-            });
-        }
-    }
-
-     public void buscarRegistro(){
-         inicializarValoresEscolares();
-        ResultadoEJB<DtoReincorporacion.General> resAcceso = ejb.getDtoReincorporacion(rol.getCurpBusqueda(),rol.getEsEscolares()); 
+    public void buscarRegistro(){
+        inicializarValoresEscolares();
+        ResultadoEJB<DtoReincorporacion.General> resAcceso = ejb.getDtoReincorporacion(rol.getCurpBusqueda(),Boolean.TRUE); 
         if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}
         rol.setGeneral(resAcceso.getValor());        
         if(rol.getGeneral().getEcontrado()){                 
@@ -441,6 +389,13 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
                 asentamientosPorMunicipioTutor();
             }
             
+            if(rol.getDfamiliares().getEcontrado()){
+                municipiosPorEstadoPadre();
+                asentamientosPorMunicipioPadre();
+                municipiosPorEstadoMadre();
+                asentamientosPorMunicipioMadre();
+            }
+            
             if(rol.getDacademicos().getEcontrado()){
                 municipiosPorEstadoIems();
                 localidadPormunicipioIems();
@@ -450,8 +405,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             }
             if (!rol.getEstudianteR().isEmpty()) {
                 DtoReincorporacion.EstudianteR er = rol.getEstudianteR().get(rol.getEstudianteR().size() - 1);
-                rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera(),rol.getGeneraciones()).getValor());
-                llenarProceso();
+                rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera()).getValor());
             }
             if (!rol.getCalificacionesR().isEmpty()) {
                 if (rol.getCalificacionesR().stream().filter(t -> Objects.equals(t.getPuedeValidar(), Boolean.FALSE)).collect(Collectors.toList()).isEmpty()) {
@@ -491,6 +445,27 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             }
         }         
     }
+    
+    public void buscarRegistroEstudiante(){
+        ResultadoEJB<DtoReincorporacion.RegistroEstudiante> resAcceso = ejb.getDtoRegistroEstudiante(rol.getAspirante().getAspirante(),rol.getPersonaD().getPersona()); 
+        if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}
+        rol.setRegistroEstudiante(resAcceso.getValor());        
+        if(rol.getRegistroEstudiante().getEcontrado()){
+            rol.setEmergencias(rol.getRegistroEstudiante().getRes());
+            rol.setFamilias(rol.getRegistroEstudiante().getFs());  
+            rol.setRegistrDelEstudianteR(rol.getRegistroEstudiante().getEsact());
+            rol.setAcademicosCR(rol.getRegistroEstudiante().getDac());
+            rol.setRegDatosLaborales(rol.getRegistroEstudiante().getLabo());
+            rol.setSosioeconomicosR(rol.getRegistroEstudiante().getSr());
+            rol.setEncuestaVocacional(rol.getRegistroEstudiante().getVr());
+        } 
+        
+        if (rol.getRegDatosLaborales().getEcontrado()) {
+            municipiosPorEstadoDatosLaborales();
+            asentamientosPorMunicipioDatosLaborales();
+            rol.setRespuestaTrabaja(rol.getRegDatosLaborales().getDatosLaborales().getTrabajoActual());
+        }
+    }
      
     public void buscarReincorporacion(ValueChangeEvent event) {
         Estudiante li = (Estudiante) event.getNewValue();
@@ -498,6 +473,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         if (li.getIdEstudiante()!= null) {
             rol.setCurpBusqueda(li.getAspirante().getIdPersona().getCurp());
             buscarRegistro();
+            buscarRegistroEstudiante();
         }
     }
         
@@ -511,6 +487,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             if (rol.getPersonaD().getEcontrado()) {
                 rol.setCurpBusqueda(per.getCurp());
                 buscarRegistro();
+            buscarRegistroEstudiante();
                 return;
             }
             rol.getPersonaD().setPersona(per);
@@ -559,6 +536,24 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         rol.setDdomicilios(rejb.getValor());
         rol.setPaso(3);
     }
+    
+    public void guardaLaborales() {
+        rol.getRegDatosLaborales().getDatosLaborales().setTrabajoActual(rol.getRespuestaTrabaja());
+        ResultadoEJB<DtoReincorporacion.RegDatosLaborales> rejb =ejb.operacionesLaborales(rol.getRegDatosLaborales(), rol.getAspirante().getAspirante());
+        if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
+        rol.setRegDatosLaborales(rejb.getValor());
+        rol.setPaso(5);
+    }
+    
+    public void guardaSocioeconomicosAcademicos() {
+        ResultadoEJB<DtoReincorporacion.SosioeconomicosR> rejbS =ejb.operacionesSocioeconomicos(rol.getSosioeconomicosR(), rol.getAspirante().getAspirante());
+        if(!rejbS.getCorrecto()){ mostrarMensajeResultadoEJB(rejbS);return;}
+        rol.setSosioeconomicosR(rejbS.getValor());        
+        ResultadoEJB<DtoReincorporacion.AcademicosCR> rejbA =ejb.operacionesAcademicosConplementarios(rol.getAcademicosCR(), rol.getAspirante().getAspirante());
+        if(!rejbA.getCorrecto()){ mostrarMensajeResultadoEJB(rejbA);return;}
+        rol.setAcademicosCR(rejbA.getValor());
+        rol.setPaso(5);
+    }
 
     public void guardaDatosFamiliares() {
          ResultadoEJB<DtoReincorporacion.TutorR> rejb =ejb.operacionesTutorR(rol.getTutor());
@@ -568,7 +563,26 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         ResultadoEJB<DtoReincorporacion.FamiliaresR> resjb =ejb.operacionesFamiliaresR(rol.getDfamiliares(), rol.getAspirante().getAspirante());
         if(!resjb.getCorrecto()){ mostrarMensajeResultadoEJB(resjb);return;}
         rol.setDfamiliares(resjb.getValor());
-        rol.setPaso(4);
+        rol.setPaso(3);        
+        rol.setSubpaso(1);
+    }
+    
+    public void guardaDatosIntegrantesDeFamilia() {
+        ResultadoEJB<DtoReincorporacion.Familia> resjb =ejb.operacionesFamiliaR(rol.getFamiliaR(), rol.getAspirante().getAspirante());
+        if(!resjb.getCorrecto()){ mostrarMensajeResultadoEJB(resjb);return;}
+        rol.setFamiliaR(new DtoReincorporacion.Familia(new IntegrantesFamilia(), new Ocupacion(), new Escolaridad(), Operacion.PERSISTIR, Boolean.FALSE));
+        rol.setPaso(3);
+        rol.setSubpaso(3);
+        buscarRegistroEstudiante();
+    }
+    
+    public void guardaDatosContactoemergencias() {
+        ResultadoEJB<DtoReincorporacion.RcontactoEmergencia> resjb =ejb.operacionesContactoEmR(rol.getRcontactoEmergencia(), rol.getAspirante().getAspirante());
+        if(!resjb.getCorrecto()){ mostrarMensajeResultadoEJB(resjb);return;}
+        rol.setRcontactoEmergencia(new DtoReincorporacion.RcontactoEmergencia(new ContactoEmergenciasEstudiante(), Operacion.PERSISTIR, Boolean.FALSE));
+        rol.setPaso(3);
+        rol.setSubpaso(4);
+        buscarRegistroEstudiante();
     }
 
     public void guardaDatosAcademicos() {
@@ -648,211 +662,46 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         rol.setPaso(6);
     }
     
-    public void guardaEstudiante() {   
-        rol.getRein().setTrabajadorInscribe(rol.getPersonalActivoSe().getPersonal().getClave());            
-        prepararCoreo(null);
-        ResultadoEJB<DtoReincorporacion.ProcesoInscripcionRein> rejb =ejb.operacionesEstudianteR(rol.getRein(),rol.getAspirante().getAspirante(),rol.getEventoActivo());
+    public void guardaEncuestaVocacional(ValueChangeEvent event) {
+        Integer numeroP=0;
+        String valor="";    
+        switch (event.getComponent().getId()) {
+            case "pv1": numeroP=1; valor=event.getNewValue().toString();  break;  
+            case "pv2": numeroP=2; valor=event.getNewValue().toString(); break;
+            case "pv5": numeroP=5; valor=event.getNewValue().toString(); break;
+        }              
+        ResultadoEJB<DtoReincorporacion.VocacionalR> rejb =ejb.operacionesEncuestaVocacional(rol.getPersonaD().getPersona(),valor,numeroP);
         if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
-        rol.setRein(rejb.getValor());
-        
-        ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> eJB =ejb.getAlineacionCalificaciones(rol.getAspirante().getAspirante(),rol.getEsEscolares());
-        if(!eJB.getCorrecto()){ mostrarMensajeResultadoEJB(eJB);return;}
-        rol.setCalificacionesR(eJB.getValor());
-        buscarRegistro();
-        rol.setPaso(7);
-    }
-
-    public void actualizarUltimoGrupo(RowEditEvent event) {
-        DtoReincorporacion.EstudianteR er = (DtoReincorporacion.EstudianteR) event.getObject();
-        er.getEstudiante().setTipoRegistro(rol.getNombreR());
-        er.setOperacion(Operacion.ACTUALIZAR);        
-        prepararCoreo(er);
-        ResultadoEJB<DtoReincorporacion.EstudianteR> rejb =ejb.operacionesEstudianteRegistrados(er);
-        if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
-        buscarRegistro();
-        rol.setPaso(7);        
+        rol.setEncuestaVocacional(rejb.getValor());
+        rol.setPaso(6);
     }
     
     public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalWarn("¡Operación cancelada!!");
     }
-    
-    public void guardaCalificaciones(ValueChangeEvent event) {
-        String idC=event.getComponent().getId();
-        String[] parts=idC.split("-");
-        ResultadoEJB<CalificacionPromedio> rejb =ejb.registrarCalificacionesPorPromedio(Integer.parseInt(parts[2]),Integer.parseInt(parts[1]),Double.parseDouble(event.getNewValue().toString()),rol.getTipoCal());
-        if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
-        buscarRegistro();
-        rol.setPaso(8);
-    }
-    
-    public void guardaCalificacionesValidadas() {
-        if (!rol.getCalificacionesR().isEmpty()) {
-            rol.getCalificacionesR().forEach((t) -> {
-                if (!t.getCalificacionesReincorporacions().isEmpty()) {
-                    t.getCalificacionesReincorporacions().forEach((ca) -> {
-                        ResultadoEJB<CalificacionPromedio> rejb = ejb.registrarCalificacionesPorPromedio(ca.getCalificacionPromedio().getCalificacionPromedioPK().getIdEstudiante(), ca.getCalificacionPromedio().getCalificacionPromedioPK().getCarga(), ca.getCalificacionPromedio().getValor(), "Oficial");
-                    });
-                }
-            });
-        } 
-        buscarRegistro();
-        rol.setPaso(8);
-    }
-  
-    public void prepararCoreo(DtoReincorporacion.EstudianteR er) {
-        String titulo = "Movimientos Escolares";        
-        String correoD="",correoO="";
-        rol.setMensaje("Me permito por este medio enviarle un cordial saludo, al mismo tiempo, informarle que se ha realizado una reincorporación del tipo: "
-                + rol.getNombreR()
-                + " del estudiante \n"
-                + rol.getPersonaD().getPersona().getApellidoPaterno()
-                + " "
-                + rol.getPersonaD().getPersona().getApellidoMaterno()
-                + " "
-                + rol.getPersonaD().getPersona().getNombre()
-                + " con matricula: "
-                + rol.getRein().getMatricula());
-        String mEscolares = rol.getMensaje();
-        switch (rol.getNombreR()) {
-            case "Cambio de grupo":
-                rol.setMensaje(rol.getMensaje()
-                        + " del grupo "
-                        + er.getEstudiante().getGrupo().getGrado()
-                        + "° "
-                        + er.getEstudiante().getGrupo().getLiteral()
-                        + " modalidad "
-                        + er.getEstudiante().getGrupo().getIdSistema().getNombre()
-                        + " al grupo "
-                        + er.getGrupo().getGrado()
-                        + "° "
-                        + er.getGrupo().getLiteral()
-                        + " modalidad "
-                        + er.getGrupo().getIdSistema().getNombre()
-                        + " del programa educativo ");
-
-                if (rol.getRein().getOpcionIncripcion()) {
-                    rol.setMensaje(rol.getMensaje()
-                            + rol.getRein().getPrimeraOp());
-                    correoD = rol.getDacademicos().getUniversidad1().getCorreoInstitucional();
-                } else {
-                    rol.setMensaje(rol.getMensaje()
-                            + rol.getRein().getSegundaOP());
-                    correoD = rol.getDacademicos().getUniversidad2().getCorreoInstitucional();
-                }
-                if (!rol.getCalificacionesR().isEmpty()) {
-                    if (!rol.getCalificacionesR().stream().filter(t -> t.getCalificacionesReincorporacions().isEmpty() == false).collect(Collectors.toList()).isEmpty()) {
-                        rol.setMensaje(rol.getMensaje() + " el cual ya contaba con las siguientes calificaciones registradas \n");
-                    }
-                    rol.getCalificacionesR().forEach((t) -> {
-                        if (Objects.equals(er.getEstudiante().getGrupo().getIdGrupo(), t.getGrupo().getIdGrupo())) {
-                            if (!t.getCalificacionesReincorporacions().isEmpty()) {
-                                rol.setMensaje(rol.getMensaje() + " del grupo " + t.getGrupo().getGrado() + "° " + t.getGrupo().getLiteral() + "\n");
-                                t.getCalificacionesReincorporacions().forEach((ca) -> {
-                                    rol.setMensaje(rol.getMensaje()
-                                            + ca.getEstudioMateria().getClaveMateria()
-                                            + "--"
-                                            + ca.getMateria().getNombre()
-                                            + " -- Promedio -- "
-                                            + ca.getCalificacionPromedio().getValor()
-                                            + "\n");
-                                });
-                            }
-                        }
-                    });
-                }
-                ejb.enviarConfirmacionCorreoElectronico(correoD, titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica correspondiente
-                break;
-            case "Cambio de carrera":
-                rol.setMensaje(rol.getMensaje() + " del programa educativo ");
-                if (!rol.getRein().getOpcionIncripcion()) {
-                    rol.setMensaje(rol.getMensaje()
-                            + rol.getRein().getPrimeraOp());
-                    correoO = rol.getDacademicos().getUniversidad1().getCorreoInstitucional();
-                } else {
-                    rol.setMensaje(rol.getMensaje()
-                            + rol.getRein().getSegundaOP());
-                    correoO = rol.getDacademicos().getUniversidad2().getCorreoInstitucional();
-                }
-                rol.setMensaje(rol.getMensaje() + " al programa educativo ");
-                if (rol.getRein().getOpcionIncripcion()) {
-                    rol.setMensaje(rol.getMensaje()
-                            + rol.getRein().getPrimeraOp());
-                    correoD = rol.getDacademicos().getUniversidad1().getCorreoInstitucional();
-                } else {
-                    rol.setMensaje(rol.getMensaje()
-                            + rol.getRein().getSegundaOP());
-                    correoD = rol.getDacademicos().getUniversidad2().getCorreoInstitucional();
-                }
-                if (!Objects.equals(rol.getDacademicos().getUniversidad1().getArea(), rol.getDacademicos().getUniversidad2().getArea())) {
-                    rol.setNombreR("Cambio de programa educativo");
-                    ejb.enviarConfirmacionCorreoElectronico(correoO, titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica orijen 
-                }else{
-                    rol.setNombreR("Cambio de plan de estudio");
-                }
-                if (!rol.getCalificacionesR().isEmpty()) {
-                    if (!rol.getCalificacionesR().stream().filter(t -> t.getCalificacionesReincorporacions().isEmpty()==false).collect(Collectors.toList()).isEmpty()) {
-                        rol.setMensaje(rol.getMensaje() + " el cual ya contaba con las siguientes calificaciones registradas \n");
-                    }
-                    rol.getCalificacionesR().forEach((t) -> {
-                        if (!t.getCalificacionesReincorporacions().isEmpty()) {
-                            rol.setMensaje(rol.getMensaje() + " del grupo " + t.getGrupo().getGrado() + "° " + t.getGrupo().getLiteral() + "\n");
-                            t.getCalificacionesReincorporacions().forEach((ca) -> {
-                                rol.setMensaje(rol.getMensaje()
-                                        + ca.getEstudioMateria().getClaveMateria()
-                                        + "--"
-                                        + ca.getMateria().getNombre()
-                                        + " -- Promedio -- "
-                                        + ca.getCalificacionPromedio().getValor()
-                                        + "\n");
-                            });
-                        }
-                    });
-                }
-                rol.setMensaje(rol.getMensaje() + " por lo que se le solicita realizar el registro correspondiente de calificaciones, notificando al Departamento de Servicios Escolares la finalizacion del proceso.");
-                ejb.enviarConfirmacionCorreoElectronico(correoD, titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica destino
-
-                break;
-            case "Reincorporación otra UT":
-                if (rol.getRein().getOpcionIncripcion()) {
-                    correoD = rol.getDacademicos().getUniversidad1().getCorreoInstitucional();
-                } else {
-                    correoD = rol.getDacademicos().getUniversidad2().getCorreoInstitucional();
-                }
-                rol.setMensaje(rol.getMensaje()
-                        + " por lo que se le pide estar atento al proceso hasta que se halla culminado la catura de calificaciones por parte del departamento de Servicios Escolares");
-                ejb.enviarConfirmacionCorreoElectronico(correoD, titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica destino
-
-                break;
-            case "Equivalencia":
-                if (rol.getRein().getOpcionIncripcion()) {
-                    correoD = rol.getDacademicos().getUniversidad1().getCorreoInstitucional();
-                } else {
-                    correoD = rol.getDacademicos().getUniversidad2().getCorreoInstitucional();
-                }
-                rol.setMensaje(rol.getMensaje()
-                        + " por lo que se le pide registrar la calificacion correspondiente a cada matera ");
-
-                ejb.enviarConfirmacionCorreoElectronico(correoD, titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica destino
-                break;
-            case "Reincorporación otra generación":
-                if (rol.getRein().getOpcionIncripcion()) {
-                    correoD = rol.getDacademicos().getUniversidad1().getCorreoInstitucional();
-                } else {
-                    correoD = rol.getDacademicos().getUniversidad2().getCorreoInstitucional();
-                }
-                rol.setMensaje(rol.getMensaje()
-                        + " por lo que se le pide estar atento al proceso hasta que se halla culminado la catura de calificaciones por parte del departamento de Servicios Escolares");
-                ejb.enviarConfirmacionCorreoElectronico(correoD, titulo, rol.getNombreR(), rol.getMensaje());//coreo para el area academica destino
-               break;
-        }
-        rol.getRein().setTipoRegistro(rol.getNombreR());
-        ejb.enviarConfirmacionCorreoElectronico("servicios.escolares@utxicotepec.edu.mx", titulo, rol.getNombreR(), mEscolares);// correo para el departamento de servicios escolares
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares1.prepararCoreo()" + rol.getMensaje());
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares.prepararCoreo()"+mEscolares);
-    }
-
+ 
     public void imprimirValores() {
+
+    }
+    
+    public void agregarCroquis() {
+        if (rol.getCroquis() != null) {
+            if (!rol.getEvidencia().equals("")) {
+                String ruta = carga.subirEvidenciaPOA(rol.getCroquis(), new File(String.valueOf("control_escolar").concat(File.separator).concat(rol.getDdomicilios().getDomicilio().getAspirante().toString()).concat(File.separator).concat("Domicilio").concat(File.separator).concat(rol.getEvidencia()).concat(File.separator)));
+                switch (rol.getEvidencia()) {
+                    case "Procedencia":
+                        rol.getDdomicilios().getDomicilio().setCroquisParticular(ruta);
+                        break;
+                    case "Recidencia":
+                        rol.getDdomicilios().getDomicilio().setCroquisRenta(ruta);
+                        break;
+                }
+                guardaDomicilio();
+            }
+        } else {
+            Messages.addGlobalWarn("Es necesario seleccionar un archivo !!");
+        }
+        
 
     }
 }

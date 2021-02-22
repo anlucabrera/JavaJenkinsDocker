@@ -176,5 +176,5 @@ public class ProcesosInscripcion implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion[ idProcesosInscripcion=" + idProcesosInscripcion + " ]";
     }
-    
-}
+
+    }

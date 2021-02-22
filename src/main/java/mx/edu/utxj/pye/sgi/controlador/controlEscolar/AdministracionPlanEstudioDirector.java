@@ -46,6 +46,10 @@ import org.primefaces.event.RowEditEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Objects;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaMetasPropuestas;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.MetasPropuestas;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 /**
@@ -57,6 +61,7 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 @ViewScoped
 public class AdministracionPlanEstudioDirector extends ViewScopedRol implements Desarrollable{
     @Getter @Setter RegistroPlanesEstudioRolDirector rol;
+    @Getter @Setter PlanEstudioMateria pem;
     
     @EJB EjbPropiedades ep;
     @EJB EjbRegistroPlanEstudio ejb;
@@ -73,8 +78,8 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
 @PostConstruct
     public void init(){
         try {
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
+            if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+            cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.ADMINISTRACION_PLAN_ESTUDIOS);
 
             ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarDirector(logon.getPersonal().getClave());
@@ -101,15 +106,20 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
 
             ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan = ejb.getProgramasEducativos(director);
             ResultadoEJB<List<AreaConocimiento>> resAreasConocimiento = ejb.getAreasConocimiento();
+            ResultadoEJB<List<PeriodosEscolares>> resperiodos = ejb.getPeriodosDescendentes();
             
             if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
             rol.setAreaPlanEstudioMap(resProgramaPlan.getValor());
             
             if(!resAreasConocimiento.getCorrecto()) mostrarMensajeResultadoEJB(resAreasConocimiento);
             rol.setConocimientos(resAreasConocimiento.getValor());
-                        
+             
+            if(!resperiodos.getCorrecto()) mostrarMensajeResultadoEJB(resperiodos);
+            rol.setPeriodosEscolareses(resperiodos.getValor());
+            
             rol.setPlanEstudio1(new DtoPlanEstudio(new PlanEstudio(), rol.getPrograma()));
             rol.setMateriaRegistro1(new DtoMateriaRegistro(new Materia(), rol.getConocimiento()));
+            rol.setMateriaMetasPropuestas(new DtoMateriaMetasPropuestas(new MetasPropuestas(), rol.getMateria()));
             rol.setMateriaUnidades1(new DtoMateriaUnidades(new UnidadMateria(), rol.getMateria()));
             rol.setMateriaPlanEstudio1(new DtoMateriaPlanEstudio(new PlanEstudioMateria(),rol.getPlanEstudio(), rol.getMateria()));
             rol.setPlanEstudioMateriaCompetencias1(new DtoPlanEstudioMateriaCompetencias(new Competencia(),new Competencia(),rol.getPlanEstudioMateria(),rol.getPlanEstudio()));
@@ -144,6 +154,19 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
         ejb.registrarUnidadMateria(rol.getMateriaUnidades1(), Operacion.PERSISTIR);
         unidadesPorMateriaConsulta();
         rol.setMateriaUnidades1(new DtoMateriaUnidades(new UnidadMateria(), rol.getMateriaUnidades1().getMateria()));
+    }
+    
+    public void guardarMeta() {
+        rol.getMateriaMetasPropuestas().getMetasPropuestas().setValorAlcanzado(0D);
+        pem=new PlanEstudioMateria();
+        rol.getPlanEstudioMaterias().forEach((t) -> {
+             if((Objects.equals(t.getIdPlan().getIdPlanEstudio(), rol.getPlanEstudioMateriaCompetencias1().getPlanEstudio().getIdPlanEstudio()))&& (t.getIdMateria().getIdMateria()==rol.getMateriaMetasPropuestas().getMateria().getIdMateria())){
+                pem=t;
+            }
+        });
+        ejb.registrarMetaMateria(rol.getMateriaMetasPropuestas(),pem, Operacion.PERSISTIR);
+        metasPorMateriaConsulta();
+        rol.setMateriaMetasPropuestas(new DtoMateriaMetasPropuestas(new MetasPropuestas(), rol.getMateriaMetasPropuestas().getMateria()));
     }
 
     public void guardarPlanEstudioMateria() {
@@ -260,6 +283,18 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
             Logger.getLogger(AdministracionPlanEstudioDirector.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void eliminarMetaMateria(MetasPropuestas um) {
+        try {
+            rol.setMateriaMetasPropuestas(new DtoMateriaMetasPropuestas(um, rol.getMateriaMetasPropuestas().getMateria()));
+            ejb.registrarMetaMateria(rol.getMateriaMetasPropuestas(),pem, Operacion.ELIMINAR);
+            metasPorMateriaConsulta();
+            rol.setMateriaMetasPropuestas(new DtoMateriaMetasPropuestas(new MetasPropuestas(), rol.getMateriaUnidades1().getMateria()));
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionPlanEstudioDirector.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void eliminarPlanEstudioMateria(PlanEstudioMateria pem) {
         try {
@@ -300,6 +335,14 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
             mostrarMensajeResultadoEJB(resUnidadesMateria);
         }
         rol.setMateriasUnidadesMap(resUnidadesMateria.getValor());
+    }
+    
+    public void metasPorMateriaConsulta() {
+        ResultadoEJB<Map<Materia, List<MetasPropuestas>>> resUnidadesMateria = ejb.getListaMetasMateria();
+        if (!resUnidadesMateria.getCorrecto()) {
+            mostrarMensajeResultadoEJB(resUnidadesMateria);
+        }
+        rol.setmateriasMetasMap(resUnidadesMateria.getValor());
     }
 
     public void materiasPorPlanEstudioConsulta() {
