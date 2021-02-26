@@ -10,7 +10,6 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "medio_difusion", catalog = "control_escolar", schema = "")
@@ -52,7 +51,7 @@ public class MedioDifusion implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
-    @OneToMany(mappedBy = "r15medioImpacto", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "r15medioImpacto")
     private List<EncuestaAspirante> encuestaAspiranteList;
 
     public MedioDifusion() {

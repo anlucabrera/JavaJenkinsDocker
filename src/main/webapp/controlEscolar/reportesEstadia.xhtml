@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Reportes de estadía
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{reportesEstadia.cargado}">
+        <adm:breadcrumb title="Reportes de estadía"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{reportesEstadia.tieneAcceso}">
+                <c:if test="#{reportesEstadia.rol.generaciones ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesEstadia.descargarReportesEstadia()}" 
+                                                       target="_blank" title="Descargar Reporte en Excel"><i class="fa fa-file-excel-o" />
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-6'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" value="#{reportesEstadia.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{reportesEstadia.cambiarGeneracion}">
+                                                    <f:selectItems value="#{reportesEstadia.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generacion" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{reportesEstadia.rol.nivelEducativo}" converter="entityConverter" valueChangeListener="#{reportesEstadia.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{reportesEstadia.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla3}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="reporte" value="#{reportesEstadia.rol.reporte}" converter="entityConverter" valueChangeListener="#{reportesEstadia.cambiarReporte}">
+                                                    <f:selectItems value="#{reportesEstadia.rol.reportes}" var="reporte" itemValue="#{reporte}" itemLabel="#{reporte}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Reporte" for="reporte"/>
+                                                <p:message for="reporte" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <c:if test="#{reportesEstadia.rol.reporte eq 'Eficiencia Estadía Técnica'}">
+                                            <center>
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                <p:dataTable id="tbEficienciaEstadia" var="eficienciaEst" value="#{reportesEstadia.rol.eficienciaEstadia}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                             tableStyle="vertical-align: middle;" emptyMessage="Sin información">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Programa educativo" style="width: 400px;"/>
+                                                            <p:column headerText="Acreditados(as)" style="width: 100px;"/>
+                                                            <p:column headerText="No acreditados(as)" style="width: 100px;"/>
+                                                            <p:column headerText="Total" style="width: 100px;"/>
+                                                            <p:column headerText="% de Eficiencia de Estadía" style="width: 100px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{eficienciaEst.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{eficienciaEst.acreditaron}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{eficienciaEst.noAcreditaron}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{eficienciaEst.seguimiento}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{eficienciaEst.eficienciaEstadia}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:columnGroup type="footer">
+                                                        <p:row>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="Totales:"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalAcreditados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalNoAcreditados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.total}"/>
+                                                            <p:column/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                </p:dataTable>
+                                                </div>
+                                            </center>
+                                        </c:if>
+                                        <c:if test="#{reportesEstadia.rol.reporte eq 'Listado Estudiantes con Promedios'}">
+                                            <center>
+                                                <p:dataTable id="tbEstudiantesPromedios" var="segEst" value="#{reportesEstadia.rol.listadoEstudiantesPromedio}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="50" rowsPerPageTemplate="50,100,150,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950,1000" resizeMode="expand"
+                                                             editable="true" editMode="cell" expandableRowGroups="true"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Matricula" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Estudiante" style="width: 180px;" sortBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Grupo" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Programa educativo" style="width: 200px;" sortBy="#{segEst.dtoEstudiante.programaEducativo.nombre}" filterBy="#{segEst.dtoEstudiante.programaEducativo.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Empresa" style="width: 200px;" sortBy="#{segEst.empresa.nombre}" filterBy="#{segEst.empresa.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Dirección" style="width: 200px;" sortBy="#{segEst.empresa.direccion}"  filterBy="#{segEst.empresa.direccion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Estado" style="width: 150px;" sortBy="#{segEst.empresa.localidad.municipio.estado.nombre}"  filterBy="#{segEst.empresa.localidad.municipio.estado.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Municipio" style="width: 180px;" sortBy="#{segEst.empresa.localidad.municipio.nombre}" filterBy="#{segEst.empresa.localidad.municipio.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Localidad" style="width: 180px;" sortBy="#{segEst.empresa.localidad.nombre}" filterBy="#{segEst.empresa.localidad.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="País" style="width: 150px;" sortBy="#{segEst.empresa.localidad.municipio.estado.idpais.nombre}" filterBy="#{segEst.empresa.localidad.municipio.estado.idpais.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Evaluación Interna" style="width: 150px;" sortBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorInterno}" filterBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorInterno}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Evaluación Externa" style="width: 150px;"  sortBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno}" filterBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Situación Estadía" style="width: 150px;" sortBy="#{!reportesEstadia.aproboEstadia(segEst)?'No acreditado(a)':'Acreditado(a)'}" filterBy="#{!reportesEstadia.aproboEstadia(segEst)?'No acreditado(a)':'Acreditado(a)'}" filterMatchMode="contains"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.matricula}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.empresa.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.empresa.direccion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.empresa.localidad.municipio.estado.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.empresa.localidad.municipio.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.empresa.localidad.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.empresa.localidad.municipio.estado.idpais.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorInterno}" style="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorInterno ge 8 ? 'color: #000000':'color: #E53935'}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                       <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno}" style="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno ge 8 ? 'color: #000000':'color: #E53935'}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{!reportesEstadia.aproboEstadia(segEst)?'No acreditado(a)':'Acreditado(a)'}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </center>
+                                        </c:if>
+                                        <c:if test="#{reportesEstadia.rol.reporte eq 'Zona influencia institucional'}">
+                                            <center>
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                <p:dataTable id="tbZonaInfluenciaInstitucional" var="zonaInfIns" value="#{reportesEstadia.rol.listaZonaInfluenciaIns}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="50" rowsPerPageTemplate="50,100,150,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950,1000" resizeMode="expand"
+                                                             editable="true" editMode="cell" expandableRowGroups="true"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Estado" style="width: 150px;"/>
+                                                            <p:column headerText="Municipio" style="width: 180px;"/>
+                                                            <p:column headerText="Estudiantes colocados" style="width: 150px;"/>
+                                                            <p:column headerText="% Estudiantes" style="width: 150px;"/>
+                                                         </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;" groupRow="true">
+                                                        <h:outputText value="#{zonaInfIns.municipio.estado.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;" groupRow="true">
+                                                        <h:outputText value="#{zonaInfIns.municipio.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{zonaInfIns.estudiantesColocados}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                       <h:outputText value="#{zonaInfIns.porcentajeEstudiantes}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:columnGroup type="footer">
+                                                        <p:row>
+                                                            <p:column colspan="2" style="text-align:center;font-weight: bold;" footerText="Totales:"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalEstColocados} de #{reportesEstadia.rol.totalEstSeguimientoEstadia}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalPorcentajeEstColocados}"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                </p:dataTable>
+                                                </div>
+                                            </center>
+                                        </c:if>
+                                        <c:if test="#{reportesEstadia.rol.reporte eq 'Zona influencia programa educativo'}">
+                                            <center>
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                    <p:dataTable id="tbZonaInfluenciaPrograma" var="zonaInfProg" value="#{reportesEstadia.rol.listaZonaInfluenciaPrograma}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="50" rowsPerPageTemplate="50,100,150,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950,1000" resizeMode="expand"
+                                                             editable="true" editMode="cell" expandableRowGroups="true" 
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Programa Educativo" style="width: 200px;"/>
+                                                            <p:column headerText="Estado" style="width: 150px;"/>
+                                                            <p:column headerText="Municipio" style="width: 180px;"/>
+                                                            <p:column headerText="Estudiantes colocados" style="width: 150px;"/>
+                                                            <p:column headerText="% Estudiantes" style="width: 150px;"/>
+                                                         </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: justify;" groupRow="true">
+                                                      <h:outputText value="#{zonaInfProg.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;" groupRow="true">
+                                                        <h:outputText value="#{zonaInfProg.municipio.estado.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;" groupRow="true">
+                                                        <h:outputText value="#{zonaInfProg.municipio.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{zonaInfProg.estudiantesColocados}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                       <h:outputText value="#{zonaInfProg.porcentajeEstudiantes}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                </div>
+                                            </center>
+                                        </c:if>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty reportesEstadia.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{reportesEstadia.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para seguimiento de estadía por asesor académico</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{reportesEstadia.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{reportesEstadia.rol.generaciones eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay eventos registrados."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!reportesEstadia.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para asesores académicos de estadía."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Asignación estudiantes de estadía
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{asignacionEstudiantesEstadiaDocente.cargado}">
+        <adm:breadcrumb title="Asignación estudiantes de estadía"/>
+        <div class="contenedor">
+            <c:if test="#{asignacionEstudiantesEstadiaDocente.tieneAcceso}">
+                <c:if test="#{asignacionEstudiantesEstadiaDocente.rol.generaciones ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <c:if test="#{asignacionEstudiantesEstadiaDocente.rol.generacionEventoActivo ne null}">
+                                        <p:outputLabel value="Generación activa para asignación: #{caster.generacionToString(asignacionEstudiantesEstadiaDocente.rol.generacionEventoActivo)}" />
+                                        </c:if>
+                                        <c:if test="#{asignacionEstudiantesEstadiaDocente.rol.generacionEventoActivo eq null}">
+                                        <p:outputLabel value="No existe evento activo" />
+                                        </c:if>
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-3'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-3 col-lg-2'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" value="#{asignacionEstudiantesEstadiaDocente.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{asignacionEstudiantesEstadiaDocente.cambiarGeneracion}">
+                                                    <f:selectItems value="#{asignacionEstudiantesEstadiaDocente.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generacion" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{asignacionEstudiantesEstadiaDocente.rol.nivelEducativo}" converter="entityConverter" valueChangeListener="#{asignacionEstudiantesEstadiaDocente.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{asignacionEstudiantesEstadiaDocente.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla3}">
+                                            <div class="ui-material">
+                                               <p:autoComplete id="estudiante" value="#{asignacionEstudiantesEstadiaDocente.rol.estudianteSeleccionado}" completeMethod="#{asignacionEstudiantesEstadiaDocente.completeEstudiantes}" queryDelay="800"
+                                                                valueChangeListener="#{asignacionEstudiantesEstadiaDocente.cambiarEstudiante}"
+                                                                var="estudiante" itemValue="#{estudiante}" itemLabel="#{estudiante.datosComplete}" converter="entityConverter" forceSelection="true" size="70">
+                                                    <p:column>#{estudiante.datosComplete}</p:column>
+                                                    <p:column>#{estudiante.periodoEscolar}</p:column>
+                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                </p:autoComplete>
+                                                <p:outputLabel value="Estudiante - Matricula" for="estudiante" style="font-weight: bold; font-size: 14px;"/>
+                                                <p:message for="estudiante" /> 
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla4}">
+                                            <div class="ui-material">
+                                                <c:if test="#{asignacionEstudiantesEstadiaDocente.rol.estudianteSeleccionado ne null}">
+                                                    <p:commandButton actionListener="#{asignacionEstudiantesEstadiaDocente.asignarEstudiante}" disabled="#{asignacionEstudiantesEstadiaDocente.rol.deshabilitarAsignacion}"
+                                                        class="btn btn-sm #{estudiante ne null?'btn-danger':'btn-info'}" icon="#{estudiante ne null?'fa fa-minus':'fa fa-plus'}"
+                                                        title="#{estudiante ne null?'Asignar estudiante.':'Asignar estudiante.'}"/>
+                                                </c:if>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                            <center>
+                                                <p:remoteCommand name="actualizar" update="@form:tbListaRolesEstadia" />
+                                                <p:dataTable id="tbListaRolesEstadia" var="estudianteReg" value="#{asignacionEstudiantesEstadiaDocente.rol.estudiantesRegistrados}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No ha asignado estudiantes de esta generación"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50,60" resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Eliminar" style="width: 200px;"/>
+                                                            <p:column headerText="Programa educativo" style="width: 250px;" sortBy="#{estudianteReg.programaEducativo.nombre}" filterBy="#{estudianteReg.programaEducativo.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Grupo" style="width: 150px;" sortBy="#{estudianteReg.estudiante.grupo.grado}° '#{estudianteReg.estudiante.grupo.literal}' #{estudianteReg.estudiante.grupo.idSistema.nombre}" filterBy="#{estudianteReg.estudiante.grupo.grado}° '#{estudianteReg.estudiante.grupo.literal}' #{estudianteReg.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Matricula" style="width: 100px;" sortBy="#{estudianteReg.estudiante.matricula}" filterBy="#{estudianteReg.estudiante.matricula}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Nombre del estudiante" style="width: 300px;" sortBy="#{estudianteReg.estudiante.aspirante.idPersona.apellidoPaterno} #{estudianteReg.estudiante.aspirante.idPersona.apellidoMaterno} #{estudianteReg.estudiante.aspirante.idPersona.nombre}" filterBy="#{estudianteReg.estudiante.aspirante.idPersona.apellidoPaterno} #{estudianteReg.estudiante.aspirante.idPersona.apellidoMaterno} #{estudianteReg.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandButton class="btn btn-danger btn-sm" icon="fa fa-trash" actionListener="#{asignacionEstudiantesEstadiaDocente.eliminarAsignacion(estudianteReg)}" onsuccess="actualizar();" title="Eliminar registro." disabled="#{asignacionEstudiantesEstadiaDocente.rol.deshabilitarAsignacion}">
+                                                                    <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la asignación?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{estudianteReg.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{estudianteReg.estudiante.grupo.grado}° '#{estudianteReg.estudiante.grupo.literal}' #{estudianteReg.estudiante.grupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{estudianteReg.estudiante.matricula}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{estudianteReg.estudiante.aspirante.idPersona.apellidoPaterno} #{estudianteReg.estudiante.aspirante.idPersona.apellidoMaterno} #{estudianteReg.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog> 
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty asignacionEstudiantesEstadiaDocente.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{asignacionEstudiantesEstadiaDocente.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación roles de estadía</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{asignacionEstudiantesEstadiaDocente.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{asignacionEstudiantesEstadiaDocente.rol.generaciones eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay eventos registrados."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!asignacionEstudiantesEstadiaDocente.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a dirección de carrera."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

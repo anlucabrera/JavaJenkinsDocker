@@ -10,7 +10,6 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "competencia", catalog = "control_escolar", schema = "")
@@ -56,13 +55,13 @@ public class Competencia implements Serializable {
     @Size(min = 1, max = 12)
     @Column(name = "tipo")
     private String tipo;
-    @JoinTable(name = "control_escolar.plan_materia_competencias", joinColumns = {
+    @JoinTable(name = "plan_materia_competencias", joinColumns = {
         @JoinColumn(name = "id_competencia", referencedColumnName = "id_competencia")}, inverseJoinColumns = {
         @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")})
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     private List<PlanEstudioMateria> planEstudioMateriaList;
     @JoinColumn(name = "plan_estudios", referencedColumnName = "id_plan_estudio")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private PlanEstudio planEstudios;
 
     public Competencia() {

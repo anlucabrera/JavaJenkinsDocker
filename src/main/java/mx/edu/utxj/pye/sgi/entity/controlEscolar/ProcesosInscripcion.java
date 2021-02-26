@@ -12,7 +12,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "procesos_inscripcion", catalog = "control_escolar", schema = "")
@@ -70,7 +69,7 @@ public class ProcesosInscripcion implements Serializable {
     @NotNull
     @Column(name = "id_periodo")
     private int idPeriodo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProcesoInscripcion", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProcesoInscripcion")
     private List<Aspirante> aspiranteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "procesosInscripcion")
     private List<ProyeccionAreas> proyeccionAreasList;

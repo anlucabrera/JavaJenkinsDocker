@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento estudiantes de estadía por dirección de carrera
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{seguimientoEstadiaDirector.cargado}">
+        <adm:breadcrumb title="Seguimiento estudiantes de estadía por dirección de carrera"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{seguimientoEstadiaDirector.tieneAcceso}">
+                <c:if test="#{seguimientoEstadiaDirector.rol.generaciones ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-6'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" value="#{seguimientoEstadiaDirector.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{seguimientoEstadiaDirector.cambiarGeneracion}">
+                                                    <f:selectItems value="#{seguimientoEstadiaDirector.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generacion" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{seguimientoEstadiaDirector.rol.nivelEducativo}" converter="entityConverter" valueChangeListener="#{seguimientoEstadiaDirector.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{seguimientoEstadiaDirector.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla3}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="programa" value="#{seguimientoEstadiaDirector.rol.programaEducativo}" converter="entityConverter" valueChangeListener="#{seguimientoEstadiaDirector.cambiarProgramaEducativo}">
+                                                    <f:selectItems value="#{seguimientoEstadiaDirector.rol.programasEducativos}" var="programa" itemValue="#{programa}" itemLabel="#{programa.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Programa" for="programa"/>
+                                                <p:message for="programa" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                            <center>
+                                                <p:remoteCommand name="actualizar" update="@form:tbListaSeguimientoEstadia" />
+                                                <p:dataTable id="tbListaSeguimientoEstadia" var="segEst" value="#{seguimientoEstadiaDirector.rol.estudiantesSeguimiento}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50,60" resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <f:facet name="header">
+                                                        Las columnas indicadas con un * contienen información o actividades asignadas a su rol 
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column rowspan="2" headerText="Matricula" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Estudiante" style="width: 180px;" sortBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Grupo" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Programa educativo" style="width: 200px;" sortBy="#{segEst.dtoEstudiante.programaEducativo.nombre}"/>
+                                                            <p:column rowspan="2" headerText="Empresa" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="Dirección" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="Proyecto" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="Semanas de estadía" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="Asesor Interno" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="Comentarios Coordinador" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="Validación Coordinador" style="width: 100px;"/>
+                                                            <p:column colspan="2" headerText="* Validación Dirección" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Carta de Presentación" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Carta de Aceptación" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Primer Informe" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Segundo Informe" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Tercer Informe" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Informe Final" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Carta Liberación Institucional" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Evaluación Empresarial" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Carta de Acreditación" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Archivos Liberación Empresarial" style="width: 200px;"/>
+                                                            <p:column colspan="3" headerText="* Acreditación de Estadía" style="width: 400px;"/>
+                                                            <p:column rowspan="2" headerText="Cédula de Evaluación Institucional" style="width: 100px;"/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Situación" style="width: 200px;"/>
+                                                            <p:column headerText="Acción" style="width: 200px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Comentarios" style="width: 200px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.matricula}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.empresa.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.empresa.direccion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.proyecto}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.semanasEstadia}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="1"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.asesorEstadia.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.comentariosCoordinador eq null?'No se han capturado comentarios':segEst.seguimientoEstadiaEstudiante.comentariosCoordinador}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.validacionCoordinador?'Si':'No'}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.validacionDirector?'Validado':'No validado'}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink actionListener="#{seguimientoEstadiaDirector.validarEstadiaDirector(segEst)}" 
+                                                                        class="btn btn-sm #{segEst.seguimientoEstadiaEstudiante.validacionDirector?'btn-danger':'btn-success'}"
+                                                                        title="#{segEst.seguimientoEstadiaEstudiante.validacionDirector?'De clic para no validar.':'De clic para validar.'}"
+                                                                        onsuccess="actualizar();"><i class="#{segEst.seguimientoEstadiaEstudiante.validacionDirector?'fa fa-close':'fa fa-check'}"/>
+                                                        </p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(33, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(33, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(33, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(33, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="cartaPresentacion" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(33, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{cartaPresentacion?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(33, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(33, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(34, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(34, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(34, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(34, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="cartaAceptacion" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(34, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{cartaAceptacion?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(34, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(34, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(35, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(35, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(35, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(35, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="primerInforme" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(35, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{primerInforme?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(35, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(35, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(36, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(36, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(36, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(36, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="segundoInforme" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(36, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segundoInforme?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(36, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(36, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(37, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(37, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(37, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(37, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="tercerInforme" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(37, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{tercerInforme?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(37, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(37, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(38, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(38, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(38, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(38, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="informeFinal" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(38, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{informeFinal?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(38, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(38, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(39, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(39, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(39, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(39, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="cartaLiberacionIns" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(39, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{cartaLiberacionIns?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(39, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(39, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(40, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(40, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(40, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(40, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="evaluacionEmp" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(40, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{evaluacionEmp?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(40, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(40, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(41, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(41, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(41, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(41, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="cartaAcred" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(41, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{cartaAcred?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(41, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(41, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(42, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(42, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(42, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(42, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="cartaLiberacionEmp" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(42, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{cartaLiberacionEmp?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(42, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(42, segEst)}"/>
+                                                    </p:column>
+                                                    <c:set var="docSegEst" value="#{seguimientoEstadiaDirector.buscarDocumentoEstudiante(43, segEst)}" />
+                                                    <c:set var="existeDoc" value="#{seguimientoEstadiaDirector.consultarExisteDocumento(docSegEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandButton icon="fa fa-upload" onclick="PF('modalCargaArchivo').show()" class="btn btn-sm #{existeDoc?'btn-info':'btn-danger'}" actionListener="#{seguimientoEstadiaDirector.seleccionarDocumento(segEst)}" rendered="#{!existeDoc}" disabled="#{!seguimientoEstadiaDirector.deshabilitarCarga(segEst)}" title="#{seguimientoEstadiaDirector.deshabilitarCarga(segEst)?'Cargar documento.':'El evento ha cerrado.'}"/>
+                                                        <p:commandLink class="btn btn-sm btn-info" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(43, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(43, segEst)?'Descargar documento.':'Documento no cargado.'}" rendered="#{existeDoc}"><i class="fa fa-download" /></p:commandLink>
+                                                        <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{seguimientoEstadiaDirector.eliminarDocumento(docSegEst)}" onsuccess="actualizarListaDocs();" title="Eliminar documento." disabled="#{docSegEst.validado}" rendered="#{existeDoc}">
+                                                                    <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento #{caster.rutaToArchivoNombre(docSegEst.ruta)}?" icon="ui-icon-alert"/>
+                                                        </p:commandButton>
+                                                    </p:column>
+                                                    <c:set var="acreditacionEst" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(43, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{acreditacionEst?'Si':'No'}" rendered="#{existeDoc}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!existeDoc}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                       <h:outputText value="#{docSegEst.observaciones}" rendered="#{existeDoc}"/>
+                                                       <h:outputText value="No hay documento" rendered="#{!existeDoc}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="No se ha registrado evaluación" rendered="#{(segEst.seguimientoEstadiaEstudiante.promedioAsesorInterno eq 0.0 and segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno eq 0.0)}"/>
+                                                        <h:outputText value="No aprobó la evaluación" rendered="#{!seguimientoEstadiaDirector.aproboEstadia(segEst) and (segEst.seguimientoEstadiaEstudiante.promedioAsesorInterno ne 0.0 or segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno ne 0.0)}"/>
+                                                        <p:commandButton actionListener="#{seguimientoEstadiaDirector.generarCedEvalAcredEstadia(segEst)}" action="/controlEscolar/formatos/cedulaEvalAcredEstadia?faces-redirect=true" 
+                                                                                  class="btn btn-sm btn-primary" 
+                                                                                  rendered="#{seguimientoEstadiaDirector.aproboEstadia(segEst)}"
+                                                                                  icon="fa fa-print"
+                                                                                  title="Generar Cédula de Evaluación y Acreditación de Estadía"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog> 
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty seguimientoEstadiaDirector.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{seguimientoEstadiaDirector.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                    <center>
+                        <h:form id="formularioContenedor" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <o:inputFile id="file" value="#{seguimientoEstadiaDirector.file}" 
+                                                 accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG o documentos PDF." 
+                                                 maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." 
+                                                 required="true" requiredMessage="Debe elegir un archivo." >
+                                    </o:inputFile>
+                                    <p:messages for="file" ><p:autoUpdate/></p:messages>
+                                </div>
+                                <p:separator />
+                                <div class="col-md-12">
+                                    <h:commandButton id="btnuploadFile" value="Subir archivo" class="btn btn-primary" action="#{seguimientoEstadiaDirector.subirDocumento()}" />
+                                </div>
+                            </div>
+                        </h:form>
+                        <p:blockUI block="formularioContenedor" widgetVar="bloqueoCargaFile" trigger="formularioContenedor:btnuploadFile">
+                            Cargando archivo espere por favor.<br />
+                        </p:blockUI>
+                    </center>
+                </p:dialog>
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación roles de estadía</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{seguimientoEstadiaDirector.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{seguimientoEstadiaDirector.rol.generaciones eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay eventos registrados."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!seguimientoEstadiaDirector.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a dirección de carrera."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

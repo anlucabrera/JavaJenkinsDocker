@@ -16,13 +16,15 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 
 @RequiredArgsConstructor @ToString
 public class DtoEstudianteComplete implements Serializable{
-    @Getter @Setter @NonNull Estudiante estudiantes;        
+    @Getter @Setter @NonNull Estudiante estudiantes; 
     @Getter @Setter @NonNull String datosComplete;
     @Getter @Setter @NonNull String periodoEscolar;
+    @Getter @Setter @NonNull AreasUniversidad programaEducativo; 
 
     public DtoEstudianteComplete(Estudiante estudiantes, String datosComplete) {
         this.estudiantes = estudiantes;

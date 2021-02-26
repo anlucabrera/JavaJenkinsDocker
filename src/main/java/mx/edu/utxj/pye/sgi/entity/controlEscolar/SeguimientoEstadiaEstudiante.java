@@ -12,7 +12,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "seguimiento_estadia_estudiante", catalog = "control_escolar", schema = "")
@@ -44,9 +44,11 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByProyecto", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.proyecto = :proyecto")
     , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByFechaInicio", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.fechaInicio = :fechaInicio")
     , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByFechaFin", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.fechaFin = :fechaFin")
-    , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByValidacion", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.validacion = :validacion")
-    , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByFechaValidacion", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.fechaValidacion = :fechaValidacion")
-    , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByPersonalValidacion", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.personalValidacion = :personalValidacion")
+    , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByValidacionCoordinador", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.validacionCoordinador = :validacionCoordinador")
+    , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByFechaValidacionCoordinador", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.fechaValidacionCoordinador = :fechaValidacionCoordinador")
+    , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByComentariosCoordinador", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.comentariosCoordinador = :comentariosCoordinador")
+    , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByValidacionDirector", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.validacionDirector = :validacionDirector")
+    , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByFechaValidacionDirector", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.fechaValidacionDirector = :fechaValidacionDirector")
     , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByPromedioAsesorExterno", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.promedioAsesorExterno = :promedioAsesorExterno")
     , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByPromedioAsesorInterno", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.promedioAsesorInterno = :promedioAsesorInterno")})
 public class SeguimientoEstadiaEstudiante implements Serializable {
@@ -75,33 +77,45 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
     private Date fechaFin;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "validacion")
-    private boolean validacion;
-    @Column(name = "fecha_validacion")
+    @Column(name = "validacion_coordinador")
+    private boolean validacionCoordinador;
+    @Column(name = "fecha_validacion_coordinador")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaValidacion;
-    @Column(name = "personal_validacion")
-    private Integer personalValidacion;
+    private Date fechaValidacionCoordinador;
+    @Size(max = 500)
+    @Column(name = "comentarios_coordinador")
+    private String comentariosCoordinador;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "validacion_director")
+    private boolean validacionDirector;
+    @Column(name = "fecha_validacion_director")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaValidacionDirector;
     @Basic(optional = false)
     @NotNull
     @Column(name = "promedio_asesor_externo")
-    private float promedioAsesorExterno;
+    private double promedioAsesorExterno;
     @Basic(optional = false)
     @NotNull
     @Column(name = "promedio_asesor_interno")
-    private float promedioAsesorInterno;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimientoEstadiaEstudiante", fetch = FetchType.LAZY)
+    private double promedioAsesorInterno;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimientoEstadiaEstudiante")
     private List<CalificacionCriterioEstadia> calificacionCriterioEstadiaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimientoEstadia", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimiento")
+    private List<AsesorEmpresarialEstadia> asesorEmpresarialEstadiaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimientoEstadia")
     private List<DocumentoSeguimientoEstadia> documentoSeguimientoEstadiaList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "seguimiento")
+    private FolioAcreditacionEstadia folioAcreditacionEstadia;
     @JoinColumn(name = "asesor", referencedColumnName = "asesor_estadia")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private AsesorAcademicoEstadia asesor;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private EventoEstadia evento;
     @JoinColumn(name = "matricula", referencedColumnName = "matricula")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Estudiante matricula;
 
     public SeguimientoEstadiaEstudiante() {
@@ -111,10 +125,11 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
         this.seguimiento = seguimiento;
     }
 
-    public SeguimientoEstadiaEstudiante(Integer seguimiento, Date fechaRegistro, boolean validacion, float promedioAsesorExterno, float promedioAsesorInterno) {
+    public SeguimientoEstadiaEstudiante(Integer seguimiento, Date fechaRegistro, boolean validacionCoordinador, boolean validacionDirector, double promedioAsesorExterno, double promedioAsesorInterno) {
         this.seguimiento = seguimiento;
         this.fechaRegistro = fechaRegistro;
-        this.validacion = validacion;
+        this.validacionCoordinador = validacionCoordinador;
+        this.validacionDirector = validacionDirector;
         this.promedioAsesorExterno = promedioAsesorExterno;
         this.promedioAsesorInterno = promedioAsesorInterno;
     }
@@ -167,43 +182,59 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
         this.fechaFin = fechaFin;
     }
 
-    public boolean getValidacion() {
-        return validacion;
+    public boolean getValidacionCoordinador() {
+        return validacionCoordinador;
     }
 
-    public void setValidacion(boolean validacion) {
-        this.validacion = validacion;
+    public void setValidacionCoordinador(boolean validacionCoordinador) {
+        this.validacionCoordinador = validacionCoordinador;
     }
 
-    public Date getFechaValidacion() {
-        return fechaValidacion;
+    public Date getFechaValidacionCoordinador() {
+        return fechaValidacionCoordinador;
     }
 
-    public void setFechaValidacion(Date fechaValidacion) {
-        this.fechaValidacion = fechaValidacion;
+    public void setFechaValidacionCoordinador(Date fechaValidacionCoordinador) {
+        this.fechaValidacionCoordinador = fechaValidacionCoordinador;
     }
 
-    public Integer getPersonalValidacion() {
-        return personalValidacion;
+    public String getComentariosCoordinador() {
+        return comentariosCoordinador;
     }
 
-    public void setPersonalValidacion(Integer personalValidacion) {
-        this.personalValidacion = personalValidacion;
+    public void setComentariosCoordinador(String comentariosCoordinador) {
+        this.comentariosCoordinador = comentariosCoordinador;
     }
 
-    public float getPromedioAsesorExterno() {
+    public boolean getValidacionDirector() {
+        return validacionDirector;
+    }
+
+    public void setValidacionDirector(boolean validacionDirector) {
+        this.validacionDirector = validacionDirector;
+    }
+
+    public Date getFechaValidacionDirector() {
+        return fechaValidacionDirector;
+    }
+
+    public void setFechaValidacionDirector(Date fechaValidacionDirector) {
+        this.fechaValidacionDirector = fechaValidacionDirector;
+    }
+
+    public double getPromedioAsesorExterno() {
         return promedioAsesorExterno;
     }
 
-    public void setPromedioAsesorExterno(float promedioAsesorExterno) {
+    public void setPromedioAsesorExterno(double promedioAsesorExterno) {
         this.promedioAsesorExterno = promedioAsesorExterno;
     }
 
-    public float getPromedioAsesorInterno() {
+    public double getPromedioAsesorInterno() {
         return promedioAsesorInterno;
     }
 
-    public void setPromedioAsesorInterno(float promedioAsesorInterno) {
+    public void setPromedioAsesorInterno(double promedioAsesorInterno) {
         this.promedioAsesorInterno = promedioAsesorInterno;
     }
 
@@ -217,12 +248,29 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
     }
 
     @XmlTransient
+    public List<AsesorEmpresarialEstadia> getAsesorEmpresarialEstadiaList() {
+        return asesorEmpresarialEstadiaList;
+    }
+
+    public void setAsesorEmpresarialEstadiaList(List<AsesorEmpresarialEstadia> asesorEmpresarialEstadiaList) {
+        this.asesorEmpresarialEstadiaList = asesorEmpresarialEstadiaList;
+    }
+
+    @XmlTransient
     public List<DocumentoSeguimientoEstadia> getDocumentoSeguimientoEstadiaList() {
         return documentoSeguimientoEstadiaList;
     }
 
     public void setDocumentoSeguimientoEstadiaList(List<DocumentoSeguimientoEstadia> documentoSeguimientoEstadiaList) {
         this.documentoSeguimientoEstadiaList = documentoSeguimientoEstadiaList;
+    }
+
+    public FolioAcreditacionEstadia getFolioAcreditacionEstadia() {
+        return folioAcreditacionEstadia;
+    }
+
+    public void setFolioAcreditacionEstadia(FolioAcreditacionEstadia folioAcreditacionEstadia) {
+        this.folioAcreditacionEstadia = folioAcreditacionEstadia;
     }
 
     public AsesorAcademicoEstadia getAsesor() {

@@ -1,7 +1,5 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
-import com.github.adminfaces.starter.infra.model.Filter;
-import com.sun.org.apache.regexp.internal.RE;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
@@ -9,30 +7,19 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteGeneralFichas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteProyeccionFichas;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProyeccionAreas;
-import mx.edu.utxj.pye.sgi.entity.logueo.Areas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
-import mx.edu.utxj.pye.sgi.enums.TramiteTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
 
 /**
  * Consulta de registro de fichas de admisión  por carrera

@@ -22,7 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 
 @RequiredArgsConstructor @ToString
-public class DtoDatosEstudiante implements Serializable{
+public class DtoDatosEstudiante implements Serializable, Comparable<DtoDatosEstudiante>{
     @Getter @Setter @NonNull Estudiante estudiante;
     @Getter @Setter @NonNull Aspirante aspirante;
     @Getter @Setter @NonNull AreasUniversidad programaEducativo;
@@ -32,6 +32,18 @@ public class DtoDatosEstudiante implements Serializable{
         this.estudiante = estudiante;
         this.programaEducativo = programaEducativo;
         this.periodoEscolar = periodoEscolar;
+    }  
+    
+    @Override
+    public int compareTo(DtoDatosEstudiante o) {
+        return toLabel(this).compareTo(toLabel(o));
+    }
+
+    public static String toLabel(DtoDatosEstudiante dtoDatosEstudiante){
+         return dtoDatosEstudiante.getProgramaEducativo().getNombre().concat(" ")
+                 .concat(dtoDatosEstudiante.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno().concat(" "))
+                 .concat(dtoDatosEstudiante.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno().concat(" "))
+                 .concat(dtoDatosEstudiante.getEstudiante().getAspirante().getIdPersona().getNombre());
     }
     
    

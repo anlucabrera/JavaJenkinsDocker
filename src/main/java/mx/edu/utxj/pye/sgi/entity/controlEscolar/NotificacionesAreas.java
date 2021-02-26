@@ -8,7 +8,6 @@ package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -18,7 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "notificaciones_areas", catalog = "control_escolar", schema = "")
@@ -33,7 +32,7 @@ public class NotificacionesAreas implements Serializable {
     @EmbeddedId
     protected NotificacionesAreasPK notificacionesAreasPK;
     @JoinColumn(name = "notificacion", referencedColumnName = "notificacion", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private NotificacionesCe notificacionesCe;
 
     public NotificacionesAreas() {

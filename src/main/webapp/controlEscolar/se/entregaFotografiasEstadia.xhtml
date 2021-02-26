@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Registro de entrega de fotografias estadías
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{entregaFotografiasEscolares.cargado}">
+        <adm:breadcrumb title="Registro de entrega de fotografias estadías"/>
+        <div class="contenedor">
+            <c:if test="#{entregaFotografiasEscolares.tieneAcceso}">
+                <c:if test="#{entregaFotografiasEscolares.rol.generaciones ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-3'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-3 col-lg-2'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" value="#{entregaFotografiasEscolares.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{entregaFotografiasEscolares.cambiarGeneracion}">
+                                                    <f:selectItems value="#{entregaFotografiasEscolares.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generacion" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{entregaFotografiasEscolares.rol.nivelEducativo}" converter="entityConverter" valueChangeListener="#{entregaFotografiasEscolares.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{entregaFotografiasEscolares.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla3}">
+                                            <div class="ui-material">
+                                               <p:autoComplete id="estudiante" value="#{entregaFotografiasEscolares.rol.estudianteSeleccionado}" completeMethod="#{entregaFotografiasEscolares.completeEstudiantes}" queryDelay="800"
+                                                                valueChangeListener="#{entregaFotografiasEscolares.cambiarEstudiante}"
+                                                                var="estudiante" itemValue="#{estudiante}" itemLabel="#{estudiante.datosComplete}" converter="entityConverter" forceSelection="true" size="70">
+                                                    <p:column>#{estudiante.datosComplete}</p:column>
+                                                    <p:column>#{estudiante.estudiantes.grupo.grado}° #{estudiante.estudiantes.grupo.literal} #{estudiante.estudiantes.grupo.idSistema.nombre}</p:column>
+                                                    <p:column>#{estudiante.programaEducativo.siglas}</p:column>
+                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                </p:autoComplete>
+                                                <p:outputLabel value="Estudiante - Matricula" for="estudiante" style="font-weight: bold; font-size: 14px;"/>
+                                                <p:message for="estudiante" /> 
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla4}">
+                                            <div class="ui-material">
+                                                <c:if test="#{entregaFotografiasEscolares.rol.estudianteSeleccionado ne null}">
+                                                    <p:commandButton actionListener="#{entregaFotografiasEscolares.registrarEntrega()}" disabled="#{entregaFotografiasEscolares.rol.desactivarRegistro}"
+                                                        class="btn btn-sm #{estudiante ne null?'btn-danger':'btn-info'}" icon="#{estudiante ne null?'fa fa-minus':'fa fa-plus'}"
+                                                        title="#{estudiante ne null?'Registrar entrega de fotografías.':'Debe seleccionar un estudiante.'}"/>
+                                                </c:if>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h:outputText value="&#160;" />
+                                    <h:outputText value="&#160;" />
+                                    <div class="row">
+                                            <center>
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                    <p:dataTable id="tbListaPorcentajeEntregaFotografias" var="porcentEntrega" value="#{entregaFotografiasEscolares.rol.porcentajesEntrega}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                             tableStyle="vertical-align: middle;" emptyMessage="Sin información">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Programa educativo" style="width: 400px;"/>
+                                                            <p:column headerText="Total de estudiantes" style="width: 100px;"/>
+                                                            <p:column headerText="Entregaron fotografías" style="width: 100px;"/>
+                                                            <p:column headerText="Pendientes de entrega" style="width: 100px;"/>
+                                                            <p:column headerText="% de Entrega" style="width: 100px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{porcentEntrega.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{porcentEntrega.totalEstudiantes}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{porcentEntrega.totalEntrega}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{porcentEntrega.totalPendientes}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{porcentEntrega.porcentajeEntrega}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:columnGroup type="footer">
+                                                        <p:row>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="Totales:"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalAcreditados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalNoAcreditados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.total}"/>
+                                                            <p:column/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                </p:dataTable>
+                                                </div>
+                                                <h:outputText value="&#160;" />
+                                                <h:outputText value="&#160;" />
+                                                <p:remoteCommand name="actualizar" update="@form:tbListaEntregaFotografias" />
+                                                <p:dataTable id="tbListaEntregaFotografias" var="entregaFotografia" value="#{entregaFotografiasEscolares.rol.estudiantesFotografias}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se han registrado entrega de fotografías"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50,60" resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Eliminar" style="width: 200px;"/>
+                                                            <p:column headerText="Programa educativo" style="width: 250px;" sortBy="#{entregaFotografia.programaEducativo.nombre}" filterBy="#{entregaFotografia.programaEducativo.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Grupo" style="width: 150px;" sortBy="#{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.grado}° '#{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.literal}' #{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.idSistema.nombre}" filterBy="#{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.grado}° '#{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.literal}' #{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Matricula" style="width: 100px;" sortBy="#{entregaFotografia.entregaFotografiasEstudiante.matricula.matricula}" filterBy="#{entregaFotografia.entregaFotografiasEstudiante.matricula.matricula}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Nombre del estudiante" style="width: 300px;" sortBy="#{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.apellidoPaterno} #{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.apellidoMaterno} #{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.nombre}" filterBy="#{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.apellidoPaterno} #{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.apellidoMaterno} #{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Fecha de entrega" style="width: 150px;" sortBy="#{entregaFotografia.entregaFotografiasEstudiante.fechaEntrega}" filterBy="#{entregaFotografia.entregaFotografiasEstudiante.fechaEntrega}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Personal recibió" style="width: 250px;" sortBy="#{entregaFotografia.personalRecibio.nombre}" filterBy="#{entregaFotografia.personalRecibio.nombre}" filterMatchMode="contains"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandButton class="btn btn-danger btn-sm" icon="fa fa-trash" actionListener="#{entregaFotografiasEscolares.eliminarEntrega(entregaFotografia)}" onsuccess="actualizar();" title="Eliminar registro.">
+                                                                    <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la asignación?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{entregaFotografia.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.grado}° '#{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.literal}' #{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{entregaFotografia.entregaFotografiasEstudiante.matricula.matricula}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.apellidoPaterno} #{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.apellidoMaterno} #{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{entregaFotografia.entregaFotografiasEstudiante.fechaEntrega}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{entregaFotografia.personalRecibio.nombre}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog> 
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty entregaFotografiasEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{entregaFotografiasEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación roles de estadía</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{entregaFotografiasEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{entregaFotografiasEscolares.rol.generaciones eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay eventos registrados."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!entregaFotografiasEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a dirección de carrera."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

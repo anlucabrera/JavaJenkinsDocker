@@ -43,7 +43,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Aspirante.findByFolioAspirante", query = "SELECT a FROM Aspirante a WHERE a.folioAspirante = :folioAspirante")
     , @NamedQuery(name = "Aspirante.findByEstatus", query = "SELECT a FROM Aspirante a WHERE a.estatus = :estatus")
     , @NamedQuery(name = "Aspirante.findByFolioCeneval", query = "SELECT a FROM Aspirante a WHERE a.folioCeneval = :folioCeneval")
-    , @NamedQuery(name = "Aspirante.findByFechaRegistro", query = "SELECT a FROM Aspirante a WHERE a.fechaRegistro = :fechaRegistro")})
+    , @NamedQuery(name = "Aspirante.findByFechaRegistro", query = "SELECT a FROM Aspirante a WHERE a.fechaRegistro = :fechaRegistro")
+    , @NamedQuery(name = "Aspirante.findByFechaValidacion", query = "SELECT a FROM Aspirante a WHERE a.fechaValidacion = :fechaValidacion")})
 public class Aspirante implements Serializable {
 
     @Basic(optional = false)
@@ -265,7 +266,7 @@ public class Aspirante implements Serializable {
     public void setDatosAcademicosComplementarios(DatosAcademicosComplementarios datosAcademicosComplementarios) {
         this.datosAcademicosComplementarios = datosAcademicosComplementarios;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -290,10 +291,10 @@ public class Aspirante implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante[ idAspirante=" + idAspirante + " ]";
     }
-
+    
     public Date getFechaValidacion() {
         return fechaValidacion;
-    }
+}
 
     public void setFechaValidacion(Date fechaValidacion) {
         this.fechaValidacion = fechaValidacion;

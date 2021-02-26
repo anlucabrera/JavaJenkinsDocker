@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Embeddable
 public class CalificacionCriterioEstadiaPK implements Serializable {
@@ -26,18 +26,13 @@ public class CalificacionCriterioEstadiaPK implements Serializable {
     @NotNull
     @Column(name = "criterio")
     private int criterio;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "calificacion")
-    private float calificacion;
 
     public CalificacionCriterioEstadiaPK() {
     }
 
-    public CalificacionCriterioEstadiaPK(int seguimiento, int criterio, float calificacion) {
+    public CalificacionCriterioEstadiaPK(int seguimiento, int criterio) {
         this.seguimiento = seguimiento;
         this.criterio = criterio;
-        this.calificacion = calificacion;
     }
 
     public int getSeguimiento() {
@@ -56,20 +51,11 @@ public class CalificacionCriterioEstadiaPK implements Serializable {
         this.criterio = criterio;
     }
 
-    public float getCalificacion() {
-        return calificacion;
-    }
-
-    public void setCalificacion(float calificacion) {
-        this.calificacion = calificacion;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (int) seguimiento;
         hash += (int) criterio;
-        hash += (int) calificacion;
         return hash;
     }
 
@@ -86,15 +72,12 @@ public class CalificacionCriterioEstadiaPK implements Serializable {
         if (this.criterio != other.criterio) {
             return false;
         }
-        if (this.calificacion != other.calificacion) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadiaPK[ seguimiento=" + seguimiento + ", criterio=" + criterio + ", calificacion=" + calificacion + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadiaPK[ seguimiento=" + seguimiento + ", criterio=" + criterio + " ]";
     }
     
 }

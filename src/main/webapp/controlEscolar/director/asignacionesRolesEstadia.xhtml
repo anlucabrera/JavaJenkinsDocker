@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Asignación coordinadores y asesores de estadía
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{asignacionRolesEstadiaDirector.cargado}">
+        <adm:breadcrumb title="Asignación coordinadores y asesores de estadía"/>
+        <div class="contenedor">
+            <c:if test="#{asignacionRolesEstadiaDirector.tieneAcceso}">
+                <c:if test="#{asignacionRolesEstadiaDirector.rol.generaciones ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <c:if test="#{asignacionRolesEstadiaDirector.rol.generacionEventoActivo ne null}">
+                                        <p:outputLabel value="Generación activa para asignación: #{caster.generacionToString(asignacionRolesEstadiaDirector.rol.generacionEventoActivo)}" />
+                                        </c:if>
+                                        <c:if test="#{asignacionRolesEstadiaDirector.rol.generacionEventoActivo eq null}">
+                                        <p:outputLabel value="No existe evento activo" />
+                                        </c:if>
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" value="#{asignacionRolesEstadiaDirector.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{asignacionRolesEstadiaDirector.cambiarGeneracion}">
+                                                    <f:selectItems value="#{asignacionRolesEstadiaDirector.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generacion" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{asignacionRolesEstadiaDirector.rol.nivelEducativo}" converter="entityConverter" valueChangeListener="#{asignacionRolesEstadiaDirector.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{asignacionRolesEstadiaDirector.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                            <center>
+                                                <p:remoteCommand name="actualizar" update="@form:tbListaRolesEstadia" />
+                                                <p:dataTable id="tbListaRolesEstadia" var="rol" value="#{asignacionRolesEstadiaDirector.rol.rolesEstadia}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50,60" resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Clave" style="width: 80px;" sortBy="#{rol.personal.clave}" filterBy="#{rol.personal.clave}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Nombre" style="width: 250px;" sortBy="#{rol.personal.nombre}" filterBy="#{rol.personal.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Coordinador de estadía" style="width: 200px;"/>
+                                                            <p:column headerText="Asesor académico de estadía" style="width: 200px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{rol.personal.clave}"/>
+                                                    </p:column>
+                                                     <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{rol.personal.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandButton actionListener="#{asignacionRolesEstadiaDirector.asignarCoordinadorEstadia(rol)}" disabled="#{asignacionRolesEstadiaDirector.rol.deshabilitarAsignacion}"
+                                                                        class="btn btn-sm #{rol.rolCoordinador eq ''?'btn-danger':'btn-info'}" icon="#{rol.rolCoordinador eq ''?'fa fa-plus':'fa fa-minus'}"
+                                                                        title="#{rol.rolCoordinador eq ''?'Asignar rol.':'Quitar rol.'}"
+                                                                        onsuccess="actualizar();" />
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandButton actionListener="#{asignacionRolesEstadiaDirector.asignarAsesorEstadia(rol)}" disabled="#{asignacionRolesEstadiaDirector.rol.deshabilitarAsignacion}"
+                                                                        class="btn btn-sm #{rol.rolAsesor eq ''?'btn-danger':'btn-info'}" icon="#{rol.rolAsesor eq ''?'fa fa-plus':'fa fa-minus'}"
+                                                                        title="#{rol.rolAsesor eq ''?'Asignar rol.':'Quitar rol.'}"
+                                                                        onsuccess="actualizar();" />
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog> 
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty asignacionRolesEstadiaDirector.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{asignacionRolesEstadiaDirector.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación roles de estadía</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{asignacionRolesEstadiaDirector.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{asignacionRolesEstadiaDirector.rol.generaciones eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay eventos registrados."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!asignacionRolesEstadiaDirector.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a dirección de carrera."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

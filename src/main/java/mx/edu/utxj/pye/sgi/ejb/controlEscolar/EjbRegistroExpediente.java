@@ -205,8 +205,8 @@ public class EjbRegistroExpediente {
                     String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+ estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+ estudiante.getAspirante().getIdPersona().getNombre()+ " - " + estudiante.getMatricula();
                     PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
                     String periodoEscolar = periodo.getMesInicio().getAbreviacion()+" - "+periodo.getMesFin().getAbreviacion()+" "+periodo.getAnio();
-                    DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar);
-                   
+                    AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
+                    DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar, programaEducativo);
                     listaDtoEstudiantes.add(dtoEstudianteComplete);
             });
             return ResultadoEJB.crearCorrecto(listaDtoEstudiantes, "Lista para mostrar en autocomplete");

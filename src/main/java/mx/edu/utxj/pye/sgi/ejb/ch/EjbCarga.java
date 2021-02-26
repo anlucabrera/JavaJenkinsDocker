@@ -145,4 +145,23 @@ public interface EjbCarga extends Serializable {
     public String subirDocumentoAspirante(Part file, String tipoDoc, File rutaRelativa);
 
     public String subirFotoFirmaEstudiante(Part file, File rutaRelativa);
+    
+    /**
+     * Método de subida de archivos en el servidor para el módulo de seguimiento de estadía del estudiante
+     * el cual recibe los siguiente parámetros:
+     *
+     * @param file Archivo de excel
+     * @param tipoDoc Parámetro que clasifica el tipo de documento del archivo
+     * @param rutaRelativa Parámetro de la ruta relativa del archivo
+     * @return Devuelve la ruta completa del archivo
+     */
+    public String subirDocumentoEstadia(Part file, String tipoDoc, File rutaRelativa);
+    
+     /**
+     * Método que crea o comprueba si el directorio de los reportes de seguimiento de estadía en control escolar
+     * @param generacion Es ocupado para crear o comprobar de que generación es el reporte que se está generando
+     * @param nivel Es ocupado para crear o comprobar de que nivel educativo es el reporte que se está generando
+     * @return Retorna la ruta del directorio
+     */
+    public String crearDirectorioReportesEstadia(String generacion, String nivel);
 }

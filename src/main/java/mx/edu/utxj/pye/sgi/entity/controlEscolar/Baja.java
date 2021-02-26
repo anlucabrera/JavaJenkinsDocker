@@ -12,15 +12,14 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "baja", catalog = "control_escolar", schema = "")
@@ -103,11 +102,11 @@ public class Baja implements Serializable {
     @NotNull
     @Column(name = "validada")
     private int validada;
-    @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Estudiante estudiante;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroBaja", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroBaja")
     private List<BajaReprobacion> bajaReprobacionList;
+    @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
+    @OneToOne(optional = false)
+    private Estudiante estudiante;
 
     public Baja() {
     }
@@ -225,14 +224,6 @@ public class Baja implements Serializable {
         this.validada = validada;
     }
 
-    public Estudiante getEstudiante() {
-        return estudiante;
-    }
-
-    public void setEstudiante(Estudiante estudiante) {
-        this.estudiante = estudiante;
-    }
-
     @XmlTransient
     public List<BajaReprobacion> getBajaReprobacionList() {
         return bajaReprobacionList;
@@ -240,6 +231,14 @@ public class Baja implements Serializable {
 
     public void setBajaReprobacionList(List<BajaReprobacion> bajaReprobacionList) {
         this.bajaReprobacionList = bajaReprobacionList;
+    }
+
+    public Estudiante getEstudiante() {
+        return estudiante;
+    }
+
+    public void setEstudiante(Estudiante estudiante) {
+        this.estudiante = estudiante;
     }
 
     @Override

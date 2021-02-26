@@ -131,6 +131,12 @@ public class Estudiante implements Serializable {
     private ExpedienteTitulacion expedienteTitulacion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<ParticipantesTutoria> participantesTutoriaList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
+    private Baja baja;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matricula", fetch = FetchType.LAZY)
+    private List<EntregaFotografiasEstudiante> entregaFotografiasEstudianteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matricula", fetch = FetchType.LAZY)
+    private List<SeguimientoEstadiaEstudiante> seguimientoEstadiaEstudianteList;
 
     public Estudiante() {
     }
@@ -412,6 +418,32 @@ public class Estudiante implements Serializable {
 
     public void setParticipantesTutoriaList(List<ParticipantesTutoria> participantesTutoriaList) {
         this.participantesTutoriaList = participantesTutoriaList;
+    }
+
+    public Baja getBaja() {
+        return baja;
+    }
+
+    public void setBaja(Baja baja) {
+        this.baja = baja;
+    }
+    
+    @XmlTransient
+    public List<EntregaFotografiasEstudiante> getEntregaFotografiasEstudianteList() {
+        return entregaFotografiasEstudianteList;
+    }
+
+    public void setEntregaFotografiasEstudianteList(List<EntregaFotografiasEstudiante> entregaFotografiasEstudianteList) {
+        this.entregaFotografiasEstudianteList = entregaFotografiasEstudianteList;
+    }
+
+    @XmlTransient
+    public List<SeguimientoEstadiaEstudiante> getSeguimientoEstadiaEstudianteList() {
+        return seguimientoEstadiaEstudianteList;
+    }
+
+    public void setSeguimientoEstadiaEstudianteList(List<SeguimientoEstadiaEstudiante> seguimientoEstadiaEstudianteList) {
+        this.seguimientoEstadiaEstudianteList = seguimientoEstadiaEstudianteList;
     }
 
     @Override

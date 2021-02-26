@@ -758,14 +758,14 @@ public class EjbCedulaIdentificacion {
         try{
             DtoCedulaIdentificacionDatosFamiliares datosFamiliares = new DtoCedulaIdentificacionDatosFamiliares();
             if(estudiante==null){return ResultadoEJB.crearErroneo(2,datosFamiliares,"El estudiante no debe ser nulo");}
-            datosFamiliares.setP65(estudiante.getAspirante().getDatosFamiliares().getTutor().getNombre().concat(" ").concat(estudiante.getAspirante().getDatosFamiliares().getTutor().getApellidoPaterno()).concat(" ").concat(estudiante.getAspirante().getDatosFamiliares().getTutor().getApellidoMaterno()));//Nombre completo del tutor familiar
-            DtoDomicilio domicilioTutor= new DtoDomicilio();
-            ResultadoEJB<DtoDomicilio> resDomicilio = getDomicilio(estudiante.getAspirante().getDatosFamiliares().getTutor().getAsentamiento());
-            if(resDomicilio.getCorrecto()==true){domicilioTutor = resDomicilio.getValor();}
-            else {return ResultadoEJB.crearErroneo(3,datosFamiliares,"No se pudo obtener el domiclio del tutor familiar");}
-            datosFamiliares.setP66(estudiante.getAspirante().getDatosFamiliares().getTutor().getCalle().concat(" #").concat(estudiante.getAspirante().getDatosFamiliares().getTutor().getNumero().concat(" ").concat(domicilioTutor.getAsentamiento().getNombreAsentamiento()).concat(", ").concat(domicilioTutor.getMunicipio().getNombre()).concat(", ").concat("CP: ").concat(domicilioTutor.getAsentamiento().getCodigoPostal()).concat(", ").concat(domicilioTutor.getEstado().getNombre()).concat(", ").concat(domicilioTutor.getPais().getNombre())));//Domicilio Completo del tutor
-            datosFamiliares.setP67(estudiante.getAspirante().getDatosFamiliares().getTutor().getNoTelefono());//Telefono de contacto
-            datosFamiliares.setP68(estudiante.getAspirante().getDatosFamiliares().getTutor().getParentesco());//Parentesco
+//            datosFamiliares.setP65(estudiante.getAspirante().getDatosFamiliares().getTutor().getNombre().concat(" ").concat(estudiante.getAspirante().getDatosFamiliares().getTutor().getApellidoPaterno()).concat(" ").concat(estudiante.getAspirante().getDatosFamiliares().getTutor().getApellidoMaterno()));//Nombre completo del tutor familiar
+//            DtoDomicilio domicilioTutor= new DtoDomicilio();
+//            ResultadoEJB<DtoDomicilio> resDomicilio = getDomicilio(estudiante.getAspirante().getDatosFamiliares().getTutor().getAsentamiento());
+//            if(resDomicilio.getCorrecto()==true){domicilioTutor = resDomicilio.getValor();}
+//            else {return ResultadoEJB.crearErroneo(3,datosFamiliares,"No se pudo obtener el domiclio del tutor familiar");}
+//            datosFamiliares.setP66(estudiante.getAspirante().getDatosFamiliares().getTutor().getCalle().concat(" #").concat(estudiante.getAspirante().getDatosFamiliares().getTutor().getNumero().concat(" ").concat(domicilioTutor.getAsentamiento().getNombreAsentamiento()).concat(", ").concat(domicilioTutor.getMunicipio().getNombre()).concat(", ").concat("CP: ").concat(domicilioTutor.getAsentamiento().getCodigoPostal()).concat(", ").concat(domicilioTutor.getEstado().getNombre()).concat(", ").concat(domicilioTutor.getPais().getNombre())));//Domicilio Completo del tutor
+//            datosFamiliares.setP67(estudiante.getAspirante().getDatosFamiliares().getTutor().getNoTelefono());//Telefono de contacto
+//            datosFamiliares.setP68(estudiante.getAspirante().getDatosFamiliares().getTutor().getParentesco());//Parentesco
             datosFamiliares.setP69(estudiante.getAspirante().getDatosFamiliares().getNombrePadre());//Nombre completo del padre
             datosFamiliares.setP70(estudiante.getAspirante().getDatosFamiliares().getOcupacionPadre().getDescripcion());//Ocupacion del padre
             datosFamiliares.setP71(estudiante.getAspirante().getDatosFamiliares().getTelefonoPadre());//Telefono de contacto del padre

@@ -11,7 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "asesor_academico_estadia", catalog = "control_escolar", schema = "")
@@ -45,21 +44,19 @@ public class AsesorAcademicoEstadia implements Serializable {
     @Basic(optional = false)
     @Column(name = "asesor_estadia")
     private Integer asesorEstadia;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "programa_educativo")
-    private short programaEducativo;
+    private Short programaEducativo;
     @Basic(optional = false)
     @NotNull
     @Column(name = "personal")
     private int personal;
-    @JoinColumn(name = "evento", referencedColumnName = "evento")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private EventoEstadia evento;
     @JoinColumn(name = "coordinador", referencedColumnName = "coordinador_estadia")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne
     private CoordinadorAreaEstadia coordinador;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "asesor", fetch = FetchType.LAZY)
+    @JoinColumn(name = "evento", referencedColumnName = "evento")
+    @ManyToOne(optional = false)
+    private EventoEstadia evento;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "asesor")
     private List<SeguimientoEstadiaEstudiante> seguimientoEstadiaEstudianteList;
 
     public AsesorAcademicoEstadia() {
@@ -69,9 +66,8 @@ public class AsesorAcademicoEstadia implements Serializable {
         this.asesorEstadia = asesorEstadia;
     }
 
-    public AsesorAcademicoEstadia(Integer asesorEstadia, short programaEducativo, int personal) {
+    public AsesorAcademicoEstadia(Integer asesorEstadia, int personal) {
         this.asesorEstadia = asesorEstadia;
-        this.programaEducativo = programaEducativo;
         this.personal = personal;
     }
 
@@ -83,11 +79,11 @@ public class AsesorAcademicoEstadia implements Serializable {
         this.asesorEstadia = asesorEstadia;
     }
 
-    public short getProgramaEducativo() {
+    public Short getProgramaEducativo() {
         return programaEducativo;
     }
 
-    public void setProgramaEducativo(short programaEducativo) {
+    public void setProgramaEducativo(Short programaEducativo) {
         this.programaEducativo = programaEducativo;
     }
 
@@ -99,20 +95,20 @@ public class AsesorAcademicoEstadia implements Serializable {
         this.personal = personal;
     }
 
-    public EventoEstadia getEvento() {
-        return evento;
-    }
-
-    public void setEvento(EventoEstadia evento) {
-        this.evento = evento;
-    }
-
     public CoordinadorAreaEstadia getCoordinador() {
         return coordinador;
     }
 
     public void setCoordinador(CoordinadorAreaEstadia coordinador) {
         this.coordinador = coordinador;
+    }
+
+    public EventoEstadia getEvento() {
+        return evento;
+    }
+
+    public void setEvento(EventoEstadia evento) {
+        this.evento = evento;
     }
 
     @XmlTransient

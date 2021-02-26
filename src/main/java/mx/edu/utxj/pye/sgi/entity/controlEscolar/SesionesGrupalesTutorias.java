@@ -6,12 +6,12 @@
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +21,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "sesiones_grupales_tutorias", catalog = "control_escolar", schema = "")
@@ -40,7 +42,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "SesionesGrupalesTutorias.findByActividadProgramada", query = "SELECT s FROM SesionesGrupalesTutorias s WHERE s.actividadProgramada = :actividadProgramada")
     , @NamedQuery(name = "SesionesGrupalesTutorias.findByObjetivos", query = "SELECT s FROM SesionesGrupalesTutorias s WHERE s.objetivos = :objetivos")
     , @NamedQuery(name = "SesionesGrupalesTutorias.findByCumplimiento", query = "SELECT s FROM SesionesGrupalesTutorias s WHERE s.cumplimiento = :cumplimiento")
-    , @NamedQuery(name = "SesionesGrupalesTutorias.findByJustificacion", query = "SELECT s FROM SesionesGrupalesTutorias s WHERE s.justificacion = :justificacion")})
+    , @NamedQuery(name = "SesionesGrupalesTutorias.findByJustificacion", query = "SELECT s FROM SesionesGrupalesTutorias s WHERE s.justificacion = :justificacion")
+    , @NamedQuery(name = "SesionesGrupalesTutorias.findByFechaProgramada", query = "SELECT s FROM SesionesGrupalesTutorias s WHERE s.fechaProgramada = :fechaProgramada")
+    , @NamedQuery(name = "SesionesGrupalesTutorias.findByObservacionesRecomendaciones", query = "SELECT s FROM SesionesGrupalesTutorias s WHERE s.observacionesRecomendaciones = :observacionesRecomendaciones")})
 public class SesionesGrupalesTutorias implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -72,10 +76,16 @@ public class SesionesGrupalesTutorias implements Serializable {
     @Size(min = 1, max = 5000)
     @Column(name = "justificacion")
     private String justificacion;
+    @Column(name = "fecha_programada")
+    @Temporal(TemporalType.DATE)
+    private Date fechaProgramada;
+    @Size(max = 5000)
+    @Column(name = "observaciones_recomendaciones")
+    private String observacionesRecomendaciones;
     @JoinColumn(name = "plan_accion_tutoria", referencedColumnName = "plan_accion_tutoria")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private PlanAccionTutorial planAccionTutoria;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sesionGrupal", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sesionGrupal")
     private List<TutoriasGrupales> tutoriasGrupalesList;
 
     public SesionesGrupalesTutorias() {
@@ -140,6 +150,22 @@ public class SesionesGrupalesTutorias implements Serializable {
 
     public void setJustificacion(String justificacion) {
         this.justificacion = justificacion;
+    }
+
+    public Date getFechaProgramada() {
+        return fechaProgramada;
+    }
+
+    public void setFechaProgramada(Date fechaProgramada) {
+        this.fechaProgramada = fechaProgramada;
+    }
+
+    public String getObservacionesRecomendaciones() {
+        return observacionesRecomendaciones;
+    }
+
+    public void setObservacionesRecomendaciones(String observacionesRecomendaciones) {
+        this.observacionesRecomendaciones = observacionesRecomendaciones;
     }
 
     public PlanAccionTutorial getPlanAccionTutoria() {

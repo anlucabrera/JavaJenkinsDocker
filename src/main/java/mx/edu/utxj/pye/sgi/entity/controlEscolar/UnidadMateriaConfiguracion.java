@@ -12,7 +12,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "unidad_materia_configuracion", catalog = "control_escolar", schema = "")
@@ -67,26 +66,26 @@ public class UnidadMateriaConfiguracion implements Serializable {
     @NotNull
     @Column(name = "porcentaje")
     private double porcentaje;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion", fetch = FetchType.LAZY)
-    private List<AccionesDeMejora> accionesDeMejoraList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion")
     private List<UnidadMateriaConfiguracionCriterio> unidadMateriaConfiguracionCriterioList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion", fetch = FetchType.LAZY)
-    private UnidadMateriaValidacion unidadMateriaValidacion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion", fetch = FetchType.LAZY)
-    private List<UnidadMateriaComentario> unidadMateriaComentarioList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion")
     private List<Asesoria> asesoriaList;
-    @OneToMany(mappedBy = "configuracion", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "configuracion")
     private List<CasoCritico> casoCriticoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion", fetch = FetchType.LAZY)
-    private List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList;
     @JoinColumn(name = "carga", referencedColumnName = "carga")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private CargaAcademica carga;
     @JoinColumn(name = "id_unidad_materia", referencedColumnName = "id_unidad_materia")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private UnidadMateria idUnidadMateria;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion")
+    private UnidadMateriaValidacion unidadMateriaValidacion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "unidadMateriaConfiguracion")
+    private List<UnidadMateriaComentario> unidadMateriaComentarioList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion")
+    private List<AccionesDeMejora> accionesDeMejoraList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion")
+    private List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList;
 
     public UnidadMateriaConfiguracion() {
     }
@@ -151,23 +150,6 @@ public class UnidadMateriaConfiguracion implements Serializable {
         this.unidadMateriaConfiguracionCriterioList = unidadMateriaConfiguracionCriterioList;
     }
 
-    public UnidadMateriaValidacion getUnidadMateriaValidacion() {
-        return unidadMateriaValidacion;
-    }
-
-    public void setUnidadMateriaValidacion(UnidadMateriaValidacion unidadMateriaValidacion) {
-        this.unidadMateriaValidacion = unidadMateriaValidacion;
-    }
-
-    @XmlTransient
-    public List<UnidadMateriaComentario> getUnidadMateriaComentarioList() {
-        return unidadMateriaComentarioList;
-    }
-
-    public void setUnidadMateriaComentarioList(List<UnidadMateriaComentario> unidadMateriaComentarioList) {
-        this.unidadMateriaComentarioList = unidadMateriaComentarioList;
-    }
-
     @XmlTransient
     public List<Asesoria> getAsesoriaList() {
         return asesoriaList;
@@ -186,15 +168,6 @@ public class UnidadMateriaConfiguracion implements Serializable {
         this.casoCriticoList = casoCriticoList;
     }
 
-    @XmlTransient
-    public List<UnidadMateriaConfiguracionDetalle> getUnidadMateriaConfiguracionDetalleList() {
-        return unidadMateriaConfiguracionDetalleList;
-    }
-
-    public void setUnidadMateriaConfiguracionDetalleList(List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList) {
-        this.unidadMateriaConfiguracionDetalleList = unidadMateriaConfiguracionDetalleList;
-    }
-
     public CargaAcademica getCarga() {
         return carga;
     }
@@ -209,6 +182,41 @@ public class UnidadMateriaConfiguracion implements Serializable {
 
     public void setIdUnidadMateria(UnidadMateria idUnidadMateria) {
         this.idUnidadMateria = idUnidadMateria;
+    }
+
+    public UnidadMateriaValidacion getUnidadMateriaValidacion() {
+        return unidadMateriaValidacion;
+    }
+
+    public void setUnidadMateriaValidacion(UnidadMateriaValidacion unidadMateriaValidacion) {
+        this.unidadMateriaValidacion = unidadMateriaValidacion;
+    }
+
+    @XmlTransient
+    public List<UnidadMateriaComentario> getUnidadMateriaComentarioList() {
+        return unidadMateriaComentarioList;
+    }
+
+    public void setUnidadMateriaComentarioList(List<UnidadMateriaComentario> unidadMateriaComentarioList) {
+        this.unidadMateriaComentarioList = unidadMateriaComentarioList;
+    }
+
+    @XmlTransient
+    public List<AccionesDeMejora> getAccionesDeMejoraList() {
+        return accionesDeMejoraList;
+    }
+
+    public void setAccionesDeMejoraList(List<AccionesDeMejora> accionesDeMejoraList) {
+        this.accionesDeMejoraList = accionesDeMejoraList;
+    }
+
+    @XmlTransient
+    public List<UnidadMateriaConfiguracionDetalle> getUnidadMateriaConfiguracionDetalleList() {
+        return unidadMateriaConfiguracionDetalleList;
+    }
+
+    public void setUnidadMateriaConfiguracionDetalleList(List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList) {
+        this.unidadMateriaConfiguracionDetalleList = unidadMateriaConfiguracionDetalleList;
     }
 
     @Override
@@ -234,15 +242,6 @@ public class UnidadMateriaConfiguracion implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion[ configuracion=" + configuracion + " ]";
-    }
-
-    @XmlTransient
-    public List<AccionesDeMejora> getAccionesDeMejoraList() {
-        return accionesDeMejoraList;
-    }
-
-    public void setAccionesDeMejoraList(List<AccionesDeMejora> accionesDeMejoraList) {
-        this.accionesDeMejoraList = accionesDeMejoraList;
     }
     
 }
