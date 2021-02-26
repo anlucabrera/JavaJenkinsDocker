@@ -100,6 +100,17 @@ public class ControlEscolarMenu implements Desarrollable, Desplegable {
         get = Faces.evaluateExpressionGet("#{registroDelEstudianteConsulta.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{resultadosPlaneacionesConsulta.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{registroFichaAdmisionSE.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{asignacionRolesEstadiaDirector.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{asignacionEstudiantesEstadiaDocente.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{seguimientoEstadiaAsesor.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{seguimientoEstadiaPorEstudiante.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{seguimientoEstadiaCoordinador.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{seguimientoEstadiaDirector.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{letreroFotografiasEstudiante.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{seguimientoEstadiaVinculacion.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{reportesEstadia.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{registroEventosEstadiaEscolares.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{entregaFotografiasEscolares.tieneAcceso}"); if(get) return true;
 
         return false;
     }

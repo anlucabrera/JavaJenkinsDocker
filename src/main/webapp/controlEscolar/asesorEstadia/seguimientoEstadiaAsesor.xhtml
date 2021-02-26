@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento estudiantes de estadía por asesor académico
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{seguimientoEstadiaAsesor.cargado}">
+        <adm:breadcrumb title="Seguimiento estudiantes de estadía por asesor académico"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{seguimientoEstadiaAsesor.tieneAcceso}">
+                <c:if test="#{seguimientoEstadiaAsesor.rol.generaciones ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" value="#{seguimientoEstadiaAsesor.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{seguimientoEstadiaAsesor.cambiarGeneracion}">
+                                                    <f:selectItems value="#{seguimientoEstadiaAsesor.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generacion" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{seguimientoEstadiaAsesor.rol.nivelEducativo}" converter="entityConverter" valueChangeListener="#{seguimientoEstadiaAsesor.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{seguimientoEstadiaAsesor.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                            <center>
+                                                <p:remoteCommand name="actualizar" update="@form:tbListaSeguimientoEstadia" />
+                                                <p:dataTable id="tbListaSeguimientoEstadia" var="segEst" value="#{seguimientoEstadiaAsesor.rol.estudiantesSeguimiento}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50,60" resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <f:facet name="header">
+                                                        Las columnas indicadas con un * contienen información o actividades asignadas a su rol 
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column rowspan="2" headerText="Matricula" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Estudiante" style="width: 180px;" sortBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Grupo" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Programa educativo" style="width: 200px;" sortBy="#{segEst.dtoEstudiante.programaEducativo.nombre}" filterBy="#{segEst.dtoEstudiante.programaEducativo.nombre}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="* Editar información" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="* Empresa" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="* Dirección" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="* Proyecto" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="* Semanas de estadía" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="Comentarios Coordinador" style="width: 250px;"/>
+                                                            <p:column rowspan="2" headerText="Validación Coordinador" style="width: 100px;"/>
+                                                            <p:column rowspan="2" headerText="Validación Dirección" style="width: 100px;"/>
+                                                            <p:column colspan="2" headerText="Carta de Presentación" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Carta de Aceptación" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="* Primer Informe" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;"/>
+                                                            <p:column colspan="2" headerText="* Segundo Informe" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;"/>
+                                                            <p:column colspan="2" headerText="* Tercer Informe" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;"/>
+                                                            <p:column colspan="2" headerText="* Informe Final" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;"/>
+                                                            <p:column colspan="2" headerText="Carta Liberación Institucional" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Evaluación Empresarial" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Carta de Acreditación" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Archivos Liberación Empresarial" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Acreditación de Estadía" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="Cédula de Evaluación Institucional" style="width: 100px;"/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 80px;"/>
+                                                            <p:column headerText="Validación" style="width: 120px;"/>
+                                                            <p:column headerText="Archivo" style="width: 80px;"/>
+                                                            <p:column headerText="Validación" style="width: 120px;"/>
+                                                            <p:column headerText="Archivo" style="width: 80px;"/>
+                                                            <p:column headerText="Validación" style="width: 120px;"/>
+                                                            <p:column headerText="Archivo" style="width: 80px;"/>
+                                                            <p:column headerText="Validación" style="width: 120px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.matricula}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandButton actionListener="#{seguimientoEstadiaAsesor.editarSeguimiento(segEst)}" rendered="#{segEst.seguimientoEstadiaEstudiante.empresa ne null}" disabled="#{!seguimientoEstadiaAsesor.deshabilitarCaptura(segEst)}" class="btn btn-sm #{!seguimientoEstadiaAsesor.deshabilitarCaptura(segEst)?'btn-danger':'btn-info'}" icon="fa fa-edit" title="#{!seguimientoEstadiaAsesor.deshabilitarCaptura(segEst)?'El periodo para actualizar venció.':'Actualizar información.'}"/>
+                                                        <p:commandButton actionListener="#{seguimientoEstadiaAsesor.registrarInformacionEstadia(segEst)}" rendered="#{segEst.seguimientoEstadiaEstudiante.empresa eq null}" disabled="#{!seguimientoEstadiaAsesor.deshabilitarCaptura(segEst)}" class="btn btn-sm #{!seguimientoEstadiaAsesor.deshabilitarCaptura(segEst)?'btn-danger':'btn-info'}" icon="fa fa-edit" title="#{!seguimientoEstadiaAsesor.deshabilitarCaptura(segEst)?'El periodo para registrar venció.':'Registrar información.'}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.empresa.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.empresa.direccion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.proyecto}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.semanasEstadia}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="1"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.comentariosCoordinador eq null?'No se han capturado comentarios':segEst.seguimientoEstadiaEstudiante.comentariosCoordinador}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.validacionCoordinador?'Si':'No'}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.validacionDirector?'Si':'No'}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaAsesor.consultarExisteDocumento(33, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaAsesor.descargarDocumento(33, segEst)}" target="_blank" title="#{seguimientoEstadiaAsesor.consultarExisteDocumento(33, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(33, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="cartaPresentacion" value="#{seguimientoEstadiaAsesor.buscarValidacionDocumento(33, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{cartaPresentacion?'Si':'No'}" rendered="#{seguimientoEstadiaAsesor.consultarExisteDocumento(33, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(33, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaAsesor.consultarExisteDocumento(34, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaAsesor.descargarDocumento(34, segEst)}" target="_blank" title="#{seguimientoEstadiaAsesor.consultarExisteDocumento(34, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(34, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="cartaAceptacion" value="#{seguimientoEstadiaAsesor.buscarValidacionDocumento(34, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{cartaAceptacion?'Si':'No'}" rendered="#{seguimientoEstadiaAsesor.consultarExisteDocumento(34, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(34, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaAsesor.consultarExisteDocumento(35, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaAsesor.descargarDocumento(35, segEst)}" target="_blank" title="#{seguimientoEstadiaAsesor.consultarExisteDocumento(35, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(35, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(35, segEst)?'No':'Sí'}" rendered="#{!seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,1) and seguimientoEstadiaAsesor.consultarExisteDocumento(35, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(35, segEst)}"/>
+                                                        <h:outputText value="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(35, segEst)?'Inválido':'Validado'}" rendered="#{seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,1) and seguimientoEstadiaAsesor.consultarExisteDocumento(35, segEst)}"/>
+                                                        <p:commandLink actionListener="#{seguimientoEstadiaAsesor.validarDocumento(35, segEst)}" rendered="#{seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,1) and seguimientoEstadiaAsesor.consultarExisteDocumento(35, segEst)}"
+                                                                        class="btn btn-sm #{!seguimientoEstadiaAsesor.buscarValidacionDocumento(35, segEst)?'btn-danger':'btn-success'}"
+                                                                        title="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(35, segEst)?'De clic para validar documento.':'De clic para invalidar documento.'}"
+                                                                        onsuccess="actualizar();"><i class="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(35, segEst)?'fa fa-close':'fa fa-check'}"/>
+                                                        </p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                       <h:outputText value="#{seguimientoEstadiaAsesor.comentariosDocumento(35, segEst).observaciones}" rendered="#{!seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,1) and seguimientoEstadiaAsesor.consultarExisteDocumento(35, segEst)}"/>
+                                                       <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(35, segEst)}"/>
+                                                       <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaAsesor.comentariosDocumento(35, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaAsesor.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,1) and seguimientoEstadiaAsesor.consultarExisteDocumento(35, segEst)}">
+                                                            <p:ajax process="@this" update="@this" global="false" /> 
+                                                            <f:attribute name="documento" value="35" />
+                                                            <f:attribute name="seguimientoEstadia" value="#{segEst}" />
+                                                       </p:inputTextarea>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaAsesor.consultarExisteDocumento(36, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaAsesor.descargarDocumento(36, segEst)}" target="_blank" title="#{seguimientoEstadiaAsesor.consultarExisteDocumento(36, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(36, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(36, segEst)?'No':'Sí'}" rendered="#{!seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,2) and seguimientoEstadiaAsesor.consultarExisteDocumento(36, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(36, segEst)}"/>
+                                                        <h:outputText value="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(36, segEst)?'Inválido':'Validado'}" rendered="#{seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,2) and seguimientoEstadiaAsesor.consultarExisteDocumento(36, segEst)}"/>
+                                                        <p:commandLink actionListener="#{seguimientoEstadiaAsesor.validarDocumento(36, segEst)}" rendered="#{seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,2) and seguimientoEstadiaAsesor.consultarExisteDocumento(36, segEst)}"
+                                                                        class="btn btn-sm #{!seguimientoEstadiaAsesor.buscarValidacionDocumento(36, segEst)?'btn-danger':'btn-success'}"
+                                                                        title="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(36, segEst)?'De clic para validar documento.':'De clic para invalidar documento.'}"
+                                                                        onsuccess="actualizar();"><i class="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(36, segEst)?'fa fa-close':'fa fa-check'}"/>
+                                                        </p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                       <h:outputText value="#{seguimientoEstadiaAsesor.comentariosDocumento(36, segEst).observaciones}" rendered="#{!seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,2) and seguimientoEstadiaAsesor.consultarExisteDocumento(36, segEst)}"/>
+                                                       <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(36, segEst)}"/>
+                                                       <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaAsesor.comentariosDocumento(36, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaAsesor.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,2) and seguimientoEstadiaAsesor.consultarExisteDocumento(36, segEst)}">
+                                                            <p:ajax process="@this" update="@this" global="false" /> 
+                                                            <f:attribute name="documento" value="36" />
+                                                            <f:attribute name="seguimientoEstadia" value="#{segEst}" />
+                                                       </p:inputTextarea>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaAsesor.consultarExisteDocumento(37, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaAsesor.descargarDocumento(37, segEst)}" target="_blank" title="#{seguimientoEstadiaAsesor.consultarExisteDocumento(37, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(37, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(37, segEst)?'No':'Sí'}" rendered="#{!seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,3) and seguimientoEstadiaAsesor.consultarExisteDocumento(37, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(37, segEst)}"/>
+                                                        <h:outputText value="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(37, segEst)?'Inválido':'Validado'}" rendered="#{seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,3) and seguimientoEstadiaAsesor.consultarExisteDocumento(37, segEst)}"/>
+                                                        <p:commandLink actionListener="#{seguimientoEstadiaAsesor.validarDocumento(37, segEst)}" rendered="#{seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,3) and seguimientoEstadiaAsesor.consultarExisteDocumento(37, segEst)}"
+                                                                        class="btn btn-sm #{!seguimientoEstadiaAsesor.buscarValidacionDocumento(37, segEst)?'btn-danger':'btn-success'}"
+                                                                        title="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(37, segEst)?'De clic para validar documento.':'De clic para invalidar documento.'}"
+                                                                        onsuccess="actualizar();"><i class="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(37, segEst)?'fa fa-close':'fa fa-check'}"/>
+                                                        </p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                       <h:outputText value="#{seguimientoEstadiaAsesor.comentariosDocumento(37, segEst).observaciones}" rendered="#{!seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,3) and seguimientoEstadiaAsesor.consultarExisteDocumento(37, segEst)}"/>
+                                                       <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(37, segEst)}"/>
+                                                       <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaAsesor.comentariosDocumento(37, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaAsesor.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,3) and seguimientoEstadiaAsesor.consultarExisteDocumento(37, segEst)}">
+                                                            <p:ajax process="@this" update="@this" global="false" /> 
+                                                            <f:attribute name="documento" value="37" />
+                                                            <f:attribute name="seguimientoEstadia" value="#{segEst}" />
+                                                       </p:inputTextarea>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaAsesor.consultarExisteDocumento(38, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaAsesor.descargarDocumento(38, segEst)}" target="_blank" title="#{seguimientoEstadiaAsesor.consultarExisteDocumento(38, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(38, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(38, segEst)?'No':'Sí'}" rendered="#{!seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,4) and seguimientoEstadiaAsesor.consultarExisteDocumento(38, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(38, segEst)}"/>
+                                                        <h:outputText value="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(38, segEst)?'Inválido':'Validado'}" rendered="#{seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,4) and seguimientoEstadiaAsesor.consultarExisteDocumento(38, segEst)}"/>
+                                                        <p:commandLink actionListener="#{seguimientoEstadiaAsesor.validarDocumento(38, segEst)}" rendered="#{seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,4) and seguimientoEstadiaAsesor.consultarExisteDocumento(38, segEst)}"
+                                                                        class="btn btn-sm #{!seguimientoEstadiaAsesor.buscarValidacionDocumento(38, segEst)?'btn-danger':'btn-success'}"
+                                                                        title="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(38, segEst)?'De clic para validar documento.':'De clic para invalidar documento.'}"
+                                                                        onsuccess="actualizar();"><i class="#{!seguimientoEstadiaAsesor.buscarValidacionDocumento(38, segEst)?'fa fa-close':'fa fa-check'}"/>
+                                                        </p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                       <h:outputText value="#{seguimientoEstadiaAsesor.comentariosDocumento(38, segEst).observaciones}" rendered="#{!seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,4) and seguimientoEstadiaAsesor.consultarExisteDocumento(38, segEst)}"/>
+                                                       <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(38, segEst)}"/>
+                                                       <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaAsesor.comentariosDocumento(38, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaAsesor.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaAsesor.deshabilitarValidacion(segEst,4) and seguimientoEstadiaAsesor.consultarExisteDocumento(38, segEst)}">
+                                                            <p:ajax process="@this" update="@this" global="false" /> 
+                                                            <f:attribute name="documento" value="38" />
+                                                            <f:attribute name="seguimientoEstadia" value="#{segEst}" />
+                                                       </p:inputTextarea>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaAsesor.consultarExisteDocumento(39, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaAsesor.descargarDocumento(39, segEst)}" target="_blank" title="#{seguimientoEstadiaAsesor.consultarExisteDocumento(39, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(39, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="cartaLiberacionIns" value="#{seguimientoEstadiaAsesor.buscarValidacionDocumento(39, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{cartaLiberacionIns?'Si':'No'}" rendered="#{seguimientoEstadiaAsesor.consultarExisteDocumento(39, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(39, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaAsesor.consultarExisteDocumento(40, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaAsesor.descargarDocumento(40, segEst)}" target="_blank" title="#{seguimientoEstadiaAsesor.consultarExisteDocumento(40, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(40, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="evaluacionEmp" value="#{seguimientoEstadiaAsesor.buscarValidacionDocumento(40, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{evaluacionEmp?'Si':'No'}" rendered="#{seguimientoEstadiaAsesor.consultarExisteDocumento(40, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(40, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaAsesor.consultarExisteDocumento(41, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaAsesor.descargarDocumento(41, segEst)}" target="_blank" title="#{seguimientoEstadiaAsesor.consultarExisteDocumento(41, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(41, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="cartaAcred" value="#{seguimientoEstadiaAsesor.buscarValidacionDocumento(41, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{cartaAcred?'Si':'No'}" rendered="#{seguimientoEstadiaAsesor.consultarExisteDocumento(41, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(41, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaAsesor.consultarExisteDocumento(42, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaAsesor.descargarDocumento(42, segEst)}" target="_blank" title="#{seguimientoEstadiaAsesor.consultarExisteDocumento(42, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(42, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="cartaLiberacionEmp" value="#{seguimientoEstadiaAsesor.buscarValidacionDocumento(42, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{cartaLiberacionEmp?'Si':'No'}" rendered="#{seguimientoEstadiaAsesor.consultarExisteDocumento(42, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(42, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaAsesor.consultarExisteDocumento(43, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaAsesor.descargarDocumento(43, segEst)}" target="_blank" title="#{seguimientoEstadiaAsesor.consultarExisteDocumento(43, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(43, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <c:set var="acreditacionEst" value="#{seguimientoEstadiaAsesor.buscarValidacionDocumento(43, segEst)}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{acreditacionEst?'Si':'No'}" rendered="#{seguimientoEstadiaAsesor.consultarExisteDocumento(43, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(43, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandButton actionListener="#{seguimientoEstadiaAsesor.editarEvaluacion(segEst)}" class="btn btn-sm btn-info" icon="fa fa-edit" title="Evaluación estadía"/>
+                                                        <p:commandButton actionListener="#{seguimientoEstadiaAsesor.generarCedEvalAcredEstadia(segEst)}" action="/controlEscolar/formatos/cedulaEvalAcredEstadia?faces-redirect=true" 
+                                                                                  class="btn btn-sm btn-primary" 
+                                                                                  disabled="#{!seguimientoEstadiaAsesor.aproboEstadia(segEst)}"
+                                                                                  icon="fa fa-print"
+                                                                                  title="Generar Cédula de Evaluación y Acreditación de Estadía"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog> 
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <!-- Modal para registrar información de estadía -->
+                    <p:dialog id="modalRegistroInfEst" 
+                              widgetVar="modalRegistroInfEst" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{seguimientoEstadiaAsesor.rol.aperturaDialogoRegistroInfEst}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Registro de información de estadía" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <h:form id="frmModalRegistroInfEst" enctype="multipart/form-data"> 
+                                        <p:outputPanel>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>No. Seguimiento</strong> 
+                                                                    <p class="text-muted">
+                                                                        #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.seguimientoEstadiaEstudiante.seguimiento}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Matricula</strong> 
+                                                                    <p class="text-muted">
+                                                                        #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.dtoEstudiante.estudiante.matricula}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Estudiante</strong> 
+                                                                    <p class="text-muted">
+                                                                        #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.dtoEstudiante.estudiante.aspirante.idPersona.nombre}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                    <strong></strong>
+                                                                    <p class="text-muted" >
+                                                                    <p:autoComplete id="empresaR" value="#{seguimientoEstadiaAsesor.rol.empresaSeleccionada}" completeMethod="#{seguimientoEstadiaAsesor.completeEmpresa}" queryDelay="800"
+                                                                                    valueChangeListener="#{seguimientoEstadiaAsesor.cambiarEmpresa}" placeholder="Buscar empresa: nombre, localidad, municipio o estado"
+                                                                                    var="empresa" itemValue="#{empresa}" itemLabel="#{empresa.datosComplete}" converter="entityConverter" forceSelection="true" size="150">
+                                                                        <p:column>#{empresa.datosComplete}</p:column>
+                                                                        <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                                    </p:autoComplete>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Fecha de inicio</strong> 
+                                                                    <p class="text-muted">
+                                                                        <p:calendar id="fechaInicioR" locale="es" value="#{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.seguimientoEstadiaEstudiante.fechaInicio}" pattern="dd-MM-yyyy" mask="true">
+                                                                            <p:ajax event="dateSelect" listener="#{seguimientoEstadiaAsesor.calcularSemanasEstadia}"/>
+                                                                        </p:calendar>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Fecha de fin</strong> 
+                                                                    <p class="text-muted">
+                                                                        <p:calendar id="fechaFinR" locale="es" value="#{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.seguimientoEstadiaEstudiante.fechaFin}" pattern="dd-MM-yyyy" mask="true">
+                                                                        <p:ajax event="dateSelect" listener="#{seguimientoEstadiaAsesor.calcularSemanasEstadia}"/>
+                                                                        </p:calendar>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Semanas</strong> 
+                                                                    <p class="text-muted">
+                                                                        <h:outputText id="semanasR" class="form-control" value="#{seguimientoEstadiaAsesor.rol.semanasEstadia}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="1"/></h:outputText>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                    <strong>Proyecto</strong> 
+                                                                    <p class="text-muted">
+                                                                        <h:inputText id="proyectoR" maxlength="1000" style="width: 1150px;" onkeyup="contarCaracteresProyectoEstadiaRegistro()" value="#{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.seguimientoEstadiaEstudiante.proyecto}"/>
+                                                                    </p>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                     <center><p:outputLabel value="Caracteres restantes:" style="font-weight: normal;"/><p:inputText id="txtCaracteresRestantesR" value="1000" disabled="true" style="background-color: white; border-color: white; color:red;"/></center>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-12"><p style="text-align: center; font-size: 15px; font-weight: bold;">Datos Asesor Empresarial</p></div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Nombre</strong> 
+                                                                    <p class="text-muted">
+                                                                       <h:inputText id="nombreAsesorR" maxlength="150" style="width: 350px;" value="#{seguimientoEstadiaAsesor.rol.asesorEmpresarialEstadia.nombre}"/>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Apellido paterno</strong> 
+                                                                    <p class="text-muted">
+                                                                       <h:inputText id="apellidoPR" maxlength="150" style="width: 350px;" value="#{seguimientoEstadiaAsesor.rol.asesorEmpresarialEstadia.apellidoPaterno}"/>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Apellido materno</strong> 
+                                                                    <p class="text-muted">
+                                                                        <h:inputText id="apellidoMR" maxlength="150" style="width: 350px;" value="#{seguimientoEstadiaAsesor.rol.asesorEmpresarialEstadia.apellidoMaterno}"/>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Cargo o puesto</strong> 
+                                                                    <p class="text-muted">
+                                                                       <h:inputText id="cargoAsesorR" maxlength="255" style="width: 350px;" value="#{seguimientoEstadiaAsesor.rol.asesorEmpresarialEstadia.puesto}"/>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Teléfono</strong> 
+                                                                    <p class="text-muted">
+                                                                       <p:inputMask id="telefonoAsesorR" value="#{seguimientoEstadiaAsesor.rol.asesorEmpresarialEstadia.telefono}" mask="(999)999-9999"/>
+                                                                       <p:message for="telefonoAsesorR" display="tooltip" />
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Correo electrónico</strong> 
+                                                                    <p class="text-muted">
+                                                                        <p:inputText id="emailAsesorR" value="#{seguimientoEstadiaAsesor.rol.asesorEmpresarialEstadia.email}" maxlength="150" style="width: 350px;"/>
+                                                                        <p:message for="emailAsesorR" />
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:commandButton id="btnGuardarRegistro" value="Guardar" actionListener="#{seguimientoEstadiaAsesor.guardarInformacionEstadia()}" 
+                                                                                     disabled="#{!seguimientoEstadiaAsesor.rol.habilitarGuardar}"
+                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalRegistroInfEst')update();"
+                                                                                     update="@form"  process="@form" />
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                             </h:form>
+                    </p:dialog>
+                <!-- Modal para editar registro seleccionado -->
+                    <p:dialog id="modalEdicionInfEst" 
+                              widgetVar="modalEdicionInfEst" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{seguimientoEstadiaAsesor.rol.aperturaDialogoEdicionInfEst}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Editar información de estadía" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <h:form id="frmModalEdicionInfEst" enctype="multipart/form-data"> 
+                                        <p:outputPanel>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>No. Seguimiento</strong> 
+                                                                    <p class="text-muted">
+                                                                        #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.seguimientoEstadiaEstudiante.seguimiento}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Matricula</strong> 
+                                                                    <p class="text-muted">
+                                                                        #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.dtoEstudiante.estudiante.matricula}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Estudiante</strong> 
+                                                                    <p class="text-muted">
+                                                                        #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.dtoEstudiante.estudiante.aspirante.idPersona.nombre}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Empresa</strong>
+                                                                    <p class="text-muted">
+                                                                        #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.empresa.nombre}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Ubicación</strong>
+                                                                    <p class="text-muted">
+                                                                        #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.empresa.localidad.nombre}, #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.empresa.localidad.municipio.nombre}, #{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.empresa.localidad.municipio.estado.nombre}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Cambiar empresa</strong>
+                                                                    <p class="text-muted">
+                                                                        <p:inputSwitch id="cambiarEmpresa" value="#{seguimientoEstadiaAsesor.rol.editarEmpresa}" valueChangeListener="#{seguimientoEstadiaAsesor.cambiarEdicionEmpresa}" > 
+                                                                            <p:ajax update="@form" process="@this" />
+                                                                            <p:autoUpdate />
+                                                                        </p:inputSwitch>
+                                                                    </p>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                    <strong></strong>
+                                                                    <p class="text-muted" >
+                                                                    <p:autoComplete id="empresaA" value="#{seguimientoEstadiaAsesor.rol.empresaSeleccionada}" completeMethod="#{seguimientoEstadiaAsesor.completeEmpresa}" queryDelay="800"
+                                                                                    valueChangeListener="#{seguimientoEstadiaAsesor.cambiarEmpresa}" rendered="#{seguimientoEstadiaAsesor.rol.editarEmpresa}" placeholder="Buscar empresa: nombre, localidad, municipio o estado"
+                                                                                    var="empresa" itemValue="#{empresa}" itemLabel="#{empresa.datosComplete}" converter="entityConverter" forceSelection="true" size="150">
+                                                                        <p:column>#{empresa.datosComplete}</p:column>
+                                                                        <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                                    </p:autoComplete>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Fecha de inicio</strong> 
+                                                                    <p class="text-muted">
+                                                                        <p:calendar id="fechaInicioA" locale="es" value="#{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.seguimientoEstadiaEstudiante.fechaInicio}" pattern="dd-MM-yyyy" mask="true">
+                                                                            <p:ajax event="dateSelect" listener="#{seguimientoEstadiaAsesor.calcularSemanasEstadia}"/>
+                                                                        </p:calendar>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Fecha de fin</strong> 
+                                                                    <p class="text-muted">
+                                                                        <p:calendar id="fechaFinA" locale="es" value="#{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.seguimientoEstadiaEstudiante.fechaFin}" pattern="dd-MM-yyyy" mask="true">
+                                                                        <p:ajax event="dateSelect" listener="#{seguimientoEstadiaAsesor.calcularSemanasEstadia}"/>
+                                                                        </p:calendar>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Semanas</strong> 
+                                                                    <p class="text-muted">
+                                                                        <h:outputText id="semanasA" class="form-control" value="#{seguimientoEstadiaAsesor.rol.semanasEstadia}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="1"/></h:outputText>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                    <strong>Proyecto</strong> 
+                                                                    <p class="text-muted">
+                                                                        <h:inputText id="proyectoA" maxlength="1000" style="width: 1150px;" onkeyup="contarCaracteresProyectoEstadiaEdicion()" value="#{seguimientoEstadiaAsesor.rol.estudianteSeguimiento.seguimientoEstadiaEstudiante.proyecto}"/>
+                                                                    </p>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                     <center><p:outputLabel value="Caracteres restantes:" style="font-weight: normal;"/><p:inputText id="txtCaracteresRestantesA" value="1000" disabled="true" style="background-color: white; border-color: white; color:red;"/></center>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4"/>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-12"><p style="text-align: center; font-size: 15px; font-weight: bold;">Datos Asesor Empresarial</p></div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Nombre</strong> 
+                                                                    <p class="text-muted">
+                                                                       <h:inputText id="nombreAsesorA" maxlength="150" style="width: 350px;" value="#{seguimientoEstadiaAsesor.rol.asesorEmpresarialEstadia.nombre}"/>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Apellido paterno</strong> 
+                                                                    <p class="text-muted">
+                                                                       <h:inputText id="apellidoPA" maxlength="150" style="width: 350px;" value="#{seguimientoEstadiaAsesor.rol.asesorEmpresarialEstadia.apellidoPaterno}"/>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Apellido materno</strong> 
+                                                                    <p class="text-muted">
+                                                                        <h:inputText id="apellidoMA" maxlength="150" style="width: 350px;" value="#{seguimientoEstadiaAsesor.rol.asesorEmpresarialEstadia.apellidoMaterno}"/>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Cargo o puesto</strong> 
+                                                                    <p class="text-muted">
+                                                                       <h:inputText id="cargoAsesorA" maxlength="255" style="width: 350px;" value="#{seguimientoEstadiaAsesor.rol.asesorEmpresarialEstadia.puesto}"/>
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Teléfono</strong> 
+                                                                    <p class="text-muted">
+                                                                       <p:inputMask id="telefonoAsesorA" value="#{seguimientoEstadiaAsesor.rol.asesorEmpresarialEstadia.telefono}" mask="(999)999-9999"/>
+                                                                       <p:message for="telefonoAsesorA" display="tooltip" />
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Correo electrónico</strong> 
+                                                                    <p class="text-muted">
+                                                                        <p:inputText id="emailAsesorA" value="#{seguimientoEstadiaAsesor.rol.asesorEmpresarialEstadia.email}" maxlength="150" style="width: 350px;"/>
+                                                                        <p:message for="emailAsesorA" />
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <p:commandButton id="btnGuardarEdicion" value="Actualizar" actionListener="#{seguimientoEstadiaAsesor.actualizarInformacionEstadia()}" 
+                                                                                     disabled="#{!seguimientoEstadiaAsesor.rol.habilitarGuardar}"
+                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicionInfEst')update();"
+                                                                                     update="@form"  process="@form" />
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                             </h:form>
+                    </p:dialog>
+                 <!-- Modal para registrar evaluación -->
+                    <p:dialog id="modalCapturaEvaluacion" 
+                              widgetVar="modalCapturaEvaluacion" 
+                              width="1200" 
+                              height="auto"  
+                              closeOnEscape="true" 
+                              visible="#{seguimientoEstadiaAsesor.rol.aperturaDialogoEvalEst}"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Registro evaluación de estadía del estudiante" 
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        
+                             <h:form id="frmModalCapturaEvaluacion" enctype="multipart/form-data"> 
+                                        <p:outputPanel>
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <c:if test="#{seguimientoEstadiaAsesor.rol.evaluacionRegistrada}">
+                                                                <p:dataGrid var="evalEst" value="#{seguimientoEstadiaAsesor.rol.listaEvaluacionEstadiaRegistrada}" layout="grid" id="evalEst">
+                                                                    <p:panel header="#{evalEst.criterioEvaluacionEstadia.descripcion}" style="text-align:center;" class="no-border" >
+                                                                        <h:panelGrid columns="1" style="width:100%;">
+                                                                            <p:inputNumber value="#{evalEst.calificacion}" inputStyle="text-align: center; font-size: 14px;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero="">
+                                                                            <p:ajax event="change" listener="#{seguimientoEstadiaAsesor.recalcularPromedio}"/>
+                                                                            </p:inputNumber>
+                                                                        </h:panelGrid>
+                                                                    </p:panel>
+                                                                </p:dataGrid>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p style="text-align: center; font-size: 16px; font-weight: bold;">Promedio Asesor(a) Interno</p>
+                                                                    <p style="text-align: center;" >
+                                                                        <p:inputNumber value="#{seguimientoEstadiaAsesor.rol.promedioAsesorInterno}" readonly="true" inputStyle="text-align: center; font-size: 16px;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero=""/>
+                                                                    </p>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p style="text-align: center; font-size: 16px; font-weight: bold;">Promedio Asesor(a) Externo</p>
+                                                                    <p style="text-align: center;" >
+                                                                    <p:inputNumber value="#{seguimientoEstadiaAsesor.rol.promedioAsesorExterno}" inputStyle="text-align: center; font-size: 16px;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero=""/>
+                                                                    </p>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p style="text-align: center; font-size: 16px; font-weight: bold;  color: #FFF;">Actualizar</p>
+                                                                    <p style="text-align: center;" >
+                                                                    <p:commandButton id="btnActEval" value="Actualizar" actionListener="#{seguimientoEstadiaAsesor.actualizarEvaluacionEstadia()}" 
+                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalCapturaEvaluacion')update();"
+                                                                                     update="@form"  process="@form" />
+                                                                    </p>
+                                                                </div>
+                                                                </c:if>
+                                                                <c:if test="#{!seguimientoEstadiaAsesor.rol.evaluacionRegistrada}">
+                                                                <p:dataGrid var="evalEst" value="#{seguimientoEstadiaAsesor.rol.listaEvaluacionEstadia}" layout="grid" id="evalEst">
+                                                                    <p:panel header="#{evalEst.criterioEvaluacionEstadia.descripcion}" style="text-align:center;" class="no-border" >
+                                                                        <h:panelGrid columns="1" style="width:100%;">
+                                                                            <p:inputNumber value="#{evalEst.calificacion}" inputStyle="text-align: center; font-size: 14px;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero="">
+                                                                            <p:ajax event="change" listener="#{seguimientoEstadiaAsesor.calcularPromedio}"/>
+                                                                            </p:inputNumber>
+                                                                        </h:panelGrid>
+                                                                    </p:panel>
+                                                                </p:dataGrid>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p style="text-align: center; font-size: 16px; font-weight: bold;">Promedio Asesor(a) Interno</p>
+                                                                    <p style="text-align: center;" >
+                                                                        <p:inputNumber value="#{seguimientoEstadiaAsesor.rol.promedioAsesorInterno}" readonly="true" inputStyle="text-align: center; font-size: 16px;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero=""/>
+                                                                    </p>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p style="text-align: center; font-size: 16px; font-weight: bold;">Promedio Asesor(a) Externo</p>
+                                                                    <p style="text-align: center;" >
+                                                                    <p:inputNumber value="#{seguimientoEstadiaAsesor.rol.promedioAsesorExterno}" inputStyle="text-align: center; font-size: 16px;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero=""/>
+                                                                    </p>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p style="text-align: center; font-size: 16px; font-weight: bold;  color: #FFF;">Registrar</p>
+                                                                    <p style="text-align: center;" >
+                                                                    <p:commandButton id="btnRegEval" value="Registrar" actionListener="#{seguimientoEstadiaAsesor.guardarEvaluacionEstadia()}" 
+                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalCapturaEvaluacion')update();"
+                                                                                     update="@form"  process="@form" />
+                                                                    </p>
+                                                                </div>
+                                                                </c:if>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+                                    </h:form>
+                    </p:dialog>
+                <c:if test="#{!empty seguimientoEstadiaAsesor.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{seguimientoEstadiaAsesor.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para seguimiento de estadía por asesor académico</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{seguimientoEstadiaAsesor.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{seguimientoEstadiaAsesor.rol.generaciones eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay eventos registrados."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!seguimientoEstadiaAsesor.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para asesores académicos de estadía."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

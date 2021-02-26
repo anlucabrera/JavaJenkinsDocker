@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <script type="text/javascript">
+            function myconfig() {
+                console.log("ejemplo");
+            }
+            ;
+
+        </script>
+        <style type="text/css">
+            @media print{
+                /* indicamos el salto de pagina */
+                .saltoDePagina{
+                    display:block;
+                    page-break-inside:auto  !important;
+                }
+            }
+        </style>
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />
+        </c:if>      
+        <!-- Fin estilos par proceso electoral -->
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="title">
+        Cédula de Evaluación y Acreditación de estadía
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+            <adm:breadcrumb title="Cédula de Evaluación y Acreditación de estadía"/>
+            <div class="contenedor">
+                    <!-- zona de importación de enums -->
+                    <h:form id="frm" prependId="false" class="form-inline">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <div id="main-buttons" class="hidden-sm hidden-xs">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+
+                                        </f:facet>
+                                        <f:facet name="right">
+
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                                <div class="box box-solid">
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <c:if test="#{generarCedEvalAcredEstadia.evaluacionRegistrada}">
+                                                <center>
+                                                    <p:commandButton value="Imprimir" icon="fa fa-print" class="btn-success">                                        
+                                                        <p:printer target="CV" />
+                                                    </p:commandButton>
+                                                    <p:panel id="CV" style="overflow: hidden !important">
+                                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                            <div class="col-md-12">
+                                                                <div class="box box-widget widget-user-2">
+                                                                    <div class="row" style="align-content:  center">
+                                                                        <div class="col-sm-3 pull-left">
+                                                                            <div class="description-block" style="text-align: center">
+                                                                                <img src="../../resources/img/utxj2.jpg" alt="" height="80px"/>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-3 pull-left" >
+                                                                            <div class="row">
+                                                                                <div class="row">
+                                                                                    <div id="tituloCV" class="col-sm-12">
+                                                                                        <div class="description-block" style="text-align: center">
+                                                                                            
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-6 pull-right">
+                                                                            <div class="description-block" style="text-align: right; font-size: 14px;">
+                                                                                <strong>UNIVERSIDAD TECNOLÓGICA DE XICOTEPEC DE JUÁREZ</strong><br />
+                                                                                #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.areaSuperior.nombre}<br />
+                                                                                #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.dtoEstudiante.programaEducativo.nombre}<br />
+                                                                                #{generarCedEvalAcredEstadia.folioAcreditacionEstadia.folioCompleto}<br/>
+                                                                                ASUNTO: <strong>CÉDULA DE EVALUACIÓN Y ACREDITACIÓN DE ESTADÍA</strong>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br/>
+                                                                    <div class="row">
+                                                                        <div class="col-sm-12">
+                                                                            <div class="description-block" style="text-align: justify; font-size: 12px;">
+                                                                                La carrera de #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.dtoEstudiante.programaEducativo.nombre}, en cumplimiento al Plan de Estudios
+                                                                                #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.dtoEstudiante.estudiante.grupo.plan.anio} y con fundamento en la Sección Tercera; Art.18,
+                                                                                Sección Quinta; Artículos 24 y 25 del Reglamento de Estadías de la Universidad Tecnológica de Xicotepec de Juárez, ACREDITA que la (el):
+                                                                            </div>
+                                                                            <br/>
+                                                                            <div class="description-block" style="text-align: center; font-size: 12px;">
+                                                                                C. #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.dtoEstudiante.estudiante.aspirante.idPersona.nombre} #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno}<br/>
+                                                                                No. de Matrícula: #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.dtoEstudiante.estudiante.matricula}
+                                                                            </div>
+                                                                            <br/>
+                                                                            <div class="description-block" style="text-align: justify; font-size: 12px;">
+                                                                                Ha cumplido con base a la normatividad vigente su Estadía con una duración de 525 horas, del #{generarCedEvalAcredEstadia.fechaInicioEstadia} al #{generarCedEvalAcredEstadia.fechaFinEstadia}
+                                                                                haciendo entrega del Informe Final correspondiente en medio digital (PDF).
+                                                                            </div>
+                                                                            <br/>
+                                                                            <div class="description-block" style="text-align: justify; font-size: 11px;">
+                                                                                Empresa: #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.empresa.nombre}<br/>
+                                                                                Domicilio: #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.empresa.direccion}<br/>
+                                                                                <c:if test="#{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.empresa.localidad.municipio.nombre eq generarCedEvalAcredEstadia.dtoSeguimientoEstadia.empresa.localidad.municipio.estado.nombre}">
+                                                                                Localidad/Municipio/Estado: #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.empresa.localidad.nombre}, #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.empresa.localidad.municipio.estado.nombre}, #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.empresa.localidad.municipio.estado.idpais.nombre}<br/>
+                                                                                </c:if>
+                                                                                <c:if test="#{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.empresa.localidad.municipio.nombre ne generarCedEvalAcredEstadia.dtoSeguimientoEstadia.empresa.localidad.municipio.estado.nombre}">
+                                                                                Localidad/Municipio/Estado: #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.empresa.localidad.nombre}, #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.empresa.localidad.municipio.estado.nombre}, #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.empresa.localidad.municipio.estado.idpais.nombre}<br/>
+                                                                                </c:if>
+                                                                                Proyecto desarrollado: #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.seguimientoEstadiaEstudiante.proyecto}
+                                                                            </div>
+                                                                            <br/>
+                                                                            <div class="description-block" style="text-align: justify; font-size: 11px;">
+                                                                                Evaluación del Asesor Empresarial: #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.seguimientoEstadiaEstudiante.promedioAsesorExterno}<br/>
+                                                                                Evaluación del Asesor Académico #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.seguimientoEstadiaEstudiante.promedioAsesorInterno}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                            <center>
+                                                                    <p:dataTable id="frmModalCapturaEvaluacion" var="evalEstadia" value="#{generarCedEvalAcredEstadia.listaEvaluacionEstadiaRegistrada}"
+                                                                                 style="width: 600px; alignment-adjust: central; border: #fffff 1px;">
+                                                                        <p:columnGroup type="header">
+                                                                            <p:row>
+                                                                                <p:column headerText="ASPECTOS A EVALUARSE" style="width: 60%;font-size: 11px;text-align: center;"  /> 
+                                                                                <p:column headerText="EVALUACIÓN ASESOR ACADÉMICO" style="width: 40%;font-size: 11px;text-align: center;"/> 
+                                                                            </p:row>
+                                                                        </p:columnGroup>
+                                                                        <p:column style="border: #000000  !important;font-size: 11px;">
+                                                                            <h:outputText value="#{evalEstadia.criterioEvaluacionEstadia.descripcion}" style="text-align: justify;"/>
+                                                                        </p:column>
+                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: 11px;">
+                                                                            <h:outputText value="#{evalEstadia.calificacion}" style="text-align: center;"/>
+                                                                        </p:column>
+                                                                        <p:columnGroup type="footer">
+                                                                            <p:row>
+                                                                                <p:column footerText="PROMEDIO" style="width: 60%;font-size: 11px;text-align: center; font-weight: bold;" />
+                                                                                <p:column footerText="#{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.seguimientoEstadiaEstudiante.promedioAsesorInterno}" style="width: 40%;font-size: 11px;text-align: center;"/> 
+                                                                            </p:row>
+                                                                        </p:columnGroup>
+                                                                    </p:dataTable>
+                                                            </center>
+                                                                <p style="font-size: 12px;"><strong>Nota.</strong> La calificación mínima aprobatoria es 8.0 (ocho punto cero).</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="description-block" style="text-align: justify; font-size: 12px;">
+                                                                   Se expide el presente para los fines legales a que haya lugar en la Ciudad de Xicotepec de Juárez, Puebla, a los #{generarCedEvalAcredEstadia.fechaEmision}.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="description-block" style="text-align: center; font-size: 12px;">
+                                                                   <strong>A T E N T A M E N T E </strong><br />
+                                                                   <strong>"TECNOLOGÍA Y CALIDAD, BASE DEL DESARROLLO"</strong>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br/>
+                                                        <div>
+                                                            <div class="col-sm-6 pull-left" >
+                                                                <div class="row">
+                                                                    <div class="row">
+                                                                        <div id="tituloCV" class="col-sm-12">
+                                                                            <div class="description-block" style="text-align: center; font-size: 12px;">
+                                                                                <br/>
+                                                                                <br/>
+                                                                                #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.director.nombre}<br />
+                                                                                Director(a) del #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.areaSuperior.nombre}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 pull-right" >
+                                                                <div class="row">
+                                                                    <div class="row">
+                                                                        <div id="tituloCV" class="col-sm-12">
+                                                                            <div class="description-block" style="text-align: center; font-size: 12px;">
+                                                                                <br/>
+                                                                                <br/>
+                                                                                #{generarCedEvalAcredEstadia.dtoSeguimientoEstadia.asesorEstadia.nombre}<br />
+                                                                                Asesor(a) Académico
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br/>
+                                                        <br/>
+                                                        <br/>
+                                                        <br/>
+                                                        <div>
+                                                            <div class="col-sm-2 pull-left" >
+                                                                <div class="row">
+                                                                    <div class="row">
+                                                                        <div id="tituloCV" class="col-sm-12">
+                                                                            <div class="description-block" style="text-align: center; font-size: 10px;">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 pull-center" >
+                                                                <div class="row">
+                                                                    <div class="row">
+                                                                        <div id="tituloCV" class="col-sm-12">
+                                                                            <div class="description-block" style="text-align: center; font-size: 11px;">
+                                                                                El presente documento se plantea de manera incluyente y libre de estereotipos de<br />
+                                                                                género, por lo que al referirse a una persona como "el" significa "el o la".
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-4 pull-right" >
+                                                                <div class="row">
+                                                                    <div class="row">
+                                                                        <div id="tituloCV" class="col-sm-12">
+                                                                            <div class="description-block" style="text-align: center; font-size: 10px;">
+                                                                                <p:barcode value="#{generarCedEvalAcredEstadia.folioAcreditacionEstadia.codigoQr}" type="qr" width="80" height="80"/>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div class="col-sm-2 pull-left" >
+                                                                <div class="row">
+                                                                    <div class="row">
+                                                                        <div id="tituloCV" class="col-sm-12">
+                                                                            <div class="description-block" style="text-align: center; font-size: 9px;">
+                                                                                 <br/>
+                                                                                 <br/>
+                                                                                C.c.p. Archivo.
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:panel>
+                                                </center>
+                                            </c:if>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+            </div>
+            <script>
+                //collapseSidebar(); activar para colapsar barra lateral
+            </script>
+    </ui:define>
+</ui:composition>

@@ -15,6 +15,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados2;
 @RequiredArgsConstructor
 public enum ControlEscolarVistaControlador {
     PERMISO_APERTURA_EXTEMPORANEA("/controlEscolar/pye/permisoAperturaExtemporanea.xhtml", PermisoAperturaExtemporaneaAdministrador.class),
+    CALENDARIO_EVENTOS_ESTADIA("/calendarioEventos.xhtml", CalendarioEventosEstadia.class),
+    REPORTES_ESTADIA("/reportesEstadia.xhtml", ReportesEstadia.class),
     
     CONCENTRADO_CALIFICACIONES_SECACA("/controlEscolar/secAcademica/concentradoCal.xhtml",  ConcentradoCalificacionesSecAca.class),
     AVANCE_PROGRAMATICO_SECACA("/controlEscolar/secAcademica/avanceP.xhtml",  AvanceProgramaticoSecAca.class),
@@ -33,7 +35,8 @@ public enum ControlEscolarVistaControlador {
     VALIDACION_PLANEACION_CUATRIMESTRAL("/controlEscolar/director/planeacionCuatrimestralValidacion.xhtml", PlaneacionCuatrimestralValidacion.class),
     VALIDACION_PLAN_ACCION_TUTORIAL_DIRECTOR("/controlEscolar/director/validacion_plan_accion_tutorial.xhtml", ValidacionPlanAccionTutorialDirector.class),
     SEGUIMIENTO_CUESTIONARIO_PSICOPEDAGOGICO_DIRECTOR("/controlEscolar/director/seguimientoCuestionarioPsicopedagogicoDirector.xhtml", SeguimientoCuestionariopsiDirector.class),
-
+    ASIGNACION_ROLES_ESTADIA("/controlEscolar/director/asignacionesRolesEstadia.xhtml", AsignacionRolesEstadiaDirector.class),
+    SEGUIMIENTO_ESTADIA_DIRECTOR("/controlEscolar/director/seguimientoEstadiaDirector.xhtml", SeguimientoEstadiaDirector.class),
 
     REASIGNACION_ACADEMICA("/controlEscolar/se/asignacion_academica.xhtml",  AsignacionAcademicaEscolares.class),
     REINCORPORACION("/controlEscolar/se/reincorporaciones.xhtml", ReincorporacionServiciosEscolares.class),
@@ -49,7 +52,10 @@ public enum ControlEscolarVistaControlador {
     REINSCRIPCION_SEGUIMIENTO("/controlEscolar/se/reinscripcionSeguimientoSE.xhtml",ReinscripcionExtemporaneaSE.class),
     CONCENTRADO_BAJAS("/controlEscolar/se/concentradorBajas.xhtml",  ConcentradoBajasAreasVarias.class),
     REGISTRO_FICHA_SE("/controlEscolar/aspirante/registroFichaSE.xhtml", RegistroFichaAdmisionSE.class),
-
+    REGISTRO_EVENTOS_ESTADIA("/controlEscolar/se/registroEventosEstadia.xhtml",  RegistroEventosEstadiaEscolares.class),
+    ENTREGA_FOTOGRAFIAS_ESTADIA("/controlEscolar/se/entregaFotografiasEstadia.xhtml",  EntregaFotografiasEscolares.class),
+    
+    SEGUIMIENTO_ESTADIA_VINCULACION("/controlEscolar/vinculacion/seguimientoEstadiaVinculacion.xhtml", SeguimientoEstadiaVinculacion.class),
 
     SEGUIMIENTO_EXPEDIENTE_GENERACION("/controlEscolar/titulacion/seguimientoMatricula.xhtml", SeguimientoExpedienteMatriculaTitulacion.class),
     SEGUIMIENTO_EXPEDIENTE_MATRICULA("/controlEscolar/titulacion/seguimientoGeneracion.xhtml", SeguimientoExpedienteGeneracionTitulacion.class),
@@ -89,7 +95,9 @@ public enum ControlEscolarVistaControlador {
     AVANCE_PROGRAMATICO_DOCENTE("/controlEscolar/docente/avanceP.xhtml",  AvanceProgramaticoDocente.class),
     REGISTRO_ASESORIA("/controlEscolar/docente/registro_asesorias.xhtml", RegistroAsesoriaDocente.class),
     REPORTE_EVALUACIONES("/capitalHumano/perfilEmpleadoEvaluaciones.xhtml",ReporteEvaluacionesDocente.class),
-
+    ASIGNACION_ESTUDIANTES_ESTADIA("/controlEscolar/docente/asignacionEstudiantesEstadia.xhtml",AsignacionEstudiantesEstadiaDocente.class),
+    SEGUIMIENTO_ESTADIA_ASESOR("/controlEscolar/docente/seguimientoEstadiaAsesor.xhtml",SeguimientoEstadiaAsesor.class),
+    SEGUIMIENTO_ESTADIA_COORDINADOR("/controlEscolar/docente/seguimientoEstadiaCoordinador.xhtml",SeguimientoEstadiaCoordinador.class),
     
     REPORTE_BECAS("/becas/reporteBecas.xhtml", reporteBecas.class),
     SEGUIMIENTO_EV_TUTOR("/evaluaciones/administracion/administracionEvaluacionTutor.xhtml", AdministracionEvaluacionTutor.class),
@@ -107,6 +115,8 @@ public enum ControlEscolarVistaControlador {
     EVALUACION_DOCENTE2("/evaluaciones/evaluacion/evaluacionDocente.xhtml", EvaluacionDocentesMateriaResultados2.class),
     INTEGRACION_EXPEDIENTE_TITULACION("/controlEscolar/estudiante/expedienteTitulacion.xhtml",IntegracionExpedienteTitulacionEstudiante.class),
     REGISTRO_DEL_ESTUDIANTE("/controlEscolar/estudiante/registroEstudiante.xhtml", RegistrolDelEstudiante.class),
+    SEGUIMIENTO_ESTADIA_ESTUDIANTE("/controlEscolar/estudiante/seguimientoEstadia.xhtml",SeguimientoEstadiaPorEstudiante.class),
+    LETRERO_FOTOGRAFIAS("/controlEscolar/formatos/letreroFotografías.xhtml",LetreroFotografiasEstudiante.class),
 
     REGISTRO_FICHA_ASPIRANTE("/controlEscolar/aspirante/registroFichaAspirante.xhtml", RegistroFichaAdmisionAspirante.class),
     CARGA_DOCUMENTOS_ASPIRANTE("/controlEscolar/aspirante/cargaDocumentos.xhtml", CargaDocumentosAspirante.class),

@@ -66,7 +66,7 @@ public class PerfilEstudiante extends ViewScopedRol implements Desarrollable {
                 else {mostrarMensajeResultadoEJB(resCedula);}
                 rol.setDatosFamiliares(rol.getEstudiante().getAspirante().getDatosFamiliares());
                 rol.setMedioComunicacion(rol.getEstudiante().getAspirante().getIdPersona().getMedioComunicacion());
-                rol.setTutorFamiliar(rol.getEstudiante().getAspirante().getDatosFamiliares().getTutor());
+//                rol.setTutorFamiliar(rol.getEstudiante().getAspirante().getDatosFamiliares().getTutor());
                 rol.setNivelRol(NivelRol.OPERATIVO);
                     //TODO: Instrucciones
                     rol.getInstrucciones().add("Ingrese los datos que desea actualizar.");

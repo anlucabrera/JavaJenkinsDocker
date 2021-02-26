@@ -11,7 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "unidad_materia", catalog = "control_escolar", schema = "")
@@ -76,14 +75,14 @@ public class UnidadMateria implements Serializable {
     @NotNull
     @Column(name = "integradora")
     private boolean integradora;
-    @OneToMany(mappedBy = "idUnidadMateria", fetch = FetchType.LAZY)
-    private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
     @JoinColumn(name = "id_materia", referencedColumnName = "id_materia")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Materia idMateria;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUnidadMateria", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUnidadMateria")
     private List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList;
-    @OneToMany(mappedBy = "idUnidadMateria", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "idUnidadMateria")
+    private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
+    @OneToMany(mappedBy = "idUnidadMateria")
     private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
 
     public UnidadMateria() {
@@ -159,15 +158,6 @@ public class UnidadMateria implements Serializable {
         this.integradora = integradora;
     }
 
-    @XmlTransient
-    public List<PermisosCapturaExtemporaneaEstudiante> getPermisosCapturaExtemporaneaEstudianteList() {
-        return permisosCapturaExtemporaneaEstudianteList;
-    }
-
-    public void setPermisosCapturaExtemporaneaEstudianteList(List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList) {
-        this.permisosCapturaExtemporaneaEstudianteList = permisosCapturaExtemporaneaEstudianteList;
-    }
-
     public Materia getIdMateria() {
         return idMateria;
     }
@@ -183,6 +173,15 @@ public class UnidadMateria implements Serializable {
 
     public void setUnidadMateriaConfiguracionList(List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList) {
         this.unidadMateriaConfiguracionList = unidadMateriaConfiguracionList;
+    }
+
+    @XmlTransient
+    public List<PermisosCapturaExtemporaneaEstudiante> getPermisosCapturaExtemporaneaEstudianteList() {
+        return permisosCapturaExtemporaneaEstudianteList;
+    }
+
+    public void setPermisosCapturaExtemporaneaEstudianteList(List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList) {
+        this.permisosCapturaExtemporaneaEstudianteList = permisosCapturaExtemporaneaEstudianteList;
     }
 
     @XmlTransient

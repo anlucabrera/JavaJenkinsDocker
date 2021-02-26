@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Letrero de fotografías
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{letreroFotografiasEstudiante.cargado}">
+        <adm:breadcrumb title="Letrero de fotografías"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{letreroFotografiasEstudiante.tieneAcceso}">
+                <c:if test="#{letreroFotografiasEstudiante.rol.generaciones ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" value="#{letreroFotografiasEstudiante.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{letreroFotografiasEstudiante.cambiarGeneracion}">
+                                                    <f:selectItems value="#{letreroFotografiasEstudiante.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generacion" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{letreroFotografiasEstudiante.rol.nivelEducativo}" converter="entityConverter" valueChangeListener="#{letreroFotografiasEstudiante.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{letreroFotografiasEstudiante.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla3}">
+                                            <div class="ui-material">
+                                                <p:commandButton value="Imprimir" icon="fa fa-print" class="btn-success" disabled="#{!letreroFotografiasEstudiante.rol.eventoActivo}">                                        
+                                                    <p:printer target="CV" />
+                                                </p:commandButton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <p:tabView>
+                                            <p:tab title="Especificaciones para las fotografías">
+                                                Alumnas y alumnos egresados de #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.programaEducativo.nivelEducativo.nombre}, generación #{letreroFotografiasEstudiante.rol.generacionTexto}, se les informa favor de pasar a dejar sus fotografías para las hojas de terminación de estudios. Fecha de entrega a partir del #{letreroFotografiasEstudiante.rol.fechaInicio} al #{letreroFotografiasEstudiante.rol.fechaFin}, en el Departamento de Servicios Escolares.
+                                                    <br/>
+                                                    <br/>
+                                                    Requisitos:
+                                                    <ul>
+                                                    <li>6 fotografías tamaño infantil formales. </li>
+                                                    <li>Color: blanco y negro (fondo blanco),no instantaneas</li>
+                                                    <li>En Papel mate autoadherible</li>
+                                                    <li>Hombres: Saco obscuro, corbata, camisa color claro (blanco o crema) sin estampado; se deben de observar claramente los rasgos de la boca y cara,oídos descubiertos y sin aretes</li>
+                                                    <li>Mujeres: Saco obscuro, blusa color claro (blanco o crema) sin estampado; se deben de observar claramente los rasgos de la boca y cara,oídos descubiertos y sin aretes</li>
+                                                    <li>Adherible en las fotografías en la parte de atrás</li>
+                                                    <li>Cada fotografía infantil, debe de llevar su matrícula con lápiz en la parte de atrás.</li>
+                                                    <li>Las fotografías las deben entregar dentro de un sobre tamaño nomina</li>
+                                                    </ul>
+                                            </p:tab>
+                                        </p:tabView>
+                                    </div>
+                                    <p:panel id="CV" style="overflow: hidden !important">
+                                        <br />
+                                        <br />
+                                    <div class="row">
+                                            <center> 
+                                                <p:panelGrid columns="2" style="width: 300px; height: 350px;">
+                                                    <h:outputText value="Nombre:"/>
+                                                    <h:outputText value="#{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+
+                                                    <h:outputText value="Carrera:"/>
+                                                    <h:outputText value="#{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.programaEducativo.nombre}"/>
+
+                                                    <h:outputText value="Matricula:"/>
+                                                    <h:outputText value="#{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.matricula}"/>
+                                                    
+                                                    <h:outputText value="Generación:"/>
+                                                    <h:outputText value="#{letreroFotografiasEstudiante.rol.generacionTexto}"/>
+                                                    
+                                                    <f:facet name="footer">
+                                                        <center><p:barcode value="#{letreroFotografiasEstudiante.rol.codigoQr}" type="qr" width="120" height="120"/></center>
+                                                    </f:facet>
+                                                </p:panelGrid>
+                                            </center>
+                                        <br />
+                                        <br />
+                                        <p style="text-align: center;">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </p>
+                                        <br />
+                                        <br />
+                                            <center> 
+                                                <p:panelGrid columns="2" style="width: 300px; height: 350px;">
+                                                    <h:outputText value="Nombre:"/>
+                                                    <h:outputText value="#{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+
+                                                    <h:outputText value="Carrera:"/>
+                                                    <h:outputText value="#{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.programaEducativo.nombre}"/>
+
+                                                    <h:outputText value="Matricula:"/>
+                                                    <h:outputText value="#{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.matricula}"/>
+                                                    
+                                                    <h:outputText value="Generación:"/>
+                                                    <h:outputText value="#{letreroFotografiasEstudiante.rol.generacionTexto}"/>
+                                                    
+                                                    <f:facet name="footer">
+                                                        <center><p:barcode value="#{letreroFotografiasEstudiante.rol.codigoQr}" type="qr" width="120" height="120"/></center>
+                                                    </f:facet>
+                                                </p:panelGrid>
+                                            </center>
+                                    </div>
+                                        <br />
+                                        <br />
+                                        <br />
+                                        <br />
+                                        <br />
+                                    <div class="row">
+                                            <center> 
+                                                <p:panelGrid style="width: 600px; height: 400px;">
+                                                    <f:facet name="header">
+                                                        <p:row>
+                                                            <p:column style="height: 80px;" colspan="4">
+                                                                <div class="col-sm-3 pull-left">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <img src="../../resources/img/utxj2.jpg" alt="" height="60px"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-9 pull-center">
+                                                                    <div class="description-block" style="text-align: center; font-size: 14px;">
+                                                                         <strong>UNIVERSIDAD TECNOLÓGICA DE XICOTEPEC DE JUÁREZ</strong><br />
+                                                                         Departamento de Servicios Escolares
+                                                                    </div>
+                                                                </div>
+                                                            </p:column>
+                                                        </p:row>
+                                                    </f:facet>
+                                                    <p:row>
+                                                        <p:column colspan="4"><strong>Fecha de entrega:</strong> #{letreroFotografiasEstudiante.rol.fechaEmision}</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="3"><strong>Nombre del alumno:</strong> #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.aspirante.idPersona.nombre}</p:column>
+                                                        <p:column colspan="1"><strong>Matrícula:</strong> #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.matricula}</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                       <p:column colspan="3"><strong>Programa educativo:</strong> #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.programaEducativo.nombre}</p:column>
+                                                       <p:column colspan="1"><strong>Cuatrimestre:</strong> #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.grupo.grado}°</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="4" style="height: 80px;">
+                                                            <div class="col-sm-6 pull-left">
+                                                                <div class="description-block" style="text-align: justify">
+                                                                <strong>Documento entregados:</strong><br/>
+                                                                    <i class="fa fa-square-o" /> Acta de nacimiento<br/>
+                                                                    <i class="fa fa-square-o" /> Certificado de secundaria <br/>                                                                   
+                                                                    <i class="fa fa-square-o" /> Certificado de bachillerato<br/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 pull-rigth">
+                                                                <div class="description-block" style="text-align: justify;">
+                                                                    <br/>
+                                                                    <i class="fa fa-square-o" /> Copias de la CURP<br/>
+                                                                    <i class="fa fa-square-o" /> Copias varias y otros recibos<br/>
+                                                                </div>
+                                                            </div>
+                                                        </p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="4" style="text-align: justify; font-weight: bold; font-size: 11px;">Motivo: Validación de Legalizado del certificado y Actualización del Acta de Nacimiento</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column style="height: 80px;" colspan="4">
+                                                            <div class="col-sm-6 pull-left">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <br/>
+                                                                    Firma del estudiante
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 pull-rigth">
+                                                                <div class="description-block" style="text-align: right;">
+                                                                    <br/>
+                                                                    Firma del personal
+                                                                </div>
+                                                            </div>
+                                                        </p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="4" style="text-align: justify; font-weight: bold; font-size: 11px;">Nota: Estar al pendiente de las fechas de Integración de expedientes para titulación emitidas por la Coordinación de Titulación</p:column>
+                                                    </p:row>
+                                                </p:panelGrid>
+                                            </center>
+                                        <br />
+                                        <p style="text-align: center;">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - </p>
+                                        <br />
+                                            <center> 
+                                               <p:panelGrid style="width: 600px; height: 400px;">
+                                                    <f:facet name="header">
+                                                        <p:row>
+                                                            <p:column style="height: 80px;" colspan="4">
+                                                                <div class="col-sm-3 pull-left">
+                                                                    <div class="description-block" style="text-align: center">
+                                                                        <img src="../../resources/img/utxj2.jpg" alt="" height="60px"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-9 pull-center">
+                                                                    <div class="description-block" style="text-align: center; font-size: 14px;">
+                                                                         <strong>UNIVERSIDAD TECNOLÓGICA DE XICOTEPEC DE JUÁREZ</strong><br />
+                                                                         Departamento de Servicios Escolares
+                                                                    </div>
+                                                                </div>
+                                                            </p:column>
+                                                        </p:row>
+                                                    </f:facet>
+                                                    <p:row>
+                                                        <p:column colspan="4"><strong>Fecha de entrega:</strong> #{letreroFotografiasEstudiante.rol.fechaEmision}</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="3"><strong>Nombre del alumno:</strong> #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.aspirante.idPersona.nombre}</p:column>
+                                                        <p:column colspan="1"><strong>Matrícula:</strong> #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.matricula}</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                       <p:column colspan="3"><strong>Programa educativo:</strong> #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.programaEducativo.nombre}</p:column>
+                                                       <p:column colspan="1"><strong>Cuatrimestre:</strong> #{letreroFotografiasEstudiante.rol.dtoDatosEstudiante.estudiante.grupo.grado}°</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="4" style="height: 80px;">
+                                                            <div class="col-sm-6 pull-left">
+                                                                <div class="description-block" style="text-align: justify">
+                                                                <strong>Documento entregados:</strong><br/>
+                                                                    <i class="fa fa-square-o" /> Acta de nacimiento<br/>
+                                                                    <i class="fa fa-square-o" /> Certificado de secundaria <br/>                                                                   
+                                                                    <i class="fa fa-square-o" /> Certificado de bachillerato<br/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 pull-center">
+                                                                <div class="description-block" style="text-align: justify;">
+                                                                    <br/>
+                                                                    <i class="fa fa-square-o" /> Copias de la CURP<br/>
+                                                                    <i class="fa fa-square-o" /> Copias varias y otros recibos<br/>
+                                                                </div>
+                                                            </div>
+                                                        </p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="4" style="text-align: justify; font-weight: bold; font-size: 11px;">Motivo: Validación de Legalizado del certificado y Actualización del Acta de Nacimiento</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column style="height: 80px;" colspan="4">
+                                                            <div class="col-sm-6 pull-left">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <br/>
+                                                                    Firma del estudiante
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 pull-rigth">
+                                                                <div class="description-block" style="text-align: right;">
+                                                                    <br/>
+                                                                    Firma del personal
+                                                                </div>
+                                                            </div>
+                                                        </p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="4" style="text-align: justify; font-weight: bold; font-size: 11px;">Nota: Estar al pendiente de las fechas de Integración de expedientes para titulación emitidas por la Coordinación de Titulación</p:column>
+                                                    </p:row>
+                                                </p:panelGrid>
+                                            </center>
+                                    </div>
+                                    </p:panel>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty letreroFotografiasEstudiante.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{letreroFotografiasEstudiante.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para seguimiento de estadía por asesor académico</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{letreroFotografiasEstudiante.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{letreroFotografiasEstudiante.rol.generaciones eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay eventos registrados para entrega de fotografías activo para el estudiante."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!letreroFotografiasEstudiante.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para estudiante que iniciarán o se encuentran en proceso de estadía."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

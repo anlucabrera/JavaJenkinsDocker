@@ -15,6 +15,7 @@ import javax.servlet.http.Part;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.controladores.ch.CvEducacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import org.omnifaces.cdi.ViewScoped;
@@ -24,6 +25,7 @@ import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
 
 @Named
 @ViewScoped
@@ -317,6 +319,23 @@ public class UtilidadesCH implements Serializable {
             return ruta;
         } else {
             mensajes("no fue posible cargar el archivo, Intente nuevamente.", "E", "F");
+            return "";
+        }
+    }
+    
+     public String agregarDocumentoEstadia(Part file, SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante, DtoDocumentoEstadiaEstudiante docsSeg) {
+        String ruta = "";
+        if (file == null) {
+            return null;
+        }
+        
+        ruta = carga.subirDocumentoEstadia(file, docsSeg.getDocumentoProceso().getDocumento().getNomenclatura(), new File(docsSeg.getGeneracion().concat(File.separator).concat(Integer.toString(seguimientoEstadiaEstudiante.getMatricula().getMatricula())).concat(File.separator).concat(docsSeg.getDocumentoProceso().getProceso())));
+        
+        if (!"Error: No se pudo leer el archivo".equals(ruta)) {
+            Messages.addGlobalInfo("El documento se ha guardado correctamente.");
+            return ruta;
+        } else {
+            Messages.addGlobalInfo("El documento no se ha podido guardar.");
             return "";
         }
     }

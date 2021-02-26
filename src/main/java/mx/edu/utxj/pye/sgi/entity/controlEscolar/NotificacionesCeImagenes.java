@@ -9,7 +9,6 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "notificaciones_ce_imagenes", catalog = "control_escolar", schema = "")
@@ -59,7 +58,7 @@ public class NotificacionesCeImagenes implements Serializable {
     @Column(name = "tamanio_bytes")
     private long tamanioBytes;
     @JoinColumn(name = "notificacion", referencedColumnName = "notificacion")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private NotificacionesCe notificacion;
 
     public NotificacionesCeImagenes() {

@@ -11,7 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "grupo", catalog = "control_escolar", schema = "")
@@ -77,26 +76,26 @@ public class Grupo implements Serializable {
     @NotNull
     @Column(name = "generacion")
     private short generacion;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "grupo", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
+    private List<Estudiante> estudianteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo")
+    private List<Tutoria> tutoriaList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "grupo")
     private PlanAccionTutorial planAccionTutorial;
     @JoinColumn(name = "plan", referencedColumnName = "id_plan_estudio")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private PlanEstudio plan;
     @JoinColumn(name = "id_sistema", referencedColumnName = "id_sistema")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Sistema idSistema;
     @JoinColumn(name = "id_turno", referencedColumnName = "id_turno")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Turno idTurno;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idGrupo", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idGrupo")
     private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cveGrupo", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cveGrupo")
     private List<CargaAcademica> cargaAcademicaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo", fetch = FetchType.LAZY)
-    private List<Estudiante> estudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grupo", fetch = FetchType.LAZY)
-    private List<Tutoria> tutoriaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idGrupo", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idGrupo")
     private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
 
     public Grupo() {
@@ -180,6 +179,24 @@ public class Grupo implements Serializable {
         this.generacion = generacion;
     }
 
+    @XmlTransient
+    public List<Estudiante> getEstudianteList() {
+        return estudianteList;
+    }
+
+    public void setEstudianteList(List<Estudiante> estudianteList) {
+        this.estudianteList = estudianteList;
+    }
+
+    @XmlTransient
+    public List<Tutoria> getTutoriaList() {
+        return tutoriaList;
+    }
+
+    public void setTutoriaList(List<Tutoria> tutoriaList) {
+        this.tutoriaList = tutoriaList;
+    }
+
     public PlanAccionTutorial getPlanAccionTutorial() {
         return planAccionTutorial;
     }
@@ -228,24 +245,6 @@ public class Grupo implements Serializable {
 
     public void setCargaAcademicaList(List<CargaAcademica> cargaAcademicaList) {
         this.cargaAcademicaList = cargaAcademicaList;
-    }
-
-    @XmlTransient
-    public List<Estudiante> getEstudianteList() {
-        return estudianteList;
-    }
-
-    public void setEstudianteList(List<Estudiante> estudianteList) {
-        this.estudianteList = estudianteList;
-    }
-
-    @XmlTransient
-    public List<Tutoria> getTutoriaList() {
-        return tutoriaList;
-    }
-
-    public void setTutoriaList(List<Tutoria> tutoriaList) {
-        this.tutoriaList = tutoriaList;
     }
 
     @XmlTransient

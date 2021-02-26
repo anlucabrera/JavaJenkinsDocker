@@ -173,6 +173,7 @@ public class ServicioCarga implements EjbCarga {
     private static final String carpetaL = "/home/admin/archivos/";
     public static String carpetaRaiz;
     public static final String formatosEscolares = "formatosEscolares";
+    public static final String seguimientoEstadia = "seguimientoEstadia";
 
 //    Método que se encarga de crear la carpeta raíz en caso de que no exista para poder almacenar el archivo
     static {
@@ -472,5 +473,56 @@ public class ServicioCarga implements EjbCarga {
         }
     }
 
+     @Override
+    public String subirDocumentoEstadia(Part file, String tipoDoc, File rutaRelativa) {
+        //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subirDocExpTit(): " + rutaRelativa);
+        try {
+            byte[] content = Utils.toByteArray(file.getInputStream());
+            File carpeta = new File("C:/archivos/seguimientoEstadia/".concat(rutaRelativa.toString()));
+            addCarpetaRelativa(carpeta.toString());
+            nombreArchivo = file.getSubmittedFileName();
+            //extrae la extension y el nombre de archivo por separado
+            String tipo = file.getContentType();
+                if ("image/jpg".equals(tipo) || "image/jpeg".equals(tipo)) {
+                    extension = ".jpg";
+                }
+                else if("image/png".equals(tipo)){
+                    extension = ".png";
+                }
+                if("application/pdf".equals(tipo)){
+                    extension = ".pdf";
+                }
+            Pattern p = Pattern.compile("[^A-Za-z0-9-_.() ]+");
+            Matcher m = p.matcher(nombreArchivo);
+            StringBuffer sb = new StringBuffer();
+            valida = m.find();
+            while (valida) {
+                m.appendReplacement(sb, "");
+                valida = m.find();
+            }
+            m.appendTail(sb);
+            nombreArchivo = sb.toString();
+                for (int i = 1; i <= 10; i++) {
+                    int numero = (int) Math.round(Math.random() * 35);
+                    aleatorio = aleatorio + abecedario[numero];
+                }
+                String name = carpeta.toString().concat(File.separator).concat(tipoDoc).concat(extension);
+                FileOutputStream fos = new FileOutputStream(name);
+                FileCopyUtils.copy(content, fos);
+                aleatorio = ""; 
+//                System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subirDocExpTit(fin)");
+                return name;
+        } catch (IOException ex) {
+            Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);
+            return "Error: No se pudo leer el archivo";
+        }
+    }
+    
+    @Override
+    public String crearDirectorioReportesEstadia(String generacion, String nivel) {
+        String rutaRelativa = genCarpetaRelativa(seguimientoEstadia, reportes, generacion, nivel);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
 
 }

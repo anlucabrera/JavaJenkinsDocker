@@ -10,7 +10,6 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "documento_seguimiento_estadia", catalog = "control_escolar", schema = "")
@@ -74,13 +73,13 @@ public class DocumentoSeguimientoEstadia implements Serializable {
     @Column(name = "personal_validacion")
     private Integer personalValidacion;
     @JoinColumn(name = "documento", referencedColumnName = "documento")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Documento documento;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private EventoEstadia evento;
     @JoinColumn(name = "seguimiento_estadia", referencedColumnName = "seguimiento")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private SeguimientoEstadiaEstudiante seguimientoEstadia;
 
     public DocumentoSeguimientoEstadia() {

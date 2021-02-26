@@ -12,7 +12,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "evento_estadia", catalog = "control_escolar", schema = "")
@@ -80,15 +79,17 @@ public class EventoEstadia implements Serializable {
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaFin;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento")
     private List<EvaluacionEstadia> evaluacionEstadiaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento")
     private List<CoordinadorAreaEstadia> coordinadorAreaEstadiaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento")
     private List<AsesorAcademicoEstadia> asesorAcademicoEstadiaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento")
+    private List<EntregaFotografiasEstudiante> entregaFotografiasEstudianteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento")
     private List<DocumentoSeguimientoEstadia> documentoSeguimientoEstadiaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento")
     private List<SeguimientoEstadiaEstudiante> seguimientoEstadiaEstudianteList;
 
     public EventoEstadia() {
@@ -189,6 +190,15 @@ public class EventoEstadia implements Serializable {
 
     public void setAsesorAcademicoEstadiaList(List<AsesorAcademicoEstadia> asesorAcademicoEstadiaList) {
         this.asesorAcademicoEstadiaList = asesorAcademicoEstadiaList;
+    }
+
+    @XmlTransient
+    public List<EntregaFotografiasEstudiante> getEntregaFotografiasEstudianteList() {
+        return entregaFotografiasEstudianteList;
+    }
+
+    public void setEntregaFotografiasEstudianteList(List<EntregaFotografiasEstudiante> entregaFotografiasEstudianteList) {
+        this.entregaFotografiasEstudianteList = entregaFotografiasEstudianteList;
     }
 
     @XmlTransient

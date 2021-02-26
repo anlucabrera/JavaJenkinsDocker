@@ -11,7 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "plan_estudio_materia", catalog = "control_escolar", schema = "")
@@ -54,21 +53,21 @@ public class PlanEstudioMateria implements Serializable {
     @NotNull
     @Column(name = "grado")
     private int grado;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
-    private List<MetasPropuestas> metasPropuestasList;
-    @ManyToMany(mappedBy = "planEstudioMateriaList", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "planEstudioMateriaList")
     private List<Competencia> competenciaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
+    private List<MetasPropuestas> metasPropuestasList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
     private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
     @JoinColumn(name = "id_materia", referencedColumnName = "id_materia")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Materia idMateria;
     @JoinColumn(name = "id_plan", referencedColumnName = "id_plan_estudio")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private PlanEstudio idPlan;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
     private List<CargaAcademica> cargaAcademicaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
     private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
 
     public PlanEstudioMateria() {
@@ -114,6 +113,15 @@ public class PlanEstudioMateria implements Serializable {
 
     public void setCompetenciaList(List<Competencia> competenciaList) {
         this.competenciaList = competenciaList;
+    }
+
+    @XmlTransient
+    public List<MetasPropuestas> getMetasPropuestasList() {
+        return metasPropuestasList;
+    }
+
+    public void setMetasPropuestasList(List<MetasPropuestas> metasPropuestasList) {
+        this.metasPropuestasList = metasPropuestasList;
     }
 
     @XmlTransient
@@ -182,15 +190,6 @@ public class PlanEstudioMateria implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria[ idPlanMateria=" + idPlanMateria + " ]";
-    }
-
-    @XmlTransient
-    public List<MetasPropuestas> getMetasPropuestasList() {
-        return metasPropuestasList;
-    }
-
-    public void setMetasPropuestasList(List<MetasPropuestas> metasPropuestasList) {
-        this.metasPropuestasList = metasPropuestasList;
     }
     
 }

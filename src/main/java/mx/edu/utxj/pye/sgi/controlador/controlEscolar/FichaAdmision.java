@@ -363,7 +363,7 @@ public class FichaAdmision implements Serializable, Guardable{
             ejbFichaAdmision.guardaTutorFamiliar(tutorFamiliar);
             if(tutorFamiliar.getIdTutorFamiliar() > 0){
                 datosFamiliares.setAspirante(aspirante.getIdAspirante());
-                datosFamiliares.setTutor(tutorFamiliar);
+//                datosFamiliares.setTutor(tutorFamiliar);
                 ejbFichaAdmision.guardaDatosFamiliares(datosFamiliares);
             }
             da = false;
@@ -462,7 +462,7 @@ public class FichaAdmision implements Serializable, Guardable{
         }
         if(aspirante.getDatosFamiliares() != null) {
             datosFamiliares = aspirante.getDatosFamiliares();
-            tutorFamiliar = datosFamiliares.getTutor();
+//            tutorFamiliar = datosFamiliares.getTutor();
             selectMunicipioTutor();
             selectAsentamientoTutor();
             df = false;

@@ -11,7 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "carga_academica", catalog = "control_escolar", schema = "")
@@ -52,29 +51,29 @@ public class CargaAcademica implements Serializable {
     private int docente;
     @Column(name = "horas_semana")
     private Integer horasSemana;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "carga", fetch = FetchType.LAZY)
-    private TareaIntegradora tareaIntegradora;
-    @OneToMany(mappedBy = "cargaAcademica", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "cargaAcademica")
     private List<Asistenciasacademicas> asistenciasacademicasList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica")
+    private List<CalificacionPromedio> calificacionPromedioList;
+    @OneToMany(mappedBy = "carga")
+    private List<CasoCritico> casoCriticoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga")
+    private List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica")
+    private List<BajaReprobacion> bajaReprobacionList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "carga")
+    private TareaIntegradora tareaIntegradora;
     @JoinColumn(name = "cve_grupo", referencedColumnName = "id_grupo")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Grupo cveGrupo;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private EventoEscolar evento;
     @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private PlanEstudioMateria idPlanMateria;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica")
     private List<CalificacionNivelacion> calificacionNivelacionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica", fetch = FetchType.LAZY)
-    private List<CalificacionPromedio> calificacionPromedioList;
-    @OneToMany(mappedBy = "carga", fetch = FetchType.LAZY)
-    private List<CasoCritico> casoCriticoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "carga", fetch = FetchType.LAZY)
-    private List<UnidadMateriaConfiguracion> unidadMateriaConfiguracionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargaAcademica", fetch = FetchType.LAZY)
-    private List<BajaReprobacion> bajaReprobacionList;
 
     public CargaAcademica() {
     }
@@ -112,14 +111,6 @@ public class CargaAcademica implements Serializable {
         this.horasSemana = horasSemana;
     }
 
-    public TareaIntegradora getTareaIntegradora() {
-        return tareaIntegradora;
-    }
-
-    public void setTareaIntegradora(TareaIntegradora tareaIntegradora) {
-        this.tareaIntegradora = tareaIntegradora;
-    }
-
     @XmlTransient
     public List<Asistenciasacademicas> getAsistenciasacademicasList() {
         return asistenciasacademicasList;
@@ -127,39 +118,6 @@ public class CargaAcademica implements Serializable {
 
     public void setAsistenciasacademicasList(List<Asistenciasacademicas> asistenciasacademicasList) {
         this.asistenciasacademicasList = asistenciasacademicasList;
-    }
-
-    public Grupo getCveGrupo() {
-        return cveGrupo;
-    }
-
-    public void setCveGrupo(Grupo cveGrupo) {
-        this.cveGrupo = cveGrupo;
-    }
-
-    public EventoEscolar getEvento() {
-        return evento;
-    }
-
-    public void setEvento(EventoEscolar evento) {
-        this.evento = evento;
-    }
-
-    public PlanEstudioMateria getIdPlanMateria() {
-        return idPlanMateria;
-    }
-
-    public void setIdPlanMateria(PlanEstudioMateria idPlanMateria) {
-        this.idPlanMateria = idPlanMateria;
-    }
-
-    @XmlTransient
-    public List<CalificacionNivelacion> getCalificacionNivelacionList() {
-        return calificacionNivelacionList;
-    }
-
-    public void setCalificacionNivelacionList(List<CalificacionNivelacion> calificacionNivelacionList) {
-        this.calificacionNivelacionList = calificacionNivelacionList;
     }
 
     @XmlTransient
@@ -196,6 +154,47 @@ public class CargaAcademica implements Serializable {
 
     public void setBajaReprobacionList(List<BajaReprobacion> bajaReprobacionList) {
         this.bajaReprobacionList = bajaReprobacionList;
+    }
+
+    public TareaIntegradora getTareaIntegradora() {
+        return tareaIntegradora;
+    }
+
+    public void setTareaIntegradora(TareaIntegradora tareaIntegradora) {
+        this.tareaIntegradora = tareaIntegradora;
+    }
+
+    public Grupo getCveGrupo() {
+        return cveGrupo;
+    }
+
+    public void setCveGrupo(Grupo cveGrupo) {
+        this.cveGrupo = cveGrupo;
+    }
+
+    public EventoEscolar getEvento() {
+        return evento;
+    }
+
+    public void setEvento(EventoEscolar evento) {
+        this.evento = evento;
+    }
+
+    public PlanEstudioMateria getIdPlanMateria() {
+        return idPlanMateria;
+    }
+
+    public void setIdPlanMateria(PlanEstudioMateria idPlanMateria) {
+        this.idPlanMateria = idPlanMateria;
+    }
+
+    @XmlTransient
+    public List<CalificacionNivelacion> getCalificacionNivelacionList() {
+        return calificacionNivelacionList;
+    }
+
+    public void setCalificacionNivelacionList(List<CalificacionNivelacion> calificacionNivelacionList) {
+        this.calificacionNivelacionList = calificacionNivelacionList;
     }
 
     @Override

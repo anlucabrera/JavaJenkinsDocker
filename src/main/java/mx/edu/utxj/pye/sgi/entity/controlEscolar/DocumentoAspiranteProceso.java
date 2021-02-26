@@ -10,7 +10,6 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "documento_aspirante_proceso", catalog = "control_escolar", schema = "")
@@ -71,10 +70,10 @@ public class DocumentoAspiranteProceso implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaValidacion;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Aspirante aspirante;
     @JoinColumn(name = "documento", referencedColumnName = "documento")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Documento documento;
 
     public DocumentoAspiranteProceso() {

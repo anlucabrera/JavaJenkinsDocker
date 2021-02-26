@@ -127,6 +127,23 @@
                     <c:if test="#{registroNotificacionesGeneral.mostrarEnDesarrollo(request) and registroNotificacionesGeneral.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/registro_notificaciones.xhtml"><i class="fa fa-list-ol"></i><span>Registrar Notificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{registroAsesoriaEstudianteGeneral.mostrarEnDesarrollo(request) and registroAsesoriaEstudianteGeneral.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/registro_asesorias_general.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Asesorías Generales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
+                    <!-- Coordinador de Estadías - Extensión y Vinculación -->
+                    <c:if test="#{seguimientoEstadiaVinculacion.mostrarEnDesarrollo(request) and seguimientoEstadiaVinculacion.tieneAcceso}">
+                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Coordinador de Estadías</li>
+                    </c:if>
+                    <c:if test="#{seguimientoEstadiaVinculacion.mostrarEnDesarrollo(request) and seguimientoEstadiaVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/vinculacion/seguimientoEstadiaVinculacion.xhtml"><i class="fa fa-folder"></i><span>Seguimiento de estadía</span></p:link></li></c:if>
+                    <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
+                    <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
+                    
+                    <!-- Estadía - Director de carrera -->
+                    <c:if test="#{asignacionRolesEstadiaDirector.mostrarEnDesarrollo(request) and asignacionRolesEstadiaDirector.tieneAcceso}">
+                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Estadía</li>
+                    </c:if>
+                    <c:if test="#{asignacionRolesEstadiaDirector.mostrarEnDesarrollo(request) and asignacionRolesEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/asignacionesRolesEstadia.xhtml"><i class="fa fa-user-plus"></i><span>Asignación roles de estadía</span></p:link></li></c:if>
+                    <c:if test="#{seguimientoEstadiaDirector.mostrarEnDesarrollo(request) and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/seguimientoEstadiaDirector.xhtml"><i class="fa fa-folder"></i><span>Seguimiento de estadía</span></p:link></li></c:if>
+                    <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
+                    <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
+                    
                     <!-- Docente -->
                     <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Docente</li>
@@ -168,11 +185,34 @@
                     <c:if test="#{registroTutoriaIndividual.mostrarEnDesarrollo(request) and registroTutoriaIndividual.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_individual.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Individuales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{consultaPlanesAccionTutoralCoordinadorTutores.mostrarEnDesarrollo(request) and consultaPlanesAccionTutoralCoordinadorTutores.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/consulta_plan_accion_tutorial_tutores.xhtml"><i class="fa fa-slideshare"></i><span>Planes de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
+                     <!-- Asesor de estadía -->
+                    <c:if test="#{seguimientoEstadiaAsesor.mostrarEnDesarrollo(request) and seguimientoEstadiaAsesor.tieneAcceso}">
+                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Asesor estadía</li>
+                    </c:if>
+                    <c:if test="#{asignacionEstudiantesEstadiaDocente.mostrarEnDesarrollo(request) and asignacionEstudiantesEstadiaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/asesorEstadia/asignacionEstudiantesEstadia.xhtml"><i class="fa fa-user-plus"></i><span>Asignación estudiantes</span></p:link></li></c:if>
+                    <c:if test="#{seguimientoEstadiaAsesor.mostrarEnDesarrollo(request) and seguimientoEstadiaAsesor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/asesorEstadia/seguimientoEstadiaAsesor.xhtml"><i class="fa fa-folder"></i><span>Seguimiento estudiantes</span></p:link></li></c:if>
+                    <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaAsesor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
+                    <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaAsesor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
+                    
+                     <!-- Coordinador de estadía por área académica-->
+                    <c:if test="#{seguimientoEstadiaCoordinador.mostrarEnDesarrollo(request) and seguimientoEstadiaCoordinador.tieneAcceso}">
+                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Coordinador estadía</li>
+                    </c:if>
+                    <c:if test="#{seguimientoEstadiaCoordinador.mostrarEnDesarrollo(request) and seguimientoEstadiaCoordinador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/coordinadorEstadia/seguimientoEstadiaCoordinador.xhtml"><i class="fa fa-folder"></i><span>Seguimiento estudiantes</span></p:link></li></c:if>
+                    <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaCoordinador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
+                    <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaCoordinador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
+                    
                     <!-- Consulta multiples -->
                     <c:if test="#{consultaCalificaciones.mostrarEnDesarrollo(request) and consultaCalificaciones.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/consultarCalificaciones.xhtml"><i class="fa fa-list-ol"></i><span>Consultar calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{resultadosPlaneacionesConsulta.mostrarEnDesarrollo(request) and resultadosPlaneacionesConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesMu/resultadosPlaneaciones.xhtml"><i class="fa fa-list-ol"></i><span>Resultado de Planeaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{registroDeEstudianteConsulta.mostrarEnDesarrollo(request) and registroDeEstudianteConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesMu/registroEstudianteConsulta.xhtml"><i class="fa fa-list-ol"></i><span>Resultado Registro del estudiante</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
+                    <!-- Apartado de estadías para Servicios Escolares-->
+                    <c:if test="#{registroEventosEstadiaEscolares.mostrarEnDesarrollo(request) and registroEventosEstadiaEscolares.tieneAcceso}">
+                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Estadías</li>
+                    </c:if>
+                    <c:if test="#{entregaFotografiasEscolares.mostrarEnDesarrollo(request) and entregaFotografiasEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/entregaFotografiasEstadia.xhtml"><i class="fa fa-camera"></i><span>Entrega de fotografías</span></p:link></li></c:if>
+                    <c:if test="#{registroEventosEstadiaEscolares.mostrarEnDesarrollo(request) and registroEventosEstadiaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registroEventosEstadia.xhtml"><i class="fa fa-calendar-check-o"></i><span>Registro de eventos</span></p:link></li></c:if>
                 </c:if>
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluaciones y encuestas</li>
                 <c:if test="#{serviciosConsulta.mostrarEnDesarrollo(request) and serviciosConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/consulta/servicios.xhtml" title="Satisfacción de servicios"><i class="fa fa-slideshare"></i><span>Satisfacción de servicios</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>

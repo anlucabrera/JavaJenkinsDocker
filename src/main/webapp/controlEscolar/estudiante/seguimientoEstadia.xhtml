@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento estadía
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{seguimientoEstadiaPorEstudiante.cargado}">
+        <adm:breadcrumb title="Seguimiento estadía"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{seguimientoEstadiaPorEstudiante.tieneAcceso}">
+                <c:if test="#{seguimientoEstadiaPorEstudiante.rol.generaciones ne null}">
+                <!-- zona de importación de enums -->
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <h:form id="frm" prependId="false" class="form-inline">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" value="#{seguimientoEstadiaPorEstudiante.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{seguimientoEstadiaPorEstudiante.cambiarGeneracion}">
+                                                    <f:selectItems value="#{seguimientoEstadiaPorEstudiante.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generacion" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{seguimientoEstadiaPorEstudiante.rol.nivelEducativo}" converter="entityConverter" valueChangeListener="#{seguimientoEstadiaPorEstudiante.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{seguimientoEstadiaPorEstudiante.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </h:form>
+                                    <div class="row">
+                                        <p:outputPanel>
+                                            <section class="content">
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                    <strong>No. Seguimiento</strong> 
+                                                                    <p class="text-muted">
+                                                                                #{seguimientoEstadiaPorEstudiante.rol.dtoSeguimientoEstadiaEstudiante.seguimientoEstadiaEstudiante.seguimiento}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <strong>Fecha Registro</strong> 
+                                                                    <p class="text-muted">
+                                                                                #{seguimientoEstadiaPorEstudiante.rol.dtoSeguimientoEstadiaEstudiante.fechaRegistro}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <strong>Grado Académico</strong>      
+                                                                    <p class="text-muted">
+                                                                                #{seguimientoEstadiaPorEstudiante.rol.dtoSeguimientoEstadiaEstudiante.dtoEstudiante.programaEducativo.nivelEducativo.nombre}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Programa Educativo</strong>
+                                                                    <p class="text-muted">
+                                                                                #{seguimientoEstadiaPorEstudiante.rol.dtoSeguimientoEstadiaEstudiante.dtoEstudiante.programaEducativo.nombre}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <br/><br/><br/><br/>
+                                                                <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                    <strong>Matricula</strong> 
+                                                                    <p class="text-muted">
+                                                                                 #{seguimientoEstadiaPorEstudiante.rol.dtoSeguimientoEstadiaEstudiante.dtoEstudiante.estudiante.matricula}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong>Nombre</strong>               
+                                                                    <p class="text-muted">
+                                                                                #{seguimientoEstadiaPorEstudiante.rol.dtoSeguimientoEstadiaEstudiante.dtoEstudiante.estudiante.aspirante.idPersona.nombre}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <strong>Apellido Paterno</strong>
+                                                                    <p class="text-muted">
+                                                                                #{seguimientoEstadiaPorEstudiante.rol.dtoSeguimientoEstadiaEstudiante.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <strong>Apellido Materno</strong>
+                                                                    <p class="text-muted">
+                                                                                #{seguimientoEstadiaPorEstudiante.rol.dtoSeguimientoEstadiaEstudiante.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <br/><br/><br/><br/>
+                                                            </div>
+                                                        </div>
+                                                        <br/>
+                                                        <br/>
+                                                        <br/> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </section>
+                                        </p:outputPanel>
+                                            <center>
+                                                <h:form id="frmDocsSegEst">
+                                                    <p:remoteCommand name="actualizarListaDocs" update="@form:tblDocsSegEst" />
+                                                    <p:dataTable id="tblDocsSegEst" emptyMessage="Sin datos en el periodo seleccionado." value="#{seguimientoEstadiaPorEstudiante.rol.dtoSeguimientoEstadiaEstudiante.listaDocumentosEstadia}" var="docsSeg"
+                                                                 resizeMode="expand" tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                                 tableStyle="vertical-align: middle;" paginator="true" rows="15" rowsPerPageTemplate="15,30,45,60,75" 
+                                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                        <p:columnGroup type="header">
+                                                            <p:row>
+                                                                <p:column rowspan="2" headerText="Responsable carga de documento" width="120"/>
+                                                                <p:column rowspan="2" headerText="Opciones" width="150"/>
+                                                                <p:column rowspan="2" headerText="Documento" width="200" />
+                                                                <p:column colspan="2" headerText="Periodo de carga" width="400" />
+                                                                <p:column rowspan="2" headerText="Obligatorio" width="100" />
+                                                                <p:column rowspan="2" headerText="Fecha Carga" width="120" />
+                                                                <p:column rowspan="2" headerText="Observaciones" width="350" />
+                                                                <p:column rowspan="2" headerText="Validado" width="100" />
+                                                                <p:column rowspan="2" headerText="Fecha Validación" width="120" />
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="2" headerText="Fecha Inicio" width="200"/>
+                                                                <p:column rowspan="2" headerText="Fecha Fin" width="200"/>
+                                                            </p:row>
+                                                        </p:columnGroup>
+                                                        <c:set var="existeDoc" value="#{cargaArchivosSeguimientoEstadia.consultarExisteDocumento(docsSeg.documentoProceso.documento)}" />
+                                                        <c:set var="eventoActDoc" value="#{seguimientoEstadiaPorEstudiante.eventoActivoDocumento(docsSeg)}" />
+                                                        <c:set var="eventoDoc" value="#{seguimientoEstadiaPorEstudiante.eventoDocumento(docsSeg)}" />
+                                                        <c:set var="permisoCap" value="#{seguimientoEstadiaPorEstudiante.deshabilitarCarga(docsSeg)}" />
+                                                        <p:column style="text-align: center;" groupRow="true"><h:outputText value="#{eventoDoc.usuario}" /></p:column>
+                                                        <p:column style="text-align: center;">
+                                                            <div class="btn-group">
+                                                                <p:commandButton icon="fa fa-upload" onclick="PF('modalCargaArchivo').show()" class="btn btn-sm #{existeDoc?'btn-info':'btn-danger'}" actionListener="#{cargaArchivosSeguimientoEstadia.editarDocumento(docsSeg, eventoActDoc)}" disabled="#{existeDoc or !permisoCap}" rendered="#{eventoDoc.usuario eq 'Estudiante'}"/>
+                                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{cargaArchivosSeguimientoEstadia.descargarDocumento(docsSeg)}" target="_blank" title="Descargar documento." disabled="#{!existeDoc}"><i class="fa fa-download" /></p:commandLink>
+                                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{cargaArchivosSeguimientoEstadia.eliminarDocumento(docsSeg)}" onsuccess="actualizarListaDocs();" title="Eliminar documento." disabled="#{(!existeDoc or docsSeg.documentoSeguimientoEstadia.validado)}" rendered="#{eventoDoc.usuario eq 'Estudiante'}">
+                                                                    <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento #{caster.rutaToArchivoNombre(docsSeg.documentoSeguimientoEstadia.ruta)}?" icon="ui-icon-alert"/>
+                                                                </p:commandButton>
+                                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                                                                </p:confirmDialog> 
+                                                            </div>
+                                                        </p:column>
+                                                        <p:column style="text-align: justify;"><h:outputText value="#{docsSeg.documentoProceso.documento.descripcion}" /></p:column>
+                                                        <p:column style="text-align: center;"><h:outputText value="#{eventoDoc.fechaInicio}"><f:convertDateTime dateStyle="long" timeZone="America/Mexico_City" type="both"/></h:outputText></p:column>
+                                                        <p:column style="text-align: center;"><h:outputText value="#{eventoDoc.fechaFin}"><f:convertDateTime dateStyle="long" timeZone="America/Mexico_City" type="both"/></h:outputText></p:column>
+                                                        <p:column style="text-align: center;"><h:outputText value="#{docsSeg.documentoProceso.obligatorio?'Si':'No'}" /></p:column>
+                                                        <p:column style="text-align: center;"><h:outputText value="#{docsSeg.documentoSeguimientoEstadia.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
+                                                        <p:column style="text-align: justify;"><h:outputText value="#{docsSeg.documentoSeguimientoEstadia.observaciones}" /></p:column>
+                                                        <p:column style="text-align: center;"><h:outputText value="#{docsSeg.documentoSeguimientoEstadia.validado?'Si':'No'}" /></p:column>
+                                                        <p:column style="text-align: center;"><h:outputText value="#{docsSeg.documentoSeguimientoEstadia.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+
+                                                    </p:dataTable>
+                                                </h:form>
+                                            </center>
+                                        <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                                            <center>
+                                                <h:form id="formularioContenedor" enctype="multipart/form-data">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <o:inputFile id="file" value="#{cargaArchivosSeguimientoEstadia.file}" 
+                                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG o documentos PDF." 
+                                                                         maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." 
+                                                                         required="true" requiredMessage="Debe elegir un archivo." >
+                                                            </o:inputFile>
+                                                            <p:messages for="file" ><p:autoUpdate/></p:messages>
+                                                        </div>
+                                                        <p:separator />
+                                                        <div class="col-md-12">
+                                                            <h:commandButton id="btnuploadFile" value="Subir archivo" class="btn btn-primary" action="#{cargaArchivosSeguimientoEstadia.subirDocumento()}" />
+                                                        </div>
+                                                    </div>
+                                                </h:form>
+                                                <p:blockUI block="formularioContenedor" widgetVar="bloqueoCargaFile" trigger="formularioContenedor:btnuploadFile">
+                                                    Cargando archivo espere por favor.<br />
+                                                </p:blockUI>
+                                            </center>
+                                        </p:dialog>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <c:if test="#{!empty seguimientoEstadiaPorEstudiante.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{seguimientoEstadiaPorEstudiante.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación roles de estadía</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{seguimientoEstadiaPorEstudiante.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{seguimientoEstadiaPorEstudiante.rol.generaciones eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay seguimientos registrados."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!seguimientoEstadiaPorEstudiante.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a estudiantes registrados en seguimiento de estadía."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

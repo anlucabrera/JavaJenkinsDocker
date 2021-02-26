@@ -11,7 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "tutoria", catalog = "control_escolar", schema = "")
@@ -69,9 +68,9 @@ public class Tutoria implements Serializable {
     @Column(name = "evento_registro")
     private int eventoRegistro;
     @JoinColumn(name = "grupo", referencedColumnName = "id_grupo")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Grupo grupo;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "tutoria1", fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "tutoria1")
     private ParticipantesTutoria participantesTutoria;
 
     public Tutoria() {
