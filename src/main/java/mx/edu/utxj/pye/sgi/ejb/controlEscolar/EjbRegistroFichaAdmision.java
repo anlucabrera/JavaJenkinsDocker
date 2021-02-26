@@ -350,10 +350,10 @@ public class EjbRegistroFichaAdmision {
             switch (datosFam.getOperacion()) {
                 case PERSISTIR:
                     datosFam.getDatosFamiliares().setAspirante1(new Aspirante());
-                    datosFam.getDatosFamiliares().setTutor(0);
+                    datosFam.getDatosFamiliares().setTutor(new TutorFamiliar());
                     datosFam.getDatosFamiliares().setAspirante1(a);
                     datosFam.getDatosFamiliares().setAspirante(a.getIdAspirante());
-                    datosFam.getDatosFamiliares().setTutor(0);
+                    datosFam.getDatosFamiliares().setTutor(datosFam.getTutorR().getTutorFamiliar());
                     em.persist(datosFam.getDatosFamiliares()); f.setEntityClass(DatosFamiliares.class); f.flush(); datosFam.setOperacion(Operacion.ACTUALIZAR); break;
                 case ACTUALIZAR: em.merge(datosFam.getDatosFamiliares());  f.setEntityClass(DatosFamiliares.class); f.flush(); break;
             }

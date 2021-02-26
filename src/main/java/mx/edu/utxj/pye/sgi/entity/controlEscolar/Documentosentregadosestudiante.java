@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -20,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "documentosentregadosestudiante", catalog = "control_escolar", schema = "")
@@ -76,7 +77,7 @@ public class Documentosentregadosestudiante implements Serializable {
     @Column(name = "pago_colegiatura")
     private Boolean pagoColegiatura;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Estudiante estudiante1;
 
     public Documentosentregadosestudiante() {

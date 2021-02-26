@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "especialidad_centro", catalog = "control_escolar", schema = "")
@@ -52,9 +53,9 @@ public class EspecialidadCentro implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "especialidadIems")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "especialidadIems", fetch = FetchType.LAZY)
     private List<DatosAcademicos> datosAcademicosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEspecialidad")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEspecialidad", fetch = FetchType.LAZY)
     private List<InstitucionAcademica> institucionAcademicaList;
 
     public EspecialidadCentro() {

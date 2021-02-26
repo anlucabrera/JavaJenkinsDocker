@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "unidad_materia_configuracion_detalle", catalog = "control_escolar", schema = "")
@@ -47,16 +48,16 @@ public class UnidadMateriaConfiguracionDetalle implements Serializable {
     @NotNull
     @Column(name = "porcentaje")
     private double porcentaje;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracionDetalle")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracionDetalle", fetch = FetchType.LAZY)
     private List<Calificacion> calificacionList;
     @JoinColumn(name = "criterio", referencedColumnName = "criterio")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Criterio criterio;
     @JoinColumn(name = "indicador", referencedColumnName = "indicador")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Indicador indicador;
     @JoinColumn(name = "configuracion", referencedColumnName = "configuracion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private UnidadMateriaConfiguracion configuracion;
 
     public UnidadMateriaConfiguracionDetalle() {

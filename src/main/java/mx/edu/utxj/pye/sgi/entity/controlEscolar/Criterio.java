@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -23,7 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "criterio", catalog = "control_escolar", schema = "")
@@ -56,11 +57,11 @@ public class Criterio implements Serializable {
     @NotNull
     @Column(name = "porcentaje_recomendado")
     private double porcentajeRecomendado;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "criterio1")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "criterio1", fetch = FetchType.LAZY)
     private List<UnidadMateriaConfiguracionCriterio> unidadMateriaConfiguracionCriterioList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "criterio1")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "criterio1", fetch = FetchType.LAZY)
     private List<CriterioIndicadorPeriodo> criterioIndicadorPeriodoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "criterio")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "criterio", fetch = FetchType.LAZY)
     private List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList;
 
     public Criterio() {

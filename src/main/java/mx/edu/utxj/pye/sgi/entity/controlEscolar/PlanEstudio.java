@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "plan_estudio", catalog = "control_escolar", schema = "")
@@ -62,12 +63,12 @@ public class PlanEstudio implements Serializable {
     @NotNull
     @Column(name = "id_pe")
     private short idPe;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudios")
-    private List<Competencia> competenciaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plan")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plan", fetch = FetchType.LAZY)
     private List<Grupo> grupoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlan")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlan", fetch = FetchType.LAZY)
     private List<PlanEstudioMateria> planEstudioMateriaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudios", fetch = FetchType.LAZY)
+    private List<Competencia> competenciaList;
 
     public PlanEstudio() {
     }
@@ -125,15 +126,6 @@ public class PlanEstudio implements Serializable {
     }
 
     @XmlTransient
-    public List<Competencia> getCompetenciaList() {
-        return competenciaList;
-    }
-
-    public void setCompetenciaList(List<Competencia> competenciaList) {
-        this.competenciaList = competenciaList;
-    }
-
-    @XmlTransient
     public List<Grupo> getGrupoList() {
         return grupoList;
     }
@@ -149,6 +141,15 @@ public class PlanEstudio implements Serializable {
 
     public void setPlanEstudioMateriaList(List<PlanEstudioMateria> planEstudioMateriaList) {
         this.planEstudioMateriaList = planEstudioMateriaList;
+    }
+
+    @XmlTransient
+    public List<Competencia> getCompetenciaList() {
+        return competenciaList;
+    }
+
+    public void setCompetenciaList(List<Competencia> competenciaList) {
+        this.competenciaList = competenciaList;
     }
 
     @Override

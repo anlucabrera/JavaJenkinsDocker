@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "expediente_titulacion", catalog = "control_escolar", schema = "")
@@ -87,13 +88,13 @@ public class ExpedienteTitulacion implements Serializable {
     @NotNull
     @Column(name = "servicio_social")
     private boolean servicioSocial;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "expediente")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "expediente", fetch = FetchType.LAZY)
     private List<DocumentoExpedienteTitulacion> documentoExpedienteTitulacionList;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EventoTitulacion evento;
     @JoinColumn(name = "matricula", referencedColumnName = "matricula")
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Estudiante matricula;
 
     public ExpedienteTitulacion() {

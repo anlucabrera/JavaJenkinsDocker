@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "ocupacion", catalog = "control_escolar", schema = "")
@@ -35,7 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Ocupacion.findByIdOcupacion", query = "SELECT o FROM Ocupacion o WHERE o.idOcupacion = :idOcupacion")
     , @NamedQuery(name = "Ocupacion.findByDescripcion", query = "SELECT o FROM Ocupacion o WHERE o.descripcion = :descripcion")})
 public class Ocupacion implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,11 +48,11 @@ public class Ocupacion implements Serializable {
     @Size(min = 1, max = 150)
     @Column(name = "descripcion")
     private String descripcion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ocupacionMadre")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ocupacionMadre", fetch = FetchType.LAZY)
     private List<DatosFamiliares> datosFamiliaresList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ocupacionPadre")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ocupacionPadre", fetch = FetchType.LAZY)
     private List<DatosFamiliares> datosFamiliaresList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ocupacion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ocupacion", fetch = FetchType.LAZY)
     private List<IntegrantesFamilia> integrantesFamiliaList;
     @OneToMany(mappedBy = "ocupacion")
     private List<TutorFamiliar> tutorFamiliarList;
@@ -76,13 +77,6 @@ public class Ocupacion implements Serializable {
         this.idOcupacion = idOcupacion;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
 
     @XmlTransient
     public List<DatosFamiliares> getDatosFamiliaresList() {
@@ -111,15 +105,6 @@ public class Ocupacion implements Serializable {
         this.integrantesFamiliaList = integrantesFamiliaList;
     }
 
-    @XmlTransient
-    public List<TutorFamiliar> getTutorFamiliarList() {
-        return tutorFamiliarList;
-    }
-
-    public void setTutorFamiliarList(List<TutorFamiliar> tutorFamiliarList) {
-        this.tutorFamiliarList = tutorFamiliarList;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -143,6 +128,23 @@ public class Ocupacion implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion[ idOcupacion=" + idOcupacion + " ]";
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    @XmlTransient
+    public List<TutorFamiliar> getTutorFamiliarList() {
+        return tutorFamiliarList;
+    }
+
+    public void setTutorFamiliarList(List<TutorFamiliar> tutorFamiliarList) {
+        this.tutorFamiliarList = tutorFamiliarList;
     }
     
 }

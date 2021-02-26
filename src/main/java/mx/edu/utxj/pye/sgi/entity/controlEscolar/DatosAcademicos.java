@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -24,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "datos_academicos", catalog = "control_escolar", schema = "")
@@ -65,16 +66,16 @@ public class DatosAcademicos implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaTerminacion;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Aspirante aspirante1;
     @JoinColumn(name = "especialidad_iems", referencedColumnName = "id_especialidad_centro")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EspecialidadCentro especialidadIems;
     @JoinColumn(name = "sistema_primera_opcion", referencedColumnName = "id_sistema")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Sistema sistemaPrimeraOpcion;
     @JoinColumn(name = "sistema_segunda_opcion", referencedColumnName = "id_sistema")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Sistema sistemaSegundaOpcion;
 
     public DatosAcademicos() {

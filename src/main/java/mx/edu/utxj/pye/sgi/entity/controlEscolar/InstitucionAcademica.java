@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "institucion_academica", catalog = "control_escolar", schema = "")
@@ -81,22 +82,22 @@ public class InstitucionAcademica implements Serializable {
     @Column(name = "id_pais")
     private int idPais;
     @JoinColumn(name = "id_especialidad", referencedColumnName = "id_especialidad_centro")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EspecialidadCentro idEspecialidad;
     @JoinColumn(name = "id_nivel_educativo", referencedColumnName = "id_nivel_educativo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private NivelEducativo idNivelEducativo;
     @JoinColumn(name = "id_servicio_educativo", referencedColumnName = "id_servicio_educativo")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ServicioEducativo idServicioEducativo;
     @JoinColumn(name = "id_tipo_control", referencedColumnName = "id_tipo_control")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TipoControl idTipoControl;
     @JoinColumn(name = "id_tipo_sostenimiento", referencedColumnName = "idtipo_sostenimiento")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TipoSostenimiento idTipoSostenimiento;
     @JoinColumn(name = "id_turno_ia", referencedColumnName = "id_turno_ia")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TurnoIa idTurnoIa;
 
     public InstitucionAcademica() {

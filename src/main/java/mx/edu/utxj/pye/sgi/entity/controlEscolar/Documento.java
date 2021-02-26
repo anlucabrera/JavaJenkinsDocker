@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "documento", catalog = "control_escolar", schema = "")
@@ -64,13 +65,13 @@ public class Documento implements Serializable {
     @NotNull
     @Column(name = "activo")
     private boolean activo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "documento")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "documento", fetch = FetchType.LAZY)
     private List<DocumentoAspiranteProceso> documentoAspiranteProcesoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "documento")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "documento", fetch = FetchType.LAZY)
     private List<DocumentoExpedienteTitulacion> documentoExpedienteTitulacionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "documento")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "documento", fetch = FetchType.LAZY)
     private List<DocumentoSeguimientoEstadia> documentoSeguimientoEstadiaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "documento")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "documento", fetch = FetchType.LAZY)
     private List<DocumentoProceso> documentoProcesoList;
 
     public Documento() {

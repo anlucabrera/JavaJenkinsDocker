@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "tarea_integradora", catalog = "control_escolar", schema = "")
@@ -63,11 +64,11 @@ public class TareaIntegradora implements Serializable {
     @NotNull
     @Column(name = "porcentaje")
     private double porcentaje;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tareaIntegradora")
-    private List<TareaIntegradoraPromedio> tareaIntegradoraPromedioList;
     @JoinColumn(name = "carga", referencedColumnName = "carga")
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private CargaAcademica carga;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tareaIntegradora", fetch = FetchType.LAZY)
+    private List<TareaIntegradoraPromedio> tareaIntegradoraPromedioList;
 
     public TareaIntegradora() {
     }
@@ -115,6 +116,14 @@ public class TareaIntegradora implements Serializable {
         this.porcentaje = porcentaje;
     }
 
+    public CargaAcademica getCarga() {
+        return carga;
+    }
+
+    public void setCarga(CargaAcademica carga) {
+        this.carga = carga;
+    }
+
     @XmlTransient
     public List<TareaIntegradoraPromedio> getTareaIntegradoraPromedioList() {
         return tareaIntegradoraPromedioList;
@@ -122,14 +131,6 @@ public class TareaIntegradora implements Serializable {
 
     public void setTareaIntegradoraPromedioList(List<TareaIntegradoraPromedio> tareaIntegradoraPromedioList) {
         this.tareaIntegradoraPromedioList = tareaIntegradoraPromedioList;
-    }
-
-    public CargaAcademica getCarga() {
-        return carga;
-    }
-
-    public void setCarga(CargaAcademica carga) {
-        this.carga = carga;
     }
 
     @Override

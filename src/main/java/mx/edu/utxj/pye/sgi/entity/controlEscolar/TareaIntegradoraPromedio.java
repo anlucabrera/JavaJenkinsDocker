@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -20,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "tarea_integradora_promedio", catalog = "control_escolar", schema = "")
@@ -40,10 +41,10 @@ public class TareaIntegradoraPromedio implements Serializable {
     @Column(name = "valor")
     private double valor;
     @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Estudiante estudiante;
     @JoinColumn(name = "id_tarea_integradora", referencedColumnName = "id_tarea_integradora", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TareaIntegradora tareaIntegradora;
 
     public TareaIntegradoraPromedio() {

@@ -862,10 +862,10 @@ public class EjbReincorporacion {
             switch (rr.getOperacion()) {
                 case PERSISTIR:
                     rr.getDatosFamiliares().setAspirante1(new Aspirante());
-//                    rr.getDatosFamiliares().setTutor(new TutorFamiliar());                    
-//                    rr.getDatosFamiliares().setAspirante1(a);
-//                    rr.getDatosFamiliares().setAspirante(a.getIdAspirante());
-//                    rr.getDatosFamiliares().setTutor(rr.getTutorR().getTutorFamiliar());                    
+                    rr.getDatosFamiliares().setTutor(new TutorFamiliar());                    
+                    rr.getDatosFamiliares().setAspirante1(a);
+                    rr.getDatosFamiliares().setAspirante(a.getIdAspirante());
+                    rr.getDatosFamiliares().setTutor(rr.getTutorR().getTutorFamiliar());                    
                     em.persist(rr.getDatosFamiliares()); f.setEntityClass(DatosFamiliares.class); f.flush(); rr.setOperacion(Operacion.ACTUALIZAR); break;
                 case ACTUALIZAR: em.merge(rr.getDatosFamiliares());  f.setEntityClass(DatosFamiliares.class); f.flush(); break;
             }

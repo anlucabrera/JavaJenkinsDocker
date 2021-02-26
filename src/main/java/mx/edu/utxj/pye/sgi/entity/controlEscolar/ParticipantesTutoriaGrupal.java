@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -21,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "participantes_tutoria_grupal", catalog = "control_escolar", schema = "")
@@ -53,10 +54,10 @@ public class ParticipantesTutoriaGrupal implements Serializable {
     @Column(name = "comentarios")
     private String comentarios;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Estudiante estudiante1;
     @JoinColumn(name = "tutoria_grupal", referencedColumnName = "tutoria_grupal", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TutoriasGrupales tutoriasGrupales;
 
     public ParticipantesTutoriaGrupal() {

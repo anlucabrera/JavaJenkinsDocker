@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -20,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "calificacion_nivelacion", catalog = "control_escolar", schema = "")
@@ -40,13 +41,13 @@ public class CalificacionNivelacion implements Serializable {
     @Column(name = "valor")
     private double valor;
     @JoinColumn(name = "carga", referencedColumnName = "carga", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CargaAcademica cargaAcademica;
     @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Estudiante estudiante;
     @JoinColumn(name = "indicador", referencedColumnName = "indicador")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Indicador indicador;
 
     public CalificacionNivelacion() {

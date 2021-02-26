@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -22,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author UTXJ
+ * @author Desarrollo
  */
 @Entity
 @Table(name = "unidad_materia_comentario", catalog = "control_escolar", schema = "")
@@ -52,10 +53,10 @@ public class UnidadMateriaComentario implements Serializable {
     @Column(name = "nivelacion")
     private Double nivelacion;
     @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Estudiante estudiante;
     @JoinColumn(name = "configuracion", referencedColumnName = "configuracion", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private UnidadMateriaConfiguracion unidadMateriaConfiguracion;
 
     public UnidadMateriaComentario() {
