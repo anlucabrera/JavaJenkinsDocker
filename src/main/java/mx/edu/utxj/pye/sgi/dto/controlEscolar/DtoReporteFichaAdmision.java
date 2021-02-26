@@ -12,6 +12,21 @@ import java.io.Serializable;
 public class DtoReporteFichaAdmision  implements Serializable {
 
     @Getter @Setter private AreasUniversidad pe;
-    @Getter @Setter private long  totalRegistroSemanal,totalRegistroSabatino,totalRegistroSemanalValido,totalRegistroSabatinoValido,totalRegistros,totalRegistrosValidados;
+    @Getter @Setter private long  totalRegistroSemanal,
+            totalRegistroSabatino,
+            totalRegistroSemanalValido,
+            totalRegistroSabatinoValido,
+            totalRegistros,
+            totalRegistrosValidados,
+            totalInscritosSemanal,
+            totalInscritosSabatino,
+            totalInscritos,
+            proyeccionFichasValidadas,
+            proyeccionMatricula
+    ;
+
+    @Getter @Setter private  Double
+            porcentajeAlcanceFichas,
+            porcentajeAlcanceMatricula;
 
 }

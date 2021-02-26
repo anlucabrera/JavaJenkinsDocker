@@ -4,6 +4,7 @@ import com.github.adminfaces.starter.infra.model.Filter;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.controlador.controlEscolar.ProcesoInscripcion;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
@@ -22,9 +23,26 @@ public class FichaAdmisionReporteRol {
 
     //Ultimo proceso de inscripción
     @Getter @NonNull private ProcesosInscripcion procesosInscripcion;
+    @Getter @NonNull private  ProcesosInscripcion procesoSelect;
     @Getter @NonNull private List<AreasUniversidad> peActivas;
+    @Getter @NonNull private  List<ProcesosInscripcion> listProcesosInsc;
     // Concentrado
     @Getter @NonNull List<DtoReporteFichaAdmision> concentradoFichas;
+    //Totales institucionales
+    //TOTAL INSTITUCIONALES
+    @Getter @NonNull private  long
+            totalfichasProyectadasInstitucional,
+            totalInscritosProyectadasInstitucional,
+            totalFichasRegistradasSemanalInstitucional,
+            totalFichasRegistradasSabatinoInstitucional,
+            totalFichasRegistradasInstitucional,
+            totalFichasValidadasSemanalInstitucional,
+            totalFichasValidadasSabatinoInstitucional,
+            totalFichasValidadasInstitucional,
+            totalInscripcionSemanalInstitucional,
+            totalInscripcionSabatinoInstitucioanal,
+            totalInscripcionInstitucional;
+    @Getter @NonNull private  Double porcentajeFichasValidadasInstitucional, porcentajeInscritosInstitucional;
     //Reporte
     @Getter @NonNull List<DtoReporteProyeccionFichas> reporte;
     public Boolean tieneAcceso(PersonalActivo personalActivo, UsuarioTipo usuarioTipo){
@@ -57,4 +75,34 @@ public class FichaAdmisionReporteRol {
     public void setReporte(List<DtoReporteProyeccionFichas> reporte) {
         this.reporte = reporte;
     }
+
+    public void setListProcesosInsc(List<ProcesosInscripcion> listProcesosInsc) { this.listProcesosInsc = listProcesosInsc; }
+
+    public void setProcesoSelect(ProcesosInscripcion procesoSelect) { this.procesoSelect = procesoSelect; }
+
+    public void setTotalfichasProyectadasInstitucional(long totalfichasProyectadasInstitucional) { this.totalfichasProyectadasInstitucional = totalfichasProyectadasInstitucional; }
+
+    public void setTotalInscritosProyectadasInstitucional(long totalInscritosProyectadasInstitucional) { this.totalInscritosProyectadasInstitucional = totalInscritosProyectadasInstitucional; }
+
+    public void setTotalFichasRegistradasSemanalInstitucional(long totalFichasRegistradasSemanalInstitucional) { this.totalFichasRegistradasSemanalInstitucional = totalFichasRegistradasSemanalInstitucional; }
+
+    public void setTotalFichasRegistradasSabatinoInstitucional(long totalFichasRegistradasSabatinoInstitucional) { this.totalFichasRegistradasSabatinoInstitucional = totalFichasRegistradasSabatinoInstitucional; }
+
+    public void setTotalFichasRegistradasInstitucional(long totalFichasRegistradasInstitucional) { this.totalFichasRegistradasInstitucional = totalFichasRegistradasInstitucional; }
+
+    public void setTotalFichasValidadasSemanalInstitucional(long totalFichasValidadasSemanalInstitucional) { this.totalFichasValidadasSemanalInstitucional = totalFichasValidadasSemanalInstitucional; }
+
+    public void setTotalFichasValidadasSabatinoInstitucional(long totalFichasValidadasSabatinoInstitucional) { this.totalFichasValidadasSabatinoInstitucional = totalFichasValidadasSabatinoInstitucional; }
+
+    public void setTotalFichasValidadasInstitucional(long totalFichasValidadasInstitucional) { this.totalFichasValidadasInstitucional = totalFichasValidadasInstitucional; }
+
+    public void setTotalInscripcionSemanalInstitucional(long totalInscripcionSemanalInstitucional) { this.totalInscripcionSemanalInstitucional = totalInscripcionSemanalInstitucional; }
+
+    public void setTotalInscripcionSabatinoInstitucioanal(long totalInscripcionSabatinoInstitucioanal) { this.totalInscripcionSabatinoInstitucioanal = totalInscripcionSabatinoInstitucioanal; }
+
+    public void setTotalInscripcionInstitucional(long totalInscripcionInstitucional) { this.totalInscripcionInstitucional = totalInscripcionInstitucional; }
+
+    public void setPorcentajeFichasValidadasInstitucional(Double porcentajeFichasValidadasInstitucional) { this.porcentajeFichasValidadasInstitucional = porcentajeFichasValidadasInstitucional; }
+
+    public void setPorcentajeInscritosInstitucional(Double porcentajeInscritosInstitucional) { this.porcentajeInscritosInstitucional = porcentajeInscritosInstitucional; }
 }

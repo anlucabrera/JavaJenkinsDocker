@@ -95,6 +95,13 @@ public class Caster {
                 .append(periodo.getMesInicio().getMes().equals("Septiembre") ? sdf.format(periodo.getCiclo().getInicio()) : sdf.format(periodo.getCiclo().getFin()))
                 .toString();
     }
+    public String anioFecha(Date fecha){
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(fecha);
+        return (new StringBuilder())
+                .append(cal.get(Calendar.YEAR))
+                .toString();
+    }
 
     public String clavePeriodoToString(Integer periodo){
         if(periodo == null) return "Clave de periodo nulo";

@@ -50,13 +50,14 @@ public class FacadeService<T> implements Facade {
     
     @Override
     public EntityManager getEntityManager() {
-        try {
+        //try {
             Cache c = em.getEntityManagerFactory().getCache();
             c.evictAll();
             return em;
-        }catch (Exception e){
+       /* }catch (Exception e){
             return null;
         }
+        */
     }
 
     @Override

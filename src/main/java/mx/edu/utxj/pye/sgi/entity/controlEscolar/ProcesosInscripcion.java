@@ -34,14 +34,14 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "procesos_inscripcion", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "ProcesosInscripcion.findAll", query = "SELECT p FROM ProcesosInscripcion p")
-    , @NamedQuery(name = "ProcesosInscripcion.findByIdProcesosInscripcion", query = "SELECT p FROM ProcesosInscripcion p WHERE p.idProcesosInscripcion = :idProcesosInscripcion")
-    , @NamedQuery(name = "ProcesosInscripcion.findByFechaInicio", query = "SELECT p FROM ProcesosInscripcion p WHERE p.fechaInicio = :fechaInicio")
-    , @NamedQuery(name = "ProcesosInscripcion.findByFechaFin", query = "SELECT p FROM ProcesosInscripcion p WHERE p.fechaFin = :fechaFin")
-    , @NamedQuery(name = "ProcesosInscripcion.findByActivoNi", query = "SELECT p FROM ProcesosInscripcion p WHERE p.activoNi = :activoNi")
-    , @NamedQuery(name = "ProcesosInscripcion.findByActivoIng", query = "SELECT p FROM ProcesosInscripcion p WHERE p.activoIng = :activoIng")
-    , @NamedQuery(name = "ProcesosInscripcion.findByActivoRe", query = "SELECT p FROM ProcesosInscripcion p WHERE p.activoRe = :activoRe")
-    , @NamedQuery(name = "ProcesosInscripcion.findByIdPeriodo", query = "SELECT p FROM ProcesosInscripcion p WHERE p.idPeriodo = :idPeriodo")})
+        @NamedQuery(name = "ProcesosInscripcion.findAll", query = "SELECT p FROM ProcesosInscripcion p")
+        , @NamedQuery(name = "ProcesosInscripcion.findByIdProcesosInscripcion", query = "SELECT p FROM ProcesosInscripcion p WHERE p.idProcesosInscripcion = :idProcesosInscripcion")
+        , @NamedQuery(name = "ProcesosInscripcion.findByFechaInicio", query = "SELECT p FROM ProcesosInscripcion p WHERE p.fechaInicio = :fechaInicio")
+        , @NamedQuery(name = "ProcesosInscripcion.findByFechaFin", query = "SELECT p FROM ProcesosInscripcion p WHERE p.fechaFin = :fechaFin")
+        , @NamedQuery(name = "ProcesosInscripcion.findByActivoNi", query = "SELECT p FROM ProcesosInscripcion p WHERE p.activoNi = :activoNi")
+        , @NamedQuery(name = "ProcesosInscripcion.findByActivoIng", query = "SELECT p FROM ProcesosInscripcion p WHERE p.activoIng = :activoIng")
+        , @NamedQuery(name = "ProcesosInscripcion.findByActivoRe", query = "SELECT p FROM ProcesosInscripcion p WHERE p.activoRe = :activoRe")
+        , @NamedQuery(name = "ProcesosInscripcion.findByIdPeriodo", query = "SELECT p FROM ProcesosInscripcion p WHERE p.idPeriodo = :idPeriodo")})
 public class ProcesosInscripcion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -72,6 +72,8 @@ public class ProcesosInscripcion implements Serializable {
     private int idPeriodo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProcesoInscripcion", fetch = FetchType.LAZY)
     private List<Aspirante> aspiranteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "procesosInscripcion")
+    private List<ProyeccionAreas> proyeccionAreasList;
 
     public ProcesosInscripcion() {
     }
@@ -177,4 +179,8 @@ public class ProcesosInscripcion implements Serializable {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion[ idProcesosInscripcion=" + idProcesosInscripcion + " ]";
     }
 
+    public void setProyeccionAreasList(List<ProyeccionAreas> proyeccionAreasList) {
+        this.proyeccionAreasList = proyeccionAreasList;
     }
+
+}
