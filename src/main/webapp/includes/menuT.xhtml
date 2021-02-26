@@ -134,7 +134,7 @@
                     <c:if test="#{seguimientoEstadiaVinculacion.mostrarEnDesarrollo(request) and seguimientoEstadiaVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/vinculacion/seguimientoEstadiaVinculacion.xhtml"><i class="fa fa-folder"></i><span>Seguimiento de estadía</span></p:link></li></c:if>
                     <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
                     <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
-                    
+
                     <!-- Estadía - Director de carrera -->
                     <c:if test="#{asignacionRolesEstadiaDirector.mostrarEnDesarrollo(request) and asignacionRolesEstadiaDirector.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Estadía</li>
@@ -143,7 +143,7 @@
                     <c:if test="#{seguimientoEstadiaDirector.mostrarEnDesarrollo(request) and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/seguimientoEstadiaDirector.xhtml"><i class="fa fa-folder"></i><span>Seguimiento de estadía</span></p:link></li></c:if>
                     <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
                     <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
-                    
+
                     <!-- Docente -->
                     <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Docente</li>
@@ -185,7 +185,7 @@
                     <c:if test="#{registroTutoriaIndividual.mostrarEnDesarrollo(request) and registroTutoriaIndividual.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_individual.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Individuales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{consultaPlanesAccionTutoralCoordinadorTutores.mostrarEnDesarrollo(request) and consultaPlanesAccionTutoralCoordinadorTutores.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/consulta_plan_accion_tutorial_tutores.xhtml"><i class="fa fa-slideshare"></i><span>Planes de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
-                     <!-- Asesor de estadía -->
+                    <!-- Asesor de estadía -->
                     <c:if test="#{seguimientoEstadiaAsesor.mostrarEnDesarrollo(request) and seguimientoEstadiaAsesor.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Asesor estadía</li>
                     </c:if>
@@ -193,15 +193,15 @@
                     <c:if test="#{seguimientoEstadiaAsesor.mostrarEnDesarrollo(request) and seguimientoEstadiaAsesor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/asesorEstadia/seguimientoEstadiaAsesor.xhtml"><i class="fa fa-folder"></i><span>Seguimiento estudiantes</span></p:link></li></c:if>
                     <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaAsesor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
                     <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaAsesor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
-                    
-                     <!-- Coordinador de estadía por área académica-->
+
+                    <!-- Coordinador de estadía por área académica-->
                     <c:if test="#{seguimientoEstadiaCoordinador.mostrarEnDesarrollo(request) and seguimientoEstadiaCoordinador.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Coordinador estadía</li>
                     </c:if>
                     <c:if test="#{seguimientoEstadiaCoordinador.mostrarEnDesarrollo(request) and seguimientoEstadiaCoordinador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/coordinadorEstadia/seguimientoEstadiaCoordinador.xhtml"><i class="fa fa-folder"></i><span>Seguimiento estudiantes</span></p:link></li></c:if>
                     <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaCoordinador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
                     <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaCoordinador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
-                    
+
                     <!-- Consulta multiples -->
                     <c:if test="#{consultaCalificaciones.mostrarEnDesarrollo(request) and consultaCalificaciones.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/consultarCalificaciones.xhtml"><i class="fa fa-list-ol"></i><span>Consultar calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{resultadosPlaneacionesConsulta.mostrarEnDesarrollo(request) and resultadosPlaneacionesConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesMu/resultadosPlaneaciones.xhtml"><i class="fa fa-list-ol"></i><span>Resultado de Planeaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
@@ -881,21 +881,23 @@
                         </span> 
                     </a>
                     <ul class="treeview-menu" style="display: none;">
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/4_1_Comprension_UTXJ_contexto_AMBIENTAL.pdf#toolbar=0" target="_blank"><span>4.1 Compresión de la UTXJ y <br/>su contexto</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/4_2_Comprension_nec_expec_Partes_Interesadas_AMBIENTAL.pdf#toolbar=0" target="_blank"><span>4.2 Compresión de las necesidades <br/>y expectativas de las <br/>Partes Interesadas</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/4.1_Comprension_de_la_UTXJ_y_su_contexto.pdf#toolbar=0" target="_blank"><span>4.1 Compresión de la UTXJ y <br/>su contexto<small class="label pull-right bg-blue">Actualización</small></span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/4.2_Compresion_de_las_necesidades_y_expectativas_de__las_Partes_Interesadas.pdf#toolbar=0" target="_blank"><span>4.2 Compresión de las necesidades <br/>y expectativas de las <br/>Partes Interesadas<small class="label pull-right bg-blue">Actualización</small></span></p:link></li>
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-file-text-o"></i> 
                                 <span>Matriz de Aspectos <br/>Ambientales</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
+                                    <small class="label pull-right bg-blue">Actualización</small>
                                 </span> 
                             </a>
                             <ul class="treeview-menu" style="display: none;">      
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/MATRIZ_ASPECTOS_AMBIENTALES_ENSENANZA_APRENDIZAJE.pdf#toolbar=0" target="_blank"><span>Enseñanza - Aprendizaje</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/MATRIZ_ASPECTOS_AMBIENTALES_ADMINISTRATIVOS.pdf#toolbar=0" target="_blank"><span>Administrativo</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/MATRIZ_ASPECTOS_AMBIENTALES_SERVICIOS_GENERALES.pdf#toolbar=0" target="_blank"><span>Servicios Materiales</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/MATRIZ_ASPECTOS_AMBIENTALES_MODIFICACIONES.pdf#toolbar=0" target="_blank"><span>Modificaciones</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/Ensenanza_Aprendizaje.pdf#toolbar=0" target="_blank"><span>Enseñanza - Aprendizaje</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/Administrativo.pdf#toolbar=0" target="_blank"><span>Administrativo</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/Servicios_Generales.pdf#toolbar=0" target="_blank"><span>Servicios Materiales</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/Modificaciones.pdf#toolbar=0" target="_blank"><span>Modificaciones</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/Clinica_TFAR.pdf#toolbar=0" target="_blank"><span>Clinica TFAR</span></p:link></li>
                             </ul>
                         </li>
                         <li class="treeview">
@@ -904,15 +906,16 @@
                                 <span>Obligaciones Legales</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
+                                    <small class="label pull-right bg-blue">Actualización</small>
                                 </span> 
                             </a>
                             <ul class="treeview-menu" style="display: none;">    
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Obligaciones_Legales/OBLIGACIONES_LEGALES_FEDERAL.pdf#toolbar=0" target="_blank"><span>Federal</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Obligaciones_Legales/OBLIGACIONES_LEGALES_ESTATAL.pdf#toolbar=0" target="_blank"><span>Estatal</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Obligaciones_Legales/OBLIGACIONES_LEGALES_MUNICIPAL.pdf#toolbar=0" target="_blank"><span>Municipal</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Obligaciones_Legales/Federal.pdf#toolbar=0" target="_blank"><span>Federal</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Obligaciones_Legales/Estatal.pdf#toolbar=0" target="_blank"><span>Estatal</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Obligaciones_Legales/Municipal.pdf#toolbar=0" target="_blank"><span>Municipal</span></p:link></li>
                             </ul>
                         </li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/abordar_riesgos_ambiental.pdf#toolbar=0" target="_blank"><span>6.1 Acciones para bordar <br/>riesgos y oportunidades</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/6.1_Acciones_para_afrontar_Riesgos__y_Oportunidades_GENERAL.pdf#toolbar=0" target="_blank"><span>6.1 Acciones para bordar <br/>riesgos y oportunidades<small class="label pull-right bg-blue">Actualización</small></span></p:link></li>
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-file-text-o"></i> 
@@ -942,9 +945,9 @@
                         </span> 
                     </a>
                     <ul class="treeview-menu" style="display: none;">
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/9001/4_1_Comprension_UTXJ_y_su_contexto_GENERAL.pdf#toolbar=0" target="_blank"><span>4.1 Cmpresión de la UTXJ y<br/> su contexto</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/9001/4_2_Comprension_nec_expec_Partes_Interesadas_GENERAL.pdf#toolbar=0" target="_blank"><span>4.2 Compresión de las <br/>necesidades y expectativas de <br/>las Partes Interesadas</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/9001/abordar_riesgos_calidad.pdf#toolbar=0" target="_blank"><span>6.1 Acciones para bordar <br/>riesgos y oportunidades</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/9001/4.1_Compresion_de_la_UTXJ_y_su_contexto.pdf#toolbar=0" target="_blank"><span>4.1 Cmpresión de la UTXJ y<br/> su contexto<small class="label pull-right bg-blue">Actualización</small></span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/9001/4.2_Comprension_de_las_necesidades_y_expectativas_de_las_Partes_Interesadas.pdf#toolbar=0" target="_blank"><span>4.2 Compresión de las <br/>necesidades y expectativas de <br/>las Partes Interesadas<small class="label pull-right bg-blue">Actualización</small></span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/9001/6.1_Acciones_para_abordar_riesgos_y_oportunidades.pdf#toolbar=0" target="_blank"><span>6.1 Acciones para bordar <br/>riesgos y oportunidades<small class="label pull-right bg-blue">Actualización</small></span></p:link></li>
                         <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/9001/7_1_6_Capital_del_Conocimiento.pdf#toolbar=0" target="_blank"><span>7.1.6 Capital del conocimiento</span></p:link></li>
                         <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/9001/7_4_Cedula_Comunicacion_Institucional.pdf#toolbar=0" target="_blank"><span>7.4 Cedula de Comunicación</span></p:link></li>
                     </ul>
