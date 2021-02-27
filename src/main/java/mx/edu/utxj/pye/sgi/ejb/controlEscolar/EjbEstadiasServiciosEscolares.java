@@ -7,8 +7,11 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.util.ArrayList;
+import static java.util.Collections.list;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -308,11 +311,18 @@ public class EjbEstadiasServiciosEscolares {
 
             EntregaFotografiasEstudiante entregaFotografiasBD = em.find(EntregaFotografiasEstudiante.class, entregaFotografiasEstudiante.getEntrega());
             if(entregaFotografiasBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar entrega de fotografías no registrado previamente en base de datos.", DtoEntregaFotografiasEstadia.class);
+          
+            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.idEstudiante DESC", Estudiante.class)
+                    .setParameter("matricula", entregaFotografiasBD.getMatricula().getMatricula())
+                    .setParameter("generacion", entregaFotografiasBD.getEvento().getGeneracion())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
             
             AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, entregaFotografiasBD.getMatricula().getCarrera());
             Personal personal = em.find(Personal.class, entregaFotografiasBD.getPersonalRecibio());
             
-            DtoEntregaFotografiasEstadia dtoEntregaFotografiasEstadia = new DtoEntregaFotografiasEstadia(entregaFotografiasBD, programaEducativo, personal);
+            DtoEntregaFotografiasEstadia dtoEntregaFotografiasEstadia = new DtoEntregaFotografiasEstadia(entregaFotografiasBD, estudiante, programaEducativo, personal);
             
             return ResultadoEJB.crearCorrecto(dtoEntregaFotografiasEstadia, "entrega de fotografías empaquetado.");
         }catch (Exception e){
@@ -375,8 +385,9 @@ public class EjbEstadiasServiciosEscolares {
         try{
             EventoEstadia eventoEntrega = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivel, "Entrega de fotografías").getValor();
             
-            EntregaFotografiasEstudiante entregaFotografiasEstudiante = em.createNamedQuery("SELECT e FROM EntregaFotografiasEstudiante e WHERE e.entrega = :entrega", EntregaFotografiasEstudiante.class)
-                    .setParameter("entrega", eventoEntrega.getEvento())
+            EntregaFotografiasEstudiante entregaFotografiasEstudiante = em.createQuery("SELECT e FROM EntregaFotografiasEstudiante e WHERE e.evento.evento = :evento AND e.matricula.matricula=:matricula", EntregaFotografiasEstudiante.class)
+                    .setParameter("evento", eventoEntrega.getEvento())
+                    .setParameter("matricula", estudiante.getEstudiante().getMatricula())
                     .getResultStream().findFirst().orElse(null);
                 
             return ResultadoEJB.crearCorrecto(entregaFotografiasEstudiante, "Resultado de búsqueda de entrega de fotografías.");
@@ -393,6 +404,9 @@ public class EjbEstadiasServiciosEscolares {
      */
     public ResultadoEJB<List<DtoPorcentajeEntregaFotografias>> getListaPorcentajeEntregaFotografias(Generaciones generacion, ProgramasEducativosNiveles nivel, List<DtoEntregaFotografiasEstadia> listaEntregaFotografias){
         try{
+            List<Integer> listaPeriodos = listaEntregaFotografias.stream().map(p->p.getEstudiante().getPeriodo()).collect(Collectors.toList());
+            
+            Optional<Integer> maxNumber = listaPeriodos.stream().max((i, j) -> i.compareTo(j));
             
             List<AreasUniversidad> listaProgramasEducativos = listaEntregaFotografias.stream().map(p-> p.getProgramaEducativo()).collect(Collectors.toList());
             
@@ -402,7 +416,7 @@ public class EjbEstadiasServiciosEscolares {
                 
                 List<Estudiante> listaEstudiantes = em.createQuery("SELECT e FROM Estudiante e WHERE e.grupo.idPe=:carrera AND e.grupo.periodo=:periodo AND e.grupo.generacion=:generacion", Estudiante.class)
                     .setParameter("carrera", programa.getArea())
-                    .setParameter("periodo", ejbAsignacionRolesEstadia.getPeriodoActual().getPeriodo()) 
+                    .setParameter("periodo", maxNumber.get()) 
                     .setParameter("generacion", generacion.getGeneracion()) 
                     .getResultStream()
                     .collect(Collectors.toList());
