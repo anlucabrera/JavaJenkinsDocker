@@ -148,6 +148,18 @@ public class EjbReincorporacion {
         }
     }
     
+    public ResultadoEJB<List<Estudiante>> getEstudiantesReincorporaciones() {
+        try {
+            List<Estudiante> estudiantes = em.createQuery("select t from Estudiante t WHERE t.tipoEstudiante.idTipoEstudiante=:idTipoEstudiante GROUP BY t.matricula", Estudiante.class)
+                        .setParameter("idTipoEstudiante", Short.parseShort("5"))
+                        .getResultList();
+            
+            return ResultadoEJB.crearCorrecto(estudiantes, "estudiantes Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los estudiantes(EjbReincorporacion.getEstudiantes).", e, null);
+        }
+    }
+    
     public ResultadoEJB<List<TipoSangre>> getTiposSangre() {
         try {
             List<TipoSangre> sangres = em.createQuery("select t from TipoSangre t", TipoSangre.class).getResultList();
@@ -462,6 +474,26 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar AspiranteR (EjbReincorporacion.getAspiranteR).", e, null);
         }
     }
+    
+    public ResultadoEJB<DtoReincorporacion.AspiranteR> getAspiranteRCalificaciones(Integer estudiante) {
+        try {
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getAspiranteRCalificaciones()"+estudiante);
+            List<Aspirante> aspirantes = em.createQuery("select a from Estudiante e INNER JOIN e.aspirante a WHERE e.idEstudiante=:idEstudiante", Aspirante.class).setParameter("idEstudiante", estudiante).getResultList();
+            DtoReincorporacion.AspiranteR rr = new DtoReincorporacion.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE);
+            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getAspiranteRCalificaciones()"+aspirantes.size());
+            if (!aspirantes.isEmpty()) {
+                Aspirante aspirante = aspirantes.get(0);
+                rr.setAspirante(aspirante);
+                rr.setTipo(aspirante.getTipoAspirante());
+                rr.setProcesosInscripcion(aspirante.getIdProcesoInscripcion());
+                rr.setOperacion(Operacion.ACTUALIZAR);
+                rr.setEcontrado(Boolean.TRUE);
+            }
+            return ResultadoEJB.crearCorrecto(rr, "AspiranteR Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar AspiranteR (EjbReincorporacion.getAspiranteR).", e, null);
+        }
+    }
 
     public ResultadoEJB<DtoReincorporacion.MedicosR> getMedicosR(Persona p) {
         try {
@@ -642,6 +674,7 @@ public class EjbReincorporacion {
             List<DtoReincorporacion.AlineacionCalificaciones> rr = new ArrayList<>();
             if (!das.isEmpty()) {
                 das.forEach((t) -> {
+                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getAlineacionCalificaciones()"+t.getGrupo().getGrado());
                     if (!t.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("2")) && !t.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("3"))) {
                         List<DtoReincorporacion.CalificacionesR> crs = new ArrayList<>();
                         List<CargaAcademica> cas = new ArrayList<>();
