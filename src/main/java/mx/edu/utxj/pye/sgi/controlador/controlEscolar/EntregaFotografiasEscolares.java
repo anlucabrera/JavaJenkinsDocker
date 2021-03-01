@@ -94,16 +94,15 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
            
             rol.setNivelRol(NivelRol.OPERATIVO);
-            rol.setDesactivarRegistro(Boolean.TRUE);
+            rol.setDesactivarRegistro(Boolean.FALSE);
 //            rol.setSoloLectura(true);
             
-            rol.getInstrucciones().add("Seleccione periodo escolar para consultar bajas registradas durante ese periodo.");
-            rol.getInstrucciones().add("Seleccione programa educativo.");
-            rol.getInstrucciones().add("En la columna OPCIONES, usted puede: Validar o Invalidar baja, Consultar materias reprobadas, Generar formato de baja y Eliminar el registro.");
-            rol.getInstrucciones().add("Dar clic en el botón de Validar/Invalidar baja, para que se cambie la situación académica en sistema.");
-            rol.getInstrucciones().add("El botón de Consultar materias reprobadas se habilita únicamente en el caso de que la baja haya sido por reprobación.");
-            rol.getInstrucciones().add("Para generar el formato de baja de clic en el botón Generar formato.");
-            rol.getInstrucciones().add("Dar clic en el botón Eliminar baja, para eliminar el registro en caso de que se haya equivocado al realizar el trámite.");
+            rol.getInstrucciones().add("Seleccione generación.");
+            rol.getInstrucciones().add("Seleccione nivel educativo.");
+            rol.getInstrucciones().add("Ingrese la matricula o el nombre del estudiante para realizar la búsqueda.");
+            rol.getInstrucciones().add("Seleccionar de la lista el registro del estudiante que corresponda.");
+            rol.getInstrucciones().add("De clic en el botón para registrar entrega de fotografías.");
+            rol.getInstrucciones().add("Si se equivocó puede eliminar el registro en la tabla que se muestra en la parte inferior.");
            
             generacionesEventosRegistrados();
             
@@ -230,6 +229,7 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
         if(e.getNewValue() instanceof  ProgramasEducativosNiveles){
             ProgramasEducativosNiveles nivel = (ProgramasEducativosNiveles)e.getNewValue();
             rol.setNivelEducativo(nivel);
+            listaPorcentajeEntregaFotografias();
             listaEstudiantesEntregaronFotografias();
             Ajax.update("frm");
         }else mostrarMensaje("");
@@ -242,7 +242,8 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
         ResultadoEJB<EntregaFotografiasEstudiante> resAsignar = ejb.registrarEntregaFotografias(rol.getGeneracion(), rol.getNivelEducativo(), rol.getUsuario().getPersonal(), rol.getEstudianteRegistrado());
         mostrarMensajeResultadoEJB(resAsignar);
         listaEstudiantesEntregaronFotografias();
-        Ajax.update("frm");
+        listaPorcentajeEntregaFotografias();
+        rol.setEstudianteSeleccionado(null);
     }
     
      /**
@@ -250,10 +251,10 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
      * @param dtoEntregaFotografiasEstadia
      */
     public void eliminarEntrega(DtoEntregaFotografiasEstadia dtoEntregaFotografiasEstadia){
-        ResultadoEJB<Integer> resEliminar = ejb.eliminarEntregaFotografias(rol.getEstudianteFotografias().getEntregaFotografiasEstudiante());
+        ResultadoEJB<Integer> resEliminar = ejb.eliminarEntregaFotografias(dtoEntregaFotografiasEstadia.getEntregaFotografiasEstudiante());
         mostrarMensajeResultadoEJB(resEliminar);
         listaEstudiantesEntregaronFotografias();
-        Ajax.update("frm");
+        listaPorcentajeEntregaFotografias();
     }
     
      /**
@@ -262,9 +263,9 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
     public void existeRegistro(){
         ResultadoEJB<EntregaFotografiasEstudiante> res = ejb.buscarRegistroEntregaFotografias(rol.getGeneracion(), rol.getNivelEducativo(), rol.getEstudianteRegistrado());
         if(res.getValor() != null){
-            rol.setDesactivarRegistro(Boolean.FALSE);
-        }else{
             rol.setDesactivarRegistro(Boolean.TRUE);
+        }else{
+            rol.setDesactivarRegistro(Boolean.FALSE);
         }
     }
     

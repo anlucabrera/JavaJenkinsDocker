@@ -110,8 +110,8 @@
                                             <div class="ui-material">
                                                 <c:if test="#{entregaFotografiasEscolares.rol.estudianteSeleccionado ne null}">
                                                     <p:commandButton actionListener="#{entregaFotografiasEscolares.registrarEntrega()}" disabled="#{entregaFotografiasEscolares.rol.desactivarRegistro}"
-                                                        class="btn btn-sm #{estudiante ne null?'btn-danger':'btn-info'}" icon="#{estudiante ne null?'fa fa-minus':'fa fa-plus'}"
-                                                        title="#{estudiante ne null?'Registrar entrega de fotografías.':'Debe seleccionar un estudiante.'}"/>
+                                                        class="btn btn-sm #{entregaFotografiasEscolares.rol.desactivarRegistro?'btn-danger':'btn-info'}" icon="#{entregaFotografiasEscolares.rol.desactivarRegistro?'fa fa-ban':'fa fa-check'}"
+                                                        title="#{entregaFotografiasEscolares.rol.desactivarRegistro?'Ya se registró entrega de fotografías del estudiante seleccionado.':'Registrar entrega de fotografías.'}"/>
                                                 </c:if>
                                             </div>
                                         </div>
@@ -121,6 +121,7 @@
                                     <div class="row">
                                             <center>
                                                 <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                    <p:remoteCommand name="actualizar1" update="@form:tbListaPorcentajeEntregaFotografias" />
                                                     <p:dataTable id="tbListaPorcentajeEntregaFotografias" var="porcentEntrega" value="#{entregaFotografiasEscolares.rol.porcentajesEntrega}"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                              tableStyle="vertical-align: middle;" emptyMessage="Sin información">
@@ -161,7 +162,7 @@
                                                 </div>
                                                 <h:outputText value="&#160;" />
                                                 <h:outputText value="&#160;" />
-                                                <p:remoteCommand name="actualizar" update="@form:tbListaEntregaFotografias" />
+                                                <p:remoteCommand name="actualizar2" update="@form:tbListaEntregaFotografias" />
                                                 <p:dataTable id="tbListaEntregaFotografias" var="entregaFotografia" value="#{entregaFotografiasEscolares.rol.estudiantesFotografias}"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se han registrado entrega de fotografías"
                                                              tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50,60" resizeMode="expand"
@@ -170,15 +171,15 @@
                                                         <p:row class="success">
                                                             <p:column headerText="Eliminar" style="width: 200px;"/>
                                                             <p:column headerText="Programa educativo" style="width: 250px;" sortBy="#{entregaFotografia.programaEducativo.nombre}" filterBy="#{entregaFotografia.programaEducativo.nombre}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Grupo" style="width: 150px;" sortBy="#{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.grado}° '#{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.literal}' #{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.idSistema.nombre}" filterBy="#{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.grado}° '#{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.literal}' #{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.idSistema.nombre}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Matricula" style="width: 100px;" sortBy="#{entregaFotografia.entregaFotografiasEstudiante.matricula.matricula}" filterBy="#{entregaFotografia.entregaFotografiasEstudiante.matricula.matricula}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Nombre del estudiante" style="width: 300px;" sortBy="#{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.apellidoPaterno} #{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.apellidoMaterno} #{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.nombre}" filterBy="#{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.apellidoPaterno} #{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.apellidoMaterno} #{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Grupo" style="width: 150px;" sortBy="#{entregaFotografia.estudiante.grupo.grado}° '#{entregaFotografia.estudiante.grupo.literal}' #{entregaFotografia.estudiante.grupo.idSistema.nombre}" filterBy="#{entregaFotografia.estudiante.grupo.grado}° '#{entregaFotografia.estudiante.grupo.literal}' #{entregaFotografia.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Matricula" style="width: 100px;" sortBy="#{entregaFotografia.estudiante.matricula}" filterBy="#{entregaFotografia.estudiante.matricula}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Nombre del estudiante" style="width: 300px;" sortBy="#{entregaFotografia.estudiante.aspirante.idPersona.apellidoPaterno} #{entregaFotografia.estudiante.aspirante.idPersona.apellidoMaterno} #{entregaFotografia.estudiante.aspirante.idPersona.nombre}" filterBy="#{entregaFotografia.estudiante.aspirante.idPersona.apellidoPaterno} #{entregaFotografia.estudiante.aspirante.idPersona.apellidoMaterno} #{entregaFotografia.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Fecha de entrega" style="width: 150px;" sortBy="#{entregaFotografia.entregaFotografiasEstudiante.fechaEntrega}" filterBy="#{entregaFotografia.entregaFotografiasEstudiante.fechaEntrega}" filterMatchMode="contains"/>
                                                             <p:column headerText="Personal recibió" style="width: 250px;" sortBy="#{entregaFotografia.personalRecibio.nombre}" filterBy="#{entregaFotografia.personalRecibio.nombre}" filterMatchMode="contains"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column style="text-align: center;">
-                                                        <p:commandButton class="btn btn-danger btn-sm" icon="fa fa-trash" actionListener="#{entregaFotografiasEscolares.eliminarEntrega(entregaFotografia)}" onsuccess="actualizar();" title="Eliminar registro.">
+                                                        <p:commandButton class="btn btn-danger btn-sm" icon="fa fa-trash" actionListener="#{entregaFotografiasEscolares.eliminarEntrega(entregaFotografia)}" onsuccess="actualizar1(); actualizar2();" title="Eliminar registro.">
                                                                     <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la asignación?" icon="ui-icon-alert" />
                                                         </p:commandButton>
                                                     </p:column>
@@ -186,13 +187,13 @@
                                                         <h:outputText value="#{entregaFotografia.programaEducativo.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.grado}° '#{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.literal}' #{entregaFotografia.entregaFotografiasEstudiante.matricula.grupo.idSistema.nombre}"/>
+                                                        <h:outputText value="#{entregaFotografia.estudiante.grupo.grado}° '#{entregaFotografia.estudiante.grupo.literal}' #{entregaFotografia.estudiante.grupo.idSistema.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{entregaFotografia.entregaFotografiasEstudiante.matricula.matricula}"/>
+                                                        <h:outputText value="#{entregaFotografia.estudiante.matricula}"/>
                                                     </p:column>
                                                     <p:column style="text-align: justify;">
-                                                        <h:outputText value="#{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.apellidoPaterno} #{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.apellidoMaterno} #{entregaFotografia.entregaFotografiasEstudiante.matricula.aspirante.idPersona.nombre}"/>
+                                                        <h:outputText value="#{entregaFotografia.estudiante.aspirante.idPersona.apellidoPaterno} #{entregaFotografia.estudiante.aspirante.idPersona.apellidoMaterno} #{entregaFotografia.estudiante.aspirante.idPersona.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{entregaFotografia.entregaFotografiasEstudiante.fechaEntrega}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>

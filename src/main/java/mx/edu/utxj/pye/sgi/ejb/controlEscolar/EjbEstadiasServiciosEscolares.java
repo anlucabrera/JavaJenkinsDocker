@@ -7,8 +7,11 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.util.ArrayList;
+import static java.util.Collections.list;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -94,13 +97,63 @@ public class EjbEstadiasServiciosEscolares {
     }
     
     /**
+     * Permite obtener la última generación registrada en eventos estadía
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Generaciones> getUltimaGeneracionRegistrada(){
+        try{
+            List<Short> listaClaves = em.createQuery("SELECT e FROM EventoEstadia e ORDER BY e.generacion DESC", EventoEstadia.class)
+                    .getResultStream()
+                    .map(p->p.getGeneracion())
+                    .distinct()
+                    .collect(Collectors.toList());
+            
+            List<Generaciones> listaGeneraciones = new ArrayList<>();
+            listaClaves.forEach(gen -> {
+                Generaciones generacion = em.find(Generaciones.class, gen);
+                listaGeneraciones.add(generacion);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaGeneraciones.get(0), "Última generación registrada en eventos estadía.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la última generación registrada en eventos estadía. (EjbEstadiasServiciosEscolares.getUltimaGeneracionRegistrada)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener el último nivel educativo registrado en eventos estadía
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<ProgramasEducativosNiveles> getUltimoNivelEducativoRegistrado(){
+        try{
+            List<String> listaClaves = em.createQuery("SELECT e FROM EventoEstadia e ORDER BY e.nivel DESC", EventoEstadia.class)
+                    .getResultStream()
+                    .map(p->p.getNivel())
+                    .distinct()
+                    .collect(Collectors.toList());
+            
+            List<ProgramasEducativosNiveles> listaNiveles = new ArrayList<>();
+            listaClaves.forEach(niv -> {
+                ProgramasEducativosNiveles nivel = em.find(ProgramasEducativosNiveles.class, niv);
+                listaNiveles.add(nivel);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaNiveles.get(0), "Útimo nivel educativo registrado en eventos estadía.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el último nivel educativo registrado en eventos estadía. (EjbEstadiasServiciosEscolares.getUltimoNivelEducativoRegistrado)", e, null);
+        }
+    }
+    
+    /**
      * Permite obtener la lista de niveles educativos registrados
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<ProgramasEducativosNiveles>> getNivelesEducativos(){
         try{
-            List<ProgramasEducativosNiveles> nivelesEducativos = em.createQuery("SELECT p FROM ProgramasEducativosNiveles p ORDER BY p.nombre ASC", ProgramasEducativosNiveles.class)
-                     .getResultList();
+            
+            List<ProgramasEducativosNiveles> nivelesEducativos = em.createQuery("SELECT p FROM ProgramasEducativosNiveles p WHERE p.nivel<>:valor ORDER BY p.nombre ASC", ProgramasEducativosNiveles.class)
+                    .setParameter("valor", "5B3")
+                    .getResultList();
             
             return ResultadoEJB.crearCorrecto(nivelesEducativos, "Lista de niveles educativos para eventos de estadía.");
         }catch (Exception e){
@@ -308,11 +361,18 @@ public class EjbEstadiasServiciosEscolares {
 
             EntregaFotografiasEstudiante entregaFotografiasBD = em.find(EntregaFotografiasEstudiante.class, entregaFotografiasEstudiante.getEntrega());
             if(entregaFotografiasBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar entrega de fotografías no registrado previamente en base de datos.", DtoEntregaFotografiasEstadia.class);
+          
+            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.idEstudiante DESC", Estudiante.class)
+                    .setParameter("matricula", entregaFotografiasBD.getMatricula().getMatricula())
+                    .setParameter("generacion", entregaFotografiasBD.getEvento().getGeneracion())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
             
             AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, entregaFotografiasBD.getMatricula().getCarrera());
             Personal personal = em.find(Personal.class, entregaFotografiasBD.getPersonalRecibio());
             
-            DtoEntregaFotografiasEstadia dtoEntregaFotografiasEstadia = new DtoEntregaFotografiasEstadia(entregaFotografiasBD, programaEducativo, personal);
+            DtoEntregaFotografiasEstadia dtoEntregaFotografiasEstadia = new DtoEntregaFotografiasEstadia(entregaFotografiasBD, estudiante, programaEducativo, personal);
             
             return ResultadoEJB.crearCorrecto(dtoEntregaFotografiasEstadia, "entrega de fotografías empaquetado.");
         }catch (Exception e){
@@ -375,8 +435,9 @@ public class EjbEstadiasServiciosEscolares {
         try{
             EventoEstadia eventoEntrega = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivel, "Entrega de fotografías").getValor();
             
-            EntregaFotografiasEstudiante entregaFotografiasEstudiante = em.createNamedQuery("SELECT e FROM EntregaFotografiasEstudiante e WHERE e.entrega = :entrega", EntregaFotografiasEstudiante.class)
-                    .setParameter("entrega", eventoEntrega.getEvento())
+            EntregaFotografiasEstudiante entregaFotografiasEstudiante = em.createQuery("SELECT e FROM EntregaFotografiasEstudiante e WHERE e.evento.evento = :evento AND e.matricula.matricula=:matricula", EntregaFotografiasEstudiante.class)
+                    .setParameter("evento", eventoEntrega.getEvento())
+                    .setParameter("matricula", estudiante.getEstudiante().getMatricula())
                     .getResultStream().findFirst().orElse(null);
                 
             return ResultadoEJB.crearCorrecto(entregaFotografiasEstudiante, "Resultado de búsqueda de entrega de fotografías.");
@@ -393,6 +454,9 @@ public class EjbEstadiasServiciosEscolares {
      */
     public ResultadoEJB<List<DtoPorcentajeEntregaFotografias>> getListaPorcentajeEntregaFotografias(Generaciones generacion, ProgramasEducativosNiveles nivel, List<DtoEntregaFotografiasEstadia> listaEntregaFotografias){
         try{
+            List<Integer> listaPeriodos = listaEntregaFotografias.stream().map(p->p.getEstudiante().getPeriodo()).collect(Collectors.toList());
+            
+            Optional<Integer> maxNumber = listaPeriodos.stream().max((i, j) -> i.compareTo(j));
             
             List<AreasUniversidad> listaProgramasEducativos = listaEntregaFotografias.stream().map(p-> p.getProgramaEducativo()).collect(Collectors.toList());
             
@@ -402,7 +466,7 @@ public class EjbEstadiasServiciosEscolares {
                 
                 List<Estudiante> listaEstudiantes = em.createQuery("SELECT e FROM Estudiante e WHERE e.grupo.idPe=:carrera AND e.grupo.periodo=:periodo AND e.grupo.generacion=:generacion", Estudiante.class)
                     .setParameter("carrera", programa.getArea())
-                    .setParameter("periodo", ejbAsignacionRolesEstadia.getPeriodoActual().getPeriodo()) 
+                    .setParameter("periodo", maxNumber.get()) 
                     .setParameter("generacion", generacion.getGeneracion()) 
                     .getResultStream()
                     .collect(Collectors.toList());
