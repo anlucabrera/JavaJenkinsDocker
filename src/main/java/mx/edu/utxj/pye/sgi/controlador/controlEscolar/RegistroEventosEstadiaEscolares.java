@@ -120,7 +120,7 @@ public class RegistroEventosEstadiaEscolares extends ViewScopedRol implements De
         if(res.getCorrecto()){
             if (res.getValor().size() != 0) {
                 rol.setGeneraciones(res.getValor());
-                rol.setGeneracion(rol.getGeneraciones().get(0));
+                rol.setGeneracion(ejb.getUltimaGeneracionRegistrada().getValor());
                 listaNivelesGeneracion();
             }
         }else mostrarMensajeResultadoEJB(res);
@@ -134,7 +134,7 @@ public class RegistroEventosEstadiaEscolares extends ViewScopedRol implements De
         ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejb.getNivelesEducativos();
         if(res.getCorrecto()){
             rol.setNivelesEducativos(res.getValor());
-            rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
+            rol.setNivelEducativo(ejb.getUltimoNivelEducativoRegistrado().getValor());
             existeRegistro();
         }else mostrarMensajeResultadoEJB(res);
     

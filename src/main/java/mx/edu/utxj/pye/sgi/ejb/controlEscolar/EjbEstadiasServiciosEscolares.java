@@ -97,13 +97,63 @@ public class EjbEstadiasServiciosEscolares {
     }
     
     /**
+     * Permite obtener la última generación registrada en eventos estadía
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Generaciones> getUltimaGeneracionRegistrada(){
+        try{
+            List<Short> listaClaves = em.createQuery("SELECT e FROM EventoEstadia e ORDER BY e.generacion DESC", EventoEstadia.class)
+                    .getResultStream()
+                    .map(p->p.getGeneracion())
+                    .distinct()
+                    .collect(Collectors.toList());
+            
+            List<Generaciones> listaGeneraciones = new ArrayList<>();
+            listaClaves.forEach(gen -> {
+                Generaciones generacion = em.find(Generaciones.class, gen);
+                listaGeneraciones.add(generacion);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaGeneraciones.get(0), "Última generación registrada en eventos estadía.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la última generación registrada en eventos estadía. (EjbEstadiasServiciosEscolares.getUltimaGeneracionRegistrada)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener el último nivel educativo registrado en eventos estadía
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<ProgramasEducativosNiveles> getUltimoNivelEducativoRegistrado(){
+        try{
+            List<String> listaClaves = em.createQuery("SELECT e FROM EventoEstadia e ORDER BY e.nivel DESC", EventoEstadia.class)
+                    .getResultStream()
+                    .map(p->p.getNivel())
+                    .distinct()
+                    .collect(Collectors.toList());
+            
+            List<ProgramasEducativosNiveles> listaNiveles = new ArrayList<>();
+            listaClaves.forEach(niv -> {
+                ProgramasEducativosNiveles nivel = em.find(ProgramasEducativosNiveles.class, niv);
+                listaNiveles.add(nivel);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaNiveles.get(0), "Útimo nivel educativo registrado en eventos estadía.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el último nivel educativo registrado en eventos estadía. (EjbEstadiasServiciosEscolares.getUltimoNivelEducativoRegistrado)", e, null);
+        }
+    }
+    
+    /**
      * Permite obtener la lista de niveles educativos registrados
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<ProgramasEducativosNiveles>> getNivelesEducativos(){
         try{
-            List<ProgramasEducativosNiveles> nivelesEducativos = em.createQuery("SELECT p FROM ProgramasEducativosNiveles p ORDER BY p.nombre ASC", ProgramasEducativosNiveles.class)
-                     .getResultList();
+            
+            List<ProgramasEducativosNiveles> nivelesEducativos = em.createQuery("SELECT p FROM ProgramasEducativosNiveles p WHERE p.nivel<>:valor ORDER BY p.nombre ASC", ProgramasEducativosNiveles.class)
+                    .setParameter("valor", "5B3")
+                    .getResultList();
             
             return ResultadoEJB.crearCorrecto(nivelesEducativos, "Lista de niveles educativos para eventos de estadía.");
         }catch (Exception e){
