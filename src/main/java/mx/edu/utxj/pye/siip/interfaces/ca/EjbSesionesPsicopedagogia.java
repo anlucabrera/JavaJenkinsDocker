@@ -38,30 +38,34 @@ public interface EjbSesionesPsicopedagogia {
     /**
      * Método que busca en base de datos el registro de SesionIndividualMensualPsicopedogia
      * @param simPsicopedagogia Utilizado como referencia para la búsqueda en base de datos
+     * @param ejercicioFiscal
      * @return List SesionIndividualMensualPsicopedogia el cual contiene los valores completos de los registros encontrados.
      */
-    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogia(SesionIndividualMensualPsicopedogia simPsicopedagogia);
+    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogia(SesionIndividualMensualPsicopedogia simPsicopedagogia, Short ejercicioFiscal);
     
     /**
      * Método que busca en base de datos el registro de SesionIndividualMensualPsicopedogia que no están relacionados con programas educativos
      * @param simPsicopedagogia Utilizado como referencia para la búsqueda en base de datos
+     * @param ejercicioFiscal
      * @return List SesionIndividualMensualPsicopedogia el cual contiene los valores completos de los registros encontrados.
      */
-    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaSPE(SesionIndividualMensualPsicopedogia simPsicopedagogia);
+    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaSPE(SesionIndividualMensualPsicopedogia simPsicopedagogia, Short ejercicioFiscal);
     
     /**
      * Método que busca en base de datos el registro de SesionInvidualMensualPsicopedagogia (Uso para método de edición)
      * @param simPsicopedagogia Utilizado como referencia para la búsqueda en base de datos
+     * @param ejercicioFiscal
      * @return  List SesionInvidualMensualPsicopedagogia el cual contiene los valores completos de los registros encontrados.
      */
-    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaParaEdicion(SesionIndividualMensualPsicopedogia simPsicopedagogia);
+    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaParaEdicion(SesionIndividualMensualPsicopedogia simPsicopedagogia, Short ejercicioFiscal);
     
     /**
      * Método que busca en base de datos el registro de SesionIndividualMensualPsicopedagogia que no están relacionados con programas educativos
      * @param simPsicopedagogia Utilizado como referencia para la búsqueda en base de datos
+     * @param ejercicioFiscal
      * @return  List SesionInvidualMensualPsicopedagogia el cual contiene los valores completos de los registros encontrados.
      */
-    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaSPEParaEdicion(SesionIndividualMensualPsicopedogia simPsicopedagogia);
+    public List<SesionIndividualMensualPsicopedogia> buscaSesionIndividualMensualPsicopedagogiaSPEParaEdicion(SesionIndividualMensualPsicopedogia simPsicopedagogia, Short ejercicioFiscal);
     
     /**
      * Método que almacena en base de datos el registro de una SesionIndividualMensualPsicopedogia

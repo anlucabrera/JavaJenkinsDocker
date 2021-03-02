@@ -54,7 +54,7 @@ public class CuerposAcademicosRegistro implements Serializable {
     private Integer registro;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 11)
+    @Size(min = 1, max = 50)
     @Column(name = "cuerpo_academico")
     private String cuerpoAcademico;
     @Basic(optional = false)

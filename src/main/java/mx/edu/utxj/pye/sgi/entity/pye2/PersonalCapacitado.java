@@ -59,7 +59,7 @@ public class PersonalCapacitado implements Serializable {
     private Integer registro;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 15)
+    @Size(min = 1, max = 50)
     @Column(name = "curso")
     private String curso;
     @Basic(optional = false)

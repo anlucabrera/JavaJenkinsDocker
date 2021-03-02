@@ -87,7 +87,7 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     
     @PostConstruct
     public void init(){
-        
+        try {
             if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
             cargado = true;
             
@@ -145,7 +145,7 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
             rol.setPeriodoActivo(ejb.getPeriodoEscolarActivo().getValor().getPeriodo());
             rol.setPeriodosConPlanAccionTutorial(resPeriodos.getValor());
             cambiarPeriodo();
-        
+        }catch (Exception e){mostrarExcepcion(e); }
     }
     
     /*********************************************** Inicializadores *********************************************************/

@@ -269,7 +269,7 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
     public void guardarSesionPsipedagogia(SesionIndividualMensualPsicopedogia sesionPsicopedagogia) {
         sesionPsicopedagogia.setMes(controladorModulosRegistro.getEventosRegistros().getMes());
         sesionPsicopedagogia.setProgramaEducativo(dto.getProgramaEducativo().getArea());
-        if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogia(sesionPsicopedagogia).isEmpty()) {
+        if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogia(sesionPsicopedagogia,controladorModulosRegistro.getEventosRegistros().getEjercicioFiscal().getAnio()).isEmpty()) {
             dto.setMensaje("No se ha podido guardar, los datos que ha ingresado corresponden con un registro previamente registrado");
             actualizaInterfazSesionPsicopedagogia();
         } else {
@@ -287,7 +287,7 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
     public void guardarSesionPsipedagogiaSPE(SesionIndividualMensualPsicopedogia sesionPsicopedagogia) {
         sesionPsicopedagogia.setMes(controladorModulosRegistro.getEventosRegistros().getMes());
         sesionPsicopedagogia.setProgramaEducativo(null);
-        if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogiaSPE(sesionPsicopedagogia).isEmpty()) {
+        if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogiaSPE(sesionPsicopedagogia,controladorModulosRegistro.getEventosRegistros().getEjercicioFiscal().getAnio()).isEmpty()) {
             dto.setMensaje("No se ha podido guardar, los datos que ha ingresado corresponden con un registro previamente registrado");
             actualizaInterfazSesionPsicopedagogia();
         } else {
@@ -305,7 +305,7 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
     public void editaSesionPsicopedagogia(SesionIndividualMensualPsicopedogia sesionPsicopedagogia){
         DTOSesionesPsicopedagogia dtoSP = new DTOSesionesPsicopedagogia();
         sesionPsicopedagogia.setProgramaEducativo(dto.getProgramaEducativo().getArea());
-        if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogiaParaEdicion(sesionPsicopedagogia).isEmpty()) {
+        if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogiaParaEdicion(sesionPsicopedagogia,controladorModulosRegistro.getEventosRegistros().getEjercicioFiscal().getAnio()).isEmpty()) {
             dto.setMensaje("No se ha podido actualizar, los datos que ha ingresado corresponden con un registro previo");
             actualizaInterfazSesionPsicopedagogia();
         }else{
@@ -320,7 +320,7 @@ public class ControladorSesionesPsicopedagogia implements Serializable{
     
     public void editaSesionPsicopedagogiaSPE(SesionIndividualMensualPsicopedogia sesionPsicopedagogia){
         DTOSesionesPsicopedagogia dtoSP = new DTOSesionesPsicopedagogia();
-        if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogiaSPEParaEdicion(sesionPsicopedagogia).isEmpty()) {
+        if (!ejbSesionesPsicopedagogia.buscaSesionIndividualMensualPsicopedagogiaSPEParaEdicion(sesionPsicopedagogia,controladorModulosRegistro.getEventosRegistros().getEjercicioFiscal().getAnio()).isEmpty()) {
             dto.setMensaje("No se ha podido actualizar, los datos que ha ingresado corresponden con un registro previo");
             actualizaInterfazSesionPsicopedagogia();
         }else{
