@@ -18,6 +18,7 @@ import javax.persistence.TypedQuery;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
+import mx.edu.utxj.pye.sgi.entity.ch.Permisosevaluacionpoaex;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
 
@@ -73,5 +74,26 @@ public class EjbAdministrador {
         facade.edit(procesopoa);
         facade.flush();
         return procesopoa;
+    }
+    
+    public Permisosevaluacionpoaex crearPermisosevaluacionpoaex(Permisosevaluacionpoaex p){
+        facade.setEntityClass(Permisosevaluacionpoaex.class);
+        facade.create(p);
+        facade.flush();
+        return p;
+    }
+    
+    public Permisosevaluacionpoaex actualizarPermisosevaluacionpoaex(Permisosevaluacionpoaex p){
+        facade.setEntityClass(Permisosevaluacionpoaex.class);
+        facade.edit(p);
+        facade.flush();
+        return p;
+    }
+     
+    public Permisosevaluacionpoaex eliminarPermisosevaluacionpoaex(Permisosevaluacionpoaex p){
+        facade.setEntityClass(Permisosevaluacionpoaex.class);
+        facade.remove(p);
+        facade.flush();
+        return p;
     }
 }

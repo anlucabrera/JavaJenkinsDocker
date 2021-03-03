@@ -19,7 +19,6 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisosevaluacionpoaex;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -36,9 +35,13 @@ import org.primefaces.event.RowEditEvent;
 @ViewScoped
 public class AdministracionPOA implements Serializable {
 
-    private static final long serialVersionUID = 1736039029781733869L;
+    private static final long serialVersionUID = 1736039029781733869L;   
+    
+    @Getter    @Setter    private Integer calendario;     
+    @Getter    @Setter    private Date fechF=new Date();     
+    @Getter    @Setter    private ProcesoDetallePoa poa; 
 
-    @Getter    @Setter    private List<ProcesoDetallePoa> detallePoas = new ArrayList<>();  
+    @Getter    @Setter    private List<ProcesoDetallePoa> detallePoas = new ArrayList<>(); 
     @Getter    @Setter    private List<Calendarioevaluacionpoa> calendarioevaluacionpoas = new ArrayList<>();
     @Getter    @Setter    private List<Calendarioevaluacionpoa> calendarioPoaActivo = new ArrayList<>();
     @Getter    @Setter    private List<Boolean> estatus = new ArrayList<>();
@@ -151,7 +154,16 @@ public class AdministracionPOA implements Serializable {
     }
     public void agregarPermiso() {
         try {
-            
+            Permisosevaluacionpoaex p= new Permisosevaluacionpoaex();
+            p.setFechaApertura(new Date());
+            p.setFechaCierre(fechF);
+            p.setEvaluacionPOA(new Calendarioevaluacionpoa());
+            p.setProcesoPOA(new Procesopoa());
+            p.setEvaluacionPOA(new Calendarioevaluacionpoa(calendario));
+            p.setProcesoPOA(poa.getProcesopoa());
+            administrador.crearPermisosevaluacionpoaex(p);
+            buscarProcesosPOA();
+            Ajax.update("frmPorceso");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);
@@ -202,7 +214,10 @@ public class AdministracionPOA implements Serializable {
     }
     public void actualizarPermiso(RowEditEvent event) {
         try {
-            
+            Permisosevaluacionpoaex p= (Permisosevaluacionpoaex) event.getObject();
+            administrador.actualizarPermisosevaluacionpoaex(p);
+            buscarProcesosPOA();
+            Ajax.update("frmPorceso");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);
@@ -223,7 +238,9 @@ public class AdministracionPOA implements Serializable {
     }
     public void eliminarPermiso(Permisosevaluacionpoaex permisosevaluacionpoaex) {
         try {
-            
+            administrador.eliminarPermisosevaluacionpoaex(permisosevaluacionpoaex);
+            buscarProcesosPOA();
+            Ajax.update("frmPorceso");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);

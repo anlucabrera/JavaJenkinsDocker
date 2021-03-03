@@ -104,7 +104,7 @@ public class RegistroDeEstudianteConsulta extends ViewScopedRol implements Desar
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     @Inject LogonMB logon;
-    @Getter Boolean tieneAcceso = false;
+    @Getter Boolean tieneAcceso = Boolean.FALSE;
     Integer bt=0,bd=0,ri=0;
     BigDecimal promedio = BigDecimal.ZERO;
     Double suma = 0D;

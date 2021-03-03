@@ -155,6 +155,7 @@
                                                             <p:column rowspan="2" headerText="Correo" style="width: 30%;" styleClass="hederTablesTitle"/>
                                                             <p:column colspan="3" headerText="Registros" style="width: 20%" styleClass="hederTablesTitle"/>
                                                             <p:column colspan="3" headerText="Validaciones" style="width: 20%;" styleClass="hederTablesTitle"/>
+                                                            <p:column rowspan="2" style="width: 50px;" styleClass="hederTablesTitle"/>
                                                             <p:column rowspan="2" style="width: 32px;" styleClass="hederTablesTitle"/>
                                                         </p:row>
                                                         <p:row class="success">
@@ -253,14 +254,24 @@
                                                                 </p:selectOneMenu>
                                                             </f:facet>
                                                         </p:cellEditor>
-                                                    </p:column>  
+                                                    </p:column> 
+                                                    <p:column>
+                                                        <p:commandButton icon="fa fa-calendar" styleClass="btn-primary"
+                                                                         oncomplete="PF('dlgComentario').show()" process="@this" update="@form">
+                                                            <f:setPropertyActionListener target="#{administracionPOA.poa}" value="#{dPoa}" />
+                                                        </p:commandButton>
+                                                    </p:column>
                                                     <p:column style="width:32px;" class="noprint">
                                                         <p:rowEditor />
                                                     </p:column>
 
 
                                                     <p:rowExpansion>
-                                                        <p:dataTable id="tblActividades"  value="#{dPoa.permisosevaluacionpoaexs}"  var="per">
+                                                        <p:dataTable id="tblActividades"  value="#{dPoa.permisosevaluacionpoaexs}"  var="per" editable="true" editMode="row" >
+
+                                                            <p:ajax event="rowEdit" listener="#{administracionPOA.actualizarPermiso}" update="@this" oncomplete="actualizarTabla()"/>
+                                                            <p:ajax event="rowEditCancel" listener="#{areaPoaPresupuestacion.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+
                                                             <p:column headerText="Proceso">
                                                                 <h:outputText value="#{per.evaluacionPOA.mesEvaluacion}" />
                                                             </p:column>
@@ -268,12 +279,65 @@
                                                                 <h:outputLabel value="#{per.fechaApertura}"><f:convertDateTime pattern="dd/MM/yyyy hh:mm" timeZone="America/Mexico_City"/></h:outputLabel> 
                                                             </p:column>
                                                             <p:column headerText="Fecha Fin">
-                                                                <h:outputLabel value="#{per.fechaCierre}"><f:convertDateTime pattern="dd/MM/yyyy hh:mm" timeZone="America/Mexico_City"/></h:outputLabel> 
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output"> 
+                                                                        <h:outputLabel value="#{per.fechaCierre}"><f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Mexico_City"/></h:outputLabel>
+                                                                    </f:facet>
+                                                                    <f:facet name="input">
+                                                                        <p:calendar locale="es" value="#{per.fechaCierre}" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City" mask="true" />
+                                                                    </f:facet>
+                                                                </p:cellEditor>
+                                                            </p:column>
+                                                            <p:column style="width:32px;" class="noprint">
+                                                                <p:rowEditor />
+                                                            </p:column>   
+                                                            <p:column style="width:50px;" class="noprint">
+                                                                <p:commandButton actionListener="#{administracionPOA.eliminarPermiso(per)}" process="@this" update="@form"  icon="fa fa-trash" styleClass="btn-primary" title="Eliminar recurso">
+                                                                    <p:confirm header="Confirmación" message="¿Confirma la eliminación del permiso evaluacion o evento: #{per.evaluacionPOA.mesEvaluacion} ?" icon="ui-icon-alert" />
+                                                                </p:commandButton>
                                                             </p:column>
                                                         </p:dataTable>
                                                     </p:rowExpansion>
                                                 </p:dataTable>  
-                                            </p:outputPanel>    
+                                            </p:outputPanel>   
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>
+                                        </h:form>
+
+                                        <h:form id="frmComentario">
+                                            <p:dialog header="Permisos extemporaneos" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+                                                <p:outputPanel>
+                                                    <p:autoUpdate/>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-12 col-lg-12"> 
+                                                            <h2>#{administracionPOA.poa.universidad.nombre}</h2>
+                                                        </div>
+                                                    </div>
+                                                    <br/>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-12 col-lg-12">  
+                                                            <p:outputLabel value="Evento o mes de registro" />
+                                                            <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" value="#{administracionPOA.calendario}">
+                                                                <f:selectItems value="#{administracionPOA.calendarioevaluacionpoas}" var="cal" itemValue="#{cal.evaluacionPOA}" itemLabel="#{cal.mesEvaluacion}" />
+                                                            </p:selectOneMenu> 
+                                                            <p:message for="eje" display="tooltip" />
+                                                            <br/>
+                                                            <p:outputLabel value="Fecha de Fin" />
+                                                            <p:calendar id="fechaFP" locale="es" value="#{administracionPOA.fechF}" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City" mask="true" />
+                                                            <p:message for="fechaFP" display="tooltip" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-12 col-lg-12">  
+                                                            <p:commandButton id="btnAceptarComentario" value="Aceptar" actionListener="#{administracionPOA.agregarPermiso()}"
+                                                                             icon="fa fa-chek" styleClass="btn-primary"  update="@form"
+                                                                             oncomplete="PF('dlgComentario').hide()" />
+                                                        </div>
+                                                    </div>
+                                                </p:outputPanel>
+                                            </p:dialog>
                                         </h:form>
                                     </p:tab>
                                 </p:tabView>
