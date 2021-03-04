@@ -14,7 +14,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados2;
 
 @RequiredArgsConstructor
 public enum ControlEscolarVistaControlador {
-    PERMISO_APERTURA_EXTEMPORANEA("/controlEscolar/pye/permisoAperturaExtemporanea.xhtml", PermisoAperturaExtemporaneaAdministrador.class),
+    PERMISO_APERTURA_EXTEMPORANEA("/controlEscolar/se/permisoAperturaExtemporanea.xhtml", PermisoAperturaExtemporaneaAdministrador.class),
+    REPORTE_APERTURA_EXTEMPORANEA("/controlEscolar/pye/reporteAperturaExtemporanea.xhtml", ReporteAperturaExtemporaneaAdministrador.class),
     CALENDARIO_EVENTOS_ESTADIA("/calendarioEventos.xhtml", CalendarioEventosEstadia.class),
     REPORTES_ESTADIA("/reportesEstadia.xhtml", ReportesEstadia.class),
     
@@ -54,6 +55,7 @@ public enum ControlEscolarVistaControlador {
     REGISTRO_FICHA_SE("/controlEscolar/aspirante/registroFichaSE.xhtml", RegistroFichaAdmisionSE.class),
     REGISTRO_EVENTOS_ESTADIA("/controlEscolar/se/registroEventosEstadia.xhtml",  RegistroEventosEstadiaEscolares.class),
     ENTREGA_FOTOGRAFIAS_ESTADIA("/controlEscolar/se/entregaFotografiasEstadia.xhtml",  EntregaFotografiasEscolares.class),
+    APERTURA_EXTEMPORANEA_ESTADIA("/controlEscolar/se/aperturaExtemporaneaEstadia.xhtml",  AperturaExtemporaneaEstadia.class),
     
     SEGUIMIENTO_ESTADIA_VINCULACION("/controlEscolar/vinculacion/seguimientoEstadiaVinculacion.xhtml", SeguimientoEstadiaVinculacion.class),
 

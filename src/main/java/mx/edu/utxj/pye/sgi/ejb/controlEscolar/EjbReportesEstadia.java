@@ -81,7 +81,7 @@ public class EjbReportesEstadia {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }
-            else if (p.getPersonal().getCategoriaOperativa().getCategoria() == 10 && p.getPersonal().getStatus()!='B') {
+            else if (p.getPersonal().getAreaOperativa() == 10 && p.getPersonal().getStatus()!='B') {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }

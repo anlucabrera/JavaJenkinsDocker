@@ -174,6 +174,7 @@ public class ServicioCarga implements EjbCarga {
     public static String carpetaRaiz;
     public static final String formatosEscolares = "formatosEscolares";
     public static final String seguimientoEstadia = "seguimientoEstadia";
+    public static final String reportesPlaneacion = "reportesPlaneacion";
 
 //    Método que se encarga de crear la carpeta raíz en caso de que no exista para poder almacenar el archivo
     static {
@@ -525,4 +526,10 @@ public class ServicioCarga implements EjbCarga {
         return rutaRelativa;
     }
 
+    @Override
+    public String crearDirectorioReportePlaneacion(String periodoEscolar) {
+        String rutaRelativa = genCarpetaRelativa(reportesPlaneacion, reportes, periodoEscolar);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
 }

@@ -212,7 +212,7 @@
                                                             </div>
                                                         </p:column>
                                                         <p:column style="text-align: justify;"><h:outputText value="#{docsSeg.documentoProceso.documento.descripcion}" /></p:column>
-                                                        <p:column style="text-align: center;"><h:outputText value="#{eventoDoc.fechaInicio}"><f:convertDateTime dateStyle="long" timeZone="America/Mexico_City" type="both"/></h:outputText></p:column>
+                                                        <p:column style="text-align: center;"><h:outputText value="#{eventoDoc.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
                                                         <p:column style="text-align: center;"><h:outputText value="#{eventoDoc.fechaFin}"><f:convertDateTime dateStyle="long" timeZone="America/Mexico_City" type="both"/></h:outputText></p:column>
                                                         <p:column style="text-align: center;"><h:outputText value="#{docsSeg.documentoProceso.obligatorio?'Si':'No'}" /></p:column>
                                                         <p:column style="text-align: center;"><h:outputText value="#{docsSeg.documentoSeguimientoEstadia.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               

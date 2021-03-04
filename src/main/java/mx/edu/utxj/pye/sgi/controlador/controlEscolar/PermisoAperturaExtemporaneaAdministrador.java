@@ -44,6 +44,7 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAperturaExtPorEstudiante;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroBajas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PermisosCapturaExtemporaneaEstudiante;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -62,6 +63,7 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
 
     @EJB EjbPermisoAperturaExtemporanea ejb;
     @EJB EjbPropiedades ep;
+    @EJB EjbRegistroBajas ejbRegistroBajas;
     @Inject LogonMB logon;
     @Getter Boolean tieneAcceso = false;
 
@@ -84,10 +86,10 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
  if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
  cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.PERMISO_APERTURA_EXTEMPORANEA);
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarAdministrador(logon.getPersonal().getClave());//validar si es director
+            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejbRegistroBajas.validarServiciosEscolares(logon.getPersonal().getClave());//validar si es director
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 
-            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarAdministrador(logon.getPersonal().getClave());
+            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejbRegistroBajas.validarServiciosEscolares(logon.getPersonal().getClave());
             if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
 
             Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación

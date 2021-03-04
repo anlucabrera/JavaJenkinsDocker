@@ -758,14 +758,14 @@ public class EjbCedulaIdentificacion {
         try{
             DtoCedulaIdentificacionDatosFamiliares datosFamiliares = new DtoCedulaIdentificacionDatosFamiliares();
             if(estudiante==null){return ResultadoEJB.crearErroneo(2,datosFamiliares,"El estudiante no debe ser nulo");}
-//            datosFamiliares.setP65(estudiante.getAspirante().getDatosFamiliares().getTutor().getNombre().concat(" ").concat(estudiante.getAspirante().getDatosFamiliares().getTutor().getApellidoPaterno()).concat(" ").concat(estudiante.getAspirante().getDatosFamiliares().getTutor().getApellidoMaterno()));//Nombre completo del tutor familiar
-//            DtoDomicilio domicilioTutor= new DtoDomicilio();
-//            ResultadoEJB<DtoDomicilio> resDomicilio = getDomicilio(estudiante.getAspirante().getDatosFamiliares().getTutor().getAsentamiento());
-//            if(resDomicilio.getCorrecto()==true){domicilioTutor = resDomicilio.getValor();}
-//            else {return ResultadoEJB.crearErroneo(3,datosFamiliares,"No se pudo obtener el domiclio del tutor familiar");}
-//            datosFamiliares.setP66(estudiante.getAspirante().getDatosFamiliares().getTutor().getCalle().concat(" #").concat(estudiante.getAspirante().getDatosFamiliares().getTutor().getNumero().concat(" ").concat(domicilioTutor.getAsentamiento().getNombreAsentamiento()).concat(", ").concat(domicilioTutor.getMunicipio().getNombre()).concat(", ").concat("CP: ").concat(domicilioTutor.getAsentamiento().getCodigoPostal()).concat(", ").concat(domicilioTutor.getEstado().getNombre()).concat(", ").concat(domicilioTutor.getPais().getNombre())));//Domicilio Completo del tutor
-//            datosFamiliares.setP67(estudiante.getAspirante().getDatosFamiliares().getTutor().getNoTelefono());//Telefono de contacto
-//            datosFamiliares.setP68(estudiante.getAspirante().getDatosFamiliares().getTutor().getParentesco());//Parentesco
+           datosFamiliares.setP65(estudiante.getAspirante().getDatosFamiliares().getTutor().getNombre().concat(" ").concat(estudiante.getAspirante().getDatosFamiliares().getTutor().getApellidoPaterno()).concat(" ").concat(estudiante.getAspirante().getDatosFamiliares().getTutor().getApellidoMaterno()));//Nombre completo del tutor familiar
+           DtoDomicilio domicilioTutor= new DtoDomicilio();
+           ResultadoEJB<DtoDomicilio> resDomicilio = getDomicilio(estudiante.getAspirante().getDatosFamiliares().getTutor().getAsentamiento());
+           if(resDomicilio.getCorrecto()==true){domicilioTutor = resDomicilio.getValor();}
+            else {return ResultadoEJB.crearErroneo(3,datosFamiliares,"No se pudo obtener el domiclio del tutor familiar");}
+            datosFamiliares.setP66(estudiante.getAspirante().getDatosFamiliares().getTutor().getCalle().concat(" #").concat(estudiante.getAspirante().getDatosFamiliares().getTutor().getNumero().concat(" ").concat(domicilioTutor.getAsentamiento().getNombreAsentamiento()).concat(", ").concat(domicilioTutor.getMunicipio().getNombre()).concat(", ").concat("CP: ").concat(domicilioTutor.getAsentamiento().getCodigoPostal()).concat(", ").concat(domicilioTutor.getEstado().getNombre()).concat(", ").concat(domicilioTutor.getPais().getNombre())));//Domicilio Completo del tutor
+           datosFamiliares.setP67(estudiante.getAspirante().getDatosFamiliares().getTutor().getNoTelefono());//Telefono de contacto
+          datosFamiliares.setP68(estudiante.getAspirante().getDatosFamiliares().getTutor().getParentesco());//Parentesco
             datosFamiliares.setP69(estudiante.getAspirante().getDatosFamiliares().getNombrePadre());//Nombre completo del padre
             datosFamiliares.setP70(estudiante.getAspirante().getDatosFamiliares().getOcupacionPadre().getDescripcion());//Ocupacion del padre
             datosFamiliares.setP71(estudiante.getAspirante().getDatosFamiliares().getTelefonoPadre());//Telefono de contacto del padre
@@ -971,13 +971,13 @@ public class EjbCedulaIdentificacion {
             else{
                 Estudiante estudiante= new Estudiante();
                 AreasUniversidad carrera = new AreasUniversidad();
-                //TODO: Se busca al estudiante
+                //Se busca al estudiante
                 ResultadoEJB<Estudiante> resEstudiante = validaEstudiante(matricula);
                 if(resEstudiante.getCorrecto()==true){
                     //Se empiezan a buscar el resto de los datos y a llenar el
                     estudiante = resEstudiante.getValor();
-                    //TODO:Llenado de dto
-                    //TODO:DATOS GENERALES DEL ESTUDIANTE
+                    //Llenado de dto
+                    //DATOS GENERALES DEL ESTUDIANTE
                     dtoCedulaIdentificacionDatosGenerales datosGenerales= new dtoCedulaIdentificacionDatosGenerales();
                     datosGenerales.setP1(estudiante.getMatricula());//Matricula
                     datosGenerales.setP2(estudiante.getAspirante().getIdPersona().getNombre().concat(" ").concat(estudiante.getAspirante().getIdPersona().getApellidoPaterno()).concat(" ").concat(estudiante.getAspirante().getIdPersona().getApellidoMaterno()));//NombreCompleto
@@ -988,7 +988,7 @@ public class EjbCedulaIdentificacion {
                     datosGenerales.setP5(estudiante.getGrupo().getGrado());//Grado
                     datosGenerales.setP6(Character.toString(estudiante.getGrupo().getLiteral()));//Grupo
                     cedulaIdentificacion.setDatosGenerales(datosGenerales);
-                    //TODO:DATOS PERSONALES
+                    //DATOS PERSONALES
                     dtoCedulaIdentificacionDatosPersonales datosPersonales = new dtoCedulaIdentificacionDatosPersonales();
                     datosPersonales.setP7(utilidadesCH.castearDaLD(estudiante.getAspirante().getIdPersona().getFechaNacimiento()).toString());//Fecha de nacimiento
                     ResultadoEJB<String> resEdad= getEdad(estudiante);
@@ -1003,7 +1003,7 @@ public class EjbCedulaIdentificacion {
                     datosPersonales.setP13(estudiante.getAspirante().getIdPersona().getMedioComunicacion().getEmail());//Correo
                     datosPersonales.setP14(estudiante.getAspirante().getIdPersona().getMedioComunicacion().getTelefonoFijo());//Telefono fijo
                     datosPersonales.setP15(estudiante.getAspirante().getIdPersona().getMedioComunicacion().getTelefonoMovil());//Telefono movil
-                    //TODO: Domicilio Residencia
+                    //Domicilio Residencia
                     datosPersonales.setP16(estudiante.getAspirante().getDomicilio().getCalle());//Calle
                     datosPersonales.setP17(estudiante.getAspirante().getDomicilio().getNumero());//Número
                     DtoDomicilio domicilioResidencia = new DtoDomicilio();//Dto para almacenar el domicilio de Residencia
@@ -1017,7 +1017,7 @@ public class EjbCedulaIdentificacion {
                     datosPersonales.setP22(domicilioResidencia.getAsentamiento().getCodigoPostal());//Código Postal
                     datosPersonales.setP23(domicilioResidencia.getPais().getNombre());//País
                     datosPersonales.setP24(estudiante.getAspirante().getDomicilio().getTiempoResidencia());//Tiempo Residencia
-                    //TODO: Domicilio Procedencia
+                    //Domicilio Procedencia
                     DtoDomicilio domicilioProcedencia= new DtoDomicilio();
                     ResultadoEJB<DtoDomicilio> resDomicilioR= getDomicilio(estudiante.getAspirante().getDomicilio().getAsentamientoProcedencia());
                     if(resDomicilioR.getCorrecto()==true){domicilioProcedencia=resDomicilioR.getValor();}

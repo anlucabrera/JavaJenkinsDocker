@@ -185,7 +185,16 @@ public class SeguimientoEstadiaPorEstudiante extends ViewScopedRol implements De
         ResultadoEJB<EventoEstadia> res = ejb.buscarEventoActivoDocumento(rol.getDtoSeguimientoEstadiaEstudiante(),dtoDocumentoEstadiaEstudiante, "Estudiante");
         if(res.getCorrecto() && res.getValor() != null){
             permiso= Boolean.TRUE;
-        }else mostrarMensajeResultadoEJB(res);
+        }else{
+            mostrarMensajeResultadoEJB(res);
+            ResultadoEJB<EventoEstadia> resA = ejb.buscarAperturaExtemporaneaDocumento(rol.getDtoSeguimientoEstadiaEstudiante(),dtoDocumentoEstadiaEstudiante, "Estudiante");
+            if (resA.getCorrecto() && resA.getValor() != null) {
+                permiso = Boolean.TRUE;
+            } else {
+                mostrarMensajeResultadoEJB(resA);
+
+            }
+        }
         return permiso;
     }
     

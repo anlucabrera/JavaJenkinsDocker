@@ -45,6 +45,7 @@ import java.util.Date;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalendarioEventosEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEvaluacionEstadiaEstudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.AperturaExtemporaneaEventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorEmpresarialEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadiaPK;
@@ -334,10 +335,43 @@ public class EjbSeguimientoEstadia {
                 .setParameter("actividad", relDocEvento.getActividad())
                 .setParameter("usuario", relDocEvento.getUsuario())
                 .getResultStream().findFirst().orElse(null);
-           
-           return ResultadoEJB.crearCorrecto(eventoReg, "Documento empaquetado.");
+            
+           return ResultadoEJB.crearCorrecto(eventoReg, "Evento activo del documento seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el documento (EjbSeguimientoEstadia.buscarEventoActivoDocumento).", e, EventoEstadia.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo encontrar evento activo del documento seleccionado. (EjbSeguimientoEstadia.buscarEventoActivoDocumento).", e, EventoEstadia.class);
+        }
+    }
+    
+    /**
+     * Permite verificar apertura extemporánea activa y valdiada de la actividad y usuario seleccionado
+     * @param dtoSeguimientoEstadiaEstudiante
+     * @param dtoDocumentoEstadiaEstudiante
+     * @param usuario
+     * @return Devueleve el seguimiento de estadía del estudiante, código de error 2 si no la tiene y código de error 1 para un error desconocido.
+     */
+    public ResultadoEJB<EventoEstadia> buscarAperturaExtemporaneaDocumento(DtoSeguimientoEstadiaEstudiante dtoSeguimientoEstadiaEstudiante, DtoDocumentoEstadiaEstudiante dtoDocumentoEstadiaEstudiante, String usuario){
+        try{
+            RelacionDocumentoEstadiaEvento relDocEvento = em.createQuery("SELECT r FROM RelacionDocumentoEstadiaEvento r WHERE r.documentoEstadia=:documento AND r.usuario=:usuario", RelacionDocumentoEstadiaEvento.class)
+                    .setParameter("documento", dtoDocumentoEstadiaEstudiante.getDocumentoProceso().getDocumento().getDocumento())
+                    .setParameter("usuario", usuario)
+                    .getResultStream().findFirst().orElse(null);
+            
+            if(relDocEvento == null) return ResultadoEJB.crearErroneo(2, "No se encontró relación del documento en la base de datos.", EventoEstadia.class);
+            
+            EventoEstadia eventoReg = em.createQuery("SELECT a FROM AperturaExtemporaneaEventoEstadia a WHERE a.evento.generacion=:generacion AND a.evento.nivel=:nivel AND a.evento.actividad=:actividad AND a.evento.usuario=:usuario AND a.seguimiento.seguimiento=:seguimiento AND a.validada=:valor AND current_date between a.fechaInicio and a.fechaFin", AperturaExtemporaneaEventoEstadia.class)
+                .setParameter("generacion", dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getEvento().getGeneracion())
+                .setParameter("nivel", dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getEvento().getNivel())
+                .setParameter("actividad", relDocEvento.getActividad())
+                .setParameter("usuario", relDocEvento.getUsuario())
+                .setParameter("seguimiento", dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getSeguimiento())
+                .setParameter("valor", Boolean.TRUE)
+                .getResultStream()
+                .map(p-> p.getEvento())
+                .findFirst().orElse(null);
+            
+           return ResultadoEJB.crearCorrecto(eventoReg, "Apertura extemporánea del evento y estudiante seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la apertura extemporánea del evento y estudiante seleccionado (EjbSeguimientoEstadia.buscarAperturaExtemporaneaDocumento).", e, EventoEstadia.class);
         }
     }
     
