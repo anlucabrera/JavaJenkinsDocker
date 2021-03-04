@@ -111,6 +111,7 @@ public class ControlEscolarMenu implements Desarrollable, Desplegable {
         get = Faces.evaluateExpressionGet("#{reportesEstadia.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{registroEventosEstadiaEscolares.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{entregaFotografiasEscolares.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{aperturaExtemporaneaEstadia.tieneAcceso}"); if(get) return true;
 
         return false;
     }

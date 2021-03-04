@@ -12,7 +12,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,7 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "estudiante", catalog = "control_escolar", schema = "")
@@ -82,60 +81,58 @@ public class Estudiante implements Serializable {
     @Size(min = 1, max = 51)
     @Column(name = "tipo_registro")
     private String tipoRegistro;
-    @ManyToMany(mappedBy = "estudianteList", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "estudianteList")
     private List<Asesoria> asesoriaList;
-    @ManyToMany(mappedBy = "estudianteList", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "estudianteList")
     private List<AsesoriasEstudiantes> asesoriasEstudiantesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
     private List<Calificacion> calificacionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
-    private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
-    @OneToMany(mappedBy = "estudiante", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "estudiante")
     private List<Asistenciasacademicas> asistenciasacademicasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<PrestamosDocumentos> prestamosDocumentosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
-    private List<Baja> bajaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
-    private List<CalificacionNivelacion> calificacionNivelacionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante1", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante1")
     private List<ParticipantesTutoriaGrupal> participantesTutoriaGrupalList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
-    private List<UnidadMateriaComentario> unidadMateriaComentarioList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1", fetch = FetchType.LAZY)
-    private Documentosentregadosestudiante documentosentregadosestudiante;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<CalificacionPromedio> calificacionPromedioList;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Aspirante aspirante;
     @JoinColumn(name = "tipo_estudiante", referencedColumnName = "id_tipo_estudiante")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private TipoEstudiante tipoEstudiante;
     @JoinColumn(name = "grupo", referencedColumnName = "id_grupo")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Grupo grupo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
-    private List<CuestionarioPsicopedagogicoResultados> cuestionarioPsicopedagogicoResultadosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
-    private List<DocumentoEstudiante> documentoEstudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<TareaIntegradoraPromedio> tareaIntegradoraPromedioList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
     private List<CasoCritico> casoCriticoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<TutoriasIndividuales> tutoriasIndividualesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jefeGrupo", fetch = FetchType.LAZY)
-    private List<TutoriasGrupales> tutoriasGrupalesList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "matricula", fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "matricula")
     private ExpedienteTitulacion expedienteTitulacion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private List<ParticipantesTutoria> participantesTutoriaList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante")
     private Baja baja;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matricula", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<CalificacionNivelacion> calificacionNivelacionList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<UnidadMateriaComentario> unidadMateriaComentarioList;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "estudiante1")
+    private Documentosentregadosestudiante documentosentregadosestudiante;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<CuestionarioPsicopedagogicoResultados> cuestionarioPsicopedagogicoResultadosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
+    private List<DocumentoEstudiante> documentoEstudianteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matricula")
     private List<EntregaFotografiasEstudiante> entregaFotografiasEstudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matricula", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jefeGrupo")
+    private List<TutoriasGrupales> tutoriasGrupalesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matricula")
     private List<SeguimientoEstadiaEstudiante> seguimientoEstadiaEstudianteList;
 
     public Estudiante() {
@@ -246,15 +243,6 @@ public class Estudiante implements Serializable {
     }
 
     @XmlTransient
-    public List<PermisosCapturaExtemporaneaEstudiante> getPermisosCapturaExtemporaneaEstudianteList() {
-        return permisosCapturaExtemporaneaEstudianteList;
-    }
-
-    public void setPermisosCapturaExtemporaneaEstudianteList(List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList) {
-        this.permisosCapturaExtemporaneaEstudianteList = permisosCapturaExtemporaneaEstudianteList;
-    }
-
-    @XmlTransient
     public List<Asistenciasacademicas> getAsistenciasacademicasList() {
         return asistenciasacademicasList;
     }
@@ -273,47 +261,12 @@ public class Estudiante implements Serializable {
     }
 
     @XmlTransient
-    public List<Baja> getBajaList() {
-        return bajaList;
-    }
-
-    public void setBajaList(List<Baja> bajaList) {
-        this.bajaList = bajaList;
-    }
-
-    @XmlTransient
-    public List<CalificacionNivelacion> getCalificacionNivelacionList() {
-        return calificacionNivelacionList;
-    }
-
-    public void setCalificacionNivelacionList(List<CalificacionNivelacion> calificacionNivelacionList) {
-        this.calificacionNivelacionList = calificacionNivelacionList;
-    }
-
-    @XmlTransient
     public List<ParticipantesTutoriaGrupal> getParticipantesTutoriaGrupalList() {
         return participantesTutoriaGrupalList;
     }
 
     public void setParticipantesTutoriaGrupalList(List<ParticipantesTutoriaGrupal> participantesTutoriaGrupalList) {
         this.participantesTutoriaGrupalList = participantesTutoriaGrupalList;
-    }
-
-    @XmlTransient
-    public List<UnidadMateriaComentario> getUnidadMateriaComentarioList() {
-        return unidadMateriaComentarioList;
-    }
-
-    public void setUnidadMateriaComentarioList(List<UnidadMateriaComentario> unidadMateriaComentarioList) {
-        this.unidadMateriaComentarioList = unidadMateriaComentarioList;
-    }
-
-    public Documentosentregadosestudiante getDocumentosentregadosestudiante() {
-        return documentosentregadosestudiante;
-    }
-
-    public void setDocumentosentregadosestudiante(Documentosentregadosestudiante documentosentregadosestudiante) {
-        this.documentosentregadosestudiante = documentosentregadosestudiante;
     }
 
     @XmlTransient
@@ -350,24 +303,6 @@ public class Estudiante implements Serializable {
     }
 
     @XmlTransient
-    public List<CuestionarioPsicopedagogicoResultados> getCuestionarioPsicopedagogicoResultadosList() {
-        return cuestionarioPsicopedagogicoResultadosList;
-    }
-
-    public void setCuestionarioPsicopedagogicoResultadosList(List<CuestionarioPsicopedagogicoResultados> cuestionarioPsicopedagogicoResultadosList) {
-        this.cuestionarioPsicopedagogicoResultadosList = cuestionarioPsicopedagogicoResultadosList;
-    }
-
-    @XmlTransient
-    public List<DocumentoEstudiante> getDocumentoEstudianteList() {
-        return documentoEstudianteList;
-    }
-
-    public void setDocumentoEstudianteList(List<DocumentoEstudiante> documentoEstudianteList) {
-        this.documentoEstudianteList = documentoEstudianteList;
-    }
-
-    @XmlTransient
     public List<TareaIntegradoraPromedio> getTareaIntegradoraPromedioList() {
         return tareaIntegradoraPromedioList;
     }
@@ -394,15 +329,6 @@ public class Estudiante implements Serializable {
         this.tutoriasIndividualesList = tutoriasIndividualesList;
     }
 
-    @XmlTransient
-    public List<TutoriasGrupales> getTutoriasGrupalesList() {
-        return tutoriasGrupalesList;
-    }
-
-    public void setTutoriasGrupalesList(List<TutoriasGrupales> tutoriasGrupalesList) {
-        this.tutoriasGrupalesList = tutoriasGrupalesList;
-    }
-
     public ExpedienteTitulacion getExpedienteTitulacion() {
         return expedienteTitulacion;
     }
@@ -420,6 +346,15 @@ public class Estudiante implements Serializable {
         this.participantesTutoriaList = participantesTutoriaList;
     }
 
+    @XmlTransient
+    public List<PermisosCapturaExtemporaneaEstudiante> getPermisosCapturaExtemporaneaEstudianteList() {
+        return permisosCapturaExtemporaneaEstudianteList;
+    }
+
+    public void setPermisosCapturaExtemporaneaEstudianteList(List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList) {
+        this.permisosCapturaExtemporaneaEstudianteList = permisosCapturaExtemporaneaEstudianteList;
+    }
+
     public Baja getBaja() {
         return baja;
     }
@@ -427,7 +362,51 @@ public class Estudiante implements Serializable {
     public void setBaja(Baja baja) {
         this.baja = baja;
     }
-    
+
+    @XmlTransient
+    public List<CalificacionNivelacion> getCalificacionNivelacionList() {
+        return calificacionNivelacionList;
+    }
+
+    public void setCalificacionNivelacionList(List<CalificacionNivelacion> calificacionNivelacionList) {
+        this.calificacionNivelacionList = calificacionNivelacionList;
+    }
+
+    @XmlTransient
+    public List<UnidadMateriaComentario> getUnidadMateriaComentarioList() {
+        return unidadMateriaComentarioList;
+    }
+
+    public void setUnidadMateriaComentarioList(List<UnidadMateriaComentario> unidadMateriaComentarioList) {
+        this.unidadMateriaComentarioList = unidadMateriaComentarioList;
+    }
+
+    public Documentosentregadosestudiante getDocumentosentregadosestudiante() {
+        return documentosentregadosestudiante;
+    }
+
+    public void setDocumentosentregadosestudiante(Documentosentregadosestudiante documentosentregadosestudiante) {
+        this.documentosentregadosestudiante = documentosentregadosestudiante;
+    }
+
+    @XmlTransient
+    public List<CuestionarioPsicopedagogicoResultados> getCuestionarioPsicopedagogicoResultadosList() {
+        return cuestionarioPsicopedagogicoResultadosList;
+    }
+
+    public void setCuestionarioPsicopedagogicoResultadosList(List<CuestionarioPsicopedagogicoResultados> cuestionarioPsicopedagogicoResultadosList) {
+        this.cuestionarioPsicopedagogicoResultadosList = cuestionarioPsicopedagogicoResultadosList;
+    }
+
+    @XmlTransient
+    public List<DocumentoEstudiante> getDocumentoEstudianteList() {
+        return documentoEstudianteList;
+    }
+
+    public void setDocumentoEstudianteList(List<DocumentoEstudiante> documentoEstudianteList) {
+        this.documentoEstudianteList = documentoEstudianteList;
+    }
+
     @XmlTransient
     public List<EntregaFotografiasEstudiante> getEntregaFotografiasEstudianteList() {
         return entregaFotografiasEstudianteList;
@@ -435,6 +414,15 @@ public class Estudiante implements Serializable {
 
     public void setEntregaFotografiasEstudianteList(List<EntregaFotografiasEstudiante> entregaFotografiasEstudianteList) {
         this.entregaFotografiasEstudianteList = entregaFotografiasEstudianteList;
+    }
+
+    @XmlTransient
+    public List<TutoriasGrupales> getTutoriasGrupalesList() {
+        return tutoriasGrupalesList;
+    }
+
+    public void setTutoriasGrupalesList(List<TutoriasGrupales> tutoriasGrupalesList) {
+        this.tutoriasGrupalesList = tutoriasGrupalesList;
     }
 
     @XmlTransient
@@ -470,5 +458,5 @@ public class Estudiante implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante[ idEstudiante=" + idEstudiante + " ]";
     }
-    
+
 }

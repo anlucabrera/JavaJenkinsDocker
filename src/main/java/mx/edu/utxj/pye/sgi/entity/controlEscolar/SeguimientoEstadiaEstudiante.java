@@ -321,5 +321,5 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante[ seguimiento=" + seguimiento + " ]";
     }
-    
+
 }

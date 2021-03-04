@@ -31,7 +31,9 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAperturaExtPorEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPermisoCapturaExtemporanea;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRangoFechasPermiso;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoValidarPermisoCapExt;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
+import net.sf.jxls.transformer.XLSTransformer;
 
 /**
  *
@@ -43,6 +45,9 @@ public class EjbPermisoAperturaExtemporanea {
     @EJB EjbPropiedades ep;
     @EJB Facade f;
     private EntityManager em;
+    
+    @EJB EjbCarga ejbCarga;
+    public static final String ACTUALIZADO_APERTURAS = "aperturasExtemporaneas.xlsx";
 
     @PostConstruct
     public  void init(){
@@ -58,9 +63,27 @@ public class EjbPermisoAperturaExtemporanea {
         try{
             PersonalActivo p = ejbPersonalBean.pack(clave);
             Filter<PersonalActivo> filtro = new Filter<>();
-            filtro.setEntity(p);
-            filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalAdministrador").orElse(9)));
-            return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como personal administrador del Sistema.");
+            if (p.getPersonal().getAreaOperativa()== 6 && p.getPersonal().getCategoriaOperativa().getCategoria()==18) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("planeacionAreaOperativa").orElse(6)));
+                filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorCategoriaOperativa").orElse(18)));
+            }
+            else if (p.getPersonal().getAreaOperativa()== 6 && p.getPersonal().getCategoriaOperativa().getCategoria()==48) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("planeacionAreaOperativa").orElse(6)));
+                filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorEncargadoCategoriaOperativa").orElse(48)));
+            }
+            else if (p.getPersonal().getAreaOperativa()== 9 && p.getPersonal().getCategoriaOperativa().getCategoria()==24) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("estadisticaAreaOperativa").orElse(9)));
+                filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("jefeDapartamentoCategoria").orElse(24)));
+            }
+            else if (p.getPersonal().getAreaOperativa()== 9 && p.getPersonal().getCategoriaOperativa().getCategoria()==20) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("estadisticaAreaOperativa").orElse(9)));
+                filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("jefeEncargadoDepartamentoCategoria").orElse(20)));
+            }
+            return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como titular de planeación y evaluación,e información y estadística.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbPermisoAperturaExtemporanea.validarAdministrador)", e, null);
         }
@@ -850,7 +873,7 @@ public class EjbPermisoAperturaExtemporanea {
             
             return ResultadoEJB.crearCorrecto(listaPermisosCapturaGrupal, "Lista de periodo escolares en los que se han registrado permisos.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos en los que se han registrado bajas. (EjbPermisoAperturaExtemporanea.getPermisosCapturaExtemporaneaGrupal)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos en los que se han registrado permisos. (EjbPermisoAperturaExtemporanea.getPermisosCapturaExtemporaneaGrupal)", e, null);
         }
     }
     
@@ -864,7 +887,39 @@ public class EjbPermisoAperturaExtemporanea {
                     .getResultList();
             return ResultadoEJB.crearCorrecto(listaPermisosCapturaEstudiante, "Lista de periodo escolares en los que se han registrado permisos.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos en los que se han registrado bajas. (EjbPermisoAperturaExtemporanea.getPermisosCapturaExtemporaneaEstudiante)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos en los que se han registrado permisos. (EjbPermisoAperturaExtemporanea.getPermisosCapturaExtemporaneaEstudiante)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de periodos en los que se han registrado aperturas extemporáneas
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosPermisosRegistrados(){
+        try{
+            List<PeriodosEscolares> listaPeriodos = new ArrayList<>();
+            
+            List<PermisosCapturaExtemporaneaGrupal> periodosPermisoGrupal = getPermisosCapturaExtemporaneaGrupal().getValor();
+            
+            periodosPermisoGrupal.forEach(periodoGrupal -> {
+                    PeriodosEscolares periodo = em.find(PeriodosEscolares.class, periodoGrupal.getPeriodo());
+                    listaPeriodos.add(periodo);
+            });
+          
+            List<PermisosCapturaExtemporaneaEstudiante> periodosPermisoEstudiante = getPermisosCapturaExtemporaneaEstudiante().getValor();
+          
+            periodosPermisoEstudiante.forEach(periodoEstudiante -> {
+                    PeriodosEscolares periodo = em.find(PeriodosEscolares.class, periodoEstudiante.getPeriodo());
+                    listaPeriodos.add(periodo);
+            });
+            
+             List<PeriodosEscolares> listaPeriodosDistintos = listaPeriodos.stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+             
+            return ResultadoEJB.crearCorrecto(listaPeriodosDistintos, "Lista de periodo escolares en los que se han registrado permisos.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos en los que se han registrado permisos. (EjbPermisoAperturaExtemporanea.getPeriodosPermisosRegistrados)", e, null);
         }
     }
     
@@ -901,6 +956,44 @@ public class EjbPermisoAperturaExtemporanea {
             return ResultadoEJB.crearCorrecto(listaPeriodosDistintos, "Lista de periodo escolares en los que se han registrado permisos.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos en los que se han registrado bajas. (EjbPermisoAperturaExtemporanea.getPeriodosPermisosSolicitados)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de programas educativos que tienen registradas aperturas extemporáneas
+     * @param periodo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativosPermisosRegistrados(PeriodosEscolares periodo){
+         try{
+            List<AreasUniversidad> listaProgramasEducativos = new ArrayList<>();
+            
+            List<PermisosCapturaExtemporaneaGrupal> areasPermisoGrupal = getPermisosCapturaExtemporaneaGrupal().getValor();
+          
+            areasPermisoGrupal.forEach(areaGrupal -> {
+                if (areaGrupal.getPeriodo() == periodo.getPeriodo()) {
+                    AreasUniversidad area = em.find(AreasUniversidad.class, areaGrupal.getIdGrupo().getIdPe());
+                    listaProgramasEducativos.add(area);
+                }
+            });
+            
+            List<PermisosCapturaExtemporaneaEstudiante> areasPermisoEstudiante = getPermisosCapturaExtemporaneaEstudiante().getValor();
+          
+            areasPermisoEstudiante.forEach(areaEstudiante -> {
+                if (areaEstudiante.getPeriodo() == periodo.getPeriodo()) {
+                    AreasUniversidad area = em.find(AreasUniversidad.class, areaEstudiante.getIdGrupo().getIdPe());
+                    listaProgramasEducativos.add(area);
+                }
+            });
+            
+             List<AreasUniversidad> listaProgramasDistintos = listaProgramasEducativos.stream()
+                    .distinct()
+                    .sorted(Comparator.comparing(AreasUniversidad::getNombre))
+                    .collect(Collectors.toList());
+             
+            return ResultadoEJB.crearCorrecto(listaProgramasDistintos, "Lista de programas educativos del periodo seleccionado en el que se han registrado permisos.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de programas educativos en los que se han registrado permisos. (EjbPermisoAperturaExtemporanea.getProgramasEducativosPermisosRegistrados)", e, null);
         }
     }
     
@@ -953,6 +1046,8 @@ public class EjbPermisoAperturaExtemporanea {
     public ResultadoEJB<List<DtoValidarPermisoCapExt>> obtenerListaPermisosPeriodoProgramaEducativo(PeriodosEscolares periodo, AreasUniversidad programaEducativo){
         try{
             SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
+            String periodoEscolar = periodo.getMesInicio().getMes().concat(" - ").concat(periodo.getMesFin().getMes()).concat(" ").concat(String.valueOf(periodo.getAnio()));
+            
             List<DtoValidarPermisoCapExt> listaPermisosApertura = new ArrayList<>();
             
             List<PermisosCapturaExtemporaneaGrupal> permisosGrupales = getPermisosCapturaExtemporaneaGrupal().getValor();
@@ -963,15 +1058,19 @@ public class EjbPermisoAperturaExtemporanea {
                     String rangoFechas = sm.format(permisoGrupo.getFechaInicio()).concat(" al ").concat(sm.format(permisoGrupo.getFechaFin()));
                     DtoValidarPermisoCapExt dtoValidarPermisoCapExt = new DtoValidarPermisoCapExt();
                     dtoValidarPermisoCapExt.setClavePermiso(permisoGrupo.getPermisoGrupal());
+                    dtoValidarPermisoCapExt.setPeriodoEscolar(periodoEscolar);
                     dtoValidarPermisoCapExt.setTipoApertura(permisoGrupo.getTipoApertura());
                     dtoValidarPermisoCapExt.setTipoSolicitud("Grupal");
                     dtoValidarPermisoCapExt.setEstudiante("No Aplica");
                     dtoValidarPermisoCapExt.setGrupo(permisoGrupo.getIdGrupo());
+                    dtoValidarPermisoCapExt.setProgramaEducativo(programaEducativo);
                     dtoValidarPermisoCapExt.setPlanMateria(permisoGrupo.getIdPlanMateria());
                     if (permisoGrupo.getTipoEvaluacion().equals("Ordinaria")) {
                         dtoValidarPermisoCapExt.setUnidadMateria(permisoGrupo.getIdUnidadMateria());
+                        dtoValidarPermisoCapExt.setUnidad(String.valueOf(permisoGrupo.getIdUnidadMateria().getNoUnidad()).concat(". ").concat(permisoGrupo.getIdUnidadMateria().getNombre()));
                     } else {
                         dtoValidarPermisoCapExt.setUnidadMateria(null);
+                        dtoValidarPermisoCapExt.setUnidad("No Aplica");
                     }
                     dtoValidarPermisoCapExt.setDocente(docente);
                     dtoValidarPermisoCapExt.setTipoEvaluacion(permisoGrupo.getTipoEvaluacion());
@@ -999,15 +1098,19 @@ public class EjbPermisoAperturaExtemporanea {
                     String rangoFechas = sm.format(permisoEstudiante.getFechaInicio()).concat(" al ").concat(sm.format(permisoEstudiante.getFechaFin()));
                     DtoValidarPermisoCapExt dtoValidarPermisoCapExt = new DtoValidarPermisoCapExt();
                     dtoValidarPermisoCapExt.setClavePermiso(permisoEstudiante.getPermisoEstudiante());
+                    dtoValidarPermisoCapExt.setPeriodoEscolar(periodoEscolar);
                     dtoValidarPermisoCapExt.setTipoApertura(permisoEstudiante.getTipoApertura());
                     dtoValidarPermisoCapExt.setTipoSolicitud("Individual");
                     dtoValidarPermisoCapExt.setEstudiante(Integer.toString(permisoEstudiante.getEstudiante().getMatricula()).concat(" - ").concat(permisoEstudiante.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()).concat(" ").concat(permisoEstudiante.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()).concat(" ").concat(permisoEstudiante.getEstudiante().getAspirante().getIdPersona().getNombre()));
                     dtoValidarPermisoCapExt.setGrupo(permisoEstudiante.getIdGrupo());
+                    dtoValidarPermisoCapExt.setProgramaEducativo(programaEducativo);
                     dtoValidarPermisoCapExt.setPlanMateria(permisoEstudiante.getIdPlanMateria());
                     if (permisoEstudiante.getTipoEvaluacion().equals("Ordinaria")) {
                         dtoValidarPermisoCapExt.setUnidadMateria(permisoEstudiante.getIdUnidadMateria());
+                        dtoValidarPermisoCapExt.setUnidad(String.valueOf(permisoEstudiante.getIdUnidadMateria().getNoUnidad()).concat(". ").concat(permisoEstudiante.getIdUnidadMateria().getNombre()));
                     } else {
                         dtoValidarPermisoCapExt.setUnidadMateria(null);
+                        dtoValidarPermisoCapExt.setUnidad("No Aplica");
                     }
                     dtoValidarPermisoCapExt.setDocente(docente);
                     dtoValidarPermisoCapExt.setTipoEvaluacion(permisoEstudiante.getTipoEvaluacion());
@@ -1027,14 +1130,114 @@ public class EjbPermisoAperturaExtemporanea {
                 }
             });
           
-            return ResultadoEJB.crearCorrecto(listaPermisosApertura, "Lista de bajas registradas en el periodo escolar y programa educativo seleccionado");
+            return ResultadoEJB.crearCorrecto(listaPermisosApertura.stream().sorted(DtoValidarPermisoCapExt::compareTo).collect(Collectors.toList()), "Lista de aperturas extemporáneas registradas en el periodo escolar y programa educativo seleccionado");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de bajas registradas en el periodo escolar y programa educativo seleccionado. (EjbPermisoAperturaExtemporanea.obtenerListaBajasProgramaEducativo)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de aperturas extemporáneas registradas en el periodo escolar y programa educativo seleccionado. (EjbPermisoAperturaExtemporanea.obtenerListaPermisosPeriodoProgramaEducativo)", e, null);
         }
     }
     
      /**
-     * Permite obtener lista de solicitudes registradas del periodo escolar y programa educativo seleccionado
+     * Permite obtener lista de aperturas extemporáneas registradas del periodo escolar para generar reporte
+     * @param periodo Periodo escolar seleccionado
+     * @return Resultado del proceso ordenado 
+     */
+    public ResultadoEJB<List<DtoValidarPermisoCapExt>> obtenerListaPermisosPeriodoEscolarReporte(PeriodosEscolares periodo){
+        try{
+            SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
+            String periodoEscolar = periodo.getMesInicio().getMes().concat(" - ").concat(periodo.getMesFin().getMes()).concat(" ").concat(String.valueOf(periodo.getAnio()));
+            
+            List<DtoValidarPermisoCapExt> listaPermisosApertura = new ArrayList<>();
+            
+            List<PermisosCapturaExtemporaneaGrupal> permisosGrupales = getPermisosCapturaExtemporaneaGrupal().getValor();
+          
+            permisosGrupales.forEach(permisoGrupo -> {
+                if (permisoGrupo.getPeriodo() == periodo.getPeriodo()) {
+                    Personal docente = em.find(Personal.class, permisoGrupo.getDocente());
+                    String rangoFechas = sm.format(permisoGrupo.getFechaInicio()).concat(" al ").concat(sm.format(permisoGrupo.getFechaFin()));
+                    AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, permisoGrupo.getIdPlanMateria().getIdPlan().getIdPe());
+                    DtoValidarPermisoCapExt dtoValidarPermisoCapExt = new DtoValidarPermisoCapExt();
+                    dtoValidarPermisoCapExt.setClavePermiso(permisoGrupo.getPermisoGrupal());
+                    dtoValidarPermisoCapExt.setPeriodoEscolar(periodoEscolar);
+                    dtoValidarPermisoCapExt.setTipoApertura(permisoGrupo.getTipoApertura());
+                    dtoValidarPermisoCapExt.setTipoSolicitud("Grupal");
+                    dtoValidarPermisoCapExt.setEstudiante("No Aplica");
+                    dtoValidarPermisoCapExt.setGrupo(permisoGrupo.getIdGrupo());
+                    dtoValidarPermisoCapExt.setProgramaEducativo(programaEducativo);
+                    dtoValidarPermisoCapExt.setPlanMateria(permisoGrupo.getIdPlanMateria());
+                    if (permisoGrupo.getTipoEvaluacion().equals("Ordinaria")) {
+                        dtoValidarPermisoCapExt.setUnidadMateria(permisoGrupo.getIdUnidadMateria());
+                        dtoValidarPermisoCapExt.setUnidad(String.valueOf(permisoGrupo.getIdUnidadMateria().getNoUnidad()).concat(". ").concat(permisoGrupo.getIdUnidadMateria().getNombre()));
+                    } else {
+                        dtoValidarPermisoCapExt.setUnidadMateria(null);
+                        dtoValidarPermisoCapExt.setUnidad("No Aplica");
+                    }
+                    dtoValidarPermisoCapExt.setDocente(docente);
+                    dtoValidarPermisoCapExt.setTipoEvaluacion(permisoGrupo.getTipoEvaluacion());
+                    dtoValidarPermisoCapExt.setRangoFechas(rangoFechas);
+                    dtoValidarPermisoCapExt.setJustificacion(permisoGrupo.getJustificacionPermiso().getDescripcion());
+                    if (permisoGrupo.getValidada() == 0) {
+                        dtoValidarPermisoCapExt.setPersonaValido(null);
+                        dtoValidarPermisoCapExt.setFechaValidacion(null);
+                        dtoValidarPermisoCapExt.setValidado(false);
+                    } else {
+                        Personal personalValido = em.find(Personal.class, permisoGrupo.getPersonalGrabaPermiso());
+                        dtoValidarPermisoCapExt.setPersonaValido(personalValido);
+                        dtoValidarPermisoCapExt.setFechaValidacion(permisoGrupo.getFechaGrabaPermiso());
+                        dtoValidarPermisoCapExt.setValidado(true);
+                    }
+                    listaPermisosApertura.add(dtoValidarPermisoCapExt);
+                }
+            });
+            
+            List<PermisosCapturaExtemporaneaEstudiante> permisosEstudiante = getPermisosCapturaExtemporaneaEstudiante().getValor();
+          
+            permisosEstudiante.forEach(permisoEstudiante -> {
+                if (permisoEstudiante.getPeriodo() == periodo.getPeriodo()) {
+                    Personal docente = em.find(Personal.class, permisoEstudiante.getDocente());
+                    String rangoFechas = sm.format(permisoEstudiante.getFechaInicio()).concat(" al ").concat(sm.format(permisoEstudiante.getFechaFin()));
+                    AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, permisoEstudiante.getIdPlanMateria().getIdPlan().getIdPe());
+                    DtoValidarPermisoCapExt dtoValidarPermisoCapExt = new DtoValidarPermisoCapExt();
+                    dtoValidarPermisoCapExt.setClavePermiso(permisoEstudiante.getPermisoEstudiante());
+                    dtoValidarPermisoCapExt.setPeriodoEscolar(periodoEscolar);
+                    dtoValidarPermisoCapExt.setTipoApertura(permisoEstudiante.getTipoApertura());
+                    dtoValidarPermisoCapExt.setTipoSolicitud("Individual");
+                    dtoValidarPermisoCapExt.setEstudiante(Integer.toString(permisoEstudiante.getEstudiante().getMatricula()).concat(" - ").concat(permisoEstudiante.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()).concat(" ").concat(permisoEstudiante.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()).concat(" ").concat(permisoEstudiante.getEstudiante().getAspirante().getIdPersona().getNombre()));
+                    dtoValidarPermisoCapExt.setGrupo(permisoEstudiante.getIdGrupo());
+                    dtoValidarPermisoCapExt.setProgramaEducativo(programaEducativo);
+                    dtoValidarPermisoCapExt.setPlanMateria(permisoEstudiante.getIdPlanMateria());
+                    if (permisoEstudiante.getTipoEvaluacion().equals("Ordinaria")) {
+                        dtoValidarPermisoCapExt.setUnidadMateria(permisoEstudiante.getIdUnidadMateria());
+                        dtoValidarPermisoCapExt.setUnidad(String.valueOf(permisoEstudiante.getIdUnidadMateria().getNoUnidad()).concat(". ").concat(permisoEstudiante.getIdUnidadMateria().getNombre()));
+                    } else {
+                        dtoValidarPermisoCapExt.setUnidadMateria(null);
+                        dtoValidarPermisoCapExt.setUnidad("No Aplica");
+                    }
+                    dtoValidarPermisoCapExt.setDocente(docente);
+                    dtoValidarPermisoCapExt.setTipoEvaluacion(permisoEstudiante.getTipoEvaluacion());
+                    dtoValidarPermisoCapExt.setRangoFechas(rangoFechas);
+                    dtoValidarPermisoCapExt.setJustificacion(permisoEstudiante.getJustificacionPermiso().getDescripcion());
+                    if (permisoEstudiante.getValidada() == 0) {
+                        dtoValidarPermisoCapExt.setPersonaValido(null);
+                        dtoValidarPermisoCapExt.setFechaValidacion(null);
+                        dtoValidarPermisoCapExt.setValidado(false);
+                    } else {
+                        Personal personalValido = em.find(Personal.class, permisoEstudiante.getPersonalGrabaPermiso());
+                        dtoValidarPermisoCapExt.setPersonaValido(personalValido);
+                        dtoValidarPermisoCapExt.setFechaValidacion(permisoEstudiante.getFechaGrabaPermiso());
+                        dtoValidarPermisoCapExt.setValidado(true);
+                    }
+                    listaPermisosApertura.add(dtoValidarPermisoCapExt);
+                }
+            });
+          
+            return ResultadoEJB.crearCorrecto(listaPermisosApertura.stream().sorted(DtoValidarPermisoCapExt::compareTo).collect(Collectors.toList()), "Lista de aperturas extemporáneas registradas en el periodo escolar seleccionado");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de aperturas extemporáneas registradas en el periodo escolar seleccionado. (EjbPermisoAperturaExtemporanea.obtenerListaPermisosPeriodoEscolarReporte)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener lista de solicitudes registradas del periodo escolar y programa educativo seleccionado (solo solicitudes de docentes para validar)
      * @param periodo Periodo escolar seleccionado
      * @param programaEducativo Programa Educativo del que se hará al consulta
      * @return Resultado del proceso ordenado 
@@ -1051,15 +1254,16 @@ public class EjbPermisoAperturaExtemporanea {
                 }
             });
             
-            return ResultadoEJB.crearCorrecto(listaPermisosSolicitados, "Lista de bajas registradas en el periodo escolar y programa educativo seleccionado");
+            return ResultadoEJB.crearCorrecto(listaPermisosSolicitados.stream().sorted(DtoValidarPermisoCapExt::compareTo).collect(Collectors.toList()), "Lista de solicitudes de aperturas extemporáneas registradas en el periodo escolar y programa educativo seleccionado");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de bajas registradas en el periodo escolar y programa educativo seleccionado. (EjbPermisoAperturaExtemporanea.obtenerListaBajasProgramaEducativo)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de solicitudes de aperturas extemporáneas registradas en el periodo escolar y programa educativo seleccionado. (EjbPermisoAperturaExtemporanea.obtenerListaSolicitudesPeriodoProgramaEducativo)", e, null);
         }
     }
     
       /**
      * Permite validar o invalidar el permiso solicitidado
      * @param permiso Permiso solicitado
+     * @param personal
      * @return Resultado del proceso
      */
     public ResultadoEJB<Integer> validarPermiso(DtoValidarPermisoCapExt permiso, PersonalActivo personal){
@@ -1150,5 +1354,26 @@ public class EjbPermisoAperturaExtemporanea {
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
         }
+    }
+    
+     /**
+     * Permite generar reporte de bajas registradas en el periodo escolar seleccionado
+     * @param periodo Periodo Escolar
+     * @return Resultado del proceso
+     */
+    
+    public String getReportePeriodo(PeriodosEscolares periodo) throws Throwable {
+        String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
+        String rutaPlantilla = "C:\\archivos\\reportesPlaneacion\\reporteAperturasExtemporaneas.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportePlaneacion(periodoEscolar);
+
+        String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_APERTURAS);
+        
+        Map beans = new HashMap();
+        beans.put("aperturaExt", obtenerListaPermisosPeriodoEscolarReporte(periodo).getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
     }
 }

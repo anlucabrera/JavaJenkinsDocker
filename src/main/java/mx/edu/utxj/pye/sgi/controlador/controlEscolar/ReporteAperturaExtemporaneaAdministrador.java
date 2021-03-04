@@ -6,15 +6,11 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import java.util.Collections;
-import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.PermisoAperturaExtemporaneaRolAdministrador;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPermisoAperturaExtemporanea;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -35,9 +31,12 @@ import org.omnifaces.util.Ajax;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.io.File;
+import java.io.IOException;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoValidarPermisoCapExt;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Faces;
 
 /**
  *
@@ -45,7 +44,7 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
  */
 @Named
 @ViewScoped
-public class ValidacionAperturaExtemporaneaAdministrador extends ViewScopedRol implements Desarrollable{
+public class ReporteAperturaExtemporaneaAdministrador extends ViewScopedRol implements Desarrollable{
     @Getter @Setter ValidacionAperturaExtRolAdministrador rol;
 
     @EJB EjbPermisoAperturaExtemporanea ejb;
@@ -71,7 +70,7 @@ public class ValidacionAperturaExtemporaneaAdministrador extends ViewScopedRol i
         try{
  if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
  cargado = true;
-            setVistaControlador(ControlEscolarVistaControlador.PERMISO_APERTURA_EXTEMPORANEA);
+            setVistaControlador(ControlEscolarVistaControlador.REPORTE_APERTURA_EXTEMPORANEA);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarAdministrador(logon.getPersonal().getClave());//validar si es director
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 
@@ -103,13 +102,13 @@ public class ValidacionAperturaExtemporaneaAdministrador extends ViewScopedRol i
             rol.getInstrucciones().add("En la tabla inferior podrá VISUALIZAR los permisos de captura extemporanea vigentes del docente seleccionado.");
             rol.getInstrucciones().add("En caso de existir un error puede ELIMINAR el permiso de captura, al dar clic en el botón ubicado en la columna opciones de la tabla.");
            
-            periodosPermisosSolicitados();
+            periodosPermisosRegistrados();
         }catch (Exception e){mostrarExcepcion(e); }
     }
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
-        String valor = "validación apertura extemporanea";
+        String valor = "reporte apertura extemporanea";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
     }
@@ -117,8 +116,8 @@ public class ValidacionAperturaExtemporaneaAdministrador extends ViewScopedRol i
      /**
      * Permite obtener la lista de periodo escolares en los que existen bajas registradas
      */
-    public void periodosPermisosSolicitados(){
-        ResultadoEJB<List<PeriodosEscolares>> res = ejb.getPeriodosPermisosSolicitados();
+    public void periodosPermisosRegistrados(){
+        ResultadoEJB<List<PeriodosEscolares>> res = ejb.getPeriodosPermisosRegistrados();
         if(res.getCorrecto()){
             if (res.getValor().size() != 0) {
                 rol.setPeriodos(res.getValor());
@@ -132,7 +131,7 @@ public class ValidacionAperturaExtemporaneaAdministrador extends ViewScopedRol i
      * Permite obtener la lista de programas educativos que tienen bajas registradas dependiendo del área de la que es el director
      */
     public void programasEducativosPermisosRegistrados(){
-        ResultadoEJB<List<AreasUniversidad>> res = ejb.getProgramasEducativosPermisosSolicitados(rol.getPeriodo());
+        ResultadoEJB<List<AreasUniversidad>> res = ejb.getProgramasEducativosPermisosRegistrados(rol.getPeriodo());
         if(res.getCorrecto()){
             if (res.getValor().size() != 0) {
                 rol.setProgramasEducativos(res.getValor());
@@ -146,7 +145,7 @@ public class ValidacionAperturaExtemporaneaAdministrador extends ViewScopedRol i
      * Permite obtener la lista de permisos de aperturas extemporáneas en el periodo y del programa educativo seleccionado
      */
     public void listaPermisosProgramaEducativo(){
-        ResultadoEJB<List<DtoValidarPermisoCapExt>> res = ejb.obtenerListaSolicitudesPeriodoProgramaEducativo(rol.getPeriodo(), rol.getProgramaEducativo());
+        ResultadoEJB<List<DtoValidarPermisoCapExt>> res = ejb.obtenerListaPermisosPeriodoProgramaEducativo(rol.getPeriodo(), rol.getProgramaEducativo());
         if(res.getCorrecto()){
             rol.setPermisosProgramaEducativo(res.getValor());
             Ajax.update("tbListaPermisosSolicitados");
@@ -202,4 +201,13 @@ public class ValidacionAperturaExtemporaneaAdministrador extends ViewScopedRol i
 //         periodosPermisosSolicitados();
 //        Ajax.update("frm");
 //    }
+    
+    /**
+     * Permite descargar aperturas extemporáneas registradas en el periodo escolar seleccionado
+     * @throws java.io.IOException
+     */
+    public void descargarReportePeriodo() throws IOException, Throwable{
+        File f = new File(ejb.getReportePeriodo(rol.getPeriodo()));
+        Faces.sendFile(f, true);
+    }
 }

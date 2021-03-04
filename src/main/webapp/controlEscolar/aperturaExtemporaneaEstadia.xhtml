@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Apertura Extemporánea Estadía
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{aperturaExtemporaneaEstadia.cargado}">
+        <adm:breadcrumb title="Apertura Extemporánea Estadía"/>
+
+        <div class="contenedor">
+            <c:if test="#{aperturaExtemporaneaEstadia.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <div class="row margin-bottom" style="margin-top: 30px;">
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <div class="ui-material">
+                                               <p:selectOneMenu id="generacion" value="#{aperturaExtemporaneaEstadia.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{aperturaExtemporaneaEstadia.cambiarGeneracion}">
+                                                    <f:selectItems value="#{aperturaExtemporaneaEstadia.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generación" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{aperturaExtemporaneaEstadia.rol.nivelEducativo}" converter="entityConverter" valueChangeListener="#{aperturaExtemporaneaEstadia.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{aperturaExtemporaneaEstadia.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                         <div class="col-sm-12 col-md-12 col-lg-6">
+                                            <div class="ui-material">
+                                                 <p:autoComplete id="estudiante" value="#{aperturaExtemporaneaEstadia.rol.estudianteSeleccionado}" completeMethod="#{aperturaExtemporaneaEstadia.completeEstudiantes}" queryDelay="800"
+                                                                valueChangeListener="#{aperturaExtemporaneaEstadia.cambiarEstudiante}"
+                                                                var="estudiante" itemValue="#{estudiante}" itemLabel="#{estudiante.datosComplete}" converter="entityConverter" forceSelection="true" size="70">
+                                                    <p:column>#{estudiante.datosComplete}</p:column>
+                                                    <p:column>#{estudiante.estudiantes.grupo.grado}° #{estudiante.estudiantes.grupo.literal} #{estudiante.estudiantes.grupo.idSistema.nombre}</p:column>
+                                                    <p:column>#{estudiante.programaEducativo.siglas}</p:column>
+                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                </p:autoComplete>
+                                                <p:outputLabel value="Estudiante - Matricula" for="estudiante" style="font-weight: bold; font-size: 14px;"/>
+                                                <p:message for="estudiante" /> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p></p>
+                                    <p></p>
+                                    <p></p>
+                                    <div class="row margin-bottom" style="margin-top: 30px;">
+                                         <div class="col-sm-12 col-md-12 col-lg-6">
+                                            <div class="ui-material">
+                                                 <p:selectOneMenu id="actividad" value="#{aperturaExtemporaneaEstadia.rol.actividad}" converter="entityConverter" valueChangeListener="#{aperturaExtemporaneaEstadia.cambiarActividadEvento}">
+                                                    <f:selectItems value="#{aperturaExtemporaneaEstadia.rol.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.actividad}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Actividad:" for="actividad"/>
+                                                <p:message for="actividad" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <div class="ui-material">
+                                                <p:calendar id="fechaInicio" locale="es" value="#{aperturaExtemporaneaEstadia.rol.fechaInicio}" pattern="dd-MM-yyyy" mask="true"/>
+                                                <p:outputLabel value="Fecha Inicio" for="fechaInicio"/>
+                                                <p:message for="fechaInicio" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <div class="ui-material">
+                                                 <p:calendar id="fechaFin" locale="es" value="#{aperturaExtemporaneaEstadia.rol.fechaFin}" pattern="dd-MM-yyyy" mask="true"/>
+                                                <p:outputLabel value="Fecha Fin" for="fechaFin"/>
+                                                <p:message for="fechaFin" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row margin-bottom" style="margin-top: 30px;">
+                                    <center>
+                                        <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{aperturaExtemporaneaEstadia.guardarAperturaExtemporanea()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                    </center>   
+                                    </div>
+                                    <c:if test="#{aperturaExtemporaneaEstadia.rol.listaAperturasExtemporaneas ne null}">
+                                    <div class="row margin-bottom" style="margin-top: 60px;">
+                                            <center>
+                                                <p:remoteCommand name="actualizar" update="@form:tbListaAperturasExtemporaneas" />
+                                                <p:dataTable id="tbListaAperturasExtemporaneas" var="aperturasExt" value="#{aperturaExtemporaneaEstadia.rol.listaAperturasExtemporaneas}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive" editable="true" editMode="cell" expandableRowGroups="true" >
+                                                    <f:facet name="header">
+                                                        <center>Aperturas Extemporáneas Registradas</center>
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Actividad" style="width: 150px;"/>
+                                                            <p:column headerText="Matrícula" style="width: 100px;"/> 
+                                                            <p:column headerText="Estudiante" style="width: 250px;"/>
+                                                            <p:column headerText="Fecha Inicio" style="width: 100px;"/>
+                                                            <p:column headerText="Fecha Fin" style="width: 150px;"/>
+                                                            <p:column headerText="Tipo apertura" style="width: 150px;"/>
+                                                            <p:column headerText="Actividad" style="width: 250px;"/>
+                                                            <p:column headerText="Rol" style="width: 200px;"/>
+                                                            <p:column headerText="Personal validó" style="width: 250px;"/>
+                                                            <p:column headerText="Fecha validación" style="width: 100px;"/>
+                                                            <p:column headerText="Situación" style="width: 100px;"/>
+                                                            <p:column headerText="Opciones" style="width: 150px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:ajax event="cellEdit" listener="#{aperturaExtemporaneaEstadia.onCellEdit}"/>
+                                                    <p:column groupRow="true" style="text-align: justify;">
+                                                        <h:outputText value="#{aperturasExt.aperturaExtemporanea.evento.actividad}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{aperturasExt.aperturaExtemporanea.seguimiento.matricula.matricula}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{aperturasExt.aperturaExtemporanea.seguimiento.matricula.aspirante.idPersona.apellidoPaterno} #{aperturasExt.aperturaExtemporanea.seguimiento.matricula.aspirante.idPersona.apellidoMaterno} #{aperturasExt.aperturaExtemporanea.seguimiento.matricula.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{aperturasExt.aperturaExtemporanea.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></f:facet>
+                                                             <f:facet name="input"><p:calendar id="fechaInicio" locale="es" value="#{aperturasExt.aperturaExtemporanea.fechaInicio}" pattern="dd-MM-yyyy" mask="true"/></f:facet>
+                                                         </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{aperturasExt.aperturaExtemporanea.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText></f:facet>
+                                                             <f:facet name="input"><p:calendar id="fechaFin" locale="es" value="#{aperturasExt.aperturaExtemporanea.fechaFin}" pattern="dd-MM-yyyy HH:mm:ss" mask="true"/></f:facet>
+                                                         </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column  style="text-align: justify;">
+                                                        <h:outputText value="#{aperturasExt.aperturaExtemporanea.tipoApertura}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{aperturasExt.aperturaExtemporanea.evento.actividad}"/></f:facet>
+                                                             <f:facet name="input">
+                                                                 <p:selectOneMenu id="actividadEvento" value="#{aperturasExt.aperturaExtemporanea.evento}" converter="entityConverter">
+                                                                     <f:selectItems value="#{aperturaExtemporaneaEstadia.rol.actividades}" var="actividadEvento"
+                                                                                    itemValue="#{actividadEvento}" itemLabel="#{actividadEvento.actividad}"/>
+                                                                 </p:selectOneMenu>
+                                                             </f:facet>
+                                                         </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{aperturasExt.aperturaExtemporanea.evento.usuario}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{aperturasExt.personalValido.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{aperturasExt.aperturaExtemporanea.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                       <h:outputText value="#{aperturasExt.aperturaExtemporanea.validada?'Validada':'Sin validar'}" />  
+                                                    </p:column>
+                                                    <p:column>
+                                                        <center>
+                                                        <div class="btn-group">
+                                                            <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{aperturaExtemporaneaEstadia.eliminarApertura(aperturasExt)}" title="Eliminar registro." onsuccess="actualizar();" >
+                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del permiso?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                            <p:commandButton actionListener="#{aperturaExtemporaneaEstadia.validarApertura(aperturasExt)}" disabled="#{aperturaExtemporaneaEstadia.rol.usuario.personal.areaOperativa ne 10}"
+                                                                                  class="btn btn-sm #{!aperturasExt.aperturaExtemporanea.validada?'btn-info':'btn-danger'}" icon="#{!aperturasExt.aperturaExtemporanea.validada?'fa fa-check':'fa fa-close'}"
+                                                                                  title="#{!aperturasExt.aperturaExtemporanea.validada?'Validar apertura.':'Invalidar apertura.'}"  onsuccess="actualizar();" />
+                                                        </div>
+                                                        </center>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p></p>
+                                                <p></p>
+                                                <p></p>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog> 
+                                            </center>
+                                    </div>
+                                    </c:if>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty aperturaExtemporaneaEstadia.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{aperturaExtemporaneaEstadia.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para registrar apertura extemporánea de estadía</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{aperturaExtemporaneaEstadia.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!aperturaExtemporaneaEstadia.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal de servicios escolares o direcciones de carrera."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

@@ -6,11 +6,14 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import lombok.Getter;
@@ -18,30 +21,27 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.EntregaFotografiasRolEscolares;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAperturaExtemporaneaEstadia;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.AperturaExtemporaneaEstadiaRolMultiple;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAperturaExtemporaneaEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionRolesEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbEstadiasServiciosEscolares;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.AperturaExtemporaneaEventoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
-
-import javax.inject.Inject;
-import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.util.Collections;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEntregaFotografiasEstadia;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPorcentajeEntregaFotografias;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EntregaFotografiasEstudiante;
-import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
-import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-
-
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 
 /**
  *
@@ -49,10 +49,11 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
  */
 @Named
 @ViewScoped
-public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarrollable{
-    @Getter @Setter EntregaFotografiasRolEscolares rol;
+public class AperturaExtemporaneaEstadia extends ViewScopedRol implements Desarrollable{
+    @Getter @Setter AperturaExtemporaneaEstadiaRolMultiple rol;
     
-    @EJB EjbEstadiasServiciosEscolares ejb;
+    @EJB EjbAperturaExtemporaneaEstadia ejb;
+    @EJB EjbEstadiasServiciosEscolares ejbEstadiasServiciosEscolares;
     @EJB EjbAsignacionRolesEstadia ejbAsignacionRolesEstadia;
     @EJB EjbSeguimientoEstadia ejbSeguimientoEstadia;
     @EJB EjbPropiedades ep;
@@ -77,14 +78,14 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
     if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
         cargado = true;
         try{
-            setVistaControlador(ControlEscolarVistaControlador.ENTREGA_FOTOGRAFIAS_ESTADIA);
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarServiciosEscolares(logon.getPersonal().getClave());//validar si es director
+            setVistaControlador(ControlEscolarVistaControlador.APERTURA_EXTEMPORANEA_ESTADIA);
+            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarAcceso(logon.getPersonal().getClave());//validar si es director
 
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return; }//cortar el flujo si no se pudo validar
 
             Filter<PersonalActivo> filtro = resAcceso.getValor();//se obtiene el filtro resultado de la validación
             PersonalActivo personal = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
-            rol = new EntregaFotografiasRolEscolares(filtro, personal);
+            rol = new AperturaExtemporaneaEstadiaRolMultiple(filtro, personal);
             tieneAcceso = rol.tieneAcceso(personal);
 //            System.out.println("tieneAcceso2 = " + tieneAcceso);
             if(!tieneAcceso){return;} //cortar el flujo si no tiene acceso
@@ -101,8 +102,9 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
             rol.getInstrucciones().add("Seleccione nivel educativo.");
             rol.getInstrucciones().add("Ingrese la matricula o el nombre del estudiante para realizar la búsqueda.");
             rol.getInstrucciones().add("Seleccionar de la lista el registro del estudiante que corresponda.");
-            rol.getInstrucciones().add("De clic en el botón para registrar entrega de fotografías.");
-            rol.getInstrucciones().add("Si se equivocó puede eliminar el registro en la tabla que se muestra en la parte inferior.");
+            rol.getInstrucciones().add("Selecciona la actividad del evento de estadía que desea activar.");
+            rol.getInstrucciones().add("Seleccione las fechas de inicio y fin en que estará activa la actividad.");
+            rol.getInstrucciones().add("Si se equivocó puede eliminar el registro en la columna opciones.");
            
             generacionesEventosRegistrados();
             
@@ -111,7 +113,7 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
-        String valor = "entrega fotografias estadia";
+        String valor = "apertura extemporanea estadia";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
     }
@@ -139,8 +141,20 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
         if(res.getCorrecto()){
             rol.setNivelesEducativos(res.getValor());
             rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
-            listaEstudiantesEntregaronFotografias();
-            listaPorcentajeEntregaFotografias();
+            listaActividadesApertura();
+            listaAperturasExtemporaneas();
+        }else mostrarMensajeResultadoEJB(res);
+    
+    }
+    
+    /**
+     * Permite obtener la lista de bajas registradas en el periodo seleccionado
+     */
+    public void listaActividadesApertura(){
+        ResultadoEJB<List<EventoEstadia>> res = ejb.getActividadesEventoEstadia(rol.getGeneracion(), rol.getNivelEducativo());
+        if(res.getCorrecto()){
+            rol.setActividades(res.getValor());
+            rol.setActividad(rol.getActividades().get(0));
         }else mostrarMensajeResultadoEJB(res);
     
     }
@@ -151,13 +165,23 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
      * @return Lista de sugerencias
      */
     public List<DtoEstudianteComplete> completeEstudiantes(String pista){
-        ResultadoEJB<List<DtoEstudianteComplete>> res = ejb.buscarEstudiante(rol.getGeneracion(), rol.getNivelEducativo(), pista);
+        if(rol.getUsuario().getAreaOperativa().getArea()==10){
+            ResultadoEJB<List<DtoEstudianteComplete>> res = ejbEstadiasServiciosEscolares.buscarEstudiante(rol.getGeneracion(), rol.getNivelEducativo(),pista);
             if(res.getCorrecto()){
                 return res.getValor();
             }else{
                 mostrarMensajeResultadoEJB(res);
                 return Collections.emptyList();
             }
+        }else{
+            ResultadoEJB<List<DtoEstudianteComplete>> res = ejb.buscarEstudianteAreaAcademica(rol.getGeneracion(), rol.getNivelEducativo(), rol.getUsuario().getAreaOficial(), pista);
+            if(res.getCorrecto()){
+                return res.getValor();
+            }else{
+                mostrarMensajeResultadoEJB(res);
+                return Collections.emptyList();
+            }
+        }
     }
     
     /**
@@ -178,7 +202,6 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
         ResultadoEJB<DtoDatosEstudiante> res = ejbAsignacionRolesEstadia.buscarDatosEstudiante(claveEstudiante);
         if(res.getCorrecto()){
         rol.setEstudianteRegistrado(res.getValor());
-        existeRegistro();
         Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
     }
@@ -186,26 +209,20 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
     /**
      * Permite obtener la lista de estudiantes asignados al asesor academico y evento seleccionado
      */
-    public void listaEstudiantesEntregaronFotografias(){
-        ResultadoEJB<List<DtoEntregaFotografiasEstadia>> res = ejb.getListaEstudiantesEntregaronFotografias(rol.getGeneracion(), rol.getNivelEducativo());
-        if(res.getCorrecto()){
-            rol.setEstudiantesFotografias(res.getValor());
-            Ajax.update("tbListaEntregaFotografias");
-        }else mostrarMensajeResultadoEJB(res);
-    
-    }
-    
-    
-            /**
-     * Permite obtener la lista de estudiantes asignados al asesor academico y evento seleccionado
-     */
-    public void listaPorcentajeEntregaFotografias(){
-        ResultadoEJB<List<DtoPorcentajeEntregaFotografias>> res = ejb.getListaPorcentajeEntregaFotografias(rol.getGeneracion(), rol.getNivelEducativo(), rol.getEstudiantesFotografias());
-        if(res.getCorrecto()){
-            rol.setPorcentajesEntrega(res.getValor());
-            Ajax.update("tbListaPorcentajeEntregaFotografias");
-        }else mostrarMensajeResultadoEJB(res);
-    
+    public void listaAperturasExtemporaneas(){
+        if(rol.getUsuario().getAreaOperativa().getArea()==10){
+            ResultadoEJB<List<DtoAperturaExtemporaneaEstadia>> res = ejb.getListaAperturasExtemporaneas(rol.getGeneracion(), rol.getNivelEducativo());
+            if(res.getCorrecto()){
+             rol.setListaAperturasExtemporaneas(res.getValor());
+             Ajax.update("tbListaAperturasExtemporaneas");
+            }else mostrarMensajeResultadoEJB(res);
+        }else{
+            ResultadoEJB<List<DtoAperturaExtemporaneaEstadia>> res = ejb.getListaAperturasExtemporaneasAreaAcademica(rol.getGeneracion(), rol.getNivelEducativo(), rol.getUsuario().getAreaOficial());
+            if(res.getCorrecto()){
+             rol.setListaAperturasExtemporaneas(res.getValor());
+             Ajax.update("tbListaAperturasExtemporaneas");
+            }else mostrarMensajeResultadoEJB(res);
+        }
     }
     
     /**
@@ -229,44 +246,66 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
         if(e.getNewValue() instanceof  ProgramasEducativosNiveles){
             ProgramasEducativosNiveles nivel = (ProgramasEducativosNiveles)e.getNewValue();
             rol.setNivelEducativo(nivel);
-            listaPorcentajeEntregaFotografias();
-            listaEstudiantesEntregaronFotografias();
+            listaAperturasExtemporaneas();
+            Ajax.update("frm");
+        }else mostrarMensaje("");
+    }
+    
+    /**
+     * Permite que al cambiar o seleccionar un programa educativo se pueda actualizar la lista de bajas por programa educativo
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarActividadEvento(ValueChangeEvent e){
+        if(e.getNewValue() instanceof  EventoEstadia){
+            EventoEstadia actividad = (EventoEstadia)e.getNewValue();
+            rol.setActividad(actividad);
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
     
      /**
-     * Permite asignar un estudiante al seguimiento de estadía del asesor académico
+     * Permite guardar apertura extemporánea
      */
-    public void registrarEntrega(){
-        ResultadoEJB<EntregaFotografiasEstudiante> resAsignar = ejb.registrarEntregaFotografias(rol.getGeneracion(), rol.getNivelEducativo(), rol.getUsuario().getPersonal(), rol.getEstudianteRegistrado());
-        mostrarMensajeResultadoEJB(resAsignar);
-        listaEstudiantesEntregaronFotografias();
-        listaPorcentajeEntregaFotografias();
+    public void guardarAperturaExtemporanea(){
+        ResultadoEJB<AperturaExtemporaneaEventoEstadia> resGuardar = ejb.guardarAperturaExtemporanea(rol.getActividad(), rol.getEstudianteRegistrado(), rol.getFechaInicio(), rol.getFechaFin(), rol.getUsuario().getPersonal());
+        mostrarMensajeResultadoEJB(resGuardar);
+        listaAperturasExtemporaneas();
         rol.setEstudianteSeleccionado(null);
     }
     
      /**
-     * Permite eliminar asignación del estudiante
-     * @param dtoEntregaFotografiasEstadia
+     * Permite eliminar apertura extemporánea seleccionada
+     * @param dtoAperturaExtemporaneaEstadia
      */
-    public void eliminarEntrega(DtoEntregaFotografiasEstadia dtoEntregaFotografiasEstadia){
-        ResultadoEJB<Integer> resEliminar = ejb.eliminarEntregaFotografias(dtoEntregaFotografiasEstadia.getEntregaFotografiasEstudiante());
+    public void eliminarApertura(DtoAperturaExtemporaneaEstadia dtoAperturaExtemporaneaEstadia){
+        ResultadoEJB<Integer> resEliminar = ejb.eliminarAperturaExtemporanea(dtoAperturaExtemporaneaEstadia.getAperturaExtemporanea());
         mostrarMensajeResultadoEJB(resEliminar);
-        listaEstudiantesEntregaronFotografias();
-        listaPorcentajeEntregaFotografias();
+        listaAperturasExtemporaneas();
     }
     
-     /**
-     * Permite buscar si existe registro de entrega de fotografías del estudiante seleccionado
+    /**
+     * Permite actualizar la apertura extemporánea seleccionada
+     * @param event
      */
-    public void existeRegistro(){
-        ResultadoEJB<EntregaFotografiasEstudiante> res = ejb.buscarRegistroEntregaFotografias(rol.getGeneracion(), rol.getNivelEducativo(), rol.getEstudianteRegistrado());
-        if(res.getValor() != null){
-            rol.setDesactivarRegistro(Boolean.TRUE);
-        }else{
-            rol.setDesactivarRegistro(Boolean.FALSE);
-        }
+    public void onCellEdit(CellEditEvent event) {
+        DataTable dataTable = (DataTable) event.getSource();
+        DtoAperturaExtemporaneaEstadia permisoNew = (DtoAperturaExtemporaneaEstadia) dataTable.getRowData();
+        ResultadoEJB<AperturaExtemporaneaEventoEstadia> resActualizar = ejb.actualizarAperturaExtemporanea(permisoNew);
+        mostrarMensajeResultadoEJB(resActualizar);
+        listaAperturasExtemporaneas();
+        Ajax.update("frm");
+    }
+    
+      /**
+     * Permite validar o invalidar la apertura extemporánea
+     * @param dtoAperturaExtemporaneaEstadia 
+     */
+    public void validarApertura(DtoAperturaExtemporaneaEstadia dtoAperturaExtemporaneaEstadia){
+        ResultadoEJB<Integer> resValidar = ejb.validarAperturaExtemporanea(dtoAperturaExtemporaneaEstadia, rol.getUsuario().getPersonal());
+        mostrarMensajeResultadoEJB(resValidar);
+        listaAperturasExtemporaneas();
+        Ajax.update("frm");
     }
     
 }
+

@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import static java.util.Collections.list;
 import java.util.Comparator;
 import java.util.Date;
@@ -296,16 +297,35 @@ public class EjbEstadiasServiciosEscolares {
      /**
      * Permite identificar a una lista de posibles estudiante para asignar estadía, de la generación y nivel seleccionado, situación regular en el periodo actual
      * @param generacion
+     * @param nivelEducativo
      * @param pista Contenido que la vista que puede incluir parte del nombre, apellidos o matricula del estudiante
      * @return Resultado del proceso con docentes ordenador por nombre
      */
-    public ResultadoEJB<List<DtoEstudianteComplete>> buscarEstudiante(Generaciones generacion, String pista){
+    public ResultadoEJB<List<DtoEstudianteComplete>> buscarEstudiante(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo, String pista){
         try{
-             //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
+            List<Integer> listaGrados = new ArrayList<>(); 
+            if("TSU".equals(nivelEducativo.getNivel())){
+                listaGrados.add(5);
+                listaGrados.add(6);
+            }else{
+                listaGrados.add(10);
+                listaGrados.add(11);
+            }
+            
+            Integer ultimoPeriodo = em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion AND g.grado IN :listaGrados ORDER BY g.idGrupo DESC", Grupo.class)
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .setParameter("listaGrados", listaGrados)
+                    .getResultStream()
+                    .map(p-> p.getPeriodo())
+                    .findFirst()
+                    .orElse(null);
+            
+
+            //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
             List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p INNER JOIN e.grupo g WHERE g.generacion=:generacion AND e.tipoEstudiante.idTipoEstudiante=:tipo AND e.periodo=:periodo AND concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo DESC", Estudiante.class)
                     .setParameter("generacion", generacion.getGeneracion())
                     .setParameter("tipo", (short)1)
-                    .setParameter("periodo", ejbAsignacionRolesEstadia.getPeriodoActual().getPeriodo())
+                    .setParameter("periodo", ultimoPeriodo)
                     .setParameter("pista", pista)
                     .getResultList();
             
@@ -322,7 +342,7 @@ public class EjbEstadiasServiciosEscolares {
             
             return ResultadoEJB.crearCorrecto(listaDtoEstudiantes, "Lista para mostrar en autocomplete");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo localizar la lista de estudiantes activos. (EjbEstadiasServiciosEscolares.buscarEstudiante)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes activos. (EjbEstadiasServiciosEscolares.buscarEstudiante)", e, null);
         }
     }
     
