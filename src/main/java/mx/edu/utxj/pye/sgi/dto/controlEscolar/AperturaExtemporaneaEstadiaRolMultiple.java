@@ -91,7 +91,7 @@ public class AperturaExtemporaneaEstadiaRolMultiple extends AbstractRol{
      * Número de apertuas registradas de una actividad del estudiante
      */
     @Getter @NonNull private Integer numeroAperturasRegistradas;
-    
+   
     /**
      * Lista de aperturas extemporáneas de estadía
      */

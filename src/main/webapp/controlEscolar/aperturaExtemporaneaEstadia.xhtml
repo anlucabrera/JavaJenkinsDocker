@@ -135,7 +135,7 @@
                                     </div>
                                     <div class="row margin-bottom" style="margin-top: 30px;">
                                     <center>
-                                        <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{aperturaExtemporaneaEstadia.guardarAperturaExtemporanea()}" disabled="#{!aperturaExtemporaneaEstadia.rol.desactivarRegistro}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                        <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{aperturaExtemporaneaEstadia.guardarAperturaExtemporanea()}" disabled="#{aperturaExtemporaneaEstadia.rol.desactivarRegistro}" icon="fa fa-pencil-square-o" class="btn-primary"/>
                                     </center>   
                                     </div>
                                     <c:if test="#{aperturaExtemporaneaEstadia.rol.listaAperturasExtemporaneas ne null}">
@@ -149,18 +149,17 @@
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column headerText="Actividad" style="width: 150px;"/>
-                                                            <p:column headerText="Matrícula" style="width: 100px;"/> 
-                                                            <p:column headerText="Estudiante" style="width: 250px;"/>
-                                                            <p:column headerText="Fecha Inicio" style="width: 100px;"/>
-                                                            <p:column headerText="Fecha Fin" style="width: 150px;"/>
-                                                            <p:column headerText="Tipo apertura" style="width: 150px;"/>
-                                                            <p:column headerText="Actividad" style="width: 250px;"/>
-                                                            <p:column headerText="Rol" style="width: 200px;"/>
-                                                            <p:column headerText="Personal validó" style="width: 250px;"/>
-                                                            <p:column headerText="Fecha validación" style="width: 100px;"/>
-                                                            <p:column headerText="Situación" style="width: 100px;"/>
-                                                            <p:column headerText="Opciones" style="width: 150px;"/>
+                                                            <p:column headerText="Actividad" style="width: 150px;" sortBy="#{aperturasExt.aperturaExtemporanea.evento.actividad}" filterBy="#{aperturasExt.aperturaExtemporanea.evento.actividad}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Matrícula" style="width: 100px;" sortBy="#{aperturasExt.aperturaExtemporanea.seguimiento.matricula.matricula}}" filterBy="#{aperturasExt.aperturaExtemporanea.seguimiento.matricula.matricula}}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Estudiante" style="width: 250px;" sortBy="#{aperturasExt.aperturaExtemporanea.seguimiento.matricula.aspirante.idPersona.apellidoPaterno} #{aperturasExt.aperturaExtemporanea.seguimiento.matricula.aspirante.idPersona.apellidoMaterno} #{aperturasExt.aperturaExtemporanea.seguimiento.matricula.aspirante.idPersona.nombre}" filterBy="#{aperturasExt.aperturaExtemporanea.seguimiento.matricula.aspirante.idPersona.apellidoPaterno} #{aperturasExt.aperturaExtemporanea.seguimiento.matricula.aspirante.idPersona.apellidoMaterno} #{aperturasExt.aperturaExtemporanea.seguimiento.matricula.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Fecha Inicio" style="width: 150px;" sortBy="#{aperturasExt.aperturaExtemporanea.fechaInicio}" filterBy="#{aperturasExt.aperturaExtemporanea.fechaInicio}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Fecha Fin" style="width: 150px;" sortBy="#{aperturasExt.aperturaExtemporanea.fechaFin}" filterBy="#{aperturasExt.aperturaExtemporanea.fechaFin}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Tipo apertura" style="width: 150px;" sortBy="#{aperturasExt.aperturaExtemporanea.tipoApertura}" filterBy="#{aperturasExt.aperturaExtemporanea.tipoApertura}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Actividad" style="width: 250px;" sortBy="#{aperturasExt.aperturaExtemporanea.evento.actividad}" filterBy="#{aperturasExt.aperturaExtemporanea.evento.actividad}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Personal validó" style="width: 250px;" sortBy="#{aperturasExt.personalValido.nombre}" filterBy="#{aperturasExt.personalValido.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Fecha validación" style="width: 150px;" sortBy="#{aperturasExt.aperturaExtemporanea.fechaValidacion}" filterBy="#{aperturasExt.aperturaExtemporanea.fechaValidacion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Situación" style="width: 100px;" sortBy="#{aperturasExt.aperturaExtemporanea.validada?'Validada':'Sin validar'}" filterBy="#{aperturasExt.aperturaExtemporanea.validada?'Validada':'Sin validar'}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Opciones" style="width: 100px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:ajax event="cellEdit" listener="#{aperturaExtemporaneaEstadia.onCellEdit}"/>
@@ -200,9 +199,6 @@
                                                          </p:cellEditor>
                                                     </p:column>
                                                     <p:column style="text-align: justify;">
-                                                        <h:outputText value="#{aperturasExt.aperturaExtemporanea.evento.usuario}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: justify;">
                                                         <h:outputText value="#{aperturasExt.personalValido.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
@@ -214,10 +210,10 @@
                                                     <p:column>
                                                         <center>
                                                         <div class="btn-group">
-                                                            <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{aperturaExtemporaneaEstadia.eliminarApertura(aperturasExt)}" title="Eliminar registro." onsuccess="actualizar();" >
+                                                            <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{aperturaExtemporaneaEstadia.eliminarApertura(aperturasExt)}" title="Eliminar registro." onsuccess="actualizar();" disabled="#{aperturaExtemporaneaEstadia.desactivarEliminar(aperturasExt)}" >
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro del permiso?" icon="ui-icon-alert" />
                                                             </p:commandButton>
-                                                            <p:commandButton actionListener="#{aperturaExtemporaneaEstadia.validarApertura(aperturasExt)}" disabled="#{aperturaExtemporaneaEstadia.rol.usuario.personal.areaOperativa ne 10}"
+                                                            <p:commandButton actionListener="#{aperturaExtemporaneaEstadia.validarApertura(aperturasExt)}" rendered="#{aperturaExtemporaneaEstadia.rol.usuario.personal.areaOperativa eq 10}"
                                                                                   class="btn btn-sm #{!aperturasExt.aperturaExtemporanea.validada?'btn-info':'btn-danger'}" icon="#{!aperturasExt.aperturaExtemporanea.validada?'fa fa-check':'fa fa-close'}"
                                                                                   title="#{!aperturasExt.aperturaExtemporanea.validada?'Validar apertura.':'Invalidar apertura.'}"  onsuccess="actualizar();" />
                                                         </div>

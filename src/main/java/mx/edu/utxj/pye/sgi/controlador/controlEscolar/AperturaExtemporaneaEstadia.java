@@ -33,7 +33,6 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AperturaExtemporaneaEventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -332,7 +331,24 @@ public class AperturaExtemporaneaEstadia extends ViewScopedRol implements Desarr
         if(res.getCorrecto()){
              rol.setNumeroAperturasRegistradas(res.getValor());
         }else mostrarMensajeResultadoEJB(res);
-        Messages.addGlobalWarn("El estudiante tiene " + rol.getNumeroAperturasRegistradas() + " aperturas registradas para la misma actividad");
+        if(rol.getNumeroAperturasRegistradas()>1){
+        Messages.addGlobalWarn("El estudiante tiene " + rol.getNumeroAperturasRegistradas() + " aperturas registradas para la misma actividad");}
+    }
+    
+     /**
+     * Permite eliminar apertura extemporánea seleccionada
+     * @param dtoAperturaExtemporaneaEstadia
+     * @return 
+     */
+    public Boolean desactivarEliminar(DtoAperturaExtemporaneaEstadia dtoAperturaExtemporaneaEstadia){
+        Boolean valor = Boolean.TRUE;
+        if("Dirección de carrera".equals(dtoAperturaExtemporaneaEstadia.getAperturaExtemporanea().getTipoApertura()) && rol.getUsuario().getPersonal().getAreaOperativa()!= 10)
+        {
+            valor = Boolean.FALSE;
+        }else if(rol.getUsuario().getPersonal().getAreaOperativa()== 10){
+            valor = Boolean.FALSE;
+        }
+        return valor;
     }
     
 }
