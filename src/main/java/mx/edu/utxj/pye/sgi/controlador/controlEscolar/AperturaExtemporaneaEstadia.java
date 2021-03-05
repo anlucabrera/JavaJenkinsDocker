@@ -313,7 +313,7 @@ public class AperturaExtemporaneaEstadia extends ViewScopedRol implements Desarr
     }
     
      /**
-     * Permite buscar si existe registro de entrega de fotografías del estudiante seleccionado
+     * Permite verificar si el estudiante tiene seguimiento de estadía registrado
      * @param estudiante
      */
     public void existeSeguimiento(DtoDatosEstudiante estudiante){
@@ -325,7 +325,7 @@ public class AperturaExtemporaneaEstadia extends ViewScopedRol implements Desarr
     }
     
      /**
-     * Permite buscar si existe registro de entrega de fotografías del estudiante seleccionado
+     * Permite obtener lista de aperturas registradas de la actividad y estudiante seleccionado
      */
     public void listaAperturasRegistradasEvento(){
         ResultadoEJB<Integer> res = ejb.buscarAperturasRegistradasEvento(rol.getActividad(), rol.getEstudianteRegistrado());
