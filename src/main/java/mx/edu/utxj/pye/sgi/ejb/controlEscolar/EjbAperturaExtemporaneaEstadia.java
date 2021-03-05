@@ -206,8 +206,6 @@ public class EjbAperturaExtemporaneaEstadia {
                     .map(p-> p.getArea())
                     .collect(Collectors.toList());
             
-            System.err.println("getListaAperturasExtemporaneasAreaAcademica - programas " + programas.toString());
-            
             List<AperturaExtemporaneaEventoEstadia> listaAperturas = em.createQuery("SELECT a FROM AperturaExtemporaneaEventoEstadia a WHERE a.evento.generacion=:generacion AND a.evento.nivel=:nivel AND a.seguimiento.matricula.carrera IN :programas", AperturaExtemporaneaEventoEstadia.class)
                     .setParameter("generacion", generacion.getGeneracion())
                     .setParameter("nivel", nivelEducativo.getNivel())
@@ -215,8 +213,6 @@ public class EjbAperturaExtemporaneaEstadia {
                     .getResultStream()
                     .distinct()
                     .collect(Collectors.toList());
-            
-             System.err.println("getListaAperturasExtemporaneasAreaAcademica - listaAperturas " + listaAperturas.toString());
             
             List<DtoAperturaExtemporaneaEstadia> listaAperturasExtemporaneas = new ArrayList<>();
             
@@ -343,6 +339,26 @@ public class EjbAperturaExtemporaneaEstadia {
             return ResultadoEJB.crearCorrecto(validar, mensaje);
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo validar o invalidar la apertura extemporánea seleccionada. (EjbAperturaExtemporaneaEstadia.validarAperturaExtemporanea)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de aperturas extemporáneas registradas de una actividad del estudiante seleccionado
+     * @param actividad
+     * @param estudiante 
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> buscarAperturasRegistradasEvento(EventoEstadia actividad, DtoDatosEstudiante estudiante){
+        try{
+            List<AperturaExtemporaneaEventoEstadia> listaAperturaExtemporaneaEventoEstadia = em.createQuery("SELECT a FROM AperturaExtemporaneaEventoEstadia a WHERE a.seguimiento.matricula.matricula=:matricula AND a.evento.evento=:evento", AperturaExtemporaneaEventoEstadia.class)
+                    .setParameter("matricula", estudiante.getEstudiante().getMatricula())
+                    .setParameter("evento", actividad.getEvento())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+                
+            return ResultadoEJB.crearCorrecto(listaAperturaExtemporaneaEventoEstadia.size(), "Lista de aperturas extemporáneas registradas de una actividad del estudiante seleccionado.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener correctamente la lista de aperturas extemporáneas registradas de una actividad del estudiante seleccionado. (EjbAperturaExtemporaneaEstadia.buscarAperturasRegistradasEvento)", e, null);
         }
     }
     

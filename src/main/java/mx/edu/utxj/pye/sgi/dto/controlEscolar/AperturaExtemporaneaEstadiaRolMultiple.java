@@ -87,6 +87,11 @@ public class AperturaExtemporaneaEstadiaRolMultiple extends AbstractRol{
      */
     @Getter @NonNull private Boolean desactivarRegistro;
     
+     /**
+     * Número de apertuas registradas de una actividad del estudiante
+     */
+    @Getter @NonNull private Integer numeroAperturasRegistradas;
+    
     /**
      * Lista de aperturas extemporáneas de estadía
      */
@@ -149,6 +154,10 @@ public class AperturaExtemporaneaEstadiaRolMultiple extends AbstractRol{
         this.desactivarRegistro = desactivarRegistro;
     }
 
+    public void setNumeroAperturasRegistradas(Integer numeroAperturasRegistradas) {
+        this.numeroAperturasRegistradas = numeroAperturasRegistradas;
+    }
+    
     public void setListaAperturasExtemporaneas(List<DtoAperturaExtemporaneaEstadia> listaAperturasExtemporaneas) {
         this.listaAperturasExtemporaneas = listaAperturasExtemporaneas;
     }

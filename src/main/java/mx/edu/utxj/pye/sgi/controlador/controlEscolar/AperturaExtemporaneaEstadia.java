@@ -25,6 +25,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAperturaExtemporaneaEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.AperturaExtemporaneaEstadiaRolMultiple;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAperturaExtemporaneaEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionRolesEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbEstadiasServiciosEscolares;
@@ -32,6 +33,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AperturaExtemporaneaEventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -40,6 +42,7 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Messages;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 
@@ -95,7 +98,7 @@ public class AperturaExtemporaneaEstadia extends ViewScopedRol implements Desarr
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
            
             rol.setNivelRol(NivelRol.OPERATIVO);
-            rol.setDesactivarRegistro(Boolean.FALSE);
+            rol.setDesactivarRegistro(Boolean.TRUE);
 //            rol.setSoloLectura(true);
             
             rol.getInstrucciones().add("Seleccione generación.");
@@ -202,6 +205,7 @@ public class AperturaExtemporaneaEstadia extends ViewScopedRol implements Desarr
         ResultadoEJB<DtoDatosEstudiante> res = ejbAsignacionRolesEstadia.buscarDatosEstudiante(claveEstudiante);
         if(res.getCorrecto()){
         rol.setEstudianteRegistrado(res.getValor());
+        existeSeguimiento(rol.getEstudianteRegistrado());
         Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
     }
@@ -270,6 +274,7 @@ public class AperturaExtemporaneaEstadia extends ViewScopedRol implements Desarr
         ResultadoEJB<AperturaExtemporaneaEventoEstadia> resGuardar = ejb.guardarAperturaExtemporanea(rol.getActividad(), rol.getEstudianteRegistrado(), rol.getFechaInicio(), rol.getFechaFin(), rol.getUsuario().getPersonal());
         mostrarMensajeResultadoEJB(resGuardar);
         listaAperturasExtemporaneas();
+        listaAperturasRegistradasEvento();
         rol.setEstudianteSeleccionado(null);
     }
     
@@ -305,6 +310,29 @@ public class AperturaExtemporaneaEstadia extends ViewScopedRol implements Desarr
         mostrarMensajeResultadoEJB(resValidar);
         listaAperturasExtemporaneas();
         Ajax.update("frm");
+    }
+    
+     /**
+     * Permite buscar si existe registro de entrega de fotografías del estudiante seleccionado
+     * @param estudiante
+     */
+    public void existeSeguimiento(DtoDatosEstudiante estudiante){
+        ResultadoEJB<DtoSeguimientoEstadiaEstudiante> res = ejbSeguimientoEstadia.getSeguimientoEstudiante(rol.getGeneracion(), rol.getNivelEducativo(), estudiante.getEstudiante().getMatricula());
+        if(res.getValor() == null){
+            rol.setDesactivarRegistro(Boolean.FALSE);
+            Messages.addGlobalWarn("El estudiante no tiene seguimiento de estadía registrado, por eso no se puede aperturar evento");
+        }
+    }
+    
+     /**
+     * Permite buscar si existe registro de entrega de fotografías del estudiante seleccionado
+     */
+    public void listaAperturasRegistradasEvento(){
+        ResultadoEJB<Integer> res = ejb.buscarAperturasRegistradasEvento(rol.getActividad(), rol.getEstudianteRegistrado());
+        if(res.getCorrecto()){
+             rol.setNumeroAperturasRegistradas(res.getValor());
+        }else mostrarMensajeResultadoEJB(res);
+        Messages.addGlobalWarn("El estudiante tiene " + rol.getNumeroAperturasRegistradas() + " aperturas registradas para la misma actividad");
     }
     
 }
