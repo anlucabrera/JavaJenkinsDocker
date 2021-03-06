@@ -67,12 +67,27 @@
                                         </p:link>
                                     </div>      
                                 </div>
-                                <p:tabView>
+                                    <p:tabView id="cataogosPtw">
                                     <p:tab title="Eventos Generales">
-                                        <h:form id="frmEventos"> 
+                                        <h:form id="frmEventos">  
+                                            <div class="row">
+                                                <div class="col-lg-10 col-xs-10">
+                                                    <p:outputLabel for="anio" value="Año" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                    <p:selectOneMenu  id="anio" value="#{administracionPOA.ejerciciosFiscalesBusqueda}" valueChangeListener="#{administracionPOA.numeroAnioAsiganado}">>
+                                                        <f:selectItems value="#{utilidadesAcceso.aniosReportes}" var="anio" itemValue="#{anio.ejercicioFiscal}" itemLabel="#{anio.anio}" />
+                                                        <p:ajax update="@form" listener="#{administracionPOA.imprimirValores()}"/>
+                                                    </p:selectOneMenu >
+                                                    <hr/>
+                                                </div>
+                                                <div class="col-lg-2 col-xs-2">
+                                                    <p:commandButton id="btnAgregaCañemdario" value="Agregar nuevo calendario" actionListener="#{administracionPOA.agregarCalendario()}"
+                                                                     icon="fa fa-chek" styleClass="btn-primary"  update="@form"/>
+                                                </div>      
+                                            </div>
                                             <p:outputPanel id="incidenciasReporte">
                                                 <p:dataTable id="tblActividades"  value="#{administracionPOA.calendarioevaluacionpoas}"  var="calendario"
-                                                             editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+                                                             editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." 
+                                                             rowStyleClass="#{administracionPOA.vencida(calendario.fechaFin)?'actividad':(administracionPOA.vencida(calendario.fechaInicio)?'lac':'actividad')}" rendered="true">
                                                     <p:ajax event="rowEdit" listener="#{administracionPOA.actualizarCalendarioPOA}" update="tblActividades" process="@this"/>
                                                     <p:ajax event="rowEditCancel" listener="#{administracionPOA.onRowCancel}" update="tblActividades" />
 
@@ -80,7 +95,8 @@
                                                               sortBy="#{calendario.mesEvaluacion}" 
                                                               filterBy="#{calendario.mesEvaluacion}" 
                                                               filterMatchMode="contains">
-                                                        <h:outputText value="#{calendario.mesEvaluacion}" />
+                                                        <h:outputText value="#{calendario.estapa eq 'Registro'?'Registro de':'Evaluación del Mes de'} #{calendario.mesEvaluacion} " />
+                                                        <h:outputLabel value="#{calendario.fechaInicio}"><f:convertDateTime pattern="yyyy"/></h:outputLabel>
                                                     </p:column>                                                   
                                                     <p:column headerText="Fecha Inicio" style="width: 100px">
                                                         <p:cellEditor>
@@ -126,7 +142,7 @@
                                                                     <h3>Asignacion de <br/>Recurso y registro <br/>de Justificaciones</h3>
                                                                 </c:if>
                                                                 <c:if test="#{b.evaluacionPOA ge 3}">
-                                                                    <h3>Evaluacion del <br/>mes de #{b.mesEvaluacion}</h3>
+                                                                <h3>Evaluacion del <br/>mes de #{b.mesEvaluacion} #{administracionPOA.anioB}</h3>
                                                                 </c:if>
                                                             </div>
                                                             <div class="icon">

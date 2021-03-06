@@ -21,6 +21,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisosevaluacionpoaex;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
+import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 
 /**
  *
@@ -62,6 +63,13 @@ public class EjbAdministrador {
         return nuevoConfiguracionPropiedades;
     }
     
+    public Calendarioevaluacionpoa agregarCalendarioPoa(Calendarioevaluacionpoa calendarioevaluacionpoa){
+        facade.setEntityClass(Calendarioevaluacionpoa.class);
+        facade.create(calendarioevaluacionpoa);
+        facade.flush();
+        return calendarioevaluacionpoa;
+    }
+    
     public Calendarioevaluacionpoa actualizarCalendarioPoa(Calendarioevaluacionpoa calendarioevaluacionpoa){
         facade.setEntityClass(Calendarioevaluacionpoa.class);
         facade.edit(calendarioevaluacionpoa);
@@ -93,6 +101,13 @@ public class EjbAdministrador {
     public Permisosevaluacionpoaex eliminarPermisosevaluacionpoaex(Permisosevaluacionpoaex p){
         facade.setEntityClass(Permisosevaluacionpoaex.class);
         facade.remove(p);
+        facade.flush();
+        return p;
+    }
+    
+    public EjerciciosFiscales crearEjerciciosFiscales(EjerciciosFiscales p){
+        facade.setEntityClass(EjerciciosFiscales.class);
+        facade.create(p);
         facade.flush();
         return p;
     }
