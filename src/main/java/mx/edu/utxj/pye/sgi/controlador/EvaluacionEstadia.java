@@ -34,7 +34,7 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.ViewEstudianteAsesorAcademico;
 public class EvaluacionEstadia implements Serializable{
     
 
-    @Getter private Boolean cargada,finalizado;
+    @Getter private Boolean cargada,finalizado, mostrar;
     @Getter @Setter Short grado = 2;
     @Getter private Evaluaciones evaluacion;
     @Getter private String evaluador, valor;
@@ -63,34 +63,26 @@ public class EvaluacionEstadia implements Serializable{
             respuestasPosibles4 = ejb.getRespuestasPosibles4();
             respuestasPosibles5 = ejb.getRespuestasPosibles5();
             evaluacion = ejb.getEvaluacionActiva();
-            //System.out.println("Evaluacion estadia"+ evaluacion);
-            asesor = ejb.viewEstudianteAsesorAcademico(evaluador);
-            if(asesor==null){
-                return;
-            }
-            evaluado = Integer.parseInt(asesor.getNumeroNomina());
-            if (evaluacion != null) {
-                
-                alumno = ejb.obtenerAlumnos(evaluador);
-                //System.out.println("Alumno"+alumno.getMatricula());
-                evaluadorr=Integer.parseInt(evaluador);
-                periodoEsc=ejbS.getPeriodo(evaluacion);
-                if (alumno != null) {
-                    resultado = ejb.getResultado(evaluacion, alumno.getMatricula(), evaluado, respuestas);
-                    //System.out.println("mx.edu.utxj.pye.sgi.controlador.EvaluacionEstadia.init() Resultado:"+ resultado);
-                    if (resultado != null) {
-                        apartados = ejb.getApartados();
-                        apartados1 = ejb.getApartados1();
-                        apartados2 = ejb.getApartados2();
-                        apartados3 = ejb.getApartados3();
-                        apartados4 = ejb.getApartados4();
-                        apartados5 = ejb.getApartados5();
-                        apartados6 = ejb.getApartados6();
-                        finalizado = ejb.actualizarResultado(resultado);
-                        cargada = true;
-                    }
-                }
-            }
+            if(evaluacion == null) return;
+                asesor = ejb.viewEstudianteAsesorAcademico(evaluador);
+                if(asesor == null) return;
+                    evaluado = Integer.parseInt(asesor.getNumeroNomina());
+                    alumno = ejb.obtenerAlumnos(evaluador);
+                    if(alumno == null) return;
+                        evaluadorr=Integer.parseInt(evaluador);
+                        periodoEsc=ejbS.getPeriodo(evaluacion);
+                        resultado = ejb.getResultado(evaluacion, alumno.getMatricula(), evaluado, respuestas);
+                        if(resultado == null) return;
+                            apartados = ejb.getApartados();
+                            apartados1 = ejb.getApartados1();
+                            apartados2 = ejb.getApartados2();
+                            apartados3 = ejb.getApartados3();
+                            apartados4 = ejb.getApartados4();
+                            apartados5 = ejb.getApartados5();
+                            apartados6 = ejb.getApartados6();
+                            finalizado = ejb.actualizarResultado(resultado);
+                            cargada = true;
+                            mostrar = ejb.mostrarApartados();
         } catch (Exception e) {
             cargada = false;
             e.printStackTrace();

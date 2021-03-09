@@ -123,6 +123,24 @@ public class EjbAdministracionEncuestaServicios {
                 .getResultStream().map(alumnos -> packEstudiantesEncuesta(alumnos)).filter(ResultadoEJB::getCorrecto).map(ResultadoEJB::getValor).collect(Collectors.toList());
         return ResultadoEJB.crearCorrecto(dtoAlumnosEncuesta, "Se empaqueto con éxito.");
     }
+    
+    public ResultadoEJB<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE> obtenerAlumnosNoAccedieron(Integer matricula, Short grado) {
+        
+        DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE dtoAlumnosEncuesta = em2.createQuery("select a from Alumnos as a " +
+                "where (a.cveStatus = :estatus or a.cveStatus = :estatus2) " +
+                "and (a.matricula = :matricula) " +
+                "and (a.gradoActual = :grado1)", Alumnos.class)
+                .setParameter("matricula", matricula.toString())
+                .setParameter("estatus", 1)
+                .setParameter("estatus2", 6)
+                .setParameter("grado1", grado)
+                .getResultStream().map(alumnos -> packEstudiantesEncuesta(alumnos))
+                .filter(ResultadoEJB::getCorrecto).map(ResultadoEJB::getValor)
+                .map(dtoAEG -> packEstudianteSaiiut(dtoAEG))
+                .filter(ResultadoEJB::getCorrecto).map(ResultadoEJB::getValor)
+                .findFirst().orElse(new DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE());
+        return ResultadoEJB.crearCorrecto(dtoAlumnosEncuesta, "Se empaqueto con éxito.");
+    }
 
     public ResultadoEJB<List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar>> obtenerAlumnosNoAccedieronCE() {
         String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
@@ -158,9 +176,24 @@ public class EjbAdministracionEncuestaServicios {
                 .getResultStream().map(estudiante -> packEstudiantesEncuesta(estudiante)).filter(ResultadoEJB::getCorrecto).map(ResultadoEJB::getValor).collect(Collectors.toList());
         return ResultadoEJB.crearCorrecto(dtoAlumnosEncuesta, "Se empaqueto con éxito.");
     }
+    
+    public ResultadoEJB<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar> obtenerAlumnosNoAccedieronCE(Integer matricula) {
+        DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar dtoAlumnosEncuesta = em.createQuery("select e from Estudiante as e " +
+                "where e.tipoEstudiante.idTipoEstudiante = :tipoEstudiante " +
+                "and e.matricula = :matricula "+
+                "and (e.grupo.grado = :grado1 or e.grupo.grado = :grado2)", Estudiante.class)
+                .setParameter("tipoEstudiante", Short.parseShort("1"))
+                .setParameter("matricula", matricula)
+                .setParameter("grado1", 11)
+                .setParameter("grado2", 6)
+                .getResultStream().map(estudiante -> packEstudiantesEncuesta(estudiante)).filter(ResultadoEJB::getCorrecto).map(ResultadoEJB::getValor)
+                .findFirst().orElse(new DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar());
+        return ResultadoEJB.crearCorrecto(dtoAlumnosEncuesta, "Se empaqueto con éxito.");
+    }
 
     public ResultadoEJB<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar> packEstudiantesEncuesta(Estudiante estudiante){
         try{
+            if(estudiante == null) return ResultadoEJB.crearErroneo(2, "No se encontro al estudiante enviado", DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar.class);
             Estudiante estudianteBD = em.find(Estudiante.class, estudiante.getIdEstudiante());
             Grupo grupo = em.find(Grupo.class, estudianteBD.getGrupo().getIdGrupo());
             AreasUniversidad areasUniversidad = em.find(AreasUniversidad.class, estudianteBD.getCarrera());
@@ -182,14 +215,16 @@ public class EjbAdministracionEncuestaServicios {
 
     public ResultadoEJB<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> packEstudiantesEncuesta(Alumnos alumnos){
         try{
+            if(alumnos == null) return ResultadoEJB.crearErroneo(2, "El alumno enviado no se encontro", DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral.class);
+            //System.out.println("Entro aqui");
             Personas alumno = em2.createQuery("select p from Personas as p where p.personasPK.cvePersona = :cveAlumno", Personas.class)
-                    .setParameter("cveAlumno", alumnos.getAlumnosPK().getCveAlumno()).getResultStream().findFirst().orElse(null);
+                    .setParameter("cveAlumno", alumnos.getAlumnosPK().getCveAlumno()).getResultStream().findFirst().orElse(new Personas());
             assert alumno != null;
             //System.out.println("Datos personales:"+alumno.getNombre()+" "+alumno.getApellidoPat()+" "+alumno.getApellidoMat());
             Grupos grupos = alumnos.getGrupos();
             //System.out.println("Grupo:"+ grupos.getGrado()+" "+grupos.getIdGrupo());
             CarrerasCgut carrerasCgut = em2.createQuery("select c from CarrerasCgut as c where c.cveCarrera = :cveCarrera", CarrerasCgut.class)
-                    .setParameter("cveCarrera", grupos.getGruposPK().getCveCarrera()).getResultStream().findFirst().orElse(null);
+                    .setParameter("cveCarrera", grupos.getGruposPK().getCveCarrera()).getResultStream().findFirst().orElse(new CarrerasCgut());
             DtoAlumnosEncuesta.DtoCarrera dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera();
             assert carrerasCgut != null;
             if(carrerasCgut.getAbreviatura().equals("AARH")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "AARH");}
@@ -222,7 +257,7 @@ public class EjbAdministracionEncuestaServicios {
             if(carrerasCgut.getAbreviatura().equals("TIEVND")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "TIEVND");}
             //System.out.println("Transformación de la carrera:"+ dtoCarrera.getNombre()+"-"+dtoCarrera.getAbreviatura());
             Personas docente = em2.createQuery("select p from Personas as p where p.personasPK.cvePersona = :cvePersona", Personas.class)
-                    .setParameter("cvePersona", grupos.getCveMaestro()).getResultStream().findFirst().orElse(null);
+                    .setParameter("cvePersona", grupos.getCveMaestro()).getResultStream().findFirst().orElse(new Personas());
             assert docente != null;
             //System.out.println("Información del tutor:"+docente.getNombre()+" "+docente.getApellidoPat()+" "+docente.getApellidoMat());
             DtoAlumnosEncuesta.DtoCarrera finalDtoCarrera = dtoCarrera;
@@ -230,7 +265,7 @@ public class EjbAdministracionEncuestaServicios {
                     .filter(siglas -> siglas.getSiglas().equals(finalDtoCarrera.getAbreviatura())).findFirst().orElse(null);
             assert dtoDirector != null;
             ListaUsuarioClaveNomina listaUsuarioClaveNomina = em2.createQuery("select l from ListaUsuarioClaveNomina as l where l.numeroNomina = :noNomima", ListaUsuarioClaveNomina.class)
-                    .setParameter("noNomima", dtoDirector.getClaveDirector().toString()).getResultStream().findFirst().orElse(null);
+                    .setParameter("noNomima", dtoDirector.getClaveDirector().toString()).getResultStream().findFirst().orElse(new ListaUsuarioClaveNomina());
             DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral dto = new DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral(
                     alumnos, alumno, grupos, dtoCarrera, docente, listaUsuarioClaveNomina, dtoCarrera.getAbreviatura(), grupos.getIdGrupo(), alumnos.getGradoActual()
             );
@@ -387,6 +422,7 @@ public class EjbAdministracionEncuestaServicios {
 
     public ResultadoEJB<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE> packEstudianteSaiiut(DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral dtoAlumnosEncuestaGeneral){
         try {
+            if(dtoAlumnosEncuestaGeneral.getAlumnos() == null) return ResultadoEJB.crearErroneo(2, "No existe un DTO creado", DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE.class);
             String tutor = "No hay tutor asignado";
             if(dtoAlumnosEncuestaGeneral.getGrupos().getCveMaestro() != null){
                 tutor = dtoAlumnosEncuestaGeneral.getTutor().getNombre()+" "+dtoAlumnosEncuestaGeneral.getTutor().getApellidoPat()+" "+dtoAlumnosEncuestaGeneral.getTutor().getApellidoMat();
@@ -430,6 +466,8 @@ public class EjbAdministracionEncuestaServicios {
                 .collect(Collectors.toList());
         return ResultadoEJB.crearCorrecto(lista, "Lista completada con exito");
     }
+    
+    
 
     public ResultadoEJB<List<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE>> obtenerListaCompletaControlEscolar(){
         List<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE> lista =
@@ -440,9 +478,37 @@ public class EjbAdministracionEncuestaServicios {
                         .collect(Collectors.toList());
         return ResultadoEJB.crearCorrecto(lista, "Lista completada con exito");
     }
+    
+    public ResultadoEJB<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE> obtenerListaCompletaControlEscolar(Integer matricula){
+        DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar dtoAEGCE = obtenerAlumnosNoAccedieronCE(matricula).getValor();
+        DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE dtoAESyCE = packEstudiantControlEscolar(dtoAEGCE).getValor();
+        return ResultadoEJB.crearCorrecto(dtoAESyCE, "Lista completada con exito");
+    }
 
     public ResultadoEJB<List<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE>> obtenerEstudiantesSaiiutyCE(){
         List<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE> estudiantes = Stream.concat(obtenerListaCompletaSaiiut().getValor().stream(), obtenerListaCompletaControlEscolar().getValor().stream()).collect(Collectors.toList());
         return ResultadoEJB.crearCorrecto(estudiantes, "Lista completa");
+    }
+    
+    public ResultadoEJB<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE> obtenerEstudiantesSaiiutyCE(Integer matricula){
+        DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE dtoSaiiut, dtoCE, dto = new DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE();
+        if(!obtenerListaCompletaControlEscolar(matricula).getValor().equals(new DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE())){
+            dtoCE = obtenerListaCompletaControlEscolar(matricula).getValor();
+            dto = dtoCE;
+        }
+        return ResultadoEJB.crearCorrecto(dto, "");
+        
+    }
+    
+    public ResultadoEJB<List<EncuestaServiciosResultados>> obtenerListaEncuestasPorPeriodo(Integer periodo){
+        Evaluaciones e = em.createQuery("select e from Evaluaciones as e where e.periodo = :periodo and e.tipo = :tipo", Evaluaciones.class)
+                .setParameter("periodo", periodo)
+                .setParameter("tipo", "Servicios")
+                .getResultStream()
+                .findFirst().orElse(new Evaluaciones());
+        List<EncuestaServiciosResultados> esr = em.createQuery("select e from EncuestaServiciosResultados as e where e.encuestaServiciosResultadosPK.evaluacion = :evaluacion", EncuestaServiciosResultados.class)
+                .setParameter("evaluacion", e.getEvaluacion())
+                .getResultStream().collect(Collectors.toList());
+        return ResultadoEJB.crearCorrecto(esr, "Lista completa");
     }
 }

@@ -48,9 +48,13 @@ public class EjbEncuestaServicios implements Serializable {
      * con la fecha de apertura y la fecha de cierre, para así encontrar la encuesta.
      */
     public Evaluaciones getEvaluacionActivaAnterior() {
+        VariablesProntuario vp = em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "periodoEncuestaServiciosAnt")
+                .getResultStream()
+                .findFirst().get();
         TypedQuery<Evaluaciones> q = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND e.periodo = :periodo ORDER BY e.evaluacion desc", Evaluaciones.class);
         q.setParameter("tipo", "Servicios");
-        q.setParameter("periodo", 53);
+        q.setParameter("periodo", Integer.parseInt(vp.getValor()));
 
         List<Evaluaciones> l = q.getResultList();
         if(l.isEmpty()){
@@ -81,7 +85,7 @@ public class EjbEncuestaServicios implements Serializable {
                     .setParameter("fecha", new Date())
                     .getResultStream()
                     .findFirst()
-                    .orElse(null);
+                    .orElse(new Evaluaciones());
             if(eventoEscolar == null){
                 return ResultadoEJB.crearErroneo(2,new Evaluaciones(), "No existe evento aperturado del tipo solicitado.");// .crearCorrecto(map.entrySet().iterator().next(), "Evento aperturado.");
             }else{
@@ -647,25 +651,17 @@ public class EjbEncuestaServicios implements Serializable {
      * @param matricula Parametro que se envia dentro del formulario de Login
      * @return Devuelve un objeto de Alumnos que se encuetra en la tabla misma.
      */
-    public Alumnos obtenerAlumnos(String matricula) {
-        String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+    public Alumnos obtenerAlumnos(String matricula) throws Exception{
+        String periodoEscolar = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
                 .setParameter("nombre", "periodoEncuestaServicios")
-                .getResultStream().findFirst().orElse(null)).getValor();
-        String periodoEscolarActual = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
-                .setParameter("nombre", "periodoEncuestaServiciosActual")
-                .getResultStream().findFirst().orElse(null)).getValor();
-        String grado1 = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
-                .setParameter("nombre", "grado1")
-                .getResultStream().findFirst().orElse(null)).getValor();
-        String grado2 = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
-                .setParameter("nombre", "grado2")
-                .getResultStream().findFirst().orElse(null)).getValor();
-        String grado3 = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
-                .setParameter("nombre", "grado3")
-                .getResultStream().findFirst().orElse(null)).getValor();
-        String grado4 = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
-                .setParameter("nombre", "grado4")
-                .getResultStream().findFirst().orElse(null)).getValor();
+                .getResultStream().findFirst().orElse(new VariablesProntuario())).getValor();
+        String periodoEscolarActual = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "aperturaEncuestaServiciosAnt")
+                .getResultStream().findFirst().orElse(new VariablesProntuario())).getValor();
+        String grado1 = obtenerGrado1();
+        String grado2 = obtenerGrado2();
+        String grado3 = obtenerGrado3();
+        String grado4 = obtenerGrado4();
         return f2.getEntityManager()
                 .createQuery("SELECT a from Alumnos a "
                         + "WHERE a.matricula=:matricula AND "
@@ -687,10 +683,58 @@ public class EjbEncuestaServicios implements Serializable {
         return (PeriodosEscolares)f.find(evaluacion.getPeriodo());
     }
 
-    public List<ListaEncuestaServicios> obtenerEncuestasRealizadas(){
-        TypedQuery<ListaEncuestaServicios> q=f.getEntityManager().createQuery("SELECT l FROM ListaEncuestaServicios l", ListaEncuestaServicios.class);
-        List<ListaEncuestaServicios> pr=q.getResultList();
-        return pr;
+    public boolean mostrarApartados() throws Exception{
+        VariablesProntuario vp = em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "apartadoServicios")
+                .getResultStream()
+                .findFirst().orElseThrow(() -> new Exception("No hay variable disponible de acuerdo a lo que especifico"));
+        if(!vp.getValor().equals("1")) return Boolean.FALSE;
+        return Boolean.TRUE;
+    }
+    
+    public boolean aperturaEncuestaSimultaneas() throws Exception{
+        VariablesProntuario vp = em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "aperturaEncuestaServiciosAnt")
+                .getResultStream()
+                .findFirst().orElseThrow(() -> new Exception("No hay variable disponible de acuerdo a lo que especifico"));
+        if(!vp.getValor().equals("1")) return Boolean.FALSE;
+        return Boolean.TRUE;
+    }
+    
+    public String obtenerGrado1() throws Exception{
+        VariablesProntuario vp = em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado1")
+                .getResultStream().findFirst().orElseThrow(() -> new Exception("No hay valor disponible"));
+        return vp.getValor();
+    }
+    
+    public String obtenerGrado2() throws Exception{
+        VariablesProntuario vp = em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado2")
+                .getResultStream().findFirst().orElseThrow(() -> new Exception("No hay valor disponible"));
+        return vp.getValor();
+    }
+    
+    public String obtenerGrado3() throws Exception{
+        VariablesProntuario vp = em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado3")
+                .getResultStream().findFirst().orElseThrow(() -> new Exception("No hay valor disponible"));
+        return vp.getValor();
+    }
+    
+    public String obtenerGrado4() throws Exception{
+        VariablesProntuario vp = em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "grado4")
+                .getResultStream().findFirst().orElseThrow(() -> new Exception("No hay valor disponible"));
+        return vp.getValor();
     }
 
+    public boolean denegarAcceso(){
+        VariablesProntuario vp = em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "denegarAcceso")
+                .getResultStream()
+                .findFirst().get();
+        if(!vp.getValor().equals("1")) return Boolean.FALSE;
+        return Boolean.TRUE;
+    }
 }

@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
  *
@@ -37,10 +38,10 @@ public class DtoEvaluaciones implements Serializable{
         return true;
     }
     /////////////////////////General wrappers\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    @Getter @Setter public Boolean completo, cargada, finalizado, estSexto, estOnceavo ,esDeIyE,director, tutor, tutorCe,tutor2,esSecretario, planeacion,esPsicopedagogia, ESActiva, ESTsuActiva, ESIngActiva, ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2, eCEActiva;
+    @Getter @Setter public Boolean mostrarES, completo, cargada, finalizado, estSexto, estOnceavo ,esDeIyE,director, tutor, tutorCe,tutor2,esSecretario, planeacion,esPsicopedagogia, ESActiva, ESTsuActiva, ESIngActiva, ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2, eCEActiva;
     @Getter @Setter public Short grado;
     @Getter @Setter public String evaluador, valor, cveDirector, nombreCompletoTutor;
-    @Getter @Setter public Integer evaluadorr,cveTrabajador,usuarioNomina;
+    @Getter @Setter public Integer evaluadorr,cveTrabajador,usuarioNomina, periodo;
     @Getter @Setter public Long total,total2;
     //////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     ////////////////////////General entity's\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -57,9 +58,10 @@ public class DtoEvaluaciones implements Serializable{
     @Getter @Setter public ResultadoEJB<EncuestaServiciosResultados> resultadoEJB;
     @Getter @Setter public ResultadosEncuestaSatisfaccionTsu resultadoREST;
     @Getter @Setter public EncuestaSatisfaccionEgresadosIng resultadoESEI;
-    @Getter @Setter public List<ListadoEvaluacionEgresados> listaEvaCompleta, listaEvaIncompleta, listaEvaNA, listaFiltrado;
+    @Getter @Setter public List<PeriodosEscolares> listaEvaluaciones;
+    @Getter @Setter public List<ListadoEvaluacionEgresados> listaEvaCompleta, listaEvaIncompleta, listaEvaNA, listaFiltrado, listaEvaluacionHitorico, listaEvaluacionFilter;
     @Getter @Setter public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> alumnosEncuesta = new ArrayList<>();
-    @Getter @Setter public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE> alumnosEncuestaUnion = new ArrayList<>();
+    @Getter @Setter public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE> alumnosEncuestaUnion = new ArrayList<>(), alumnos, alumnosFilter;
     @Getter @Setter public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar> alumnosEncuestaCE = new ArrayList<>();
     @Getter @Setter public List<ListaDatosAvanceEncuestaServicio> dtoLDAES, dtoLDAES1, dtoLDAES2, dtoLDAES3;
     @Getter @Setter public List<ViewEstudianteAsesorAcademico> alumnosEncuestas;

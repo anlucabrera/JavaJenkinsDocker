@@ -27,6 +27,8 @@ import javax.faces.model.SelectItem;
 import javax.persistence.TypedQuery;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 
 /**
  *
@@ -38,6 +40,14 @@ public class EjbEvaluacionEstadia {
     @Getter @Setter private Integer periodo;
     @EJB private Facade f;
     @EJB private Facade2 f2;
+    
+    private EntityManager em;
+    private EntityManager em2;
+
+    @PostConstruct
+    public  void init(){
+        em = f.getEntityManager();em2 = f2.getEntityManager();
+    }
     
     public Evaluaciones evaluacionEstadiaPeridoActual(){
         String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
@@ -72,7 +82,9 @@ public class EjbEvaluacionEstadia {
         String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
                 .setParameter("nombre", "periodoEncuestaEstadia")
                 .getResultStream().findFirst().orElse(null)).getValor();
-        Short grado = 11;
+        VariablesProntuario vp = em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "gradoEvaluacionEstadia").getResultStream().findFirst().get();
+        Short grado = Short.parseShort(vp.getValor());
         TypedQuery<Alumnos> q = f2.getEntityManager()
                 .createQuery("SELECT a from Alumnos a " 
                         + "WHERE a.matricula=:matricula AND "
@@ -498,5 +510,14 @@ public class EjbEvaluacionEstadia {
         l.add(new SelectItem("El desarrollo de un proyecto dentro de la universidad", "El desarrollo de un proyecto dentro de la universidad", "El desarrollo de un proyecto dentro de la universidad"));
         l.add(new SelectItem("La realización de un proyecto de desarrollo comunitario, sin la participación de empresas.", "La realización de un proyecto de desarrollo comunitario, sin la participación de empresas.", "La realización de un proyecto de desarrollo comunitario, sin la participación de empresas."));
         return l;
+    }
+    
+    public boolean mostrarApartados() throws Exception{
+        VariablesProntuario vp = em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "apartadoEstadia")
+                .getResultStream()
+                .findFirst().orElseThrow(() -> new Exception("No hay variable disponible de acuerdo a lo que especifico"));
+        if(!vp.getValor().equals("1")) return Boolean.FALSE;
+        return Boolean.TRUE;
     }
 }
