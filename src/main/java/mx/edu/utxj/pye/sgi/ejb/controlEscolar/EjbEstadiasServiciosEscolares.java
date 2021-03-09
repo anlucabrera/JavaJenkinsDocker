@@ -29,14 +29,13 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEventosEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPorcentajeEntregaFotografias;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorAcademicoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EntregaFotografiasEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadiaDescripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -578,6 +577,25 @@ public class EjbEstadiasServiciosEscolares {
             return ResultadoEJB.crearCorrecto(evaluacionEstadia, "Resultado de búsqueda de evaluación estadía.");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se obtuvo resultado de búsqueda de evaluación de estadía. (EjbEstadiasServiciosEscolares.buscarRegistroEvaluacionEstadia)", e, null);
+        }
+    }
+    
+     /**
+     * Permite verificar si existe registro de calificaciones para la evaluación de estadía seleccionada
+     * @param evaluacionEstadiaDescripcion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<CalificacionCriterioEstadia>> buscarRegistroCalificacionEvaluacionEstadia(EvaluacionEstadiaDescripcion evaluacionEstadiaDescripcion){
+        try{
+            
+            List<CalificacionCriterioEstadia> listaCalificacionesEstadia = em.createQuery("SELECT c FROM CalificacionCriterioEstadia c WHERE c.criterioEvaluacionEstadia.evaluacion.evaluacion=:evaluacion ", CalificacionCriterioEstadia.class)
+                    .setParameter("evaluacion", evaluacionEstadiaDescripcion.getEvaluacion())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+              
+            return ResultadoEJB.crearCorrecto(listaCalificacionesEstadia, "Resultado de búsqueda de calificaciones de la evaluación de estadía.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo resultado de búsqueda de calificaciones de la evaluación de estadía. (EjbEstadiasServiciosEscolares.buscarRegistroCalificacionEvaluacionEstadia)", e, null);
         }
     }
     

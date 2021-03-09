@@ -110,9 +110,8 @@
                                                                             <div class="col-sm-12 col-md-12 col-lg-1">
                                                                                 <strong>Registrar</strong> 
                                                                                 <p class="text-muted">
-                                                                                        <p:commandButton actionListener="#{gestorEvaluacionesEstadiaEscolares.registrarEvaluacionEvento()}" disabled="#{gestorEvaluacionesEstadiaEscolares.rol.deshabilitarRegistro}"
-                                                                                                         class="btn btn-sm #{gestorEvaluacionesEstadiaEscolares.rol.deshabilitarRegistro?'btn-danger':'btn-info'}" icon="#{gestorEvaluacionesEstadiaEscolares.rol.deshabilitarRegistro?'fa fa-ban':'fa fa-check'}"
-                                                                                                         title="#{gestorEvaluacionesEstadiaEscolares.rol.deshabilitarRegistro?'Ya se registró entrega de fotografías del estudiante seleccionado.':'Registrar entrega de fotografías.'}"/>
+                                                                                    <p:commandButton actionListener="#{gestorEvaluacionesEstadiaEscolares.registrarEvaluacionEvento()}" onsuccess="actualizar();"
+                                                                                                         class="btn btn-sm btn-info" icon="fa fa-check" title="Registrar evaluación al evento seleccionado."/>
                                                                                 </p>
                                                                             </div>
                                                                             <br/><br/><br/><br/>

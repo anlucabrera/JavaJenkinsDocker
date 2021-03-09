@@ -12,6 +12,7 @@ import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 
 import java.util.*;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadiaDescripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
@@ -67,16 +68,16 @@ public class GestorEvaluacionesEstadiaRolEscolares extends AbstractRol{
      * Evento escolar de la evaluación
      */
     @Getter @NonNull private EvaluacionEstadia  evaluacionEstadia;
-    
-     /**
-     * Indica si se deshabilita o habilita el botón de registro
-     */
-    @Getter @NonNull private Boolean deshabilitarRegistro;
-    
+  
     /**
      * Evaluaciones por evento de estadía
      */
     @Getter @NonNull private List<DtoEvaluacionEventoEstadia> evaluacionesEvento;
+    
+    /**
+     * Lista de calificaciones registradas para la evaluación seleccionada
+     */
+    @Getter @NonNull private List<CalificacionCriterioEstadia> listaCalificacionesEvaluacion;
     
     public GestorEvaluacionesEstadiaRolEscolares(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
@@ -115,10 +116,6 @@ public class GestorEvaluacionesEstadiaRolEscolares extends AbstractRol{
         this.eventoEstadia = eventoEstadia;
     }
 
-    public void setDeshabilitarRegistro(Boolean deshabilitarRegistro) {
-        this.deshabilitarRegistro = deshabilitarRegistro;
-    }
-
     public void setEvaluacionEstadia(EvaluacionEstadia evaluacionEstadia) {
         this.evaluacionEstadia = evaluacionEstadia;
     }
@@ -126,5 +123,9 @@ public class GestorEvaluacionesEstadiaRolEscolares extends AbstractRol{
         this.evaluacionesEvento = evaluacionesEvento;
     }
 
+    public void setListaCalificacionesEvaluacion(List<CalificacionCriterioEstadia> listaCalificacionesEvaluacion) {
+        this.listaCalificacionesEvaluacion = listaCalificacionesEvaluacion;
+    }
+    
 }
 

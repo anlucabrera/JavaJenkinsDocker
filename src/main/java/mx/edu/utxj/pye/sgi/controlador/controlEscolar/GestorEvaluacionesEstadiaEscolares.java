@@ -33,11 +33,13 @@ import org.omnifaces.util.Ajax;
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEvaluacionEventoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadiaDescripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Messages;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 
@@ -93,8 +95,6 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
            
-            rol.setDeshabilitarRegistro(Boolean.TRUE);
-            System.err.println("Init - deshabilitarRegistro " + rol.getDeshabilitarRegistro());
             rol.setNivelRol(NivelRol.OPERATIVO);
 //            rol.setSoloLectura(true);
             
@@ -140,7 +140,6 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
         if(res.getCorrecto()){
             rol.setNivelesEducativos(res.getValor());
             rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
-            verificarRegistro();
             listaEvaluacionesRegistradas();
             listaEvaluacionesEventoEstadia();
         }else mostrarMensajeResultadoEJB(res);
@@ -148,32 +147,20 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
     }
     
      /**
-     * Permite obtener la lista de evaluaciones registradas por evento de estadía 
+     * Permite verificar si se puede realizar el registro de evaluación al evento de estadía seleccionado
      */
-    public void verificarRegistro(){
+    public void permitirRegistro(){
         ResultadoEJB<EventoEstadia> res =  ejbAsignacionRolesEstadia.buscarEventoSeleccionado(rol.getGeneracion(), rol.getNivelEducativo(), "Registro cedula evaluacion empresarial");
         if(res.getCorrecto()){
             rol.setEventoEstadia(res.getValor());
             if(rol.getEventoEstadia()!= null)
             {
-                System.err.println("EventoEstadia NotNull - deshabilitarRegistro " + rol.getDeshabilitarRegistro());
                 ResultadoEJB<EvaluacionEstadia> resE =  ejb.buscarRegistroEvaluacionEstadia(rol.getEventoEstadia());
                 if(resE.getCorrecto()){
                 rol.setEvaluacionEstadia(resE.getValor());
-                    if(rol.getEvaluacionEstadia() != null)
-                    {
-                        rol.setDeshabilitarRegistro(Boolean.TRUE);
-                        System.err.println("EvaluacionEstadia NotNull - deshabilitarRegistro " + rol.getDeshabilitarRegistro());
-                    }else{
-                        rol.setDeshabilitarRegistro(Boolean.FALSE);
-                        System.err.println("EvaluacionEstadia Null - deshabilitarRegistro " + rol.getDeshabilitarRegistro());
-                    }
                 }else mostrarMensajeResultadoEJB(resE);
             }
         }else mostrarMensajeResultadoEJB(res);
-        System.err.println("verificarRegistro " + rol.getDeshabilitarRegistro());
-        
-        
         
     }
     
@@ -185,6 +172,7 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
         if(res.getCorrecto()){
             rol.setEvaluaciones(res.getValor());
             rol.setEvaluacion(rol.getEvaluaciones().get(0));
+            Ajax.update("frmEvalEst");
         }else mostrarMensajeResultadoEJB(res);
     
     }
@@ -196,7 +184,7 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
         ResultadoEJB<List<DtoEvaluacionEventoEstadia>> res = ejb.getListaEvaluacionesEventoEstadia();
         if(res.getCorrecto()){
             rol.setEvaluacionesEvento(res.getValor());
-            Ajax.update("tbListaEvaluacionesEvento");
+            Ajax.update("frmEvalEst");
         }else mostrarMensajeResultadoEJB(res);
     
     }
@@ -222,7 +210,6 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
         if(e.getNewValue() instanceof  ProgramasEducativosNiveles){
             ProgramasEducativosNiveles nivel = (ProgramasEducativosNiveles)e.getNewValue();
             rol.setNivelEducativo(nivel);
-            verificarRegistro();
             listaEvaluacionesRegistradas();
             listaEvaluacionesEventoEstadia();
             Ajax.update("frmEvalEst");
@@ -237,7 +224,7 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
         if(e.getNewValue() instanceof  EvaluacionEstadiaDescripcion){
             EvaluacionEstadiaDescripcion eval = (EvaluacionEstadiaDescripcion)e.getNewValue();
             rol.setEvaluacion(eval);
-            Ajax.update("frmEvalEst");
+
         }else mostrarMensaje("");
     }
     
@@ -245,29 +232,41 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
      * Permite asignar un estudiante al seguimiento de estadía del asesor académico
      */
     public void registrarEvaluacionEvento(){
-        ResultadoEJB<EvaluacionEstadia> res = ejb.registrarEvaluacionEvento(rol.getEventoEstadia(), rol.getEvaluacion());
-        mostrarMensajeResultadoEJB(res);
-        verificarRegistro();
-        listaEvaluacionesRegistradas();
-        listaEvaluacionesEventoEstadia();
-        Ajax.update("frmEvalEst");
+        permitirRegistro();
+        if(rol.getEventoEstadia()!=null & rol.getEvaluacionEstadia() == null){
+            ResultadoEJB<EvaluacionEstadia> res = ejb.registrarEvaluacionEvento(rol.getEventoEstadia(), rol.getEvaluacion());
+            mostrarMensajeResultadoEJB(res);
+            listaEvaluacionesRegistradas();
+            listaEvaluacionesEventoEstadia();
+        }else if(rol.getEventoEstadia()!=null & rol.getEvaluacionEstadia()!= null){
+            Messages.addGlobalWarn("Ya se asignó una evaluación para el evento de estadía seleccionado.");
+        }else if(rol.getEventoEstadia()== null){
+            Messages.addGlobalWarn("No existe evento de estadía para la generación y nivel educativo seleccionado.");
+        }
     }
     
      /**
-     * Permite eliminar asignación del estudiante
+     * Permite eliminar asignación de la evaluación al evento de estadía
      * @param dtoEvaluacionEventoEstadia
      */
     public void eliminarAsignacion(DtoEvaluacionEventoEstadia dtoEvaluacionEventoEstadia){
-        ResultadoEJB<Integer> resEliminar = ejb.eliminarAsignacion(dtoEvaluacionEventoEstadia.getEvaluacionEstadia());
-        mostrarMensajeResultadoEJB(resEliminar);
-        verificarRegistro();
-        listaEvaluacionesRegistradas();
-        listaEvaluacionesEventoEstadia();
-        Ajax.update("frmEvalEst");
+//           ResultadoEJB<List<CalificacionCriterioEstadia>> res =  ejb.buscarRegistroCalificacionEvaluacionEstadia(dtoEvaluacionEventoEstadia.getEvaluacionEstadia().getEvaluacion());
+//            if(res.getCorrecto()){
+//                rol.setListaCalificacionesEvaluacion(res.getValor());
+//                System.err.println("permitirEliminacion - lista " + rol.getListaCalificacionesEvaluacion().size());
+//                if(rol.getListaCalificacionesEvaluacion().isEmpty()){
+                    ResultadoEJB<Integer> resEliminar = ejb.eliminarAsignacion(dtoEvaluacionEventoEstadia.getEvaluacionEstadia());
+                    mostrarMensajeResultadoEJB(resEliminar);
+                    listaEvaluacionesRegistradas();
+                    listaEvaluacionesEventoEstadia();
+//                }else{
+//                    Messages.addGlobalWarn("No se puede eliminar la evaluación del evento de estadía ya que contiene calificaciones registradas.");
+//                }
+//            }else mostrarMensajeResultadoEJB(res);
     }
 
      /**
-     * Permite actualizar la apertura extemporánea seleccionada
+     * Permite actualizar la evaluación al evento de estadía
      * @param event
      */
     public void onCellEdit(CellEditEvent event) {

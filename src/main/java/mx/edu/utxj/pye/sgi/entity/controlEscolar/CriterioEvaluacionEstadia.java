@@ -49,7 +49,7 @@ public class CriterioEvaluacionEstadia implements Serializable {
     private String descripcion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "criterioEvaluacionEstadia")
     private List<CalificacionCriterioEstadia> calificacionCriterioEstadiaList;
-    @JoinColumn(name = "evaluacion", referencedColumnName = "clave")
+    @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion")
     @ManyToOne(optional = false)
     private EvaluacionEstadiaDescripcion evaluacion;
 
