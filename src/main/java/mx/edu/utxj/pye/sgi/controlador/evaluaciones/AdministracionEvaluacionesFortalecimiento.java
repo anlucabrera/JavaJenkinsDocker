@@ -126,7 +126,7 @@ public class AdministracionEvaluacionesFortalecimiento extends ViewScopedRol imp
     public void getEvaluacionesbyPeriodo(){
         try{
             //System.out.println("Obenter evaluaciones -- area" + rol.getPrograma());
-            ResultadoEJB<List<DtoAdministracionEvaluaciones>> resEv= ejdAdminEvaluaciones.getEvaluacionesbyArea(rol.getPrograma(),rol.getPeriodoSeleccionado());
+            ResultadoEJB<List<DtoAdministracionEvaluaciones>> resEv= ejdAdminEvaluaciones.getEvaluacionesbyArea(rol.getPrograma(),rol.getPeriodoSeleccionado(),rol.getPeriodoActivo());
             //System.out.println(resEv.getValor());
             if(resEv.getCorrecto()){ rol.setEvaluaciones(resEv.getValor()); }
             else {mostrarMensajeResultadoEJB(resEv);}
@@ -196,7 +196,7 @@ public class AdministracionEvaluacionesFortalecimiento extends ViewScopedRol imp
             if(resVer.getCorrecto()){
                 rol.setEvalucionEx(resVer.getValor());
                 getAperturabyTipoSeleccionado();
-               // System.out.println("Activa ->"+ resVer.getValor()+ " apertura "+ rol.getApertura());
+                // System.out.println("Activa ->"+ resVer.getValor()+ " apertura "+ rol.getApertura());
             }else {rol.setEvalucionEx(true);mostrarMensajeResultadoEJB(resVer);}
         }catch (Exception e){mostrarExcepcion(e);}
     }

@@ -173,21 +173,19 @@ public class EjbSatisfaccionEgresadosIng {
 
     public Alumnos obtenerAlumnos(String matricula) {
         Integer periodoEscolar =  Integer.parseInt(Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
-                .setParameter("nombre", "periodoEncuestaSatisfaccionING").getResultStream().findFirst().orElse(null)).getValor());
-        PeriodosEscolares periodo = em.find(PeriodosEscolares.class, periodoEscolar);
-
+                .setParameter("nombre", "periodoEncuestaSatisfaccionING").getResultStream().findFirst().orElse(new VariablesProntuario())).getValor());
+        if(periodoEscolar.equals(0)) return new Alumnos();
         Alumnos alumno = f2.getEntityManager()
                 .createQuery("SELECT a from Alumnos a WHERE a.matricula=:matricula AND (a.cveStatus = :estatus or a.cveStatus = :estatus2) " +
                         "AND a.grupos.gruposPK.cvePeriodo = :periodo AND a.gradoActual =:grado", Alumnos.class)
                 .setParameter("estatus", 1)
                 .setParameter("estatus2", 6)
-                .setParameter("periodo", periodo.getPeriodo())
+                .setParameter("periodo", periodoEscolar)
                 .setParameter("matricula", matricula)
                 .setParameter("grado", 11)
                 .getResultStream().findFirst()
                 .orElse(new Alumnos());
-
-    return alumno;
+        return alumno;
     }
 
     public PeriodosEscolares getPeriodo(Evaluaciones evaluacion){
@@ -195,4 +193,13 @@ public class EjbSatisfaccionEgresadosIng {
         return (PeriodosEscolares)f.find(evaluacion.getPeriodo());
     }
 
+    public boolean mostrarApartados() throws Exception{
+        VariablesProntuario vp = em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "apartadoIng")
+                .getResultStream()
+                .findFirst().orElseThrow(() -> new Exception("No hay variable disponible de acuerdo a lo que especifico"));
+        if(!vp.getValor().equals("1")) return Boolean.FALSE;
+        return Boolean.TRUE;
+    }
+    
 }

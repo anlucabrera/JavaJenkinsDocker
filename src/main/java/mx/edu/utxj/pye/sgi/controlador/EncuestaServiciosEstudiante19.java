@@ -8,17 +8,13 @@ package mx.edu.utxj.pye.sgi.controlador;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.DtoEvaluaciones;
-import mx.edu.utxj.pye.sgi.dto.EvaluacionRolMultiple;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.EjbEncuestaServicios;
-import mx.edu.utxj.pye.sgi.ejb.EjbEvaluacionDesempenioAmbiental;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbConsultaCalificacion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.EncuestaServiciosResultados;
-import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDesempenioAmbientalUtxj;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -35,7 +31,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -65,32 +60,26 @@ public class EncuestaServiciosEstudiante19 extends ViewScopedRol implements Desa
             if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19)) return;
             cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.ENCUESTA_SERVICIOS);
+            //System.out.println("1");
+            if(ejb.denegarAcceso() == Boolean.TRUE) return;
+            //System.out.println("2");
             ResultadoEJB<DtoEstudiante> resAcceso = ejbC.validadEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
             ResultadoEJB<DtoEstudiante> resValidacion = ejbC.validadEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
             if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
             rol.setEstudiante(resValidacion.getValor());
-
+            //System.out.println("Grado:"+rol.getEstudiante().getInscripcionActiva().getGrupo().getGrado());
+            if(rol.getEstudiante().getInscripcionActiva().getGrupo().getGrado() != Integer.parseInt(ejb.obtenerGrado1()) || 
+                    rol.getEstudiante().getInscripcionActiva().getGrupo().getGrado() != Integer.parseInt(ejb.obtenerGrado2()) ||
+                    rol.getEstudiante().getInscripcionActiva().getGrupo().getGrado() != Integer.parseInt(ejb.obtenerGrado3()) || 
+                    rol.getEstudiante().getInscripcionActiva().getGrupo().getGrado() != Integer.parseInt(ejb.obtenerGrado4())) return;
+            //System.out.println("3");
             tieneAcceso = rol.tieneAcceso(rol.getEstudiante(), UsuarioTipo.ESTUDIANTE19);
-
+            //System.out.println("4");
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
             ResultadoEJB<Evaluaciones> resEvento = ejb.verificarEvaluacion();
             if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
-
-            String mensajeParametros = null;
-                    
-            if(resEvento.getValor() == null) mensajeParametros = "No se detectó evaluación";
-            if(resEvento.getValor().getEvaluacion() == null) mensajeParametros = "No se detectó clave de evaluación";
-            if(rol.getEstudiante() == null) mensajeParametros = "No se detectó paquete de estudiante";
-            if(rol.getEstudiante().getInscripcionActiva() == null) mensajeParametros = "No se detectó inscripción activa en paquete de estudiante";
-            if(rol.getEstudiante().getInscripcionActiva().getInscripcion() == null) mensajeParametros = "No se detectó empaquetado de inscripción en inscripción activa en paquete de estudiante";
-            if(rol.getEstudiante().getInscripcionActiva().getInscripcion().getMatricula() == 0) mensajeParametros = "No se detectó matricula en empaquetado de inscripción en inscripción activa en paquete de estudiante";
-            
-            if(mensajeParametros != null){
-                cargado = false;
-                System.out.println("EncuestaServiciosEstudiante19.init: Error: ".concat(mensajeParametros));
-                return;
-            }
+            //if(rol.getEstudiante().getInscripcionActiva().getGrupo().getGrado() != )
             
             ResultadoEJB<Boolean> resultadoEJB = ejb.verificarEvaluacionCOmpleta(resEvento.getValor(), rol.getEstudiante());
             rol.setCompleto(resultadoEJB.getValor());

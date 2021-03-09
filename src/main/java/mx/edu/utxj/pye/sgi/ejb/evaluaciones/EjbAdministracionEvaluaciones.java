@@ -129,19 +129,21 @@ public class EjbAdministracionEvaluaciones {
     }
 
     /***
-     * Verifica que si la evaluación está activa
+     * Verifica que si la evaluación está activa en el periodo activo
+     * De lo contrario no lo deja reapeturar
      * @param evaluacion Evaluación
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Boolean> verficaActiva(@NonNull Evaluaciones evaluacion){
+    public ResultadoEJB<Boolean> verficaActiva(@NonNull Evaluaciones evaluacion, PeriodosEscolares periodoActivo){
         try{
             if(evaluacion==null){return ResultadoEJB.crearErroneo(2,false,"La evalaución no debe ser nula");}
-            Evaluaciones evaluacionA = em.createQuery("select e from Evaluaciones e where e.evaluacion=:evaluacion and current_timestamp between e.fechaInicio and e.fechaFin", Evaluaciones.class)
+            Evaluaciones evaluacionA = em.createQuery("select e from Evaluaciones e where e.evaluacion=:evaluacion and e.periodo=:periodo", Evaluaciones.class)
                     .setParameter("evaluacion", evaluacion.getEvaluacion())
+                    .setParameter("periodo", periodoActivo.getPeriodo())
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
-            if(evaluacionA==null){return ResultadoEJB.crearCorrecto(false,"La evaluación no está activa");}
+            if(evaluacionA==null){return ResultadoEJB.crearCorrecto(false,"La evaluación no está activa en el periodo activo");}
             else {return ResultadoEJB.crearCorrecto(true,"La evaluación está activa");}
 
         }catch (Exception e){
@@ -157,12 +159,12 @@ public class EjbAdministracionEvaluaciones {
      */
     public  ResultadoEJB<List<EvaluacionesAreas>> getEvaluacionesPsicopedagogia(@NonNull AreasUniversidad areaPsicoP){
         try{
-         if(areaPsicoP==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El área no debe ser nula");}
-         List<EvaluacionesAreas> evaluaciones = em.createQuery("select e from EvaluacionesAreas e where e.areaResponsable=:area",EvaluacionesAreas.class)
-                 .setParameter("area",areaPsicoP.getArea())
-                 .getResultList()
-                 ;
-         if(evaluaciones.isEmpty() || evaluaciones==null){return ResultadoEJB.crearErroneo(3,evaluaciones,"No se encontraron evauaciones a cargo del área");}
+            if(areaPsicoP==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El área no debe ser nula");}
+            List<EvaluacionesAreas> evaluaciones = em.createQuery("select e from EvaluacionesAreas e where e.areaResponsable=:area",EvaluacionesAreas.class)
+                    .setParameter("area",areaPsicoP.getArea())
+                    .getResultList()
+                    ;
+            if(evaluaciones.isEmpty() || evaluaciones==null){return ResultadoEJB.crearErroneo(3,evaluaciones,"No se encontraron evauaciones a cargo del área");}
             else {return ResultadoEJB.crearCorrecto(evaluaciones,"Evaluaciones encontradas");}
         }catch (Exception e){return ResultadoEJB.crearErroneo(1, "Error al obtener la lista de evaluaciones (EjbAdministracionEvaluaciones.getEvaluacionesPsicopedagogia", e, null); }
     }
@@ -196,18 +198,20 @@ public class EjbAdministracionEvaluaciones {
      * @param evaluacion Evaluacion
      * @return Resultado del proceso
      */
-    public ResultadoEJB<DtoAdministracionEvaluaciones> packEvaluacion(@NonNull Evaluaciones evaluacion){
+    public ResultadoEJB<DtoAdministracionEvaluaciones> packEvaluacion(@NonNull Evaluaciones evaluacion,@NonNull PeriodosEscolares periodoActivo){
         try{
             DtoAdministracionEvaluaciones dto = new DtoAdministracionEvaluaciones(new Evaluaciones(), new PeriodosEscolares(), false);
             if(evaluacion==null){return ResultadoEJB.crearErroneo(2,dto,"La evaluación no debe ser nulo");}
+            if(periodoActivo==null){return ResultadoEJB.crearErroneo(2,dto,"El periodo activo no debe ser nulo");}
+
             dto.setEvaluacion(evaluacion);
             //Obtiene el periodo de la evaluación
             ResultadoEJB<PeriodosEscolares> resPeriodo= getPeriodobyEvaluacion(evaluacion);
             if(resPeriodo.getCorrecto()){
                 dto.setPeriodo(resPeriodo.getValor());
-                ResultadoEJB<Boolean> resActiva= verficaActiva(evaluacion);
+                ResultadoEJB<Boolean> resActiva= verficaActiva(evaluacion,periodoActivo);
                 if(resActiva.getCorrecto()){dto.setActiva(resActiva.getValor());
-                return ResultadoEJB.crearCorrecto(dto ,"Evaluación empaquetada"); }
+                    return ResultadoEJB.crearCorrecto(dto ,"Evaluación empaquetada"); }
                 else {return ResultadoEJB.crearErroneo(4,dto,"Error al veridicar si la evaluación está activa");}
             }else {return ResultadoEJB.crearErroneo(3,dto,"Error al obtener el periodo de la evaluación");}
         }catch (Exception e){
@@ -221,16 +225,18 @@ public class EjbAdministracionEvaluaciones {
      * @param periodoSeleccionado Periodo seleccionado
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoAdministracionEvaluaciones>> getEvaluacionesbyTipoPeriodo(@NonNull List<EvaluacionesAreas> evaluacionesAreas,@NonNull PeriodosEscolares periodoSeleccionado){
+    public ResultadoEJB<List<DtoAdministracionEvaluaciones>> getEvaluacionesbyTipoPeriodo(@NonNull List<EvaluacionesAreas> evaluacionesAreas,@NonNull PeriodosEscolares periodoSeleccionado,@NonNull PeriodosEscolares periodoActivo){
         try{
             if(evaluacionesAreas==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"Las evaluaciones no deben ser nulas");}
             if(periodoSeleccionado==null){return ResultadoEJB.crearErroneo(3,new ArrayList<>(),"El periodo no debe ser nulo");}
+            if(periodoActivo==null){return ResultadoEJB.crearErroneo(3,new ArrayList<>(),"El periodo no debe ser nulo");}
+
             List<DtoAdministracionEvaluaciones> evaluaciones = new ArrayList<>();
             evaluacionesAreas.forEach(e->{
                 ResultadoEJB<Evaluaciones> resEv=evaluacionesbyPeriodoandTipo(periodoSeleccionado,e.getTipoEvaluacion());
                 if(resEv.getCorrecto()){
-                   //Empaqueta la evaluación
-                    ResultadoEJB<DtoAdministracionEvaluaciones> resPack= packEvaluacion(resEv.getValor());
+                    //Empaqueta la evaluación
+                    ResultadoEJB<DtoAdministracionEvaluaciones> resPack= packEvaluacion(resEv.getValor(),periodoActivo);
                     if(resPack.getCorrecto()){
                         evaluaciones.add(resPack.getValor());
                     }else {return;}
@@ -247,7 +253,7 @@ public class EjbAdministracionEvaluaciones {
      * @param periodoSeleleccionado Periodo Escolar seleccionado
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoAdministracionEvaluaciones>> getEvaluacionesbyArea(@NonNull AreasUniversidad area,@NonNull PeriodosEscolares periodoSeleleccionado){
+    public ResultadoEJB<List<DtoAdministracionEvaluaciones>> getEvaluacionesbyArea(@NonNull AreasUniversidad area,@NonNull PeriodosEscolares periodoSeleleccionado,@NonNull PeriodosEscolares periodoActivo){
         try {
             //System.out.println("Area" + area);
             if(area==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El área no debe ser nula");}
@@ -256,7 +262,7 @@ public class EjbAdministracionEvaluaciones {
             ResultadoEJB<List<EvaluacionesAreas>> resEvaluaciones= getEvaluacionesPsicopedagogia(area);
             if(resEvaluaciones.getCorrecto()){
                 //Obtiene las evaluaciones por periodo
-                ResultadoEJB<List<DtoAdministracionEvaluaciones>> resEv= getEvaluacionesbyTipoPeriodo(resEvaluaciones.getValor(),periodoSeleleccionado);
+                ResultadoEJB<List<DtoAdministracionEvaluaciones>> resEv= getEvaluacionesbyTipoPeriodo(resEvaluaciones.getValor(),periodoSeleleccionado,periodoActivo);
                 if(resEv.getCorrecto()){
                     return ResultadoEJB.crearCorrecto(resEv.getValor(),"Evaluaciones");
                 }else {return ResultadoEJB.crearErroneo(5,new ArrayList<>(),"Error al obtener las evaluaciones por periodo");}

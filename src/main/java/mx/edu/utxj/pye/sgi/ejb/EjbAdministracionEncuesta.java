@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
  *
@@ -189,6 +191,21 @@ public class EjbAdministracionEncuesta {
         }else{
             return Boolean.FALSE;
         }
+    }
+    
+    public List<PeriodosEscolares> obtenerListaEvaluaciones(String tipo, String tipo2){
+        List<PeriodosEscolares> pe = em.createQuery("select e from Evaluaciones as e where (e.tipo = :tipo or e.tipo = :tipo2) order by e.periodo desc", Evaluaciones.class)
+                .setParameter("tipo", tipo)
+                .setParameter("tipo2", tipo2)
+                .getResultStream()
+                .map(evaluacion -> obtenerPeriodoEscolar(evaluacion)).collect(Collectors.toList());
+        pe.remove(0);
+        return pe;
+    }
+    
+    public PeriodosEscolares obtenerPeriodoEscolar(Evaluaciones evaluacion){
+        PeriodosEscolares pe = em.find(PeriodosEscolares.class, evaluacion.getPeriodo());
+        return pe;
     }
 
 

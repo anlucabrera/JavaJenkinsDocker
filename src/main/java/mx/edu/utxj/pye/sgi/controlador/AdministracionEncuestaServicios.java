@@ -23,8 +23,11 @@ import javax.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import mx.edu.utxj.pye.sgi.dto.DtoAlumnosEncuesta;
+import mx.edu.utxj.pye.sgi.ejb.EjbAdministracionEncuesta;
 
 
 /**
@@ -39,6 +42,7 @@ public class AdministracionEncuestaServicios implements Serializable{
 
     @Getter @Setter private DtoEvaluaciones dto = new DtoEvaluaciones();
     @EJB private EjbAdministracionEncuestaServicios ejbAdminAES;
+    @EJB private EjbAdministracionEncuesta ejbAE;
     @Inject AdministracionEncuesta ae;
     
 
@@ -49,9 +53,10 @@ public class AdministracionEncuestaServicios implements Serializable{
 
     @PostConstruct
     public void init(){
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
-
+        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+        cargado = true;
+        //dto.grado = Short.parseShort("11");
+        //obtenerListaPeriodosEscolaresEvaluacion();
     }
 
     public void seguimientoEncuestaServiciosIyE(){
@@ -165,6 +170,41 @@ public class AdministracionEncuestaServicios implements Serializable{
             Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + e.getMessage());
             Logger.getLogger(AdministracionEncuestaServicios.class.getName()).log(Level.SEVERE, null, e);
         }
+    }
+    
+    public void obtenerListaPeriodosEscolaresEvaluacion() {
+        dto.setListaEvaluaciones(ejbAE.obtenerListaEvaluaciones("Servicios", "Servicios (fusionada)"));
+        //dto.setPeriodo(dto.getListaEvaluaciones().get(0).getPeriodo());
+    }
+    
+    public void consultarEncuestasPasadas() {
+        try {
+                dto.alumnos = new ArrayList<>();
+                dto.alumnosFilter = new ArrayList<>();
+                List<EncuestaServiciosResultados> listaESR = new ArrayList<>();
+                //System.out.println("Periodo:"+ dto.periodo);
+                listaESR = ejbAdminAES.obtenerListaEncuestasPorPeriodo(dto.periodo).getValor();
+                //System.out.println("Total:"+ listaESR.size());
+                listaESR.forEach(esr -> {
+                    try {
+                        if(dto.comparador.isCompleto(esr)){
+                            DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE dtoP = ejbAdminAES.obtenerAlumnosNoAccedieron(esr.getEncuestaServiciosResultadosPK().getEvaluador(), dto.grado).getValor();
+                            ///System.out.println(dtoP);
+                            //DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE dtoA = ejbAdminAES.obtenerEstudiantesSaiiutyCE(esr.getEncuestaServiciosResultadosPK().getEvaluador()).getValor();
+                            if(dtoP.getMatricula() == null) return;
+                            dto.alumnos.add(new DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE(dtoP.getMatricula(), dtoP.getNombre(), dtoP.getGrado(), dtoP.getSiglas(), 
+                                    dtoP.getGrupo(), dtoP.getTutor(), dtoP.getCveMaestro(), dtoP.getCveDirector()));
+                            //System.out.println("DTO:"+dto.alumnos);
+                        }
+                    } catch (Throwable e) {
+                        Logger.getLogger(AdministracionEncuestaServicios.class.getName()).log(Level.SEVERE, null, e);
+                    }
+                });
+            } catch (Throwable e) {
+            Messages.addGlobalFatal("Ocurrio un error (" + (new Date()) + "): " + e.getMessage());
+            Logger.getLogger(AdministracionEncuestaServicios.class.getName()).log(Level.SEVERE, null, e);
+        }
+        
     }
 
 }
