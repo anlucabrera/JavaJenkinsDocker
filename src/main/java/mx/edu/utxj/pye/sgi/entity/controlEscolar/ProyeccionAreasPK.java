@@ -5,11 +5,11 @@
  */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
+import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 /**
  *

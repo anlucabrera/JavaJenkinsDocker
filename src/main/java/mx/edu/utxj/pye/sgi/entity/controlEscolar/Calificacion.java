@@ -9,7 +9,6 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "calificacion", catalog = "control_escolar", schema = "")
@@ -43,10 +42,10 @@ public class Calificacion implements Serializable {
     @Column(name = "valor")
     private Double valor;
     @JoinColumn(name = "configuracion_detalle", referencedColumnName = "configuracion_detalle")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private UnidadMateriaConfiguracionDetalle configuracionDetalle;
     @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Estudiante idEstudiante;
 
     public Calificacion() {

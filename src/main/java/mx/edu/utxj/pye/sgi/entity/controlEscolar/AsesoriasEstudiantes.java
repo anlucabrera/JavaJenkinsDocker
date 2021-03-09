@@ -11,7 +11,6 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "asesorias_estudiantes", catalog = "control_escolar", schema = "")
@@ -85,10 +84,10 @@ public class AsesoriasEstudiantes implements Serializable {
     @NotNull
     @Column(name = "evento_registro")
     private int eventoRegistro;
-    @JoinTable(name = "control_escolar.participantes_asesorias_estudiantes", joinColumns = {
+    @JoinTable(name = "participantes_asesorias_estudiantes", joinColumns = {
         @JoinColumn(name = "asesoria_estudiante", referencedColumnName = "asesoria_estudiante")}, inverseJoinColumns = {
         @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")})
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     private List<Estudiante> estudianteList;
 
     public AsesoriasEstudiantes() {

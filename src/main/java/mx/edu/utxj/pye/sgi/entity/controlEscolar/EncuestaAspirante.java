@@ -9,7 +9,6 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -23,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "encuesta_aspirante", catalog = "control_escolar", schema = "")
@@ -130,13 +129,13 @@ public class EncuestaAspirante implements Serializable {
     @Column(name = "r25_enfermedadCual")
     private String r25enfermedadCual;
     @JoinColumn(name = "cve_aspirante", referencedColumnName = "id_aspirante", insertable = false, updatable = false)
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @OneToOne(optional = false)
     private Aspirante aspirante;
     @JoinColumn(name = "r2_tipoLenguaIndigena", referencedColumnName = "id_lengua_indigena")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private LenguaIndigena r2tipoLenguaIndigena;
     @JoinColumn(name = "r15_medioImpacto", referencedColumnName = "id_medio_difusion")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private MedioDifusion r15medioImpacto;
 
     public EncuestaAspirante() {

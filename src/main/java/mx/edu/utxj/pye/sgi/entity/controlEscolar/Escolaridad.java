@@ -11,7 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "escolaridad", catalog = "control_escolar", schema = "")
@@ -48,11 +47,11 @@ public class Escolaridad implements Serializable {
     @Size(min = 1, max = 90)
     @Column(name = "descripcion")
     private String descripcion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadMadre", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadMadre")
     private List<DatosFamiliares> datosFamiliaresList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadPadre", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadPadre")
     private List<DatosFamiliares> datosFamiliaresList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridad", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridad")
     private List<IntegrantesFamilia> integrantesFamiliaList;
     @OneToMany(mappedBy = "escolaridad")
     private List<TutorFamiliar> tutorFamiliarList;
@@ -112,6 +111,15 @@ public class Escolaridad implements Serializable {
         this.integrantesFamiliaList = integrantesFamiliaList;
     }
 
+    @XmlTransient
+    public List<TutorFamiliar> getTutorFamiliarList() {
+        return tutorFamiliarList;
+    }
+
+    public void setTutorFamiliarList(List<TutorFamiliar> tutorFamiliarList) {
+        this.tutorFamiliarList = tutorFamiliarList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -135,15 +143,6 @@ public class Escolaridad implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad[ idEscolaridad=" + idEscolaridad + " ]";
-    }
-
-    @XmlTransient
-    public List<TutorFamiliar> getTutorFamiliarList() {
-        return tutorFamiliarList;
-    }
-
-    public void setTutorFamiliarList(List<TutorFamiliar> tutorFamiliarList) {
-        this.tutorFamiliarList = tutorFamiliarList;
     }
     
 }

@@ -20,6 +20,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -32,33 +33,42 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "EvaluacionEstadia.findAll", query = "SELECT e FROM EvaluacionEstadia e")
-    , @NamedQuery(name = "EvaluacionEstadia.findByEvaluacion", query = "SELECT e FROM EvaluacionEstadia e WHERE e.evaluacion = :evaluacion")})
+    , @NamedQuery(name = "EvaluacionEstadia.findByClave", query = "SELECT e FROM EvaluacionEstadia e WHERE e.clave = :clave")})
 public class EvaluacionEstadia implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "evaluacion")
-    private Integer evaluacion;
+    @Column(name = "clave")
+    private Integer clave;
+    @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion")
+    @ManyToOne(optional = false)
+    private EvaluacionEstadiaDescripcion evaluacion;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
     @ManyToOne(optional = false)
     private EventoEstadia evento;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluacion")
-    private List<CriterioEvaluacionEstadia> criterioEvaluacionEstadiaList;
 
     public EvaluacionEstadia() {
     }
 
-    public EvaluacionEstadia(Integer evaluacion) {
-        this.evaluacion = evaluacion;
+    public EvaluacionEstadia(Integer clave) {
+        this.clave = clave;
     }
 
-    public Integer getEvaluacion() {
+    public Integer getClave() {
+        return clave;
+    }
+
+    public void setClave(Integer clave) {
+        this.clave = clave;
+    }
+
+    public EvaluacionEstadiaDescripcion getEvaluacion() {
         return evaluacion;
     }
 
-    public void setEvaluacion(Integer evaluacion) {
+    public void setEvaluacion(EvaluacionEstadiaDescripcion evaluacion) {
         this.evaluacion = evaluacion;
     }
 
@@ -70,19 +80,10 @@ public class EvaluacionEstadia implements Serializable {
         this.evento = evento;
     }
 
-    @XmlTransient
-    public List<CriterioEvaluacionEstadia> getCriterioEvaluacionEstadiaList() {
-        return criterioEvaluacionEstadiaList;
-    }
-
-    public void setCriterioEvaluacionEstadiaList(List<CriterioEvaluacionEstadia> criterioEvaluacionEstadiaList) {
-        this.criterioEvaluacionEstadiaList = criterioEvaluacionEstadiaList;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (evaluacion != null ? evaluacion.hashCode() : 0);
+        hash += (clave != null ? clave.hashCode() : 0);
         return hash;
     }
 
@@ -93,7 +94,7 @@ public class EvaluacionEstadia implements Serializable {
             return false;
         }
         EvaluacionEstadia other = (EvaluacionEstadia) object;
-        if ((this.evaluacion == null && other.evaluacion != null) || (this.evaluacion != null && !this.evaluacion.equals(other.evaluacion))) {
+        if ((this.clave == null && other.clave != null) || (this.clave != null && !this.clave.equals(other.clave))) {
             return false;
         }
         return true;
@@ -101,7 +102,7 @@ public class EvaluacionEstadia implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadia[ evaluacion=" + evaluacion + " ]";
+        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadia[ clave=" + clave + " ]";
     }
     
 }

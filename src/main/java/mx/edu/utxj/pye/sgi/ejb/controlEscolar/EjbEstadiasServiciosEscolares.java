@@ -24,6 +24,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalendarioEventosEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEntregaFotografiasEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEvaluacionEventoEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEventosEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPorcentajeEntregaFotografias;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -31,6 +32,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorAcademicoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EntregaFotografiasEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadiaDescripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
@@ -513,6 +516,123 @@ public class EjbEstadiasServiciosEscolares {
             return ResultadoEJB.crearCorrecto(listaPorcentajeEntregaOrdenada, "Lista de porcentaje de entrega de fotografías por programa educativo.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de porcentaje de entrega de fotografías por programa educativo. (EjbEstadiasServiciosEscolares.getListaPorcentajeEntregaFotografias)", e, null);
+        }
+    }
+    
+    /* MÓDULO GESTOR DE EVALUACIONES DE ESTADÍA */
+    
+     /**
+     * Permite obtener la lista de evaluaciones de estadía registradas
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<EvaluacionEstadiaDescripcion>> getListaEvaluacionesEstadia(){
+        try{
+            
+            List<EvaluacionEstadiaDescripcion> nivelesEducativos = em.createQuery("SELECT e FROM EvaluacionEstadiaDescripcion e WHERE e.activa=:valor ORDER BY e.evaluacion DESC", EvaluacionEstadiaDescripcion.class)
+                    .setParameter("valor", Boolean.TRUE)
+                    .getResultList();
+            
+            return ResultadoEJB.crearCorrecto(nivelesEducativos, "Lista de evaluaciones de estadía registradas.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evaluaciones de estadía registradas. (EjbEstadiasServiciosEscolares.getListaEvaluacionesEstadia)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de evaluaciones por evento de estadía registradas
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoEvaluacionEventoEstadia>> getListaEvaluacionesEventoEstadia(){
+        try{
+            List<EvaluacionEstadia> listaEvaluaciones = em.createQuery("SELECT e FROM EvaluacionEstadia e ORDER BY e.evento.evento DESC", EvaluacionEstadia.class)
+                    .getResultList();
+            
+            List<DtoEvaluacionEventoEstadia> listaEvaluacioneEvento = new ArrayList<>();
+            
+            listaEvaluaciones.forEach(evaluacion -> {
+                Generaciones generacion = em.find(Generaciones.class, evaluacion.getEvento().getGeneracion());
+                ProgramasEducativosNiveles nivelEducativo = em.find(ProgramasEducativosNiveles.class, evaluacion.getEvento().getNivel());
+                DtoEvaluacionEventoEstadia  dtoEvaluacionEventoEstadia = new DtoEvaluacionEventoEstadia(evaluacion, generacion, nivelEducativo);
+                listaEvaluacioneEvento.add(dtoEvaluacionEventoEstadia);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaEvaluacioneEvento, "Lista de evaluaciones por evento de estadía registradas.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evaluaciones por evento de estadía registradas (EjbEstadiasServiciosEscolares.getListaEvaluacionesEventoEstadia)", e, null);
+        }
+    }
+    
+     /**
+     * Permite verificar si existe registro de evaluación de estadía
+     * @param eventoEstadia
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<EvaluacionEstadia> buscarRegistroEvaluacionEstadia(EventoEstadia eventoEstadia){
+        try{
+            
+            EvaluacionEstadia evaluacionEstadia = em.createQuery("SELECT e FROM EvaluacionEstadia e WHERE e.evento.generacion=:generacion AND e.evento.nivel=:nivel", EvaluacionEstadia.class)
+                    .setParameter("generacion", eventoEstadia.getGeneracion())
+                    .setParameter("nivel", eventoEstadia.getNivel())
+                    .getResultStream().findFirst().orElse(null);
+                
+            return ResultadoEJB.crearCorrecto(evaluacionEstadia, "Resultado de búsqueda de evaluación estadía.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo resultado de búsqueda de evaluación de estadía. (EjbEstadiasServiciosEscolares.buscarRegistroEvaluacionEstadia)", e, null);
+        }
+    }
+    
+    /**
+     * Permite registrar evaluación de estadía al evento seleccionado
+     * @param eventoEstadia
+     * @param evaluacion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<EvaluacionEstadia> registrarEvaluacionEvento(EventoEstadia eventoEstadia, EvaluacionEstadiaDescripcion evaluacion){
+        try{
+           
+            EvaluacionEstadia evaluacionEstadia = new EvaluacionEstadia();
+                evaluacionEstadia.setEvento(eventoEstadia);
+                evaluacionEstadia.setEvaluacion(evaluacion);
+                em.persist(evaluacionEstadia);
+                f.flush();
+                
+            return ResultadoEJB.crearCorrecto(evaluacionEstadia, "Se ha registrado correctamente la evaluación de estadía al evento seleccionado.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente la evaluación de estadía al evento seleccionado. (EjbEstadiasServiciosEscolares.registrarEvaluacionEvento)", e, null);
+        }
+    }
+    
+     /**
+     * Permite eliminar la evaluación de estadía del evento seleccionado
+     * @param evaluacionEstadia
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> eliminarAsignacion(EvaluacionEstadia evaluacionEstadia){
+        try{
+            
+            Integer delete = em.createQuery("DELETE FROM EvaluacionEstadia e WHERE e.clave=:clave", EvaluacionEstadia.class)
+                .setParameter("clave", evaluacionEstadia.getClave())
+                .executeUpdate();
+            
+            return ResultadoEJB.crearCorrecto(delete, "Se ha eliminado correctamente la evaluación de estadía del evento seleccionado.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar correctamente la evaluación de estadía del evento seleccionado. (EjbEstadiasServiciosEscolares.eliminarAsignacion)", e, null);
+        }
+    }
+    
+     /**
+     * Permite actualizar la evaluación de estadía del evento seleccionado
+     * @param dtoEvaluacionEventoEstadia
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<EvaluacionEstadia> actualizarEvaluacionEvento(DtoEvaluacionEventoEstadia dtoEvaluacionEventoEstadia){
+        try{
+            em.merge(dtoEvaluacionEventoEstadia.getEvaluacionEstadia());
+            em.flush();
+           
+            return ResultadoEJB.crearCorrecto(dtoEvaluacionEventoEstadia.getEvaluacionEstadia(), "Se actualizó correctamente la evaluación de estadía del evento seleccionad.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar la evaluación de estadía del evento seleccionad. (EjbEstadiasServiciosEscolares.actualizarEvaluacionEvento)", e, null);
         }
     }
 }

@@ -149,7 +149,7 @@
                     <c:if test="#{aperturaExtemporaneaEstadia.mostrarEnDesarrollo(request) and aperturaExtemporaneaEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/aperturaExtemporaneaEstadia.xhtml"><i class="fa fa-clock-o"></i><span>Aperturas extemporáneas</span></p:link></li></c:if>
                     <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
                     <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
-
+                    
                     <!-- Docente -->
                     <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Docente</li>
@@ -212,8 +212,10 @@
                     </c:if>
                     <c:if test="#{registroEventosEstadiaEscolares.mostrarEnDesarrollo(request) and registroEventosEstadiaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registroEventosEstadia.xhtml"><i class="fa fa-calendar-check-o"></i><span>Registro de eventos</span></p:link></li></c:if>
                     <c:if test="#{entregaFotografiasEscolares.mostrarEnDesarrollo(request) and entregaFotografiasEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/entregaFotografiasEstadia.xhtml"><i class="fa fa-camera"></i><span>Entrega de fotografías</span></p:link></li></c:if>
+                    <c:if test="#{gestorEvaluacionesEstadiaEscolares.mostrarEnDesarrollo(request) and gestorEvaluacionesEstadiaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/gestorEvaluacionesEstadia.xhtml"><i class="fa fa-list-ol"></i><span>Gestor evaluaciones</span></p:link></li></c:if>
                     <c:if test="#{aperturaExtemporaneaEstadia.mostrarEnDesarrollo(request) and aperturaExtemporaneaEstadia.tieneAcceso and registroEventosEstadiaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/aperturaExtemporaneaEstadia.xhtml"><i class="fa fa-clock-o"></i><span>Aperturas extemporáneas</span></p:link></li></c:if>
                     <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and registroEventosEstadiaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
+                    
                 </c:if>
                 
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluaciones y encuestas</li>

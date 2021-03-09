@@ -280,5 +280,5 @@ public class Grupo implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo[ idGrupo=" + idGrupo + " ]";
     }
-
+    
 }

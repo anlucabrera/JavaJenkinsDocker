@@ -133,5 +133,5 @@ public class Sistema implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema[ idSistema=" + idSistema + " ]";
     }
-
+    
 }

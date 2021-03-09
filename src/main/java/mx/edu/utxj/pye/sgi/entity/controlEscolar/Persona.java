@@ -12,7 +12,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "persona", catalog = "control_escolar", schema = "")
@@ -100,15 +99,15 @@ public class Persona implements Serializable {
     @Size(max = 400)
     @Column(name = "urlCurp")
     private String urlCurp;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona", fetch = FetchType.LAZY)
-    private DatosMedicos datosMedicos;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1", fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1")
     private MedioComunicacion medioComunicacion;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1", fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1")
     private Login login;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersona", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersona")
     private List<Aspirante> aspiranteList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona", fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona")
+    private DatosMedicos datosMedicos;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona")
     private EncuestaVocacional encuestaVocacional;
 
     public Persona() {
@@ -225,14 +224,6 @@ public class Persona implements Serializable {
         this.urlCurp = urlCurp;
     }
 
-    public DatosMedicos getDatosMedicos() {
-        return datosMedicos;
-    }
-
-    public void setDatosMedicos(DatosMedicos datosMedicos) {
-        this.datosMedicos = datosMedicos;
-    }
-
     public MedioComunicacion getMedioComunicacion() {
         return medioComunicacion;
     }
@@ -256,6 +247,22 @@ public class Persona implements Serializable {
 
     public void setAspiranteList(List<Aspirante> aspiranteList) {
         this.aspiranteList = aspiranteList;
+    }
+
+    public DatosMedicos getDatosMedicos() {
+        return datosMedicos;
+    }
+
+    public void setDatosMedicos(DatosMedicos datosMedicos) {
+        this.datosMedicos = datosMedicos;
+    }
+
+    public EncuestaVocacional getEncuestaVocacional() {
+        return encuestaVocacional;
+    }
+
+    public void setEncuestaVocacional(EncuestaVocacional encuestaVocacional) {
+        this.encuestaVocacional = encuestaVocacional;
     }
 
     @Override
@@ -282,12 +289,5 @@ public class Persona implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona[ idpersona=" + idpersona + " ]";
     }
-
-    public EncuestaVocacional getEncuestaVocacional() {
-        return encuestaVocacional;
-    }
-
-    public void setEncuestaVocacional(EncuestaVocacional encuestaVocacional) {
-        this.encuestaVocacional = encuestaVocacional;
-    }
-    }
+    
+}

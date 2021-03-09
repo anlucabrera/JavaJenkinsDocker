@@ -10,7 +10,6 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "prestamos_documentos", catalog = "control_escolar", schema = "")
@@ -88,7 +87,7 @@ public class PrestamosDocumentos implements Serializable {
     @Column(name = "persona")
     private int persona;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Estudiante estudiante;
 
     public PrestamosDocumentos() {

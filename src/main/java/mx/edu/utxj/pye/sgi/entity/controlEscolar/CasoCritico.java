@@ -11,7 +11,6 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "caso_critico", catalog = "control_escolar", schema = "")
@@ -93,15 +92,15 @@ public class CasoCritico implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCierre;
     @JoinColumn(name = "carga", referencedColumnName = "carga")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private CargaAcademica carga;
     @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Estudiante idEstudiante;
     @JoinColumn(name = "configuracion", referencedColumnName = "configuracion")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private UnidadMateriaConfiguracion configuracion;
-    @OneToMany(mappedBy = "casoCritico", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "casoCritico")
     private List<TutoriasIndividuales> tutoriasIndividualesList;
 
     public CasoCritico() {

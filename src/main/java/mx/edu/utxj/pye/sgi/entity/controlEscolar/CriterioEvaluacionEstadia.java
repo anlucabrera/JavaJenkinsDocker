@@ -11,7 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "criterio_evaluacion_estadia", catalog = "control_escolar", schema = "")
@@ -48,11 +47,11 @@ public class CriterioEvaluacionEstadia implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "descripcion")
     private String descripcion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "criterioEvaluacionEstadia", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "criterioEvaluacionEstadia")
     private List<CalificacionCriterioEstadia> calificacionCriterioEstadiaList;
-    @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private EvaluacionEstadia evaluacion;
+    @JoinColumn(name = "evaluacion", referencedColumnName = "clave")
+    @ManyToOne(optional = false)
+    private EvaluacionEstadiaDescripcion evaluacion;
 
     public CriterioEvaluacionEstadia() {
     }
@@ -91,11 +90,11 @@ public class CriterioEvaluacionEstadia implements Serializable {
         this.calificacionCriterioEstadiaList = calificacionCriterioEstadiaList;
     }
 
-    public EvaluacionEstadia getEvaluacion() {
+    public EvaluacionEstadiaDescripcion getEvaluacion() {
         return evaluacion;
     }
 
-    public void setEvaluacion(EvaluacionEstadia evaluacion) {
+    public void setEvaluacion(EvaluacionEstadiaDescripcion evaluacion) {
         this.evaluacion = evaluacion;
     }
 

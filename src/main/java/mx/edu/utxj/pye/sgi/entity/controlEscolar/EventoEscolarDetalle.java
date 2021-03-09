@@ -10,7 +10,6 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "evento_escolar_detalle", catalog = "control_escolar", schema = "")
@@ -61,7 +60,7 @@ public class EventoEscolarDetalle implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fin;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private EventoEscolar evento;
 
     public EventoEscolarDetalle() {

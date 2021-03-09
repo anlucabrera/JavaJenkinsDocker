@@ -104,6 +104,8 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
     private List<CalificacionCriterioEstadia> calificacionCriterioEstadiaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimiento")
     private List<AsesorEmpresarialEstadia> asesorEmpresarialEstadiaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimiento")
+    private List<AperturaExtemporaneaEventoEstadia> aperturaExtemporaneaEventoEstadiaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimientoEstadia")
     private List<DocumentoSeguimientoEstadia> documentoSeguimientoEstadiaList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "seguimiento")
@@ -257,6 +259,15 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
     }
 
     @XmlTransient
+    public List<AperturaExtemporaneaEventoEstadia> getAperturaExtemporaneaEventoEstadiaList() {
+        return aperturaExtemporaneaEventoEstadiaList;
+    }
+
+    public void setAperturaExtemporaneaEventoEstadiaList(List<AperturaExtemporaneaEventoEstadia> aperturaExtemporaneaEventoEstadiaList) {
+        this.aperturaExtemporaneaEventoEstadiaList = aperturaExtemporaneaEventoEstadiaList;
+    }
+
+    @XmlTransient
     public List<DocumentoSeguimientoEstadia> getDocumentoSeguimientoEstadiaList() {
         return documentoSeguimientoEstadiaList;
     }
@@ -321,5 +332,5 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante[ seguimiento=" + seguimiento + " ]";
     }
-
+    
 }

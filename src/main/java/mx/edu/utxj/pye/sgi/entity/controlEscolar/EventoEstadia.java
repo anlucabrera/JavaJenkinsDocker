@@ -86,6 +86,8 @@ public class EventoEstadia implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento")
     private List<AsesorAcademicoEstadia> asesorAcademicoEstadiaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento")
+    private List<AperturaExtemporaneaEventoEstadia> aperturaExtemporaneaEventoEstadiaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento")
     private List<EntregaFotografiasEstudiante> entregaFotografiasEstudianteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evento")
     private List<DocumentoSeguimientoEstadia> documentoSeguimientoEstadiaList;
@@ -190,6 +192,15 @@ public class EventoEstadia implements Serializable {
 
     public void setAsesorAcademicoEstadiaList(List<AsesorAcademicoEstadia> asesorAcademicoEstadiaList) {
         this.asesorAcademicoEstadiaList = asesorAcademicoEstadiaList;
+    }
+
+    @XmlTransient
+    public List<AperturaExtemporaneaEventoEstadia> getAperturaExtemporaneaEventoEstadiaList() {
+        return aperturaExtemporaneaEventoEstadiaList;
+    }
+
+    public void setAperturaExtemporaneaEventoEstadiaList(List<AperturaExtemporaneaEventoEstadia> aperturaExtemporaneaEventoEstadiaList) {
+        this.aperturaExtemporaneaEventoEstadiaList = aperturaExtemporaneaEventoEstadiaList;
     }
 
     @XmlTransient

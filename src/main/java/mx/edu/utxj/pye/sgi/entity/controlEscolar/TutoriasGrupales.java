@@ -12,7 +12,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "tutorias_grupales", catalog = "control_escolar", schema = "")
@@ -89,13 +88,13 @@ public class TutoriasGrupales implements Serializable {
     @NotNull
     @Column(name = "evento_registro")
     private int eventoRegistro;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tutoriasGrupales", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tutoriasGrupales")
     private List<ParticipantesTutoriaGrupal> participantesTutoriaGrupalList;
     @JoinColumn(name = "jefe_grupo", referencedColumnName = "id_estudiante")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Estudiante jefeGrupo;
     @JoinColumn(name = "sesion_grupal", referencedColumnName = "sesion_grupal")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private SesionesGrupalesTutorias sesionGrupal;
 
     public TutoriasGrupales() {
