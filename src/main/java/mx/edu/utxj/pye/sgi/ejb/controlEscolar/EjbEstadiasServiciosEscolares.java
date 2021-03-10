@@ -27,6 +27,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEvaluacionEventoEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEventosEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPorcentajeEntregaFotografias;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPregNuevaEvalEstadia;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
@@ -699,27 +700,25 @@ public class EjbEstadiasServiciosEscolares {
     
     /**
      * Permite registrar lista de preguntas a una evaluación de estadía
-     * @param evaluacion
      * @param preguntas
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<CriterioEvaluacionEstadia>> registrarPreguntasEvaluacion(EvaluacionEstadiaDescripcion evaluacion, List<String> preguntas){
+    public ResultadoEJB<List<CriterioEvaluacionEstadia>> registrarPreguntasEvaluacion(List<DtoPregNuevaEvalEstadia> preguntas){
         try{
-            System.err.println("registrarPreguntasEvaluacion - evaluación " + evaluacion.getEvaluacion());
             System.err.println("registrarPreguntasEvaluacion - preguntas " + preguntas.size());
             List<CriterioEvaluacionEstadia> listaPreguntasRegistradas = new ArrayList<>();
             
             preguntas.forEach(pregunta -> {
-//                if(!pregunta.startsWith("Pregunta")){
-                System.err.println("registrarPreguntasEvaluacion - foreachPregunta " + pregunta);
+                System.err.println("registrarPreguntasEvaluacion - pregunta " + pregunta.getPregunta());
+                Boolean valor= pregunta.getPregunta().startsWith("Pregunta");
+                System.err.println("registrarPreguntasEvaluacion - valor " + valor);
                 CriterioEvaluacionEstadia criterioEvaluacionEstadia = new CriterioEvaluacionEstadia();
-                criterioEvaluacionEstadia.setDescripcion(pregunta);
-                criterioEvaluacionEstadia.setEvaluacion(evaluacion);
+                criterioEvaluacionEstadia.setDescripcion(pregunta.getPregunta());
+                criterioEvaluacionEstadia.setEvaluacion(pregunta.getEvaluacionEstadiaDescripcion());
                 em.persist(criterioEvaluacionEstadia);
                 f.flush();
                 
                 listaPreguntasRegistradas.add(criterioEvaluacionEstadia);
-//                }
             });
             
             return ResultadoEJB.crearCorrecto(listaPreguntasRegistradas, "Se ha registrado correctamente la lista de preguntas a la evaluación de estadía.");
@@ -730,14 +729,18 @@ public class EjbEstadiasServiciosEscolares {
     
     /**
      * Permite generar lisa de preguntas para registrar a una evaluación
+     * @param numeroPreguntas
+     * @param evaluacion
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<String>> getPreguntasRegistrarEvaluacion(){
+    public ResultadoEJB<List<DtoPregNuevaEvalEstadia>> getPreguntasRegistrarEvaluacion(Integer numeroPreguntas, EvaluacionEstadiaDescripcion evaluacion){
         try{
            
-            List<String> listaPreguntas = new ArrayList<>();
-            for (int i = 1; i < 16; i ++) { 
-                listaPreguntas.add("Pregunta número: " + i);
+            List<DtoPregNuevaEvalEstadia> listaPreguntas = new ArrayList<>();
+            for (int i = 1; i < numeroPreguntas; i ++) { 
+                String preg = "Pregunta número: " + i;
+                DtoPregNuevaEvalEstadia dtoPregNuevaEvalEstadia = new DtoPregNuevaEvalEstadia(preg, evaluacion);
+                listaPreguntas.add(dtoPregNuevaEvalEstadia);
             }
             
             return ResultadoEJB.crearCorrecto(listaPreguntas, "Se ha registrado correctamente la lista de preguntas a la evaluación de estadía.");

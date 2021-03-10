@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.ArrayList;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEvaluacionEventoEstadia;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPregNuevaEvalEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CriterioEvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadia;
@@ -292,6 +293,7 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
             rol.setNumeroEvaluacion(res.getValor()+1);
             rol.setDescripcionEvaluacion("Ingresar descripción de la evaluación");
             rol.setAnioInicioEvaluacion(2021);
+            rol.setNumeroPreguntas(10);
         }else mostrarMensajeResultadoEJB(res);
     }
     
@@ -312,7 +314,7 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
      * Permite registrar una nueva evaluación de estadía
      */
     public void listaPreguntasRegistrar(){
-        ResultadoEJB<List<String>> res = ejb.getPreguntasRegistrarEvaluacion();
+        ResultadoEJB<List<DtoPregNuevaEvalEstadia>> res = ejb.getPreguntasRegistrarEvaluacion(rol.getNumeroPreguntas(), rol.getEvaluacionRegistrada());
         if(res.getCorrecto()){
             rol.setPreguntasRegistrarEvaluacion(res.getValor());
             rol.setRegistroEvaluacion(Boolean.TRUE);
@@ -324,7 +326,7 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
      * Permite registrar lista de preguntas a la evaluación de estadía
      */
     public void registrarPreguntasEvaluacion(){
-        ResultadoEJB<List<CriterioEvaluacionEstadia>> res = ejb.registrarPreguntasEvaluacion(rol.getEvaluacionRegistrada(), rol.getPreguntasRegistrarEvaluacion());
+        ResultadoEJB<List<CriterioEvaluacionEstadia>> res = ejb.registrarPreguntasEvaluacion(rol.getPreguntasRegistrarEvaluacion());
         if(res.getCorrecto()){
             rol.setPreguntasRegistradas(res.getValor());
             rol.setPestaniaActiva(1);

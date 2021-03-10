@@ -187,7 +187,7 @@
                                                                                     <h:outputText value="#{gestorEvaluacionesEstadiaEscolares.rol.numeroEvaluacion}"/>
                                                                                 </p>
                                                                             </div>
-                                                                            <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                 <strong>Descripción</strong> 
                                                                                 <p class="text-muted">                               
                                                                                     <p:inputText value="#{gestorEvaluacionesEstadiaEscolares.rol.descripcionEvaluacion}" size="100" counter="display" maxlength="255" required="true" requiredMessage="Debe de registrar una descripción para identificar la evaluación"/>
@@ -199,6 +199,12 @@
                                                                                 <strong>Año inicio</strong> 
                                                                                 <p class="text-muted">                             
                                                                                     <p:inputNumber id="anioInicio" value="#{gestorEvaluacionesEstadiaEscolares.rol.anioInicioEvaluacion}" decimalPlaces="0" padControl="false"/>
+                                                                                </p>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                <strong>Número de preguntas</strong> 
+                                                                                <p class="text-muted">                             
+                                                                                    <p:inputNumber id="preguntas" value="#{gestorEvaluacionesEstadiaEscolares.rol.numeroPreguntas}" decimalPlaces="0" padControl="false"/>
                                                                                 </p>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-2">
@@ -230,7 +236,7 @@
                                                                                         </p:row>
                                                                                     </p:columnGroup>
                                                                                     <p:column style="text-align: justify;">
-                                                                                        <p:inputText value="#{pregReg}" size="200" maxlength="255" />
+                                                                                        <p:inputText value="#{pregReg.pregunta}" size="200" maxlength="255" />
                                                                                     </p:column>
                                                                                 </p:dataTable>
                                                                             </div>

@@ -101,6 +101,11 @@ public class GestorEvaluacionesEstadiaRolEscolares extends AbstractRol{
      */
     @Getter @NonNull private Integer  anioInicioEvaluacion;
     
+    /**
+     * Número de preguntas que tendrá la evaluación que se registrará
+     */
+    @Getter @NonNull private Integer  numeroPreguntas;
+    
      /**
      * Representa si se registró o no la evaluación
      */
@@ -114,7 +119,7 @@ public class GestorEvaluacionesEstadiaRolEscolares extends AbstractRol{
     /**
      * Lista de preguntas que se registrarán a la evaluación
      */
-    @Getter @NonNull private List<String> preguntasRegistrarEvaluacion;
+    @Getter @NonNull private List<DtoPregNuevaEvalEstadia> preguntasRegistrarEvaluacion;
     
     
     /**
@@ -186,6 +191,10 @@ public class GestorEvaluacionesEstadiaRolEscolares extends AbstractRol{
         this.anioInicioEvaluacion = anioInicioEvaluacion;
     }
 
+    public void setNumeroPreguntas(Integer numeroPreguntas) {
+        this.numeroPreguntas = numeroPreguntas;
+    }
+    
     public void setRegistroEvaluacion(Boolean registroEvaluacion) {
         this.registroEvaluacion = registroEvaluacion;
     }
@@ -194,7 +203,7 @@ public class GestorEvaluacionesEstadiaRolEscolares extends AbstractRol{
         this.evaluacionRegistrada = evaluacionRegistrada;
     }
 
-    public void setPreguntasRegistrarEvaluacion(List<String> preguntasRegistrarEvaluacion) {
+    public void setPreguntasRegistrarEvaluacion(List<DtoPregNuevaEvalEstadia> preguntasRegistrarEvaluacion) {
         this.preguntasRegistrarEvaluacion = preguntasRegistrarEvaluacion;
     }
 
