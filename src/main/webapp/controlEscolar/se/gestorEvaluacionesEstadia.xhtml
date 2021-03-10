@@ -64,7 +64,7 @@
                         </h:form>
                             <div class="box box-solid">
                                 <div class="box-body">
-                                   <p:tabView>
+                                   <p:tabView activeIndex="#{gestorEvaluacionesEstadiaEscolares.rol.pestaniaActiva}">
                                         <!-- Pestaña relación evaluación con evento de estadía -->
                                         <p:tab title="Evaluación por evento">
                                             <h:form id="frmEvalEst">
@@ -176,71 +176,77 @@
                                         <p:tab title="Registro de Evaluaciones">
                                             <h:form id="frmRegEval">
                                             <p:outputPanel>
-                                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="row" id="contenederEval" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                             <div class="col-md-12">
                                                                 <div class="box box-widget widget-user-2">
                                                                     <div class="row">
                                                                         <div class="form-group">
-                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                <strong>Celular *</strong> 
+                                                                            <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                <strong>No. evaluación</strong> 
                                                                                 <p class="text-muted">                             
-                                                                                
+                                                                                    <h:outputText value="#{gestorEvaluacionesEstadiaEscolares.rol.numeroEvaluacion}"/>
                                                                                 </p>
-                                                                                <hr/>
                                                                             </div>
-                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                <strong>Teléfono fijo *</strong> 
+                                                                            <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                <strong>Descripción</strong> 
                                                                                 <p class="text-muted">                               
-                                                                                
+                                                                                    <p:inputText value="#{gestorEvaluacionesEstadiaEscolares.rol.descripcionEvaluacion}" size="100" counter="display" maxlength="255" required="true" requiredMessage="Debe de registrar una descripción para identificar la evaluación"/>
+                                                                                    <br/>
+                                                                                    <h:outputText id="display" class="p-d-block" />
                                                                                 </p>
-                                                                                <hr/>
                                                                             </div>
-                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                <strong>Email *</strong> 
+                                                                            <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                <strong>Año inicio</strong> 
                                                                                 <p class="text-muted">                             
-                                                                                
+                                                                                    <p:inputNumber id="anioInicio" value="#{gestorEvaluacionesEstadiaEscolares.rol.anioInicioEvaluacion}" decimalPlaces="0" padControl="false"/>
                                                                                 </p>
-                                                                                <hr/>
                                                                             </div>
-                                                                            <br/><br/><br/><br/>
-                                                                            <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                                <strong>Calle *</strong>      
+                                                                            <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                <strong>Registrar</strong> 
                                                                                 <p class="text-muted">
-                                                                                
+                                                                                    <p:commandButton actionListener="#{gestorEvaluacionesEstadiaEscolares.registrarEvaluacionEstadia()}" oncomplete="PF('frmRegEval')update();" 
+                                                                                                         class="btn btn-sm btn-info" icon="fa fa-check" title="Registrar evaluación."/>
                                                                                 </p>
-                                                                                <hr/>
                                                                             </div>
-                                                                            <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                                <strong>Número *</strong>
-                                                                                <p class="text-muted">
-                                                                               
-                                                                                </p>
-                                                                                <hr/>
-                                                                            </div>
-                                                                            <br/><br/><br/><br/>
-                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                <strong>Estado *</strong>
-                                                                                <p class="text-muted">
-                                                                                
-                                                                                </p>
-                                                                                <hr/>
-                                                                            </div>
-                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                <strong>Municipio *</strong>
-                                                                                <p class="text-muted">
-                                                                                
-                                                                                </p>
-                                                                                <hr/>
-                                                                            </div>
-                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                <strong>Asentamiento *</strong>
-                                                                                <p class="text-muted">
-                                                                                
-                                                                                </p>
-                                                                                <hr/>
-                                                                            </div>
+                                                                            <br/><br/>
                                                                         </div>
                                                                     </div>
+                                                                    <c:if test="#{gestorEvaluacionesEstadiaEscolares.rol.registroEvaluacion}">
+                                                                    <h:outputText value="&#160;" />
+                                                                    <h:outputText value="&#160;" />
+                                                                    <div class="row">
+                                                                        <center>
+                                                                            <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                                                <p:remoteCommand name="actualizar1" update="@form:tbListaRegistrarPreguntasEvaluacion" />
+                                                                                <p:dataTable id="tbListaRegistrarPreguntasEvaluacion" var="pregReg" value="#{gestorEvaluacionesEstadiaEscolares.rol.preguntasRegistrarEvaluacion}"
+                                                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                                             tableStyle="vertical-align: middle;" emptyMessage="Sin información" editable="true" editMode="cell" expandableRowGroups="true">
+                                                                                    <f:facet name="header">
+                                                                                        <center>Evaluación: #{gestorEvaluacionesEstadiaEscolares.rol.evaluacionRegistrada.evaluacion}. #{gestorEvaluacionesEstadiaEscolares.rol.evaluacionRegistrada.descripcion} - #{gestorEvaluacionesEstadiaEscolares.rol.evaluacionRegistrada.anioInicio} </center>
+                                                                                    </f:facet>
+                                                                                    <p:columnGroup type="header">
+                                                                                        <p:row class="success">
+                                                                                            <p:column headerText="Pregunta" style="width: 400px;"/>
+                                                                                        </p:row>
+                                                                                    </p:columnGroup>
+                                                                                    <p:column style="text-align: justify;">
+                                                                                        <p:inputText value="#{pregReg}" size="200" maxlength="255" />
+                                                                                    </p:column>
+                                                                                </p:dataTable>
+                                                                            </div>
+                                                                        </center>
+                                                                        <div class="row margin-bottom" style="margin-top: 30px;">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-5"/>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                <center>
+                                                                                    <p:commandButton id="btnGuardarRegistro" value="Guardar" actionListener="#{gestorEvaluacionesEstadiaEscolares.registrarPreguntasEvaluacion()}" 
+                                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" update="@form"  process="@form" />
+                                                                                </center> 
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-5"/>
+                                                                        </div> 
+                                                                    </div>
+                                                                    </c:if>
                                                                     <br/>
                                                                 </div>
                                                             </div>

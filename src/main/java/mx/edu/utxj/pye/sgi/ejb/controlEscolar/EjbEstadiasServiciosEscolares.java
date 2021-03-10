@@ -30,6 +30,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPorcentajeEntregaFotografias;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CriterioEvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EntregaFotografiasEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadia;
@@ -651,6 +652,97 @@ public class EjbEstadiasServiciosEscolares {
             return ResultadoEJB.crearCorrecto(dtoEvaluacionEventoEstadia.getEvaluacionEstadia(), "Se actualizó correctamente la evaluación de estadía del evento seleccionad.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo actualizar la evaluación de estadía del evento seleccionad. (EjbEstadiasServiciosEscolares.actualizarEvaluacionEvento)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener el último número de evaluación registrada
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> getUltimoNumeroEvaluacionRegistrada(){
+        try{
+            List<Integer> listaNumeros = em.createQuery("SELECT e FROM EvaluacionEstadiaDescripcion e ORDER BY e.evaluacion DESC", EvaluacionEstadiaDescripcion.class)
+                    .getResultStream()
+                    .map(p->p.getEvaluacion())
+                    .distinct()
+                    .collect(Collectors.toList());
+           
+            return ResultadoEJB.crearCorrecto(listaNumeros.get(0), "Último último número de evaluación registrada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el último número de evaluación registrada. (EjbEstadiasServiciosEscolares.getUltimoNumeroEvaluacionRegistrada)", e, null);
+        }
+    }
+    
+    /**
+     * Permite registrar una nueva evaluación de estadía
+     * @param numeroEvaluacion
+     * @param descripcionEvaluacion
+     * @param anioInicioEvaluacion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<EvaluacionEstadiaDescripcion> registrarEvaluacionEstadia(Integer numeroEvaluacion, String descripcionEvaluacion, Integer anioInicioEvaluacion){
+        try{
+           
+            EvaluacionEstadiaDescripcion evaluacionEstadiaDescripcion = new EvaluacionEstadiaDescripcion();
+                evaluacionEstadiaDescripcion.setEvaluacion(numeroEvaluacion);
+                evaluacionEstadiaDescripcion.setDescripcion(descripcionEvaluacion);
+                evaluacionEstadiaDescripcion.setAnioInicio(anioInicioEvaluacion);
+                evaluacionEstadiaDescripcion.setActiva(Boolean.TRUE);
+                em.persist(evaluacionEstadiaDescripcion);
+                f.flush();
+                
+            return ResultadoEJB.crearCorrecto(evaluacionEstadiaDescripcion, "Se ha registrado correctamente una nueva evaluación de estadía.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente una nueva evaluación de estadía. (EjbEstadiasServiciosEscolares.registrarEvaluacionEstadia)", e, null);
+        }
+    }
+    
+    /**
+     * Permite registrar lista de preguntas a una evaluación de estadía
+     * @param evaluacion
+     * @param preguntas
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<CriterioEvaluacionEstadia>> registrarPreguntasEvaluacion(EvaluacionEstadiaDescripcion evaluacion, List<String> preguntas){
+        try{
+            System.err.println("registrarPreguntasEvaluacion - evaluación " + evaluacion.getEvaluacion());
+            System.err.println("registrarPreguntasEvaluacion - preguntas " + preguntas.size());
+            List<CriterioEvaluacionEstadia> listaPreguntasRegistradas = new ArrayList<>();
+            
+            preguntas.forEach(pregunta -> {
+//                if(!pregunta.startsWith("Pregunta")){
+                System.err.println("registrarPreguntasEvaluacion - foreachPregunta " + pregunta);
+                CriterioEvaluacionEstadia criterioEvaluacionEstadia = new CriterioEvaluacionEstadia();
+                criterioEvaluacionEstadia.setDescripcion(pregunta);
+                criterioEvaluacionEstadia.setEvaluacion(evaluacion);
+                em.persist(criterioEvaluacionEstadia);
+                f.flush();
+                
+                listaPreguntasRegistradas.add(criterioEvaluacionEstadia);
+//                }
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaPreguntasRegistradas, "Se ha registrado correctamente la lista de preguntas a la evaluación de estadía.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente la lista de preguntas a la evaluación de estadía. (EjbEstadiasServiciosEscolares.registrarPreguntasEvaluacion)", e, null);
+        }
+    }
+    
+    /**
+     * Permite generar lisa de preguntas para registrar a una evaluación
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<String>> getPreguntasRegistrarEvaluacion(){
+        try{
+           
+            List<String> listaPreguntas = new ArrayList<>();
+            for (int i = 1; i < 16; i ++) { 
+                listaPreguntas.add("Pregunta número: " + i);
+            }
+            
+            return ResultadoEJB.crearCorrecto(listaPreguntas, "Se ha registrado correctamente la lista de preguntas a la evaluación de estadía.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente la lista de preguntas a la evaluación de estadía. (EjbEstadiasServiciosEscolares.registrarPreguntasEvaluacion)", e, null);
         }
     }
 }

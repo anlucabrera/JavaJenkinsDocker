@@ -13,6 +13,7 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 
 import java.util.*;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CriterioEvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadiaDescripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
@@ -79,6 +80,48 @@ public class GestorEvaluacionesEstadiaRolEscolares extends AbstractRol{
      */
     @Getter @NonNull private List<CalificacionCriterioEstadia> listaCalificacionesEvaluacion;
     
+    
+     /**
+     * Número de pestaña activa
+     */
+    @Getter @NonNull private Integer  pestaniaActiva;
+    
+     /**
+     * Número de evaluación que se registrará
+     */
+    @Getter @NonNull private Integer  numeroEvaluacion;
+    
+     /**
+     * Descripción de la evaluación que se registrará
+     */
+    @Getter @NonNull private String  descripcionEvaluacion;
+    
+     /**
+     * Anio de inicio de la evaluación que se registrará
+     */
+    @Getter @NonNull private Integer  anioInicioEvaluacion;
+    
+     /**
+     * Representa si se registró o no la evaluación
+     */
+    @Getter @NonNull private Boolean  registroEvaluacion;
+    
+    /**
+     * Evaluación de estadía registrada
+     */
+    @Getter @NonNull private EvaluacionEstadiaDescripcion evaluacionRegistrada;
+    
+    /**
+     * Lista de preguntas que se registrarán a la evaluación
+     */
+    @Getter @NonNull private List<String> preguntasRegistrarEvaluacion;
+    
+    
+    /**
+     * Lista de preguntas registradas de la evaluación
+     */
+    @Getter @NonNull private List<CriterioEvaluacionEstadia> preguntasRegistradas;
+    
     public GestorEvaluacionesEstadiaRolEscolares(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
         this.usuario = usuario;
@@ -125,6 +168,38 @@ public class GestorEvaluacionesEstadiaRolEscolares extends AbstractRol{
 
     public void setListaCalificacionesEvaluacion(List<CalificacionCriterioEstadia> listaCalificacionesEvaluacion) {
         this.listaCalificacionesEvaluacion = listaCalificacionesEvaluacion;
+    }
+
+    public void setPestaniaActiva(Integer pestaniaActiva) {
+        this.pestaniaActiva = pestaniaActiva;
+    }
+    
+    public void setNumeroEvaluacion(Integer numeroEvaluacion) {
+        this.numeroEvaluacion = numeroEvaluacion;
+    }
+
+    public void setDescripcionEvaluacion(String descripcionEvaluacion) {
+        this.descripcionEvaluacion = descripcionEvaluacion;
+    }
+
+    public void setAnioInicioEvaluacion(Integer anioInicioEvaluacion) {
+        this.anioInicioEvaluacion = anioInicioEvaluacion;
+    }
+
+    public void setRegistroEvaluacion(Boolean registroEvaluacion) {
+        this.registroEvaluacion = registroEvaluacion;
+    }
+
+    public void setEvaluacionRegistrada(EvaluacionEstadiaDescripcion evaluacionRegistrada) {
+        this.evaluacionRegistrada = evaluacionRegistrada;
+    }
+
+    public void setPreguntasRegistrarEvaluacion(List<String> preguntasRegistrarEvaluacion) {
+        this.preguntasRegistrarEvaluacion = preguntasRegistrarEvaluacion;
+    }
+
+    public void setPreguntasRegistradas(List<CriterioEvaluacionEstadia> preguntasRegistradas) {
+        this.preguntasRegistradas = preguntasRegistradas;
     }
     
 }

@@ -32,8 +32,10 @@ import org.omnifaces.util.Ajax;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.ArrayList;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEvaluacionEventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CriterioEvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadiaDescripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
@@ -95,6 +97,8 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
            
+            rol.setPestaniaActiva(0);
+            rol.setRegistroEvaluacion(Boolean.FALSE);
             rol.setNivelRol(NivelRol.OPERATIVO);
 //            rol.setSoloLectura(true);
             
@@ -106,6 +110,7 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
             rol.getInstrucciones().add("Si se equivocó puede eliminar el registro en la tabla que se muestra en la parte inferior.");
            
             generacionesEventosRegistrados();
+            inicializarNumEvaluacion();
             
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -229,7 +234,7 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
     }
     
      /**
-     * Permite asignar un estudiante al seguimiento de estadía del asesor académico
+     * Permite registrar una evaluación a un evento de estadía
      */
     public void registrarEvaluacionEvento(){
         permitirRegistro();
@@ -276,5 +281,53 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
         mostrarMensajeResultadoEJB(resActualizar);
         listaEvaluacionesEventoEstadia();
         Ajax.update("frmEvalEst");
+    }
+    
+    /**
+     * Permite inicializar el número de evaluación que corresponderá
+     */
+    public void inicializarNumEvaluacion(){
+        ResultadoEJB<Integer> res = ejb.getUltimoNumeroEvaluacionRegistrada();
+        if(res.getCorrecto()){
+            rol.setNumeroEvaluacion(res.getValor()+1);
+            rol.setDescripcionEvaluacion("Ingresar descripción de la evaluación");
+            rol.setAnioInicioEvaluacion(2021);
+        }else mostrarMensajeResultadoEJB(res);
+    }
+    
+     /**
+     * Permite registrar una nueva evaluación de estadía
+     */
+    public void registrarEvaluacionEstadia(){
+        ResultadoEJB<EvaluacionEstadiaDescripcion> res = ejb.registrarEvaluacionEstadia(rol.getNumeroEvaluacion(), rol.getDescripcionEvaluacion(), rol.getAnioInicioEvaluacion());
+        if(res.getCorrecto()){
+            rol.setEvaluacionRegistrada(res.getValor());
+            rol.setPestaniaActiva(1);
+            inicializarNumEvaluacion();
+            listaPreguntasRegistrar();
+        }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite registrar una nueva evaluación de estadía
+     */
+    public void listaPreguntasRegistrar(){
+        ResultadoEJB<List<String>> res = ejb.getPreguntasRegistrarEvaluacion();
+        if(res.getCorrecto()){
+            rol.setPreguntasRegistrarEvaluacion(res.getValor());
+            rol.setRegistroEvaluacion(Boolean.TRUE);
+            Ajax.update("contenederEval");
+        }else mostrarMensajeResultadoEJB(res);
+    }
+    
+     /**
+     * Permite registrar lista de preguntas a la evaluación de estadía
+     */
+    public void registrarPreguntasEvaluacion(){
+        ResultadoEJB<List<CriterioEvaluacionEstadia>> res = ejb.registrarPreguntasEvaluacion(rol.getEvaluacionRegistrada(), rol.getPreguntasRegistrarEvaluacion());
+        if(res.getCorrecto()){
+            rol.setPreguntasRegistradas(res.getValor());
+            rol.setPestaniaActiva(1);
+        }else mostrarMensajeResultadoEJB(res);
     }
 }
