@@ -529,11 +529,10 @@ public class EjbEstadiasServiciosEscolares {
     public ResultadoEJB<List<EvaluacionEstadiaDescripcion>> getListaEvaluacionesEstadia(){
         try{
             
-            List<EvaluacionEstadiaDescripcion> nivelesEducativos = em.createQuery("SELECT e FROM EvaluacionEstadiaDescripcion e WHERE e.activa=:valor ORDER BY e.evaluacion DESC", EvaluacionEstadiaDescripcion.class)
-                    .setParameter("valor", Boolean.TRUE)
+            List<EvaluacionEstadiaDescripcion> listaEvaluaciones = em.createQuery("SELECT e FROM EvaluacionEstadiaDescripcion e", EvaluacionEstadiaDescripcion.class)
                     .getResultList();
             
-            return ResultadoEJB.crearCorrecto(nivelesEducativos, "Lista de evaluaciones de estadía registradas.");
+            return ResultadoEJB.crearCorrecto(listaEvaluaciones, "Lista de evaluaciones de estadía registradas.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evaluaciones de estadía registradas. (EjbEstadiasServiciosEscolares.getListaEvaluacionesEstadia)", e, null);
         }
@@ -699,35 +698,6 @@ public class EjbEstadiasServiciosEscolares {
     }
     
     /**
-     * Permite registrar lista de preguntas a una evaluación de estadía
-     * @param preguntas
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<List<CriterioEvaluacionEstadia>> registrarPreguntasEvaluacion(List<DtoPregNuevaEvalEstadia> preguntas){
-        try{
-            System.err.println("registrarPreguntasEvaluacion - preguntas " + preguntas.size());
-            List<CriterioEvaluacionEstadia> listaPreguntasRegistradas = new ArrayList<>();
-            
-            preguntas.forEach(pregunta -> {
-                System.err.println("registrarPreguntasEvaluacion - pregunta " + pregunta.getPregunta());
-                Boolean valor= pregunta.getPregunta().startsWith("Pregunta");
-                System.err.println("registrarPreguntasEvaluacion - valor " + valor);
-                CriterioEvaluacionEstadia criterioEvaluacionEstadia = new CriterioEvaluacionEstadia();
-                criterioEvaluacionEstadia.setDescripcion(pregunta.getPregunta());
-                criterioEvaluacionEstadia.setEvaluacion(pregunta.getEvaluacionEstadiaDescripcion());
-                em.persist(criterioEvaluacionEstadia);
-                f.flush();
-                
-                listaPreguntasRegistradas.add(criterioEvaluacionEstadia);
-            });
-            
-            return ResultadoEJB.crearCorrecto(listaPreguntasRegistradas, "Se ha registrado correctamente la lista de preguntas a la evaluación de estadía.");
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente la lista de preguntas a la evaluación de estadía. (EjbEstadiasServiciosEscolares.registrarPreguntasEvaluacion)", e, null);
-        }
-    }
-    
-    /**
      * Permite generar lisa de preguntas para registrar a una evaluación
      * @param numeroPreguntas
      * @param evaluacion
@@ -737,7 +707,7 @@ public class EjbEstadiasServiciosEscolares {
         try{
            
             List<DtoPregNuevaEvalEstadia> listaPreguntas = new ArrayList<>();
-            for (int i = 1; i < numeroPreguntas; i ++) { 
+            for (int i = 1; i <= numeroPreguntas; i ++) { 
                 String preg = "Pregunta número: " + i;
                 DtoPregNuevaEvalEstadia dtoPregNuevaEvalEstadia = new DtoPregNuevaEvalEstadia(preg, evaluacion);
                 listaPreguntas.add(dtoPregNuevaEvalEstadia);
@@ -748,4 +718,76 @@ public class EjbEstadiasServiciosEscolares {
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente la lista de preguntas a la evaluación de estadía. (EjbEstadiasServiciosEscolares.registrarPreguntasEvaluacion)", e, null);
         }
     }
+    
+     
+    /**
+     * Permite registrar lista de preguntas a una evaluación de estadía
+     * @param preguntas
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<CriterioEvaluacionEstadia>> registrarPreguntasEvaluacion(List<DtoPregNuevaEvalEstadia> preguntas){
+        try{  
+            List<CriterioEvaluacionEstadia> listaPreguntasRegistradas = new ArrayList<>();           
+            preguntas.forEach(pregunta -> {
+                Boolean valor = pregunta.getPregunta().startsWith("Pregunta");
+                if (!valor) {
+                    CriterioEvaluacionEstadia criterioEvaluacionEstadia = new CriterioEvaluacionEstadia();
+                    criterioEvaluacionEstadia.setDescripcion(pregunta.getPregunta());
+                    criterioEvaluacionEstadia.setEvaluacion(pregunta.getEvaluacionEstadiaDescripcion());
+                    em.persist(criterioEvaluacionEstadia);
+                    f.flush();
+                    listaPreguntasRegistradas.add(criterioEvaluacionEstadia);
+                }
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaPreguntasRegistradas, "Se ha registrado correctamente la lista de preguntas a la evaluación de estadía.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente la lista de preguntas a la evaluación de estadía. (EjbEstadiasServiciosEscolares.registrarPreguntasEvaluacion)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de preguntas de la evaluación consultada
+     * @param evaluacionEstadiaDescripcion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<CriterioEvaluacionEstadia>> getListaPreguntasEvaluacionConsulta(EvaluacionEstadiaDescripcion evaluacionEstadiaDescripcion){
+        try{
+            
+            List<CriterioEvaluacionEstadia> listaPreguntasEvaluacion = em.createQuery("SELECT c FROM CriterioEvaluacionEstadia c WHERE c.evaluacion.evaluacion=:evaluacion", CriterioEvaluacionEstadia.class)
+                    .setParameter("evaluacion", evaluacionEstadiaDescripcion.getEvaluacion())
+                    .getResultList();
+            
+            return ResultadoEJB.crearCorrecto(listaPreguntasEvaluacion, "Lista de evaluaciones de preguntas de la evaluación consultada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de preguntas de la evaluación consultada. (EjbEstadiasServiciosEscolares.getListaEvaluacionesEstadia)", e, null);
+        }
+    }
+    
+    /**
+     * Permite activar o desactivar la evaluación seleccionada
+     * @param evaluacionEstadiaDescripcion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<EvaluacionEstadiaDescripcion> cambiarSituacionEvaluacion(EvaluacionEstadiaDescripcion evaluacionEstadiaDescripcion){
+        try{
+            EvaluacionEstadiaDescripcion evaluacion = em.find(EvaluacionEstadiaDescripcion.class, evaluacionEstadiaDescripcion.getEvaluacion());
+            String mensaje = "";
+            if (evaluacionEstadiaDescripcion.getActiva()) {
+                evaluacion.setActiva(Boolean.FALSE);
+                em.merge(evaluacion);
+                f.flush();
+                mensaje = "La evaluación se desactivó correctamente.";
+            } else {
+                evaluacion.setActiva(Boolean.TRUE);
+                em.merge(evaluacion);
+                f.flush();
+                mensaje = "La evaluación se activó correctamente.";
+            }
+            return ResultadoEJB.crearCorrecto(evaluacion, mensaje);
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo activar o desactivar la evaluación seleccionada. (EjbEstadiasServiciosEscolares.cambiarSituacionEvaluacion)", e, null);
+        }
+    }
+    
 }

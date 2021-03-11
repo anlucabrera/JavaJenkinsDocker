@@ -83,7 +83,6 @@
                                                                                 <p:autoUpdate />
                                                                                 </p:selectOneMenu>
                                                                                 </p>
-                                                                                <hr/>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-3">
                                                                                 <strong>Nivel Educativo</strong> 
@@ -94,7 +93,6 @@
                                                                                 <p:autoUpdate />
                                                                                 </p:selectOneMenu>
                                                                                 </p>
-                                                                                <hr/>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-6">
                                                                                 <strong>Evaluación</strong>      
@@ -105,7 +103,6 @@
                                                                                 <p:autoUpdate />
                                                                                 </p:selectOneMenu>
                                                                                 </p>
-                                                                                <hr/>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-1">
                                                                                 <strong>Registrar</strong> 
@@ -172,6 +169,74 @@
                                                     </p:outputPanel>
                                                 </h:form>
                                         </p:tab>
+                                        <!-- Pestaña consulta de evaluación y preguntas, activar y desactivar -->
+                                        <p:tab title="Evaluaciones Registradas">
+                                            <h:form id="frmEvalReg">
+                                            <p:outputPanel>
+                                                        <div class="row" id="contenederConsEval" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                            <div class="col-md-12">
+                                                                <div class="box box-widget widget-user-2">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                                <strong>Evaluación</strong> 
+                                                                                <p class="text-muted">                             
+                                                                                <p:selectOneMenu id="evalConsulta" value="#{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta}" converter="entityConverter" valueChangeListener="#{gestorEvaluacionesEstadiaEscolares.cambiarEvaluacionConsulta}">
+                                                                                <f:selectItems value="#{gestorEvaluacionesEstadiaEscolares.rol.evaluacionesConsulta}" var="evalConsulta" itemValue="#{evalConsulta}" itemLabel="#{evalConsulta.evaluacion}. #{evalConsulta.descripcion} - #{evalConsulta.anioInicio}" />
+                                                                                <p:ajax update="@(form)" process="@this" />
+                                                                                </p:selectOneMenu>  
+                                                                                </p>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                <strong>Situación</strong> 
+                                                                                <p class="text-muted">                             
+                                                                                <h:outputText value="#{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'Activa':'Inactiva'}"/>   
+                                                                                </p>
+                                                                            </div>
+                                                                            <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                                <strong>Activar/Desactivar</strong> 
+                                                                                <p class="text-muted">
+                                                                                    <p:commandButton actionListener="#{gestorEvaluacionesEstadiaEscolares.cambiarSituacionEvaluacion()}" oncomplete="@(form)"
+                                                                                                         class="btn btn-sm #{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'btn-info':'btn-danger'}" 
+                                                                                                         icon="#{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'fa fa-check':'fa fa-ban'}" 
+                                                                                                         title="#{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'Activar evaluación':'Desactivar evaluación'}"/>
+                                                                                </p>
+                                                                            </div>
+                                                                            <br/><br/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <c:if test="#{gestorEvaluacionesEstadiaEscolares.rol.preguntasEvalConsulta ne null}">
+                                                                    <h:outputText value="&#160;" />
+                                                                    <h:outputText value="&#160;" />
+                                                                    <div class="row">
+                                                                        <center>
+                                                                            <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                                                <p:dataTable id="tbListaPreguntasGuardadas" var="pregConsul" value="#{gestorEvaluacionesEstadiaEscolares.rol.preguntasEvalConsulta}"
+                                                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                                             tableStyle="vertical-align: middle;" emptyMessage="Sin información" editable="true" editMode="cell" expandableRowGroups="true">
+                                                                                    <f:facet name="header">
+                                                                                        <center>Evaluación: #{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.evaluacion}. #{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.descripcion} - #{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.anioInicio} </center>
+                                                                                    </f:facet>
+                                                                                    <p:columnGroup type="header">
+                                                                                        <p:row class="success">
+                                                                                            <p:column headerText="Pregunta" style="width: 400px;"/>
+                                                                                        </p:row>
+                                                                                    </p:columnGroup>
+                                                                                    <p:column style="text-align: justify;">
+                                                                                        <h:outputText value="#{pregConsul.descripcion}"/>
+                                                                                    </p:column>
+                                                                                </p:dataTable>
+                                                                            </div>
+                                                                        </center>
+                                                                    </div>
+                                                                    </c:if>
+                                                                    <br/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:outputPanel> 
+                                            </h:form>
+                                        </p:tab>
                                         <!-- Pestaña registro de evaluaciones y banco de preguntas -->
                                         <p:tab title="Registro de Evaluaciones">
                                             <h:form id="frmRegEval">
@@ -184,13 +249,13 @@
                                                                             <div class="col-sm-12 col-md-12 col-lg-2">
                                                                                 <strong>No. evaluación</strong> 
                                                                                 <p class="text-muted">                             
-                                                                                    <h:outputText value="#{gestorEvaluacionesEstadiaEscolares.rol.numeroEvaluacion}"/>
+                                                                                    <h:outputText value="#{gestorEvaluacionesEstadiaEscolares.rol.numeroEvaluacion}" style="font-size: 12px; font-weight: bold;"/>
                                                                                 </p>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                 <strong>Descripción</strong> 
                                                                                 <p class="text-muted">                               
-                                                                                    <p:inputText value="#{gestorEvaluacionesEstadiaEscolares.rol.descripcionEvaluacion}" size="100" counter="display" maxlength="255" required="true" requiredMessage="Debe de registrar una descripción para identificar la evaluación"/>
+                                                                                    <p:inputText value="#{gestorEvaluacionesEstadiaEscolares.rol.descripcionEvaluacion}" size="60" counter="display" maxlength="255" required="true" requiredMessage="Debe de registrar una descripción para identificar la evaluación"/>
                                                                                     <br/>
                                                                                     <h:outputText id="display" class="p-d-block" />
                                                                                 </p>
@@ -236,7 +301,7 @@
                                                                                         </p:row>
                                                                                     </p:columnGroup>
                                                                                     <p:column style="text-align: justify;">
-                                                                                        <p:inputText value="#{pregReg.pregunta}" size="200" maxlength="255" />
+                                                                                        <p:inputText value="#{pregReg.pregunta}" size="150" maxlength="255" />
                                                                                     </p:column>
                                                                                 </p:dataTable>
                                                                             </div>
@@ -251,6 +316,31 @@
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-5"/>
                                                                         </div> 
+                                                                    </div>
+                                                                    </c:if>
+                                                                    <c:if test="#{!gestorEvaluacionesEstadiaEscolares.rol.registroEvaluacion and gestorEvaluacionesEstadiaEscolares.rol.preguntasRegistradas ne null}">
+                                                                    <h:outputText value="&#160;" />
+                                                                    <h:outputText value="&#160;" />
+                                                                    <div class="row">
+                                                                        <center>
+                                                                            <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                                                <p:dataTable id="tbListaPreguntasEvaluacion" var="pregEval" value="#{gestorEvaluacionesEstadiaEscolares.rol.preguntasRegistradas}"
+                                                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                                             tableStyle="vertical-align: middle;" emptyMessage="Sin información" editable="true" editMode="cell" expandableRowGroups="true">
+                                                                                    <f:facet name="header">
+                                                                                        <center>Evaluación: #{gestorEvaluacionesEstadiaEscolares.rol.evaluacionRegistrada.evaluacion}. #{gestorEvaluacionesEstadiaEscolares.rol.evaluacionRegistrada.descripcion} - #{gestorEvaluacionesEstadiaEscolares.rol.evaluacionRegistrada.anioInicio} </center>
+                                                                                    </f:facet>
+                                                                                    <p:columnGroup type="header">
+                                                                                        <p:row class="success">
+                                                                                            <p:column headerText="Pregunta" style="width: 400px;"/>
+                                                                                        </p:row>
+                                                                                    </p:columnGroup>
+                                                                                    <p:column style="text-align: justify;">
+                                                                                        <h:outputText value="#{pregEval.descripcion}"/>
+                                                                                    </p:column>
+                                                                                </p:dataTable>
+                                                                            </div>
+                                                                        </center>
                                                                     </div>
                                                                     </c:if>
                                                                     <br/>

@@ -121,11 +121,25 @@ public class GestorEvaluacionesEstadiaRolEscolares extends AbstractRol{
      */
     @Getter @NonNull private List<DtoPregNuevaEvalEstadia> preguntasRegistrarEvaluacion;
     
-    
     /**
      * Lista de preguntas registradas de la evaluación
      */
     @Getter @NonNull private List<CriterioEvaluacionEstadia> preguntasRegistradas;
+    
+     /**
+     * Lista de evaluaciones de estadía consultadas
+     */
+    @Getter @NonNull private List<EvaluacionEstadiaDescripcion> evaluacionesConsulta;
+    
+    /**
+     * Evaluación de estadía consultada
+     */
+    @Getter @NonNull private EvaluacionEstadiaDescripcion evaluacionConsulta;
+    
+    /**
+     * Lista de preguntas registradas de la evaluación consultada
+     */
+    @Getter @NonNull private List<CriterioEvaluacionEstadia> preguntasEvalConsulta;
     
     public GestorEvaluacionesEstadiaRolEscolares(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
@@ -210,6 +224,19 @@ public class GestorEvaluacionesEstadiaRolEscolares extends AbstractRol{
     public void setPreguntasRegistradas(List<CriterioEvaluacionEstadia> preguntasRegistradas) {
         this.preguntasRegistradas = preguntasRegistradas;
     }
+
+    public void setEvaluacionesConsulta(List<EvaluacionEstadiaDescripcion> evaluacionesConsulta) {
+        this.evaluacionesConsulta = evaluacionesConsulta;
+    }
+
+    public void setEvaluacionConsulta(EvaluacionEstadiaDescripcion evaluacionConsulta) {
+        this.evaluacionConsulta = evaluacionConsulta;
+    }
+
+    public void setPreguntasEvalConsulta(List<CriterioEvaluacionEstadia> preguntasEvalConsulta) {
+        this.preguntasEvalConsulta = preguntasEvalConsulta;
+    }
+    
     
 }
 
