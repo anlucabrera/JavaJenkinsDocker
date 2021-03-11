@@ -158,7 +158,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             rol.setReporte(rol.getReportes().get(0));
             generarReportes();
         }
-        else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==10){
+        else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){
             listaReportes.add("Eficiencia Estadía Técnica");
             listaReportes.add("Listado Estudiantes con Promedios");
             rol.setReportes(listaReportes);
@@ -295,7 +295,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             rol.setNivelEducativo(nivel);
             if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
                 generarReportesDireccionAcademica();
-            }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==10){
+            }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10){
                 generarReportes();
             }
             Ajax.update("frm");
@@ -312,7 +312,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             rol.setReporte(reporte);
             if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
                 generarReportesDireccionAcademica();
-            }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==10){
+            }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10){
                 generarReportes();
             }
             Ajax.update("frm");
@@ -343,7 +343,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             generarListadoEstudiantesPromediosAreaAcademica();
             File f = new File(ejb.getReportesEstadiaAreaAcademica(rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getGeneracion(), rol.getNivelEducativo()));
             Faces.sendFile(f, true);
-        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==10){     
+        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10){     
             generarEficienciaEstadia();
             generarListadoEstudiantesPromedios();
             generarZonaInfluenciaIns();

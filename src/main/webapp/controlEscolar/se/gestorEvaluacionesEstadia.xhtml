@@ -190,16 +190,16 @@
                                                                             <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                 <strong>Situación</strong> 
                                                                                 <p class="text-muted">                             
-                                                                                <h:outputText value="#{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'Activa':'Inactiva'}"/>   
+                                                                                <h:outputText value="#{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'Activa':'Inactiva'}" style="font-size: 18px; font-weight: bold;"/>   
                                                                                 </p>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-2">
                                                                                 <strong>Activar/Desactivar</strong> 
                                                                                 <p class="text-muted">
                                                                                     <p:commandButton actionListener="#{gestorEvaluacionesEstadiaEscolares.cambiarSituacionEvaluacion()}" onsuccess="@(form)"
-                                                                                                         class="btn btn-sm #{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'btn-info':'btn-danger'}" 
-                                                                                                         icon="#{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'fa fa-check':'fa fa-ban'}" 
-                                                                                                         title="#{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'Activar evaluación':'Desactivar evaluación'}"/>
+                                                                                                         class="btn btn-sm #{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'btn-danger':'btn-info'}" 
+                                                                                                         icon="#{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'fa fa-ban':'fa fa-check'}" 
+                                                                                                         title="#{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'Desactivar evaluación':'Activar evaluación'}"/>
                                                                                 </p>
                                                                             </div>
                                                                             <br/><br/>
@@ -249,7 +249,7 @@
                                                                             <div class="col-sm-12 col-md-12 col-lg-2">
                                                                                 <strong>No. evaluación</strong> 
                                                                                 <p class="text-muted">                             
-                                                                                    <h:outputText value="#{gestorEvaluacionesEstadiaEscolares.rol.numeroEvaluacion}" style="font-size: 12px; font-weight: bold;"/>
+                                                                                    <h:outputText value="#{gestorEvaluacionesEstadiaEscolares.rol.numeroEvaluacion}" style="font-size: 18px; font-weight: bold;"/>
                                                                                 </p>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-4">

@@ -375,6 +375,7 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
         mostrarMensajeResultadoEJB(res);
         rol.setPestaniaActiva(1);
         listaEvaluacionesActivas();
+        listaEvaluacionesConsulta();
         listaPreguntasEvalConsulta();
         Ajax.update("frmEvalReg");
         Ajax.update("contenederConsEval");
