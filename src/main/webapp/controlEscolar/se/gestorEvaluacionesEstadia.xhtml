@@ -196,7 +196,7 @@
                                                                             <div class="col-sm-12 col-md-12 col-lg-2">
                                                                                 <strong>Activar/Desactivar</strong> 
                                                                                 <p class="text-muted">
-                                                                                    <p:commandButton actionListener="#{gestorEvaluacionesEstadiaEscolares.cambiarSituacionEvaluacion()}" oncomplete="@(form)"
+                                                                                    <p:commandButton actionListener="#{gestorEvaluacionesEstadiaEscolares.cambiarSituacionEvaluacion()}" onsuccess="@(form)"
                                                                                                          class="btn btn-sm #{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'btn-info':'btn-danger'}" 
                                                                                                          icon="#{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'fa fa-check':'fa fa-ban'}" 
                                                                                                          title="#{gestorEvaluacionesEstadiaEscolares.rol.evaluacionConsulta.activa?'Activar evaluación':'Desactivar evaluación'}"/>
