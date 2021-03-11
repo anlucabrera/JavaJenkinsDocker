@@ -129,7 +129,7 @@ public class AdministracionEvaluacionesPsicopedagogia extends ViewScopedRol impl
     public void getEvaluacionesbyPeriodo(){
         try{
             //System.out.println("Obenter evaluaciones -- area" + rol.getPrograma());
-            ResultadoEJB<List<DtoAdministracionEvaluaciones>> resEv= ejdAdminEvaluaciones.getEvaluacionesbyArea(rol.getPrograma(),rol.getPeriodoSeleccionado());
+            ResultadoEJB<List<DtoAdministracionEvaluaciones>> resEv= ejdAdminEvaluaciones.getEvaluacionesbyArea(rol.getPrograma(),rol.getPeriodoSeleccionado(),rol.getPeriodoActivo());
             //System.out.println(resEv.getValor());
             if(resEv.getCorrecto()){ rol.setEvaluaciones(resEv.getValor()); }
             else {mostrarMensajeResultadoEJB(resEv);}

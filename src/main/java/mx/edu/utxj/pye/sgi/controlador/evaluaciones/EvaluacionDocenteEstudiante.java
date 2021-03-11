@@ -110,6 +110,7 @@ public class EvaluacionDocenteEstudiante extends ViewScopedRol {
                         }
                         respuestasPosibles = ejbEvaluacionDocente2.getRespuestasPosibles();
                     }else {mostrarMensajeResultadoEJB(resMaterias);}
+                    dtoDocenteEvaluando= listaResultados.get(0);
 
                 }
             }
@@ -357,7 +358,7 @@ public class EvaluacionDocenteEstudiante extends ViewScopedRol {
     public void  getdocenteEvaluando(dtoEstudianteMateria evaluando){
         dtoDocenteEvaluando = new dtoEstudianteMateria();
         dtoDocenteEvaluando = evaluando;
-        Ajax.update("frmEvaluacion");
+        Ajax.update("frmEv");
         //System.out.println("Evaluado" + dtoDocenteEvaluando);
     }
     public void actualizaDocente(){
