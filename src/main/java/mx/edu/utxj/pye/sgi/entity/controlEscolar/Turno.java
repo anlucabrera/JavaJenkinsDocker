@@ -10,7 +10,6 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "turno", catalog = "control_escolar", schema = "")
@@ -47,7 +46,7 @@ public class Turno implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(mappedBy = "idTurno", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "idTurno")
     private List<Grupo> grupoList;
 
     public Turno() {

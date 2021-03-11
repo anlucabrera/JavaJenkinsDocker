@@ -10,7 +10,6 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "tutorias_individuales", catalog = "control_escolar", schema = "")
@@ -84,10 +83,10 @@ public class TutoriasIndividuales implements Serializable {
     @Column(name = "evento_registro")
     private int eventoRegistro;
     @JoinColumn(name = "caso_critico", referencedColumnName = "caso")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private CasoCritico casoCritico;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Estudiante estudiante;
 
     public TutoriasIndividuales() {

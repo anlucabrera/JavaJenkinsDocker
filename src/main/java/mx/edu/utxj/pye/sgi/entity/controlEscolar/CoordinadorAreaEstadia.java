@@ -8,10 +8,8 @@ package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "coordinador_area_estadia", catalog = "control_escolar", schema = "")
@@ -54,9 +52,9 @@ public class CoordinadorAreaEstadia implements Serializable {
     @Column(name = "personal")
     private int personal;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private EventoEstadia evento;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "coordinador", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "coordinador")
     private List<AsesorAcademicoEstadia> asesorAcademicoEstadiaList;
 
     public CoordinadorAreaEstadia() {

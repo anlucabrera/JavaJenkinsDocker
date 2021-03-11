@@ -919,14 +919,14 @@ public class EjbSeguimientoEstadia {
                     .findFirst().orElse(null);
             
             if(eventoEvaluacion != null){
-            EvaluacionEstadia evaluacionEstadia = em.createQuery("SELECT e FROM EvaluacionEstadia e WHERE e.evento=:evento", EvaluacionEstadia.class)
+            EvaluacionEstadia evaluacionEstadia = em.createQuery("SELECT e FROM EvaluacionEstadia e WHERE e.evento.evento=:evento", EvaluacionEstadia.class)
                     .setParameter("evento", eventoEvaluacion)
                     .getResultStream()
                     .findFirst().orElse(null);
                     
                 if(evaluacionEstadia != null){
-                     listaCriteriosEvaluar = em.createQuery("SELECT c FROM CriterioEvaluacionEstadia c WHERE c.evaluacion=:evaluacion ORDER BY c.criterio ASC", CriterioEvaluacionEstadia.class)
-                        .setParameter("evaluacion", evaluacionEstadia)
+                     listaCriteriosEvaluar = em.createQuery("SELECT c FROM CriterioEvaluacionEstadia c WHERE c.evaluacion.clave=:evaluacion ORDER BY c.criterio ASC", CriterioEvaluacionEstadia.class)
+                        .setParameter("evaluacion", evaluacionEstadia.getClave())
                         .getResultStream()
                         .map(criterio -> packCriterio(criterio).getValor())
                         .filter(dto -> dto != null)

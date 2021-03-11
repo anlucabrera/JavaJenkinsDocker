@@ -11,7 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -25,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "citas_aspirantes", catalog = "control_escolar", schema = "")
@@ -56,10 +55,10 @@ public class CitasAspirantes implements Serializable {
     @Column(name = "status")
     private String status;
     @JoinColumn(name = "id_aspirante", referencedColumnName = "id_aspirante", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Aspirante aspirante;
     @JoinColumn(name = "id_tramite", referencedColumnName = "id_tramite", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private TramitesEscolares tramitesEscolares;
 
     public CitasAspirantes() {

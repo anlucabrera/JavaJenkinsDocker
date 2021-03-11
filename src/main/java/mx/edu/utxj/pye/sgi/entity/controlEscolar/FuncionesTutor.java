@@ -9,7 +9,6 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "funciones_tutor", catalog = "control_escolar", schema = "")
@@ -52,7 +51,7 @@ public class FuncionesTutor implements Serializable {
     @Column(name = "meta_funcion_tutor")
     private String metaFuncionTutor;
     @JoinColumn(name = "plan_accion_tutoria", referencedColumnName = "plan_accion_tutoria")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private PlanAccionTutorial planAccionTutoria;
 
     public FuncionesTutor() {

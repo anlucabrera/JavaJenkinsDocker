@@ -9,7 +9,6 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "integrantes_familia", catalog = "control_escolar", schema = "")
@@ -92,14 +91,14 @@ public class IntegrantesFamilia implements Serializable {
     @Column(name = "parentesco")
     private String parentesco;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Aspirante aspirante;
-    @JoinColumn(name = "ocupacion", referencedColumnName = "id_ocupacion")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Ocupacion ocupacion;
     @JoinColumn(name = "escolaridad", referencedColumnName = "id_escolaridad")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Escolaridad escolaridad;
+    @JoinColumn(name = "ocupacion", referencedColumnName = "id_ocupacion")
+    @ManyToOne(optional = false)
+    private Ocupacion ocupacion;
 
     public IntegrantesFamilia() {
     }
@@ -215,20 +214,20 @@ public class IntegrantesFamilia implements Serializable {
         this.aspirante = aspirante;
     }
 
-    public Ocupacion getOcupacion() {
-        return ocupacion;
-    }
-
-    public void setOcupacion(Ocupacion ocupacion) {
-        this.ocupacion = ocupacion;
-    }
-
     public Escolaridad getEscolaridad() {
         return escolaridad;
     }
 
     public void setEscolaridad(Escolaridad escolaridad) {
         this.escolaridad = escolaridad;
+    }
+
+    public Ocupacion getOcupacion() {
+        return ocupacion;
+    }
+
+    public void setOcupacion(Ocupacion ocupacion) {
+        this.ocupacion = ocupacion;
     }
 
     @Override

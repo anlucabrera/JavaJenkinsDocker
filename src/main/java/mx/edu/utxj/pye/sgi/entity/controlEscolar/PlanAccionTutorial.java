@@ -11,7 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -26,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Desarrollo
+ * @author UTXJ
  */
 @Entity
 @Table(name = "plan_accion_tutorial", catalog = "control_escolar", schema = "")
@@ -71,11 +70,11 @@ public class PlanAccionTutorial implements Serializable {
     @Column(name = "comentarios_director")
     private String comentariosDirector;
     @JoinColumn(name = "plan_accion_tutoria", referencedColumnName = "id_grupo", insertable = false, updatable = false)
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @OneToOne(optional = false)
     private Grupo grupo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoria", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoria")
     private List<SesionesGrupalesTutorias> sesionesGrupalesTutoriasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoria", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoria")
     private List<FuncionesTutor> funcionesTutorList;
 
     public PlanAccionTutorial() {

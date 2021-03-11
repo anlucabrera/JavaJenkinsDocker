@@ -56,6 +56,7 @@ public enum ControlEscolarVistaControlador {
     REGISTRO_EVENTOS_ESTADIA("/controlEscolar/se/registroEventosEstadia.xhtml",  RegistroEventosEstadiaEscolares.class),
     ENTREGA_FOTOGRAFIAS_ESTADIA("/controlEscolar/se/entregaFotografiasEstadia.xhtml",  EntregaFotografiasEscolares.class),
     APERTURA_EXTEMPORANEA_ESTADIA("/controlEscolar/se/aperturaExtemporaneaEstadia.xhtml",  AperturaExtemporaneaEstadia.class),
+    GESTOR_EVALUACION_ESTADIA("/controlEscolar/se/gestorEvaluacionesEstadia.xhtml",  GestorEvaluacionesEstadiaEscolares.class),
     
     SEGUIMIENTO_ESTADIA_VINCULACION("/controlEscolar/vinculacion/seguimientoEstadiaVinculacion.xhtml", SeguimientoEstadiaVinculacion.class),
 

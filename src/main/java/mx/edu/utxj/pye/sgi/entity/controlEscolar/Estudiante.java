@@ -458,5 +458,5 @@ public class Estudiante implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante[ idEstudiante=" + idEstudiante + " ]";
     }
-
+    
 }
