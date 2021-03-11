@@ -33,6 +33,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionRolesEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReportesEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -161,6 +162,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
         else if(rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){
             listaReportes.add("Eficiencia Estadía Técnica");
             listaReportes.add("Listado Estudiantes con Promedios");
+            listaReportes.add("Consulta memorias de estadía");
             rol.setReportes(listaReportes);
             rol.setReporte(rol.getReportes().get(0));
             generarReportes();
@@ -174,6 +176,8 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
         if("Eficiencia Estadía Técnica".equals(rol.getReporte())){
            generarEficienciaEstadia();
         }else if("Listado Estudiantes con Promedios".equals(rol.getReporte())){
+           generarListadoEstudiantesPromedios();
+        }else if("Consulta memorias de estadía".equals(rol.getReporte())){
            generarListadoEstudiantesPromedios();
         }else if("Zona influencia institucional".equals(rol.getReporte())){
            generarZonaInfluenciaIns();
@@ -351,6 +355,28 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             File f = new File(ejb.getReportesEstadia(rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getListaZonaInfluenciaIns(), rol.getListaZonaInfluenciaPrograma(), rol.getGeneracion(), rol.getNivelEducativo()));
             Faces.sendFile(f, true);
         }
+    }
+     
+    /**
+     * Método que permite consultar si el documento ha sido registrado en la base de datos
+     * @param claveDocumento 
+     * @param dtoSeguimientoEstadia 
+     * @return  Verdadero o Falso según sea el caso
+     */
+    public Boolean consultarExisteDocumento(Integer claveDocumento, DtoSeguimientoEstadia dtoSeguimientoEstadia){
+        return ejbSeguimientoEstadia.consultarClaveDocumento(claveDocumento, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+    }
+    
+    /**
+     * Método que busca la ruta del documento seleccionado para su descarga
+     * @param claveDocumento
+     * @param dtoSeguimientoEstadia
+     * @throws java.io.IOException
+     */
+    public void descargarDocumento(Integer claveDocumento, DtoSeguimientoEstadia dtoSeguimientoEstadia) throws IOException{
+        ResultadoEJB<DocumentoSeguimientoEstadia> resBuscarDoc = ejbSeguimientoEstadia.buscarDocumentoEstudiante(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante(), claveDocumento);
+        File f = new File(resBuscarDoc.getValor().getRuta());
+        Faces.sendFile(f, false);
     }
     
 }

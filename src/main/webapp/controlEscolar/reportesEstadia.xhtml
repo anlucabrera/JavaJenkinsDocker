@@ -217,6 +217,44 @@
                                                 </p:dataTable>
                                             </center>
                                         </c:if>
+                                        <c:if test="#{reportesEstadia.rol.reporte eq 'Consulta memorias de estadía'}">
+                                            <center>
+                                                <p:dataTable id="tbEstudiantesMemorias" var="segEst" value="#{reportesEstadia.rol.listadoEstudiantesPromedio}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="50" rowsPerPageTemplate="50,100,150,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950,1000" resizeMode="expand"
+                                                             editable="true" editMode="cell" expandableRowGroups="true"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Matricula" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Estudiante" style="width: 180px;" sortBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Grupo" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Programa educativo" style="width: 200px;" sortBy="#{segEst.dtoEstudiante.programaEducativo.nombre}" filterBy="#{segEst.dtoEstudiante.programaEducativo.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Proyecto" style="width: 250px;" sortBy="#{segEst.seguimientoEstadiaEstudiante.proyecto}" filterBy="#{segEst.seguimientoEstadiaEstudiante.proyecto}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Memoria de estadía" style="width: 150px;"/>
+                                                         </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.matricula}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.proyecto}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{reportesEstadia.consultarExisteDocumento(38, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{reportesEstadia.descargarDocumento(38, segEst)}" target="_blank" title="#{reportesEstadia.consultarExisteDocumento(38, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!reportesEstadia.consultarExisteDocumento(38, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </center>
+                                        </c:if>
                                         <c:if test="#{reportesEstadia.rol.reporte eq 'Zona influencia institucional'}">
                                             <center>
                                                 <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
