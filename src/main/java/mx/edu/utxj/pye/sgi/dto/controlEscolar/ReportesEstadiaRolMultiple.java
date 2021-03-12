@@ -106,6 +106,11 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
      */
     @Getter @NonNull private List<DtoZonaInfluenciaEstPrograma> listaZonaInfluenciaPrograma;
     
+      /**
+     * Reporte de listado de seguimiento de actividaes de estadía
+     */
+    @Getter @NonNull private List<DtoReporteActividadesEstadia> listaSegActEstadia;
+    
     public ReportesEstadiaRolMultiple(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
         this.usuario = usuario;
@@ -178,4 +183,9 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
     public void setListaZonaInfluenciaPrograma(List<DtoZonaInfluenciaEstPrograma> listaZonaInfluenciaPrograma) {
         this.listaZonaInfluenciaPrograma = listaZonaInfluenciaPrograma;
     }
+
+    public void setListaSegActEstadia(List<DtoReporteActividadesEstadia> listaSegActEstadia) {
+        this.listaSegActEstadia = listaSegActEstadia;
+    }
+    
 }

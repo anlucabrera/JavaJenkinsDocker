@@ -25,6 +25,7 @@ import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadia;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteActividadesEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstIns;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstPrograma;
@@ -160,6 +161,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             generarReportes();
         }
         else if(rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){
+            listaReportes.add("Seguimiento actividades de estadía");
             listaReportes.add("Eficiencia Estadía Técnica");
             listaReportes.add("Listado Estudiantes con Promedios");
             listaReportes.add("Consulta memorias de estadía");
@@ -173,7 +175,9 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
      * Permite generar el reporte seleccionado dependiendo la opción seleccionada
      */
     public void generarReportes(){
-        if("Eficiencia Estadía Técnica".equals(rol.getReporte())){
+        if("Seguimiento actividades de estadía".equals(rol.getReporte())){
+           generarSeguimientoActEstadia();
+        }else if("Eficiencia Estadía Técnica".equals(rol.getReporte())){
            generarEficienciaEstadia();
         }else if("Listado Estudiantes con Promedios".equals(rol.getReporte())){
            generarListadoEstudiantesPromedios();
@@ -196,6 +200,21 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
            generarListadoEstudiantesPromediosAreaAcademica();
         }
     }
+    
+    /**
+     * Permite generar el reporte de seguimiento de actividades de estadía
+     */
+    public void generarSeguimientoActEstadia(){
+        ResultadoEJB<List<DtoReporteActividadesEstadia>> res = ejb.getSeguimientoActividadesEstadia(rol.getGeneracion(), rol.getNivelEducativo());
+        if(res.getCorrecto()){
+             rol.setListaSegActEstadia(res.getValor());
+//             rol.setTotalAcreditados(rol.getEficienciaEstadia().stream().mapToInt(p->p.getAcreditaron()).sum());
+//             rol.setTotalNoAcreditados(rol.getEficienciaEstadia().stream().mapToInt(p->p.getNoAcreditaron()).sum());
+//             rol.setTotal(rol.getEficienciaEstadia().stream().mapToInt(p->p.getSeguimiento()).sum());
+             Ajax.update("tbSegActEstadia");
+         }else mostrarMensajeResultadoEJB(res);
+    }
+    
     
     /**
      * Permite generar el reporte de eficiencia de estadía

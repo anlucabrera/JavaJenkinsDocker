@@ -108,6 +108,83 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <c:if test="#{reportesEstadia.rol.reporte eq 'Seguimiento actividades de estadía'}">
+                                            <center>
+                                                <p:dataTable id="tbSegActEstadia" var="segActEst" value="#{reportesEstadia.rol.listaSegActEstadia}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                             tableStyle="vertical-align: middle;" emptyMessage="Sin información">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column rowspan="3" headerText="Programa educativo" style="width: 200px;"/>
+                                                            <p:column rowspan="3" headerText="Total estudiantes iniciaron cuatrimestre" style="width: 100px;"/>
+                                                            <p:column rowspan="3" headerText="Total estudiantes activos" style="width: 100px;"/>
+                                                            <p:column colspan="9" headerText="Actividades de estadía" style="width: 900px;"/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column colspan="3" headerText="Asignación asesor académico" style="width: 300px;"/>
+                                                            <p:column colspan="3" headerText="Registro de información" style="width: 300px;"/>
+                                                            <p:column colspan="3" headerText="Información validada" style="width: 300px;"/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Total asignados" style="width: 100px;"/>
+                                                            <p:column headerText="Total sin asignar" style="width: 100px;"/>
+                                                            <p:column headerText="Porcentaje asignación" style="width: 100px;"/>
+                                                            <p:column headerText="Total con registro" style="width: 100px;"/>
+                                                            <p:column headerText="Total sin registro" style="width: 100px;"/>
+                                                            <p:column headerText="Porcentaje registro" style="width: 100px;"/>
+                                                            <p:column headerText="Total validados" style="width: 100px;"/>
+                                                            <p:column headerText="Total sin validar" style="width: 100px;"/>
+                                                            <p:column headerText="Porcentaje validación" style="width: 100px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segActEst.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segActEst.estudiantesIniciaron}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{segActEst.estudiantesActivos}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{segActEst.estudiantesAsignados}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{segActEst.estudiantesSinAsignar}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{segActEst.porcentajeAsignacion}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{segActEst.estudiantesInformacion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{segActEst.estudiantesSinInformacion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{segActEst.porcentajeRegistro}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{segActEst.estudiantesValidados}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{segActEst.estudiantesSinValidar}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{segActEst.porcentajeValidacion}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+<!--                                                    <p:columnGroup type="footer">
+                                                        <p:row>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="Totales:"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="# {reportesEstadia.rol.totalAcreditados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="# {reportesEstadia.rol.totalNoAcreditados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="# {reportesEstadia.rol.total}"/>
+                                                            <p:column/>
+                                                        </p:row>
+                                                    </p:columnGroup>-->
+                                                </p:dataTable>
+                                            </center>
+                                        </c:if>
                                         <c:if test="#{reportesEstadia.rol.reporte eq 'Eficiencia Estadía Técnica'}">
                                             <center>
                                                 <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 

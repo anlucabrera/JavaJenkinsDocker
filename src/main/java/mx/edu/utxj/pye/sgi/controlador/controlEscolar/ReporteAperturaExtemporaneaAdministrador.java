@@ -91,16 +91,10 @@ public class ReporteAperturaExtemporaneaAdministrador extends ViewScopedRol impl
 //            rol.setSoloLectura(true);
             rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
           
-            rol.getInstrucciones().add("Ingrese nombre o clave del docente al que se le aperturará sistema.");
             rol.getInstrucciones().add("Seleccionar Periodo Escolar.");
-            rol.getInstrucciones().add("Seleccionar Materia - Grupo - Programa Educativo.");
-            rol.getInstrucciones().add("Seleccionar Tipo de Evaluación: Ordinaria o Nivelación Final.");
-            rol.getInstrucciones().add("En caso de que haya seleccionado ORDINARIA en tipo de evaluación, DEBERÁ seleccionar la unidad correspondiente, en caso contrario NO es necesario seleccionar UNIDAD");
-            rol.getInstrucciones().add("Ingresar fecha de inicio y fin en la que estará habilitada la captura extemporanea.");
-            rol.getInstrucciones().add("Seleccionar la justificación por la cual el docente solicitó el permiso.");
-            rol.getInstrucciones().add("Una vez que haya ingresado la información, puede proceder a REGISTRAR el permiso.");
-            rol.getInstrucciones().add("En la tabla inferior podrá VISUALIZAR los permisos de captura extemporanea vigentes del docente seleccionado.");
-            rol.getInstrucciones().add("En caso de existir un error puede ELIMINAR el permiso de captura, al dar clic en el botón ubicado en la columna opciones de la tabla.");
+            rol.getInstrucciones().add("Seleccionar Programa Educativo.");
+            rol.getInstrucciones().add("A continuación podrá visualizar las aperturas extemporáneas registradas, puede filtrar u ordenar según lo requiera.");
+            rol.getInstrucciones().add("Si desea descargar un reporte en hoja de cálculo, deberá de dar clic en el botón ubicado en la parte superior derecha con el icono de excel.");
            
             periodosPermisosRegistrados();
         }catch (Exception e){mostrarExcepcion(e); }
