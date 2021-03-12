@@ -24,6 +24,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsigAsesorAcadEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteActividadesEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
@@ -177,6 +178,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
     public void generarReportes(){
         if("Seguimiento actividades de estadía".equals(rol.getReporte())){
            generarSeguimientoActEstadia();
+           generarAsigProgramaAsesor();
         }else if("Eficiencia Estadía Técnica".equals(rol.getReporte())){
            generarEficienciaEstadia();
         }else if("Listado Estudiantes con Promedios".equals(rol.getReporte())){
@@ -208,10 +210,29 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
         ResultadoEJB<List<DtoReporteActividadesEstadia>> res = ejb.getSeguimientoActividadesEstadia(rol.getGeneracion(), rol.getNivelEducativo());
         if(res.getCorrecto()){
              rol.setListaSegActEstadia(res.getValor());
-//             rol.setTotalAcreditados(rol.getEficienciaEstadia().stream().mapToInt(p->p.getAcreditaron()).sum());
-//             rol.setTotalNoAcreditados(rol.getEficienciaEstadia().stream().mapToInt(p->p.getNoAcreditaron()).sum());
-//             rol.setTotal(rol.getEficienciaEstadia().stream().mapToInt(p->p.getSeguimiento()).sum());
+             rol.setTotalIniciaron(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesIniciaron()).sum());
+             rol.setTotalActivos(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesActivos()).sum());
+             rol.setTotalAsignados(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesAsignados()).sum());
+             rol.setTotalNoAsignados(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesSinAsignar()).sum());
+             rol.setPorcentajeAsignacion(String.format("%.2f", rol.getListaSegActEstadia().stream().mapToDouble(p->p.getPorcentajeAsignacion()).average().getAsDouble()));
+             rol.setTotalInfoRegistrada(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesInformacion()).sum());
+             rol.setTotalSinInfoRegistrada(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesSinInformacion()).sum());
+             rol.setPorcentajeRegistro(String.format("%.2f", rol.getListaSegActEstadia().stream().mapToDouble(p->p.getPorcentajeRegistro()).average().getAsDouble()));
+             rol.setTotalInfoValidada(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesValidados()).sum());
+             rol.setTotalSinInfoValidada(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesSinValidar()).sum());
+             rol.setPorcentajeValidacion(String.format("%.2f", rol.getListaSegActEstadia().stream().mapToDouble(p->p.getPorcentajeValidacion()).average().getAsDouble()));
              Ajax.update("tbSegActEstadia");
+         }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite generar el listado de estudiantes asignados por programa educativo y asesor académico
+     */
+    public void generarAsigProgramaAsesor(){
+        ResultadoEJB<List<DtoAsigAsesorAcadEstadia>> res = ejb.getAsignacionAsesorAcademicoPE(rol.getGeneracion(), rol.getNivelEducativo());
+        if(res.getCorrecto()){
+             rol.setListaAsigAsesorAcad(res.getValor());
+             Ajax.update("tbAsigAsesorAcad");
          }else mostrarMensajeResultadoEJB(res);
     }
     

@@ -31,7 +31,7 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
     @Getter @NonNull private List<Generaciones> generaciones;
     
     /**
-     * Generacion seleccionada
+     * Generación seleccionada
      */
     @Getter @NonNull private Generaciones generacion;
     
@@ -111,6 +111,66 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
      */
     @Getter @NonNull private List<DtoReporteActividadesEstadia> listaSegActEstadia;
     
+     /**
+     * Total de estudiantes iniciaron
+     */
+    @Getter @NonNull private Integer totalIniciaron;
+    
+     /**
+     * Total de estudiantes activos
+     */
+    @Getter @NonNull private Integer totalActivos;
+    
+     /**
+     * Total de estudiantes asignados a un asesor académico
+     */
+    @Getter @NonNull private Integer totalAsignados;
+    
+     /**
+     * Total de estudiantes no asignados a un asesor académico
+     */
+    @Getter @NonNull private Integer totalNoAsignados;
+    
+     /**
+     * Porcentaje de asignación de asesor académico
+     */
+    @Getter @NonNull private String porcentajeAsignacion;
+    
+     /**
+     * Total de estudiantes con información de estadía registrada (Empresa, proyecto, etc)
+     */
+    @Getter @NonNull private Integer totalInfoRegistrada;
+    
+     /**
+     * Total de estudiantes sin información de estadía registrada (Empresa, proyecto, etc)
+     */
+    @Getter @NonNull private Integer totalSinInfoRegistrada;
+    
+     /**
+     * Porcentaje de registro de información de estadía
+     */
+    @Getter @NonNull private String porcentajeRegistro;
+    
+     /**
+     * Total de estudiantes con información de estadía validada
+     */
+    @Getter @NonNull private Integer totalInfoValidada;
+    
+     /**
+     * Total de estudiantes sin información de estadía sin validar
+     */
+    @Getter @NonNull private Integer totalSinInfoValidada;
+    
+     /**
+     * Porcentaje de validación de información de estadía
+     */
+    @Getter @NonNull private String porcentajeValidacion;
+
+      /**
+     * Reporte de listado de asignación de estudiantes por programa educativo y asesor académico 
+     */
+    @Getter @NonNull private List<DtoAsigAsesorAcadEstadia> listaAsigAsesorAcad;
+    
     public ReportesEstadiaRolMultiple(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
         this.usuario = usuario;
@@ -186,6 +246,54 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
 
     public void setListaSegActEstadia(List<DtoReporteActividadesEstadia> listaSegActEstadia) {
         this.listaSegActEstadia = listaSegActEstadia;
+    }
+
+    public void setTotalIniciaron(Integer totalIniciaron) {
+        this.totalIniciaron = totalIniciaron;
+    }
+
+    public void setTotalActivos(Integer totalActivos) {
+        this.totalActivos = totalActivos;
+    }
+
+    public void setTotalAsignados(Integer totalAsignados) {
+        this.totalAsignados = totalAsignados;
+    }
+
+    public void setTotalNoAsignados(Integer totalNoAsignados) {
+        this.totalNoAsignados = totalNoAsignados;
+    }
+
+    public void setPorcentajeAsignacion(String porcentajeAsignacion) {
+        this.porcentajeAsignacion = porcentajeAsignacion;
+    }
+
+    public void setTotalInfoRegistrada(Integer totalInfoRegistrada) {
+        this.totalInfoRegistrada = totalInfoRegistrada;
+    }
+
+    public void setTotalSinInfoRegistrada(Integer totalSinInfoRegistrada) {
+        this.totalSinInfoRegistrada = totalSinInfoRegistrada;
+    }
+
+    public void setPorcentajeRegistro(String porcentajeRegistro) {
+        this.porcentajeRegistro = porcentajeRegistro;
+    }
+
+    public void setTotalInfoValidada(Integer totalInfoValidada) {
+        this.totalInfoValidada = totalInfoValidada;
+    }
+
+    public void setTotalSinInfoValidada(Integer totalSinInfoValidada) {
+        this.totalSinInfoValidada = totalSinInfoValidada;
+    }
+
+    public void setPorcentajeValidacion(String porcentajeValidacion) {
+        this.porcentajeValidacion = porcentajeValidacion;
+    }
+
+    public void setListaAsigAsesorAcad(List<DtoAsigAsesorAcadEstadia> listaAsigAsesorAcad) {
+        this.listaAsigAsesorAcad = listaAsigAsesorAcad;
     }
     
 }

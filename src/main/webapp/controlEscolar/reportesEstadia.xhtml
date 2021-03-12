@@ -123,17 +123,17 @@
                                                         <p:row class="success">
                                                             <p:column colspan="3" headerText="Asignación asesor académico" style="width: 300px;"/>
                                                             <p:column colspan="3" headerText="Registro de información" style="width: 300px;"/>
-                                                            <p:column colspan="3" headerText="Información validada" style="width: 300px;"/>
+                                                            <p:column colspan="3" headerText="Información validada por Coordinador" style="width: 300px;"/>
                                                         </p:row>
                                                         <p:row class="success">
-                                                            <p:column headerText="Total asignados" style="width: 100px;"/>
-                                                            <p:column headerText="Total sin asignar" style="width: 100px;"/>
+                                                            <p:column headerText="Asignados" style="width: 100px;"/>
+                                                            <p:column headerText="Sin asignar" style="width: 100px;"/>
                                                             <p:column headerText="Porcentaje asignación" style="width: 100px;"/>
-                                                            <p:column headerText="Total con registro" style="width: 100px;"/>
-                                                            <p:column headerText="Total sin registro" style="width: 100px;"/>
+                                                            <p:column headerText="Con registro" style="width: 100px;"/>
+                                                            <p:column headerText="Sin registro" style="width: 100px;"/>
                                                             <p:column headerText="Porcentaje registro" style="width: 100px;"/>
-                                                            <p:column headerText="Total validados" style="width: 100px;"/>
-                                                            <p:column headerText="Total sin validar" style="width: 100px;"/>
+                                                            <p:column headerText="Validada" style="width: 100px;"/>
+                                                            <p:column headerText="Sin validar" style="width: 100px;"/>
                                                             <p:column headerText="Porcentaje validación" style="width: 100px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
@@ -153,7 +153,7 @@
                                                          <h:outputText value="#{segActEst.estudiantesSinAsignar}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                         <h:outputText value="#{segActEst.porcentajeAsignacion}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                         <h:outputText value="#{segActEst.porcentajeAsignacion}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                          <h:outputText value="#{segActEst.estudiantesInformacion}"/>
@@ -162,7 +162,7 @@
                                                          <h:outputText value="#{segActEst.estudiantesSinInformacion}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                         <h:outputText value="#{segActEst.porcentajeRegistro}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                         <h:outputText value="#{segActEst.porcentajeRegistro}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                          <h:outputText value="#{segActEst.estudiantesValidados}"/>
@@ -171,18 +171,52 @@
                                                          <h:outputText value="#{segActEst.estudiantesSinValidar}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                         <h:outputText value="#{segActEst.porcentajeValidacion}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                         <h:outputText value="#{segActEst.porcentajeValidacion}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
                                                     </p:column>
-<!--                                                    <p:columnGroup type="footer">
+                                                    <p:columnGroup type="footer">
                                                         <p:row>
                                                             <p:column style="text-align:center;font-weight: bold;" footerText="Totales:"/>
-                                                            <p:column style="text-align:center;font-weight: bold;" footerText="# {reportesEstadia.rol.totalAcreditados}"/>
-                                                            <p:column style="text-align:center;font-weight: bold;" footerText="# {reportesEstadia.rol.totalNoAcreditados}"/>
-                                                            <p:column style="text-align:center;font-weight: bold;" footerText="# {reportesEstadia.rol.total}"/>
-                                                            <p:column/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalIniciaron}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalActivos}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalAsignados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalNoAsignados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.porcentajeAsignacion}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalInfoRegistrada}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalSinInfoRegistrada}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.porcentajeRegistro}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalInfoValidada}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalSinInfoValidada}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.porcentajeValidacion}"/>
                                                         </p:row>
-                                                    </p:columnGroup>-->
+                                                    </p:columnGroup>
                                                 </p:dataTable>
+                                                <h:outputText value="&#160;" />
+                                                <h:outputText value="&#160;" />
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;">
+                                                <p:dataTable id="tbAsigAsesorAcad" var="asigAsesor" value="#{reportesEstadia.rol.listaAsigAsesorAcad}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive" expandableRowGroups="true" 
+                                                             tableStyle="vertical-align: middle;" emptyMessage="Sin información">
+                                                    <f:facet name="header">
+                                                        <center>Listado de estudiantes asignados por programa educativo y asesor académico</center>
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Programa educativo" style="width: 250px;" sortBy="#{asigAsesor.programaEducativo.nombre}" filterBy="#{asigAsesor.programaEducativo.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Asesor académico" style="width: 250px;" sortBy="#{asigAsesor.asesorAcademico.nombre}" filterBy="#{asigAsesor.asesorAcademico.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Estudiantes asignados" style="width: 100px;" sortBy="#{asigAsesor.estudiantesAsignados}" filterBy="#{asigAsesor.estudiantesAsignados}" filterMatchMode="contains"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column groupRow="true" style="text-align: justify;">
+                                                        <h:outputText value="#{asigAsesor.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column groupRow="true" style="text-align: justify;">
+                                                        <h:outputText value="#{asigAsesor.asesorAcademico.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{asigAsesor.estudiantesAsignados}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                </div>
                                             </center>
                                         </c:if>
                                         <c:if test="#{reportesEstadia.rol.reporte eq 'Eficiencia Estadía Técnica'}">

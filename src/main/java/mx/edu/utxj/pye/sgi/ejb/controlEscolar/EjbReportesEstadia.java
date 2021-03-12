@@ -17,6 +17,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsigAsesorAcadEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteActividadesEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
@@ -24,6 +25,8 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstIns;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstPrograma;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorAcademicoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
@@ -139,10 +142,10 @@ public class EjbReportesEstadia {
     }
     
      /**
-     * Empaqueta la eficiencia de estadía en un DTO Wrapper
+     * Empaqueta el seguimiento de actividades de estadía en un DTO Wrapper
      * @param programaEducativo 
      * @param eventoSeleccionado
-     * @return Eficiencia de estadía empaquetada
+     * @return Seguimiento de actividades de estadía empaquetada
      */
     public ResultadoEJB<DtoReporteActividadesEstadia> packSegActPrograma(AreasUniversidad programaEducativo, EventoEstadia eventoSeleccionado){
         try{
@@ -172,7 +175,7 @@ public class EjbReportesEstadia {
                     .getResultStream()
                     .collect(Collectors.toList());
             
-            Integer sinAsignar = listaActivos.size()- listaSeguimiento.size();
+            Integer sinAsignar = listaEstudiantes.size()- listaSeguimiento.size();
             
             Double porcentajeAsignacion;
             if(!listaSeguimiento.isEmpty()){
@@ -184,7 +187,7 @@ public class EjbReportesEstadia {
             
             List<SeguimientoEstadiaEstudiante> listaInfoEstadia = listaSeguimiento.stream().filter(p->p.getEmpresa()!=null && p.getProyecto()!=null).collect(Collectors.toList());
             
-            Integer sinInfo = listaSeguimiento.size()- listaInfoEstadia.size();
+            Integer sinInfo = listaEstudiantes.size()- listaInfoEstadia.size();
             
             Double porcentajeRegistro;
             if(!listaSeguimiento.isEmpty()){
@@ -196,7 +199,7 @@ public class EjbReportesEstadia {
             
             List<SeguimientoEstadiaEstudiante> listaValidados = listaSeguimiento.stream().filter(p->p.getValidacionCoordinador()).collect(Collectors.toList());
             
-            Integer sinValidar = listaInfoEstadia.size()- listaValidados.size();
+            Integer sinValidar = listaEstudiantes.size()- listaValidados.size();
             
             Double porcentajeValidacion;
             if(!listaSeguimiento.isEmpty()){
@@ -211,6 +214,76 @@ public class EjbReportesEstadia {
             return ResultadoEJB.crearCorrecto(dtoReporteActividadesEstadia, "Seguimiento de actividades de estadía empaquetada.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el seguimiento de actividades de estadía. (EjbReportesEstadia.packSegActPrograma).", e, DtoReporteActividadesEstadia.class);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de estudiantes asignados por programa educativo y asesor académico de la generación y nivel educativo seleccionado
+     * @param generacion
+     * @param nivelEducativo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoAsigAsesorAcadEstadia>> getAsignacionAsesorAcademicoPE(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo){
+        try{
+            EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
+            
+            List<Short> listaProgramasNivel = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.nivelEducativo=:nivel", AreasUniversidad.class)
+                    .setParameter("nivel", nivelEducativo)
+                    .getResultStream()
+                    .map(p -> p.getArea())
+                    .collect(Collectors.toList());
+            
+            List<Short> listaProgramasGeneracion= em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion AND g.idPe IN :lista",  Grupo.class)
+                    .setParameter("generacion",  generacion.getGeneracion())
+                    .setParameter("lista",  listaProgramasNivel)
+                    .getResultStream()
+                    .map(p -> p.getIdPe())
+                    .distinct()
+                    .collect(Collectors.toList());
+           
+            List<DtoAsigAsesorAcadEstadia> listaAsigAsesorAcadPE = new ArrayList<>();
+            
+                if (!listaProgramasGeneracion.isEmpty()) {
+                    listaProgramasGeneracion.forEach(programa -> {
+                        AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, programa);
+                        
+                        List<Integer> listaAsesorAcademicosPE = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.matricula.carrera=:programa", SeguimientoEstadiaEstudiante.class)
+                                .setParameter("evento", eventoSeleccionado.getEvento())
+                                .setParameter("programa", programa)
+                                .getResultStream()
+                                .distinct()
+                                .map(p->p.getAsesor().getPersonal())
+                                .collect(Collectors.toList());
+                        
+                            listaAsesorAcademicosPE.forEach(asesor -> {
+                                
+                                AsesorAcademicoEstadia asesorAcademicoEstadia = em.createQuery("SELECT a FROM AsesorAcademicoEstadia a WHERE a.evento.generacion=:generacion AND a.evento.nivel=:nivel AND a.personal=:personal", AsesorAcademicoEstadia.class)
+                                    .setParameter("generacion", eventoSeleccionado.getGeneracion())
+                                    .setParameter("nivel", eventoSeleccionado.getNivel())
+                                    .setParameter("personal", asesor)
+                                    .getResultStream()
+                                    .findFirst()
+                                    .orElse(null);
+                                
+                                List<SeguimientoEstadiaEstudiante> listaEstudiantesAsignados = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.asesor.asesorEstadia=:asesor", SeguimientoEstadiaEstudiante.class)
+                                    .setParameter("asesor", asesorAcademicoEstadia.getAsesorEstadia())
+                                    .getResultStream()
+                                    .collect(Collectors.toList());
+                                
+                                
+                                Personal asesorAcademico = em.find(Personal.class, asesor);
+                                DtoAsigAsesorAcadEstadia dtoAsigAsesorAcadEstadia = new DtoAsigAsesorAcadEstadia();
+                                dtoAsigAsesorAcadEstadia.setProgramaEducativo(programaEducativo);
+                                dtoAsigAsesorAcadEstadia.setAsesorAcademico(asesorAcademico);
+                                dtoAsigAsesorAcadEstadia.setEstudiantesAsignados(listaEstudiantesAsignados.size());
+                                listaAsigAsesorAcadPE.add(dtoAsigAsesorAcadEstadia);
+                        });
+                    });
+                    
+                }
+            return ResultadoEJB.crearCorrecto(listaAsigAsesorAcadPE, "Lista de estudiantes asignados por programa educativo y asesor académico.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista estudiantes asignados por programa educativo y asesor académico. (EjbReportesEstadia.getAsignacionAsesorAcademicoPE)", e, null);
         }
     }
     
