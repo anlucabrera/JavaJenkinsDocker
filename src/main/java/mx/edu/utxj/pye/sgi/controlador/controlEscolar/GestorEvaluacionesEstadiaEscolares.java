@@ -371,10 +371,11 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
      */
     public void cambiarSituacionEvaluacion(){
         ResultadoEJB<EvaluacionEstadiaDescripcion> res = ejb.cambiarSituacionEvaluacion(rol.getEvaluacionConsulta());
+        rol.setEvaluacionConsulta(res.getValor());
         mostrarMensajeResultadoEJB(res);
         rol.setPestaniaActiva(1);
-        listaEvaluacionesConsulta();
         listaEvaluacionesActivas();
+        listaEvaluacionesConsulta();
         listaPreguntasEvalConsulta();
         Ajax.update("frmEvalReg");
         Ajax.update("contenederConsEval");
