@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -52,11 +53,11 @@ public class Indicador implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicador1")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicador1", fetch = FetchType.LAZY)
     private List<CriterioIndicadorPeriodo> criterioIndicadorPeriodoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicador")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicador", fetch = FetchType.LAZY)
     private List<CalificacionNivelacion> calificacionNivelacionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicador")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "indicador", fetch = FetchType.LAZY)
     private List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList;
 
     public Indicador() {

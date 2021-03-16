@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -66,7 +67,7 @@ public class UnidadMateriaValidacion implements Serializable {
     @Column(name = "estado")
     private String estado;
     @JoinColumn(name = "configuracion", referencedColumnName = "configuracion", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private UnidadMateriaConfiguracion unidadMateriaConfiguracion;
 
     public UnidadMateriaValidacion() {

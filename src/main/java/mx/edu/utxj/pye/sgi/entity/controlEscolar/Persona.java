@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -99,15 +100,15 @@ public class Persona implements Serializable {
     @Size(max = 400)
     @Column(name = "urlCurp")
     private String urlCurp;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1", fetch = FetchType.LAZY)
     private MedioComunicacion medioComunicacion;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona1", fetch = FetchType.LAZY)
     private Login login;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersona")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersona", fetch = FetchType.LAZY)
     private List<Aspirante> aspiranteList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona", fetch = FetchType.LAZY)
     private DatosMedicos datosMedicos;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona", fetch = FetchType.LAZY)
     private EncuestaVocacional encuestaVocacional;
 
     public Persona() {

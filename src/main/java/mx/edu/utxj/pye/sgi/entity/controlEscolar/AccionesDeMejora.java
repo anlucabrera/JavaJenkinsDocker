@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -51,7 +52,7 @@ public class AccionesDeMejora implements Serializable {
     @Column(name = "valor_alcanzado")
     private double valorAlcanzado;
     @JoinColumn(name = "configuracion", referencedColumnName = "configuracion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private UnidadMateriaConfiguracion configuracion;
 
     public AccionesDeMejora() {

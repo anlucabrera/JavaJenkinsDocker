@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -52,9 +53,9 @@ public class CoordinadorAreaEstadia implements Serializable {
     @Column(name = "personal")
     private int personal;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EventoEstadia evento;
-    @OneToMany(mappedBy = "coordinador")
+    @OneToMany(mappedBy = "coordinador", fetch = FetchType.LAZY)
     private List<AsesorAcademicoEstadia> asesorAcademicoEstadiaList;
 
     public CoordinadorAreaEstadia() {

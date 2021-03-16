@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -55,9 +56,9 @@ public class EvaluacionEstadiaDescripcion implements Serializable {
     @NotNull
     @Column(name = "activa")
     private boolean activa;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluacion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluacion", fetch = FetchType.LAZY)
     private List<EvaluacionEstadia> evaluacionEstadiaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluacion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluacion", fetch = FetchType.LAZY)
     private List<CriterioEvaluacionEstadia> criterioEvaluacionEstadiaList;
 
     public EvaluacionEstadiaDescripcion() {

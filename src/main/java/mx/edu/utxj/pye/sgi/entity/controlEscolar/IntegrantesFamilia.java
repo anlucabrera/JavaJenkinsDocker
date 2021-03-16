@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -91,13 +92,13 @@ public class IntegrantesFamilia implements Serializable {
     @Column(name = "parentesco")
     private String parentesco;
     @JoinColumn(name = "aspirante", referencedColumnName = "id_aspirante")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Aspirante aspirante;
     @JoinColumn(name = "escolaridad", referencedColumnName = "id_escolaridad")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Escolaridad escolaridad;
     @JoinColumn(name = "ocupacion", referencedColumnName = "id_ocupacion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Ocupacion ocupacion;
 
     public IntegrantesFamilia() {

@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -95,10 +96,10 @@ public class TutorFamiliar implements Serializable {
     @Column(name = "parentesco")
     private String parentesco;
     @JoinColumn(name = "escolaridad", referencedColumnName = "id_escolaridad")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Escolaridad escolaridad;
     @JoinColumn(name = "ocupacion", referencedColumnName = "id_ocupacion")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Ocupacion ocupacion;
 
     public TutorFamiliar() {

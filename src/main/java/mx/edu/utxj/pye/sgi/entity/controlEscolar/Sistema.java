@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,11 +48,11 @@ public class Sistema implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sistemaPrimeraOpcion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sistemaPrimeraOpcion", fetch = FetchType.LAZY)
     private List<DatosAcademicos> datosAcademicosList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sistemaSegundaOpcion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sistemaSegundaOpcion", fetch = FetchType.LAZY)
     private List<DatosAcademicos> datosAcademicosList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idSistema")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idSistema", fetch = FetchType.LAZY)
     private List<Grupo> grupoList;
 
     public Sistema() {

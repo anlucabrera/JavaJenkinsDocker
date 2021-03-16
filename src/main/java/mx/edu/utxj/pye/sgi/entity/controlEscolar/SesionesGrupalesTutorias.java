@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -83,9 +84,9 @@ public class SesionesGrupalesTutorias implements Serializable {
     @Column(name = "observaciones_recomendaciones")
     private String observacionesRecomendaciones;
     @JoinColumn(name = "plan_accion_tutoria", referencedColumnName = "plan_accion_tutoria")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PlanAccionTutorial planAccionTutoria;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sesionGrupal")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sesionGrupal", fetch = FetchType.LAZY)
     private List<TutoriasGrupales> tutoriasGrupalesList;
 
     public SesionesGrupalesTutorias() {

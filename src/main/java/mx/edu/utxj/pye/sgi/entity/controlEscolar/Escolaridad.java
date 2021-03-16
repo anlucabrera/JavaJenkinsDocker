@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,13 +48,13 @@ public class Escolaridad implements Serializable {
     @Size(min = 1, max = 90)
     @Column(name = "descripcion")
     private String descripcion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadMadre")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadMadre", fetch = FetchType.LAZY)
     private List<DatosFamiliares> datosFamiliaresList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadPadre")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridadPadre", fetch = FetchType.LAZY)
     private List<DatosFamiliares> datosFamiliaresList1;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridad")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "escolaridad", fetch = FetchType.LAZY)
     private List<IntegrantesFamilia> integrantesFamiliaList;
-    @OneToMany(mappedBy = "escolaridad")
+    @OneToMany(mappedBy = "escolaridad", fetch = FetchType.LAZY)
     private List<TutorFamiliar> tutorFamiliarList;
 
     public Escolaridad() {

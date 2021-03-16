@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -58,7 +59,7 @@ public class NotificacionesCeImagenes implements Serializable {
     @Column(name = "tamanio_bytes")
     private long tamanioBytes;
     @JoinColumn(name = "notificacion", referencedColumnName = "notificacion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private NotificacionesCe notificacion;
 
     public NotificacionesCeImagenes() {

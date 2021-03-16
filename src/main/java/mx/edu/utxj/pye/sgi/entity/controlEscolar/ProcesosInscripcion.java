@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -69,9 +70,9 @@ public class ProcesosInscripcion implements Serializable {
     @NotNull
     @Column(name = "id_periodo")
     private int idPeriodo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProcesoInscripcion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idProcesoInscripcion", fetch = FetchType.LAZY)
     private List<Aspirante> aspiranteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "procesosInscripcion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "procesosInscripcion", fetch = FetchType.LAZY)
     private List<ProyeccionAreas> proyeccionAreasList;
 
     public ProcesosInscripcion() {

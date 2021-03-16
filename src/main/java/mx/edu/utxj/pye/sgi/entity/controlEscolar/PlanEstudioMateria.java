@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,21 +54,21 @@ public class PlanEstudioMateria implements Serializable {
     @NotNull
     @Column(name = "grado")
     private int grado;
-    @ManyToMany(mappedBy = "planEstudioMateriaList")
+    @ManyToMany(mappedBy = "planEstudioMateriaList", fetch = FetchType.LAZY)
     private List<Competencia> competenciaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
     private List<MetasPropuestas> metasPropuestasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
     private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
     @JoinColumn(name = "id_materia", referencedColumnName = "id_materia")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Materia idMateria;
     @JoinColumn(name = "id_plan", referencedColumnName = "id_plan_estudio")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PlanEstudio idPlan;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
     private List<CargaAcademica> cargaAcademicaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
     private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
 
     public PlanEstudioMateria() {

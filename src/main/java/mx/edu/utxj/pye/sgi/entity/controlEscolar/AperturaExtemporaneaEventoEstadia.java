@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -78,10 +79,10 @@ public class AperturaExtemporaneaEventoEstadia implements Serializable {
     @Column(name = "validada")
     private boolean validada;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EventoEstadia evento;
     @JoinColumn(name = "seguimiento", referencedColumnName = "seguimiento")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private SeguimientoEstadiaEstudiante seguimiento;
 
     public AperturaExtemporaneaEventoEstadia() {

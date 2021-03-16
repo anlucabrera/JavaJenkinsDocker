@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -33,10 +34,10 @@ public class CriterioIndicadorPeriodo implements Serializable {
     @EmbeddedId
     protected CriterioIndicadorPeriodoPK criterioIndicadorPeriodoPK;
     @JoinColumn(name = "criterio", referencedColumnName = "criterio", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Criterio criterio1;
     @JoinColumn(name = "indicador", referencedColumnName = "indicador", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Indicador indicador1;
 
     public CriterioIndicadorPeriodo() {

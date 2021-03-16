@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -43,10 +44,10 @@ public class ParticipantesTutoria implements Serializable {
     @Column(name = "comentarios")
     private String comentarios;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Estudiante estudiante;
     @JoinColumn(name = "tutoria", referencedColumnName = "id_tutoria", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Tutoria tutoria1;
 
     public ParticipantesTutoria() {

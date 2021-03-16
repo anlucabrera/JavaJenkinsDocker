@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -40,10 +41,10 @@ public class CalificacionCriterioEstadia implements Serializable {
     @Column(name = "calificacion")
     private double calificacion;
     @JoinColumn(name = "criterio", referencedColumnName = "criterio", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CriterioEvaluacionEstadia criterioEvaluacionEstadia;
     @JoinColumn(name = "seguimiento", referencedColumnName = "seguimiento", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante;
 
     public CalificacionCriterioEstadia() {

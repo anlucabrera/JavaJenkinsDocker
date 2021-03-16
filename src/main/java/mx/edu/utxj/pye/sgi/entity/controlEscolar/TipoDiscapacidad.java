@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
@@ -55,7 +56,7 @@ public class TipoDiscapacidad implements Serializable {
     @NotNull
     @Column(name = "estatus")
     private boolean estatus;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cveDiscapacidad")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cveDiscapacidad", fetch = FetchType.LAZY)
     private List<DatosMedicos> datosMedicosList;
 
     public TipoDiscapacidad() {

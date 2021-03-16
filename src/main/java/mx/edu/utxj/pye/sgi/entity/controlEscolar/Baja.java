@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -102,10 +103,10 @@ public class Baja implements Serializable {
     @NotNull
     @Column(name = "validada")
     private int validada;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroBaja")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "registroBaja", fetch = FetchType.LAZY)
     private List<BajaReprobacion> bajaReprobacionList;
     @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Estudiante estudiante;
 
     public Baja() {

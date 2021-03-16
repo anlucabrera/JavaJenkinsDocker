@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,10 +50,10 @@ public class CriterioEvaluacionEstadia implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "descripcion")
     private String descripcion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "criterioEvaluacionEstadia")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "criterioEvaluacionEstadia", fetch = FetchType.LAZY)
     private List<CalificacionCriterioEstadia> calificacionCriterioEstadiaList;
     @JoinColumn(name = "evaluacion", referencedColumnName = "evaluacion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EvaluacionEstadiaDescripcion evaluacion;
 
     public CriterioEvaluacionEstadia() {

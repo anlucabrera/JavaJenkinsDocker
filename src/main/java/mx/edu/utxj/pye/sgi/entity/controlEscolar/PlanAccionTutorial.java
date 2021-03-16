@@ -11,6 +11,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -70,11 +72,11 @@ public class PlanAccionTutorial implements Serializable {
     @Column(name = "comentarios_director")
     private String comentariosDirector;
     @JoinColumn(name = "plan_accion_tutoria", referencedColumnName = "id_grupo", insertable = false, updatable = false)
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private Grupo grupo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoria")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoria", fetch = FetchType.LAZY)
     private List<SesionesGrupalesTutorias> sesionesGrupalesTutoriasList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoria")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoria", fetch = FetchType.LAZY)
     private List<FuncionesTutor> funcionesTutorList;
 
     public PlanAccionTutorial() {

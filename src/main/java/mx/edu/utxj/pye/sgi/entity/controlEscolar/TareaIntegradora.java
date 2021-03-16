@@ -12,6 +12,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -63,10 +65,10 @@ public class TareaIntegradora implements Serializable {
     @NotNull
     @Column(name = "porcentaje")
     private double porcentaje;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tareaIntegradora")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tareaIntegradora", fetch = FetchType.LAZY)
     private List<TareaIntegradoraPromedio> tareaIntegradoraPromedioList;
     @JoinColumn(name = "carga", referencedColumnName = "carga")
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private CargaAcademica carga;
 
     public TareaIntegradora() {

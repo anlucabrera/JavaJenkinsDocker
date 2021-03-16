@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -67,40 +68,40 @@ public class Aspirante implements Serializable {
     @Column(name = "fechaValidacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaValidacion;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
     private DatosAcademicos datosAcademicos;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante", fetch = FetchType.LAZY)
     private List<DocumentoAspiranteProceso> documentoAspiranteProcesoList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
     private DatosFamiliares datosFamiliares;
-    @OneToMany(mappedBy = "aspirante")
+    @OneToMany(mappedBy = "aspirante", fetch = FetchType.LAZY)
     private List<Estudiante> estudianteList;
-    @OneToMany(mappedBy = "aspirante")
+    @OneToMany(mappedBy = "aspirante", fetch = FetchType.LAZY)
     private List<ContactoEmergenciasEstudiante> contactoEmergenciasEstudianteList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
     private Domicilio domicilio;
     @JoinColumn(name = "id_persona", referencedColumnName = "idpersona")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Persona idPersona;
     @JoinColumn(name = "id_proceso_inscripcion", referencedColumnName = "id_procesos_inscripcion")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProcesosInscripcion idProcesoInscripcion;
     @JoinColumn(name = "tipo_aspirante", referencedColumnName = "id_tipo_aspirante")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TipoAspirante tipoAspirante;
-    @OneToMany(mappedBy = "aspirante")
+    @OneToMany(mappedBy = "aspirante", fetch = FetchType.LAZY)
     private List<IntegrantesFamilia> integrantesFamiliaList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
     private DocumentoAspirante documentoAspirante;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante", fetch = FetchType.LAZY)
     private EncuestaAspirante encuestaAspirante;
-    @OneToMany(mappedBy = "aspirante")
+    @OneToMany(mappedBy = "aspirante", fetch = FetchType.LAZY)
     private List<DatosLaborales> datosLaboralesList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
     private DatosSocioeconomicos datosSocioeconomicos;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante", fetch = FetchType.LAZY)
     private List<CitasAspirantes> citasAspirantesList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
     private DatosAcademicosComplementarios datosAcademicosComplementarios;
 
     public Aspirante() {

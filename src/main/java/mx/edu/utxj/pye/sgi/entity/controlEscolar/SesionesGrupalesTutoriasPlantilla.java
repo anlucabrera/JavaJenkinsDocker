@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -57,7 +58,7 @@ public class SesionesGrupalesTutoriasPlantilla implements Serializable {
     @Column(name = "objetivos")
     private String objetivos;
     @JoinColumn(name = "plan_accion_tutoria_plantilla", referencedColumnName = "grado")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PlanAccionTutorialPlantilla planAccionTutoriaPlantilla;
 
     public SesionesGrupalesTutoriasPlantilla() {

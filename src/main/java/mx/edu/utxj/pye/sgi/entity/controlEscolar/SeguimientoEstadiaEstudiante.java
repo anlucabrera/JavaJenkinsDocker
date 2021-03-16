@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -100,24 +101,24 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
     @NotNull
     @Column(name = "promedio_asesor_interno")
     private double promedioAsesorInterno;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimientoEstadiaEstudiante")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimientoEstadiaEstudiante", fetch = FetchType.LAZY)
     private List<CalificacionCriterioEstadia> calificacionCriterioEstadiaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimiento")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimiento", fetch = FetchType.LAZY)
     private List<AsesorEmpresarialEstadia> asesorEmpresarialEstadiaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimiento")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimiento", fetch = FetchType.LAZY)
     private List<AperturaExtemporaneaEventoEstadia> aperturaExtemporaneaEventoEstadiaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimientoEstadia")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimientoEstadia", fetch = FetchType.LAZY)
     private List<DocumentoSeguimientoEstadia> documentoSeguimientoEstadiaList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "seguimiento")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "seguimiento", fetch = FetchType.LAZY)
     private FolioAcreditacionEstadia folioAcreditacionEstadia;
     @JoinColumn(name = "asesor", referencedColumnName = "asesor_estadia")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private AsesorAcademicoEstadia asesor;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EventoEstadia evento;
     @JoinColumn(name = "matricula", referencedColumnName = "matricula")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Estudiante matricula;
 
     public SeguimientoEstadiaEstudiante() {

@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -58,9 +59,9 @@ public class PlanAccionTutorialPlantilla implements Serializable {
     @Size(min = 1, max = 5000)
     @Column(name = "sugerencias")
     private String sugerencias;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoriaPlantilla")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoriaPlantilla", fetch = FetchType.LAZY)
     private List<SesionesGrupalesTutoriasPlantilla> sesionesGrupalesTutoriasPlantillaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoriaPlantilla")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planAccionTutoriaPlantilla", fetch = FetchType.LAZY)
     private List<FuncionesTutorPlantilla> funcionesTutorPlantillaList;
 
     public PlanAccionTutorialPlantilla() {
