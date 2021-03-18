@@ -90,8 +90,8 @@ public class SeguimientoEstadiaPorEstudiante extends ViewScopedRol implements De
 //            rol.setSoloLectura(true);
 
                 rol.getInstrucciones().add("Selecciona la generación y nivel educativo del que deseas dar seguimiento.");
-                rol.getInstrucciones().add("A continuación visualizarás una tabla que contiene la información de los documento que corresponden a tu proceso de estadía.");
-                rol.getInstrucciones().add("Los documento que deberás cargar serán los que estén indicados bajo el rol de estudiante, en ls fechas indicadas.");
+                rol.getInstrucciones().add("A continuación visualizarás una tabla que contiene la información de los documentos que corresponden a tu proceso de estadía.");
+                rol.getInstrucciones().add("Los documentos que deberás cargar serán los que estén indicados bajo el rol de estudiante, en las fechas indicadas.");
                 rol.getInstrucciones().add("En la columna OPCIONES, encontrarás el icono para cargar tu documento, descargarlo y eliminarlo.");
                 rol.getInstrucciones().add("Podrás visualizar los comentarios y validaciones realizados por las áreas correspondientes.");
 

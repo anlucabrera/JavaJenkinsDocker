@@ -134,20 +134,14 @@
                                                             <p:column colspan="2" headerText="Segundo Informe" style="width: 200px;"/>
                                                             <p:column colspan="2" headerText="Tercer Informe" style="width: 200px;"/>
                                                             <p:column colspan="2" headerText="Informe Final" style="width: 200px;"/>
-                                                            <p:column colspan="2" headerText="Carta Liberación Institucional" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Carta Liberación Empresarial" style="width: 200px;"/>
                                                             <p:column colspan="2" headerText="Evaluación Empresarial" style="width: 200px;"/>
-                                                            <p:column colspan="2" headerText="Carta de Acreditación" style="width: 200px;"/>
-                                                            <p:column colspan="2" headerText="Archivos Liberación Empresarial" style="width: 200px;"/>
-                                                            <p:column colspan="3" headerText="* Acreditación de Estadía" style="width: 400px;"/>
+                                                            <p:column colspan="3" headerText="* Carta de Acreditación" style="width: 400px;"/>
                                                             <p:column rowspan="2" headerText="Cédula de Evaluación Institucional" style="width: 100px;"/>
                                                         </p:row>
                                                         <p:row class="success">
                                                             <p:column headerText="Situación" style="width: 200px;"/>
                                                             <p:column headerText="Acción" style="width: 200px;"/>
-                                                            <p:column headerText="Archivo" style="width: 100px;"/>
-                                                            <p:column headerText="Validación" style="width: 100px;"/>
-                                                            <p:column headerText="Archivo" style="width: 100px;"/>
-                                                            <p:column headerText="Validación" style="width: 100px;"/>
                                                             <p:column headerText="Archivo" style="width: 100px;"/>
                                                             <p:column headerText="Validación" style="width: 100px;"/>
                                                             <p:column headerText="Archivo" style="width: 100px;"/>
@@ -263,9 +257,9 @@
                                                     <p:column style="text-align: center;">
                                                         <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(39, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(39, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(39, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(39, segEst)}"><i class="fa fa-download" /></p:commandLink>
                                                     </p:column>
-                                                    <c:set var="cartaLiberacionIns" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(39, segEst)}" />
+                                                    <c:set var="cartaLiberacionEmp" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(39, segEst)}" />
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{cartaLiberacionIns?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(39, segEst)}"/>
+                                                        <h:outputText value="#{cartaLiberacionEmp?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(39, segEst)}"/>
                                                         <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(39, segEst)}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
@@ -276,34 +270,18 @@
                                                         <h:outputText value="#{evaluacionEmp?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(40, segEst)}"/>
                                                         <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(40, segEst)}"/>
                                                     </p:column>
-                                                    <p:column style="text-align: center;">
-                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(41, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(41, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(41, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(41, segEst)}"><i class="fa fa-download" /></p:commandLink>
-                                                    </p:column>
-                                                    <c:set var="cartaAcred" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(41, segEst)}" />
-                                                    <p:column style="text-align: center;">
-                                                        <h:outputText value="#{cartaAcred?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(41, segEst)}"/>
-                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(41, segEst)}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(42, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(42, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(42, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(42, segEst)}"><i class="fa fa-download" /></p:commandLink>
-                                                    </p:column>
-                                                    <c:set var="cartaLiberacionEmp" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(42, segEst)}" />
-                                                    <p:column style="text-align: center;">
-                                                        <h:outputText value="#{cartaLiberacionEmp?'Si':'No'}" rendered="#{seguimientoEstadiaDirector.consultarExisteDocumento(42, segEst)}"/>
-                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaDirector.consultarExisteDocumento(42, segEst)}"/>
-                                                    </p:column>
-                                                    <c:set var="docSegEst" value="#{seguimientoEstadiaDirector.buscarDocumentoEstudiante(43, segEst)}" />
+                                                    <c:set var="docSegEst" value="#{seguimientoEstadiaDirector.buscarDocumentoEstudiante(41, segEst)}" />
                                                     <c:set var="existeDoc" value="#{seguimientoEstadiaDirector.consultarExisteDocumento(docSegEst)}" />
                                                     <p:column style="text-align: center;">
                                                         <p:commandButton icon="fa fa-upload" onclick="PF('modalCargaArchivo').show()" class="btn btn-sm #{existeDoc?'btn-info':'btn-danger'}" actionListener="#{seguimientoEstadiaDirector.seleccionarDocumento(segEst)}" rendered="#{!existeDoc}" disabled="#{!seguimientoEstadiaDirector.deshabilitarCarga(segEst)}" title="#{seguimientoEstadiaDirector.deshabilitarCarga(segEst)?'Cargar documento.':'El evento ha cerrado.'}"/>
-                                                        <p:commandLink class="btn btn-sm btn-info" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(43, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(43, segEst)?'Descargar documento.':'Documento no cargado.'}" rendered="#{existeDoc}"><i class="fa fa-download" /></p:commandLink>
+                                                        <p:commandLink class="btn btn-sm btn-info" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(41, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(41, segEst)?'Descargar documento.':'Documento no cargado.'}" rendered="#{existeDoc}"><i class="fa fa-download" /></p:commandLink>
                                                         <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{seguimientoEstadiaDirector.eliminarDocumento(docSegEst)}" onsuccess="actualizarListaDocs();" title="Eliminar documento." disabled="#{docSegEst.validado}" rendered="#{existeDoc}">
                                                                     <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento #{caster.rutaToArchivoNombre(docSegEst.ruta)}?" icon="ui-icon-alert"/>
                                                         </p:commandButton>
                                                     </p:column>
-                                                    <c:set var="acreditacionEst" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(43, segEst)}" />
+                                                    <c:set var="cartaAcreditacion" value="#{seguimientoEstadiaDirector.buscarValidacionDocumento(41, segEst)}" />
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{acreditacionEst?'Si':'No'}" rendered="#{existeDoc}"/>
+                                                        <h:outputText value="#{cartaAcreditacion?'Si':'No'}" rendered="#{existeDoc}"/>
                                                         <h:outputText value="No hay documento" rendered="#{!existeDoc}"/>
                                                     </p:column>
                                                     <p:column style="text-align: justify;">

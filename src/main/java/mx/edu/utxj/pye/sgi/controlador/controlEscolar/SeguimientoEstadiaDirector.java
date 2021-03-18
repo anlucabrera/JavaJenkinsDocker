@@ -274,7 +274,7 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
         try {
             
             EventoEstadia eventoEstadia = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(rol.getGeneracion(), rol.getNivelEducativo(), "Registro cedula evaluacion y acreditacion estadia").getValor();
-            Documento documento = ejb.getDocumentoEstadia("Acreditación de estadía T.S.U.").getValor();
+            Documento documento = ejb.getDocumentoEstadia("Carta de Acreditación T.S.U.").getValor();
             DocumentoProceso documentoProceso = ejb.getDocumentoProcesoEstadia(documento).getValor();
             DtoDocumentoEstadiaEstudiante dtoDocumentoEstadiaEstudiante = ejb.packDocumento(documentoProceso, seguimientoEstadiaEstudiante).getValor();
             
