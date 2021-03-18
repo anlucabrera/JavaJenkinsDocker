@@ -89,13 +89,11 @@ public class SeguimientoEstadiaPorEstudiante extends ViewScopedRol implements De
                 rol.setNivelRol(NivelRol.OPERATIVO);
 //            rol.setSoloLectura(true);
 
-                rol.getInstrucciones().add("Seleccione periodo escolar para consultar bajas registradas durante ese periodo.");
-                rol.getInstrucciones().add("Seleccione programa educativo.");
-                rol.getInstrucciones().add("En la columna OPCIONES, usted puede: Validar o Invalidar baja, Consultar materias reprobadas, Generar formato de baja y Eliminar el registro.");
-                rol.getInstrucciones().add("Dar clic en el botón de Validar/Invalidar baja, para que se cambie la situación académica en sistema.");
-                rol.getInstrucciones().add("El botón de Consultar materias reprobadas se habilita únicamente en el caso de que la baja haya sido por reprobación.");
-                rol.getInstrucciones().add("Para generar el formato de baja de clic en el botón Generar formato.");
-                rol.getInstrucciones().add("Dar clic en el botón Eliminar baja, para eliminar el registro en caso de que se haya equivocado al realizar el trámite.");
+                rol.getInstrucciones().add("Selecciona la generación y nivel educativo del que deseas dar seguimiento.");
+                rol.getInstrucciones().add("A continuación visualizarás una tabla que contiene la información de los documento que corresponden a tu proceso de estadía.");
+                rol.getInstrucciones().add("Los documento que deberás cargar serán los que estén indicados bajo el rol de estudiante, en ls fechas indicadas.");
+                rol.getInstrucciones().add("En la columna OPCIONES, encontrarás el icono para cargar tu documento, descargarlo y eliminarlo.");
+                rol.getInstrucciones().add("Podrás visualizar los comentarios y validaciones realizados por las áreas correspondientes.");
 
                 generacionesSeguimientosRegistrados();
 
@@ -186,12 +184,12 @@ public class SeguimientoEstadiaPorEstudiante extends ViewScopedRol implements De
         if(res.getCorrecto() && res.getValor() != null){
             permiso= Boolean.TRUE;
         }else{
-            mostrarMensajeResultadoEJB(res);
+//            mostrarMensajeResultadoEJB(res);
             ResultadoEJB<EventoEstadia> resA = ejb.buscarAperturaExtemporaneaDocumento(rol.getDtoSeguimientoEstadiaEstudiante(),dtoDocumentoEstadiaEstudiante, "Estudiante");
             if (resA.getCorrecto() && resA.getValor() != null) {
                 permiso = Boolean.TRUE;
             } else {
-                mostrarMensajeResultadoEJB(resA);
+//                mostrarMensajeResultadoEJB(resA);
 
             }
         }

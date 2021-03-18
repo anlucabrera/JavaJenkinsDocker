@@ -77,7 +77,7 @@
                                                     <p:ajax process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
-                                                <p:outputLabel value="Generacion" for="generacion"/>
+                                                <p:outputLabel value="Generación" for="generacion"/>
                                                 <p:message for="generacion" />
                                             </div>
                                         </div>
@@ -119,6 +119,7 @@
                                                         <p:row class="success">
                                                             <p:column rowspan="2" headerText="Matricula" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains"/>
                                                             <p:column rowspan="2" headerText="Estudiante" style="width: 180px;" sortBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Situación académica" style="width: 100px;" sortBy="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" filterBy="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
                                                             <p:column rowspan="2" headerText="Grupo" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
                                                             <p:column rowspan="2" headerText="Programa educativo" style="width: 200px;" sortBy="#{segEst.dtoEstudiante.programaEducativo.nombre}"/>
                                                             <p:column rowspan="2" headerText="Empresa" style="width: 200px;"/>
@@ -137,6 +138,7 @@
                                                             <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;"/>
                                                             <p:column colspan="2" headerText="* Carta de Acreditación" style="width: 200px;"/>
                                                             <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;"/>
+                                                            <p:column colspan="2" headerText="* Validación Estadía" style="width: 200px;"/>
                                                         </p:row>
                                                         <p:row class="success">
                                                             <p:column headerText="Archivo" style="width: 100px;"/>
@@ -149,6 +151,8 @@
                                                             <p:column headerText="Validación" style="width: 100px;"/>
                                                             <p:column headerText="Archivo" style="width: 100px;"/>
                                                             <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Situación" style="width: 200px;"/>
+                                                            <p:column headerText="Acción" style="width: 200px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column style="text-align: center;">
@@ -156,6 +160,9 @@
                                                     </p:column>
                                                     <p:column style="text-align: justify;">
                                                         <h:outputText value="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
@@ -219,7 +226,7 @@
                                                     <p:column style="text-align: justify;">
                                                        <h:outputText value="#{seguimientoEstadiaVinculacion.comentariosDocumento(34, segEst).observaciones}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,2) and seguimientoEstadiaVinculacion.consultarExisteDocumento(34, segEst)}"/>
                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(34, segEst)}"/>
-                                                       <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaVinculacion.comentariosDocumento(34, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,1) and seguimientoEstadiaVinculacion.consultarExisteDocumento(34, segEst)}">
+                                                       <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaVinculacion.comentariosDocumento(34, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,2) and seguimientoEstadiaVinculacion.consultarExisteDocumento(34, segEst)}">
                                                             <p:ajax process="@this" update="@this" global="false" /> 
                                                             <f:attribute name="documento" value="34" />
                                                             <f:attribute name="seguimientoEstadia" value="#{segEst}" />
@@ -241,7 +248,7 @@
                                                     <p:column style="text-align: justify;">
                                                        <h:outputText value="#{seguimientoEstadiaVinculacion.comentariosDocumento(39, segEst).observaciones}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,3) and seguimientoEstadiaVinculacion.consultarExisteDocumento(39, segEst)}"/>
                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(39, segEst)}"/>
-                                                       <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaVinculacion.comentariosDocumento(39, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,1) and seguimientoEstadiaVinculacion.consultarExisteDocumento(39, segEst)}">
+                                                       <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaVinculacion.comentariosDocumento(39, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,3) and seguimientoEstadiaVinculacion.consultarExisteDocumento(39, segEst)}">
                                                             <p:ajax process="@this" update="@this" global="false" /> 
                                                             <f:attribute name="documento" value="39" />
                                                             <f:attribute name="seguimientoEstadia" value="#{segEst}" />
@@ -263,7 +270,7 @@
                                                     <p:column style="text-align: justify;">
                                                        <h:outputText value="#{seguimientoEstadiaVinculacion.comentariosDocumento(40, segEst).observaciones}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,4) and seguimientoEstadiaVinculacion.consultarExisteDocumento(40, segEst)}"/>
                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(40, segEst)}"/>
-                                                       <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaVinculacion.comentariosDocumento(40, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,1) and seguimientoEstadiaVinculacion.consultarExisteDocumento(40, segEst)}">
+                                                       <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaVinculacion.comentariosDocumento(40, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,4) and seguimientoEstadiaVinculacion.consultarExisteDocumento(40, segEst)}">
                                                             <p:ajax process="@this" update="@this" global="false" /> 
                                                             <f:attribute name="documento" value="40" />
                                                             <f:attribute name="seguimientoEstadia" value="#{segEst}" />
@@ -285,11 +292,22 @@
                                                     <p:column style="text-align: justify;">
                                                        <h:outputText value="#{seguimientoEstadiaVinculacion.comentariosDocumento(41, segEst).observaciones}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,5) and seguimientoEstadiaVinculacion.consultarExisteDocumento(41, segEst)}"/>
                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(41, segEst)}"/>
-                                                       <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaVinculacion.comentariosDocumento(41, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,1) and seguimientoEstadiaVinculacion.consultarExisteDocumento(41, segEst)}">
+                                                       <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaVinculacion.comentariosDocumento(41, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,5) and seguimientoEstadiaVinculacion.consultarExisteDocumento(41, segEst)}">
                                                             <p:ajax process="@this" update="@this" global="false" /> 
                                                             <f:attribute name="documento" value="41" />
                                                             <f:attribute name="seguimientoEstadia" value="#{segEst}" />
                                                        </p:inputTextarea>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'Validado':'No validado'}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink actionListener="#{seguimientoEstadiaVinculacion.validarEstadiaVinculacion(segEst)}" 
+                                                                        disabled="#{seguimientoEstadiaVinculacion.deshabilitarValidacionEstadia(segEst)}"
+                                                                        class="btn btn-sm #{segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'btn-danger':'btn-success'}"
+                                                                        title="#{segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'De clic para no validar.':'De clic para validar.'}"
+                                                                        onsuccess="actualizar();"><i class="#{segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'fa fa-close':'fa fa-check'}"/>
+                                                        </p:commandLink>
                                                     </p:column>
                                                 </p:dataTable>
                                                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
@@ -317,7 +335,7 @@
                           widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
                           modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
                     <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación roles de estadía</h3></div>
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para seguimiento de estadía por coordinador(a) institucional</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
                                 <c:forEach items="#{seguimientoEstadiaVinculacion.rol.instrucciones}" var="instruccion">
@@ -341,7 +359,7 @@
             <c:if test="#{!seguimientoEstadiaVinculacion.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a coordinador de estadía área académica."/>
+                        <h:outputText value="El acceso solo está autorizado a coordinador(a) de estadía institucional."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

@@ -317,8 +317,10 @@ public class AperturaExtemporaneaEstadia extends ViewScopedRol implements Desarr
      */
     public void existeSeguimiento(DtoDatosEstudiante estudiante){
         ResultadoEJB<DtoSeguimientoEstadiaEstudiante> res = ejbSeguimientoEstadia.getSeguimientoEstudiante(rol.getGeneracion(), rol.getNivelEducativo(), estudiante.getEstudiante().getMatricula());
-        if(res.getValor() == null){
+        if(res.getValor() != null){
             rol.setDesactivarRegistro(Boolean.FALSE);
+        }else{
+            rol.setDesactivarRegistro(Boolean.TRUE);
             Messages.addGlobalWarn("El estudiante no tiene seguimiento de estadía registrado, por eso no se puede aperturar evento");
         }
     }

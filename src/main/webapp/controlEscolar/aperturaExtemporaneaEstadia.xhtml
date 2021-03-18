@@ -21,7 +21,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Apertura Extemporánea Estadía
+        Apertura extemporánea estadía
     </ui:define>
 
     <ui:define name="description">
@@ -36,7 +36,7 @@
 
     <ui:define name="body">
         <c:if test="#{aperturaExtemporaneaEstadia.cargado}">
-        <adm:breadcrumb title="Apertura Extemporánea Estadía"/>
+        <adm:breadcrumb title="Apertura extemporánea estadía"/>
 
         <div class="contenedor">
             <c:if test="#{aperturaExtemporaneaEstadia.tieneAcceso}">
@@ -142,7 +142,7 @@
                                     <div class="row margin-bottom" style="margin-top: 60px;">
                                             <center>
                                                 <p:remoteCommand name="actualizar" update="@form:tbListaAperturasExtemporaneas" />
-                                                <p:dataTable id="tbListaAperturasExtemporaneas" var="aperturasExt" value="#{aperturaExtemporaneaEstadia.rol.listaAperturasExtemporaneas}"
+                                                <p:dataTable id="tbListaAperturasExtemporaneas" var="aperturasExt" value="#{aperturaExtemporaneaEstadia.rol.listaAperturasExtemporaneas}" emptyMessage="No se han registrado aperturas extemporáneas"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive" editable="true" editMode="cell" expandableRowGroups="true" >
                                                     <f:facet name="header">
                                                         <center>Aperturas Extemporáneas Registradas</center>
@@ -264,7 +264,7 @@
             <c:if test="#{!aperturaExtemporaneaEstadia.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a personal de servicios escolares o direcciones de carrera."/>
+                        <h:outputText value="El acceso solo está autorizado a personal autorizado."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

@@ -77,7 +77,7 @@
                                                     <p:ajax process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
-                                                <p:outputLabel value="Generacion" for="generacion"/>
+                                                <p:outputLabel value="Generación" for="generacion"/>
                                                 <p:message for="generacion" />
                                             </div>
                                         </div>
@@ -368,7 +368,7 @@
                           widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
                           modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
                     <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación roles de estadía</h3></div>
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para seguimiento de estadía por director(a) de carrera</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
                                 <c:forEach items="#{seguimientoEstadiaDirector.rol.instrucciones}" var="instruccion">
@@ -392,7 +392,7 @@
             <c:if test="#{!seguimientoEstadiaDirector.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a dirección de carrera."/>
+                        <h:outputText value="El acceso solo está autorizado a director(a) de carrera."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

@@ -171,6 +171,11 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
      */
     @Getter @NonNull private List<DtoAsigAsesorAcadEstadia> listaAsigAsesorAcad;
     
+      /**
+     * Reporte de listado de cumplimiento de los estudiantes por documento y programa educativo 
+     */
+    @Getter @NonNull private List<DtoCumplimientoEstDocEstadia> listaCumplimientoEstudiante;
+    
     public ReportesEstadiaRolMultiple(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
         this.usuario = usuario;
@@ -294,6 +299,10 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
 
     public void setListaAsigAsesorAcad(List<DtoAsigAsesorAcadEstadia> listaAsigAsesorAcad) {
         this.listaAsigAsesorAcad = listaAsigAsesorAcad;
+    }
+
+    public void setListaCumplimientoEstudiante(List<DtoCumplimientoEstDocEstadia> listaCumplimientoEstudiante) {
+        this.listaCumplimientoEstudiante = listaCumplimientoEstudiante;
     }
     
 }

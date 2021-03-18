@@ -105,12 +105,10 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
             rol.setNivelRol(NivelRol.OPERATIVO);
 //            rol.setSoloLectura(true);
             
-            rol.getInstrucciones().add("Seleccione generación.");
-            rol.getInstrucciones().add("Seleccione nivel educativo.");
-            rol.getInstrucciones().add("Ingrese la matricula o el nombre del estudiante para realizar la búsqueda.");
-            rol.getInstrucciones().add("Seleccionar de la lista el registro del estudiante que corresponda.");
-            rol.getInstrucciones().add("De clic en el botón para registrar entrega de fotografías.");
-            rol.getInstrucciones().add("Si se equivocó puede eliminar el registro en la tabla que se muestra en la parte inferior.");
+            rol.getInstrucciones().add("El siguiente apartado se encuentra distrubuido en las siguientes pestañas:");
+            rol.getInstrucciones().add("1. Evaluación por evento: deberá seleccionar la evaluación que se aplicará el evento de estadía para el evento.");
+            rol.getInstrucciones().add("2. Evaluaciones registradas: puede consultar las evaluaciones registradas y las preguntas,activarlas o desactivarlas.");
+            rol.getInstrucciones().add("3. Registro de evaluaciones: dar de alta nueva evaluaciones y preguntas.");
            
             generacionesEventosRegistrados();
             listaEvaluacionesConsulta();

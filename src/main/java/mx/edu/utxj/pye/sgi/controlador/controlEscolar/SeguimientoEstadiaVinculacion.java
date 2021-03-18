@@ -27,7 +27,6 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
-import org.primefaces.event.CellEditEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
@@ -37,13 +36,13 @@ import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
-import org.primefaces.component.datatable.DataTable;
 
 /**
  *
@@ -97,14 +96,14 @@ public class SeguimientoEstadiaVinculacion extends ViewScopedRol implements Desa
            
             rol.setNivelRol(NivelRol.OPERATIVO);
             
-            rol.getInstrucciones().add("Seleccione periodo escolar para consultar bajas registradas durante ese periodo.");
-            rol.getInstrucciones().add("Seleccione programa educativo.");
-            rol.getInstrucciones().add("En la columna OPCIONES, usted puede: Validar o Invalidar baja, Consultar materias reprobadas, Generar formato de baja y Eliminar el registro.");
-            rol.getInstrucciones().add("Dar clic en el botón de Validar/Invalidar baja, para que se cambie la situación académica en sistema.");
-            rol.getInstrucciones().add("El botón de Consultar materias reprobadas se habilita únicamente en el caso de que la baja haya sido por reprobación.");
-            rol.getInstrucciones().add("Para generar el formato de baja de clic en el botón Generar formato.");
-            rol.getInstrucciones().add("Dar clic en el botón Eliminar baja, para eliminar el registro en caso de que se haya equivocado al realizar el trámite.");
-           
+            rol.getInstrucciones().add("Seleccione generación.");
+            rol.getInstrucciones().add("Seleccione nivel educativo.");
+            rol.getInstrucciones().add("Seleccione programa educativo");
+            rol.getInstrucciones().add("En la tabla podrá visualizar la información de estadía de los estudiantes.");
+            rol.getInstrucciones().add("Los datos indicados con * son aquellos en los que interviene.");
+            rol.getInstrucciones().add("Dar clic en botón que se habilita para validar o invalidar los documentos.");
+            rol.getInstrucciones().add("Dar clic en el campo del comentario para capturar las observaciones, en caso contrario dejar con el texto predeterminado.");
+            
             generacionesEventosRegistrados();
             
         }catch (Exception e){mostrarExcepcion(e); }
@@ -328,6 +327,43 @@ public class SeguimientoEstadiaVinculacion extends ViewScopedRol implements Desa
 
                     break;
             }
+        return permiso;
+    }
+    
+    /**
+     * Método que permite validar o invalidar el seguimiento de estadía seleccionado
+     * @param dtoSeguimientoEstadia
+     */
+    public void validarEstadiaVinculacion(DtoSeguimientoEstadia dtoSeguimientoEstadia){
+        ResultadoEJB<SeguimientoEstadiaEstudiante> resValidar = ejb.validarInformacionEstadia(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante(), "vinculacion");
+        if(resValidar.getCorrecto()){
+            mostrarMensajeResultadoEJB(resValidar);
+            ResultadoEJB<Estudiante> resCambiar = ejb.cambiarSituacionAcademicaEstudiante(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante());
+            mostrarMensajeResultadoEJB(resCambiar);
+            if(resCambiar.getCorrecto()){
+                listaEstudiantesSeguimiento();
+                Ajax.update("frm");
+            }
+        }
+    }
+    
+    /**
+     * Método para verificar si el estudiante tiene toda la documentación validada por parte del coordinador institucional para que se pueda habilitar el botón de validación
+     * @param dtoSeguimientoEstadia
+     * @return Verdadero o Falso, según sea el caso
+     */
+    public Boolean deshabilitarValidacionEstadia(@NonNull DtoSeguimientoEstadia dtoSeguimientoEstadia){
+        Boolean permiso = Boolean.TRUE;
+        
+        Boolean cartaPresentacion = ejb.buscarValidacionDocumento(33, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+        Boolean cartaAceptacion = ejb.buscarValidacionDocumento(34, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+        Boolean cartaLiberacion = ejb.buscarValidacionDocumento(39, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+        Boolean cartaEvaluacionEmp = ejb.buscarValidacionDocumento(40, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+        Boolean cartaAcreditacion = ejb.buscarValidacionDocumento(41, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+        
+        if(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getValidacionDirector() && cartaPresentacion && cartaAceptacion && cartaLiberacion && cartaEvaluacionEmp && cartaAcreditacion){
+            permiso = Boolean.FALSE;
+        }
         return permiso;
     }
    

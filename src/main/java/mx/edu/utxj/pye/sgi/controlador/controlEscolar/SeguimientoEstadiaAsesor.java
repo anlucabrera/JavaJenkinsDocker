@@ -108,14 +108,14 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
             rol.setEditarEmpresa(Boolean.FALSE);
             rol.setHabilitarGuardar(Boolean.FALSE);
             
-            rol.getInstrucciones().add("Seleccione periodo escolar para consultar bajas registradas durante ese periodo.");
-            rol.getInstrucciones().add("Seleccione programa educativo.");
-            rol.getInstrucciones().add("En la columna OPCIONES, usted puede: Validar o Invalidar baja, Consultar materias reprobadas, Generar formato de baja y Eliminar el registro.");
-            rol.getInstrucciones().add("Dar clic en el botón de Validar/Invalidar baja, para que se cambie la situación académica en sistema.");
-            rol.getInstrucciones().add("El botón de Consultar materias reprobadas se habilita únicamente en el caso de que la baja haya sido por reprobación.");
-            rol.getInstrucciones().add("Para generar el formato de baja de clic en el botón Generar formato.");
-            rol.getInstrucciones().add("Dar clic en el botón Eliminar baja, para eliminar el registro en caso de que se haya equivocado al realizar el trámite.");
-           
+            rol.getInstrucciones().add("Seleccione generación.");
+            rol.getInstrucciones().add("Seleccione nivel educativo.");
+            rol.getInstrucciones().add("En la tabla podrá visualizar la información de estadía de los estudiantes que tiene asignados.");
+            rol.getInstrucciones().add("Los datos indicados con * son aquellos en los que interviene.");
+            rol.getInstrucciones().add("Dar clic en botón que se habilita para validar, si se encuentra desactivado es porque el periodo venció o aún no se encuentra activo.");
+            rol.getInstrucciones().add("Dar clic en el campo del comentario para capturar, si no puede editar el comentario es porque el periodo vención o aún no se encuentra activo.");
+            rol.getInstrucciones().add("El botón para generar la cédula evaluación y acreditación de estadía se habilita cuando el estudiante acreditó sus evaluaciones, de lo contrario no podrá generar el formato.");
+            
             generacionesEventosRegistrados();
             
         }catch (Exception e){mostrarExcepcion(e); }

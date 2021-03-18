@@ -51,7 +51,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByValidacionDirector", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.validacionDirector = :validacionDirector")
     , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByFechaValidacionDirector", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.fechaValidacionDirector = :fechaValidacionDirector")
     , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByPromedioAsesorExterno", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.promedioAsesorExterno = :promedioAsesorExterno")
-    , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByPromedioAsesorInterno", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.promedioAsesorInterno = :promedioAsesorInterno")})
+    , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByPromedioAsesorInterno", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.promedioAsesorInterno = :promedioAsesorInterno")
+    , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByValidacionVinculacion", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.validacionVinculacion = :validacionVinculacion")
+    , @NamedQuery(name = "SeguimientoEstadiaEstudiante.findByFechaValidacionVinculacion", query = "SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.fechaValidacionVinculacion = :fechaValidacionVinculacion")})
 public class SeguimientoEstadiaEstudiante implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -101,6 +103,13 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
     @NotNull
     @Column(name = "promedio_asesor_interno")
     private double promedioAsesorInterno;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "validacion_vinculacion")
+    private boolean validacionVinculacion;
+    @Column(name = "fecha_validacion_vinculacion")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaValidacionVinculacion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimientoEstadiaEstudiante", fetch = FetchType.LAZY)
     private List<CalificacionCriterioEstadia> calificacionCriterioEstadiaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "seguimiento", fetch = FetchType.LAZY)
@@ -128,13 +137,14 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
         this.seguimiento = seguimiento;
     }
 
-    public SeguimientoEstadiaEstudiante(Integer seguimiento, Date fechaRegistro, boolean validacionCoordinador, boolean validacionDirector, double promedioAsesorExterno, double promedioAsesorInterno) {
+    public SeguimientoEstadiaEstudiante(Integer seguimiento, Date fechaRegistro, boolean validacionCoordinador, boolean validacionDirector, double promedioAsesorExterno, double promedioAsesorInterno, boolean validacionVinculacion) {
         this.seguimiento = seguimiento;
         this.fechaRegistro = fechaRegistro;
         this.validacionCoordinador = validacionCoordinador;
         this.validacionDirector = validacionDirector;
         this.promedioAsesorExterno = promedioAsesorExterno;
         this.promedioAsesorInterno = promedioAsesorInterno;
+        this.validacionVinculacion = validacionVinculacion;
     }
 
     public Integer getSeguimiento() {
@@ -239,6 +249,22 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
 
     public void setPromedioAsesorInterno(double promedioAsesorInterno) {
         this.promedioAsesorInterno = promedioAsesorInterno;
+    }
+    
+    public boolean getValidacionVinculacion() {
+        return validacionVinculacion;
+    }
+
+    public void setValidacionVinculacion(boolean validacionVinculacion) {
+        this.validacionVinculacion = validacionVinculacion;
+    }
+
+    public Date getFechaValidacionVinculacion() {
+        return fechaValidacionVinculacion;
+    }
+
+    public void setFechaValidacionVinculacion(Date fechaValidacionVinculacion) {
+        this.fechaValidacionVinculacion = fechaValidacionVinculacion;
     }
 
     @XmlTransient
