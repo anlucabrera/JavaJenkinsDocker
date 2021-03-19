@@ -77,7 +77,7 @@
                                                     <p:ajax process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
-                                                <p:outputLabel value="Generacion" for="generacion"/>
+                                                <p:outputLabel value="Generación" for="generacion"/>
                                                 <p:message for="generacion" />
                                             </div>
                                         </div>
@@ -135,18 +135,11 @@
                                                             <p:column colspan="2" headerText="Segundo Informe" style="width: 200px;"/>
                                                             <p:column colspan="2" headerText="Tercer Informe" style="width: 200px;"/>
                                                             <p:column colspan="2" headerText="Informe Final" style="width: 200px;"/>
-                                                            <p:column colspan="2" headerText="Carta Liberación Institucional" style="width: 200px;"/>
+                                                            <p:column colspan="2" headerText="Carta Liberación Empresarial" style="width: 200px;"/>
                                                             <p:column colspan="2" headerText="Evaluación Empresarial" style="width: 200px;"/>
                                                             <p:column colspan="2" headerText="Carta de Acreditación" style="width: 200px;"/>
-                                                            <p:column colspan="2" headerText="Archivos Liberación Empresarial" style="width: 200px;"/>
-                                                            <p:column colspan="2" headerText="Acreditación de Estadía" style="width: 200px;"/>
-                                                            <p:column rowspan="2" headerText="Cédula de Evaluación Institucional" style="width: 100px;"/>
                                                         </p:row>
                                                         <p:row class="success">
-                                                            <p:column headerText="Archivo" style="width: 100px;"/>
-                                                            <p:column headerText="Validación" style="width: 100px;"/>
-                                                            <p:column headerText="Archivo" style="width: 100px;"/>
-                                                            <p:column headerText="Validación" style="width: 100px;"/>
                                                             <p:column headerText="Archivo" style="width: 100px;"/>
                                                             <p:column headerText="Validación" style="width: 100px;"/>
                                                             <p:column headerText="Archivo" style="width: 100px;"/>
@@ -263,9 +256,9 @@
                                                     <p:column style="text-align: center;">
                                                         <p:commandLink class="btn btn-sm #{seguimientoEstadiaCoordinador.consultarExisteDocumento(39, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaCoordinador.descargarDocumento(39, segEst)}" target="_blank" title="#{seguimientoEstadiaCoordinador.consultarExisteDocumento(39, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaCoordinador.consultarExisteDocumento(39, segEst)}"><i class="fa fa-download" /></p:commandLink>
                                                     </p:column>
-                                                    <c:set var="cartaLiberacionIns" value="#{seguimientoEstadiaCoordinador.buscarValidacionDocumento(39, segEst)}" />
+                                                    <c:set var="cartaLiberacionEmp" value="#{seguimientoEstadiaCoordinador.buscarValidacionDocumento(39, segEst)}" />
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{cartaLiberacionIns?'Si':'No'}" rendered="#{seguimientoEstadiaCoordinador.consultarExisteDocumento(39, segEst)}"/>
+                                                        <h:outputText value="#{cartaLiberacionEmp?'Si':'No'}" rendered="#{seguimientoEstadiaCoordinador.consultarExisteDocumento(39, segEst)}"/>
                                                         <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaCoordinador.consultarExisteDocumento(39, segEst)}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
@@ -283,22 +276,6 @@
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{cartaAcred?'Si':'No'}" rendered="#{seguimientoEstadiaCoordinador.consultarExisteDocumento(41, segEst)}"/>
                                                         <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaCoordinador.consultarExisteDocumento(41, segEst)}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaCoordinador.consultarExisteDocumento(42, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaCoordinador.descargarDocumento(42, segEst)}" target="_blank" title="#{seguimientoEstadiaCoordinador.consultarExisteDocumento(42, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaCoordinador.consultarExisteDocumento(42, segEst)}"><i class="fa fa-download" /></p:commandLink>
-                                                    </p:column>
-                                                    <c:set var="cartaLiberacionEmp" value="#{seguimientoEstadiaCoordinador.buscarValidacionDocumento(42, segEst)}" />
-                                                    <p:column style="text-align: center;">
-                                                        <h:outputText value="#{cartaLiberacionEmp?'Si':'No'}" rendered="#{seguimientoEstadiaCoordinador.consultarExisteDocumento(42, segEst)}"/>
-                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaCoordinador.consultarExisteDocumento(42, segEst)}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                        <p:commandLink class="btn btn-sm #{seguimientoEstadiaCoordinador.consultarExisteDocumento(43, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaCoordinador.descargarDocumento(43, segEst)}" target="_blank" title="#{seguimientoEstadiaCoordinador.consultarExisteDocumento(43, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaCoordinador.consultarExisteDocumento(43, segEst)}"><i class="fa fa-download" /></p:commandLink>
-                                                    </p:column>
-                                                    <c:set var="acreditacionEst" value="#{seguimientoEstadiaCoordinador.buscarValidacionDocumento(43, segEst)}" />
-                                                    <p:column style="text-align: center;">
-                                                        <h:outputText value="#{acreditacionEst?'Si':'No'}" rendered="#{seguimientoEstadiaCoordinador.consultarExisteDocumento(43, segEst)}"/>
-                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaCoordinador.consultarExisteDocumento(43, segEst)}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         
@@ -329,7 +306,7 @@
                           widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
                           modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
                     <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación roles de estadía</h3></div>
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para seguimiento de estadía por coordinador(a) de estadía área académica</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
                                 <c:forEach items="#{seguimientoEstadiaCoordinador.rol.instrucciones}" var="instruccion">
@@ -353,7 +330,7 @@
             <c:if test="#{!seguimientoEstadiaCoordinador.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a coordinador de estadía área académica."/>
+                        <h:outputText value="El acceso solo está autorizado a coordinador(a) de estadía área académica."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

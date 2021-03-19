@@ -53,8 +53,10 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.CoordinadorAreaEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CriterioEvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadiaDescripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.FolioAcreditacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 
 /**
@@ -918,15 +920,18 @@ public class EjbSeguimientoEstadia {
                     .getResultStream()
                     .findFirst().orElse(null);
             
+            
             if(eventoEvaluacion != null){
             EvaluacionEstadia evaluacionEstadia = em.createQuery("SELECT e FROM EvaluacionEstadia e WHERE e.evento.evento=:evento", EvaluacionEstadia.class)
-                    .setParameter("evento", eventoEvaluacion)
+                    .setParameter("evento", eventoEvaluacion.getEvento())
                     .getResultStream()
                     .findFirst().orElse(null);
-                    
-                if(evaluacionEstadia != null){
-                     listaCriteriosEvaluar = em.createQuery("SELECT c FROM CriterioEvaluacionEstadia c WHERE c.evaluacion.clave=:evaluacion ORDER BY c.criterio ASC", CriterioEvaluacionEstadia.class)
-                        .setParameter("evaluacion", evaluacionEstadia.getClave())
+            
+            EvaluacionEstadiaDescripcion evaluacionEstadiaDescripcion = em.find(EvaluacionEstadiaDescripcion.class, evaluacionEstadia.getEvaluacion().getEvaluacion());
+            
+                if(evaluacionEstadiaDescripcion != null){
+                     listaCriteriosEvaluar = em.createQuery("SELECT c FROM CriterioEvaluacionEstadia c WHERE c.evaluacion.evaluacion=:evaluacion ORDER BY c.criterio ASC", CriterioEvaluacionEstadia.class)
+                        .setParameter("evaluacion", evaluacionEstadiaDescripcion.getEvaluacion())
                         .getResultStream()
                         .map(criterio -> packCriterio(criterio).getValor())
                         .filter(dto -> dto != null)
@@ -1323,9 +1328,7 @@ public class EjbSeguimientoEstadia {
      */
     public ResultadoEJB<SeguimientoEstadiaEstudiante> validarInformacionEstadia(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante, String rol){
         try{
-            
             SeguimientoEstadiaEstudiante segEstBD = em.find(SeguimientoEstadiaEstudiante.class,  seguimientoEstadiaEstudiante.getSeguimiento());
-            
             String mensaje = "";
             
             switch (rol) {
@@ -1357,6 +1360,22 @@ public class EjbSeguimientoEstadia {
                         em.merge(segEstBD);
                         f.flush();
                         mensaje = "El seguimiento de estadía se ha validado correctamente por el director.";
+                    }
+                    break;
+                    
+                case "vinculacion":
+                    if (segEstBD.getValidacionVinculacion()) {
+                        segEstBD.setValidacionVinculacion(Boolean.FALSE);
+                        segEstBD.setFechaValidacionVinculacion(new Date());
+                        em.merge(segEstBD);
+                        f.flush();
+                        mensaje = "El seguimiento de estadía se ha invalidado correctamente por el coordinador de estadía institucional.";
+                    } else {
+                        segEstBD.setValidacionVinculacion(Boolean.TRUE);
+                        segEstBD.setFechaValidacionVinculacion(new Date());
+                        em.merge(segEstBD);
+                        f.flush();
+                        mensaje = "El seguimiento de estadía se ha validado correctamente por el coordinador de estadía institucional.";
                     }
                     break;
                
@@ -1551,6 +1570,44 @@ public class EjbSeguimientoEstadia {
             return ResultadoEJB.crearCorrecto(seguimientoEstadia, "Lista de estudiantes con seguimiento de estadía de la generación, nivel y programa educativo seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes con seguimiento de estadía de la generación, nivel y programa educativo seleccionado. (EjbSeguimientoEstadia.getListaEstudiantesSeguimientoCoordinadorEstadias)", e, null);
+        }
+    }
+    
+     /**
+     * Permite cambiar la situación académica del estudiante seleccionado, de regular a egresado no titulado o viceversa
+     * @param seguimientoEstadiaEstudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Estudiante> cambiarSituacionAcademicaEstudiante(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante){
+        try{
+            
+            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.idEstudiante DESC", Estudiante.class)
+                    .setParameter("matricula", seguimientoEstadiaEstudiante.getMatricula().getMatricula())
+                    .setParameter("generacion", seguimientoEstadiaEstudiante.getEvento().getGeneracion())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            
+            if(estudiante == null) return ResultadoEJB.crearErroneo(2, "El estudiante no puede ser nulo.", Estudiante.class);
+                
+            String mensaje = "La situación académica del estudiante es " + estudiante.getTipoEstudiante().getDescripcion();
+            if (estudiante.getTipoEstudiante().getIdTipoEstudiante()==1) {
+                TipoEstudiante tipoEstudiante = em.find(TipoEstudiante.class, (short)4);
+                estudiante.setTipoEstudiante(tipoEstudiante);
+                em.merge(estudiante);
+                f.flush();
+                mensaje="La situación académica del estudiante ha cambiado de REGULAR a EGRESADO NO TITULADO.";
+            } else if(estudiante.getTipoEstudiante().getIdTipoEstudiante()==4){
+                TipoEstudiante tipoEstudiante = em.find(TipoEstudiante.class, (short)1);
+                estudiante.setTipoEstudiante(tipoEstudiante);
+                em.merge(estudiante);
+                f.flush();
+                mensaje="La situación académica del estudiante ha cambiado de EGRESADO NO TITULADO a REGULAR.";
+            }
+            
+            return ResultadoEJB.crearCorrecto(estudiante, mensaje);
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo validar o invalidar el documento seleccionado. (EjbSeguimientoEstadia.validarDocumento)", e, null);
         }
     }
 }

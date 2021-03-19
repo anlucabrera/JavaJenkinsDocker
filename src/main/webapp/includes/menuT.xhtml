@@ -138,6 +138,22 @@
                     </c:if>
                     <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and concentradoCalificacionesSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
                     <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and concentradoCalificacionesSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
+                    <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and concentradoCalificacionesSecAca.tieneAcceso}">
+                    <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i><span>Formatos</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><span>Reporte mensual</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
+                    </ul>
+                    </li></c:if>
                     
                     <!-- Coordinador de Estadías - Extensión y Vinculación -->
                     <c:if test="#{seguimientoEstadiaVinculacion.mostrarEnDesarrollo(request) and seguimientoEstadiaVinculacion.tieneAcceso}">
@@ -146,7 +162,23 @@
                     <c:if test="#{seguimientoEstadiaVinculacion.mostrarEnDesarrollo(request) and seguimientoEstadiaVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/vinculacion/seguimientoEstadiaVinculacion.xhtml"><i class="fa fa-folder"></i><span>Seguimiento de estadía</span></p:link></li></c:if>
                     <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
                     <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
-
+                    <c:if test="#{seguimientoEstadiaVinculacion.mostrarEnDesarrollo(request) and seguimientoEstadiaVinculacion.tieneAcceso}">
+                    <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i><span>Formatos</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><span>Reporte mensual</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
+                    </ul>
+                    </li></c:if>
+                    
                     <!-- Estadía - Director de carrera -->
                     <c:if test="#{asignacionRolesEstadiaDirector.mostrarEnDesarrollo(request) and asignacionRolesEstadiaDirector.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Estadía</li>
@@ -156,6 +188,22 @@
                     <c:if test="#{aperturaExtemporaneaEstadia.mostrarEnDesarrollo(request) and aperturaExtemporaneaEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/aperturaExtemporaneaEstadia.xhtml"><i class="fa fa-clock-o"></i><span>Aperturas extemporáneas</span></p:link></li></c:if>
                     <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
                     <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
+                    <c:if test="#{seguimientoEstadiaDirector.mostrarEnDesarrollo(request) and seguimientoEstadiaDirector.tieneAcceso}">
+                    <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i><span>Formatos</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><span>Reporte mensual</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
+                    </ul>
+                    </li></c:if>
                     
                     <!-- Docente -->
                     <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}">
@@ -205,6 +253,22 @@
                     <c:if test="#{asignacionEstudiantesEstadiaDocente.mostrarEnDesarrollo(request) and asignacionEstudiantesEstadiaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/asesorEstadia/asignacionEstudiantesEstadia.xhtml"><i class="fa fa-user-plus"></i><span>Asignación estudiantes</span></p:link></li></c:if>
                     <c:if test="#{seguimientoEstadiaAsesor.mostrarEnDesarrollo(request) and seguimientoEstadiaAsesor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/asesorEstadia/seguimientoEstadiaAsesor.xhtml"><i class="fa fa-folder"></i><span>Seguimiento estudiantes</span></p:link></li></c:if>
                     <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaAsesor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
+                    <c:if test="#{seguimientoEstadiaAsesor.mostrarEnDesarrollo(request) and seguimientoEstadiaAsesor.tieneAcceso}">
+                    <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i><span>Formatos</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><span>Reporte mensual</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
+                    </ul>
+                    </li></c:if>
                     
                     <!-- Coordinador de estadía por área académica-->
                     <c:if test="#{seguimientoEstadiaCoordinador.mostrarEnDesarrollo(request) and seguimientoEstadiaCoordinador.tieneAcceso}">
@@ -212,6 +276,22 @@
                     </c:if>
                     <c:if test="#{seguimientoEstadiaCoordinador.mostrarEnDesarrollo(request) and seguimientoEstadiaCoordinador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/coordinadorEstadia/seguimientoEstadiaCoordinador.xhtml"><i class="fa fa-folder"></i><span>Seguimiento estudiantes</span></p:link></li></c:if>
                     <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaCoordinador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
+                    <c:if test="#{seguimientoEstadiaCoordinador.mostrarEnDesarrollo(request) and seguimientoEstadiaCoordinador.tieneAcceso}">
+                    <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i><span>Formatos</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><span>Reporte mensual</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
+                    </ul>
+                    </li></c:if>
                     
                     <!-- Apartado de estadías para Servicios Escolares-->
                     <c:if test="#{registroEventosEstadiaEscolares.mostrarEnDesarrollo(request) and registroEventosEstadiaEscolares.tieneAcceso}">
@@ -222,6 +302,22 @@
                     <c:if test="#{gestorEvaluacionesEstadiaEscolares.mostrarEnDesarrollo(request) and gestorEvaluacionesEstadiaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/gestorEvaluacionesEstadia.xhtml"><i class="fa fa-list-ol"></i><span>Gestor evaluaciones</span></p:link></li></c:if>
                     <c:if test="#{aperturaExtemporaneaEstadia.mostrarEnDesarrollo(request) and aperturaExtemporaneaEstadia.tieneAcceso and registroEventosEstadiaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/aperturaExtemporaneaEstadia.xhtml"><i class="fa fa-clock-o"></i><span>Aperturas extemporáneas</span></p:link></li></c:if>
                     <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and registroEventosEstadiaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
+                    <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and registroEventosEstadiaEscolares.tieneAcceso}">
+                    <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-text-o"></i><span>Formatos</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu" style="display: none;">
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><span>Reporte mensual</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
+                    </ul>
+                    </li></c:if>
                     
                 </c:if>
                 

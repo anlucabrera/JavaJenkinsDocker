@@ -89,13 +89,10 @@ public class CalendarioEventosEstadia extends ViewScopedRol implements Desarroll
             rol.setNivelRol(NivelRol.OPERATIVO);
 //            rol.setSoloLectura(true);
             
-            rol.getInstrucciones().add("Seleccione periodo escolar para consultar bajas registradas durante ese periodo.");
-            rol.getInstrucciones().add("Seleccione programa educativo.");
-            rol.getInstrucciones().add("En la columna OPCIONES, usted puede: Validar o Invalidar baja, Consultar materias reprobadas, Generar formato de baja y Eliminar el registro.");
-            rol.getInstrucciones().add("Dar clic en el botón de Validar/Invalidar baja, para que se cambie la situación académica en sistema.");
-            rol.getInstrucciones().add("El botón de Consultar materias reprobadas se habilita únicamente en el caso de que la baja haya sido por reprobación.");
-            rol.getInstrucciones().add("Para generar el formato de baja de clic en el botón Generar formato.");
-            rol.getInstrucciones().add("Dar clic en el botón Eliminar baja, para eliminar el registro en caso de que se haya equivocado al realizar el trámite.");
+            rol.getInstrucciones().add("Seleccione generación.");
+            rol.getInstrucciones().add("Seleccione nivel educativo.");
+            rol.getInstrucciones().add("A continuación podrá visualizar el calendario de eventos de estadía registrados para la generación y nivel seleccinado.");
+            rol.getInstrucciones().add("Los eventos que se encuentren activos estarán indicados con un círculo verde. y en rojo los eventos que se encuentren vencido o aún no estén activos");
            
             generacionesEventosRegistrados();
             

@@ -25,6 +25,7 @@ import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsigAsesorAcadEstadia;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCumplimientoEstDocEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteActividadesEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
@@ -147,14 +148,14 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
         List<String> listaReportes = new ArrayList<>();
         
         if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
-            listaReportes.add("Eficiencia Estadía Técnica");
-            listaReportes.add("Listado Estudiantes con Promedios");
+            listaReportes.add("Eficiencia estadía técnica");
+            listaReportes.add("Listado estudiantes con promedios");
             rol.setReportes(listaReportes);
             rol.setReporte(rol.getReportes().get(0));
             generarReportesDireccionAcademica();
         }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15){
-            listaReportes.add("Eficiencia Estadía Técnica");
-            listaReportes.add("Listado Estudiantes con Promedios");
+            listaReportes.add("Eficiencia estadía técnica");
+            listaReportes.add("Listado estudiantes con promedios");
             listaReportes.add("Zona influencia institucional");
             listaReportes.add("Zona influencia programa educativo");
             rol.setReportes(listaReportes);
@@ -163,8 +164,10 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
         }
         else if(rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){
             listaReportes.add("Seguimiento actividades de estadía");
-            listaReportes.add("Eficiencia Estadía Técnica");
-            listaReportes.add("Listado Estudiantes con Promedios");
+            listaReportes.add("Asignación de asesor académico por programa educativo");
+            listaReportes.add("Cumplimiento estudiante documentos");
+            listaReportes.add("Eficiencia estadía técnica");
+            listaReportes.add("Listado estudiantes con promedios");
             listaReportes.add("Consulta memorias de estadía");
             rol.setReportes(listaReportes);
             rol.setReporte(rol.getReportes().get(0));
@@ -178,10 +181,13 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
     public void generarReportes(){
         if("Seguimiento actividades de estadía".equals(rol.getReporte())){
            generarSeguimientoActEstadia();
+        }else if("Asignación de asesor académico por programa educativo".equals(rol.getReporte())){
            generarAsigProgramaAsesor();
-        }else if("Eficiencia Estadía Técnica".equals(rol.getReporte())){
+        }else if("Cumplimiento estudiante documentos".equals(rol.getReporte())){
+           generarCumpDocumentoPrograma();
+        }else if("Eficiencia estadía técnica".equals(rol.getReporte())){
            generarEficienciaEstadia();
-        }else if("Listado Estudiantes con Promedios".equals(rol.getReporte())){
+        }else if("Listado estudiantes con promedios".equals(rol.getReporte())){
            generarListadoEstudiantesPromedios();
         }else if("Consulta memorias de estadía".equals(rol.getReporte())){
            generarListadoEstudiantesPromedios();
@@ -196,9 +202,9 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
      * Permite generar el reporte seleccionado dependiendo la opción seleccionada
      */
     public void generarReportesDireccionAcademica(){
-        if("Eficiencia Estadía Técnica".equals(rol.getReporte())){
+        if("Eficiencia estadía técnica".equals(rol.getReporte())){
            generarEficienciaEstadiaAreaAcademica();
-        }else if("Listado Estudiantes con Promedios".equals(rol.getReporte())){
+        }else if("Listado estudiantes con promedios".equals(rol.getReporte())){
            generarListadoEstudiantesPromediosAreaAcademica();
         }
     }
@@ -233,6 +239,17 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
         if(res.getCorrecto()){
              rol.setListaAsigAsesorAcad(res.getValor());
              Ajax.update("tbAsigAsesorAcad");
+         }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite generar el listado de cumplimiento de carga por documento y programa educativo
+     */
+    public void generarCumpDocumentoPrograma(){
+        ResultadoEJB<List<DtoCumplimientoEstDocEstadia>> res = ejb.getCumplimientoDocumentoPE(rol.getGeneracion(), rol.getNivelEducativo());
+        if(res.getCorrecto()){
+             rol.setListaCumplimientoEstudiante(res.getValor());
+             Ajax.update("tbCumpDocEstPE");
          }else mostrarMensajeResultadoEJB(res);
     }
     
@@ -388,11 +405,14 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             File f = new File(ejb.getReportesEstadiaAreaAcademica(rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getGeneracion(), rol.getNivelEducativo()));
             Faces.sendFile(f, true);
         }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){     
+            generarSeguimientoActEstadia();
+            generarAsigProgramaAsesor();
+            generarCumpDocumentoPrograma();
             generarEficienciaEstadia();
             generarListadoEstudiantesPromedios();
             generarZonaInfluenciaIns();
             generarZonaInfluenciaPrograma();
-            File f = new File(ejb.getReportesEstadia(rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getListaZonaInfluenciaIns(), rol.getListaZonaInfluenciaPrograma(), rol.getGeneracion(), rol.getNivelEducativo()));
+            File f = new File(ejb.getReportesEstadia(rol.getListaSegActEstadia(), rol.getListaAsigAsesorAcad(), rol.getListaCumplimientoEstudiante(), rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getListaZonaInfluenciaIns(), rol.getListaZonaInfluenciaPrograma(), rol.getGeneracion(), rol.getNivelEducativo()));
             Faces.sendFile(f, true);
         }
     }

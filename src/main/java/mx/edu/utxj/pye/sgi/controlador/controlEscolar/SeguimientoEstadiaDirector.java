@@ -114,14 +114,15 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
            
             rol.setNivelRol(NivelRol.OPERATIVO);
             
-            rol.getInstrucciones().add("Seleccione periodo escolar para consultar bajas registradas durante ese periodo.");
-            rol.getInstrucciones().add("Seleccione programa educativo.");
-            rol.getInstrucciones().add("En la columna OPCIONES, usted puede: Validar o Invalidar baja, Consultar materias reprobadas, Generar formato de baja y Eliminar el registro.");
-            rol.getInstrucciones().add("Dar clic en el botón de Validar/Invalidar baja, para que se cambie la situación académica en sistema.");
-            rol.getInstrucciones().add("El botón de Consultar materias reprobadas se habilita únicamente en el caso de que la baja haya sido por reprobación.");
-            rol.getInstrucciones().add("Para generar el formato de baja de clic en el botón Generar formato.");
-            rol.getInstrucciones().add("Dar clic en el botón Eliminar baja, para eliminar el registro en caso de que se haya equivocado al realizar el trámite.");
-           
+            rol.getInstrucciones().add("Seleccione generación.");
+            rol.getInstrucciones().add("Seleccione nivel educativo.");
+            rol.getInstrucciones().add("Seleccione programa educativo");
+            rol.getInstrucciones().add("En la tabla podrá visualizar la información de estadía de los estudiantes que tienen asignados los asesores académicos que pertenecen a su área.");
+            rol.getInstrucciones().add("Los datos indicados con * son aquellos en los que interviene.");
+            rol.getInstrucciones().add("Dar clic en botón que se habilita para validar o invalidar la información registrada por el asesor académico.");
+            rol.getInstrucciones().add("Dar clic en el campo del comentario para capturar las observaciones, en caso contrario dejar con el texto predeterminado.");
+            rol.getInstrucciones().add("El botón para generar la cédula evaluación y acreditación de estadía se habilita cuando el estudiante acreditó sus evaluaciones, de lo contrario no podrá generar el formato.");
+            
             generacionesEventosRegistrados();
             
         }catch (Exception e){mostrarExcepcion(e); }
@@ -273,7 +274,7 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
         try {
             
             EventoEstadia eventoEstadia = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(rol.getGeneracion(), rol.getNivelEducativo(), "Registro cedula evaluacion y acreditacion estadia").getValor();
-            Documento documento = ejb.getDocumentoEstadia("Acreditación de estadía T.S.U.").getValor();
+            Documento documento = ejb.getDocumentoEstadia("Carta de Acreditación T.S.U.").getValor();
             DocumentoProceso documentoProceso = ejb.getDocumentoProcesoEstadia(documento).getValor();
             DtoDocumentoEstadiaEstudiante dtoDocumentoEstadiaEstudiante = ejb.packDocumento(documentoProceso, seguimientoEstadiaEstudiante).getValor();
             

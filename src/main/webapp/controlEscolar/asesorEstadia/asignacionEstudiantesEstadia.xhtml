@@ -83,7 +83,7 @@
                                                     <p:ajax process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
-                                                <p:outputLabel value="Generacion" for="generacion"/>
+                                                <p:outputLabel value="Generación" for="generacion"/>
                                                 <p:message for="generacion" />
                                             </div>
                                         </div>
@@ -104,7 +104,8 @@
                                                                 valueChangeListener="#{asignacionEstudiantesEstadiaDocente.cambiarEstudiante}"
                                                                 var="estudiante" itemValue="#{estudiante}" itemLabel="#{estudiante.datosComplete}" converter="entityConverter" forceSelection="true" size="70">
                                                     <p:column>#{estudiante.datosComplete}</p:column>
-                                                    <p:column>#{estudiante.periodoEscolar}</p:column>
+                                                    <p:column>#{estudiante.estudiantes.grupo.grado}° #{estudiante.estudiantes.grupo.literal} #{estudiante.estudiantes.grupo.idSistema.nombre}</p:column>
+                                                    <p:column>#{estudiante.programaEducativo.siglas}</p:column>
                                                     <p:ajax event="itemSelect" update="@this" process="@this"/>
                                                 </p:autoComplete>
                                                 <p:outputLabel value="Estudiante - Matricula" for="estudiante" style="font-weight: bold; font-size: 14px;"/>
@@ -180,7 +181,7 @@
                           widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
                           modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
                     <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación roles de estadía</h3></div>
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación de estudiantes de estadía</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
                                 <c:forEach items="#{asignacionEstudiantesEstadiaDocente.rol.instrucciones}" var="instruccion">
@@ -204,7 +205,7 @@
             <c:if test="#{!asignacionEstudiantesEstadiaDocente.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado a dirección de carrera."/>
+                        <h:outputText value="El acceso solo está autorizado para asesor(a) de estadía."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

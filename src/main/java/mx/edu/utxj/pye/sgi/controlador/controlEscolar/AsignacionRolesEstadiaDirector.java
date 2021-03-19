@@ -98,13 +98,11 @@ public class AsignacionRolesEstadiaDirector extends ViewScopedRol implements Des
             rol.setEventoActivo(ejb.buscarEventoActivo().getValor());
             rol.setGeneracionEventoActivo(ejb.buscarGeneracionEventoActivo(rol.getEventoActivo()).getValor());
             
-            rol.getInstrucciones().add("Seleccione periodo escolar para consultar bajas registradas durante ese periodo.");
-            rol.getInstrucciones().add("Seleccione programa educativo.");
-            rol.getInstrucciones().add("En la columna OPCIONES, usted puede: Validar o Invalidar baja, Consultar materias reprobadas, Generar formato de baja y Eliminar el registro.");
-            rol.getInstrucciones().add("Dar clic en el botón de Validar/Invalidar baja, para que se cambie la situación académica en sistema.");
-            rol.getInstrucciones().add("El botón de Consultar materias reprobadas se habilita únicamente en el caso de que la baja haya sido por reprobación.");
-            rol.getInstrucciones().add("Para generar el formato de baja de clic en el botón Generar formato.");
-            rol.getInstrucciones().add("Dar clic en el botón Eliminar baja, para eliminar el registro en caso de que se haya equivocado al realizar el trámite.");
+            rol.getInstrucciones().add("Seleccione generación.");
+            rol.getInstrucciones().add("Seleccione nivel educativo.");
+            rol.getInstrucciones().add("A continuación podrá visualizar el listado de personal activo adscrito al área que represente.");
+            rol.getInstrucciones().add("Para seleccionar coordinadores y asesores de estadía, deberá dar clic en el icono ASIGNAR ubicado en las columna que corresponda.");
+            rol.getInstrucciones().add("Puede eliminar la asignación si cometió un error, dando clic nuevamente el icono.");
            
             rol.setAreaSuperior(ejb.getAreaSuperior(rol.getDirectorCarrera().getPersonal().getClave()).getValor());
             
