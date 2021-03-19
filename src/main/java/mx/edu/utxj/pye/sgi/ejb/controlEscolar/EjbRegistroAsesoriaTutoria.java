@@ -461,6 +461,8 @@ public class EjbRegistroAsesoriaTutoria {
                         sgtNuevo.setObjetivos(sgtplantilla.getObjetivos());
                         sgtNuevo.setCumplimiento(Boolean.FALSE);
                         sgtNuevo.setJustificacion("En espera de registro de tutorías grupales");
+                        sgtNuevo.setFechaProgramada(null);
+                        sgtNuevo.setObservacionesRecomendaciones("En espera del registro por el tutor");
                         listaSg.add(sgtNuevo);
                     });
                     pat.setSesionesGrupalesTutoriasList(listaSg);
@@ -1056,7 +1058,9 @@ public class EjbRegistroAsesoriaTutoria {
             ParticipantesTutoriaGrupal ptg = new ParticipantesTutoriaGrupal();
             ptg = participante;
             if (!(buscaParticipanteTutoriaGrupal(ptg.getParticipantesTutoriaGrupalPK().getTutoriaGrupal(), ptg.getParticipantesTutoriaGrupalPK().getEstudiante()).getCorrecto())) {
-                return ResultadoEJB.crearErroneo(2, "El participante necesita ser guardado previamente", ParticipantesTutoriaGrupal.class);
+                participante.setComentarios("Pendiente de registro");
+                guardaParticipanteTutoriaGrupal(participante);
+                return ResultadoEJB.crearErroneo(2, "El participante se ha guardado, favor de verificar la asistencia, en caso contrario favor de registrarla nuevamente", ParticipantesTutoriaGrupal.class);
             } else {
                 if (ptg.getAsistencia()) {
                     ptg.setAsistencia(Boolean.FALSE);
@@ -1224,6 +1228,7 @@ public class EjbRegistroAsesoriaTutoria {
             ti.setEventoRegistro(tutoriaIndividual.getEventoRegistro());
             if (tutoriaIndividual.getCasoCritico() == null) {
                 ti.setCasoCritico(null);
+                ti.setTutoriaIndividual(tutoriaIndividual.getTutoriaIndividual());
                 em.merge(ti);
                 return ResultadoEJB.crearCorrecto(ti, "El registro de la tutoria individual se ha actualizado correctamente");
             } else {
@@ -1234,6 +1239,7 @@ public class EjbRegistroAsesoriaTutoria {
                 ResultadoEJB<DtoCasoCritico> res = cc.actualizarCasoCritico(dtoCasoCritico);
                 if(res.getCorrecto()){
                     ti.setCasoCritico(tutoriaIndividual.getCasoCritico());
+                    ti.setTutoriaIndividual(tutoriaIndividual.getTutoriaIndividual());
                     em.merge(tutoriaIndividual);
                     return ResultadoEJB.crearCorrecto(tutoriaIndividual, "El regisro de la tutoría individual relacionada con el caso crítico se ha actualizado correctamente");
                 }
@@ -1668,25 +1674,46 @@ public class EjbRegistroAsesoriaTutoria {
         }
     }
     
-    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativosConPlanAccionTutorialPsicopedagogia(PeriodosEscolares periodoEscolar, PersonalActivo personal) {
-        try {    
+    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativosConPlanAccionTutorialPsicopedagogia(PeriodosEscolares periodoEscolar, PersonalActivo personal, Boolean moduloAsignado) {
+        try {
             if(personal.getAreaOperativa().getCategoria().getCategoria() == 8 || personal.getAreaOperativa().getCategoria().getCategoria() == 9){
                 if(personal.getAreaOperativa().getCategoria().getCategoria() == 9){
                     return getProgramasEducativosConPlanAccionTutorialCoordinadorTutores(personal.getAreaSuperior().getArea(), periodoEscolar);
-                }else{return getProgramasEducativosConPlanAccionTutorialCoordinadorTutores(personal.getAreaOperativa().getArea(), periodoEscolar);}
+                }else{
+                    return getProgramasEducativosConPlanAccionTutorialCoordinadorTutores(personal.getAreaOperativa().getArea(), periodoEscolar);
+                }
             }else{
+                List<AreasUniversidad> programasEducativosPAT = em.createQuery("SELECT g.idPe FROM PlanAccionTutorial p INNER JOIN p.grupo g WHERE g.periodo = :periodo", Short.class)
+                        .setParameter("periodo", periodoEscolar.getPeriodo())
+                        .getResultStream()
+                        .map(pe -> em.find(AreasUniversidad.class, pe))
+                        .distinct()
+                        .sorted(Comparator.comparingInt(AreasUniversidad::getAreaSuperior).reversed())
+                        .collect(Collectors.toList());    
+                if(programasEducativosPAT.isEmpty()){    
+                    return ResultadoEJB.crearErroneo(4, Collections.EMPTY_LIST, "Los grupos aún no contienen planes de accion tutorial registrados");
+                }else{
+                    return ResultadoEJB.crearCorrecto(programasEducativosPAT, "Lista de programas educativos registrados con plan de acción tutorial");
+                }   
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de programas educativos con planes de acción tutorial (EjbRegistroAsesoriaTutoria.getProgramasEducativosConPlanAccionTutorial).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativosConPlanAccionTutorialPsicopedagogiaAsignado(PeriodosEscolares periodoEscolar) {
+        try {
             List<AreasUniversidad> programasEducativosPAT = em.createQuery("SELECT g.idPe FROM PlanAccionTutorial p INNER JOIN p.grupo g WHERE g.periodo = :periodo", Short.class)
                     .setParameter("periodo", periodoEscolar.getPeriodo())
                     .getResultStream()
                     .map(pe -> em.find(AreasUniversidad.class, pe))
                     .distinct()
                     .sorted(Comparator.comparingInt(AreasUniversidad::getAreaSuperior).reversed())
-                    .collect(Collectors.toList());    
-            if(programasEducativosPAT.isEmpty()){    
+                    .collect(Collectors.toList());
+            if (programasEducativosPAT.isEmpty()) {
                 return ResultadoEJB.crearErroneo(4, Collections.EMPTY_LIST, "Los grupos aún no contienen planes de accion tutorial registrados");
-            }else{
+            } else {
                 return ResultadoEJB.crearCorrecto(programasEducativosPAT, "Lista de programas educativos registrados con plan de acción tutorial");
-            }   
             }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de programas educativos con planes de acción tutorial (EjbRegistroAsesoriaTutoria.getProgramasEducativosConPlanAccionTutorial).", e, null);

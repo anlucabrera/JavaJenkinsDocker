@@ -66,10 +66,12 @@ public class ValidacionPlanAccionTutorialRolPsicopedagogia extends AbstractRol{
     @Getter     @NonNull    private                                 List<PersonalActivo>                        docentes;
     
     @Getter     @Setter     private                                 Boolean                                     validaCT;
+    @Getter     @Setter     private                                 Boolean                                     moduloAsignado;
     
     public ValidacionPlanAccionTutorialRolPsicopedagogia(Filter<PersonalActivo> filtro,PersonalActivo psicopedagogia) {
         super(filtro);
         this.psicopedagogia = psicopedagogia;
+        this.moduloAsignado = false;
     }
 
     public void setPsicopedagogia(PersonalActivo psicopedagogia) {

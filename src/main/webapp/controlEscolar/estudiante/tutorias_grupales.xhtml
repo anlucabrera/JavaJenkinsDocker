@@ -102,7 +102,16 @@
                                     </div>
                                 </h:form>
                                 <h:form id="frmRegistro" prependId="false" class="form-inline">
-                                    <p:remoteCommand id="actualizarParticipantes" name="actualizarParticipantes" actionListener="#{validacionTutoriaGrupalEstudiante.actualizar()}" process="@this" update="contenedor periodo mes" />
+                                    <p:remoteCommand id="actualizarParticipantes" name="actualizarParticipantes" actionListener="#{validacionTutoriaGrupalEstudiante.actualizar()}" process="@this" update="frmRegistro contenedor periodo mes" />
+                                    
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <c:if test="#{validacionTutoriaGrupalEstudiante.rol.comentarioPendiente eq true}">
+                                            <div class="callout callout-warning">
+                                                <p><code style="color:#4185A0;">Se ha seleccionado en al menos una tutoría grupal la opción de <strong>"Asistí - No estoy de acuerdo"</strong>, por acuerdos de la academia así como dar un mejor seguimiento al estudiante, es requerido que ingreses los motivos de tu selección en el apartado de <strong>"Comentarios del estudiante"</strong> ubicado en el listado de Tutorías Grupales, si lo has seleccionado por error solo debes ingresar un texto de ejemplo en el apartado ya mencionado.</code></p>
+                                            </div>
+                                        </c:if>
+                                    </div>  
+                                    
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 text-info">
                                             <p:outputPanel id="contenedor">
