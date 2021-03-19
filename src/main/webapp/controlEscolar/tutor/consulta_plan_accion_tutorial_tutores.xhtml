@@ -121,20 +121,22 @@
                                                                          >
                                                                 <p:columnGroup type="header">
                                                                     <p:row class="sucess">
+                                                                        <p:column headerText="Información complementaria"                       width="150"/>
                                                                         <p:column headerText="Estatus"                                          width="150"/>
                                                                         <p:column headerText="Comentarios u observaciones del director"         width="500"/>
-                                                                        <p:column headerText="Metas de la función como tutor"                   width="290"/>
-                                                                        <p:column headerText="Sesiones grupales de tutoría"                     width="280"/>
                                                                         <p:column headerText="Grupo"                                            width="60"/>
                                                                         <p:column headerText="Sistema"                                          width="80"/>
                                                                         <p:column headerText="Tutor"                                            width="300"/>
-                                                                        <p:column headerText="Objetivo"                                         width="500"/>
-                                                                        <p:column headerText="Comentarios"                                      width="500"/>
-                                                                        <p:column headerText="Sugerencias"                                      width="500"/>
+                                                                        <p:column headerText="Metas de la función como tutor"                   width="290"/>
+                                                                        <p:column headerText="Sesiones grupales de tutoría"                     width="280"/>
                                                                     </p:row>
                                                                 </p:columnGroup>
+                                                                
+                                                                <p:column style="widows: 16px;align-content: center;text-align: center">
+                                                                    <p:rowToggler expandLabel="Mostrar Información" collapseLabel="Ocultar Información" />
+                                                                </p:column>
 
-                                                                <p:column>
+                                                                <p:column style="align-content: center;text-align: center">
                                                                     <h:outputText value="#{dtoPlanAccionTutorial.planAccionTutorial.estatus}" />
                                                                 </p:column>
 
@@ -148,6 +150,18 @@
                                                                                      readonly="true"
                                                                                      >
                                                                     </p:inputTextarea>
+                                                                </p:column>
+                                                                
+                                                                <p:column style="align-content: center;text-align: center">
+                                                                    <h:outputText value="#{dtoPlanAccionTutorial.planAccionTutorial.grupo.grado}° #{dtoPlanAccionTutorial.planAccionTutorial.grupo.literal}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center">
+                                                                    <h:outputText value="#{dtoPlanAccionTutorial.planAccionTutorial.grupo.idSistema.nombre}" />
+                                                                </p:column>
+
+                                                                <p:column>
+                                                                    <h:outputText value="#{dtoPlanAccionTutorial.tutor.personal.nombre}" />
                                                                 </p:column>
 
                                                                 <p:column>
@@ -173,31 +187,40 @@
                                                                                      global="false"
                                                                                      />
                                                                 </p:column>
-
-                                                                <p:column>
-                                                                    <h:outputText value="#{dtoPlanAccionTutorial.planAccionTutorial.grupo.grado}° #{dtoPlanAccionTutorial.planAccionTutorial.grupo.literal}" />
-                                                                </p:column>
-
-                                                                <p:column>
-                                                                    <h:outputText value="#{dtoPlanAccionTutorial.planAccionTutorial.grupo.idSistema.nombre}" />
-                                                                </p:column>
-
-                                                                <p:column>
-                                                                    <h:outputText value="#{dtoPlanAccionTutorial.tutor.personal.nombre}" />
-                                                                </p:column>
-
-                                                                <p:column>
-                                                                    <h:outputText value="#{dtoPlanAccionTutorial.planAccionTutorial.objetivo}" />
-                                                                </p:column>
-
-                                                                <p:column>
-                                                                    <h:outputText value="#{dtoPlanAccionTutorial.planAccionTutorial.comentarios}" />
-                                                                </p:column>
-
-                                                                <p:column>
-                                                                    <h:outputText value="#{dtoPlanAccionTutorial.planAccionTutorial.sugerencias}" />
-                                                                </p:column>
-
+                                                                
+                                                                <p:rowExpansion>
+                                                                    <p:panelGrid style="width: 100%">
+                                                                        
+                                                                        <p:row>
+                                                                            <p:column>
+                                                                                <h:outputText value="Objetivos: " style="font-weight: 600;"/>
+                                                                            </p:column>
+                                                                            <p:column colspan="4" style="font-weight: 600;">
+                                                                                <h:outputText value="#{dtoPlanAccionTutorial.planAccionTutorial.objetivo}" />
+                                                                            </p:column>
+                                                                        </p:row>
+                                                                        
+                                                                        <p:row>
+                                                                            <p:column>
+                                                                                <h:outputText value="Comentarios: " style="font-weight: 600;"/>
+                                                                                <p:column colspan="4" style="font-weight: 600;">
+                                                                                    <h:outputText value="#{dtoPlanAccionTutorial.planAccionTutorial.comentarios}" />
+                                                                                </p:column>
+                                                                            </p:column>
+                                                                        </p:row>
+                                                                        
+                                                                        <p:row>
+                                                                            <p:column>
+                                                                                <h:outputText value="Sugerencias: " style="font-weight: 600;"/>
+                                                                                <p:column colspan="4" style="font-weight: 600;">
+                                                                                    <h:outputText value="#{dtoPlanAccionTutorial.planAccionTutorial.sugerencias}" />
+                                                                                </p:column>
+                                                                            </p:column>
+                                                                        </p:row>
+                                                                        
+                                                                    </p:panelGrid>
+                                                                </p:rowExpansion>
+                                                                
                                                                 <f:facet name="footer">
                                                                     <div style="text-align: left">
                                                                         <p:column style="text-align: left;">
@@ -291,7 +314,7 @@
                                               styleClass="panel panel-primary" 
                                               responsive="true" 
                                               resizable="false" 
-                                              maximizable="false">
+                                              maximizable="true">
                                         <div class="col-md-12" style="margin-top: 10px"></div>
 
                                         <h:form id="frmSesiones" >
@@ -315,10 +338,12 @@
                                                                      >
                                                             <p:columnGroup type="header">
                                                                 <p:row class="sucess">
-                                                                    <p:column headerText="No. de Sesión" width="90"/>
+                                                                    <p:column headerText="No. de Sesión" width="50"/>
                                                                     <p:column headerText="Actividad Programada" width="300"/>
+                                                                    <p:column headerText="Fecha Programada" width="100"/>
                                                                     <p:column headerText="Objetivos" width="300"/>
-                                                                    <p:column headerText="Cumplimiento" width="90"/>
+                                                                    <p:column headerText="Observaciones ó Recomendaciones/Alguna Situación Emergente" width="300"/>
+                                                                    <p:column headerText="Cumplimiento" width="80"/>
                                                                     <p:column headerText="Justificación" width="300"/>
                                                                 </p:row>
                                                             </p:columnGroup>
@@ -330,9 +355,19 @@
                                                             <p:column style="text-align: center;">
                                                                 <h:outputText value="#{sesionGrupal.actividadProgramada}" />
                                                             </p:column>
+                                                            
+                                                            <p:column style="text-align: center;">
+                                                                <h:outputText value="#{sesionGrupal.fechaProgramada}">
+                                                                    <f:convertDateTime type="date" parent="yyyy-MM-dd"/>
+                                                                </h:outputText>
+                                                            </p:column>
 
                                                             <p:column style="text-align: center;">
                                                                 <h:outputText value="#{sesionGrupal.objetivos}" />
+                                                            </p:column>
+                                                            
+                                                            <p:column style="text-align: center;">
+                                                                <h:outputText value="#{sesionGrupal.observacionesRecomendaciones}" />
                                                             </p:column>
 
                                                             <p:column style="text-align: center;">

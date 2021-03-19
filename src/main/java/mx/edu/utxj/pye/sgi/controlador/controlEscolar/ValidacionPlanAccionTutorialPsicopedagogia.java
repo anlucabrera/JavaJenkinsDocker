@@ -122,6 +122,7 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
                 if(resAcceso.getCorrecto()){
                     rol.setFiltro(resAcceso.getValor());
                     tieneAcceso = rol.tieneAcceso(psicopedagogia);
+                    rol.setModuloAsignado(true);
                 }
             }
             
@@ -207,7 +208,12 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
             inicializarEventosRegistros();
             return;
         }
-        ResultadoEJB<List<AreasUniversidad>> resProgramasEducativos = ejb.getProgramasEducativosConPlanAccionTutorialPsicopedagogia(rol.getPeriodoSeleccionado(), rol.getPsicopedagogia());
+        ResultadoEJB<List<AreasUniversidad>> resProgramasEducativos;
+        if(rol.getModuloAsignado()){
+            resProgramasEducativos = ejb.getProgramasEducativosConPlanAccionTutorialPsicopedagogiaAsignado(rol.getPeriodoSeleccionado());
+        }else{
+            resProgramasEducativos = ejb.getProgramasEducativosConPlanAccionTutorialPsicopedagogia(rol.getPeriodoSeleccionado(), rol.getPsicopedagogia(),rol.getModuloAsignado());
+        }
         if(!resProgramasEducativos.getCorrecto()) mostrarMensajeResultadoEJB(resProgramasEducativos);
         else rol.setProgramasEducativos(resProgramasEducativos.getValor());
         consultarEventosRegistros();

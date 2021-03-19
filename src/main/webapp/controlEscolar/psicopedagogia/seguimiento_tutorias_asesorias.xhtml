@@ -696,10 +696,12 @@
                                                                      >
                                                             <p:columnGroup type="header">
                                                                 <p:row class="sucess">
-                                                                    <p:column headerText="No. de Sesión" width="90"/>
+                                                                    <p:column headerText="No. de Sesión" width="50"/>
                                                                     <p:column headerText="Actividad Programada" width="300"/>
+                                                                    <p:column headerText="Fecha Programada" width="100"/>
                                                                     <p:column headerText="Objetivos" width="300"/>
-                                                                    <p:column headerText="Cumplimiento" width="90"/>
+                                                                    <p:column headerText="Observaciones ó Recomendaciones/Alguna Situación Emergente" width="300"/>
+                                                                    <p:column headerText="Cumplimiento" width="80"/>
                                                                     <p:column headerText="Justificación" width="300"/>
                                                                 </p:row>
                                                             </p:columnGroup>
@@ -713,7 +715,17 @@
                                                             </p:column>
 
                                                             <p:column style="text-align: center;">
+                                                                <h:outputText value="#{sesionGrupal.fechaProgramada}">
+                                                                    <f:convertDateTime type="date" parent="yyyy-MM-dd"/>
+                                                                </h:outputText>
+                                                            </p:column>
+
+                                                            <p:column style="text-align: center;">
                                                                 <h:outputText value="#{sesionGrupal.objetivos}" />
+                                                            </p:column>
+                                                            
+                                                            <p:column style="text-align: center;">
+                                                                <h:outputText value="#{sesionGrupal.observacionesRecomendaciones}" />
                                                             </p:column>
 
                                                             <p:column style="text-align: center;">

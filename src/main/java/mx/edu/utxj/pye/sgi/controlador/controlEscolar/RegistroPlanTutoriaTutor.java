@@ -37,6 +37,7 @@ import org.primefaces.event.TabCloseEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Date;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Ajax;
 
@@ -215,6 +216,30 @@ public class RegistroPlanTutoriaTutor extends ViewScopedRol implements Desarroll
 //        TODO: Acciones que se llevan a cabo cuando el tutor selecciona el grupo.
     }
     
+    public void cambiarGrupoDate(){
+        if(rol.getGrupoTutorSeleccionado() == null){
+            mostrarMensaje("No hay un grupo tutorado seleccionado");
+            return;
+        }
+        ResultadoEJB<List<PlanAccionTutorial>> planAccionTutorial = ejb.aplicarPlantillaPlanAccionTutorial(rol.getGrupoTutorSeleccionado().getGrupo());
+        if(!planAccionTutorial.getCorrecto()){
+            mostrarMensajeResultadoEJB(planAccionTutorial);
+            inicializarPlanAccionTutorial();
+            inicializarFuncionTutor();
+            inicializarFuncionesTutor();
+            inicializarSesionGrupalTutoria();
+            inicializarSesionesGrupalesTutoria();
+        }else{
+            mostrarMensajeResultadoEJB(planAccionTutorial);
+            rol.setPlanAccionTutorial(planAccionTutorial.getValor().get(0));
+            inicializarFuncionTutor();
+            inicializarFuncionesTutor();
+            inicializarSesionGrupalTutoria();
+            inicializarSesionesGrupalesTutoria();
+        }
+        actualizarListaSesionesGrupalesTutorias();
+    }
+    
     /*************************************************************************************************************************/
     
     /*********************************************** Administración de datos *********************************************************/
@@ -293,6 +318,20 @@ public class RegistroPlanTutoriaTutor extends ViewScopedRol implements Desarroll
         SesionesGrupalesTutorias sesionGrupal = (SesionesGrupalesTutorias) event.getComponent().getAttributes().get("sesionGrupal");
         String actividadProgramda = event.getNewValue().toString();
         sesionGrupal.setActividadProgramada(actividadProgramda);
+        actualizarSesionGrupalTutoria(sesionGrupal);
+    }
+    
+    public void actualizaFechaProgramada(ValueChangeEvent event){
+        SesionesGrupalesTutorias sesionGrupal = (SesionesGrupalesTutorias) event.getComponent().getAttributes().get("sesionGrupal");
+        Date fechaProgramada = (Date) event.getNewValue();
+        sesionGrupal.setFechaProgramada(fechaProgramada);
+        actualizarSesionGrupalTutoria(sesionGrupal);
+    }
+    
+    public void actualizaObservacionesRecomendaciones(ValueChangeEvent event){
+        SesionesGrupalesTutorias sesionGrupal = (SesionesGrupalesTutorias) event.getComponent().getAttributes().get("sesionGrupal");
+        String observacionesRecomendaciones = (String) event.getNewValue();
+        sesionGrupal.setObservacionesRecomendaciones(observacionesRecomendaciones);
         actualizarSesionGrupalTutoria(sesionGrupal);
     }
     
