@@ -6,8 +6,6 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -162,7 +160,7 @@ public class EjbReportesEstadia {
             if(programaBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar programa educativo no registrado previamente en base de datos.", DtoReporteActividadesEstadia.class);
             
             List<Integer> grados = new ArrayList<>();
-            grados.add(5);
+            grados.add(6);
             grados.add(11);
             
             List<Estudiante> listaEstudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE g.idPe=:programaEducativo AND g.grado IN :grados AND g.generacion=:generacion", Estudiante.class)
@@ -332,7 +330,7 @@ public class EjbReportesEstadia {
                         AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, programa);
                         
                         List<Integer> grados = new ArrayList<>();
-                        grados.add(5);
+                        grados.add(6);
                         grados.add(11);
 
                     List<Estudiante> listaEstudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE g.idPe=:programa AND g.grado IN :grados AND g.generacion=:generacion", Estudiante.class)
@@ -466,7 +464,7 @@ public class EjbReportesEstadia {
             if(programaBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar programa ediucativo no registrado previamente en base de datos.", DtoEficienciaEstadia.class);
             
             List<Integer> grados = new ArrayList<>();
-            grados.add(5);
+            grados.add(6);
             grados.add(11);
 
 //            List<Estudiante> listaEstudiantes= em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE g.idPe=:programaEducativo AND g.grado IN :grados", Estudiante.class)
@@ -520,7 +518,7 @@ public class EjbReportesEstadia {
             
             Integer grado;
             if(nivelEducativo.getNivel().equals("TSU")){
-                grado = 5;
+                grado = 6;
             }else{
                 grado = 11;
             }

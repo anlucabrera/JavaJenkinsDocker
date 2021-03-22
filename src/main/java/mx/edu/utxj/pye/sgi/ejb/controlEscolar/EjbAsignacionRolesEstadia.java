@@ -712,7 +712,7 @@ public class EjbAsignacionRolesEstadia {
             SeguimientoEstadiaEstudiante segEstBD = em.find(SeguimientoEstadiaEstudiante.class, seguimientoEstadiaEstudiante.getSeguimiento());
             if(segEstBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar seguimiento no registrado previamente en base de datos.", DtoDatosEstudiante.class);
 
-           Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula ORDER BY e.idEstudiante DESC", Estudiante.class)
+           Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula ORDER BY e.periodo DESC", Estudiante.class)
                     .setParameter("matricula", seguimientoEstadiaEstudiante.getMatricula().getMatricula())
                     .getResultStream()
                     .findFirst()

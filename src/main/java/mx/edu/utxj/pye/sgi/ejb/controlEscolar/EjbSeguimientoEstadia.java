@@ -534,7 +534,7 @@ public class EjbSeguimientoEstadia {
      */
     public ResultadoEJB<DtoDatosEstudiante> packEstudiante(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante, EventoEstadia eventoSeleccionado){
         try{
-           Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.idEstudiante DESC", Estudiante.class)
+           Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.periodo DESC", Estudiante.class)
                     .setParameter("matricula", seguimientoEstadiaEstudiante.getMatricula().getMatricula())
                     .setParameter("generacion", eventoSeleccionado.getGeneracion())
                     .getResultStream()
@@ -1580,10 +1580,14 @@ public class EjbSeguimientoEstadia {
      */
     public ResultadoEJB<Estudiante> cambiarSituacionAcademicaEstudiante(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante){
         try{
+            List<Integer> grados = new ArrayList<>();
+            grados.add(6);
+            grados.add(11);
             
-            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.idEstudiante DESC", Estudiante.class)
+            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion AND e.grupo.grado IN :grados", Estudiante.class)
                     .setParameter("matricula", seguimientoEstadiaEstudiante.getMatricula().getMatricula())
                     .setParameter("generacion", seguimientoEstadiaEstudiante.getEvento().getGeneracion())
+                    .setParameter("grados", grados)
                     .getResultStream()
                     .findFirst()
                     .orElse(null);

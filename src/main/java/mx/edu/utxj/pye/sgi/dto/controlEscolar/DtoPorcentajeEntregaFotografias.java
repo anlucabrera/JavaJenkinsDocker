@@ -20,10 +20,18 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 @RequiredArgsConstructor @ToString
 public class DtoPorcentajeEntregaFotografias implements Serializable, Comparable<DtoPorcentajeEntregaFotografias>{
     @Getter @Setter @NonNull AreasUniversidad programaEducativo;
-    @Getter @Setter @NonNull Integer totalEstudiantes;
-    @Getter @Setter @NonNull Integer totalEntrega;
-    @Getter @Setter @NonNull Integer totalPendientes;
-    @Getter @Setter @NonNull Double porcentajeEntrega;
+    @Getter @Setter Integer totalEstudiantes;
+    @Getter @Setter Integer totalEntrega;
+    @Getter @Setter Integer totalPendientes;
+    @Getter @Setter Double porcentajeEntrega;
+
+    public DtoPorcentajeEntregaFotografias(AreasUniversidad programaEducativo, Integer totalEstudiantes, Integer totalEntrega, Integer totalPendientes, Double porcentajeEntrega) {
+        this.programaEducativo = programaEducativo;
+        this.totalEstudiantes = totalEstudiantes;
+        this.totalEntrega = totalEntrega;
+        this.totalPendientes = totalPendientes;
+        this.porcentajeEntrega = porcentajeEntrega;
+    }
     
     @Override
     public int compareTo(DtoPorcentajeEntregaFotografias o) {

@@ -7,9 +7,6 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import static java.util.Collections.list;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -386,14 +383,14 @@ public class EjbEstadiasServiciosEscolares {
             EntregaFotografiasEstudiante entregaFotografiasBD = em.find(EntregaFotografiasEstudiante.class, entregaFotografiasEstudiante.getEntrega());
             if(entregaFotografiasBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar entrega de fotografías no registrado previamente en base de datos.", DtoEntregaFotografiasEstadia.class);
           
-            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.idEstudiante DESC", Estudiante.class)
+            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.periodo DESC", Estudiante.class)
                     .setParameter("matricula", entregaFotografiasBD.getMatricula().getMatricula())
                     .setParameter("generacion", entregaFotografiasBD.getEvento().getGeneracion())
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
             
-            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, entregaFotografiasBD.getMatricula().getCarrera());
+            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
             Personal personal = em.find(Personal.class, entregaFotografiasBD.getPersonalRecibio());
             
             DtoEntregaFotografiasEstadia dtoEntregaFotografiasEstadia = new DtoEntregaFotografiasEstadia(entregaFotografiasBD, estudiante, programaEducativo, personal);
@@ -482,7 +479,9 @@ public class EjbEstadiasServiciosEscolares {
             
             Optional<Integer> maxNumber = listaPeriodos.stream().max((i, j) -> i.compareTo(j));
             
-            List<AreasUniversidad> listaProgramasEducativos = listaEntregaFotografias.stream().map(p-> p.getProgramaEducativo()).collect(Collectors.toList());
+            List<AreasUniversidad> listaProgramas = listaEntregaFotografias.stream().map(p-> p.getProgramaEducativo()).collect(Collectors.toList());
+            
+            List<AreasUniversidad> listaProgramasEducativos = listaProgramas.stream().distinct().collect(Collectors.toList());
             
             List<DtoPorcentajeEntregaFotografias> listaPorcentajeEntrega = new ArrayList<>();
             

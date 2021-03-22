@@ -81,6 +81,26 @@ public class EntregaFotografiasRolEscolares extends AbstractRol{
      * Porcentaje de entrega por programa educativo de la generación y nivel seleccionado
      */
     @Getter @NonNull private List<DtoPorcentajeEntregaFotografias> porcentajesEntrega;
+    
+     /**
+     * Número total de estudiantes
+     */
+    @Getter @NonNull private Integer totalEstudiantes;
+    
+     /**
+     * Número total de estudiantes que entregaron fotografías
+     */
+    @Getter @NonNull private Integer totalEntregaronFotografias;
+    
+     /**
+     * Número total de estudiantes pendientes de entregar fotografías
+     */
+    @Getter @NonNull private Integer totalPendienteEntrega;
+    
+     /**
+     * Número total de porcentaje de entrega
+     */
+    @Getter @NonNull private String totalPorcentajeEntrega;
       
     public EntregaFotografiasRolEscolares(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
@@ -133,6 +153,22 @@ public class EntregaFotografiasRolEscolares extends AbstractRol{
 
     public void setPorcentajesEntrega(List<DtoPorcentajeEntregaFotografias> porcentajesEntrega) {
         this.porcentajesEntrega = porcentajesEntrega;
+    }
+
+    public void setTotalEstudiantes(Integer totalEstudiantes) {
+        this.totalEstudiantes = totalEstudiantes;
+    }
+
+    public void setTotalEntregaronFotografias(Integer totalEntregaronFotografias) {
+        this.totalEntregaronFotografias = totalEntregaronFotografias;
+    }
+
+    public void setTotalPendienteEntrega(Integer totalPendienteEntrega) {
+        this.totalPendienteEntrega = totalPendienteEntrega;
+    }
+
+    public void setTotalPorcentajeEntrega(String totalPorcentajeEntrega) {
+        this.totalPorcentajeEntrega = totalPorcentajeEntrega;
     }
     
 }

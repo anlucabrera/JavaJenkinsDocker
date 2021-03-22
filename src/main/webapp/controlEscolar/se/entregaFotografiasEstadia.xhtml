@@ -147,15 +147,15 @@
                                                          <h:outputText value="#{porcentEntrega.totalPendientes}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                         <h:outputText value="#{porcentEntrega.porcentajeEntrega}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                         <h:outputText value="#{porcentEntrega.porcentajeEntrega}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
                                                     </p:column>
                                                     <p:columnGroup type="footer">
                                                         <p:row>
                                                             <p:column style="text-align:center;font-weight: bold;" footerText="Totales:"/>
-                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalAcreditados}"/>
-                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalNoAcreditados}"/>
-                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.total}"/>
-                                                            <p:column/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{entregaFotografiasEscolares.rol.totalEstudiantes}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{entregaFotografiasEscolares.rol.totalEntregaronFotografias}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{entregaFotografiasEscolares.rol.totalPendienteEntrega}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{entregaFotografiasEscolares.rol.totalPorcentajeEntrega}"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                 </p:dataTable>
@@ -165,7 +165,7 @@
                                                 <p:remoteCommand name="actualizar2" update="@form:tbListaEntregaFotografias" />
                                                 <p:dataTable id="tbListaEntregaFotografias" var="entregaFotografia" value="#{entregaFotografiasEscolares.rol.estudiantesFotografias}"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se han registrado entrega de fotografías"
-                                                             tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50,60" resizeMode="expand"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="50" rowsPerPageTemplate="50,100,150,200,250,300,350,400,450,500,550,600" resizeMode="expand"
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">

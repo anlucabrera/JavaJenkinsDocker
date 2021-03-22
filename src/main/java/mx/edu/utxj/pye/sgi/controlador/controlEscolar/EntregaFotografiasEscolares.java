@@ -203,6 +203,10 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
         ResultadoEJB<List<DtoPorcentajeEntregaFotografias>> res = ejb.getListaPorcentajeEntregaFotografias(rol.getGeneracion(), rol.getNivelEducativo(), rol.getEstudiantesFotografias());
         if(res.getCorrecto()){
             rol.setPorcentajesEntrega(res.getValor());
+            rol.setTotalEstudiantes(rol.getPorcentajesEntrega().stream().mapToInt(p->p.getTotalEstudiantes()).sum());
+            rol.setTotalEntregaronFotografias(rol.getPorcentajesEntrega().stream().mapToInt(p->p.getTotalEntrega()).sum());
+            rol.setTotalPendienteEntrega(rol.getPorcentajesEntrega().stream().mapToInt(p->p.getTotalPendientes()).sum());
+            rol.setTotalPorcentajeEntrega(String.format("%.2f",rol.getPorcentajesEntrega().stream().mapToDouble(p->p.getPorcentajeEntrega()).average().getAsDouble()));
             Ajax.update("tbListaPorcentajeEntregaFotografias");
         }else mostrarMensajeResultadoEJB(res);
     
