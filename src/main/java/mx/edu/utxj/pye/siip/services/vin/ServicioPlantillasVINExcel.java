@@ -37,6 +37,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTipos;
+import mx.edu.utxj.pye.siip.dto.vin.DtoEventoRegistro;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbCatalogoIemsRecurrentes;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbEgresados;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbIems;
@@ -70,6 +71,9 @@ public class ServicioPlantillasVINExcel implements EjbPlantillasVINExcel {
 
     public static final String CONVENIOS_PLANTILLA = "convenios.xlsx";
     public static final String CONVENIOS_ACTUALIZADO = "convenios_actualizado.xlsx";
+    
+    public static final String CONVENIOS_COPIA = "convenios_copia.xlsx";
+    public static final String CONVENIOS_ACTUALIZADO_EVENTO_REGISTRO = "convenios_actualiazado_evento_registro.xlsx";
     
     public static final String SERVICIOS_TECNOLOGICOS_PLANTILLA = "servicios_tecnologicos.xlsx";
     public static final String SERVICIOS_TECNOLOGICOS_COPIA = "servicios_tecnologicos_copia.xlsx";
@@ -116,13 +120,76 @@ public class ServicioPlantillasVINExcel implements EjbPlantillasVINExcel {
     public String getPlantillaConvenios() throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioPlantilla(ejes[2]);
         String rutaPlantillaC = ejbCarga.crearDirectorioPlantillaCompleto(ejes[2]);
+        
+        String rutaPlantillaCopia = ejbCarga.crearDirectorioPlantillaCompleto(ejes[2]);
+        String rutaPlantillaFinal = ejbCarga.crearDirectorioPlantillaCompleto(ejes[2]);
+        
         String plantilla = rutaPlantilla.concat(CONVENIOS_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(CONVENIOS_ACTUALIZADO);
+        
+        String plantillaCopia = rutaPlantillaCopia.concat(CONVENIOS_COPIA);
+        String plantillaFinal = rutaPlantillaFinal.concat(CONVENIOS_ACTUALIZADO_EVENTO_REGISTRO);
+        
         Map beans = new HashMap();
         beans.put("organismosVinculados", ejbOrganismosVinculados.getOrganismosVinculadoVigentes());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
-        return plantillaC;
+        
+        try {
+            
+            Files.copy(FileSystems.getDefault().getPath(plantillaC), FileSystems.getDefault().getPath(plantillaCopia), StandardCopyOption.REPLACE_EXISTING);
+            File archivoCopia = FileSystems.getDefault().getPath(plantillaCopia).toFile();
+
+            XSSFWorkbook libroConvenios = new XSSFWorkbook();
+            libroConvenios = (XSSFWorkbook) WorkbookFactory.create(archivoCopia);
+
+            XSSFSheet catalogos = libroConvenios.getSheetAt(1);
+
+            List<DtoEventoRegistro> eventosRegistros = ejbOrganismosVinculados.getEventosRegistrosConvenios();
+
+            XSSFRow fila;
+            XSSFCell celda;
+            
+//            Generaciones
+            for(Integer listaEventosRegistros = 0; listaEventosRegistros < eventosRegistros.size(); listaEventosRegistros++){
+//                Indica a partir de que posición empezar a llenar los datos en las celdas correspondientes - El cual se obtiene haciendo la suma de la iteración ligada a la lista y el numero de fila inicial
+                Integer ubicacion = listaEventosRegistros + 2;
+                
+//                Declarar getRow en caso de usar tabla o bien existan datos posteriores al llenado de los datos, usar create unicamente cuando la plantilla no contenga ningun formato o no existan datos a la izquierda del archivo.
+                fila = (XSSFRow) (Row) catalogos.getRow(ubicacion);
+                if (null == fila)
+                    fila = catalogos.createRow(ubicacion);
+                
+//                Inicia el vaciado de los catalogos en las celdas indicadas
+
+//                Descripcion Evento Registro
+                celda = fila.getCell(0);
+                if(null == celda)
+                    fila.createCell(0,CellType.STRING);
+                fila.getCell(0).setCellValue(eventosRegistros.get(listaEventosRegistros).getDescripcionEventoRegistro());
+                
+//                Evento Registro
+                celda = fila.getCell(1);
+                if(null == celda)
+                    fila.createCell(1,CellType.NUMERIC);
+                fila.getCell(1).setCellValue(eventosRegistros.get(listaEventosRegistros).getEventoRegistro());
+                         
+            }
+            
+            File archivoFinal = FileSystems.getDefault().getPath(plantillaFinal).toFile();
+            FileOutputStream archivoSalida = new FileOutputStream(archivoFinal);
+            libroConvenios.write(archivoSalida);
+            libroConvenios.close();
+            archivoSalida.flush();
+            archivoSalida.close();
+            Files.deleteIfExists(FileSystems.getDefault().getPath(plantillaCopia));
+        } catch (FileNotFoundException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioPlantillasVINExcel.getPlantillaServiciosTecnologicos() Archivo no escontrado");
+        } catch (IOException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioPlantillasVINExcel.getPlantillaServiciosTecnologicos() Error de lectura o escritura (i/o");
+        }
+   
+        return plantillaFinal;
     }
     
     @Override

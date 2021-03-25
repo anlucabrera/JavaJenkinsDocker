@@ -131,7 +131,7 @@ public class ControladorConveniosPYE implements Serializable {
     public void llenaAreas() {
         dtoConvenios.setListaAreasPOA(ejbCatalogos.getAreasUniversidadPorCategoriaConPoa(dtoConvenios.getCategoria())
                 .stream()
-                .filter(area -> (short) 5 == area.getArea())
+                .filter(area -> (short) 4 == area.getArea() || (short) 5 == area.getArea())
                 .collect(Collectors.toList()));
         if (!dtoConvenios.getListaAreasPOA().isEmpty() && dtoConvenios.getAreaUniversidadPOA() == null) {
             dtoConvenios.setAreaUniversidadPOA(null);

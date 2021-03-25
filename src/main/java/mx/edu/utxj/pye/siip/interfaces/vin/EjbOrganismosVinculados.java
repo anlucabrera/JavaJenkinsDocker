@@ -29,6 +29,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
 import mx.edu.utxj.pye.siip.dto.vin.DTOActividadesVinculacion;
 import mx.edu.utxj.pye.siip.dto.vin.DTOProgramasBeneficiadosVinculacion;
+import mx.edu.utxj.pye.siip.dto.vin.DtoEventoRegistro;
 
 /**
  *
@@ -267,5 +268,12 @@ public interface EjbOrganismosVinculados {
     public List<CorreosEmpresa> getCorreosEmpresas(Short ejercicio);
     
     public List<ContactosEmpresa> getReporteContactosEmpresa(Short ejercicio);
+    
+    /**
+     * Devuelve una lista de eventos de registros, para su selección en la plantilla de convenios
+     * @param ejercicio
+     * @return 
+     */
+    public List<DtoEventoRegistro> getEventosRegistrosConvenios();
     
 }

@@ -49,6 +49,7 @@ import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.sgi.util.StringUtils;
 import mx.edu.utxj.pye.siip.dto.vin.DTOActividadesVinculacion;
 import mx.edu.utxj.pye.siip.dto.vin.DTOProgramasBeneficiadosVinculacion;
+import mx.edu.utxj.pye.siip.dto.vin.DtoEventoRegistro;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -1008,7 +1009,24 @@ public class ServicioOrganismosVinculados implements EjbOrganismosVinculados {
         }
     }
     
-    
-    
-
+    @Override
+    public List<DtoEventoRegistro> getEventosRegistrosConvenios() {
+        List<DtoEventoRegistro> listaEventosRegistro = new ArrayList<>();
+        try {
+            List<Object[]> eventosRegistros = facadeProntuario.getEntityManager().createQuery("SELECT e.eventoRegistro, CONCAT(e.mes,'-',e.ejercicioFiscal.anio) AS descripcionEventoRegistro FROM EventosRegistros e ORDER BY e.eventoRegistro DESC")
+                    .getResultList();
+            eventosRegistros.stream().map((resultado) -> {
+                Integer     eventoRegistro              =       ((Number)       resultado[0]).intValue();
+                String      descripcionEventoRegistro   =       (String)        resultado[1];
+                DtoEventoRegistro dto = new DtoEventoRegistro(eventoRegistro,descripcionEventoRegistro);
+                return dto;
+            }).forEachOrdered((dto) -> {
+                listaEventosRegistro.add(dto);
+            });
+            return listaEventosRegistro;
+        } catch (Exception e) {
+            listaEventosRegistro.clear();
+            return listaEventosRegistro;
+        }
+    }
 }
