@@ -17,9 +17,9 @@
         <h:outputScript library="js" name="dialogs.js" />
         <h:outputScript library="js" name="calendario.js"/>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
-            <h:outputStylesheet library="css" name="procesoElectoral.css" />
-        </c:if>
+            <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+                <h:outputStylesheet library="css" name="procesoElectoral.css" />
+            </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
     <ui:define name="title">
@@ -43,69 +43,117 @@
             <div class="box-header with-border">
 
                 <div id="main-buttons" class="hidden-sm hidden-xs" >
-                    <p:outputPanel >
-                        <p:autoUpdate/>
-                        <p:toolbar id="tb"> 
-                            <f:facet name="left">
-                                <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                        <p:outputPanel >
+                            <p:autoUpdate/>
+                            <p:toolbar id="tb"> 
+                                <f:facet name="left">
+                                    <h:form prependId="true" id="frmMainButtons" class="form-inline">
                                     <p:spacer width="10" />
-                                    <c:if test="#{controladorArchivoConvenios.etapa eq etapa.MOSTRAR}">
-                                        <!--Criterio de búsqueda dependiendo la naturaleza del registro--> 
-                                        <p:outputLabel value="Ejercicio: " for="anioConsulta" />
-                                        <p:spacer width="5" />
-                                        <p:selectOneMenu id="anioConsulta"
-                                                         value="#{conveniosC.dtoConvenios.anioConsulta}"
-                                                         valueChangeListener="#{conveniosC.actualizarMeses}"
-                                                         class="form-control"
-                                                         style="padding-top: 0px">
-                                            <f:selectItems value="#{conveniosC.dtoConvenios.aniosConsulta}" 
-                                                           var="anio" 
-                                                           itemValue="#{anio}" 
-                                                           itemLabel="#{anio}" />
-                                            <p:ajax process="@this" listener="#{conveniosC.buscaConvenios()}" update="@(form) formMuestraDatosActivos" />
-                                        </p:selectOneMenu>
-                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                        <p:outputLabel value="Mes: " for="mesConsulta" />
-                                        <p:spacer width="5" />
-                                        <p:selectOneMenu id="mesConsulta"
-                                                         value="#{conveniosC.dtoConvenios.mesConsulta}"
-                                                         class="form-control"
-                                                         style="padding-top:  0px">
-                                            <f:selectItems value="#{conveniosC.dtoConvenios.mesesConsulta}" 
-                                                           var="mes" 
-                                                           itemValue="#{mes}" 
-                                                           itemLabel="#{mes}" />
-                                            <p:ajax process="@this" listener="#{conveniosC.buscaConvenios()}" update="@(form) formMuestraDatosActivos" />
-                                        </p:selectOneMenu>
-                                    </c:if>
-                                </h:form>
-                            </f:facet>
-                            <f:facet name="right">
-                                <h:form id="frmReporte">
+                                    <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                    <p:outputLabel value="Categoría " for="categoria"/>
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="categoria"
+                                                     required="true"
+                                                     value="#{controladorConveniosPYE.dtoConvenios.categoria}"
+                                                     valueChangeListener="#{controladorConveniosPYE.actualizarAreas}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     converter="entidadConverter2"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.listaCategoriasPOA}" 
+                                                       var="categoria" 
+                                                       itemValue="#{categoria}" 
+                                                       itemLabel="#{categoria.descripcion}"
+                                                       itemDescription="#{categoria.descripcion}"/>
+                                        <p:ajax process="@this" listener="#{controladorConveniosPYE.buscaConvenios()}" update="@(form)" />
+                                    </p:selectOneMenu>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <div class="btn-group">
-                                        <p:commandButton value="Cargar Archivo de Excel" 
-                                                         icon="fa fa-file-excel-o" 
-                                                         onclick="PF('modalCargaArchivo').show()" 
-                                                         class="btn btn-primary btn-sm"/>
-                                    </div>
-                                    <c:if test="#{controladorArchivoConvenios.etapa eq etapa.CARGAR}">
-                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="convenios?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
-                                    </c:if>
+
+                                    <p:outputLabel value="Área " for="area" />
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="area"
+                                                     required="true"
+                                                     value="#{controladorConveniosPYE.dtoConvenios.areaUniversidadPOA}"
+                                                     valueChangeListener="#{controladorConveniosPYE.actualizarAnios}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     converter="entidadConverter2"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.listaAreasPOA}" 
+                                                       var="area" 
+                                                       itemValue="#{area}" 
+                                                       itemLabel="#{area.nombre}"
+                                                       itemDescription="#{area.nombre}" />
+                                        <p:ajax process="@this" listener="#{controladorConveniosPYE.buscaConvenios()}" update="@(form)" />
+                                    </p:selectOneMenu>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarPlantillaConvenios()}" target="_blank" title="Descargar Plantilla Convenios"><i class="fa fa-download" /></p:commandLink>
-                                    <c:if test="#{conveniosC.dtoConvenios.anioConsulta ne null}">
-                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarReporteConvenios(conveniosC.dtoConvenios.anioConsulta)}" target="_blank" title="Descargar Reporte de Excel Convenios"><i class="fa fa-file-excel-o" /></p:commandLink>
-                                    </c:if>
+
+                                    <p:outputLabel value="Ejercicio: " for="anioConsulta"/>
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="anioConsulta"
+                                                     required="true"
+                                                     value="#{controladorConveniosPYE.dtoConvenios.anioConsulta}"
+                                                     valueChangeListener="#{controladorConveniosPYE.actualizarMeses}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top: 0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.aniosConsulta}"
+                                                       var="anio"
+                                                       itemValue="#{anio}"
+                                                       itemLabel="#{anio}" />
+                                        <p:ajax process="@this" listener="#{controladorConveniosPYE.buscaConvenios()}" update="@(form)" />
+                                    </p:selectOneMenu>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
-                                </h:form>
-                            </f:facet>
-                        </p:toolbar>
-                        <p:sticky target="tb" />
-                    </p:outputPanel>
+
+                                    <p:outputLabel value="Mes: " for="@form:mesConsulta" />
+                                    <p:spacer width="5" />
+                                    <p:selectOneMenu id="mesConsulta"
+                                                     required="true"
+                                                     value="#{controladorConveniosPYE.dtoConvenios.mesConsulta}"
+                                                     filter="true"
+                                                     filterPlaceholder="Buscar"
+                                                     filterMatchMode="contains"
+                                                     class="form-control"
+                                                     style="padding-top:  0px">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " 
+                                                      itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.mesesConsulta}"
+                                                       var="mes"
+                                                       itemValue="#{mes}"
+                                                       itemLabel="#{mes}" />
+                                        <p:ajax process="@this" listener="#{controladorConveniosPYE.buscaConvenios()}" update="@(form)" />
+                                    </p:selectOneMenu>
+                                    </h:form>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <h:form id="frmReporte">
+                                        <c:if test="#{controladorConveniosPYE.dtoConvenios.anioConsulta ne null}">
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarReporteConvenios(controladorConveniosPYE.dtoConvenios.anioConsulta)}" target="_blank" title="Descargar Reporte de Excel Convenios"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                        </c:if>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+                                    </h:form>
+                                </f:facet>
+                            </p:toolbar>
+                            <p:sticky target="tb" />
+                        </p:outputPanel>
                 </div>
                 <p:separator/>
 
@@ -114,130 +162,95 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
                             <h:form id="formMuestraDatosActivos">
-                                <c:if test="#{controladorArchivoConvenios.etapa eq etapa.MOSTRAR}">
-                                    <p:remoteCommand name="actualizar" update="@form:formMuestraDatosActivos"/>
-                                    <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parámetros seleccionados: Ejercicio: #{conveniosC.dtoConvenios.anioConsulta} y Mes: #{conveniosC.dtoConvenios.mesConsulta}"
-                                                 paginator="true" 
-                                                 rows="10" 
-                                                 rowsPerPageTemplate="10,20,30,40,50"
-                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                 resizeMode="expand"
-                                                 id="dtbConvenios"
-                                                 var="convenio" 
-                                                 value="#{conveniosC.dtoConvenios.lstConvenios}"
-                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                        <p:columnGroup type="header">
-                                            <p:column headerText="Opciones" width="150" />
-                                            <p:column headerText="Empresa" width="500"/>
-                                            <p:column headerText="Fecha de firma" width="100"/>
-                                            <p:column headerText="Vigencia" width="100"/>
-                                            <p:column headerText="Estudiantes Beneficiados Hombres" width="100"/>
-                                            <p:column headerText="Estudiantes Beneficiados Mujeres" width="100"/>
-                                            <p:column headerText="Docentes Beneficiados Hombres" width="100"/>
-                                            <p:column headerText="Docentes Beneficiados Mujeres" width="100"/>
-                                            <p:column headerText="Recursos obtenidos" width="150"/>
-                                            <p:column headerText="Objetivo" width="800"/>
-                                            <p:column headerText="Descripción" width="800"/>
-                                            <p:column headerText="Impacto" width="800"/>
-                                        </p:columnGroup>
-                                        <c:set var="convenioEliminado" value="#{convenio.registro}"/>
-                                        <p:column style="text-align: center;">
-                                            <div class="btn-group">
-                                                <p:commandButton class="btn btn-info btn-sm"
-                                                                 icon="fa fa-trash"
-                                                                 actionListener="#{conveniosC.eliminarRegistro(convenioEliminado, convenio)}"
-                                                                 onsuccess="actualizar();"
-                                                                 title="Eliminar convenio"
-                                                                 >
-                                                    <p:confirm header="Eliminar registro" 
-                                                               message="¿Está seguro de eliminar el convenio: #{convenio.empresa.nombre} ?" 
-                                                               icon="ui-icon-alert" />
-                                                </p:commandButton>
-                                                <c:set var="evidencias" value="#{conveniosC.consultarEvidencias(convenio.registro)}" />
-                                                <p:commandButton actionListener="#{conveniosC.seleccionarRegistro(convenio)}"
-                                                                 class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
-                                                                 icon="fa fa-image"
-                                                                 title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
-                                                <p:commandButton actionListener="#{conveniosC.abrirAlineacionPOA(convenio)}"
-                                                                 class="btn btn-sm #{conveniosC.verificaAlineacion(convenio.registro)?'btn-info':'btn-warning'}"
-                                                                 icon="fa fa-cog"
-                                                                 title="Alineación a POA." />
-                                                <p:commandButton actionListener="#{conveniosC.abrirEdicionConvenio(convenio)}"
-                                                                 class="btn btn-sm btn-info"
-                                                                 icon="fa fa-pencil-square-o"
-                                                                 
-                                                                 title="Editar convenio"/>
-                                            </div>
-                                        </p:column>    
+                                <p:remoteCommand name="actualizar" update="@form:formMuestraDatosActivos"/>
+                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parámetros seleccionados: Ejercicio: #{controladorConveniosPYE.dtoConvenios.anioConsulta} y Mes: #{controladorConveniosPYE.dtoConvenios.mesConsulta}"
+                                             paginator="true" 
+                                             rows="10" 
+                                             rowsPerPageTemplate="10,20,30,40,50"
+                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                             resizeMode="expand"
+                                             id="dtbConvenios"
+                                             var="convenio" 
+                                             value="#{controladorConveniosPYE.dtoConvenios.lstConvenios}"
+                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                    <p:columnGroup type="header">
+                                        <p:column headerText="Empresa" width="500"/>
+                                        <p:column headerText="Fecha de firma" width="100"/>
+                                        <p:column headerText="Vigencia" width="100"/>
+                                        <p:column headerText="Estudiantes Beneficiados Hombres" width="100"/>
+                                        <p:column headerText="Estudiantes Beneficiados Mujeres" width="100"/>
+                                        <p:column headerText="Docentes Beneficiados Hombres" width="100"/>
+                                        <p:column headerText="Docentes Beneficiados Mujeres" width="100"/>
+                                        <p:column headerText="Recursos obtenidos" width="150"/>
+                                        <p:column headerText="Objetivo" width="800"/>
+                                        <p:column headerText="Descripción" width="800"/>
+                                        <p:column headerText="Impacto" width="800"/>
+                                    </p:columnGroup>
+                                    <c:set var="convenioEliminado" value="#{convenio.registro}"/>
+                                    
+                                    <p:column>
+                                        <h:outputText value="#{convenio.empresa.nombre}"/>
+                                    </p:column>
 
-                                        <p:column>
-                                            <h:outputText value="#{convenio.empresa.nombre}"/>
-                                        </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{convenio.fechaFirma}">
+                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                        </h:outputText>
+                                    </p:column>
 
-                                        <p:column>
-                                            <h:outputText value="#{convenio.fechaFirma}">
-                                                <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
-                                            </h:outputText>
-                                        </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{convenio.vigencia}">
+                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    
+                                    <p:column>
+                                        <h:outputText value="#{convenio.ebh}"/>
+                                    </p:column>
 
-                                        <p:column>
-                                            <h:outputText value="#{convenio.vigencia}">
-                                                <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
-                                            </h:outputText>
-                                        </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{convenio.ebm}"/>
+                                    </p:column>
 
-                                        <p:column>
-                                            <h:outputText value="#{convenio.ebh}"/>
-                                        </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{convenio.dbh}"/>
+                                    </p:column>
 
-                                        <p:column>
-                                            <h:outputText value="#{convenio.ebm}"/>
-                                        </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{convenio.dbm}"/>
+                                    </p:column>
 
-                                        <p:column>
-                                            <h:outputText value="#{convenio.dbh}"/>
-                                        </p:column>
+                                    <p:column>
+                                        <h:outputText value="$ #{convenio.recursosObtenidos}"/>
+                                    </p:column>
 
-                                        <p:column>
-                                            <h:outputText value="#{convenio.dbm}"/>
-                                        </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{convenio.objetivo}"/>
+                                    </p:column>
 
-                                        <p:column>
-                                            <h:outputText value="$ #{convenio.recursosObtenidos}"/>
-                                        </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{convenio.descripcion}"/>
+                                    </p:column>
 
-                                        <p:column>
-                                            <h:outputText value="#{convenio.objetivo}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{convenio.descripcion}"/>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{convenio.impacto}"/>
-                                        </p:column>
-
-                                        <f:facet name="footer">
-                                            En el mes de: #{conveniosC.dtoConvenios.mesConsulta} hay un total de: #{fn:length(conveniosC.dtoConvenios.lstConvenios)} registros de Convenios.
-                                        </f:facet>
-                                    </p:dataTable>
-                                    <p:confirmDialog global="true" 
-                                                     showEffect="fade" 
-                                                     hideEffect="fade" 
-                                                     styleClass="panel panel-primary"
-                                                     width="500" 
-                                                     closeOnEscape="true">
-                                        <p:commandButton value="Si" 
-                                                         type="button" 
-                                                         styleClass="ui-confirmdialog-yes btn btn-primary" 
-                                                         icon="ui-icon-check" />
-                                        <p:commandButton value="No" 
-                                                         type="button" 
-                                                         styleClass="ui-confirmdialog-no btn btn-primary" 
-                                                         icon="ui-icon-close" />
-                                    </p:confirmDialog>
-                                </c:if>
+                                    <p:column>
+                                        <h:outputText value="#{convenio.impacto}"/>
+                                    </p:column>
+                                </p:dataTable>
+                                <p:confirmDialog global="true" 
+                                                 showEffect="fade" 
+                                                 hideEffect="fade" 
+                                                 styleClass="panel panel-primary"
+                                                 width="500" 
+                                                 closeOnEscape="true">
+                                    <p:commandButton value="Si" 
+                                                     type="button" 
+                                                     styleClass="ui-confirmdialog-yes btn btn-primary" 
+                                                     icon="ui-icon-check" />
+                                    <p:commandButton value="No" 
+                                                     type="button" 
+                                                     styleClass="ui-confirmdialog-no btn btn-primary" 
+                                                     icon="ui-icon-close" />
+                                </p:confirmDialog>
                             </h:form>
                         </div>
                     </div>
@@ -249,7 +262,7 @@
                               width="700" 
                               height="auto"  
                               closeOnEscape="true" 
-                              visible="#{conveniosC.dtoConvenios.forzarAperturaDialogo}"
+                              visible="#{controladorConveniosPYE.dtoConvenios.forzarAperturaDialogo}"
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
@@ -273,7 +286,7 @@
                                                 enctype="multipart/form-data" 
                                                 class="form-inline"  >
                                             <o:inputFile id="files" 
-                                                         value="#{conveniosC.dtoConvenios.archivos}"  
+                                                         value="#{controladorConveniosPYE.dtoConvenios.archivos}"  
                                                          multiple="true" 
                                                          class="form-control"
                                                          accept="image/png,image/jpg,image/jpeg,application/pdf" 
@@ -284,7 +297,7 @@
                                                          requiredMessage="Debe elegir al menos un archivo." 
                                                          >
                                             </o:inputFile>
-                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{conveniosC.subirEvidencias()}" 
+                                            <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{controladorConveniosPYE.subirEvidencias()}" 
                                                              />
                                         </o:form>
                                     </f:facet>
@@ -294,14 +307,14 @@
                         <h:form id="frmEvidencias" >
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
-                                <div class="col-md-12"><p:outputLabel value="Convenio: #{conveniosC.dtoConvenios.registro.convenio.empresa.nombre}" /></div>
+                                <div class="col-md-12"><p:outputLabel value="Convenio: #{controladorConveniosPYE.dtoConvenios.registro.convenio.empresa.nombre}" /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px" />
                             <div class="row">
                                 <div class="col-md-12">
                                     <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
                                     <p:dataTable id="tblEvidencias" 
-                                                 value="#{conveniosC.dtoConvenios.listaEvidencias}" 
+                                                 value="#{controladorConveniosPYE.dtoConvenios.listaEvidencias}" 
                                                  var="evidencia"
                                                  emptyMessage="No se han registrado evidencias de este registro." 
                                                  tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
@@ -323,7 +336,7 @@
                                             <div class="btn-group">
                                                 <p:commandButton class="btn btn-info btn-sm" 
                                                                  icon="fa fa-trash" 
-                                                                 actionListener="#{conveniosC.eliminarEvidencia(evidencia)}" 
+                                                                 actionListener="#{controladorConveniosPYE.eliminarEvidencia(evidencia)}" 
                                                                  onsuccess="actualizar2();" 
                                                                  title="Eliminar evidencia.">
                                                     <p:confirm header="Eliminar evidencia" 
@@ -333,7 +346,7 @@
                                                 <p:spacer width="5" />
                                                 <p:commandLink class="btn btn-info btn-sm"
                                                                ajax="false" 
-                                                               action="#{conveniosC.descargarEvidencia(evidencia)}" 
+                                                               action="#{controladorConveniosPYE.descargarEvidencia(evidencia)}" 
                                                                target="_blank" 
                                                                title="Descargar evidencia.">
                                                     <i class="fa fa-download" />
@@ -344,7 +357,7 @@
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
                                         <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
                                         <f:facet name="footer">
-                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(conveniosC.dtoConvenios.listaEvidencias)}.</span>
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorConveniosPYE.dtoConvenios.listaEvidencias)}.</span>
                                         </f:facet>
                                     </p:dataTable>
                                 </div>
@@ -379,18 +392,18 @@
                                             <p:commandButton class="btn btn-primary" 
                                                              value="Eliminar alineación" 
                                                              icon="fa fa-trash" 
-                                                             actionListener="#{conveniosC.eliminarAlineacion()}" 
-                                                             rendered="#{conveniosC.verificaAlineacion(conveniosC.dtoConvenios.registro.convenio.registro)}" >
+                                                             actionListener="#{controladorConveniosPYE.eliminarAlineacion()}" 
+                                                             rendered="#{controladorConveniosPYE.verificaAlineacion(controladorConveniosPYE.dtoConvenios.registro.convenio.registro)}" >
                                                 <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
                                             </p:commandButton>
-                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{conveniosC.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorConveniosPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
                                         </f:facet>
                                     </p:toolbar>
                                 </div>
                             </div>                            
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <div class="row">
-                                <div class="col-md-12"><p:outputLabel value="Convenio: #{conveniosC.dtoConvenios.registro.convenio.empresa.nombre} " /></div>
+                                <div class="col-md-12"><p:outputLabel value="Convenio: #{controladorConveniosPYE.dtoConvenios.registro.convenio.empresa.nombre} " /></div>
                             </div>
                             <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
                             <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
@@ -399,10 +412,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="eje" value="#{conveniosC.dtoConvenios.alineacionEje}" valueChangeListener="#{conveniosC.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="eje" value="#{controladorConveniosPYE.dtoConvenios.alineacionEje}" valueChangeListener="#{controladorConveniosPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{conveniosC.dtoConvenios.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
                                         <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="eje"><p:autoUpdate /></p:message>
@@ -411,10 +424,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="estrategia" value="#{conveniosC.dtoConvenios.alineacionEstrategia}" valueChangeListener="#{conveniosC.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="estrategia" value="#{controladorConveniosPYE.dtoConvenios.alineacionEstrategia}" valueChangeListener="#{controladorConveniosPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{conveniosC.dtoConvenios.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
                                         <p:ajax process="estrategia" update="lineaAccion,actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="estrategia"><p:autoUpdate /></p:message>
@@ -423,10 +436,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="lineaAccion" value="#{conveniosC.dtoConvenios.alineacionLinea}" valueChangeListener="#{conveniosC.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                    <p:selectOneMenu id="lineaAccion" value="#{controladorConveniosPYE.dtoConvenios.alineacionLinea}" valueChangeListener="#{controladorConveniosPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{conveniosC.dtoConvenios.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
                                         <p:ajax process="lineaAccion" update="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="lineaAccion"><p:autoUpdate /></p:message>
@@ -435,10 +448,10 @@
                             <div class="row" style="#{fila}">
                                 <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
                                 <div class="#{col2}">
-                                    <p:selectOneMenu id="actividad" value="#{conveniosC.dtoConvenios.alineacionActividad}" required="true" converter="entidadConverter2">
+                                    <p:selectOneMenu id="actividad" value="#{controladorConveniosPYE.dtoConvenios.alineacionActividad}" required="true" converter="entidadConverter2">
                                         <p:autoUpdate />
                                         <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
-                                        <f:selectItems value="#{conveniosC.dtoConvenios.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <f:selectItems value="#{controladorConveniosPYE.dtoConvenios.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
                                         <p:ajax process="actividad" />
                                     </p:selectOneMenu>
                                     <p:message for="actividad"><p:autoUpdate /></p:message>
@@ -447,114 +460,14 @@
                         </h:form>
                     </p:dialog>
 
-                    <!-- Sección de subida -->
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12">
-                            <h:form id="formPrevisualizacionDatos" prependId="false">
-                                <c:if test="#{controladorArchivoConvenios.etapa eq etapa.CARGAR}">
-                                    <center>
-                                        <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente"
-                                                     paginator="true"
-                                                     rows="10" 
-                                                     rowsPerPageTemplate="5,10,20,30,40,50"
-                                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                     resizeMode="expand"
-                                                     id="dtbConvenios"
-                                                     var="conveniosLista" 
-                                                     value="#{conveniosC.dtoConvenios.lstDtoConvenios}"
-                                                     tableStyleClass="table-bordered table-hover table-condensed table-responsive">
-                                            <f:facet name="header">
-                                                Previsualización de datos
-                                            </f:facet>
-                                            <p:columnGroup type="header">
-                                                <p:row>
-                                                    <p:column headerText="Mes de registro"                  width="100"/>
-                                                    <p:column headerText="Empresa"                          width="400"/>
-                                                    <p:column headerText="Fecha de firma"                   width="100"/>
-                                                    <p:column headerText="Vigencia"                         width="100"/>
-                                                    <p:column headerText="Objetivo"                         width="400"/>
-                                                    <p:column headerText="Descripción"                      width="400"/>
-                                                    <p:column headerText="Impacto"                          width="400"/>
-                                                    <p:column headerText="Estudiantes Beneficiados Hombres" width="200"/>
-                                                    <p:column headerText="Estudiantes Beneficiados Mujeres" width="200"/>
-                                                    <p:column headerText="Docentes Beneficiados Hombres"    width="200"/>
-                                                    <p:column headerText="Docentes Beneficiados Mujeres"    width="200"/>
-                                                    <p:column headerText="Recursos obtenidos"               width="100"/>
-                                                </p:row>
-                                            </p:columnGroup>
-                                            
-                                            <p:column>
-                                                <h:outputText value="#{conveniosLista.descripcionEventoRegistro}"/>
-                                            </p:column>
-                                            
-                                            <p:column>
-                                                <h:outputText value="#{conveniosLista.convenio.empresa.nombre}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{conveniosLista.convenio.fechaFirma}">
-                                                    <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
-                                                </h:outputText>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{conveniosLista.convenio.vigencia}">
-                                                    <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
-                                                </h:outputText>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{conveniosLista.convenio.objetivo}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{conveniosLista.convenio.descripcion}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{conveniosLista.convenio.impacto}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{conveniosLista.convenio.ebh}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{conveniosLista.convenio.ebm}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{conveniosLista.convenio.dbh}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="#{conveniosLista.convenio.dbm}"/>
-                                            </p:column>
-
-                                            <p:column>
-                                                <h:outputText value="$ #{conveniosLista.convenio.recursosObtenidos}"/>
-                                            </p:column>
-                                            
-                                            <f:facet name="footer">
-                                                Su archivo de excel contiene un total de: #{fn:length(conveniosC.dtoConvenios.lstConvenios)} registros de Convenios.
-                                            </f:facet>
-                                        </p:dataTable>
-                                        <p></p>
-                                        <p:commandButton id="btnGuardarConvenios" value="Guardar Datos" actionListener="#{conveniosC.guardaConvenios}" icon="fa fa-pencil-square-o" class="btn-primary" update=":formPrevisualizacionDatos"/>
-                                        <p:spacer width="5" />
-                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{conveniosC.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
-                                    </center>
-                                </c:if>
-                            </h:form>
-                        </div>
-                    </div>
-
+                    
+                    
                     <p:dialog id="modalEdicionConvenio" 
                               widgetVar="modalEdicionConvenio" 
                               width="700" 
                               height="auto"  
                               closeOnEscape="true" 
-                              visible="#{conveniosC.dtoConvenios.forzarAperturaDialogo}"
+                              visible="#{controladorConveniosPYE.dtoConvenios.forzarAperturaDialogo}"
                               showEffect="fade" 
                               hideEffect="fade" 
                               modal="true" 
@@ -568,18 +481,18 @@
                         <h:form id="frmEdicionConvenio">
                             <div class="row">
                                 <div class="col-sm-12 col-md-12">
-                                    <p:outputLabel value="Edición del convenio: #{conveniosC.dtoConvenios.registro.convenio.fechaFirma}"/>
+                                    <p:outputLabel value="Edición del convenio: #{controladorConveniosPYE.dtoConvenios.registro.convenio.fechaFirma}"/>
                                 </div>
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
-
+                                
                                 <!--Organismo Vinculado-->
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <p:outputLabel value="Empresa: " for="acEmpresa" />
                                     <p:spacer width="5" />
                                     <br></br>
                                     <p:autoComplete id="acEmpresa"
-                                                    value="#{conveniosC.dtoConvenios.registro.convenio.empresa}"
-                                                    completeMethod="#{conveniosC.completeOrganismosVinculados}"
+                                                    value="#{controladorConveniosPYE.dtoConvenios.registro.convenio.empresa}"
+                                                    completeMethod="#{controladorConveniosPYE.completeOrganismosVinculados}"
                                                     inputStyle="width: 45.5em;"
                                                     queryDelay="1000"
                                                     var="empresa"
@@ -591,11 +504,11 @@
                                                     placeholder="Escriba el nombre y seleccione."
                                                     required="true"
                                                     requiredMessage="Favor de seleccionar una empresa"
-                                                    valueChangeListener="#{conveniosC.seleccionaOrganismoVinculado}"
+                                                    valueChangeListener="#{controladorConveniosPYE.seleccionaOrganismoVinculado}"
                                                     >
                                         <p:column><h:outputText value="#{empresa.empresa}" /></p:column>
                                         <p:column><h:outputText value="#{empresa.nombre}"/></p:column>
-                                        <p:ajax event="itemSelect" process="@this" update="@this"/>
+                                        <p:ajax event="itemSelect" global="false" process="@this" update="@this"/>
                                         <p:message for="acEmpresa" />
                                     </p:autoComplete>
                                 </div>
@@ -609,8 +522,8 @@
                                                 label="iptFechaFirma"
                                                 required="true"
                                                 requiredMessage="Ingrese Fecha de firma"
-                                                value="#{conveniosC.dtoConvenios.registro.convenio.fechaFirma}"
-                                                valueChangeListener="#{conveniosC.validaFechaFirma}"
+                                                value="#{controladorConveniosPYE.dtoConvenios.registro.convenio.fechaFirma}"
+                                                valueChangeListener="#{controladorConveniosPYE.validaFechaFirma}"
                                                 pattern="yyyy-MM-dd" 
                                                 mask="true"
                                                 locale="es"
@@ -631,8 +544,8 @@
                                                 label="iptFechaVigencia"
                                                 required="true"
                                                 requiredMessage="Ingrese Fecha de Vigencia"
-                                                value="#{conveniosC.dtoConvenios.registro.convenio.vigencia}"
-                                                valueChangeListener="#{conveniosC.validaFechaVigencia}"
+                                                value="#{controladorConveniosPYE.dtoConvenios.registro.convenio.vigencia}"
+                                                valueChangeListener="#{controladorConveniosPYE.validaFechaVigencia}"
                                                 pattern="yyyy-MM-dd" 
                                                 mask="true"
                                                 styleClass="campo2Partes"
@@ -659,12 +572,12 @@
                                                      required="true"
                                                      class="form-control"
                                                      requiredMessage="Ingrese el objetivo del convenio"
-                                                     value="#{conveniosC.dtoConvenios.registro.convenio.objetivo}"/>
+                                                     value="#{controladorConveniosPYE.dtoConvenios.registro.convenio.objetivo}"/>
                                     <h:outputText id="displayOBJ" />
                                     <p:watermark for="itaObjetivoConvenio" value="Establecer la colaboración conjuntantamente en la consecución de sus fines, mediante el desarrollo conjuntode actividades que involucren y vinculen a los alumnos de la Institución para que estos realicen residencias profesionales en las labores cotidianas que se llevan acabo en la empresa, conforme a la operación diaria de la empresa y a lo pactado en este documento *" />
                                     <p:message for="itaObjetivoConvenio" />
                                 </div>
-
+                                
                                 <!--Descripción-->
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Descripción: " for="itaDescripcionConvenio" />
@@ -679,12 +592,12 @@
                                                      required="true"
                                                      class="form-control"
                                                      requiredMessage="Ingrese el objetivo del convenio"
-                                                     value="#{conveniosC.dtoConvenios.registro.convenio.descripcion}"/>
+                                                     value="#{controladorConveniosPYE.dtoConvenios.registro.convenio.descripcion}"/>
                                     <h:outputText id="displayDESC" />
                                     <p:watermark for="itaDescripcionConvenio" value="Proveer de espacios de estadia a los alumnos de programa educativo de gastronómia y administración en sus dos niveles educativos. *" />
                                     <p:message for="itaDescripcionConvenio" />
                                 </div>
-
+                                
                                 <!--Impacto-->
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Impacto: " for="itaImpactoConvenio" />
@@ -699,12 +612,12 @@
                                                      required="true"
                                                      class="form-control"
                                                      requiredMessage="Ingrese el impacto del convenio"
-                                                     value="#{conveniosC.dtoConvenios.registro.convenio.impacto}"/>
+                                                     value="#{controladorConveniosPYE.dtoConvenios.registro.convenio.impacto}"/>
                                     <h:outputText id="displayIMP" />
                                     <p:watermark for="itaImpactoConvenio" value="Ampliar, aplicar y consolidar el conocimiento y habilidades desarrolladas a través de los cursos del área en que se especialice. *" />
                                     <p:message for="itaImpactoConvenio" />
                                 </div>
-
+                                
                                 <div class="col-sm-3 col-md-3" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Estudiantes beneficiados hombres: " for="spnEBH" />
                                     <p:spacer width="5" />
@@ -713,13 +626,13 @@
                                                label="spnEBH"
                                                required="true"
                                                requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
-                                               value="#{conveniosC.dtoConvenios.registro.convenio.ebh}" 
+                                               value="#{controladorConveniosPYE.dtoConvenios.registro.convenio.ebh}" 
                                                min="0" max="1000"
                                                styleClass="campo4Partes"/>
                                     <p:watermark for="spnEBH" value="100 *" />
                                     <p:message for="spnEBH" />
                                 </div>
-
+                                
                                 <div class="col-sm-3 col-md-3" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Estudiantes beneficiados mujeres " for="spnEBM" />
                                     <p:spacer width="5" />
@@ -728,13 +641,13 @@
                                                label="spnEBM"
                                                required="true"
                                                requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
-                                               value="#{conveniosC.dtoConvenios.registro.convenio.ebm}" 
+                                               value="#{controladorConveniosPYE.dtoConvenios.registro.convenio.ebm}" 
                                                min="0" max="1000"
                                                styleClass="campo4Partes"/>
                                     <p:watermark for="spnEBM" value="130 *" />
                                     <p:message for="spnEBM" />
                                 </div>                                
-
+                                
                                 <div class="col-sm-3 col-md-3" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Docentes beneficiados hombres: " for="spnDBH" />
                                     <p:spacer width="5" />
@@ -743,13 +656,13 @@
                                                label="spnDBH"
                                                required="true"
                                                requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
-                                               value="#{conveniosC.dtoConvenios.registro.convenio.dbh}" 
+                                               value="#{controladorConveniosPYE.dtoConvenios.registro.convenio.dbh}" 
                                                min="0" max="1000"
                                                styleClass="campo4Partes"/>
                                     <p:watermark for="spnDBH" value="140 *" />
                                     <p:message for="spnDBH" />
                                 </div>
-
+                                
                                 <div class="col-sm-3 col-md-3" style="margin-bottom: 10px;">
                                     <p:outputLabel value="Docentes beneficiados mujeres: " for="spnDBM" />
                                     <p:spacer width="5" />
@@ -758,13 +671,13 @@
                                                label="spnDBM"
                                                required="true"
                                                requiredMessage="En caso de que no aplique, favor de ingresar el valor 0"
-                                               value="#{conveniosC.dtoConvenios.registro.convenio.dbm}" 
+                                               value="#{controladorConveniosPYE.dtoConvenios.registro.convenio.dbm}" 
                                                min="0" max="1000"
                                                styleClass="campo4Partes"/>
                                     <p:watermark for="spnDBM" value="250 *" />
                                     <p:message for="spnDBM" />
                                 </div>
-
+                                
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 10px; align-content: center;">
                                     <p:outputLabel value="Recursos obtenidos: " for="spnRecursosObtenidos" />
                                     <p:spacer width="5" />
@@ -773,7 +686,7 @@
                                                label="spnRecursosObtenidos"
                                                required="true"
                                                requiredMessage="Ingrese la cantidad del monto ingresado"
-                                               value="#{conveniosC.dtoConvenios.registro.convenio.recursosObtenidos}" 
+                                               value="#{controladorConveniosPYE.dtoConvenios.registro.convenio.recursosObtenidos}" 
                                                min="0" max="1000000"
                                                styleClass="campoRecursosObtenidos"
                                                stepFactor="0.00"
@@ -782,7 +695,7 @@
                                     <p:watermark for="spnRecursosObtenidos" value="40550 *" />
                                     <p:message for="spnRecursosObtenidos" />
                                 </div>
-
+                                
                                 <div class="col-sm-12 col-md-12"><p:separator/></div>
                                 <div class="col-sm-12 col-md-12" style="margin-bottom: 15px;">
                                     <center>
@@ -790,7 +703,7 @@
                                                          value="Actualizar Cambios"
                                                          icon="fa fa-save"
                                                          class="btn-primary"
-                                                         actionListener="#{conveniosC.editaConvenio}"
+                                                         actionListener="#{controladorConveniosPYE.editaConvenio}"
                                                          update="@form:frmEdicionConvenio" 
                                                          process="@form:frmEdicionConvenio"
                                                          />
@@ -802,40 +715,6 @@
                     </p:dialog>
 
                 </div>
-
-                <p:dialog widgetVar="modalCargaArchivo" 
-                          width="400" 
-                          height="auto" 
-                          showEffect="fade" 
-                          hideEffect="fade" 
-                          modal="true" 
-                          header="Carga de Archivo" 
-                          styleClass="panel panel-primary" 
-                          responsive="true" 
-                          resizable="false" 
-                          maximizable="false">
-                    <center>
-                        <h:form id="formularioContenedor" enctype="multipart/form-data">
-                            <o:inputFile id="file" 
-                                         value="#{controladorArchivoConvenios.file}" 
-                                         acceptMessage="Solo se permiten archivos XLSX." 
-                                         maxsize="#{100*1024*1024}" 
-                                         maxsizeMessage="El tamaño máximo permitido son 100MB." />
-                            <p></p>
-                            <h:message id="messageForFile" for="file" />
-                            <h:commandButton id="btnuploadFile" 
-                                             value="Subir archivo" 
-                                             class="btn-primary btn-info" 
-                                             action="#{controladorArchivoConvenios.subirExcelConvenios}"/>
-                            <p:blockUI block="@form:formularioContenedor" 
-                                       widgetVar="bloqueoCargaFile"
-                                       trigger="formularioContenedor:btnuploadFile">
-                                Cargando archivo espere por favor.<br />
-                            </p:blockUI>
-                        </h:form>
-                    </center>
-                </p:dialog>
-
             </div>
         </div>
     </ui:define>

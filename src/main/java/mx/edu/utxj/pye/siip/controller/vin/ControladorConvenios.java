@@ -32,14 +32,11 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
-import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacion;
-import mx.edu.utxj.pye.sgi.entity.pye2.ProgramasBeneficiadosVinculacionPK;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.dto.vin.DtoConvenios;
 import mx.edu.utxj.pye.siip.dto.vin.DTOConvenio;
-import mx.edu.utxj.pye.siip.dto.vin.DTOProgramasBeneficiadosVinculacion;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
@@ -114,7 +111,7 @@ public class ControladorConvenios implements Serializable {
         try {
             if (rutaArchivo != null) {
                 dtoConvenios.setRutaArchivo(rutaArchivo);
-                dtoConvenios.setLstConvenios(ejbConvenios.getListaConvenios(rutaArchivo));
+                dtoConvenios.setLstDtoConvenios(ejbConvenios.getListaConvenios(rutaArchivo));
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -127,9 +124,9 @@ public class ControladorConvenios implements Serializable {
     }
 
     public void guardaConvenios() {
-        if (dtoConvenios.getLstConvenios() != null) {
+        if (dtoConvenios.getLstDtoConvenios() != null) {
             try {
-                ejbConvenios.guardaConvenios(dtoConvenios.getLstConvenios(), dtoConvenios.getRegistroTipo(), dtoConvenios.getEjesRegistro(), dtoConvenios.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
+                ejbConvenios.guardaConvenios(dtoConvenios.getLstDtoConvenios(), dtoConvenios.getRegistroTipo(), dtoConvenios.getEjesRegistro(), dtoConvenios.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
                 Messages.addGlobalInfo("La información se ha almacenado de manera correcta");
             } catch (Throwable ex) {
                 Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -148,7 +145,7 @@ public class ControladorConvenios implements Serializable {
     }
 
     public void cancelarArchivo() {
-        dtoConvenios.getLstConvenios().clear();
+        dtoConvenios.getLstDtoConvenios().clear();
         if (dtoConvenios.getRutaArchivo() != null) {
             ServicioArchivos.eliminarArchivo(dtoConvenios.getRutaArchivo());
             dtoConvenios.setRutaArchivo(null);
@@ -175,6 +172,7 @@ public class ControladorConvenios implements Serializable {
         dtoConvenios.setAnioConsulta((short) e.getNewValue());
         dtoConvenios.setMesesConsulta(ejbModulos.getMesesRegistros(dtoConvenios.getAnioConsulta(), dtoConvenios.getRegistros(),dtoConvenios.getArea()));
         buscaConvenios();
+        Ajax.update("formMuestraDatosActivos");
     }
     
     public void buscaConvenios() {

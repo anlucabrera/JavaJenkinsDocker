@@ -30,6 +30,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
+import mx.edu.utxj.pye.siip.dto.vin.DtoConvenioEventoRegistro;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -59,13 +60,13 @@ public class ServicioConvenios implements EjbConvenios {
     private static final Logger LOG = Logger.getLogger(ServicioConvenios.class.getName());
     
     @Override
-    public List<Convenios> getListaConvenios(String rutaArchivo) throws Throwable {
+    public List<DtoConvenioEventoRegistro> getListaConvenios(String rutaArchivo) throws Throwable {
         if (Files.exists(Paths.get(rutaArchivo))) {
             List<Boolean> validarCelda = new ArrayList<>();
             List<String> datosInvalidos = new ArrayList<>();
 
-            List<Convenios> convenios = new ArrayList<>();
-            Convenios convenio;
+            List<DtoConvenioEventoRegistro> convenios = new ArrayList<>();
+            DtoConvenioEventoRegistro convenio;
             OrganismosVinculados organismoVinculado;
 
             File excelConvenios = new File(rutaArchivo);
@@ -79,7 +80,7 @@ public class ServicioConvenios implements EjbConvenios {
                 for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
                     fila = (XSSFRow) (Row) primeraHoja.getRow(i);
                     if (fila.getCell(2).getDateCellValue() != null) {
-                        convenio = new Convenios();
+                        convenio = new DtoConvenioEventoRegistro(new Convenios(), 0, "");
                         organismoVinculado = new OrganismosVinculados();
 
                         if (fila.getCell(1).getCellTypeEnum() == CellType.FORMULA) {
@@ -99,7 +100,7 @@ public class ServicioConvenios implements EjbConvenios {
                             switch (fila.getCell(2).getCellTypeEnum()) {
                                 case NUMERIC:
                                     if (DateUtil.isCellDateFormatted(fila.getCell(2))) {
-                                        convenio.setFechaFirma(fila.getCell(2).getDateCellValue());
+                                        convenio.getConvenio().setFechaFirma(fila.getCell(2).getDateCellValue());
                                     }
                                     break;
                                 default:
@@ -114,7 +115,7 @@ public class ServicioConvenios implements EjbConvenios {
                             switch (fila.getCell(3).getCellTypeEnum()) {
                                 case NUMERIC:
                                     if (DateUtil.isCellDateFormatted(fila.getCell(3))) {
-                                        convenio.setVigencia(fila.getCell(3).getDateCellValue());
+                                        convenio.getConvenio().setVigencia(fila.getCell(3).getDateCellValue());
                                     }
                                     break;
                                 default:
@@ -128,7 +129,7 @@ public class ServicioConvenios implements EjbConvenios {
                         if (fila.getCell(4).getCellTypeEnum() == CellType.STRING) {
                             switch (fila.getCell(4).getCellTypeEnum()) {
                                 case STRING:
-                                    convenio.setObjetivo(fila.getCell(4).getStringCellValue());
+                                    convenio.getConvenio().setObjetivo(fila.getCell(4).getStringCellValue());
                                     break;
                                 default:
                                     break;
@@ -141,7 +142,7 @@ public class ServicioConvenios implements EjbConvenios {
                         if (fila.getCell(5).getCellTypeEnum() == CellType.STRING) {
                             switch (fila.getCell(5).getCellTypeEnum()) {
                                 case STRING:
-                                    convenio.setDescripcion(fila.getCell(5).getStringCellValue());
+                                    convenio.getConvenio().setDescripcion(fila.getCell(5).getStringCellValue());
                                     break;
                                 default:
                                     break;
@@ -154,7 +155,7 @@ public class ServicioConvenios implements EjbConvenios {
                         if (fila.getCell(6).getCellTypeEnum() == CellType.STRING) {
                             switch (fila.getCell(6).getCellTypeEnum()) {
                                 case STRING:
-                                    convenio.setImpacto(fila.getCell(6).getStringCellValue());
+                                    convenio.getConvenio().setImpacto(fila.getCell(6).getStringCellValue());
                                     break;
                                 default:
                                     break;
@@ -167,7 +168,7 @@ public class ServicioConvenios implements EjbConvenios {
                         if (fila.getCell(7).getCellTypeEnum() == CellType.NUMERIC) {
                             switch (fila.getCell(7).getCellTypeEnum()) {
                                 case NUMERIC:
-                                    convenio.setEbh((short) fila.getCell(7).getNumericCellValue());
+                                    convenio.getConvenio().setEbh((short) fila.getCell(7).getNumericCellValue());
                                     break;
                                 default:
                                     break;
@@ -180,7 +181,7 @@ public class ServicioConvenios implements EjbConvenios {
                         if (fila.getCell(8).getCellTypeEnum() == CellType.NUMERIC) {
                             switch (fila.getCell(8).getCellTypeEnum()) {
                                 case NUMERIC:
-                                    convenio.setEbm((short) fila.getCell(8).getNumericCellValue());
+                                    convenio.getConvenio().setEbm((short) fila.getCell(8).getNumericCellValue());
                                     break;
                                 default:
                                     break;
@@ -193,7 +194,7 @@ public class ServicioConvenios implements EjbConvenios {
                         if (fila.getCell(9).getCellTypeEnum() == CellType.NUMERIC) {
                             switch (fila.getCell(9).getCellTypeEnum()) {
                                 case NUMERIC:
-                                    convenio.setDbh((short) fila.getCell(9).getNumericCellValue());
+                                    convenio.getConvenio().setDbh((short) fila.getCell(9).getNumericCellValue());
                                     break;
                                 default:
                                     break;
@@ -206,7 +207,7 @@ public class ServicioConvenios implements EjbConvenios {
                         if (fila.getCell(10).getCellTypeEnum() == CellType.NUMERIC) {
                             switch (fila.getCell(10).getCellTypeEnum()) {
                                 case NUMERIC:
-                                    convenio.setDbm((short) fila.getCell(10).getNumericCellValue());
+                                    convenio.getConvenio().setDbm((short) fila.getCell(10).getNumericCellValue());
                                     break;
                                 default:
                                     break;
@@ -219,7 +220,7 @@ public class ServicioConvenios implements EjbConvenios {
                         if (fila.getCell(12).getCellTypeEnum() == CellType.FORMULA) {
                             switch (fila.getCell(12).getCellTypeEnum()) {
                                 case FORMULA:
-                                    convenio.setRecursosObtenidos(fila.getCell(12).getNumericCellValue());
+                                    convenio.getConvenio().setRecursosObtenidos(fila.getCell(12).getNumericCellValue());
                                     organismoVinculado.setNombre(fila.getCell(13).getStringCellValue());
                                     break;
                                 default:
@@ -229,9 +230,23 @@ public class ServicioConvenios implements EjbConvenios {
                             validarCelda.add(false);
                             datosInvalidos.add("Dato incorrecto: Recursos Obtenidos en la columna: " + (13 + 1) + " y fila: " + (i + 1));
                         }
+                        
+                        if (fila.getCell(15).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(15).getCellTypeEnum()) {
+                                case FORMULA:
+                                    convenio.setDescripcionEventoRegistro(fila.getCell(14).getStringCellValue());
+                                    convenio.setEventoRegistro((int)fila.getCell(15).getNumericCellValue());
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            validarCelda.add(false);
+                            datosInvalidos.add("Dato incorrecto: Evento Registro en la columna: " + (15 + 1) + " y fila: " + (i + 1));
+                        }
 
                         if (!organismoVinculado.getNombre().isEmpty()) {
-                            convenio.setEmpresa(organismoVinculado);
+                            convenio.getConvenio().setEmpresa(organismoVinculado);
                             convenios.add(convenio);
                         }
 
@@ -271,29 +286,31 @@ public class ServicioConvenios implements EjbConvenios {
     }
 
     @Override
-    public void guardaConvenios(List<Convenios> listaConvenios, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
+    public void guardaConvenios(List<DtoConvenioEventoRegistro> listaConvenios, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
         List<String> listaCondicional = new ArrayList<>();
         listaConvenios.forEach((convenios) -> {
             facadeVinculacion.setEntityClass(Convenios.class);
-            Convenios convenioEncontrado = getConvenio(convenios);
+            Convenios convenioEncontrado = getConvenio(convenios.getConvenio());
             Boolean registroAlmacenado = false;
             if (convenioEncontrado != null) {
-                listaCondicional.add(convenios.getEmpresa().getEmpresa() + " " + convenios.getFechaFirma());
+                listaCondicional.add(convenios.getConvenio().getEmpresa().getEmpresa() + " " + convenios.getConvenio().getFechaFirma());
                 registroAlmacenado = true;
             }
             if (registroAlmacenado) {
                 if(ejbModulos.getEventoRegistro().getEventoRegistro().equals(convenioEncontrado.getRegistros().getEventoRegistro().getEventoRegistro())){
-                    convenios.setRegistro(convenioEncontrado.getRegistro());
-                    convenios.getEmpresa().setRegistro(convenioEncontrado.getEmpresa().getRegistro());
-                    facadeVinculacion.edit(convenios);
+                    convenios.getConvenio().setRegistro(convenioEncontrado.getRegistro());
+                    convenios.getConvenio().getEmpresa().setRegistro(convenioEncontrado.getEmpresa().getRegistro());
+                    facadeVinculacion.edit(convenios.getConvenio());
                 }else{
-                    listaCondicional.remove(convenios.getEmpresa().getEmpresa() + " " + convenios.getFechaFirma());
+                    listaCondicional.remove(convenios.getConvenio().getEmpresa().getEmpresa() + " " + convenios.getConvenio().getFechaFirma());
                 }
             } else {
-                Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, eventosRegistros);
-                convenios.getEmpresa().setRegistro(ejbOrganismosVinculados.getRegistroOrganismoEspecifico(convenios.getEmpresa().getEmpresa()));
-                convenios.setRegistro(registro.getRegistro());
-                facadeVinculacion.create(convenios);
+                Registros registro = ejbModulos.getRegistro(registrosTipo, ejesRegistro, area, facadeVinculacion.getEntityManager().createQuery("SELECT e FROM EventosRegistros e WHERE e.eventoRegistro = :eventoRegistro", EventosRegistros.class)
+                    .setParameter("eventoRegistro", convenios.getEventoRegistro())
+                    .getSingleResult());
+                convenios.getConvenio().getEmpresa().setRegistro(ejbOrganismosVinculados.getRegistroOrganismoEspecifico(convenios.getConvenio().getEmpresa().getEmpresa()));
+                convenios.getConvenio().setRegistro(registro.getRegistro());
+                facadeVinculacion.create(convenios.getConvenio());
             }
             facadeVinculacion.flush();
         });

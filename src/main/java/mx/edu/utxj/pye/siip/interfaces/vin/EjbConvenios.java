@@ -13,6 +13,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Convenios;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
+import mx.edu.utxj.pye.siip.dto.vin.DtoConvenioEventoRegistro;
 
 /**
  *
@@ -21,9 +22,9 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 @Local
 public interface EjbConvenios {
     
-    public List<Convenios> getListaConvenios(String rutaArchivo) throws Throwable;
+    public List<DtoConvenioEventoRegistro> getListaConvenios(String rutaArchivo) throws Throwable;
     
-    public void guardaConvenios(List<Convenios> listaConvenios, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable;
+    public void guardaConvenios(List<DtoConvenioEventoRegistro> listaConvenios, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable;
     
     public Convenios getConvenio(Convenios convenio);
     
