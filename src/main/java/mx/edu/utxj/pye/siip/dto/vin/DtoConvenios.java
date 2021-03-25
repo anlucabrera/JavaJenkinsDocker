@@ -72,6 +72,7 @@ public final class DtoConvenios {
     @Getter @Setter AreasUniversidad area;
     @Getter @Setter String rutaArchivo;
     
+    @Getter @Setter private List<DtoConvenioEventoRegistro> lstDtoConvenios;
     @Getter @Setter private List<Convenios> lstConvenios;
 
     public DtoConvenios() {   

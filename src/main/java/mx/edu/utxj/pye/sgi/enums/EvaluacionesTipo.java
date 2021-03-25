@@ -20,7 +20,7 @@ public enum EvaluacionesTipo {//Tutor, Control interno, Docente, Satisfacción d
     EVALUACION_ETICA(8, "Evaluación ética"),
     EVALUACION_AMBIENTAL(9, "Evaluación ambiental"),
     CONDICIONES_ESTUDIO(10, "Condiciones estudio"),
-    TUTOR(11,"Tutor"),
+    TUTOR(11,"Tutor (Cuestionario 1)"),
     TUTOR_2(12,"Tutor (Cuestionario 2)"),
     DOCENTE(13,"Docente materia"),
     DOCENTE_2(14,"Docente materia (Cuestionario 2 por contingencia)"),

@@ -105,7 +105,7 @@ public class EjbNuevaEvaluacionTutor {
         a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,8.0f, "El Tutor me proporcionó información del servicio de enfermería que proporciona la Universidad.", ""));
         a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,9.0f, "Fue fácil localizar a mi Tutor en las sesiones de Tutoría Individual.", ""));
         a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,10.0f, "En general, el desempeño de mi Tutor fue.", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,11.0f, "Comentarios hacia el tutor. (Mínimo 11 caracteres)", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,11.0f, "Comentarios hacia el tutor. (Mínimo 20 caracteres)", ""));
         l.add(a1);
         return l;
     }
