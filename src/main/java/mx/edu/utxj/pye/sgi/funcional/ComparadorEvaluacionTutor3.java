@@ -20,7 +20,7 @@ public class ComparadorEvaluacionTutor3 implements Comparador<EvaluacionTutoresR
                 || resultado.getR8() == null
                 || resultado.getR9() == null
                 || resultado.getR10() == null
-                || comparadoreTexto(resultado.getR11(),11)
+                || comparadoreTexto(resultado.getR11(),20)
 
         ){
             return false;
@@ -36,7 +36,7 @@ public class ComparadorEvaluacionTutor3 implements Comparador<EvaluacionTutoresR
                 || resultado.getR8() == null)
                 || resultado.getR9() == null
                 || resultado.getR10() == null
-                || comparadoreTexto(resultado.getR11(),11);
+                || comparadoreTexto(resultado.getR11(),20);
     }
     public boolean comparadoreTexto(String pregunta, int t) {
         if (pregunta == null) {
