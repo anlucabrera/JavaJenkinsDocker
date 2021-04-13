@@ -41,6 +41,7 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
     @Getter @Setter String encabezado;
     @Getter @Setter PdfTemplate total;
     @Getter @Setter SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    @Getter @Setter Date fechaFinVeda = new Date(2021, 06, 06);
     @Getter @Setter StreamedContent contenioArchivo;
     @Getter @Setter DefaultStreamedContent download;
     @EJB EjbConsultaCalificacion ejb;
@@ -49,7 +50,7 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
     public void generarPdf(Grupo grupo, List<DtoVistaCalificacionestitulosTabla> titulos, PeriodosEscolares periodoSelect, List<DtoPresentacionCalificacionesReporte> calificaciones, AreasUniversidad areasUniversidad) throws IOException, DocumentException {
         //Se crean las variables a utilizar para la creación del pdf
         Personal director = ejb.obtenerDirector(grupo.getPlan()).getValor();
-        calificaciones.stream().forEach(System.out::println);
+        //calificaciones.stream().forEach(System.out::println);
         List<DtoPresentacionCalificacionesReporte> dpcp = calificaciones
                 .stream().filter(dto -> dto.getTipoEstudiante().equals(Short.parseShort("1"))).collect(Collectors.toList());
         Document document;
@@ -65,7 +66,7 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
         String nombrePdf = "acta_final"+grupo.getLiteral()+"_"+grupo.getTutor()+".pdf";
         //String ruta = ServicioArchivos.carpetaRaiz.concat(File.separator).concat("acta_final").concat(File.separator).concat(nombrePdf);
         Image logoSep = Image.getInstance("C:\\archivos\\acta_final\\logoSep.jpg");
-        Image logoUT = Image.getInstance("C:\\archivos\\acta_final\\logoUT.png");
+        Image logoUT = Image.getInstance("C:\\archivos\\acta_final\\logoUT.jpg");
         Font fontBold = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD);
         Font fontNormal = new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL);
         Font fontMateria = new Font(Font.FontFamily.HELVETICA, 7, Font.NORMAL);
@@ -104,7 +105,7 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
         parrafo3.setAlignment(Element.ALIGN_CENTER);
         parrafo3.setLeading(11,0);
 
-        logoUT.scaleToFit(80,95);
+        logoUT.scaleToFit(70,95);
         logoUT.setAbsolutePosition(655f, 556f);
         logoUT.setAlignment(Element.ALIGN_RIGHT);
         fechaImpresion = new Paragraph("Fecha de impresión: ", fontNormal);
@@ -285,7 +286,11 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
         document.add(parrafo2);
         document.add(parrafo3);
         document.add(logoSep);
-        document.add(logoUT);
+            document.add(logoUT);
+        if(new Date().after(fechaFinVeda)){
+            
+            //System.out.println("La fecha de hoy es despues de la veda electoral");
+        }
         document.add(fechaImpresion);
         document.add(fecha);
         document.add(gradoGrupo);

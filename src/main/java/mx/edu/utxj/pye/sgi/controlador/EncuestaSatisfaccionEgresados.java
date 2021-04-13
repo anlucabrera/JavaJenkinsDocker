@@ -43,8 +43,9 @@ public class EncuestaSatisfaccionEgresados implements Serializable {
             if(dto.evaluacion == null) return;
                 dto.evaluador = logonMB.getCurrentUser();
                 dto.alumno=ejb.obtenerAlumnos(dto.evaluador);
+                //System.out.println("Dto Alumno:"+ dto.alumno);
                 if(dto.alumno == null) return;
-                    dto.evaluadorr= Integer.parseInt(dto.evaluador);
+                    dto.evaluadorr= Integer.parseInt(dto.alumno.getMatricula());
                     dto.resultadoESEI = ejb.getResultado(dto.evaluacion, dto.evaluadorr, dto.respuestas);
                     if(dto.resultadoESEI == null) return;
                         dto.apartados = ejb.getApartados();
