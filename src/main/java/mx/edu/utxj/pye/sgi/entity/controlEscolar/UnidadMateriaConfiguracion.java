@@ -87,6 +87,8 @@ public class UnidadMateriaConfiguracion implements Serializable {
     private List<AccionesDeMejora> accionesDeMejoraList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion", fetch = FetchType.LAZY)
     private List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configuracion", fetch = FetchType.LAZY)
+    private List<UnidadMateriaConfiguracionEvidenciaInstrumento> unidadMateriaConfiguracionEvidenciaInstrumentoList;
 
     public UnidadMateriaConfiguracion() {
     }
@@ -219,7 +221,16 @@ public class UnidadMateriaConfiguracion implements Serializable {
     public void setUnidadMateriaConfiguracionDetalleList(List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList) {
         this.unidadMateriaConfiguracionDetalleList = unidadMateriaConfiguracionDetalleList;
     }
+    
+    @XmlTransient
+    public List<UnidadMateriaConfiguracionEvidenciaInstrumento> getUnidadMateriaConfiguracionEvidenciaInstrumentoList() {
+        return unidadMateriaConfiguracionEvidenciaInstrumentoList;
+    }
 
+    public void setUnidadMateriaConfiguracionEvidenciaInstrumentoList(List<UnidadMateriaConfiguracionEvidenciaInstrumento> unidadMateriaConfiguracionEvidenciaInstrumentoList) {
+        this.unidadMateriaConfiguracionEvidenciaInstrumentoList = unidadMateriaConfiguracionEvidenciaInstrumentoList;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -244,5 +255,5 @@ public class UnidadMateriaConfiguracion implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion[ configuracion=" + configuracion + " ]";
     }
-    
-}
+
+    }

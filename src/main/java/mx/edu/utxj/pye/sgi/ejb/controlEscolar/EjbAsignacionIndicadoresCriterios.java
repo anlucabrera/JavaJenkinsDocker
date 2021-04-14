@@ -31,6 +31,7 @@ import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsigEvidenciasInstrumentosEval;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsignadosIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
@@ -172,10 +173,14 @@ public class EjbAsignacionIndicadoresCriterios {
      */
     public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicaDocente(PersonalActivo docente, PeriodosEscolares periodo){
         try{
+            List<Integer> grados = new ArrayList<>();
+            grados.add(6);
+            grados.add(11);
             //buscar carga académica del personal docente logeado del periodo seleccionado
-            List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo", CargaAcademica.class)
+            List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo AND c.cveGrupo.grado NOT IN :grados", CargaAcademica.class)
                     .setParameter("docente", docente.getPersonal().getClave())
                     .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("grados", grados)
                     .getResultStream()
                     .distinct()
                     .map(cargaAcademica -> pack(cargaAcademica))
@@ -1061,5 +1066,247 @@ public class EjbAsignacionIndicadoresCriterios {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la configuracioón de la materia seleccionada. (EjbAsignacionIndicadoresCriterios.verificarValidacionConfiguracion)", e, null);
         }
        
+    }
+    
+    // MÉTODOS PARA ASIGNACIÓN DE EVIDENCIAS E INSTRUMENTOS DE EVALUACIÓN
+    
+    /**
+     * Permite obtener la lista de evidencias e instrumentos de evaluación que deberá de registrar de manera obligatoria
+     * @param dtoCargaAcademica Materia de la que se buscará la lista de evaluación sugerida por unidad
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoAsigEvidenciasInstrumentosEval>> getEvidenciasInstrumentosSugeridos(DtoCargaAcademica dtoCargaAcademica){
+        try {
+            
+            List<UnidadMateriaConfiguracion> listaUnidadesConfiguradas = buscarConfiguracionUnidadMateria(dtoCargaAcademica).getValor();
+            
+            List<DtoAsigEvidenciasInstrumentosEval> listaEvidenciasInstrumentos = new ArrayList<>();
+
+            listaUnidadesConfiguradas.forEach(unidadConfigurada -> {
+                
+                List<EvaluacionSugerida> listaEvaluacionesSugeridas = em.createQuery("SELECT e FROM EvaluacionSugerida e WHERE e.unidadMateria.idUnidadMateria=:unidad", EvaluacionSugerida.class)
+                        .setParameter("unidad", unidadConfigurada.getIdUnidadMateria().getIdUnidadMateria())
+                        .getResultStream()
+                        .collect(Collectors.toList());
+
+                listaEvaluacionesSugeridas.forEach(evaluacionSug -> {
+                    Integer valorPorcentual = 0;
+                    DtoAsigEvidenciasInstrumentosEval dtoAsigEvidenciasInstrumentosEval = new DtoAsigEvidenciasInstrumentosEval(unidadConfigurada, evaluacionSug.getEvidencia(), evaluacionSug.getInstrumento(), valorPorcentual, evaluacionSug.getMetaInstrumento());
+                    listaEvidenciasInstrumentos.add(dtoAsigEvidenciasInstrumentosEval);
+                });
+                
+            });
+            return ResultadoEJB.crearCorrecto(listaEvidenciasInstrumentos, "Lista de evidencias e instrumentos de evaluación sugeridos.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias e instrumentos de evaluación sugeridos. (EjbAsignacionIndicadoresCriterios.getEvidenciasInstrumentosSugeridos)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de evidencias e instrumentos de evaluación que deberá de registrar de manera obligatoria
+     * @param dtoCargaAcademica Materia de la que se buscará la lista de evaluación sugerida por unidad
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<UnidadMateriaConfiguracionEvidenciaInstrumento>> buscarAsignacionEvidenciasInstrumentos(DtoCargaAcademica dtoCargaAcademica){
+        try {
+            
+            List<UnidadMateriaConfiguracion> listaUnidadesConfiguradas = buscarConfiguracionUnidadMateria(dtoCargaAcademica).getValor();
+           
+            List<UnidadMateriaConfiguracionEvidenciaInstrumento> listaEvidenciasInstrumentos = em.createQuery("SELECT u FROM UnidadMateriaConfiguracionEvidenciaInstrumento u WHERE u.configuracion  IN :lista ORDER BY u.configuracion.idUnidadMateria.noUnidad, u.evidencia.criterio.criterio, u.evidencia.descripcion ASC", UnidadMateriaConfiguracionEvidenciaInstrumento.class)
+                    .setParameter("lista", listaUnidadesConfiguradas)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(listaEvidenciasInstrumentos, "Lista de evidencias e instrumentos de evaluación registrados.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias e instrumentos de evaluación registrados. (EjbAsignacionIndicadoresCriterios.buscarAsignacionEvidenciasInstrumentos)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de evidencias e instrumentos de evaluación que deberá de registrar de manera obligatoria
+     * @param dtoCargaAcademica Materia de la que se buscará la lista de evaluación sugerida por unidad
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Criterio>> getCategoriasNivel(DtoCargaAcademica dtoCargaAcademica){
+        try {
+            
+            List<Criterio> listaCategoriasNivel = em.createQuery("SELECT c FROM Criterio c WHERE c.nivel=:nivel ORDER BY c.criterio ASC", Criterio.class)
+                    .setParameter("nivel", dtoCargaAcademica.getPrograma().getNivelEducativo().getNivel())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(listaCategoriasNivel, "Lista de categorías de evaluación del nivel educativo que corresponde.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de categorías de evaluación del nivel educativo que corresponde. (EjbAsignacionIndicadoresCriterios.getCategoriasNivel)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de evidencias e instrumentos de evaluación que deberá de registrar de manera obligatoria
+     * @param categoria Materia de la que se buscará la lista de evaluación sugerida por unidad
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<EvidenciaEvaluacion>> getEvidenciasCategoria(Criterio categoria){
+        try {
+            
+            List<EvidenciaEvaluacion> listaEvidenciasCategoria = em.createQuery("SELECT e FROM EvidenciaEvaluacion e WHERE e.criterio.criterio=:criterio AND e.activo=:valor ORDER BY e.descripcion ASC", EvidenciaEvaluacion.class)
+                    .setParameter("criterio", categoria.getCriterio())
+                    .setParameter("valor", Boolean.TRUE)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(listaEvidenciasCategoria, "Lista de evidencias de evaluación de la categoría correspondiente.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias de evaluación de la categoría correspondiente. (EjbAsignacionIndicadoresCriterios.getEvidenciasCategoria)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de evidencias e instrumentos de evaluación que deberá de registrar de manera obligatoria
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<InstrumentoEvaluacion>> getInstrumentosEvaluacion(){
+        try {
+            
+            List<InstrumentoEvaluacion> listaInstrumentoEvaluacion = em.createQuery("SELECT i FROM InstrumentoEvaluacion i WHERE i.activo=:valor ORDER BY i.descripcion ASC", InstrumentoEvaluacion.class)
+                    .setParameter("valor", Boolean.TRUE)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(listaInstrumentoEvaluacion, "Lista de instrumentos de evaluación activos.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de instrumentos de evaluación activos. (EjbAsignacionIndicadoresCriterios.getInstrumentosEvaluacion)", e, null);
+        }
+    }
+    
+     /**
+     * Permite verificar si existe evento activo de la actividad y usuario seleccionado
+     * @param listaEvidenciasSugeridas
+     * @param evidencia
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<Boolean> buscarEvidenciaListaSugerida(List<DtoAsigEvidenciasInstrumentosEval> listaEvidenciasSugeridas, EvidenciaEvaluacion evidencia){
+        try{
+           List<DtoAsigEvidenciasInstrumentosEval> listaCoincidencias = listaEvidenciasSugeridas.stream().filter(p-> Objects.equals(p.getEvidenciaEvaluacion().getEvidencia(), evidencia.getEvidencia())).collect(Collectors.toList());
+           
+           return ResultadoEJB.crearCorrecto(listaCoincidencias.isEmpty(), "Resultado búsqueda de evidencia en el listado de evidencias sugeridas");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
+    
+    /**
+     * Permite verificar si existe evento activo de la actividad y usuario seleccionado
+     * @param dtoConfiguracionUnidadMateria
+     * @param listaEvidenciasSugeridas
+     * @param evidencia
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<Boolean> buscarEvidenciaUnidadListaSugerida(DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria, List<DtoAsigEvidenciasInstrumentosEval> listaEvidenciasSugeridas, EvidenciaEvaluacion evidencia){
+        try{
+           List<DtoAsigEvidenciasInstrumentosEval> listaCoincidencias = listaEvidenciasSugeridas.stream().filter(p-> Objects.equals(p.getUnidadMateriaConfiguracion().getIdUnidadMateria().getIdUnidadMateria(), dtoConfiguracionUnidadMateria.getUnidadMateria().getIdUnidadMateria()) && p.getEvidenciaEvaluacion().getEvidencia() == evidencia.getEvidencia()).collect(Collectors.toList());
+           
+           return ResultadoEJB.crearCorrecto(listaCoincidencias.isEmpty(), "Resultado búsqueda de evidencia en la unidad seleccionada en el listado de evidencias sugeridas");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
+    
+    /**
+     * Permite verificar si existe evento activo de la actividad y usuario seleccionado
+     * @param listaEvidenciasSugeridas
+     * @param evidencia
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<List<DtoAsigEvidenciasInstrumentosEval>> agregarEvidenciaListaSugerida(List<DtoAsigEvidenciasInstrumentosEval> listaEvidenciasSugeridas, EvidenciaEvaluacion evidencia, InstrumentoEvaluacion instrumento, Integer metaInstrumento){
+        try{
+           List<UnidadMateriaConfiguracion> listaUnidadesConf = listaEvidenciasSugeridas.stream().map(p->p.getUnidadMateriaConfiguracion()).distinct().collect(Collectors.toList());
+           
+           listaUnidadesConf.forEach(unidadConfigurada -> {
+                    Integer valorPorcentual =0;
+                    DtoAsigEvidenciasInstrumentosEval dtoAsigEvidenciasInstrumentosEval = new DtoAsigEvidenciasInstrumentosEval(unidadConfigurada, evidencia, instrumento, valorPorcentual, metaInstrumento);
+                    listaEvidenciasSugeridas.add(dtoAsigEvidenciasInstrumentosEval);
+                });
+           
+            return ResultadoEJB.crearCorrecto(listaEvidenciasSugeridas.stream().sorted(DtoAsigEvidenciasInstrumentosEval::compareTo).collect(Collectors.toList()), "Lista de evidencias sugeridas con nueva evidencia agregada.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias sugeridas con nueva evidencia agregada. (EjbAsignacionIndicadoresCriterios.agregarEvidenciaListaSugerida)", e, null);
+        }
+    }
+    
+    /**
+     * Permite verificar si existe evento activo de la actividad y usuario seleccionado
+     * @param listaEvidenciasSugeridas
+     * @param evidencia
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<List<DtoAsigEvidenciasInstrumentosEval>> agregarEvidenciaUnidadListaSugerida(List<DtoAsigEvidenciasInstrumentosEval> listaEvidenciasSugeridas, DtoConfiguracionUnidadMateria dtoConfiguracionUnidadMateria, EvidenciaEvaluacion evidencia, InstrumentoEvaluacion instrumento, Integer metaInstrumento){
+        try{
+           UnidadMateriaConfiguracion unidadesConf = listaEvidenciasSugeridas.stream().filter(p->p.getUnidadMateriaConfiguracion().getIdUnidadMateria().getIdUnidadMateria().equals(dtoConfiguracionUnidadMateria.getUnidadMateria().getIdUnidadMateria())).map(p->p.getUnidadMateriaConfiguracion()).findFirst().orElse(null);
+          
+            Integer valorPorcentual = 0;
+            DtoAsigEvidenciasInstrumentosEval dtoAsigEvidenciasInstrumentosEval = new DtoAsigEvidenciasInstrumentosEval(unidadesConf, evidencia, instrumento, valorPorcentual, metaInstrumento);
+            listaEvidenciasSugeridas.add(dtoAsigEvidenciasInstrumentosEval);
+             
+            return ResultadoEJB.crearCorrecto(listaEvidenciasSugeridas.stream().sorted(DtoAsigEvidenciasInstrumentosEval::compareTo).collect(Collectors.toList()), "Lista de evidencias sugeridas con nueva evidencia agregada.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias sugeridas con nueva evidencia agregada. (EjbAsignacionIndicadoresCriterios.agregarEvidenciaListaSugerida)", e, null);
+        }
+    }
+    
+     /**
+     * Permite guardar la asignación de indicadores del criterio SABER
+     * @param listaEvidenciasInstrumentos Lista de indicadores que se guardarán
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<UnidadMateriaConfiguracionEvidenciaInstrumento>> guardarListaEvidenciasInstrumentos(List<DtoAsigEvidenciasInstrumentosEval> listaEvidenciasInstrumentos){
+        try{
+            List<UnidadMateriaConfiguracionEvidenciaInstrumento> li = new ArrayList<>();
+            
+            if(listaEvidenciasInstrumentos == null || listaEvidenciasInstrumentos.isEmpty()) return ResultadoEJB.crearErroneo(2, li, "La lista de evidencias e instrumentos de evaluación no puede ser nula o vacía.");
+          
+            List<UnidadMateriaConfiguracionEvidenciaInstrumento> l = new ArrayList<>();
+           
+            listaEvidenciasInstrumentos.forEach(evidenciaInstrumento -> {
+                try {
+                    if(evidenciaInstrumento.getValorPorcentual()!= 0){
+                    UnidadMateriaConfiguracionEvidenciaInstrumento umcei = new UnidadMateriaConfiguracionEvidenciaInstrumento();
+                    UnidadMateriaConfiguracion umc = em.find(UnidadMateriaConfiguracion.class, evidenciaInstrumento.getUnidadMateriaConfiguracion().getConfiguracion());
+                    umcei.setConfiguracion(umc);
+                    umcei.setEvidencia(evidenciaInstrumento.getEvidenciaEvaluacion());
+                    umcei.setInstrumento(evidenciaInstrumento.getInstrumentoEvaluacion());
+                    umcei.setPorcentaje(evidenciaInstrumento.getValorPorcentual());
+                    umcei.setMetaInstrumento(evidenciaInstrumento.getMetaInstrumento());
+                    em.persist(umcei);
+                    l.add(umcei);
+                    }
+                } catch (Throwable ex) {
+                    Logger.getLogger(EjbAsignacionIndicadoresCriterios.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            return ResultadoEJB.crearCorrecto(l, "El registro de evidencias e instrumentos de evaluación se ha guardado correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar las evidencias e instrumentos de evaluación se ha guardado correctamente. (EjbAsignacionIndicadoresCriterios.guardarListaEvidenciasInstrumentos)", e, null);
+        }
+    }
+    
+    /**
+     * Permite eliminar la asignación de indicadores por criterio
+     * @param cargaAcademica Carga académica de la que se guardará configuración
+     * @return Resultado del proceso generando la instancia de configuración unidad materia obtenida
+     */
+    public ResultadoEJB<Integer> eliminarEvidenciasInstrumentos(CargaAcademica cargaAcademica){
+        try{
+            if(cargaAcademica == null) return ResultadoEJB.crearErroneo(2, "La carga académica no debe ser nula.", Integer.TYPE);
+
+            Integer delete = em.createQuery("DELETE FROM UnidadMateriaConfiguracionEvidenciaInstrumento umcei WHERE umcei.configuracion.carga.carga=:carga", UnidadMateriaConfiguracionEvidenciaInstrumento.class)
+                .setParameter("carga", cargaAcademica.getCarga())
+                .executeUpdate();
+
+            return ResultadoEJB.crearCorrecto(delete, "Se han eliminado correctamente las evidencias e instrumentos de evaluación registrados.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se eliminaron las evidencias e instrumentos de evaluación registrados. (EjbAsignacionIndicadoresCriterios.eliminarEvidenciasInstrumentos)", e, null);
+        }
     }
 }

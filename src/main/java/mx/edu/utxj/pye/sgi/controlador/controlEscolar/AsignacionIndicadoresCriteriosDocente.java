@@ -36,6 +36,11 @@ import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsigEvidenciasInstrumentosEval;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvidenciaEvaluacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.InstrumentoEvaluacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionEvidenciaInstrumento;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -100,6 +105,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosCargaAcademica(rol.getDocente(), rol.getPeriodoActivo());
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
+            rol.setPeriodo(resPeriodos.getValor().get(0));
             
             ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(docente, rol.getPeriodo());
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
@@ -118,7 +124,11 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             rol.getInstrucciones().add("Usted podrá actualizar la asignación de indicadores de la unidad siempre y cuando no haya terminado de configurar todas las unidades.");
             rol.getInstrucciones().add("Una vez que realice la asignación de indicadores de todas las unidades podrá VISUALIZAR la asignación general de la materia, y podrá ELIMINARLA siempre y cuando no esté VALIDADA.");
 
+            rol.setExisteConfiguracion(Boolean.FALSE);
+            rol.setExisteAsignacionIndicadores(Boolean.FALSE);
             existeAsignacion();
+            rol.setAgregarEvidencia(Boolean.FALSE);
+            rol.setTipoAgregarEvid("masivaEvid");
 //            existeConfiguracion();
             
         }catch (Exception e){mostrarExcepcion(e); }
@@ -161,14 +171,21 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         if(res.getValor().size()>0 && !res.getValor().isEmpty()){
             rol.setExisteConfiguracion(true);
             crearDtoConfiguracionUnidadMateria();
-            listarIndicadoresSer();
-            listarIndicadoresSaber();
-            listarIndicadoresSaberHacer();
+            listaCategorias();
+            listaInstrumentosEvaluacion();
+            if(rol.getPeriodo().getPeriodo() <= 56){
+                listarIndicadoresSer();
+                listarIndicadoresSaber();
+                listarIndicadoresSaberHacer();
+                Ajax.update("frm");
+            }else{
+                listarEvidenciasInstrumentosSugeridos();
+                Ajax.update("frm");
+            }
         }else{  
             rol.setExisteConfiguracion(false);
             mostrarMensajeResultadoEJB(res);  
         } 
-        Ajax.update("frm");
     }
     
     public void crearDtoConfiguracionUnidadMateria(){
@@ -184,11 +201,11 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
     
     public void listarIndicadoresSer(){
         if(!rol.getExisteConfiguracion()) return;
-        ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> res = ejb.getIndicadoresCriterioParaAsignar(rol.getCarga());
-        if(res.getCorrecto()){
-            rol.setListaAsignarIndicadoresCriterios(res.getValor());
-            mostrarIndicadoresCriterioSer();
-        }else mostrarMensajeResultadoEJB(res);  
+            ResultadoEJB<List<Listaindicadoresporcriterioporconfiguracion>> res = ejb.getIndicadoresCriterioParaAsignar(rol.getCarga());
+            if(res.getCorrecto()){
+                rol.setListaAsignarIndicadoresCriterios(res.getValor());
+                mostrarIndicadoresCriterioSer();
+            }else mostrarMensajeResultadoEJB(res);  
     }
     
     public void listarIndicadoresSaber(){
@@ -207,6 +224,40 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             rol.setListaAsignarIndicadoresCriterios(res.getValor());
             mostrarIndicadoresCriterioSaberHacer();
         }else mostrarMensajeResultadoEJB(res);  
+    }
+    
+    public void listarEvidenciasInstrumentosSugeridos(){
+        if(!rol.getExisteConfiguracion()) return;
+            ResultadoEJB<List<DtoAsigEvidenciasInstrumentosEval>> res = ejb.getEvidenciasInstrumentosSugeridos(rol.getCarga());
+            if(res.getCorrecto()){
+                rol.setListaEvidenciasSugeridas(res.getValor());
+            }else mostrarMensajeResultadoEJB(res);  
+    }
+    
+    public void listaCategorias(){
+            ResultadoEJB<List<Criterio>> res = ejb.getCategoriasNivel(rol.getCarga());
+            if(res.getCorrecto()){
+                rol.setCategorias(res.getValor());
+                rol.setCategoria(rol.getCategorias().get(0));
+                listaEvidenciasEvaluacionCategoria();
+            }else mostrarMensajeResultadoEJB(res);  
+    }
+    
+    public void listaEvidenciasEvaluacionCategoria(){
+            ResultadoEJB<List<EvidenciaEvaluacion>> res = ejb.getEvidenciasCategoria(rol.getCategoria());
+            if(res.getCorrecto()){
+                rol.setEvidencias(res.getValor());
+                rol.setEvidencia(rol.getEvidencias().get(0));
+            }else mostrarMensajeResultadoEJB(res);  
+    }
+    
+    public void listaInstrumentosEvaluacion(){
+            ResultadoEJB<List<InstrumentoEvaluacion>> res = ejb.getInstrumentosEvaluacion();
+            if(res.getCorrecto()){
+                rol.setInstrumentos(res.getValor());
+                rol.setInstrumento(rol.getInstrumentos().get(0));
+                rol.setMetaInstrumento(80);
+            }else mostrarMensajeResultadoEJB(res);  
     }
     
     public void cambiarPeriodo(ValueChangeEvent event){
@@ -327,20 +378,31 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
      
       public void existeAsignacion(){
         if(rol.getCarga()== null) return;
-        ResultadoEJB<List<DtoAsignadosIndicadoresCriterios>> res = ejb.buscarAsignacionIndicadoresCargaAcademica(rol.getCarga());
-//        System.err.println("existeAsignacion - res " + res.getValor().size());
-        if(res.getValor().size()>0 && !res.getValor().isEmpty()){
-            rol.setExisteAsignacionIndicadores(true);
-            rol.setListaAsignacionCargaAcademica(res.getValor());
-        }else{  
-            rol.setExisteAsignacionIndicadores(false);
-            existeConfiguracion();
-            mostrarMensajeResultadoEJB(res);  
-        } 
-//        System.err.println("existeAsignacion - valor " + rol.getExisteAsignacionIndicadores());
-        Ajax.update("frm");
+          if(rol.getPeriodo().getPeriodo() <=56){  
+            ResultadoEJB<List<DtoAsignadosIndicadoresCriterios>> res = ejb.buscarAsignacionIndicadoresCargaAcademica(rol.getCarga());
+            if(res.getValor().size()>0 && !res.getValor().isEmpty()){
+                rol.setExisteAsignacionIndicadores(true);
+                rol.setListaAsignacionCargaAcademica(res.getValor());
+            }else{  
+                rol.setExisteAsignacionIndicadores(false);
+                existeConfiguracion();
+                mostrarMensajeResultadoEJB(res);  
+            } 
+                Ajax.update("frm");
+          }else{
+            ResultadoEJB<List<UnidadMateriaConfiguracionEvidenciaInstrumento>> res = ejb.buscarAsignacionEvidenciasInstrumentos(rol.getCarga());
+            if(res.getValor().size()>0 && !res.getValor().isEmpty()){
+                rol.setExisteAsignacionIndicadores(true);
+                rol.setListaEvidenciasInstrumentos(res.getValor());
+            }else{  
+                rol.setExisteAsignacionIndicadores(false);
+                existeConfiguracion();
+                mostrarMensajeResultadoEJB(res);  
+            } 
+            Ajax.update("frm");
+          }
     }
-     
+    
     public void eliminarAsignacionIndicadores(){
         ResultadoEJB<UnidadMateriaConfiguracion> configuracion = ejb.verificarValidacionConfiguracion(rol.getCarga().getCargaAcademica());
         if (configuracion.getCorrecto()) {
@@ -434,5 +496,139 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         rol.setOpcAsignacion((String)event.getNewValue());
         Ajax.update("frm");
     }
-
+    
+    public void cambiarAgregarEvid(ValueChangeEvent event){
+        if(rol.getAgregarEvidencia()){
+            rol.setAgregarEvidencia(false);
+            Ajax.update("frm");
+        }else{
+            rol.setAgregarEvidencia(true);
+            Ajax.update("frm");
+        }
+    }
+    
+    public void cambiarTipoAgregarEvid(ValueChangeEvent event){
+        rol.setTipoAgregarEvid((String)event.getNewValue());
+        Ajax.update("frm");
+    }
+    
+    public void cambiarUnidad(ValueChangeEvent event){
+        rol.setDtoConfUniMat((DtoConfiguracionUnidadMateria)event.getNewValue());
+        Ajax.update("frm");
+    }
+    
+    public void cambiarCategoria(ValueChangeEvent event){
+        rol.setCategoria((Criterio)event.getNewValue());
+        listaEvidenciasEvaluacionCategoria();
+        Ajax.update("frm");
+    }
+    
+    public void cambiarEvidencia(ValueChangeEvent event){
+        rol.setEvidencia((EvidenciaEvaluacion)event.getNewValue());
+        Ajax.update("frm");
+    }
+    
+    public void cambiarInstrumento(ValueChangeEvent event){
+        rol.setInstrumento((InstrumentoEvaluacion)event.getNewValue());
+        Ajax.update("frm");
+    }
+    
+     /**
+     * Permite registrar una evaluación a un evento de estadía
+     */
+    public void agregarNuevaEvidencia(){
+        if("masivaEvid".equals(rol.getTipoAgregarEvid())){
+            ResultadoEJB<Boolean> res = ejb.buscarEvidenciaListaSugerida(rol.getListaEvidenciasSugeridas(), rol.getEvidencia());
+            if(res.getCorrecto() && res.getValor()){
+                ResultadoEJB<List<DtoAsigEvidenciasInstrumentosEval>> agregar = ejb.agregarEvidenciaListaSugerida(rol.getListaEvidenciasSugeridas(), rol.getEvidencia(), rol.getInstrumento(), rol.getMetaInstrumento());
+                if(agregar.getCorrecto()){
+                    rol.setListaEvidenciasSugeridas(agregar.getValor());
+                    Ajax.update("frm");
+                    mostrarMensajeResultadoEJB(agregar);
+                }
+            }else if(res.getCorrecto() && !res.getValor()){
+                Messages.addGlobalWarn("La evidencia ya está en lista de evidencias sugeridas.");
+            }else{
+                mostrarMensajeResultadoEJB(res);
+            }
+        }else{
+            ResultadoEJB<Boolean> res = ejb.buscarEvidenciaUnidadListaSugerida(rol.getDtoConfUniMat(), rol.getListaEvidenciasSugeridas(), rol.getEvidencia());
+            if(res.getCorrecto() && res.getValor()){
+                ResultadoEJB<List<DtoAsigEvidenciasInstrumentosEval>> agregar = ejb.agregarEvidenciaUnidadListaSugerida(rol.getListaEvidenciasSugeridas(), rol.getDtoConfUniMat(), rol.getEvidencia(), rol.getInstrumento(), rol.getMetaInstrumento());
+                if(agregar.getCorrecto()){
+                    rol.setListaEvidenciasSugeridas(agregar.getValor());
+                    Ajax.update("frm");
+                    mostrarMensajeResultadoEJB(agregar);
+                }
+            }else if(res.getCorrecto() && !res.getValor()){
+                Messages.addGlobalWarn("La evidencia ya está en lista de evidencias sugeridas para esa unidad.");
+            }else{
+                mostrarMensajeResultadoEJB(res);
+            }
+        }
+    }
+    
+    public void guardarEvidenciasInstrumentos(){
+        Integer totalUnidades = (int) (long) rol.getListaEvidenciasSugeridas().stream().mapToInt(p->p.getUnidadMateriaConfiguracion().getIdUnidadMateria().getIdUnidadMateria()).distinct().count();
+        
+        Integer sumaTotalUnidades = totalUnidades * 100;
+        
+        Integer sumaSer = rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Ser")).mapToInt(p->p.getValorPorcentual()).sum();
+       
+        if(sumaSer < sumaTotalUnidades){
+            Messages.addGlobalWarn("Criterios SER: La suma de los porcentajes por indicador es menor a 100%.");
+        }else if(sumaSer > sumaTotalUnidades){
+            Messages.addGlobalWarn("Criterios SER: La suma de los porcentajes por indicador es mayor a 100%.");
+        }
+        
+        Integer sumaSaber = rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Saber")).mapToInt(p->p.getValorPorcentual()).sum();
+        if(sumaSaber < sumaTotalUnidades){
+             Messages.addGlobalWarn("Criterios SABER: La suma de los porcentajes por indicador es menor a 100%.");
+        }else if(sumaSaber > sumaTotalUnidades){
+             Messages.addGlobalWarn("Criterios SABER: La suma de los porcentajes por indicador es mayor a 100%.");
+        }
+        
+        Integer sumaSaberHacer = rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Saber hacer")).mapToInt(p->p.getValorPorcentual()).sum();
+        if(sumaSaberHacer < sumaTotalUnidades){
+            Messages.addGlobalWarn("Criterios SABER - HACER: La suma de los porcentajes por indicador es menor a 100%.");
+        }else if(sumaSaberHacer > sumaTotalUnidades){
+            Messages.addGlobalWarn("Criterios SABER - HACER: La suma de los porcentajes por indicador es mayor a 100%.");
+        }
+        
+        Integer comparador = sumaTotalUnidades * 3;
+        
+        Integer sumaTotalCat = sumaSer + sumaSaber + sumaSaberHacer;
+        
+        if(sumaTotalCat.equals(comparador))
+        {
+            ResultadoEJB<List<UnidadMateriaConfiguracionEvidenciaInstrumento>> resGuardar = ejb.guardarListaEvidenciasInstrumentos(rol.getListaEvidenciasSugeridas());
+            if (resGuardar.getCorrecto()) {
+                mostrarMensajeResultadoEJB(resGuardar);
+                Ajax.update("frm");
+                existeAsignacion();
+            } else {
+                mostrarMensajeResultadoEJB(resGuardar);
+            }
+        
+        }
+    }
+    
+    public void eliminarEvidenciasInstrumentos(){
+        ResultadoEJB<UnidadMateriaConfiguracion> configuracion = ejb.verificarValidacionConfiguracion(rol.getCarga().getCargaAcademica());
+        if (configuracion.getCorrecto()) {
+            rol.setDirectorValido(configuracion.getValor().getDirector());
+            if (rol.getDirectorValido() == null){
+                ResultadoEJB<Integer> resEliminar = ejb.eliminarEvidenciasInstrumentos(rol.getCarga().getCargaAcademica());
+                existeAsignacion();
+                mostrarMensajeResultadoEJB(resEliminar);
+                
+            } else {
+               Messages.addGlobalWarn("La configuración ya ha sido validada por el director de carrera, por lo que no puede eliminarla");
+            }
+            
+        } else {
+            mostrarMensajeResultadoEJB(configuracion);
+        }
+    }
+    
 }

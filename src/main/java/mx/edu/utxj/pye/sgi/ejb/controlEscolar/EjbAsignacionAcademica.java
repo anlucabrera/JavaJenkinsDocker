@@ -244,6 +244,12 @@ public class EjbAsignacionAcademica {
                         cargaAcademica.setIdPlanMateria(resPlanEstudioMateria.getValor());
                         cargaAcademica.setEvento(evento);
                         cargaAcademica.setDocente(docente.getPersonal().getClave());
+                        if(cargaAcademica.getCveGrupo().getGrado()== 6 || cargaAcademica.getCveGrupo().getGrado()== 11){
+                            cargaAcademica.setHorasSemana(0);
+                            em.persist(cargaAcademica);
+                            return ResultadoEJB.crearCorrecto(cargaAcademica, "La asignación fue registrada correctamente.");
+                        }
+                        else{
                         ResultadoEJB<Integer> resTotalHorasSugeridasPorSemana = getTotalHorasSugeridasPorSemana(materia, periodo);
 //                        System.out.println("resTotalHorasSugeridasPorSemana = " + resTotalHorasSugeridasPorSemana);
                         if(resTotalHorasSugeridasPorSemana.getCorrecto()){
@@ -251,6 +257,7 @@ public class EjbAsignacionAcademica {
                             em.persist(cargaAcademica);
                             return ResultadoEJB.crearCorrecto(cargaAcademica, "La asignación fué registrada correctamente.");
                         }else return ResultadoEJB.crearErroneo(8, "No se pudo calcular el total de horas por semana para la materia que se está asignando. ".concat(resTotalHorasSugeridasPorSemana.getMensaje()), CargaAcademica.class);
+                        }
                     }else {//si ya existe se informa
                         PersonalActivo docente1 = ejbPersonalBean.pack(cargaAcademica.getDocente());
                         return ResultadoEJB.crearErroneo(7, String.format("La materia %s ya fue asignada al docente %s, en el grupo %s.",materia.getNombre(), docente1.getPersonal().getNombre(), "".concat(String.valueOf(grupo.getGrado())).concat(String.valueOf(grupo.getLiteral()))), CargaAcademica.class);

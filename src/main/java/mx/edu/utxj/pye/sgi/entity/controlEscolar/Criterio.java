@@ -63,6 +63,8 @@ public class Criterio implements Serializable {
     private List<CriterioIndicadorPeriodo> criterioIndicadorPeriodoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "criterio", fetch = FetchType.LAZY)
     private List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "criterio", fetch = FetchType.LAZY)
+    private List<EvidenciaEvaluacion> evidenciaEvaluacionList;
 
     public Criterio() {
     }
@@ -136,7 +138,16 @@ public class Criterio implements Serializable {
     public void setUnidadMateriaConfiguracionDetalleList(List<UnidadMateriaConfiguracionDetalle> unidadMateriaConfiguracionDetalleList) {
         this.unidadMateriaConfiguracionDetalleList = unidadMateriaConfiguracionDetalleList;
     }
+    
+    @XmlTransient
+    public List<EvidenciaEvaluacion> getEvidenciaEvaluacionList() {
+        return evidenciaEvaluacionList;
+    }
 
+    public void setEvidenciaEvaluacionList(List<EvidenciaEvaluacion> evidenciaEvaluacionList) {
+        this.evidenciaEvaluacionList = evidenciaEvaluacionList;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -161,5 +172,5 @@ public class Criterio implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio[ criterio=" + criterio + " ]";
     }
-    
+
 }

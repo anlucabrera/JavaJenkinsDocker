@@ -104,6 +104,7 @@
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 text-info text-center">
                                             <p:outputPanel id="contenedor">
+                                            <c:if test="#{capturaCalificacionesDocente.rol.periodoSeleccionado.periodo le 56}">
                                                 <c:forEach items="#{capturaCalificacionesDocente.rol.dtoUnidadConfiguraciones}" var="unidadConfiguracion" varStatus="estado">
                                                     <div style="text-align: right;">
                                                         <p:commandLink ajax="false" styleClass="btn btn-primary" rendered="#{unidadConfiguracion eq capturaCalificacionesDocente.rol.dtoUnidadConfiguracionSeleccionada}">
@@ -178,8 +179,11 @@
                                                         </p:column>
                                                     </p:dataTable>
                                                 </c:forEach>
+                                            </c:if>
+                                            <c:if test="#{capturaCalificacionesDocente.rol.periodoSeleccionado.periodo >= 57}">
+                                            
+                                            </c:if>
                                             </p:outputPanel>
-
                                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
                                                              styleClass="panel panel-primary" width="500"
                                                              closable="false" closeOnEscape="true">
