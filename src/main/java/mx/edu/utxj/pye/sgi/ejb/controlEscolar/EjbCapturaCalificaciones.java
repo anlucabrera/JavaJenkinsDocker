@@ -20,13 +20,16 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCapturaCalificacionAlineacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupoEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracionAlineacion;
 
 @Stateless(name = "EjbCapturaCalificaciones")
 public class EjbCapturaCalificaciones {
@@ -65,7 +68,7 @@ public class EjbCapturaCalificaciones {
             return ResultadoEJB.crearErroneo(1, "Ocurrió un error al intentar validar si el promedio es aprobatorio (EjbCapturaCalificaciones.validarPromedioAprobatorio).", e, Boolean.TYPE);
         }
     }
-
+    
     /**
      * Permite validar si el usuario logueado es un docente
      * @param clave Número de nómina del usuario logueado
@@ -163,6 +166,37 @@ public class EjbCapturaCalificaciones {
             return ResultadoEJB.crearErroneo(1, "No se pudieron obtener las unidades con evaluación activa por docente según la fecha actual (EjbCapturaCalificaciones.getUnidadesEnEvaluacion).", e, null);
         }
     }
+    
+    /**
+     * Permite identificar si existen configuraciones registradas por el docente con fechas que corresponden a la fecha actual
+     * @param docente Docente logueado
+     * @return Lista de configuraciones o código de error.
+     */
+    public ResultadoEJB<List<DtoUnidadConfiguracionAlineacion>> getUnidadesEnEvaluacionAlineacion(PersonalActivo docente){
+        try{
+            List<DtoUnidadConfiguracionAlineacion> configuraciones = em.createQuery("select c from UnidadMateriaConfiguracion  c where current_date between c.fechaInicio and  c.fechaFin and c.carga.docente=:docente", UnidadMateriaConfiguracion.class)
+                    .setParameter("docente", docente.getPersonal().getClave())
+                    .getResultStream()
+                    .distinct()
+                    .map(unidadMateriaConfiguracion -> {
+                        CargaAcademica carga = unidadMateriaConfiguracion.getCarga();
+                        ResultadoEJB<DtoCargaAcademica> resCarga = ejbPacker.packCargaAcademica(carga);
+                        if (!resCarga.getCorrecto()) return null;
+                        return ejbPacker.packUnidadConfiguracionAlineacion(unidadMateriaConfiguracion, resCarga.getValor());
+                    })
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .collect(Collectors.toList());
+//            List<@NonNull DtoUnidadConfiguracion> configuraciones = Collections.EMPTY_LIST;
+//            System.out.println("EjbCapturaCalificaciones.getUnidadesEnEvaluacion4");
+            if(configuraciones.isEmpty()) return ResultadoEJB.crearErroneo(2, null,"No se encontraron configuraciones de unidades abiertas para captura.");
+//            System.out.println("EjbCapturaCalificaciones.getUnidadesEnEvaluacion2");
+            return ResultadoEJB.crearCorrecto(configuraciones, "Configuraciones abiertas para captura encontradas.");
+        }catch (Exception e){
+//            System.out.println("EjbCapturaCalificaciones.getUnidadesEnEvaluacion3");
+            return ResultadoEJB.crearErroneo(1, "No se pudieron obtener las unidades con evaluación activa por docente según la fecha actual (EjbCapturaCalificaciones.getUnidadesEnEvaluacion).", e, null);
+        }
+    }
 
     /**
      * Permite obtener una lista de periodos escolares ordenados en forma descendente por fecha en los que el docente ha tenido asignaciones académicas
@@ -201,10 +235,14 @@ public class EjbCapturaCalificaciones {
      */
     public ResultadoEJB<List<DtoCargaAcademica>> getCargasAcadémicasPorPeriodo(PersonalActivo docente, PeriodosEscolares periodo){
         try {
+            List<Integer> grados = new ArrayList<>();
+            grados.add(6);
+            grados.add(11);
             //obtener la lista de cargas académicas del docente
-            List<DtoCargaAcademica> cargas = em.createQuery("select ca from CargaAcademica ca inner join ca.evento e where ca.docente=:docente and e.periodo=:periodo", CargaAcademica.class)
+            List<DtoCargaAcademica> cargas = em.createQuery("select ca from CargaAcademica ca inner join ca.evento e where ca.docente=:docente and e.periodo=:periodo AND ca.cveGrupo.grado NOT IN :grados", CargaAcademica.class)
                     .setParameter("docente", docente.getPersonal().getClave())
                     .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("grados", grados)
                     .getResultStream()
                     .distinct()
                     .map(cargaAcademica -> ejbAsignacionAcademica.pack(cargaAcademica))
@@ -239,6 +277,27 @@ public class EjbCapturaCalificaciones {
             return  ResultadoEJB.crearErroneo(1, "No se pudo obtener el mapa de unidades y configuraciones (EjbCapturaCalificaciones.getConfiguraciones).", e, null);
         }
     }
+    
+    /**
+     * Permite obtener un mapa de unidad y sus configuraciones correspondientes a la materia, grupo, periodo y docente de la carga académica especificada
+     * @param dtoCargaAcademica  Carga de la que se desea conocer sus configuraciones
+     * @return
+     */
+    public ResultadoEJB<List<DtoUnidadConfiguracionAlineacion>> getConfiguracionesAlineacion(DtoCargaAcademica dtoCargaAcademica){
+        try {
+            List<DtoUnidadConfiguracionAlineacion> configuraciones = em.createQuery("select umc from UnidadMateriaConfiguracion umc where umc.carga=:carga", UnidadMateriaConfiguracion.class)
+                    .setParameter("carga", dtoCargaAcademica.getCargaAcademica())
+                    .getResultStream()
+                    .map(unidadMateriaConfiguracion -> ejbPacker.packUnidadConfiguracionAlineacion(unidadMateriaConfiguracion, dtoCargaAcademica))
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .collect(Collectors.toList());
+            if(configuraciones.isEmpty()) return  ResultadoEJB.crearErroneo(2, configuraciones, "No se encontraron configuraciones en la carga académica seleccionada.");
+            else return ResultadoEJB.crearCorrecto(configuraciones, "Cargas académicas por docente y periodo");
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "No se pudo obtener el mapa de unidades y configuraciones (EjbCapturaCalificaciones.getConfiguracionesAlineacion).", e, null);
+        }
+    }
 
     /**
      * Permite guardar la calificación capturada de un estudiante
@@ -257,6 +316,24 @@ public class EjbCapturaCalificaciones {
             return ResultadoEJB.crearErroneo(1, "No se pudo guardar la captura de calificación(EjbCapturaCalificaciones.packCapturaCalificacion).", e, Calificacion.class);
         }
     }
+    
+    /**
+     * Permite guardar la calificación capturada de un estudiante
+     * @param captura Empaquetado con la calificacion capturada
+     * @return Regresa la instancia de entity de calificacion guardada si la calificación fuer guardada correctamente FALSE de lo contrario
+     */
+    public  ResultadoEJB<CalificacionEvidenciaInstrumento> guardarCapturaCalificacionAlineacion(DtoCapturaCalificacionAlineacion.Captura captura){
+        try{
+            //guardar calificacion capturada
+            CalificacionEvidenciaInstrumento calificacionBD = em.find(CalificacionEvidenciaInstrumento.class, captura.getCalificacion().getCalificacionEvidenciaInstrumento());
+            if(calificacionBD == null) return ResultadoEJB.crearErroneo(2, "La clave de la calificación no se encuentra en la base de datos, para guardar una calificación ya debe estar persistida.", CalificacionEvidenciaInstrumento.class);
+            calificacionBD.setValor(captura.getCalificacion().getValor());
+            em.merge(calificacionBD);
+            return ResultadoEJB.crearCorrecto(calificacionBD, "Captura de calificación guardada");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo guardar la captura de calificación(EjbCapturaCalificaciones.packCapturaCalificacion).", e, CalificacionEvidenciaInstrumento.class);
+        }
+    }
 
     /**
      * Permite guardar varias calificaciones capturadas e informar la catidad de calificaciones guardadas correctamente
@@ -264,6 +341,20 @@ public class EjbCapturaCalificaciones {
      * @return Regresa el conteo de calificaciones guardadas correctamente
      */
     public  ResultadoEJB<Integer> guardarCapturaCalificaciones(List<DtoCapturaCalificacion> calificaciones){
+        try{
+            //TODO:guardar calificaciones capturadas
+            return ResultadoEJB.crearCorrecto(null, "N calificaciones guardadas");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo guardar la captura de calificación(EjbCapturaCalificaciones.packCapturaCalificacion).", e, Integer.class);
+        }
+    }
+    
+    /**
+     * Permite guardar varias calificaciones capturadas e informar la catidad de calificaciones guardadas correctamente
+     * @param calificaciones Lista de empaquetados de calificaciones capturadas
+     * @return Regresa el conteo de calificaciones guardadas correctamente
+     */
+    public  ResultadoEJB<Integer> guardarCapturaCalificacionesAlineacion(List<DtoCapturaCalificacionAlineacion> calificaciones){
         try{
             //TODO:guardar calificaciones capturadas
             return ResultadoEJB.crearCorrecto(null, "N calificaciones guardadas");
@@ -303,6 +394,38 @@ public class EjbCapturaCalificaciones {
             return ResultadoEJB.crearErroneo(1, "No se pudo promediar la unidad (EjbCapturaCalificaciones.promediarUnidad).", e, BigDecimal.class);
         }
     }
+    
+    /**
+     * Permite calcular el promedio exacto que obtuvo un estudiante inscrito con respecto a la relación grupo-asignatura-unidad
+     * @param dtoCapturaCalificacion DTO que contiene los valores de calificaciones del estudiante en una unidad de materia
+     * @return Valor del promedio por unidad del estudianto o código de error en caso no poder calcularlo
+     */
+    public ResultadoEJB<BigDecimal> promediarUnidadAlineacion(DtoCapturaCalificacionAlineacion dtoCapturaCalificacion){
+        try{
+//            System.out.println("EjbCapturaCalificaciones.promediarUnidad");
+            if(dtoCapturaCalificacion == null) return ResultadoEJB.crearErroneo(2, "El DTO de captura de calificación es nulo", BigDecimal.class);
+            if(dtoCapturaCalificacion.getCapturas() == null) return  ResultadoEJB.crearErroneo(3, "La lista de capturas de calificaciones es nula.", BigDecimal.class);
+
+            List<Criterio> criterios = dtoCapturaCalificacion.getCapturas()
+                    .stream()
+                    .map(captura -> captura.getDetalle().getCriterio())
+                    .distinct()
+                    .sorted(Comparator.comparingInt(Criterio::getCriterio))
+                    .collect(Collectors.toList());
+
+            BigDecimal suma = criterios
+                    .stream()
+                    .map(criterio -> promediarCriterioAlineacion(dtoCapturaCalificacion.getCapturas(), criterio))
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+//            System.out.println("promedioUnidad = " + suma);
+            return ResultadoEJB.crearCorrecto(suma, "Promedio calculado");
+        }catch (Exception e){
+//            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo promediar la unidad (EjbCapturaCalificaciones.promediarUnidadAlineacion).", e, BigDecimal.class);
+        }
+    }
 
     /**
      * Permite calcular el promedio exacto que obtuvo un estudiante  inscrito con respecto a la relación grupo-asignatura-unidad-criterio, sumando los valores de los indicadores configurados por el docente en el criterio especificado
@@ -318,6 +441,34 @@ public class EjbCapturaCalificaciones {
                     .stream()
                     .filter(captura -> Objects.equals(captura.getDetalle().getCriterio(), criterio))
                     .map(captura -> calificarCaptura(captura))
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+//            System.out.println("suma = " + suma);
+            BigDecimal porcentajeRecomendado = new BigDecimal(criterio.getPorcentajeRecomendado());
+//            System.out.println("porcentajeRecomendado = " + porcentajeRecomendado);
+            BigDecimal valor = porcentajeRecomendado.divide(new BigDecimal(100)).multiply(suma);
+//            System.out.println("calificacionCriterio = " + valor);
+            return ResultadoEJB.crearCorrecto(valor, "Promedio por criterio calculado");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, BigDecimal.class);
+        }
+    }
+    
+    /**
+     * Permite calcular el promedio exacto que obtuvo un estudiante  inscrito con respecto a la relación grupo-asignatura-unidad-criterio, sumando los valores de los indicadores configurados por el docente en el criterio especificado
+     * @param capturas Lista de capturas de calificaciones de todos los criterios/indicadores correspondientes a la unidad de materia
+     * @param criterio Criterio del cual se requiere el valor del promedio
+     * @return Valor del promedio por criterio del estudiante o código de error en caso de no poder calcularlo
+     */
+    public ResultadoEJB<BigDecimal> promediarCriterioAlineacion(List<DtoCapturaCalificacionAlineacion.Captura> capturas, Criterio criterio){
+        try{
+//            System.out.println("EjbCapturaCalificaciones.promediarCriterio");
+//            System.out.println("criterio.getTipo() = " + criterio.getTipo());
+            BigDecimal suma = capturas
+                    .stream()
+                    .filter(captura -> Objects.equals(captura.getDetalle().getCriterio(), criterio))
+                    .map(captura -> calificarCapturaAlineacion(captura))
                     .filter(ResultadoEJB::getCorrecto)
                     .map(ResultadoEJB::getValor)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -350,6 +501,27 @@ public class EjbCapturaCalificaciones {
         }catch (Exception e){
 //            e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo calificar la captura (EjbCapturaCalificaciones.calificarCaptura).", BigDecimal.class);
+        }
+    }
+    
+    /**
+     * Calcula el valor de una calificación ingresada en vista por el docente en escala del 1 al 10 para obtener el valor correspondiente según el porcentaje del indicador/critero configurado
+     * @param captura DTO de la captura de calificación
+     * @return Regresa el valor de la calificación o error de lo contrario
+     */
+    public ResultadoEJB<BigDecimal> calificarCapturaAlineacion(DtoCapturaCalificacionAlineacion.Captura captura){
+        try{
+//            System.out.println("EjbCapturaCalificaciones.calificarCaptura");
+            BigDecimal porcentajeDetalle = new BigDecimal(captura.getDetalle().getDetalle().getPorcentaje());
+//            System.out.println("porcentajeDetalle = " + porcentajeDetalle);
+            BigDecimal valorCalificacion = new BigDecimal(captura.getCalificacion().getValor());
+//            System.out.println("valorCalificacion = " + valorCalificacion);
+            BigDecimal valor = porcentajeDetalle.divide(new BigDecimal(100)).multiply(valorCalificacion); //porcentajeDetalle / 100d * valorCalificacion;
+//            System.out.println("valor = " + valor);
+            return ResultadoEJB.crearCorrecto(valor, "Valor de captura de calificación por detalle, criterio y estudiante, calculado.");
+        }catch (Exception e){
+//            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo calificar la captura (EjbCapturaCalificaciones.calificarCapturaAlineacion).", BigDecimal.class);
         }
     }
 
@@ -386,6 +558,29 @@ public class EjbCapturaCalificaciones {
                     .stream()
                     .map(DtoCapturaCalificacion.Captura::getCalificacion)
                     .map(Calificacion::getValor)
+                    .filter(Objects::isNull)
+                    .count();
+            if(nulos == 0l) return ResultadoEJB.crearCorrecto(Boolean.TRUE, "La capura de calificaciones de la unidad está completa.");
+            else return  ResultadoEJB.crearErroneo(2, "La captura de calificaciones de la unidad aún está incompleta.", Boolean.TYPE);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar si la captura de calificaciones por unidad está completa (EjbCapturaCalificaciones.verificarCapturaCompleta).", e, Boolean.TYPE);
+        }
+    }
+    
+    /**
+     * Permite verificar si la captura de calificaciones de un unidad ya tiene todos los valores por cada criterio-indicador
+     * @param dtoCapturaCalificacion Empaquetado de la captura de calificaciones
+     * @return Regresa TRUE si la captura está completa. <br/>
+     * Código 1: Error imprevisto.
+     * Código 2: Valores de calificaciones nulos, es decir, sin captura.
+     */
+    public ResultadoEJB<Boolean> verificarCapturaCompletaAlineacion(DtoCapturaCalificacionAlineacion dtoCapturaCalificacion){
+        try{
+            Long nulos = dtoCapturaCalificacion.getCapturas()
+                    .stream()
+                    .map(DtoCapturaCalificacionAlineacion.Captura::getCalificacion)
+                    .map(CalificacionEvidenciaInstrumento::getValor)
                     .filter(Objects::isNull)
                     .count();
             if(nulos == 0l) return ResultadoEJB.crearCorrecto(Boolean.TRUE, "La capura de calificaciones de la unidad está completa.");

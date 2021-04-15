@@ -230,6 +230,54 @@ public class EjbPacker {
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la unidad de configuración (EjbPacker.packUnidadConfiguracion).", e, DtoUnidadConfiguracion.class);
         }
     }
+    
+    /**
+     * Permite empaquetar la configuración de una unidad
+     * @param unidadMateriaConfiguracion Entity de la configuración de la unidad
+     * @return Regresa empaquetado de la configuración de la unidad o código de error de lo contrario
+     */
+    public ResultadoEJB<DtoUnidadConfiguracionAlineacion> packUnidadConfiguracionAlineacion(UnidadMateriaConfiguracion unidadMateriaConfiguracion, DtoCargaAcademica dtoCargaAcademica){
+        try{
+            UnidadMateriaConfiguracion unidadMateriaConfiguracionBD = em.find(UnidadMateriaConfiguracion.class, unidadMateriaConfiguracion.getConfiguracion());
+            UnidadMateria unidadMateria = unidadMateriaConfiguracionBD.getIdUnidadMateria();
+            final Map<Criterio,List<DtoUnidadConfiguracionAlineacion.Detalle>> detalleListMap = new HashMap<>();
+            List<DtoUnidadConfiguracionAlineacion.Detalle> detalles = em.createQuery("select d from UnidadMateriaConfiguracionEvidenciaInstrumento d where d.configuracion.configuracion=:configuracion and d.configuracion.carga.docente=:docente", UnidadMateriaConfiguracionEvidenciaInstrumento.class)
+                    .setParameter("configuracion", unidadMateriaConfiguracionBD.getConfiguracion())
+                    .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
+                    .getResultStream()
+                    .map(detalle -> packDtoUnidadConfiguracionDetalleAlineacion(detalle))
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .collect(Collectors.toList());
+            List<Criterio> criterios = detalles.stream().map(DtoUnidadConfiguracionAlineacion.Detalle::getCriterio).distinct().sorted(Comparator.comparingInt(Criterio::getCriterio)).collect(Collectors.toList());
+            criterios.forEach(criterio -> {
+                detalleListMap.put(criterio, new ArrayList<>());
+            });
+            detalles.forEach(detalle -> {
+                if(detalleListMap.containsKey(detalle.getCriterio())) detalleListMap.get(detalle.getCriterio()).add(detalle);
+            });
+            Boolean activaPorFecha = DateUtils.isBetweenWithRange(new Date(), unidadMateriaConfiguracionBD.getFechaInicio(), unidadMateriaConfiguracionBD.getFechaFin(), ejbCapturaCalificaciones.leerDiasRangoParaCapturarUnidad());
+            PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.idUnidadMateria=:unidad and p.validada=:valor", PermisosCapturaExtemporaneaGrupal.class)
+                    .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
+                    .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
+                    .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
+                    .setParameter("unidad", unidadMateria)
+                    .setParameter("valor", (int)1)
+                    .getResultStream()
+                    .findAny()
+                    .orElse(null);
+//            System.out.println("EjbPacker.packUnidadConfiguracion");
+//            System.out.println("unidadMateria = " + unidadMateria);
+//            System.out.println("permiso = " + permiso);
+            Boolean activaPorPermiso = permiso != null;
+
+            DtoUnidadConfiguracionAlineacion dto = new DtoUnidadConfiguracionAlineacion(unidadMateria, unidadMateriaConfiguracionBD, detalleListMap, dtoCargaAcademica, activaPorFecha, activaPorPermiso);
+            return ResultadoEJB.crearCorrecto(dto, "Configuración de unidad empaquetada");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la unidad de configuración (EjbPacker.packUnidadConfiguracion).", e, DtoUnidadConfiguracionAlineacion.class);
+        }
+    }
 
     /**
      * Permite empaquetar el detalle de la configuración de unidad incluyendo su criterio y su indicador
@@ -244,6 +292,22 @@ public class EjbPacker {
             return ResultadoEJB.crearCorrecto(detalle, "Detalle de la configuración de unidad");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el detalle de la configuración de unidad (EjbPacker.packDtoUnidadConfiguracionDetalle)", DtoUnidadConfiguracion.Detalle.class);
+        }
+    }
+    
+     /**
+     * Permite empaquetar el detalle de la configuración de unidad incluyendo su criterio y su indicador
+     * @param unidadMateriaConfiguracionDetalle Instancia del entity del de talle de configuración del cual se vana leer su indicador y su criterio de evaluación
+     * @return Regresa el empaquetado o código de error
+     */
+    public ResultadoEJB<DtoUnidadConfiguracionAlineacion.Detalle> packDtoUnidadConfiguracionDetalleAlineacion(UnidadMateriaConfiguracionEvidenciaInstrumento unidadMateriaConfiguracionDetalle){
+        try{
+            UnidadMateriaConfiguracionEvidenciaInstrumento unidadMateriaConfiguracionDetalleBD = em.find(UnidadMateriaConfiguracionEvidenciaInstrumento.class, unidadMateriaConfiguracionDetalle.getConfiguracionEvidenciaInstrumento());
+            DtoUnidadConfiguracionAlineacion.Detalle detalle = new DtoUnidadConfiguracionAlineacion.Detalle(unidadMateriaConfiguracionDetalleBD, unidadMateriaConfiguracionDetalleBD.getEvidencia().getCriterio(), unidadMateriaConfiguracionDetalleBD.getEvidencia(), unidadMateriaConfiguracionDetalleBD.getInstrumento());
+//            System.out.println("detalle = " + detalle);
+            return ResultadoEJB.crearCorrecto(detalle, "Detalle de la configuración de unidad");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el detalle de la configuración de unidad (EjbPacker.packDtoUnidadConfiguracionDetalleAlineacion)", DtoUnidadConfiguracionAlineacion.Detalle.class);
         }
     }
 
@@ -334,6 +398,30 @@ public class EjbPacker {
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el grupo con estudiantes a partir de una carga academica(EjbPacker.packEstudiante).", e, DtoGrupoEstudiante.class);
         }
     }
+    
+    /**
+     * Permite empaquetar un grupo de estudiantes a partir del empaquetado de unca carga academica y los ordena por apellido paterno, materno y nombre
+     * @param dtoCargaAcademica Carga académica de la cual se quiere empaquetar el grupo de estudiantes
+     * @return Grupo de estudiantes o código de error de lo contrario
+     */
+    public ResultadoEJB<DtoGrupoEstudianteAlineacion> packGrupoEstudianteAlineacion(DtoCargaAcademica dtoCargaAcademica, DtoUnidadConfiguracionAlineacion dtoUnidadConfiguracionAlineacion){
+        try{
+            ResultadoEJB<List<DtoEstudiante>> res = packDtoEstudiantesGrupo(dtoCargaAcademica);
+            if(!res.getCorrecto()) {
+                return ResultadoEJB.crearErroneo(2, res.getMensaje(), DtoGrupoEstudianteAlineacion.class);
+            }
+
+            List<DtoCapturaCalificacionAlineacion> dtoCapturaCalificaciones = res.getValor().stream()
+                    .map(dtoEstudiante -> packCapturaCalificacionAlineacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracionAlineacion))
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .collect(Collectors.toList());
+            DtoGrupoEstudianteAlineacion dtoGrupoEstudianteAlineacion = new DtoGrupoEstudianteAlineacion(dtoCargaAcademica, dtoCapturaCalificaciones);
+            return ResultadoEJB.crearCorrecto(dtoGrupoEstudianteAlineacion, "Grupo empaquetado");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el grupo con estudiantes a partir de una carga academica(EjbPacker.packGrupoEstudianteAlineacion).", e, DtoGrupoEstudianteAlineacion.class);
+        }
+    }
 
     /**
      * Permite empaquetar una captura de calificacion a partir de un empaquetado de estudiante y carga académica para preparar herramientas de captura de calificacion por un estudiante de un grupo en una materia
@@ -414,6 +502,71 @@ public class EjbPacker {
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la captura de calificaciones a partir del empaquetado de estudiante y carga academica(EjbPacker.packCapturaCalificacion).", e, DtoCapturaCalificacion.class);
         }
     }
+    
+    /**
+     * Permite empaquetar una captura de calificacion a partir de un empaquetado de estudiante y carga académica para preparar herramientas de captura de calificacion por un estudiante de un grupo en una materia
+     * @param dtoEstudiante Empaquetado del estudiante a quien se le va a capturar calificaciones
+     * @param dtoCargaAcademica Empaquetado de la carga académica a la que se le va a capturar la calificación.
+     * @return Regresa el empaquetada para la captura de calificaciones  o código de error de lo contrario.
+     */
+    public ResultadoEJB<DtoCapturaCalificacionAlineacion> packCapturaCalificacionAlineacion(DtoEstudiante dtoEstudiante, DtoCargaAcademica dtoCargaAcademica, DtoUnidadConfiguracionAlineacion dtoUnidadConfiguracion){
+        try{
+            //empaquetar captura de calificacion
+            List<DtoCapturaCalificacionAlineacion.Captura> capturas = dtoUnidadConfiguracion.getUnidadMateriaConfiguracionDetalles()
+                    .values()
+                    .stream()
+                    .flatMap(detalles -> detalles.stream())
+                    .map(detalle -> packDtoCapturaCalificacionCapturaAlineacion(detalle, dtoEstudiante, dtoCargaAcademica.getPeriodo().getPeriodo()))
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .collect(Collectors.toList());
+            
+            PermisosCapturaExtemporaneaEstudiante permiso = em.createQuery("select p from PermisosCapturaExtemporaneaEstudiante p inner join p.idPlanMateria pm inner join p.idGrupo g inner join p.estudiante e where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.idUnidadMateria=:unidad and e.idEstudiante =:estudiante and p.validada=:valor", PermisosCapturaExtemporaneaEstudiante.class)
+                    .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
+                    .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
+                    .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
+                    .setParameter("unidad", dtoUnidadConfiguracion.getUnidadMateria())
+                    .setParameter("estudiante", dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante())
+                    .setParameter("valor", (int)1)
+                    .getResultStream()
+                    .findAny()
+                    .orElse(null);
+            
+            Boolean permisoExtInd = permiso != null;
+            
+            DtoCapturaCalificacionAlineacion dtoCapturaCalificacion = new DtoCapturaCalificacionAlineacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion, permisoExtInd, capturas);
+            ResultadoEJB<BigDecimal> resPromedio = ejbCapturaCalificaciones.promediarUnidadAlineacion(dtoCapturaCalificacion);
+            if(resPromedio.getCorrecto()) {
+                dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
+                ResultadoEJB<Boolean> validarPromedioAprobatorio = ejbCapturaCalificaciones.validarPromedioAprobatorio(dtoCapturaCalificacion.getPromedio());
+                if(validarPromedioAprobatorio.getCorrecto()){
+                    dtoCapturaCalificacion.setEstaAprobado(validarPromedioAprobatorio.getValor());
+
+                    ResultadoEJB<DtoInscripcion> dtoEstudianteToDtoInscripcionPorCargaAcademica = ejbConverter.dtoEstudianteToDtoInscripcionPorCargaAcademica(dtoEstudiante, dtoCargaAcademica);
+                    UnidadMateriaComentario unidadMateriaComentario = em.createQuery("select c from UnidadMateriaComentario c where c.estudiante=:estudiante and c.unidadMateriaConfiguracion=:configuracion", UnidadMateriaComentario.class)
+                            .setParameter("estudiante", dtoEstudianteToDtoInscripcionPorCargaAcademica.getValor().getInscripcion())
+                            .setParameter("configuracion", dtoUnidadConfiguracion.getUnidadMateriaConfiguracion())
+                            .getResultStream()
+                            .findFirst()
+                            .orElse(null);
+
+                    dtoCapturaCalificacion.setTieneComentarioReprobatorio(unidadMateriaComentario != null);
+                    if(dtoCapturaCalificacion.getTieneComentarioReprobatorio()) dtoCapturaCalificacion.setComentarioReprobatorio(unidadMateriaComentario);
+
+                    ResultadoEJB<Boolean> eliminarComentarioReprobatorio = ejbValidacionComentarios.eliminarComentarioReprobatorioAlineacion(dtoCapturaCalificacion);//intenta eliminar el comentario si es que no es necesario
+//                    System.out.println("eliminarComentarioReprobatorio = " + eliminarComentarioReprobatorio);
+                }else validarPromedioAprobatorio.getException().printStackTrace();
+            }else resPromedio.getException().printStackTrace();
+
+            ResultadoEJB<Boolean> cargarCasosCriticos = ejbCasoCritico.cargarCasosCriticosAlineacion(dtoCapturaCalificacion);
+            if(!cargarCasosCriticos.getCorrecto()) cargarCasosCriticos.getException().printStackTrace();
+
+            return ResultadoEJB.crearCorrecto(dtoCapturaCalificacion, "Captura de calificación empaquetada");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la captura de calificaciones a partir del empaquetado de estudiante y carga academica(EjbPacker.packCapturaCalificacion).", e, DtoCapturaCalificacionAlineacion.class);
+        }
+    }
 
     /**
      * Permite empaquetar una linea de captura de calificación que incluye el detalle de configuración de unidad y la referencia de la inscripción activa del estudiante
@@ -462,7 +615,45 @@ public class EjbPacker {
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la captura de calificación (EjbPacker.packDtoCapturaCalificacionCaptura).", DtoCapturaCalificacion.Captura.class);
         }
     }
+    
+    /**
+     * Permite empaquetar una linea de captura de calificación que incluye el detalle de configuración de unidad y la referencia de la inscripción activa del estudiante
+     * @param detalle Detalle de la configuración de unidad
+     * @param dtoEstudiante Empaqueta del estudiante que contiene la lista de inscripciones de la cual se obtendría la inscripcón activa
+     * @return
+     */
+    public ResultadoEJB<DtoCapturaCalificacionAlineacion.Captura> packDtoCapturaCalificacionCapturaAlineacion(DtoUnidadConfiguracionAlineacion.Detalle detalle, DtoEstudiante dtoEstudiante, Integer periodo){
+        try{
+            DtoInscripcion inscripcion = dtoEstudiante.getInscripciones()
+                    .stream()
+                    .filter(dtoInscripcion -> dtoInscripcion.getInscripcion().getPeriodo() == periodo)
+                    .findFirst()
+                    .orElse(null);
+            if(inscripcion == null) return ResultadoEJB.crearErroneo(2, "No se tiene una inscripción del estudiante a un grupo en el periodo del evento escolar especificado.", DtoCapturaCalificacionAlineacion.Captura.class);
+            CalificacionEvidenciaInstrumento calificacion = em.createQuery("select c from CalificacionEvidenciaInstrumento  c where c.idEstudiante=:estudiante and c.configuracionEvidencia=:detalle", CalificacionEvidenciaInstrumento.class)
+                    .setParameter("estudiante", inscripcion.getInscripcion())
+                    .setParameter("detalle", detalle.getDetalle())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
 
+            if(calificacion == null){//si no existe calificación se crea con valor nulo
+                calificacion = new CalificacionEvidenciaInstrumento();
+                calificacion.setConfiguracionEvidencia(detalle.getDetalle());
+                calificacion.setIdEstudiante(inscripcion.getInscripcion());
+                calificacion.setValor(null);
+                em.persist(calificacion);
+            }
+
+            DtoCapturaCalificacionAlineacion.Captura captura = new DtoCapturaCalificacionAlineacion.Captura(detalle, calificacion);
+//            System.out.println("captura = " + captura);
+            return ResultadoEJB.crearCorrecto(captura, "Captura de calificación");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la captura de calificación (EjbPacker.packDtoCapturaCalificacionCaptura).", DtoCapturaCalificacionAlineacion.Captura.class);
+        }
+    }
+    
     /**
      * Permite obtener el periodo activo intentando leer la propiedad de configuración periodoActivo, en caso de no encontrarla se intenta obtener el periodo activo por sus fechas de inicio y fin declaradas en la tabla periodo_escolar_fechas
      * @return Regresa valor del periodo o código de error de lo contrario
@@ -511,6 +702,29 @@ public class EjbPacker {
         }
     }
     
+    /**
+     * Permite empaquetar un caso critico
+     * @param casoCritico Instancia del caso critico proveniente de la base de datos
+     * @param dtoEstudiante Empaquetado de la inscripción activa del estudiante
+     * @param dtoCargaAcademica Empaquetado de la carga académica del docente en la materia y grupo
+     * @param dtoUnidadConfiguracion Empaquetado de la configuración de unidad que se muestra en pantalla
+     * @return Regresa el empaquetado del caso critico o código de error en caso de no poner generarlo
+     */
+    public ResultadoEJB<DtoCasoCriticoAlineacion> packCasoCriticoAlineacion(CasoCritico casoCritico, DtoEstudiante dtoEstudiante, DtoCargaAcademica dtoCargaAcademica, DtoUnidadConfiguracionAlineacion dtoUnidadConfiguracion){
+        try{
+//            System.out.println("EjbPacker.packCasoCritico");
+//            System.out.println("casoCritico = [" + casoCritico + "], dtoEstudiante = [" + dtoEstudiante + "], dtoCargaAcademica = [" + dtoCargaAcademica + "], dtoUnidadConfiguracion = [" + dtoUnidadConfiguracion + "]");
+            CasoCriticoEstado estado = CasoCriticoEstadoConverter.of(casoCritico.getEstado());
+            CasoCriticoTipo tipo = CasoCriticoTipoConverter.of(casoCritico.getTipo());
+//            System.out.println("tipo = " + tipo);
+            DtoCasoCriticoAlineacion dtoCasoCritico = new DtoCasoCriticoAlineacion(casoCritico, tipo, estado, dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion);
+            return ResultadoEJB.crearCorrecto(dtoCasoCritico, "Caso crítico empaquetado");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "", e, DtoCasoCriticoAlineacion.class);
+        }
+    }
+    
     public ResultadoEJB<DtoCasoCritico> packCasoCriticoEstudiante(CasoCritico casoCritico, DtoEstudiante dtoEstudiante){
         try{
 //            System.out.println("EjbPacker.packCasoCritico");
@@ -523,6 +737,21 @@ public class EjbPacker {
         }catch (Exception e){
             e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "", e, DtoCasoCritico.class);
+        }
+    }
+    
+    public ResultadoEJB<DtoCasoCriticoAlineacion> packCasoCriticoEstudianteAlineacion(CasoCritico casoCritico, DtoEstudiante dtoEstudiante){
+        try{
+//            System.out.println("EjbPacker.packCasoCritico");
+//            System.out.println("casoCritico = [" + casoCritico + "], dtoEstudiante = [" + dtoEstudiante + "], dtoCargaAcademica = [" + dtoCargaAcademica + "], dtoUnidadConfiguracion = [" + dtoUnidadConfiguracion + "]");
+            CasoCriticoEstado estado = CasoCriticoEstadoConverter.of(casoCritico.getEstado());
+            CasoCriticoTipo tipo = CasoCriticoTipoConverter.of(casoCritico.getTipo());
+//            System.out.println("tipo = " + tipo);
+            DtoCasoCriticoAlineacion dtoCasoCritico = new DtoCasoCriticoAlineacion(casoCritico, tipo, estado, dtoEstudiante);
+            return ResultadoEJB.crearCorrecto(dtoCasoCritico, "Caso crítico empaquetado");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "", e, DtoCasoCriticoAlineacion.class);
         }
     }
 
@@ -575,6 +804,56 @@ public class EjbPacker {
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetas las calificaciones de todas la unidades de una materia(EjbPacker.packCapturaCalificacion).", e, DtoUnidadesCalificacion.class);
         }
     }
+    
+     /**
+     * Permite empaquetar un mapeo de calificiones para estudiantes de una misma carga académica.
+     * @param dtoCargaAcademica Empaquetado de la carga académica de la que se requiere reunir las calificaciones
+     * @param dtoUnidadConfiguraciones Lista de empaquetados de las configuraciones de las unidades que conforman la materia de la carga académica
+     * @return
+     */
+    public ResultadoEJB<DtoUnidadesCalificacionAlineacion> packDtoUnidadesCalificacionAlineacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull List<DtoUnidadConfiguracionAlineacion> dtoUnidadConfiguraciones, EventoEscolar eventoEscolar){
+        try{
+            ResultadoEJB<List<DtoEstudiante>> res = packDtoEstudiantesHistoricoGrupo(dtoCargaAcademica);
+            if(res.getCorrecto()) {
+                List<DtoEstudiante> dtoEstudiantes = res.getValor();
+                String tipoEval ="Nivelación Final";
+                Boolean activaPorFecha = eventoEscolar == null?false:DateUtils.isBetweenWithRange(new Date(), eventoEscolar.getInicio(), eventoEscolar.getFin(), ejbCapturaCalificaciones.leerDiasRangoParaCapturarUnidad());
+                PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.tipoEvaluacion=:tipo and p.validada=:valor", PermisosCapturaExtemporaneaGrupal.class)
+                        .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
+                        .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
+                        .setParameter("materia", dtoCargaAcademica.getMateria().getIdMateria())
+                        .setParameter("tipo", tipoEval)
+                        .setParameter("valor", (int)1)
+                        .getResultStream()
+                        .findAny()
+                        .orElse(null);
+                Boolean activaPorPermiso = permiso != null;
+
+                DtoUnidadesCalificacionAlineacion dtoUnidadesCalificacion = new DtoUnidadesCalificacionAlineacion(dtoCargaAcademica, dtoEstudiantes, dtoUnidadConfiguraciones, activaPorFecha, activaPorPermiso);
+                dtoEstudiantes.forEach(dtoEstudiante -> {
+//                    if(dtoEstudiante.getAspirante().getIdAspirante() == 917)
+//                        System.out.println("dtoEstudiante.getPersona() = " + dtoEstudiante.getPersona());
+                    dtoUnidadConfiguraciones.forEach(dtoUnidadConfiguracion -> {
+                        ResultadoEJB<DtoCapturaCalificacionAlineacion> dtoCapturaCalificacionResultadoEJB = packCapturaCalificacionAlineacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion);
+                        if(dtoCapturaCalificacionResultadoEJB.getCorrecto()){
+                            try {
+//                                if(dtoEstudiante.getAspirante().getIdAspirante() == 917)
+//                                    System.out.println("dtoCapturaCalificacionResultadoEJB.getValor() = " + dtoCapturaCalificacionResultadoEJB.getValor().getDtoCargaAcademica().getMateria());
+                                dtoUnidadesCalificacion.agregarCapturaCalificacion(dtoEstudiante, dtoUnidadConfiguracion, dtoCapturaCalificacionResultadoEJB.getValor());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }else
+                            System.out.println("dtoCapturaCalificacionResultadoEJB = " + dtoCapturaCalificacionResultadoEJB);
+                    });
+                });
+                return ResultadoEJB.crearCorrecto(dtoUnidadesCalificacion, "Empaqueta de calificaciones por unidad de un grupo.");
+            }else return ResultadoEJB.crearErroneo(2, res.getMensaje(), DtoUnidadesCalificacionAlineacion.class);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetas las calificaciones de todas la unidades de una materia(EjbPacker.packCapturaCalificacion).", e, DtoUnidadesCalificacionAlineacion.class);
+        }
+    }
 
     /**
      * Permite empaquetar la lista de estudiantes de un grupo, segun su carga académica
@@ -608,8 +887,8 @@ public class EjbPacker {
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar las lista de estudiantes de un grupo ordenados por apellido y nombre(EjbPacker.packCapturaCalificacion).", e, null);
         }
     }
-
-    /**
+    
+     /**
      * Permite empaquetar la lista de estudiantes de un grupo, segun su carga académica
      * @param dtoCargaAcademica Carga académica que determina grupo, docente y materia que se imparte
      * @return Lista de empaquetados de estudiantes pertenecientes al grupo de la carga académica o código de error de lo contrario
