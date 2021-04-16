@@ -256,7 +256,7 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
                         rol.getEstudiantesPorGrupoAlineacion().actualizarCalificacion(res.getValor(), resPromedio.getValor());
                         dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
                     
-                        registrarPromediosAsignatura(dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoEstudiante());
+                        registrarPromediosAsignaturaAlineacion(dtoCapturaCalificacion.getDtoCargaAcademica(), dtoCapturaCalificacion.getDtoEstudiante());
                     
                         ResultadoEJB<DtoCasoCriticoAlineacion> registrarPorReprobacion = ejbCasoCritico.registrarPorReprobacionAlineacion(dtoCapturaCalificacion);
                         if(registrarPorReprobacion.getCorrecto()) mostrarMensaje("Se generó un caso crítico automáticamente por promedio reprobatorio.");
@@ -429,6 +429,15 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
     {
         try {
             ejbRegistraPromedioAsignatura.registrarPromediosAsignatura(dtoCargaAcademica, dtoEstudiante);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void registrarPromediosAsignaturaAlineacion(DtoCargaAcademica dtoCargaAcademica, DtoEstudiante dtoEstudiante)
+    {
+        try {
+            ejbRegistraPromedioAsignatura.registrarPromediosAsignaturaAlineacion(dtoCargaAcademica, dtoEstudiante);
         } catch (Exception e) {
             e.printStackTrace();
         }

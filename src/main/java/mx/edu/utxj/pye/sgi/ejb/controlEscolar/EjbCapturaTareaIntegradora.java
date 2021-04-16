@@ -106,6 +106,54 @@ public class EjbCapturaTareaIntegradora {
             return  ResultadoEJB.crearErroneo(1, "No se pudo calcular el promedio de la asignatura (EjbCapturaTareaIntegradora.promediarAsignatura).", e, BigDecimal.class);
         }
     }
+    
+    /**
+     * Permite el calcular el promedio que obtiene un estudiante en una materia
+     * @param dtoUnidadesCalificacion Empaquetado de las calificaciones de una carga académica
+     * @param dtoCargaAcademica Empaquetado de la carga académica de la cual se obtienen las calificaciones
+     * @param dtoEstudiante Empaquetado del estudiante del que se desea obtener su promedio
+     * @return Regresa el valor del promedio del estudiante o código de error en caso de no poder calcularlo
+     */
+    public ResultadoEJB<BigDecimal> promediarAsignaturaAlineacion(@NonNull DtoUnidadesCalificacionAlineacion dtoUnidadesCalificacion, @NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
+        try{
+            //
+            BigDecimal suma = dtoUnidadesCalificacion.getCalificacionMap().entrySet().stream()
+                    .map(entrada -> entrada.getValue())
+                    .filter(dtoCapturaCalificacion -> Objects.equals(dtoCapturaCalificacion.getDtoCargaAcademica().getCargaAcademica(), dtoCargaAcademica.getCargaAcademica()))
+                    .filter(dtoCapturaCalificacion -> Objects.equals(dtoCapturaCalificacion.getDtoEstudiante().getPersona(), dtoEstudiante.getPersona()))
+                    .map(dtoCapturaCalificacion -> {
+                        BigDecimal porcentaje = new BigDecimal(dtoCapturaCalificacion.getDtoUnidadConfiguracion().getUnidadMateriaConfiguracion().getPorcentaje());
+                        BigDecimal promedio = dtoCapturaCalificacion.getPromedio();
+                        return promedio.multiply(porcentaje).divide(new BigDecimal(100));
+                    })
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            ResultadoEJB<TareaIntegradora> tareaIntegradoraResultadoEJB = verificarTareaIntegradora(dtoCargaAcademica);
+            if(tareaIntegradoraResultadoEJB.getCorrecto()){
+                ResultadoEJB<DtoInscripcion> dtoEstudianteToDtoInscripcionPorCargaAcademica = ejbConverter.dtoEstudianteToDtoInscripcionPorCargaAcademica(dtoEstudiante, dtoCargaAcademica);
+                if(!dtoEstudianteToDtoInscripcionPorCargaAcademica.getCorrecto()) return ResultadoEJB.crearErroneo(2, "Se detectó configuración de tarea integradora, pero no se encontró inscripción del estudiante en el periodo de la carga. ".concat(dtoEstudianteToDtoInscripcionPorCargaAcademica.getMensaje()), BigDecimal.class);
+                TareaIntegradora tareaIntegradora = tareaIntegradoraResultadoEJB.getValor();
+                TareaIntegradoraPromedioPK pk = new TareaIntegradoraPromedioPK(tareaIntegradora.getIdTareaIntegradora(), dtoEstudianteToDtoInscripcionPorCargaAcademica.getValor().getInscripcion().getIdEstudiante());
+                TareaIntegradoraPromedio tareaIntegradoraPromedio = em.createQuery("select tip from TareaIntegradoraPromedio tip where tip.tareaIntegradoraPromedioPK=:pk", TareaIntegradoraPromedio.class)
+                        .setParameter("pk", pk)
+                        .getResultStream()
+                        .findFirst().orElse(null);
+
+                if(tareaIntegradoraPromedio != null) {
+                    BigDecimal calificacion = new BigDecimal(tareaIntegradoraPromedio.getValor());
+                    BigDecimal porcentaje = new BigDecimal(tareaIntegradora.getPorcentaje());
+                    suma = suma.add(calificacion.multiply(porcentaje).divide(new BigDecimal(100)));
+                }
+            }
+
+            if(!tareaIntegradoraResultadoEJB.getCorrecto() && tareaIntegradoraResultadoEJB.getResultado() != 2) return ResultadoEJB.crearErroneo(2, tareaIntegradoraResultadoEJB.getMensaje(), BigDecimal.class);
+            ResultadoEJB<Boolean> actualizarPromedioAsignatura = actualizarPromedioAsignatura(dtoCargaAcademica, dtoEstudiante, suma);
+            if(!actualizarPromedioAsignatura.getCorrecto()) System.out.println("actualizarPromedioAsignatura = " + actualizarPromedioAsignatura);
+            return ResultadoEJB.crearCorrecto(suma, "Promedio por materia");
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "No se pudo calcular el promedio de la asignatura (EjbCapturaTareaIntegradora.promediarAsignatura).", e, BigDecimal.class);
+        }
+    }
 
     public ResultadoEJB<Boolean> actualizarPromedioAsignatura(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante, BigDecimal promedio){
         try{

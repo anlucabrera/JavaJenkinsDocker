@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracionAlineacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadesCalificacionAlineacion;
 
 @Stateless
 public class EjbRegistraPromedioAsignatura {
@@ -149,6 +151,35 @@ public class EjbRegistraPromedioAsignatura {
                             if(packDtoUnidadesCalificacion.getCorrecto()){
                                 @NonNull DtoUnidadesCalificacion dtoUnidadesCalificacion = packDtoUnidadesCalificacion.getValor();
                                 ResultadoEJB<BigDecimal> promediarAsignatura = ejbCapturaTareaIntegradora.promediarAsignatura(dtoUnidadesCalificacion, dtoCargaAcademica, dtoEstudiante);
+                               
+                            }else System.out.println("Error: EjbRegistraPromedioAsignatura.registrarPromediosAsignatura proceso > packDtoUnidadesCalificacion = " + packDtoUnidadesCalificacion);
+                        }else System.out.println("Error: EjbRegistraPromedioAsignatura.registrarPromediosAsignatura proceso > getConfiguraciones = " + getConfiguraciones);
+//                    });
+//                }else 
+//                System.out.println("Error: EjbRegistraPromedioAsignatura.registrarMasivamentePromedios proceso > packDtoEstudiantesGrupo = " + packDtoEstudiantesGrupo);
+                
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Permite calcular y registrar promedios por asignatura de forma masiva correspondiendo al periodo indicado en la variable de configuración periodoRegistroMasivoPromedios
+     * @return Regresa un Point con la coordenada X indicando el total de promedios posibles y la coordenada Y indicando los que se pudieron registrar
+     */
+    public void registrarPromediosAsignaturaAlineacion(DtoCargaAcademica dtoCargaAcademica, DtoEstudiante dtoEstudiante){
+        try{
+//                ResultadoEJB<List<DtoEstudiante>> packDtoEstudiantesGrupo = ejbPacker.packDtoEstudiantesHistoricoGrupo(dtoCargaAcademica);
+//                if(packDtoEstudiantesGrupo.getCorrecto()){
+//                    @NonNull List<DtoEstudiante> dtoEstudiantes = packDtoEstudiantesGrupo.getValor();
+//                    dtoEstudiantes.parallelStream().forEach(dtoEstudiante -> {
+                        ResultadoEJB<List<DtoUnidadConfiguracionAlineacion>> getConfiguraciones = ejbCapturaCalificaciones.getConfiguracionesAlineacion(dtoCargaAcademica);
+                        if(getConfiguraciones.getCorrecto()){
+                            @NonNull List<DtoUnidadConfiguracionAlineacion> dtoUnidadConfiguraciones = getConfiguraciones.getValor();
+                            ResultadoEJB<DtoUnidadesCalificacionAlineacion> packDtoUnidadesCalificacion = ejbPacker.packDtoUnidadesCalificacionAlineacion(dtoCargaAcademica, dtoUnidadConfiguraciones, null);
+                            if(packDtoUnidadesCalificacion.getCorrecto()){
+                                @NonNull DtoUnidadesCalificacionAlineacion dtoUnidadesCalificacion = packDtoUnidadesCalificacion.getValor();
+                                ResultadoEJB<BigDecimal> promediarAsignatura = ejbCapturaTareaIntegradora.promediarAsignaturaAlineacion(dtoUnidadesCalificacion, dtoCargaAcademica, dtoEstudiante);
                                
                             }else System.out.println("Error: EjbRegistraPromedioAsignatura.registrarPromediosAsignatura proceso > packDtoUnidadesCalificacion = " + packDtoUnidadesCalificacion);
                         }else System.out.println("Error: EjbRegistraPromedioAsignatura.registrarPromediosAsignatura proceso > getConfiguraciones = " + getConfiguraciones);
