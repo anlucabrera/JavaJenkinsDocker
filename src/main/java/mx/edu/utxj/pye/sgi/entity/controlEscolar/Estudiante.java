@@ -135,6 +135,8 @@ public class Estudiante implements Serializable {
     private List<TutoriasGrupales> tutoriasGrupalesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matricula", fetch = FetchType.LAZY)
     private List<SeguimientoEstadiaEstudiante> seguimientoEstadiaEstudianteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante", fetch = FetchType.LAZY)
+    private List<CalificacionEvidenciaInstrumento> calificacionEvidenciaInstrumentoList;
 
     public Estudiante() {
     }
@@ -435,6 +437,15 @@ public class Estudiante implements Serializable {
         this.seguimientoEstadiaEstudianteList = seguimientoEstadiaEstudianteList;
     }
 
+    @XmlTransient
+    public List<CalificacionEvidenciaInstrumento> getCalificacionEvidenciaInstrumentoList() {
+        return calificacionEvidenciaInstrumentoList;
+    }
+
+    public void setCalificacionEvidenciaInstrumentoList(List<CalificacionEvidenciaInstrumento> calificacionEvidenciaInstrumentoList) {
+        this.calificacionEvidenciaInstrumentoList = calificacionEvidenciaInstrumentoList;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -459,5 +470,5 @@ public class Estudiante implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante[ idEstudiante=" + idEstudiante + " ]";
     }
-    
-}
+
+    }

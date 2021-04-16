@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Objects;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracionAlineacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPeriodoEventoRegistro;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroAsesoriaTutoria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -250,6 +251,12 @@ public class Caster {
     }
 
     public String dtoUnidadConfiguracionToString(DtoUnidadConfiguracion dtoUnidadConfiguracion){
+        if(dtoUnidadConfiguracion == null) return "Null";
+        return String.valueOf(dtoUnidadConfiguracion.getUnidadMateria().getNoUnidad()).concat(".  ")
+                .concat(dtoUnidadConfiguracion.getUnidadMateria().getNombre());
+    }
+    
+    public String dtoUnidadConfiguracionAlineacionToString(DtoUnidadConfiguracionAlineacion dtoUnidadConfiguracion){
         if(dtoUnidadConfiguracion == null) return "Null";
         return String.valueOf(dtoUnidadConfiguracion.getUnidadMateria().getNoUnidad()).concat(".  ")
                 .concat(dtoUnidadConfiguracion.getUnidadMateria().getNombre());

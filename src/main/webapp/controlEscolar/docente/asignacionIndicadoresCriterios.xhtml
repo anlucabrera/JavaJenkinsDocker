@@ -13,6 +13,8 @@
 
     <ui:define name="head-end">
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
@@ -21,22 +23,12 @@
     </ui:define>
 
     <ui:define name="title">
-        Asignación de Indicadores por Criterio
-    </ui:define>
-
-    <ui:define name="description">
-
-    </ui:define>
-
-    <ui:define name="head-end">
-        <h:outputStylesheet library="css" name="tablaDatos.css"/>
-        <h:outputScript library="js" name="dialogs.js"/>
-        <h:outputScript library="js" name="calendario.js" />
+        Asignación de evidencias e instrumentos de evaluación por categoría
     </ui:define>
 
     <ui:define name="body">
         <c:if test="#{asignacionIndicadoresCriteriosDocente.cargado}">
-            <adm:breadcrumb title="Asignación de Indicadores por Criterio"/>
+            <adm:breadcrumb title="Asignación de evidencias e instrumentos de evaluación por categoría"/>
             <div class="contenedor">
                 <c:if test="#{asignacionIndicadoresCriteriosDocente.tieneAcceso}">
                     <!-- zona de importación de enums -->
@@ -93,7 +85,7 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores}">
+                                            <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores and asignacionIndicadoresCriteriosDocente.rol.periodo.periodo le 56}">
                                                 <center>
                                                     <p:dataTable id="tbAsigInd1" var="asignacionIndCA" value="#{asignacionIndicadoresCriteriosDocente.rol.listaAsignacionCargaAcademica}" sortBy="#{asignacionIndCA.unidadMateria.noUnidad}"
                                                                  tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
@@ -137,8 +129,64 @@
                                                     </p:confirmDialog>  
                                                 </center>
                                             </c:if>
+                                            <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores and asignacionIndicadoresCriteriosDocente.rol.periodo.periodo >= 57}">
+                                                <center>
+                                                    <p:dataTable id="tbEvidInstReg" var="evidInstReg" value="#{asignacionIndicadoresCriteriosDocente.rol.listaEvidenciasInstrumentos}"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
+                                                        <f:facet name="header">
+                                                            #{asignacionIndicadoresCriteriosDocente.rol.carga.materia.nombre}
+                                                        </f:facet>
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column headerText="No. Unidad" /> 
+                                                                <p:column headerText="Unidad" /> 
+                                                                <p:column headerText="Categoría de evaluación" />
+                                                                <p:column headerText="% Categoría" />
+                                                                <p:column headerText="Evidencia" />
+                                                                <p:column headerText="Instrumento de evaluación" />
+                                                                <p:column headerText="Porcentaje" />
+                                                                <p:column headerText="Meta del instrumento" />
+                                                            </p:row>
+                                                        </p:columnGroup>
+                                                        <p:column groupRow="true" style="text-align: center;">
+                                                            <h:outputText value="#{evidInstReg.configuracion.idUnidadMateria.noUnidad}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true" style="text-align: justify;">
+                                                            <h:outputText value="#{evidInstReg.configuracion.idUnidadMateria.nombre}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true" style="text-align: justify;">
+                                                            <h:outputText value="#{evidInstReg.evidencia.criterio.tipo}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true" style="text-align: center;">
+                                                            <h:outputText value="#{evidInstReg.evidencia.criterio.porcentajeRecomendado}"><f:convertNumber type="number"/></h:outputText>%
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{evidInstReg.evidencia.descripcion}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{evidInstReg.instrumento.descripcion}" />
+                                                        </p:column>
+                                                        <p:column style="text-align: center;">
+                                                            <h:outputText value="#{evidInstReg.porcentaje}"><f:convertNumber type="number"/></h:outputText>%
+                                                        </p:column>
+                                                        <p:column style="text-align: center;">
+                                                            <h:outputText value="#{evidInstReg.metaInstrumento}"><f:convertNumber type="number"/></h:outputText>%
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                    <p></p>
+                                                    <p></p>
+                                                    <p></p>
+                                                    <p:commandButton id="btnEliminarEvidIns" value="Eliminar" actionListener="#{asignacionIndicadoresCriteriosDocente.eliminarEvidenciasInstrumentos}" class="btn-primary" process="@this" update="@form" icon="fa fa-trash" >
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de las evidencias e instrumentos registrados?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                    </p:confirmDialog>  
+                                                </center>
+                                            </c:if>
                                             <c:if test="#{!asignacionIndicadoresCriteriosDocente.rol.existeAsignacionIndicadores}">
-                                                <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
+                                                <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion and asignacionIndicadoresCriteriosDocente.rol.periodo.periodo le 56}">
                                                     <center>
                                                         <p:outputLabel value="¿Cómo desea realizar la asignación de indicadores por criterios?" />
                                                         <p></p>
@@ -294,10 +342,144 @@
                                                         </center>
                                                     </c:if>
                                                 </c:if>
+                                                <c:if test="#{asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion and asignacionIndicadoresCriteriosDocente.rol.periodo.periodo >= 57}">
+                                                   <center>
+                                                       <br />
+                                                       <br />
+                                                       <p:outputLabel for="agregarEvidencia" style="font-size: large" value="#{asignacionIndicadoresCriteriosDocente.rol.agregarEvidencia?'No agregará más evidencias':'Agregar más evidencias'}" />
+                                                       <p:inputSwitch id="agregarEvidencia" class="form-control" value="#{asignacionIndicadoresCriteriosDocente.rol.agregarEvidencia}" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarAgregarEvid}"> 
+                                                           <p:ajax update="tbAgregarEvid" process="@this" />
+                                                           <p:autoUpdate />
+                                                       </p:inputSwitch>
+                                                       <p:message for="agregarEvidencia" display="tooltip" />
+                                                       <br />
+                                                       <br />
+                                                       <p:panel id="tbAgregarEvid" rendered="#{asignacionIndicadoresCriteriosDocente.rol.agregarEvidencia}">
+                                                       <div class="form-group">
+                                                           <div class="col-sm-12 col-md-12 col-lg-12">
+                                                               <strong>¿Cómo desea agregar la nueva evidencia e instrumentos de evaluación?</strong> 
+                                                               <p class="text-muted">                             
+                                                                   <p:selectOneRadio id="tipoAgregarEvid" value="#{asignacionIndicadoresCriteriosDocente.rol.tipoAgregarEvid}" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarTipoAgregarEvid}">
+                                                                       <f:selectItem itemLabel="Masiva (Aplicar asignación a todas las unidades)" itemValue="masivaEvid" />
+                                                                       <f:selectItem itemLabel="Por Unidad (Asignación por unidad)" itemValue="individualEvid" />
+                                                                       <p:ajax update="@this" process="@this"/>
+                                                                       <p:autoUpdate />
+                                                                   </p:selectOneRadio> 
+                                                               </p>
+                                                           </div>
+                                                           <div class="col-sm-12 col-md-12 col-lg-12"></div>
+                                                           <div class="col-sm-12 col-md-12 col-lg-12"></div>
+                                                           <div class="col-sm-12 col-md-12 col-lg-4">
+                                                               <strong>Unidades:</strong> 
+                                                               <p class="text-muted">                             
+                                                                   <p:selectOneMenu id="unidad" value="#{asignacionIndicadoresCriteriosDocente.rol.dtoConfUniMat}" rendered="#{asignacionIndicadoresCriteriosDocente.rol.tipoAgregarEvid eq 'individualEvid'}" converter="entityConverter" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarUnidad}">
+                                                                       <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.listaDtoConfUniMat}" var="unidad" itemValue="#{unidad}" itemLabel="#{unidad.unidadMateria.noUnidad}. #{unidad.unidadMateria.nombre}" />
+                                                                       <p:ajax update="@this" process="@this" />
+                                                                       <p:autoUpdate />
+                                                                   </p:selectOneMenu>  
+                                                                   <h:outputText value="Todas las unidades" rendered="#{asignacionIndicadoresCriteriosDocente.rol.tipoAgregarEvid eq 'masivaEvid'}"/>
+                                                               </p>
+                                                           </div>
+                                                           <div class="col-sm-12 col-md-12 col-lg-4">
+                                                               <strong>Categoría:</strong> 
+                                                               <p class="text-muted">                               
+                                                                   <p:selectOneMenu id="categoria" value="#{asignacionIndicadoresCriteriosDocente.rol.categoria}" converter="entityConverter" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarCategoria}">
+                                                                       <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.categorias}" var="categoria" itemValue="#{categoria}" itemLabel="#{categoria.tipo}"/>
+                                                                       <p:ajax update="@this" process="@this" />
+                                                                       <p:autoUpdate />
+                                                                   </p:selectOneMenu>  
+                                                               </p>
+                                                           </div>
+                                                           <div class="col-sm-12 col-md-12 col-lg-4">
+                                                               <strong>Evidencia:</strong> 
+                                                               <p class="text-muted">                               
+                                                                   <p:selectOneMenu id="evidencia" value="#{asignacionIndicadoresCriteriosDocente.rol.evidencia}" converter="entityConverter" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarEvidencia}">
+                                                                       <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.evidencias}" var="evidencia" itemValue="#{evidencia}" itemLabel="#{evidencia.descripcion}" />
+                                                                       <p:ajax update="@this" process="@this" />
+                                                                       <p:autoUpdate />
+                                                                   </p:selectOneMenu>
+                                                               </p>
+                                                           </div>
+                                                           <div class="col-sm-12 col-md-12 col-lg-4">
+                                                               <strong>Instrumento:</strong> 
+                                                               <p class="text-muted">                             
+                                                                   <p:selectOneMenu id="instrumento" value="#{asignacionIndicadoresCriteriosDocente.rol.instrumento}" converter="entityConverter" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarInstrumento}">
+                                                                       <f:selectItems value="#{asignacionIndicadoresCriteriosDocente.rol.instrumentos}" var="instrumento" itemValue="#{instrumento}" itemLabel="#{instrumento.descripcion}" />
+                                                                       <p:ajax update="@this" process="@this" />
+                                                                       <p:autoUpdate />
+                                                                   </p:selectOneMenu>
+                                                               </p>
+                                                           </div>
+                                                           <div class="col-sm-12 col-md-12 col-lg-4">
+                                                               <strong>Meta instrumento:</strong> 
+                                                               <p class="text-muted">                             
+                                                                   <p:inputNumber id="metaInstrumento" value="#{asignacionIndicadoresCriteriosDocente.rol.metaInstrumento}" size="5" symbol="%" symbolPosition="s" required="true" emptyValue="empty" minValue="0" maxValue="100"/>
+                                                               </p>
+                                                           </div>
+                                                           <div class="col-sm-12 col-md-12 col-lg-4">
+                                                               <strong>Agregar</strong> 
+                                                               <p class="text-muted">
+                                                                   <p:commandButton actionListener="#{asignacionIndicadoresCriteriosDocente.agregarNuevaEvidencia()}" class="btn btn-sm btn-info" icon="fa fa-check" title="Agregar evidencia."/>
+                                                               </p>
+                                                           </div>
+                                                           <br/><br/>
+                                                       </div>
+                                                       </p:panel>
+                                                       <br />
+                                                       <br />
+                                                       <p:dataTable id="tbEvidInstSug" var="evidInstSug" value="#{asignacionIndicadoresCriteriosDocente.rol.listaEvidenciasSugeridas}"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
+                                                        <f:facet name="header">
+                                                            #{asignacionIndicadoresCriteriosDocente.rol.carga.materia.nombre}
+                                                        </f:facet>
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column headerText="No. Unidad" /> 
+                                                                <p:column headerText="Unidad" /> 
+                                                                <p:column headerText="Categoría de evaluación" />
+                                                                <p:column headerText="% Categoría" />
+                                                                <p:column headerText="Evidencia" />
+                                                                <p:column headerText="Instrumento de evaluación" />
+                                                                <p:column headerText="Porcentaje" />
+                                                                <p:column headerText="Meta del instrumento" />
+                                                            </p:row>
+                                                        </p:columnGroup>
+                                                        <p:column groupRow="true" style="text-align: center;">
+                                                            <h:outputText value="#{evidInstSug.unidadMateriaConfiguracion.idUnidadMateria.noUnidad}"/>
+                                                        </p:column>
+                                                        <p:column groupRow="true">
+                                                            <h:outputText value="#{evidInstSug.unidadMateriaConfiguracion.idUnidadMateria.nombre}"/>
+                                                        </p:column>
+                                                        <p:column groupRow="true">
+                                                            <h:outputText value="#{evidInstSug.evidenciaEvaluacion.criterio.tipo}" style="text-align: center;"/>
+                                                        </p:column>
+                                                        <p:column groupRow="true" style="text-align: center;" >
+                                                            <h:outputText value="#{evidInstSug.evidenciaEvaluacion.criterio.porcentajeRecomendado}"><f:convertNumber type="number"/></h:outputText>%
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{evidInstSug.evidenciaEvaluacion.descripcion}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{evidInstSug.instrumentoEvaluacion.descripcion}" />
+                                                        </p:column>
+                                                        <p:column style="text-align: center;" >
+                                                            <p:inputNumber id="porcentaje" value="#{evidInstSug.valorPorcentual}" size="5" symbol="%" symbolPosition="s" required="true" emptyValue="empty" minValue="0" maxValue="100"/>
+                                                        </p:column>
+                                                        <p:column style="text-align: center;" >
+                                                            <h:outputText value="#{evidInstSug.metaInstrumento}"><f:convertNumber type="number"/></h:outputText>%
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                    <p></p>
+                                                    <p></p>
+                                                    <p></p>
+                                                    <p:commandButton id="btnGuardarEvidInst" value="Guardar" actionListener="#{asignacionIndicadoresCriteriosDocente.guardarEvidenciasInstrumentos}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                                    <p:autoUpdate />
+                                                </center>
+                                                </c:if>
                                                 <c:if test="#{!asignacionIndicadoresCriteriosDocente.rol.existeConfiguracion}">
                                                     <p:panel id="box-colors-panel" header="No existe configuración de la unidad materia" styleClass="box-fatal box-solid">
                                                         <h:panelGrid columns="2" cellpadding="10">
-                                                            <h:outputText value="Para realizar la Asignación de Indicadores por Criterio, deberá realizar la Configuración por Unidad de la Materia"/>
+                                                            <h:outputText value="Para realizar la asignación de evidencias e instrumentos de evaluación por categoría, deberá realizar la configuración por unidad de la materia"/>
                                                         </h:panelGrid>
                                                     </p:panel>
                                                 </c:if>
@@ -322,7 +504,7 @@
                               widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
                               modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
                         <div class="box box-primary">
-                            <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación de indicadores por criterio</h3></div>
+                            <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para asignación de evidencias e instrumentos de evaluación por categoría</h3></div>
                             <div class="box-body">
                                 <ul class="todo-list">
                                     <c:forEach items="#{asignacionIndicadoresCriteriosDocente.rol.instrucciones}" var="instruccion">

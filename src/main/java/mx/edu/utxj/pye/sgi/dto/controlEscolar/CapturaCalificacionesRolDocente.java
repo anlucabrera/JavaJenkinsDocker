@@ -27,11 +27,17 @@ public class CapturaCalificacionesRolDocente extends AbstractRol {
 
     @Getter private DtoUnidadConfiguracion dtoUnidadConfiguracionSeleccionada;
     @Getter private List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones;
+    
+    @Getter private DtoUnidadConfiguracionAlineacion dtoUnidadConfiguracionAlineacionSeleccionada;
+    @Getter private List<DtoUnidadConfiguracionAlineacion> dtoUnidadConfiguracionesAlineacion;
 
     @Getter private DtoGrupoEstudiante estudiantesPorGrupo;
+    @Getter private DtoGrupoEstudianteAlineacion estudiantesPorGrupoAlineacion;
     @Getter private DtoCapturaCalificacion dtoCapturaCalificacionSeleccionada;
+    @Getter private DtoCapturaCalificacionAlineacion dtoCapturaCalificacionAlineacionSeleccionada;
 
     @Getter private DtoCapturaCalificacion capturaEstudianteSeleccionado;
+    @Getter private DtoCapturaCalificacionAlineacion capturaEstudianteAlineacionSeleccionado;
     @Getter @Setter private Map<Long, Double> calificacionMap = new HashMap<>();
     @Getter @Setter private Map<Long, Boolean> casoCriticoMap = new HashMap<>();
     private Random random = new Random(1000000);
@@ -40,7 +46,7 @@ public class CapturaCalificacionesRolDocente extends AbstractRol {
         super(filtro);
         this.docenteLogueado = filtro.getEntity();
     }
-    /////////////////////////////////////////////////////////
+    /* Sin alineación de materias */
     public List<Criterio> getCriteriosEnUnidadSeleccionada(){
         if(dtoUnidadConfiguracionSeleccionada == null) return Collections.EMPTY_LIST;
         return dtoUnidadConfiguracionSeleccionada.getUnidadMateriaConfiguracionDetalles().keySet().stream().sorted(Comparator.comparingInt(Criterio::getCriterio)).collect(Collectors.toList());
@@ -75,6 +81,43 @@ public class CapturaCalificacionesRolDocente extends AbstractRol {
         if(capturas == null) return "cal".concat(String.valueOf(random.nextInt()));
         DtoCapturaCalificacion.Captura captura = getCapturaPorDetalle(detalle, capturas);
         return "cal_".concat(String.valueOf(captura.getCalificacion().getCalificacion()));
+    }
+    
+    /* Con alineación de materias */
+    public List<Criterio> getCriteriosEnUnidadAlineacionSeleccionada(){
+        if(dtoUnidadConfiguracionAlineacionSeleccionada == null) return Collections.EMPTY_LIST;
+        return dtoUnidadConfiguracionAlineacionSeleccionada.getUnidadMateriaConfiguracionDetalles().keySet().stream().sorted(Comparator.comparingInt(Criterio::getCriterio)).collect(Collectors.toList());
+    }
+
+    public List<Criterio> getCriteriosEnUnidadAlineacion(DtoUnidadConfiguracionAlineacion dtoUnidadConfiguracion){
+        if(dtoUnidadConfiguracion == null) return Collections.EMPTY_LIST;
+        return dtoUnidadConfiguracion.getUnidadMateriaConfiguracionDetalles().keySet().stream().sorted(Comparator.comparingInt(Criterio::getCriterio)).collect(Collectors.toList());
+    }
+
+    public List<DtoUnidadConfiguracionAlineacion.Detalle> getDetallesPorCriterioEnUnidadAlineacionSeleccionada(Criterio criterio){
+        if(dtoUnidadConfiguracionAlineacionSeleccionada == null && criterio == null) return Collections.EMPTY_LIST;
+
+        if(!dtoUnidadConfiguracionAlineacionSeleccionada.getUnidadMateriaConfiguracionDetalles().containsKey(criterio)) return Collections.emptyList();
+
+        return dtoUnidadConfiguracionAlineacionSeleccionada.getUnidadMateriaConfiguracionDetalles().get(criterio).stream().sorted(Comparator.comparingInt(detalle -> detalle.getEvidencia().getEvidencia())).collect(Collectors.toList());
+    }
+
+    public DtoCapturaCalificacionAlineacion.Captura getCapturaPorDetalleAlineacion(DtoUnidadConfiguracionAlineacion.Detalle detalle, List<DtoCapturaCalificacionAlineacion.Captura> capturas){
+        if(detalle == null || capturas == null) return null;
+
+        DtoCapturaCalificacionAlineacion.Captura captura = capturas.stream()
+                .filter(captura1 -> captura1.getDetalle().equals(detalle))
+                .findFirst()
+                .orElse(null);
+
+        return captura;
+    }
+
+    public String getIdCalificacionAlineacion(DtoUnidadConfiguracionAlineacion.Detalle detalle, List<DtoCapturaCalificacionAlineacion.Captura> capturas){
+        System.out.println("detalle = [" + detalle + "], capturas = [" + capturas + "]");
+        if(capturas == null) return "cal".concat(String.valueOf(random.nextInt()));
+        DtoCapturaCalificacionAlineacion.Captura captura = getCapturaPorDetalleAlineacion(detalle, capturas);
+        return "cal_".concat(String.valueOf(captura.getCalificacion().getCalificacionEvidenciaInstrumento()));
     }
     /////////////////////////////////////////////////////////
 
@@ -120,6 +163,16 @@ public class CapturaCalificacionesRolDocente extends AbstractRol {
         else dtoUnidadConfiguracionSeleccionada = null;
     }
 
+    public void setDtoUnidadConfiguracionAlineacionSeleccionada(DtoUnidadConfiguracionAlineacion dtoUnidadConfiguracionAlineacionSeleccionada) {
+        this.dtoUnidadConfiguracionAlineacionSeleccionada = dtoUnidadConfiguracionAlineacionSeleccionada;
+    }
+
+    public void setDtoUnidadConfiguracionesAlineacion(List<DtoUnidadConfiguracionAlineacion> dtoUnidadConfiguracionesAlineacion) {
+        this.dtoUnidadConfiguracionesAlineacion = dtoUnidadConfiguracionesAlineacion;
+        if(!dtoUnidadConfiguracionesAlineacion.isEmpty()) dtoUnidadConfiguracionAlineacionSeleccionada = this.dtoUnidadConfiguracionesAlineacion.get(0);
+        else dtoUnidadConfiguracionAlineacionSeleccionada = null;
+    }
+    
     public void setEstudiantesPorGrupo(DtoGrupoEstudiante estudiantesPorGrupo) {
         this.estudiantesPorGrupo = estudiantesPorGrupo;
         if(estudiantesPorGrupo == null) return;
@@ -136,11 +189,32 @@ public class CapturaCalificacionesRolDocente extends AbstractRol {
                 });
 //        System.out.println("calificacionMap = " + calificacionMap);
     }
+    
+    public void setEstudiantesPorGrupoAlineacion(DtoGrupoEstudianteAlineacion estudiantesPorGrupoAlineacion) {
+        this.estudiantesPorGrupoAlineacion = estudiantesPorGrupoAlineacion;
+        if(estudiantesPorGrupoAlineacion == null) return;
+        calificacionMap.clear();
+        estudiantesPorGrupoAlineacion.getEstudiantes()
+                .stream()
+                .map(dtoCapturaCalificacion -> dtoCapturaCalificacion.getCapturas())
+                .flatMap(capturas -> capturas.stream())
+                .map(captura -> captura.getCalificacion())
+                .forEach(calificacion -> {
+                    Long clave = calificacion.getCalificacionEvidenciaInstrumento();
+                    Double valor = calificacion.getValor();
+                    calificacionMap.put(clave, valor);
+                });
+//        System.out.println("calificacionMap = " + calificacionMap);
+    }
 
     public void setCapturaEstudianteSeleccionado(DtoCapturaCalificacion capturaEstudianteSeleccionado) {
         this.capturaEstudianteSeleccionado = capturaEstudianteSeleccionado;
     }
 
+    public void setCapturaEstudianteAlineacionSeleccionado(DtoCapturaCalificacionAlineacion capturaEstudianteAlineacionSeleccionado) {
+        this.capturaEstudianteAlineacionSeleccionado = capturaEstudianteAlineacionSeleccionado;
+    }
+    
     public void setEventoActivo(EventoEscolar eventoActivo) {
         this.eventoActivo = eventoActivo;
     }
@@ -153,4 +227,9 @@ public class CapturaCalificacionesRolDocente extends AbstractRol {
         this.dtoCapturaCalificacionSeleccionada = dtoCapturaCalificacionSeleccionada;
 //        System.out.println("dtoCapturaCalificacionSeleccionada = " + this.dtoCapturaCalificacionSeleccionada);
     }
+
+    public void setDtoCapturaCalificacionAlineacionSeleccionada(DtoCapturaCalificacionAlineacion dtoCapturaCalificacionAlineacionSeleccionada) {
+        this.dtoCapturaCalificacionAlineacionSeleccionada = dtoCapturaCalificacionAlineacionSeleccionada;
+    }
+    
 }

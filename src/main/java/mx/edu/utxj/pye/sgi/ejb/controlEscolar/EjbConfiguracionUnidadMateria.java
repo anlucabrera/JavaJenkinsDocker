@@ -120,9 +120,14 @@ public class EjbConfiguracionUnidadMateria {
      */
     public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicaPorDocente(PersonalActivo docente, PeriodosEscolares periodo){
         try{
-              List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo", CargaAcademica.class)
+            List<Integer> grados = new ArrayList<>();
+            grados.add(6);
+            grados.add(11);
+            
+              List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.docente =:docente AND c.evento.periodo =:periodo AND c.cveGrupo.grado NOT IN :grados", CargaAcademica.class)
                     .setParameter("docente", docente.getPersonal().getClave())
                     .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("grados", grados)
                     .getResultStream()
                     .distinct()
                     .map(cargaAcademica -> pack(cargaAcademica))

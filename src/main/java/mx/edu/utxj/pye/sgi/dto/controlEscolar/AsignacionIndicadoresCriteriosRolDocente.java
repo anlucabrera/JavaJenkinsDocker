@@ -15,9 +15,13 @@ import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaindicadoresporcriterioporconfiguracion;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsignadosIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionEvidenciaInstrumento;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvidenciaEvaluacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.InstrumentoEvaluacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
@@ -158,6 +162,63 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
      */
     @Getter private Integer directorValido;
     
+    /**
+     * Lista de evidencias de evaluación que debe registrar obligatoriamente
+     */
+    @Getter @NonNull private List<DtoAsigEvidenciasInstrumentosEval> listaEvidenciasSugeridas;
+    
+     /**
+     * Lista de evidencias e instrumentos de evaluación sugeridos
+     */
+    @Getter @NonNull private List<UnidadMateriaConfiguracionEvidenciaInstrumento> listaEvidenciasInstrumentos;
+    
+     /**
+     * Representa si se desea agregar más evidencias e instrumentos de evaluación
+     */
+    @Getter @NonNull private Boolean agregarEvidencia;
+    
+     /**
+     * Representa si se agregará de manera masiva o individual la evidencia e instrumento de evaluación
+     */
+    @Getter @NonNull private String tipoAgregarEvid;
+   
+     /**
+     * Lista de categorías de evaluación
+     */
+    @Getter @NonNull private List<Criterio> categorias;
+    
+     /**
+     * Categoría de evaluación seleccionada
+     */
+    @Getter @NonNull private Criterio categoria;
+    
+    /**
+     * Lista de evidencias de evaluación
+     */
+    @Getter @NonNull private List<EvidenciaEvaluacion> evidencias;
+    
+    /**
+     * Evidencias de evaluación seleccionada
+     */
+    @Getter @NonNull private EvidenciaEvaluacion evidencia;
+    
+    /**
+     * Lista de instrumentos de evaluación
+     */
+    @Getter @NonNull private List<InstrumentoEvaluacion> instrumentos;
+    
+     /**
+     * Instrumento de evaluación seleccionado
+     */
+    @Getter @NonNull private InstrumentoEvaluacion instrumento;
+    
+      /**
+     * Representa valor de la meta del instrumento de evaluación
+     */
+    @Getter @NonNull private Integer metaInstrumento;
+    
+    
+   
     public AsignacionIndicadoresCriteriosRolDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
         this.docente = docente;
@@ -281,5 +342,49 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
     public void setDirectorValido(Integer directorValido) {
         this.directorValido = directorValido;
     }
-   
+
+    public void setListaEvidenciasSugeridas(List<DtoAsigEvidenciasInstrumentosEval> listaEvidenciasSugeridas) {
+        this.listaEvidenciasSugeridas = listaEvidenciasSugeridas;
+    }
+
+    public void setListaEvidenciasInstrumentos(List<UnidadMateriaConfiguracionEvidenciaInstrumento> listaEvidenciasInstrumentos) {
+        this.listaEvidenciasInstrumentos = listaEvidenciasInstrumentos;
+    }
+
+    public void setAgregarEvidencia(Boolean agregarEvidencia) {
+        this.agregarEvidencia = agregarEvidencia;
+    }
+
+    public void setTipoAgregarEvid(String tipoAgregarEvid) {
+        this.tipoAgregarEvid = tipoAgregarEvid;
+    }
+
+    public void setCategorias(List<Criterio> categorias) {
+        this.categorias = categorias;
+    }
+
+    public void setCategoria(Criterio categoria) {
+        this.categoria = categoria;
+    }
+    
+    public void setEvidencias(List<EvidenciaEvaluacion> evidencias) {
+        this.evidencias = evidencias;
+    }
+
+    public void setEvidencia(EvidenciaEvaluacion evidencia) {
+        this.evidencia = evidencia;
+    }
+
+    public void setInstrumentos(List<InstrumentoEvaluacion> instrumentos) {
+        this.instrumentos = instrumentos;
+    }
+
+    public void setInstrumento(InstrumentoEvaluacion instrumento) {
+        this.instrumento = instrumento;
+    }
+
+    public void setMetaInstrumento(Integer metaInstrumento) {
+        this.metaInstrumento = metaInstrumento;
+    }
+
 }

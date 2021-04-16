@@ -90,6 +90,7 @@
                                                 <p:message for="carga" ><p:autoUpdate/></p:message>
                                             </div>
                                         </div>
+                                        <c:if test="#{capturaCalificacionesDocente.rol.periodoSeleccionado.periodo le 56}">
                                         <div class="#{casilla}">
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="configuracion" value="#{capturaCalificacionesDocente.rol.dtoUnidadConfiguracionSeleccionada}" converter="entityConverter" styleClass="form-control" >
@@ -100,10 +101,24 @@
                                                 <p:message for="configuracion" />
                                             </div>
                                         </div>
+                                        </c:if>
+                                        <c:if test="#{capturaCalificacionesDocente.rol.periodoSeleccionado.periodo >= 57}">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="configuracion" value="#{capturaCalificacionesDocente.rol.dtoUnidadConfiguracionAlineacionSeleccionada}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItems value="#{capturaCalificacionesDocente.rol.dtoUnidadConfiguracionesAlineacion}" var="configuracion" itemValue="#{configuracion}" itemLabel="#{caster.dtoUnidadConfiguracionAlineacionToString(configuracion)}" />
+                                                    <p:ajax process="@this" update="@this contenedor" listener="#{capturaCalificacionesDocente.cambiarUnidad}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Unidad" for="configuracion"/>
+                                                <p:message for="configuracion" />
+                                            </div>
+                                        </div>
+                                        </c:if>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 text-info text-center">
                                             <p:outputPanel id="contenedor">
+                                            <c:if test="#{capturaCalificacionesDocente.rol.periodoSeleccionado.periodo le 56}">
                                                 <c:forEach items="#{capturaCalificacionesDocente.rol.dtoUnidadConfiguraciones}" var="unidadConfiguracion" varStatus="estado">
                                                     <div style="text-align: right;">
                                                         <p:commandLink ajax="false" styleClass="btn btn-primary" rendered="#{unidadConfiguracion eq capturaCalificacionesDocente.rol.dtoUnidadConfiguracionSeleccionada}">
@@ -178,8 +193,89 @@
                                                         </p:column>
                                                     </p:dataTable>
                                                 </c:forEach>
+                                            </c:if>
+                                            <c:if test="#{capturaCalificacionesDocente.rol.periodoSeleccionado.periodo >= 57}">
+                                                <c:forEach items="#{capturaCalificacionesDocente.rol.dtoUnidadConfiguracionesAlineacion}" var="unidadConfiguracion" varStatus="estado">
+                                                    <div style="text-align: right;">
+                                                        <p:commandLink ajax="false" styleClass="btn btn-primary" rendered="#{unidadConfiguracion eq capturaCalificacionesDocente.rol.dtoUnidadConfiguracionAlineacionSeleccionada}">
+                                                            <pe:exporter type="xlsx" target="@next" fileName="calificaciones" datasetPadding="4" />
+                                                            <i class="fa fa-file-excel-o" /> Exportar
+                                                        </p:commandLink>
+                                                    </div>
+                                                    <p:dataTable var="estudiante"
+                                                                 rendered="#{unidadConfiguracion eq capturaCalificacionesDocente.rol.dtoUnidadConfiguracionAlineacionSeleccionada}"
+                                                                 emptyMessage="Sin registros."
+                                                                 value="#{capturaCalificacionesDocente.rol.estudiantesPorGrupoAlineacion.estudiantes}"
+                                                                 rowIndexVar="rowIndex"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                                 rowStyleClass="#{estudiante.tieneCasoCritico or estudiante.tieneCasoCriticoSistema?'danger':''}"
+                                                                 tableStyle="vertical-align: middle;">
+                                                        <p:columnGroup type="header">
+                                                            <p:row>
+                                                                <p:column rowspan="3" headerText="Matrícula" style="width: 80px;"/>
+                                                                <p:column rowspan="3" headerText="Nombre" style="width: 250px;"/>
+                                                                <p:column rowspan="3" headerText="Caso crítico" style="width: 80px;" />
+                                                                <p:columns var="criterio" value="#{capturaCalificacionesDocente.rol.getCriteriosEnUnidadAlineacion(unidadConfiguracion)}" colspan="#{unidadConfiguracion.unidadMateriaConfiguracionDetalles[criterio].size()}" headerText="#{criterio.tipo}" />
+                                                                <p:column rowspan="3" headerText="Promedio" style="width: 80px;" />
+                                                            </p:row>
+                                                            <p:row>
+                                                                <c:forEach var="criterio" items="#{capturaCalificacionesDocente.rol.getCriteriosEnUnidadAlineacion(unidadConfiguracion)}">
+                                                                    <p:columns var="evidencia" value="#{unidadConfiguracion.unidadMateriaConfiguracionDetalles[criterio]}" headerText="#{evidencia.evidencia.descripcion}" />
+                                                                </c:forEach>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <c:forEach var="criterio" items="#{capturaCalificacionesDocente.rol.getCriteriosEnUnidadAlineacion(unidadConfiguracion)}">
+                                                                    <p:columns var="instrumento" value="#{unidadConfiguracion.unidadMateriaConfiguracionDetalles[criterio]}" headerText="#{instrumento.instrumento.descripcion}" />
+                                                                </c:forEach>
+                                                            </p:row>
+                                                        </p:columnGroup>
+                                                        <p:column><h:outputText value="#{estudiante.dtoEstudiante.inscripcionActiva.inscripcion.matricula}" /></p:column>
+                                                        <p:column style="text-align: left; white-space: nowrap; width: auto;"><h:outputText value="#{estudiante.dtoEstudiante.persona.apellidoPaterno} #{estudiante.dtoEstudiante.persona.apellidoMaterno} #{estudiante.dtoEstudiante.persona.nombre}" title="#{estudiante.dtoEstudiante.persona.apellidoPaterno} #{estudiante.dtoEstudiante.persona.apellidoMaterno} #{estudiante.dtoEstudiante.persona.nombre}"/></p:column>
+                                                        <p:column>
+                                                            <p:commandLink class="#{estudiante.tieneCasoCritico or estudiante.tieneCasoCriticoSistema?'promedio btn btn-sm btn-danger':'promedio btn btn-sm btn-default'}"
+                                                                            process="@this"
+                                                                            actionListener="#{capturaCalificacionesDocente.iniciarRegistroCasoCritico(estudiante)}"
+                                                                            oncomplete="PF('modalCasoCritico').show();"
+                                                                            title="Presione el botón para registrar caso crítico. #{estudiante.permisoExtInd}">
+                                                                <i class="fa fa-check-square"/>
+                                                            </p:commandLink>
+                                                        </p:column>
+                                                        <c:forEach var="criterio" items="#{capturaCalificacionesDocente.rol.getCriteriosEnUnidadAlineacion(unidadConfiguracion)}">
+                                                            <c:forEach var="detalle" items="#{unidadConfiguracion.unidadMateriaConfiguracionDetalles[criterio]}">
+                                                                <p:column>
+                                                                    <c:if test="#{!(unidadConfiguracion.activaPorFecha or unidadConfiguracion.activaPorAperturaExtemporanea or capturaCalificacionesDocente.existeAperturaInd)}">
+                                                                       <h:outputText value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalleAlineacion(detalle, estudiante.capturas).calificacion.valor}" >
+                                                                            <f:convertNumber pattern="0.##" type="number" />
+                                                                        </h:outputText>
+                                                                    </c:if>
+                                                                    <c:if test="#{unidadConfiguracion.activaPorFecha or unidadConfiguracion.activaPorAperturaExtemporanea}">
+                                                                        <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalleAlineacion(detalle, estudiante.capturas).calificacion.calificacionEvidenciaInstrumento]}"
+                                                                                       valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}"
+                                                                                       inputStyle="text-align: center;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero="" >
+                                                                            <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />
+                                                                            <f:attribute name="captura" value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalleAlineacion(detalle, estudiante.capturas)}" />
+                                                                            <f:attribute name="dtoCapturaCalificacion" value="#{estudiante}" />
+                                                                        </p:inputNumber>
+                                                                    </c:if>
+                                                                    <c:if test="#{capturaCalificacionesDocente.existeAperturaInd and !unidadConfiguracion.activaPorFecha and !unidadConfiguracion.activaPorAperturaExtemporanea}">
+                                                                        <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalleAlineacion(detalle, estudiante.capturas).calificacion.calificacionEvidenciaInstrumento]}"
+                                                                                       valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}" disabled="#{!estudiante.permisoExtInd}"
+                                                                                       inputStyle="text-align: center;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero="" >
+                                                                            <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />
+                                                                            <f:attribute name="captura" value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalleAlineacion(detalle, estudiante.capturas)}" />
+                                                                            <f:attribute name="dtoCapturaCalificacion" value="#{estudiante}" />
+                                                                        </p:inputNumber>
+                                                                    </c:if>
+                                                                </p:column>
+                                                            </c:forEach>
+                                                        </c:forEach>
+                                                        <p:column>
+                                                            <p:outputLabel styleClass="promedio" value="#{estudiante.promedio}"><f:convertNumber type="number" pattern="#.##" /></p:outputLabel>
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                </c:forEach>
+                                            </c:if>
                                             </p:outputPanel>
-
                                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
                                                              styleClass="panel panel-primary" width="500"
                                                              closable="false" closeOnEscape="true">
