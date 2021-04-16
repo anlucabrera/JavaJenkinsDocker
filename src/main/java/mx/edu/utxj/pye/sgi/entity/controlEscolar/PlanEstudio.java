@@ -69,6 +69,14 @@ public class PlanEstudio implements Serializable {
     private List<Grupo> grupoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlan", fetch = FetchType.LAZY)
     private List<PlanEstudioMateria> planEstudioMateriaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudio", fetch = FetchType.LAZY)
+    private List<IndicadorAlineacion> indicadorAlineacionList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudio", fetch = FetchType.LAZY)
+    private List<CriterioDesempenio> criterioDesempenioList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudio", fetch = FetchType.LAZY)
+    private List<ObjetivoEducacional> objetivoEducacionalList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudio", fetch = FetchType.LAZY)
+    private List<AtributoEgreso> atributoEgresoList;
 
     public PlanEstudio() {
     }
@@ -175,6 +183,42 @@ public class PlanEstudio implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio[ idPlanEstudio=" + idPlanEstudio + " ]";
+    }
+
+    @XmlTransient
+    public List<IndicadorAlineacion> getIndicadorAlineacionList() {
+        return indicadorAlineacionList;
+    }
+
+    public void setIndicadorAlineacionList(List<IndicadorAlineacion> indicadorAlineacionList) {
+        this.indicadorAlineacionList = indicadorAlineacionList;
+    }
+
+    @XmlTransient
+    public List<CriterioDesempenio> getCriterioDesempenioList() {
+        return criterioDesempenioList;
+    }
+
+    public void setCriterioDesempenioList(List<CriterioDesempenio> criterioDesempenioList) {
+        this.criterioDesempenioList = criterioDesempenioList;
+    }
+
+    @XmlTransient
+    public List<ObjetivoEducacional> getObjetivoEducacionalList() {
+        return objetivoEducacionalList;
+    }
+
+    public void setObjetivoEducacionalList(List<ObjetivoEducacional> objetivoEducacionalList) {
+        this.objetivoEducacionalList = objetivoEducacionalList;
+    }
+
+    @XmlTransient
+    public List<AtributoEgreso> getAtributoEgresoList() {
+        return atributoEgresoList;
+    }
+
+    public void setAtributoEgresoList(List<AtributoEgreso> atributoEgresoList) {
+        this.atributoEgresoList = atributoEgresoList;
     }
     
 }

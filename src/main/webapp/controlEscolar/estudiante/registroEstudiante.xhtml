@@ -1645,7 +1645,7 @@
                                                                             <td>19.0</td>
                                                                             <td style="text-align: justify;">¿Tienes hijos?</td>
                                                                             <td class="danger text-center" style="min-width: 120px;">
-                                                                                <p:selectOneRadio id="p20" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r20Hijos}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.saveEncuesta}">
+                                                                                <p:selectOneRadio id="p20" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r20Hijos}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}">
                                                                                     <f:selectItem itemLabel="Si" itemValue="Si" />
                                                                                     <f:selectItem itemLabel="No" itemValue="No" />
                                                                                     <p:ajax update="@form" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
@@ -1658,7 +1658,7 @@
                                                                                 <td>20.1</td>
                                                                                 <td style="text-align: justify;">Número de hijos</td>
                                                                                 <td class="danger text-center" style="min-width: 120px;">
-                                                                                    <p:spinner id="p21" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r21noHijos}" valueChangeListener="#{registrolDelEstudiante.saveEncuesta}" min="1" >
+                                                                                    <p:spinner id="p21" value="#{registrolDelEstudiante.rol.encuesta.encuestaAspirante.r21noHijos}" valueChangeListener="#{registrolDelEstudiante.guardaEncuesta}" min="1" >
                                                                                         <p:ajax update="@this" process="@this" listener="#{registrolDelEstudiante.imprimirValores()}"/>
                                                                                     </p:spinner>
                                                                                 </td>

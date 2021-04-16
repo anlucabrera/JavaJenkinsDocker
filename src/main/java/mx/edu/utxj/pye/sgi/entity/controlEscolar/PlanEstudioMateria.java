@@ -70,6 +70,14 @@ public class PlanEstudioMateria implements Serializable {
     private List<CargaAcademica> cargaAcademicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
     private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
+    @ManyToMany(mappedBy = "planEstudioMateriaList", fetch = FetchType.LAZY)
+    private List<CriterioDesempenio> criterioDesempenioList;
+    @ManyToMany(mappedBy = "planEstudioMateriaList", fetch = FetchType.LAZY)
+    private List<AtributoEgreso> atributoEgresoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudioMateria", fetch = FetchType.LAZY)
+    private List<ObjetivoEducacionalPlanMateria> objetivoEducacionalPlanMateriaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudioMateria", fetch = FetchType.LAZY)
+    private List<IndicadorAlineacionPlanMateria> indicadorAlineacionPlanMateriaList;
 
     public PlanEstudioMateria() {
     }
@@ -191,6 +199,42 @@ public class PlanEstudioMateria implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria[ idPlanMateria=" + idPlanMateria + " ]";
+    }
+
+    @XmlTransient
+    public List<CriterioDesempenio> getCriterioDesempenioList() {
+        return criterioDesempenioList;
+    }
+
+    public void setCriterioDesempenioList(List<CriterioDesempenio> criterioDesempenioList) {
+        this.criterioDesempenioList = criterioDesempenioList;
+    }
+
+    @XmlTransient
+    public List<AtributoEgreso> getAtributoEgresoList() {
+        return atributoEgresoList;
+    }
+
+    public void setAtributoEgresoList(List<AtributoEgreso> atributoEgresoList) {
+        this.atributoEgresoList = atributoEgresoList;
+    }
+
+    @XmlTransient
+    public List<ObjetivoEducacionalPlanMateria> getObjetivoEducacionalPlanMateriaList() {
+        return objetivoEducacionalPlanMateriaList;
+    }
+
+    public void setObjetivoEducacionalPlanMateriaList(List<ObjetivoEducacionalPlanMateria> objetivoEducacionalPlanMateriaList) {
+        this.objetivoEducacionalPlanMateriaList = objetivoEducacionalPlanMateriaList;
+    }
+
+    @XmlTransient
+    public List<IndicadorAlineacionPlanMateria> getIndicadorAlineacionPlanMateriaList() {
+        return indicadorAlineacionPlanMateriaList;
+    }
+
+    public void setIndicadorAlineacionPlanMateriaList(List<IndicadorAlineacionPlanMateria> indicadorAlineacionPlanMateriaList) {
+        this.indicadorAlineacionPlanMateriaList = indicadorAlineacionPlanMateriaList;
     }
     
 }

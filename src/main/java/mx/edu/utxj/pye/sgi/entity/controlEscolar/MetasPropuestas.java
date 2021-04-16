@@ -14,11 +14,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -54,7 +56,23 @@ public class MetasPropuestas implements Serializable {
     @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PlanEstudioMateria idPlanMateria;
-
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "autonomo")
+    private String autonomo;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "destacado")
+    private String destacado;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "satisfactorio")
+    private String satisfactorio;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "no_acreditado")
+    private String noAcreditado;
+    
     public MetasPropuestas() {
     }
 
@@ -130,6 +148,38 @@ public class MetasPropuestas implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.MetasPropuestas[ idMetapropuesta=" + idMetapropuesta + " ]";
+    }
+
+    public String getAutonomo() {
+        return autonomo;
+    }
+
+    public void setAutonomo(String autonomo) {
+        this.autonomo = autonomo;
+    }
+
+    public String getDestacado() {
+        return destacado;
+    }
+
+    public void setDestacado(String destacado) {
+        this.destacado = destacado;
+    }
+
+    public String getSatisfactorio() {
+        return satisfactorio;
+    }
+
+    public void setSatisfactorio(String satisfactorio) {
+        this.satisfactorio = satisfactorio;
+    }
+
+    public String getNoAcreditado() {
+        return noAcreditado;
+    }
+
+    public void setNoAcreditado(String noAcreditado) {
+        this.noAcreditado = noAcreditado;
     }
     
 }

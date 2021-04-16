@@ -1,5 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import java.util.ArrayList;
 import java.util.List;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -15,6 +16,8 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AccionesDeMejora;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.ObjetivoEducacional;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.ObjetivoEducacionalPlanMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Informeplaneacioncuatrimestraldocenteprint;
@@ -110,7 +113,79 @@ public class EjbResultadosConfiguraciones {
             
             return ResultadoEJB.crearCorrecto(drca, "Califiaciones Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Especialidad Centro(EjbReincorporacion.getEspecialidadCentro).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Especialidad Centro(EjbResultadosConfiguraciones.getCalificacionesPorConfiguracionDetalle).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<DtoResultadosCargaAcademica> getCalificacionesUnidad(Informeplaneacioncuatrimestraldocenteprint informe,Double mp) {
+        try {
+            sumaC = 0D;
+            esalcanzados = 0;
+            String semafoto= "semaforoRojo";
+            DtoResultadosCargaAcademica drca = new DtoResultadosCargaAcademica(informe, 0, 0, 0D, 0D,"",semafoto);
+            CargaAcademica ca = getcargaAcdemica(informe.getCarga());
+            Integer esAc = ca.getCveGrupo().getEstudianteList().size();
+            if (informe.getNombreUnidad().equals("T.I.")) {
+                List<TareaIntegradoraPromedio> trp = em.createQuery("select t from TareaIntegradoraPromedio t INNER JOIN t.tareaIntegradora dt INNER JOIN dt.carga cg WHERE cg.carga=:carga", TareaIntegradoraPromedio.class)
+                        .setParameter("carga", informe.getCarga())
+                        .getResultList();
+                if (!trp.isEmpty()) {
+                    trp.forEach((k) -> {
+                        if (k.getValor() != 0D) {
+                            sumaC = sumaC + k.getValor();
+                            if (k.getValor() >= 8D) {
+                                esalcanzados = esalcanzados + 1;
+                            }
+                        }
+                    });
+                }
+            } else {
+                List<Calificacion> cal = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.cargaAcademica dt WHERE dt.carga=:carga", Calificacion.class)
+                        .setParameter("carga", informe.getCarga())
+                        .getResultList();
+                if (!cal.isEmpty()) {
+                    cal.forEach((t) -> {
+                        if (t.getValor() != null) {
+                            if (t.getValor() != 0) {
+                                sumaC = sumaC + t.getValor();
+                                if (t.getValor() >= 8D) {
+                                    esalcanzados = esalcanzados + 1;
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+            
+            Double promedioin = 0D;
+            Double promediounidad = 0D;
+            if (sumaC != 0D) {
+                promedioin = sumaC / Double.parseDouble(esAc.toString());
+            }
+            if (esalcanzados != 0) {
+                promediounidad = (Double.parseDouble(esalcanzados.toString()) * 100) / Double.parseDouble(esAc.toString());
+            }
+
+            if (promediounidad >= mp) {
+                semafoto = "semaforoVerde";
+            } else {
+                semafoto = "semaforoRojo";
+            }
+
+            String accionesDeMejora="";
+            List<AccionesDeMejora> cal = em.createQuery("select t from AccionesDeMejora t INNER JOIN t.configuracion dt WHERE dt.configuracion=:configuracion", AccionesDeMejora.class)
+                        .setParameter("configuracion", informe.getConfiguracion())
+                        .getResultList();
+                if (!cal.isEmpty()) {
+                    accionesDeMejora=cal.get(0).getAcciones();
+                }
+            
+            
+            drca=new DtoResultadosCargaAcademica(informe, esAc, esalcanzados, promedioin, promediounidad,accionesDeMejora,semafoto);
+            
+            return ResultadoEJB.crearCorrecto(drca, "Califiaciones Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Especialidad Centro(EjbResultadosConfiguraciones.getCalificacionesPorConfiguracionDetalle).", e, null);
         }
     }
     
@@ -169,5 +244,5 @@ public class EjbResultadosConfiguraciones {
             return new UnidadMateriaConfiguracion();
         }
     } 
-    
+
 }

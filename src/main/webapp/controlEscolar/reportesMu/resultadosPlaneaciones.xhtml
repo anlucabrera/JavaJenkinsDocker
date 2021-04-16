@@ -23,6 +23,13 @@
                     display:block;
                     page-break-inside:auto  !important;
                 }
+                .ui-panelgrid .ui-panelgrid-cell{
+                    border-style: hidden !important;
+                }
+            }
+
+            .ui-panelgrid .ui-panelgrid-cell{
+                border-style: hidden !important;
             }
         </style>
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
@@ -85,7 +92,7 @@
                                                 </div>
                                                 <br/>
                                             </div>
-                                            <div class="#{casilla2}" style="visibility:#{registroDelEstudianteConsulta.rol.tipoUser eq 3?'hidden':'visible'}">
+                                            <div class="#{casilla2}" style="visibility:#{resultadosPlaneacionesConsulta.rol.tipoUser eq 3?'hidden':'visible'}">
                                                 <div class="ui-material">
                                                     <p:selectOneMenu id="planEstudio" value="#{resultadosPlaneacionesConsulta.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{resultadosPlaneacionesConsulta.cambiarPlanestudio}">
                                                         <f:selectItem itemValue="#{null}"/>
@@ -97,7 +104,7 @@
                                                 </div>
                                                 <br/>
                                             </div>
-                                            <div class="#{casilla}" style="visibility:#{registroDelEstudianteConsulta.rol.tipoUser eq 3?'hidden':'visible'}">
+                                            <div class="#{casilla}" style="visibility:#{resultadosPlaneacionesConsulta.rol.tipoUser eq 3?'hidden':'visible'}">
                                                 <div class="ui-material">
                                                     <p:selectOneMenu id="grupo" value="#{resultadosPlaneacionesConsulta.rol.grupoSelec}" converter="entityConverter" valueChangeListener="#{resultadosPlaneacionesConsulta.cambiarGrupo}">
                                                         <f:selectItems value="#{resultadosPlaneacionesConsulta.rol.grupos}" var="grupo"
@@ -125,65 +132,140 @@
                                         <div class="row">
                                             <c:if test="#{resultadosPlaneacionesConsulta.rol.existeAsignacionIndicadores}">
                                                 <center>
-                                                    <p:panel id="CV" >
+                                                    <p:commandButton value="Imprimir Reporte" icon="fa fa-print" class="btn-success">                                        
+                                                        <p:printer target="CV" />
+                                                    </p:commandButton>
+                                                    <p:panel id="CV" style="overflow: hidden;">
                                                         <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                             <div class="col-md-12">
                                                                 <div class="box box-widget widget-user-2">
                                                                     <div class="row" style="align-content:  center">
-                                                                        <div class="col-sm-3 pull-left">
-                                                                            <div class="description-block" style="text-align: center">
-                                                                                <img src="../../resources/img/logoSep.jpg" alt="" height="80px"/>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-sm-6 pull-left" >
-                                                                            <div class="row">
-                                                                                <div class="row">
-                                                                                    <div id="tituloCV" class="col-sm-12">
-                                                                                        <div class="description-block" style="text-align: center">
-                                                                                            <h3><strong>Universidad Tecnológica De</strong></h3>
-                                                                                            <h3><strong>Xicotepec de Juárez</strong></h3>
-                                                                                            <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>       
-                                                                                            <h4><strong>Análisis de Logro de Atributos</strong></h4>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-sm-3">
-                                                                            <div class="description-block" style="text-align: center">
-                                                                                <img src="../../resources/img/utxj.png" alt="" height="100px"/>
-                                                                            </div>
-                                                                        </div>
+                                                                        <p:panelGrid styleClass="saltoDePagina">
+                                                                            <p:row>
+                                                                                <p:column colspan="2" style="border-style: hidden !important;">   
+                                                                                    <img src="../../resources/img/logoSep.jpg" alt="" height="80px"/>
+                                                                                </p:column>
+                                                                                <p:column colspan="2" style="border-style: hidden !important; font-weight: bold; text-align: center; font-size: x-large;">
+                                                                                    <h4><strong>Universidad Tecnológica De</strong></h4>
+                                                                                    <h4><strong>Xicotepec de Juárez</strong></h4>
+                                                                                    <h6>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h6>       
+                                                                                    <h5><strong>Análisis de Logro de Atributos</strong></h5>
+                                                                                </p:column>
+                                                                                <p:column colspan="2" style="border-style: hidden !important;">   
+                                                                                    <img src="../../resources/img/utxj.png" alt="" height="100px"/>
+                                                                                </p:column>
+                                                                            </p:row>
+                                                                            <p:row>
+                                                                                <p:column style="border-style: hidden !important;"/>
+                                                                                <p:column style="border-style: hidden !important;"/>
+                                                                                <p:column style="border-style: hidden !important;"/>
+                                                                                <p:column colspan="2" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Fecha de Consulta</p:column>
+                                                                                <p:column style="border-style: hidden !important;"> <h:outputLabel value="#{resultadosPlaneacionesConsulta.rol.fechaInpresion}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></p:column>
+                                                                            </p:row>
+                                                                            <p:row><p:column colspan="6" style="border-style: hidden !important;"/></p:row>
+                                                                            <p:row><p:column colspan="6" style="border-style: hidden !important;"/></p:row>
+                                                                            <p:row><p:column colspan="6" style="border-style: hidden !important;"/></p:row>
+                                                                            <p:row><p:column colspan="6" style="border-style: hidden !important;"/></p:row>
+                                                                            <p:row>
+                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">CARRERA:</p:column>
+                                                                                <p:column style="border-style: hidden !important;" colspan="5"> #{resultadosPlaneacionesConsulta.rol.carga.programa.nombre}  </p:column>
+                                                                            </p:row>
+                                                                            <p:row>
+                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">PERIODO:</p:column>
+                                                                                <p:column style="border-style: hidden !important;" colspan="5">#{resultadosPlaneacionesConsulta.rol.carga.periodo.mesInicio.mes} - #{resultadosPlaneacionesConsulta.rol.carga.periodo.mesFin.mes} #{resultadosPlaneacionesConsulta.rol.carga.periodo.anio} </p:column>
+                                                                            </p:row>
+                                                                            <p:row>
+                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">GRUPO:</p:column>
+                                                                                <p:column style="border-style: hidden !important;" colspan="5">#{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.cveGrupo.grado}° #{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.cveGrupo.literal} </p:column>
+                                                                            </p:row>
+                                                                            <p:row>
+                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">ASIGNATURA:</p:column>
+                                                                                <p:column style="border-style: hidden !important;" colspan="5">(#{resultadosPlaneacionesConsulta.rol.carga.planEstudioMateria.claveMateria}) #{resultadosPlaneacionesConsulta.rol.carga.materia.nombre} </p:column>
+                                                                            </p:row>    
+                                                                            <p:row>
+                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">DOCENTE:</p:column>
+                                                                                <p:column style="border-style: hidden !important;" colspan="5">#{resultadosPlaneacionesConsulta.rol.carga.docente.personal.nombre} </p:column>
+                                                                            </p:row>  
+                                                                            <p:row>
+                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">TUTOR</p:column>
+                                                                                <p:column style="border-style: hidden !important;" colspan="5">#{resultadosPlaneacionesConsulta.buscarPersonal(resultadosPlaneacionesConsulta.rol.grupoSelec.tutor)} </p:column>
+                                                                            </p:row>  
+                                                                            <p:row><p:column colspan="6"/></p:row>
+                                                                            <p:row>
+                                                                                <p:column colspan="2" styleClass="actividad" style="font-weight: bold; text-align: center;">ESTUDIANTES</p:column>
+                                                                                <p:column colspan="2" styleClass="actividad" style="font-weight: bold; text-align: center;">BAJAS</p:column>
+                                                                                <p:column colspan="2" rowspan="2" styleClass="actividad" style="font-weight: bold; text-align: justify;">NIVEL MINIMO DE LOGRO</p:column>
+                                                                            </p:row>
+                                                                            <p:row>
+                                                                                <p:column colspan="1" styleClass="actividad" style="font-weight: bold; text-align: center;">INSCRITOS</p:column>
+                                                                                <p:column colspan="1" styleClass="actividad" style="font-weight: bold; text-align: center;">REINCORPORACIONES</p:column>
+                                                                                <p:column colspan="1" styleClass="actividad" style="font-weight: bold; text-align: center;">TEMPORALES</p:column>
+                                                                                <p:column colspan="1" styleClass="actividad" style="font-weight: bold; text-align: center;">DEFINITIVAS</p:column>
+                                                                            </p:row>  
+                                                                            <p:row>
+                                                                                <p:column style="text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esInsc}</p:column>
+                                                                                <p:column style="text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esBajT}</p:column>
+                                                                                <p:column style="text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esDi}</p:column>
+                                                                                <p:column style="text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esRein}</p:column>                                                                                
+                                                                                <p:column colspan="2" style="text-align: center;" >8.0</p:column>
+                                                                            </p:row>
+
+                                                                            <p:row>
+                                                                                <p:column colspan="6" styleClass="actividad" style="font-weight: bold; text-align: center;">Atributos de Egreso</p:column>     
+                                                                            </p:row>
+                                                                            <p:row>
+                                                                                <p:column style="border-style: hidden !important;" colspan="6">
+                                                                                    <p:dataTable id="atr" var="ae" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.atributoEgresoList}" styleClass="saltoDePagina">
+                                                                                        <p:column >
+                                                                                            <h:outputText value="#{ae.clave} -- #{ae.descripcion}"  style="text-align: justify; font-size: small"/>
+                                                                                        </p:column>
+                                                                                    </p:dataTable>  
+                                                                                </p:column>     
+                                                                            </p:row>
+
+                                                                            <p:row>
+                                                                                <p:column colspan="3" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Criterios de desempeño</p:column>                                                                                    
+                                                                                <p:column colspan="3" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Indicadores</p:column>
+                                                                            </p:row>
+                                                                            <p:row>
+                                                                                <p:column style="border-style: hidden !important;" colspan="3">
+                                                                                    <p:dataTable id="cri" var="cd" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.criterioDesempenioList}" styleClass="saltoDePagina">
+                                                                                        <p:column >
+                                                                                            <h:outputText value="#{cd.clave} -- #{cd.descripcion}"  style="text-align: justify; font-size: small"/>
+                                                                                        </p:column>
+                                                                                    </p:dataTable>  
+                                                                                </p:column>                                                                                    
+                                                                                <p:column style="border-style: hidden !important;" colspan="3">
+                                                                                    <p:dataTable id="ind" var="in" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.indicadorAlineacionPlanMateriaList}" styleClass="saltoDePagina">
+                                                                                        <p:column >
+                                                                                            <h:outputText value="#{in.indicadorAlineacion.clave} -- #{in.indicadorAlineacion.descripcion}" style="text-align: justify; font-size: small"/>
+                                                                                            <h:outputText value=" Meta propuesta "  style="text-align: justify; font-weight: bold;"/>
+                                                                                            <h:outputText value=" #{in.metaIndicador}"  style="text-align: justify; font-weight: bold; font-size: larger;"/>
+                                                                                        </p:column>
+                                                                                    </p:dataTable>  
+                                                                                </p:column>
+                                                                            </p:row>
+                                                                            <p:row>
+                                                                                <p:column colspan="6" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Objetivos Educacionales</p:column>     
+                                                                            </p:row>
+                                                                            <p:row>
+                                                                                <p:column style="border-style: hidden !important;" colspan="6">
+                                                                                    <p:dataTable id="obj" var="oe" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.objetivoEducacionalPlanMateriaList}" styleClass="saltoDePagina">
+                                                                                        <p:column >
+                                                                                            <h:outputText value="#{oe.objetivoEducacional1.clave} -- #{oe.objetivoEducacional1.descripcion} Nivel de aportacion #{oe.nivelAportacion}"  style="text-align: justify; font-size: small"/>
+                                                                                            <h:outputText value=" Nivel de aportacion "  style="text-align: justify; font-weight: bold;"/>
+                                                                                            <h:outputText value=" #{oe.nivelAportacion}"  style="text-align: justify; font-weight: bold; font-size: larger;"/>
+                                                                                        </p:column>
+                                                                                    </p:dataTable>  
+                                                                                </p:column>     
+                                                                            </p:row>
+                                                                        </p:panelGrid>
                                                                     </div>
                                                                     <br/>
-                                                                    <div class="row">
-                                                                        <div class="col-sm-12">
-                                                                            <div class="description-block" style="text-align: right">
-                                                                                <h:outputLabel value="Fecha de Consulta" style="font-weight: bold;"/> <p:spacer width="10px"/> <h:outputLabel value="#{resultadosPlaneacionesConsulta.rol.fechaInpresion}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel><p:spacer width="10px"/>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row">
-                                                                        <div class="col-sm-12">
-                                                                            <div class="description-block" style="text-align: left">
-                                                                                <h:outputLabel value="CARRERA:"/> <p:spacer width="10px"/> <h:outputLabel value="#{resultadosPlaneacionesConsulta.rol.carga.programa.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
-                                                                                <h:outputLabel value="PERIODO:"/> <p:spacer width="10px"/> <h:outputLabel value="#{resultadosPlaneacionesConsulta.rol.carga.periodo.mesInicio.mes} - #{resultadosPlaneacionesConsulta.rol.carga.periodo.mesFin.mes} #{resultadosPlaneacionesConsulta.rol.carga.periodo.anio}" style="font-weight: bold;"/><p:spacer width="10px"/> 
-                                                                                <h:outputLabel value="GRUPO:"/> <p:spacer width="10px"/> <h:outputLabel value="#{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.cveGrupo.grado}° #{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.cveGrupo.literal}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
-                                                                                <h:outputLabel value="NOMBRE DE LA ASIGNATURA:"/> <p:spacer width="10px"/> <h:outputLabel value="(#{resultadosPlaneacionesConsulta.rol.carga.planEstudioMateria.claveMateria}) #{resultadosPlaneacionesConsulta.rol.carga.materia.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>    
-                                                                                <h:outputLabel value="NOMBRE DEL DOCENTE:"/> <p:spacer width="10px"/> <h:outputLabel value="#{resultadosPlaneacionesConsulta.rol.carga.docente.personal.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>  
-                                                                                <h:outputLabel value="NOMBRE DEL TUTOR"/> <p:spacer width="10px"/> <h:outputLabel value="#{resultadosPlaneacionesConsulta.buscarPersonal(resultadosPlaneacionesConsulta.rol.grupoSelec.tutor)}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>  
-                                                                                <h:outputLabel value="% ESPERADO"/> <p:spacer width="10px"/> <h:outputLabel value="#{resultadosPlaneacionesConsulta.rol.metaP}" style="font-weight: bold;"/><p:spacer width="10px"/>
-                                                                                <h:outputLabel value="ESTUDIANTES INSCRITOS"/> <p:spacer width="10px"/> <h:outputLabel value="#{resultadosPlaneacionesConsulta.rol.esInsc}" style="font-weight: bold;"/><p:spacer width="10px"/>
-                                                                                <h:outputLabel value="BAJAS TEMPORALES"/> <p:spacer width="10px"/> <h:outputLabel value="#{resultadosPlaneacionesConsulta.rol.esBajT}" style="font-weight: bold;"/><p:spacer width="10px"/>
-                                                                                <h:outputLabel value="BAJAS DEFINITIVAS"/> <p:spacer width="10px"/> <h:outputLabel value="#{resultadosPlaneacionesConsulta.rol.esDi}" style="font-weight: bold;"/><p:spacer width="10px"/>
-                                                                                <h:outputLabel value="REINCORPORACIONES"/> <p:spacer width="10px"/> <h:outputLabel value="#{resultadosPlaneacionesConsulta.rol.esRein}" style="font-weight: bold;"/><p:spacer width="10px"/>
-                                                                                <h:outputLabel value="NIVEL MINIMO DE LOGRO"/> <p:spacer width="10px"/> <h:outputLabel value="8.0" style="font-weight: bold;"/><p:spacer width="10px"/>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </div>         
+
                                                         <div class="row">
                                                             <div class="col-sm-12">
                                                                 <div class="description-block">
@@ -193,66 +275,80 @@
                                                                         <f:facet name="header">
                                                                         </f:facet>
                                                                         <p:columnGroup type="header">
-                                                                            <p:row class="success">
-                                                                                <p:column headerText="No. de Evaluación" style="width: 20%;font-size: small;"  /> 
-                                                                                <p:column headerText="Periodo" style="width: 10%;font-size: small;"/> 
-                                                                                <p:column headerText="% Eval." style="width: 10%;font-size: small;"/>            
+                                                                            <p:row class="success">         
                                                                                 <p:column headerText="Criterio de evaluacion" style="width: 10%;font-size: small;"/>
                                                                                 <p:column headerText="% Crit" style="width: 10%;font-size: small;"/>
                                                                                 <p:column headerText="Instrumentos de evaluación" style="width: 20%;font-size: small;"/> 
+                                                                                <p:column headerText="% Inst" style="width: 10%;font-size: small;"/>
+                                                                                <p:column headerText="Evidencia" style="width: 20%;font-size: small;"/> 
+                                                                                <p:column headerText="% Evi" style="width: 10%;font-size: small;"/>   
+                                                                                <p:column headerText="Meta" style="width: 10%;font-size: small;"/>                           
                                                                                 <p:column headerText="Estudiantes alcanzan meta" style="width: 10%;font-size: small;"/> 
                                                                                 <p:column headerText="Promedio" style="width: 10%;font-size: small;"/> 
                                                                                 <p:column headerText="% meta alcanzada" style="width: 10%;font-size: small;"/>                                                                             
                                                                                 <p:column headerText="Semaforizacion" style="width: 10%;font-size: small;"/>                                                                     
-                                                                                <p:column headerText="Acciones de mejora" style="width: 20%;font-size: small;"/> 
+                                                                                <p:column headerText="Acciones de mejora" style="width: 20%;font-size: small;"/>                                                                           
                                                                             </p:row>
                                                                         </p:columnGroup>
                                                                         <p:headerRow >
-                                                                            <p:column colspan="4" style="border: #000000  !important;font-size: small;" >
-                                                                                <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':asignacionIndCA.informe.unidad} #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':'-'} #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?asignacionIndCA.informe.objetivo:asignacionIndCA.informe.nombreUnidad}" style="text-align: center;"/>
+                                                                            <p:column colspan="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?6:3}" style="border: #000000  !important;font-size: small;" >
+                                                                                <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'Tarea Integradora: ':asignacionIndCA.informe.unidad} #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':'-'} #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?asignacionIndCA.informe.objetivo:asignacionIndCA.informe.nombreUnidad}" style="text-align: center;"/>
                                                                             </p:column>
-                                                                            <p:column colspan="7" style="border: #000000  !important;font-size: small;">
-                                                                                <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':asignacionIndCA.informe.objetivo}" />
+                                                                            <p:column colspan="5" style="border: #000000  !important;font-size: small; text-align: justify">
+                                                                                <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':asignacionIndCA.informe.objetivo}" style="text-align: justify" />
                                                                             </p:column>
+                                                                            <p:column colspan="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:2}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
+                                                                                <h:outputText value="#{asignacionIndCA.informe.fechaInicio}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                                                                                <h:outputText value=" al " style="text-align: center;" />
+                                                                                <h:outputText value="#{asignacionIndCA.informe.fechaFin}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                                                                            </p:column>
+                                                                            <p:column colspan="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:2}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
+                                                                                <h:outputText value="#{asignacionIndCA.informe.porUnidad}%" style="text-align: center; "/>
+                                                                            </p:column> 
                                                                         </p:headerRow> 
-                                                                        <p:column colspan="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?2:0}" groupRow="true" style="border: #000000  !important;font-size: small;">
-                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':asignacionIndCA.informe.unidad}#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':'.-'} #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'Tarea Integradora':asignacionIndCA.informe.nombreUnidad}" style="text-align: center;"/>
-                                                                        </p:column>
-                                                                        <p:column colspan="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?2:0}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
-                                                                            <h:outputText value="#{asignacionIndCA.informe.fechaInicio}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
-                                                                            <h:outputText value=" al " style="text-align: center;" />
-                                                                            <h:outputText value="#{asignacionIndCA.informe.fechaFin}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
-                                                                        </p:column>
-                                                                        <p:column colspan="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?2:0}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
-                                                                            <h:outputText value="#{asignacionIndCA.informe.porUnidad}" style="text-align: center; "/>
-                                                                        </p:column>                                                                         
 
-                                                                        <p:column groupRow="true" style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" rendered="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?false:true}">
-                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':asignacionIndCA.informe.criterio}" style="text-align: center;"/>
+
+                                                                        <p:column groupRow="true" style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" >
+                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.criterio}" style="text-align: center;"/>
                                                                         </p:column>
-                                                                        <p:column groupRow="true" style="border: #000000  !important;text-align: center;font-size: small; #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #000000':''}" rendered="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?false:true}">
-                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':asignacionIndCA.informe.porCriterio}" style="text-align: center;"/>
+
+                                                                        <p:column groupRow="true" style="border: #000000  !important;text-align: center;font-size: small; #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" >
+                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.porCriterio}" style="text-align: center;"/>
                                                                         </p:column>
-                                                                        <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #000000':''}" rendered="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?false:true}">
-                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':asignacionIndCA.informe.indicador}" />
+
+                                                                        <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" >
+                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.indicador}" />
+                                                                        </p:column>
+
+                                                                        <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" >
+                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.porcentaje}" />
+                                                                        </p:column> 
+                                                                        <!-- Reservado para la parde de evidencias que e agregara -->
+                                                                        <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" >
+                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.indicador}" />
+                                                                        </p:column>
+                                                                        <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" >
+                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.porcentaje}" />
                                                                         </p:column>  
-
+                                                                        <!-- Fin del reservado para la parde de evidencias que e agregara -->
                                                                         <p:column style="border: #000000  !important;text-align: center;font-size: small;">
                                                                             <h:outputText value="#{asignacionIndCA.estudiantesAlcazanMeta}" style="text-align: center;"/>
-                                                                        </p:column>   
+                                                                        </p:column><p:column style="border: #000000  !important;text-align: center;font-size: small;">
+                                                                            <h:outputText value="#{asignacionIndCA.estudiantesAlcazanMeta}" style="text-align: center;"/>
+                                                                        </p:column>
                                                                         <p:column style="border: #000000  !important;text-align: center;font-size: small;">
                                                                             <h:outputText value="#{asignacionIndCA.metaAlacanzadaIndicador}" style="text-align: center;"><f:convertNumber pattern="#,##0.00"/></h:outputText>
-                                                                        </p:column>  
+                                                                        </p:column>
                                                                         <p:column style="border: #000000  !important;text-align: center;font-size: small;">
                                                                             <h:outputText value="#{asignacionIndCA.metaAlacanzadaunidad}" style="text-align: center;"><f:convertNumber pattern="#,##0.00" currencySymbol="%" /></h:outputText>
-                                                                        </p:column> 
+                                                                        </p:column>  
                                                                         <p:column>
                                                                             <img src="../../resources/img/#{asignacionIndCA.semaforo}.png" alt="#{asignacionIndCA.semaforo}"/>
                                                                         </p:column>  
                                                                         <p:column groupRow="true" style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}">
-                                                                            
+
                                                                             <h:outputText value="#{asignacionIndCA.accionesMejora}" style="text-align: center;" rendered="#{asignacionIndCA.accionesMejora ne ''}"/>
-                                                                        
+
                                                                             <p:commandButton icon="fa fa-comment" styleClass="btn-primary" rendered="#{asignacionIndCA.accionesMejora eq ''?(resultadosPlaneacionesConsulta.rol.tipoUser eq 3?true:false):false}"
                                                                                              oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
                                                                                 <f:setPropertyActionListener target="#{resultadosPlaneacionesConsulta.rol.configuracion}" value="#{asignacionIndCA.informe.configuracion}" />
@@ -262,6 +358,15 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="description-block">
+                                                                    <p:barChart model="#{resultadosPlaneacionesConsulta.barModel2}" style="width: 100%; height: 500px;"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
                                                     </p:panel>
                                                 </center>
                                             </c:if>

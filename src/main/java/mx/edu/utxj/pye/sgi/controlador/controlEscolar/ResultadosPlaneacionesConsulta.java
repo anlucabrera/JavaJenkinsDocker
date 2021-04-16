@@ -49,8 +49,17 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbResultadosConfiguraciones;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AccionesDeMejora;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MetasPropuestas;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.axes.cartesian.CartesianScales;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearTicks;
+import org.primefaces.model.charts.bar.BarChartDataSet;
+import org.primefaces.model.charts.bar.BarChartModel;
+import org.primefaces.model.charts.bar.BarChartOptions;
+import org.primefaces.model.charts.optionconfig.title.Title;
 
 
 
@@ -73,6 +82,7 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     @Inject LogonMB logon;
     @Getter Boolean tieneAcceso = false;
+    @Getter    @Setter    private BarChartModel barModel2;
     Integer bt=0,bd=0,ri=0;
 
     /**
@@ -281,6 +291,7 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         
         if (resCarga.getValor().isEmpty()) {
             rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+            rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
             rol.setDrcas(Collections.EMPTY_LIST);
@@ -304,6 +315,7 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
         if (resCarga.getValor().isEmpty()) {
             rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+            rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
             return;
@@ -320,6 +332,7 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
         if (resCarga.getValor().isEmpty()) {
             rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+            rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
             return;
@@ -351,14 +364,22 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
     }
     
     public void existeAsignacion() {
-        if (rol.getCarga() == null) {
+        if (rol.getCarga() == null) {      
+            rol.setDrcas(Collections.EMPTY_LIST);      
+            rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+            rol.setEstudioMateria(new PlanEstudioMateria());
+            rol.setCargas(Collections.EMPTY_LIST);
+            rol.setCronograma(Collections.EMPTY_LIST);
             return;
         }
         ResultadoEJB<List<Informeplaneacioncuatrimestraldocenteprint>> res = ejb.buscarInforme(rol.getCarga());
         rol.setInformeplaneacioncuatrimestraldocenteprints(new ArrayList<>());
         if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
+            rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setExisteAsignacionIndicadores(true);
             rol.setInformeplaneacioncuatrimestraldocenteprints(res.getValor());
+            rol.setEstudioMateria(rol.getCarga().getPlanEstudioMateria());
+            rol.setDrcas(Collections.EMPTY_LIST);
         }
         calculaDatosGenerales();
         calcularesultados();   
@@ -369,23 +390,76 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         if(rol.getInformeplaneacioncuatrimestraldocenteprints().isEmpty())return;
         rol.setDrcas(new ArrayList<>());
         rol.getInformeplaneacioncuatrimestraldocenteprints().forEach((t) -> {
-            ResultadoEJB<DtoResultadosCargaAcademica> resc = configuraciones.getCalificacionesPorConfiguracionDetalle(t,rol.getMetaP());
+            ResultadoEJB<DtoResultadosCargaAcademica> resc = configuraciones.getCalificacionesPorConfiguracionDetalle(t, rol.getMetaP());
             if (!resc.getCorrecto()) {
                 mostrarMensajeResultadoEJB(resc);
-            }else{
+            } else {
                 rol.getDrcas().add(resc.getValor());
             }
+        });    
+            
+        barModel2=new BarChartModel();
+        ChartData data = new ChartData();
+        
+        rol.getEstudioMateria().getIndicadorAlineacionPlanMateriaList().forEach((t) -> {
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.calcularesultados()");
+            BarChartDataSet barDataSet = new BarChartDataSet();
+            barDataSet.setLabel(t.getIndicadorAlineacion().getClave());
+            barDataSet.setBackgroundColor("rgba(255, 99, 132, 0.2)");
+            barDataSet.setBorderColor("rgb(255, 99, 132)");
+            barDataSet.setBorderWidth(1);
+            List<Number> values = new ArrayList<>();
+            rol.getInformeplaneacioncuatrimestraldocenteprints().forEach((i) -> {
+                if (rol.getCarga().getCargaAcademica().getCarga() == i.getCarga()) {
+                    ResultadoEJB<DtoResultadosCargaAcademica> resc = configuraciones.getCalificacionesPorConfiguracionDetalle(i, t.getMetaIndicador());
+                    if (!resc.getCorrecto()) {
+                        mostrarMensajeResultadoEJB(resc);
+                    } else {
+                        System.out.println(resc.getValor().getMetaAlacanzadaunidad());
+                        values.add(resc.getValor().getMetaAlacanzadaunidad());
+                    }
+                }
+            });
+            barDataSet.setData(values);            
+            data.addChartDataSet(barDataSet);
         });
+        
+        List<String> labels = new ArrayList<>();
+        labels.add(rol.getEstudioMateria().getClaveMateria());
+
+        data.setLabels(labels);
+        barModel2.setData(data);
+ 
+        
+
+        //Options
+        BarChartOptions options = new BarChartOptions();
+        CartesianScales cScales = new CartesianScales();
+        CartesianLinearAxes linearAxes = new CartesianLinearAxes();
+        linearAxes.setOffset(true);
+        CartesianLinearTicks ticks = new CartesianLinearTicks();
+        ticks.setBeginAtZero(true);
+        linearAxes.setTicks(ticks);
+        cScales.addYAxesData(linearAxes);
+        options.setScales(cScales);
+
+        Title title = new Title();
+        title.setDisplay(true);
+        title.setText("Metas");
+        options.setTitle(title);
+
+        barModel2.setOptions(options);
+        
     }
     
     public void calculaDatosGenerales() {
         bt = 0;        bd = 0;        ri = 0;
         rol.setMetaP(0d);
-        if (!rol.getCarga().getPlanEstudioMateria().getMetasPropuestasList().isEmpty()) {
-            MetasPropuestas mp = new MetasPropuestas();
-            mp = rol.getCarga().getPlanEstudioMateria().getMetasPropuestasList().get(rol.getCarga().getPlanEstudioMateria().getMetasPropuestasList().size() - 1);
-            rol.setMetaP(mp.getValorPropuesto());
-        }
+//        if (!rol.getCarga().getPlanEstudioMateria().getMetasPropuestasList().isEmpty()) {
+//            MetasPropuestas mp = new MetasPropuestas();
+//            mp = rol.getCarga().getPlanEstudioMateria().getMetasPropuestasList().get(rol.getCarga().getPlanEstudioMateria().getMetasPropuestasList().size() - 1);
+//            rol.setMetaP(mp.getValorPropuesto());
+//        }
         if (!rol.getCarga().getGrupo().getEstudianteList().isEmpty()) {
             List<Estudiante> es = new ArrayList<>();
             es = rol.getCarga().getGrupo().getEstudianteList();
