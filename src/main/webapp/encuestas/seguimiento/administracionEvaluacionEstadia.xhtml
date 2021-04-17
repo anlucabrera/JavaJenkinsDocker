@@ -85,7 +85,7 @@
             <p:sticky target="tb" />
         </div>
         <p:tabView id="tabView">
-            <c:if test="#{administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.director or administracionEncuesta.dto.planeacion}">
+            <c:if test="#{administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.director or administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario}">
                 <p:tab title="Estudiantes con encuesta completa">
                     <h:form id="fr1">
                         <p:outputPanel>
@@ -142,7 +142,7 @@
                                     </p:column>
                                 </c:if>
                                 <f:facet name="footer">
-                                    <c:if test="#{administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.planeacion}">
+                                    <c:if test="#{administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario}">
                                         <p:commandButton actionListener="#{administracionEvaluacionEstadia.seguimientoEncuestaIyE()}" value="Actualizar información" icon="fa fa-refresh"
                                                          class="btn btn-primary" update="tabView:fr1:tblResEncIngTer tabView:fr2:tblResEncIngIncom" process="@form"/>
                                     </c:if>
@@ -150,10 +150,6 @@
                                         <p:commandButton actionListener="#{administracionEvaluacionEstadia.seguimientoEncuestaDirectores()}" value="Actualizar información" icon="fa fa-refresh"
                                                          class="btn btn-primary" update="tabView:fr1:tblResEncIngTer tabView:fr2:tblResEncIngIncom" process="@form"/>
                                     </c:if>
-                                    <!--c:if test="#{administracionEncuesta.dto.tutor}">
-                                        <p:commandButton actionListener="#{administracionEncuestaServicios.seguimientoEncuestaServiciosTutor()}" value="Actualizar información" icon="fa fa-refresh"
-                                                         class="btn btn-primary" update="tabView:fr1:tblResEncIngTer tabView:fr2:tblResEncIngIncom" process="@form"/>
-                                    </c:if-->
                                 </f:facet>
                             </p:dataTable>
                         </p:outputPanel>
