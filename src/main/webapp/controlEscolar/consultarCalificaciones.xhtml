@@ -10,16 +10,6 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:o="http://omnifaces.org/ui">
-
-    <ui:define name="head-end">
-        <h:outputStylesheet library="css" name="tablaDatos.css"/>
-        <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
-            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
-        </c:if>
-        <!-- Fin estilos par proceso electoral -->
-    </ui:define>
-
     <ui:define name="title">
         Calificaciones
     </ui:define>
@@ -31,6 +21,9 @@
     <ui:define name="head-end">
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
         <h:outputScript library="js" name="dialogs.js"/>
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
     </ui:define>
 
     <ui:define name="body">
@@ -55,7 +48,7 @@
                 color: #222222;
                 border-color: #d6d6d6;
                 /* with the exported variables from Nova and Luna Themes*/
-                border-color: var(--input-border-color, #d6d6d6);
+                
             }
 
             .white-button.ui-button.ui-state-default:enabled:hover,
@@ -64,7 +57,7 @@
                 border-color: #ccc;
                 color: #373a3c;
                 /* with the exported variables from Nova and Luna Themes*/
-                border-color: var(--input-hover-border-color, #ccc);
+                
             }
 
             .green-button.ui-button.ui-state-default {
@@ -203,7 +196,8 @@
                                                                 <table class="table table-condensed table-bordered table-hover table-responsive" style="text-align: left">
                                                                     <tbody>
                                                                     <tr>
-                                                                        <td colspan="6" style="font-size: x-small; font-weight: bold; background-color: #3c8dbc; color: #ffffff">
+                                                                        <td colspan="6" style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">
+                                                                            <!--#3c8dbc-->
                                                                             Datos generales del estudiante
                                                                         </td>
                                                                     </tr>
@@ -242,7 +236,7 @@
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td colspan="4" style="font-size: x-small; font-weight: bold; background-color: #3c8dbc; color: #ffffff">
+                                                                        <td colspan="4" style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">
                                                                             Datos académicos
                                                                         </td>
                                                                     </tr>
@@ -415,7 +409,7 @@
                                                             <table class="table table-condensed table-bordered table-hover table-responsive" style="text-align: center">
                                                                 <tbody>
                                                                 <tr>
-                                                                    <td colspan="5" style="font-size: x-small; font-weight: bold; background-color: #3c8dbc; color: #ffffff">
+                                                                    <td colspan="5" style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">
                                                                         Escalas alfabéticas para las calificaciones alcanzadas
                                                                     </td>
                                                                 </tr>

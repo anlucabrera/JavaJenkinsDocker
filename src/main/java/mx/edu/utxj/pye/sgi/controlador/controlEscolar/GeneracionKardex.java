@@ -42,12 +42,11 @@ public class GeneracionKardex implements Serializable{
     @Getter @Setter String encabezado;
     @Getter @Setter PdfTemplate total;
     @Getter @Setter SimpleDateFormat sdf = new SimpleDateFormat("d 'de' MMMM 'de' yyyy", new Locale("ES", "MX"));
+    @Getter @Setter Date fechaFinVeda = new Date(2021, 06, 06);
     @Getter @Setter StreamedContent contenioArchivo;
     @Getter @Setter DefaultStreamedContent download;
-    @EJB
-    EjbConsultaCalificacion ejb;
-    @Inject
-    ConsultaCalificacionesEstudiante controlador;
+    @EJB EjbConsultaCalificacion ejb;
+    @Inject ConsultaCalificacionesEstudiante controlador;
     
     public void controlPDF(DtoEstudiante estudiante) throws IOException, DocumentException {
         if(estudiante.getInscripcionActiva().getGrupo().getGrado() == 1){
@@ -184,8 +183,11 @@ public class GeneracionKardex implements Serializable{
         //Se agregan los elementos creados
         document.add(nombreUniversidad);
         document.add(departamento);
-        document.add(logoSep);
-        document.add(logoUT);
+        if(new Date().after(fechaFinVeda)){
+            document.add(logoSep);
+            document.add(logoUT);
+            //System.out.println("La fecha de hoy es despues de la veda electoral");
+        }
         document.add(textoPrincipal);
         document.add(parrafo);
         document.add(texto2);
@@ -365,8 +367,11 @@ public class GeneracionKardex implements Serializable{
         //Se agregan los elementos creados
         document.add(nombreUniversidad);
         document.add(departamento);
-        document.add(logoSep);
-        document.add(logoUT);
+        if(new Date().after(fechaFinVeda)){
+            document.add(logoSep);
+            document.add(logoUT);
+            //System.out.println("La fecha de hoy es despues de la veda electoral");
+        }
         document.add(textoPrincipal);
         document.add(parrafo);
         document.add(texto2);
@@ -580,8 +585,11 @@ public class GeneracionKardex implements Serializable{
         //Se agregan los elementos creados
         document.add(nombreUniversidad);
         document.add(departamento);
-        document.add(logoSep);
-        document.add(logoUT);
+        if(new Date().after(fechaFinVeda)){
+            document.add(logoSep);
+            document.add(logoUT);
+            //System.out.println("La fecha de hoy es despues de la veda electoral");
+        }
         document.add(textoPrincipal);
         document.add(parrafo);
         document.add(texto2);
@@ -822,8 +830,11 @@ public class GeneracionKardex implements Serializable{
         //Se agregan los elementos creados
         document.add(nombreUniversidad);
         document.add(departamento);
-        document.add(logoSep);
-        document.add(logoUT);
+        if(new Date().after(fechaFinVeda)){
+            document.add(logoSep);
+            document.add(logoUT);
+            //System.out.println("La fecha de hoy es despues de la veda electoral");
+        }
         document.add(textoPrincipal);
         document.add(parrafo);
         document.add(texto2);
@@ -1032,7 +1043,7 @@ public class GeneracionKardex implements Serializable{
                 Integer cargas = (int)estudiante1.getGrupo().getCargaAcademicaList().stream().mapToInt(CargaAcademica::getCarga).count();
                 Integer calificaciones = (int)estudiante1.getInscripcion().getCalificacionPromedioList().stream().mapToInt((cp) -> cp.getCargaAcademica().getCarga()).count();
                 BigDecimal promedioC = controlador.getPromedioCuatrimestral(estudiante1.getInscripcion());
-                //if(!cargas.equals(calificaciones) || promedioC.compareTo(new BigDecimal(8)) == -1) return;
+                if(!cargas.equals(calificaciones) || promedioC.compareTo(new BigDecimal(8)) == -1) return;
                 cuatrimestre = new PdfPCell(new Paragraph("QUINTO", fontBold1));  cuatrimestre.setColspan(3);  cuatrimestre.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table6.addCell(cuatrimestre);
                 controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 5).forEach(dtoCargaAcademica -> {
@@ -1064,8 +1075,11 @@ public class GeneracionKardex implements Serializable{
         //Se agregan los elementos creados
         document.add(nombreUniversidad);
         document.add(departamento);
-        document.add(logoSep);
-        document.add(logoUT);
+        if(new Date().after(fechaFinVeda)){
+            document.add(logoSep);
+            document.add(logoUT);
+            //System.out.println("La fecha de hoy es despues de la veda electoral");
+        }
         document.add(textoPrincipal);
         document.add(parrafo);
         document.add(texto2);
@@ -1281,7 +1295,7 @@ public class GeneracionKardex implements Serializable{
             if(estudiante1.getGrupo().getGrado() == 6){
                 SeguimientoEstadiaEstudiante see = ejb.verificarEstadiaEstudiante(estudiante1.getInscripcion()).getValor();
                 CalificacionCriterioEstadia cce = ejb.verificarCalificacionEstadia(see).getValor();
-                BigDecimal acreditado = new BigDecimal(cce.getCalificacion()).setScale(2, RoundingMode.HALF_UP);
+                BigDecimal acreditado = new BigDecimal((double) cce.getCalificacion()).setScale(2, RoundingMode.HALF_UP);
                 if(acreditado.compareTo(new BigDecimal(8)) == -1) return;
                 cuatrimestre = new PdfPCell(new Paragraph("SEXTO", fontBold1));  cuatrimestre.setColspan(3);  cuatrimestre.setHorizontalAlignment(Element.ALIGN_CENTER);
                 PdfPCell descEstadia = new PdfPCell(new Paragraph("Estadía en el Sector Productivo", fontMateria2)); descEstadia.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1303,8 +1317,11 @@ public class GeneracionKardex implements Serializable{
         //Se agregan los elementos creados
         document.add(nombreUniversidad);
         document.add(departamento);
-        document.add(logoSep);
-        document.add(logoUT);
+        if(new Date().after(fechaFinVeda)){
+            document.add(logoSep);
+            document.add(logoUT);
+            //System.out.println("La fecha de hoy es despues de la veda electoral");
+        }
         document.add(textoPrincipal);
         document.add(parrafo);
         document.add(texto2);

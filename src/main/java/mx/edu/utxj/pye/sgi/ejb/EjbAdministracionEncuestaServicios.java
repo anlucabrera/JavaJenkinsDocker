@@ -235,7 +235,7 @@ public class EjbAdministracionEncuestaServicios {
             if(carrerasCgut.getAbreviatura().equals("FAT")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "FOT");}
             if(carrerasCgut.getAbreviatura().equals("GASTRO")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "GAS");}
             if(carrerasCgut.getAbreviatura().equals("IBIO")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IBIO");}
-            if(carrerasCgut.getAbreviatura().equals("IDIE")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IDIE");}
+            if(carrerasCgut.getAbreviatura().equals("LGCH")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "LGCH");}
             if(carrerasCgut.getAbreviatura().equals("IMECA")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IMECA");}
             if(carrerasCgut.getAbreviatura().equals("IMI")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IMI");}
             if(carrerasCgut.getAbreviatura().equals("INF")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IN");}
