@@ -10,11 +10,14 @@ import javax.ejb.Stateless;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInformePlaneaciones;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoResultadosCargaAcademica;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AccionesDeMejora;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionEvidenciaInstrumento;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ObjetivoEducacional;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ObjetivoEducacionalPlanMateria;
@@ -45,7 +48,7 @@ public class EjbResultadosConfiguraciones {
     }
     
 
-    public ResultadoEJB<DtoResultadosCargaAcademica> getCalificacionesPorConfiguracionDetalle(Informeplaneacioncuatrimestraldocenteprint informe,Double mp) {
+    public ResultadoEJB<DtoResultadosCargaAcademica> getCalificacionesPorConfiguracionDetalle(DtoInformePlaneaciones informe,Double mp,Integer perido) {
         try {
             sumaC = 0D;
             esalcanzados = 0;
@@ -68,20 +71,38 @@ public class EjbResultadosConfiguraciones {
                     });
                 }
             } else {
-                List<Calificacion> cal = em.createQuery("select t from Calificacion t INNER JOIN t.configuracionDetalle dt WHERE dt.configuracionDetalle=:configuracionDetalle", Calificacion.class)
-                        .setParameter("configuracionDetalle", informe.getConfiguracionDetalle())
-                        .getResultList();
-                if (!cal.isEmpty()) {
-                    cal.forEach((t) -> {
-                        if (t.getValor() != null) {
-                            if (t.getValor() != 0) {
-                                sumaC = sumaC + t.getValor();
-                                if (t.getValor() >= 8D) {
-                                    esalcanzados = esalcanzados + 1;
+                if (perido <= 56) {
+                    List<Calificacion> cal = em.createQuery("select t from Calificacion t INNER JOIN t.configuracionDetalle dt WHERE dt.configuracionDetalle=:configuracionDetalle", Calificacion.class)
+                            .setParameter("configuracionDetalle", informe.getConfiguracionDetalle())
+                            .getResultList();
+                    if (!cal.isEmpty()) {
+                        cal.forEach((t) -> {
+                            if (t.getValor() != null) {
+                                if (t.getValor() != 0) {
+                                    sumaC = sumaC + t.getValor();
+                                    if (t.getValor() >= 8D) {
+                                        esalcanzados = esalcanzados + 1;
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
+                } else {
+                    List<CalificacionEvidenciaInstrumento> cal = em.createQuery("select t from CalificacionEvidenciaInstrumento t INNER JOIN t.configuracionEvidencia dt WHERE dt.configuracionEvidenciaInstrumento=:configuracionEvidenciaInstrumento", CalificacionEvidenciaInstrumento.class)
+                            .setParameter("configuracionEvidenciaInstrumento", informe.getConfiguracionDetalle())
+                            .getResultList();
+                    if (!cal.isEmpty()) {
+                        cal.forEach((t) -> {
+                            if (t.getValor() != null) {
+                                if (t.getValor() != 0) {
+                                    sumaC = sumaC + t.getValor();
+                                    if (t.getValor() >= 8D) {
+                                        esalcanzados = esalcanzados + 1;
+                                    }
+                                }
+                            }
+                        });
+                    }
                 }
             }
             
@@ -117,75 +138,37 @@ public class EjbResultadosConfiguraciones {
         }
     }
     
-    public ResultadoEJB<DtoResultadosCargaAcademica> getCalificacionesUnidad(Informeplaneacioncuatrimestraldocenteprint informe,Double mp) {
+    public ResultadoEJB<Double> getCalificacionesIndicador(CargaAcademica cargaAcademica,Double mp) {
         try {
+            
             sumaC = 0D;
             esalcanzados = 0;
-            String semafoto= "semaforoRojo";
-            DtoResultadosCargaAcademica drca = new DtoResultadosCargaAcademica(informe, 0, 0, 0D, 0D,"",semafoto);
-            CargaAcademica ca = getcargaAcdemica(informe.getCarga());
-            Integer esAc = ca.getCveGrupo().getEstudianteList().size();
-            if (informe.getNombreUnidad().equals("T.I.")) {
-                List<TareaIntegradoraPromedio> trp = em.createQuery("select t from TareaIntegradoraPromedio t INNER JOIN t.tareaIntegradora dt INNER JOIN dt.carga cg WHERE cg.carga=:carga", TareaIntegradoraPromedio.class)
-                        .setParameter("carga", informe.getCarga())
-                        .getResultList();
-                if (!trp.isEmpty()) {
-                    trp.forEach((k) -> {
-                        if (k.getValor() != 0D) {
-                            sumaC = sumaC + k.getValor();
-                            if (k.getValor() >= 8D) {
+            Integer esAc = cargaAcademica.getCveGrupo().getEstudianteList().size();
+
+            List<CalificacionPromedio> cal = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.cargaAcademica dt WHERE dt.carga=:carga", CalificacionPromedio.class)
+                    .setParameter("carga", cargaAcademica.getCarga())
+                    .getResultList();
+            if (!cal.isEmpty()) {
+                cal.forEach((t) -> {
+//                    if (t.getValor() != null) {
+                        if (t.getValor() != 0) {
+                            sumaC = sumaC + t.getValor();
+                            if (t.getValor() >= 8D) {
                                 esalcanzados = esalcanzados + 1;
                             }
                         }
-                    });
-                }
-            } else {
-                List<Calificacion> cal = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.cargaAcademica dt WHERE dt.carga=:carga", Calificacion.class)
-                        .setParameter("carga", informe.getCarga())
-                        .getResultList();
-                if (!cal.isEmpty()) {
-                    cal.forEach((t) -> {
-                        if (t.getValor() != null) {
-                            if (t.getValor() != 0) {
-                                sumaC = sumaC + t.getValor();
-                                if (t.getValor() >= 8D) {
-                                    esalcanzados = esalcanzados + 1;
-                                }
-                            }
-                        }
-                    });
-                }
+//                    }
+                });
             }
-            
-            Double promedioin = 0D;
             Double promediounidad = 0D;
-            if (sumaC != 0D) {
-                promedioin = sumaC / Double.parseDouble(esAc.toString());
-            }
+            
             if (esalcanzados != 0) {
                 promediounidad = (Double.parseDouble(esalcanzados.toString()) * 100) / Double.parseDouble(esAc.toString());
             }
-
-            if (promediounidad >= mp) {
-                semafoto = "semaforoVerde";
-            } else {
-                semafoto = "semaforoRojo";
-            }
-
-            String accionesDeMejora="";
-            List<AccionesDeMejora> cal = em.createQuery("select t from AccionesDeMejora t INNER JOIN t.configuracion dt WHERE dt.configuracion=:configuracion", AccionesDeMejora.class)
-                        .setParameter("configuracion", informe.getConfiguracion())
-                        .getResultList();
-                if (!cal.isEmpty()) {
-                    accionesDeMejora=cal.get(0).getAcciones();
-                }
             
-            
-            drca=new DtoResultadosCargaAcademica(informe, esAc, esalcanzados, promedioin, promediounidad,accionesDeMejora,semafoto);
-            
-            return ResultadoEJB.crearCorrecto(drca, "Califiaciones Encontrados");
+            return ResultadoEJB.crearCorrecto(promediounidad, "Califiaciones Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los Tipos de Especialidad Centro(EjbResultadosConfiguraciones.getCalificacionesPorConfiguracionDetalle).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Los promedios por materia(EjbResultadosConfiguraciones.getCalificacionesIndicador).", e, null);
         }
     }
     
@@ -203,18 +186,14 @@ public class EjbResultadosConfiguraciones {
     
     public ResultadoEJB<AccionesDeMejora> registrarAccionMejora(AccionesDeMejora adm,Integer confi, Operacion operacion) {
         try {
-            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbResultadosConfiguraciones.registrarAccionMejora(1)");
             f.setEntityClass(AccionesDeMejora.class);
             
             switch (operacion) {
                 case PERSISTIR:
                     UnidadMateriaConfiguracion umc= getcargaconfiguracion(confi);
                     adm.setConfiguracion(new UnidadMateriaConfiguracion());
-                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbResultadosConfiguraciones.registrarAccionMejora(2)");
                     adm.setConfiguracion(umc);
-                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbResultadosConfiguraciones.registrarAccionMejora(3)");                    
                     adm.getConfiguracion().setConfiguracion(confi);
-                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbResultadosConfiguraciones.registrarAccionMejora(4)");
                     em.persist(adm);
                     f.flush();
                     return ResultadoEJB.crearCorrecto(adm, "Se registró correctamente La Unidad Materia");

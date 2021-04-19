@@ -280,29 +280,28 @@
                                                                                 <p:column headerText="% Crit" style="width: 10%;font-size: small;"/>
                                                                                 <p:column headerText="Instrumentos de evaluación" style="width: 20%;font-size: small;"/> 
                                                                                 <p:column headerText="% Inst" style="width: 10%;font-size: small;"/>
-                                                                                <p:column headerText="Evidencia" style="width: 20%;font-size: small;"/> 
-                                                                                <p:column headerText="% Evi" style="width: 10%;font-size: small;"/>   
-                                                                                <p:column headerText="Meta" style="width: 10%;font-size: small;"/>                           
-                                                                                <p:column headerText="Estudiantes alcanzan meta" style="width: 10%;font-size: small;"/> 
-                                                                                <p:column headerText="Promedio" style="width: 10%;font-size: small;"/> 
-                                                                                <p:column headerText="% meta alcanzada" style="width: 10%;font-size: small;"/>                                                                             
-                                                                                <p:column headerText="Semaforizacion" style="width: 10%;font-size: small;"/>                                                                     
-                                                                                <p:column headerText="Acciones de mejora" style="width: 20%;font-size: small;"/>                                                                           
+                                                                                <p:column headerText="Evidencia" style="width: 20%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/> 
+                                                                                <p:column headerText="Meta" style="width: 10%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/>                           
+                                                                                <p:column headerText="Estudiantes alcanzan meta" style="width: 10%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/> 
+                                                                                <p:column headerText="Promedio" style="width: 10%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/> 
+                                                                                <p:column headerText="% meta alcanzada" style="width: 10%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/>                                                                             
+                                                                                <p:column headerText="Semaforizacion" style="width: 10%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/>                                                                     
+                                                                                <p:column headerText="Acciones de mejora" style="width: 20%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/>                                                                           
                                                                             </p:row>
                                                                         </p:columnGroup>
                                                                         <p:headerRow >
-                                                                            <p:column colspan="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?6:3}" style="border: #000000  !important;font-size: small;" >
+                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?(asignacionIndCA.informe.nombreUnidad eq 'T.I.'?6:3):1}" style="border: #000000  !important;font-size: small;" >
                                                                                 <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'Tarea Integradora: ':asignacionIndCA.informe.unidad} #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':'-'} #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?asignacionIndCA.informe.objetivo:asignacionIndCA.informe.nombreUnidad}" style="text-align: center;"/>
                                                                             </p:column>
-                                                                            <p:column colspan="5" style="border: #000000  !important;font-size: small; text-align: justify">
-                                                                                <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':asignacionIndCA.informe.objetivo}" style="text-align: justify" />
-                                                                            </p:column>
-                                                                            <p:column colspan="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:2}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
+                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?(asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:1):1}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
                                                                                 <h:outputText value="#{asignacionIndCA.informe.fechaInicio}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
                                                                                 <h:outputText value=" al " style="text-align: center;" />
                                                                                 <h:outputText value="#{asignacionIndCA.informe.fechaFin}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
                                                                             </p:column>
-                                                                            <p:column colspan="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:2}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
+                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?6:1}" style="border: #000000  !important;font-size: small; text-align: justify">
+                                                                                <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':asignacionIndCA.informe.objetivo}" style="text-align: justify" />
+                                                                            </p:column>
+                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?(asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:2):1}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
                                                                                 <h:outputText value="#{asignacionIndCA.informe.porUnidad}%" style="text-align: center; "/>
                                                                             </p:column> 
                                                                         </p:headerRow> 
@@ -324,28 +323,26 @@
                                                                             <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.porcentaje}" />
                                                                         </p:column> 
                                                                         <!-- Reservado para la parde de evidencias que e agregara -->
-                                                                        <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" >
-                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.indicador}" />
+                                                                        <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}"  rendered="#{resultadosPlaneacionesConsulta.rol.render}">
+                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.evidencia}" />
                                                                         </p:column>
-                                                                        <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" >
-                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.porcentaje}" />
+                                                                        <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}"  rendered="#{resultadosPlaneacionesConsulta.rol.render}">
+                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.meta}" />
                                                                         </p:column>  
                                                                         <!-- Fin del reservado para la parde de evidencias que e agregara -->
-                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;">
-                                                                            <h:outputText value="#{asignacionIndCA.estudiantesAlcazanMeta}" style="text-align: center;"/>
-                                                                        </p:column><p:column style="border: #000000  !important;text-align: center;font-size: small;">
+                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                             <h:outputText value="#{asignacionIndCA.estudiantesAlcazanMeta}" style="text-align: center;"/>
                                                                         </p:column>
-                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;">
+                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                             <h:outputText value="#{asignacionIndCA.metaAlacanzadaIndicador}" style="text-align: center;"><f:convertNumber pattern="#,##0.00"/></h:outputText>
                                                                         </p:column>
-                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;">
+                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                             <h:outputText value="#{asignacionIndCA.metaAlacanzadaunidad}" style="text-align: center;"><f:convertNumber pattern="#,##0.00" currencySymbol="%" /></h:outputText>
                                                                         </p:column>  
-                                                                        <p:column>
+                                                                        <p:column rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                             <img src="../../resources/img/#{asignacionIndCA.semaforo}.png" alt="#{asignacionIndCA.semaforo}"/>
                                                                         </p:column>  
-                                                                        <p:column groupRow="true" style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}">
+                                                                        <p:column groupRow="true" style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" rendered="#{resultadosPlaneacionesConsulta.rol.render}">
 
                                                                             <h:outputText value="#{asignacionIndCA.accionesMejora}" style="text-align: center;" rendered="#{asignacionIndCA.accionesMejora ne ''}"/>
 
@@ -362,7 +359,7 @@
                                                         <div class="row">
                                                             <div class="col-sm-12">
                                                                 <div class="description-block">
-                                                                    <p:barChart model="#{resultadosPlaneacionesConsulta.barModel2}" style="width: 100%; height: 500px;"/>
+                                                                    <p:barChart model="#{resultadosPlaneacionesConsulta.barModel2}" style="width: 100%; height: 500px;"  rendered="#{resultadosPlaneacionesConsulta.rol.render}"/>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -386,7 +383,7 @@
                                 <p:message for="txtComentario" />
                                 <h:outputText id="display" />
                                 <p:commandButton id="btnAceptarComentario" value="Aceptar" actionListener="#{resultadosPlaneacionesConsulta.guardarAccion()}"
-                                                 icon="fa fa-chek" styleClass="btn-primary"  update=":frm:tbAsigInd1" oncomplete="PF('dlgComentario').hide()" />
+                                                 icon="fa fa-chek" styleClass="btn-primary"  update="@form" oncomplete="PF('dlgComentario').hide()" />
                             </p:panelGrid>
                         </p:dialog>
                     </h:form>

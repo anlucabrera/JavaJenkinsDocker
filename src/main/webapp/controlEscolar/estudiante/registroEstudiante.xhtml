@@ -144,7 +144,7 @@
                         <div class="col-md-9">
                             <div class="nav-tabs-custom">
                                 <p:tabView id="tabw1" activeIndex="#{registrolDelEstudiante.rol.paso}">
-                                    <p:tab title="Datos Personales" >                                        
+                                    <p:tab title="Datos Personales" titleStyle="#{registrolDelEstudiante.rol.personaD.econtrado eq true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;'}">                                        
                                         <h:form id="frmDP">
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <div class="col-md-12">
@@ -268,7 +268,7 @@
                                             </div>
                                         </h:form>
                                     </p:tab>
-                                    <p:tab title="Datos Medicos y Medios Comunicación" >
+                                    <p:tab title="Datos Medicos y Medios Comunicación" titleStyle="#{registrolDelEstudiante.rol.dmedico.econtrado eq true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;'}">
                                         <h:form>
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <p style="color: red;">
@@ -399,7 +399,7 @@
                                             </div>
                                         </h:form>
                                     </p:tab>
-                                    <p:tab title="Domicilio de residencia y procedencia" >
+                                    <p:tab title="Domicilio de residencia y procedencia" titleStyle="#{registrolDelEstudiante.rol.ddomicilios.econtrado eq true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;'}">
                                         <o:form id="frmForAc"  enctype="multipart/form-data"> 
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <div class="col-md-12">
@@ -515,6 +515,7 @@
                                                                     <div class="row">
                                                                         <div class="form-group">
                                                                             <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <p:outputLabel for="messages" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Solo se aceptan IMAGENES JPG y PNG" />
                                                                                 <p:outputLabel for="messages" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Croquis de:" />
                                                                                 <br/>
                                                                                 <p:outputPanel >
@@ -556,7 +557,7 @@
                                     </p:tab>
                                     <p:tab title="Familia" >
                                         <p:tabView id="tabw2" activeIndex="#{registrolDelEstudiante.rol.subpaso}">
-                                            <p:tab title="Tutor" >
+                                            <p:tab title="Tutor" titleStyle="#{registrolDelEstudiante.rol.tutor.econtrado eq true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;'}">
                                                 <h:form>
                                                     <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                         <div class="col-md-12">
@@ -663,7 +664,7 @@
                                                     </div>
                                                 </h:form>
                                             </p:tab>
-                                            <p:tab title="Padre" >
+                                            <p:tab title="Padre" titleStyle="#{registrolDelEstudiante.rol.dfamiliares.econtrado eq true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;'}">
                                                 <h:form>
                                                     <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                         <div class="col-md-12">
@@ -751,7 +752,7 @@
                                                     </div>
                                                 </h:form>
                                             </p:tab>
-                                            <p:tab title="Madre" >
+                                            <p:tab title="Madre" titleStyle="#{registrolDelEstudiante.rol.dfamiliares.econtrado eq true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;'}">
                                                 <h:form>    
                                                     <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                         <div class="col-md-12">
@@ -839,7 +840,7 @@
                                                     </div>
                                                 </h:form>
                                             </p:tab>
-                                            <p:tab title="Familiares" >
+                                            <p:tab title="Familiares" titleStyle="#{registrolDelEstudiante.rol.familias.size() eq 0 ?'background: #7F7E7E !important;':'background: #00a7d0 !important;'}">
                                                 <h:form>
                                                     <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                         <div class="col-md-12">
@@ -979,7 +980,7 @@
                                                     </div>
                                                 </h:form>
                                             </p:tab>
-                                            <p:tab title="Contacto de Emergencias" >
+                                            <p:tab title="Contacto de Emergencias" titleStyle="#{registrolDelEstudiante.rol.emergencias.size() eq 0 ?'background: #7F7E7E !important;':'background: #00a7d0 !important;'}">
                                                 <h:form>
                                                     <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                         <div class="col-md-12">
@@ -1105,7 +1106,7 @@
                                             </p:tab>
                                         </p:tabView>
                                     </p:tab>       
-                                    <p:tab title="Datos Laborales" >
+                                    <p:tab title="Datos Laborales" titleStyle="#{registrolDelEstudiante.rol.regDatosLaborales.econtrado eq true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;'}">
                                         <h:form>
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <div class="col-md-12">
@@ -1132,17 +1133,17 @@
                                                                             <div class="form-group">
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="ingresoM" style="font-size: large" value="Ingreso mensual Aproximado*"/>
-                                                                                    <p:inputNumber id="ingresoM" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.ingresoMensual}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de residencia es requerida"/>
+                                                                                    <p:inputNumber id="ingresoM" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.ingresoMensual}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}"/>
                                                                                     <p:message for="ingresoM"><p:autoUpdate/></p:message>
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="nomEmP" style="font-size: large" value="Nombre de la empresa*"/>
-                                                                                    <p:inputText id="nomEmP" class="form-control" placeholder="Empresa" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.nombreEmpresa}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de residencia es requerida"/>
+                                                                                    <p:inputText id="nomEmP" class="form-control" placeholder="Empresa" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.nombreEmpresa}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" />
                                                                                     <p:message for="nomEmP"><p:autoUpdate/></p:message>
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="puestoO" style="font-size: large" value="Puesto*"/>
-                                                                                    <p:inputText id="puestoO" class="form-control" placeholder="Puesto" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.puesto}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de residencia es requerida"/>
+                                                                                    <p:inputText id="puestoO" class="form-control" placeholder="Puesto" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.puesto}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" />
                                                                                     <p:message for="puestoO"><p:autoUpdate/></p:message>
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
@@ -1152,17 +1153,17 @@
 
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="calle" style="font-size: large" value="Calle*"/>
-                                                                                    <p:inputText id="calle" class="form-control" placeholder="Calle" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.calle}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de residencia es requerida"/>
+                                                                                    <p:inputText id="calle" class="form-control" placeholder="Calle" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.calle}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" />
                                                                                     <p:message for="calle"><p:autoUpdate/></p:message>
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="numero" style="font-size: large" value="Número*"/>
-                                                                                    <p:inputText id="numero" class="form-control" placeholder="14,14-B"  value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.numero}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="El numero de casa de residencia es requerido"/>
+                                                                                    <p:inputText id="numero" class="form-control" placeholder="14,14-B"  value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.numero}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" />
                                                                                     <p:message for="numero"><p:autoUpdate/></p:message>
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="estadoR" style="font-size: large" value="Estado*"/>
-                                                                                    <p:selectOneMenu id="estadoR" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.estado}" required="true" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" requiredMessage="El estado de residencia es requerido">
+                                                                                    <p:selectOneMenu id="estadoR" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.estado}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}">
                                                                                         <f:selectItem itemValue="#{null}"/>
                                                                                         <f:selectItems value="#{registrolDelEstudiante.rol.estadosDl}" var="estado" itemValue="#{estado.idestado}" itemLabel="#{estado.nombre}" />
                                                                                         <p:ajax listener="#{registrolDelEstudiante.municipiosPorEstadoDatosLaborales()}" update="municipioR" process="@this"/>
@@ -1171,7 +1172,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="municipioR" style="font-size: large" value="Municipio*"/>
-                                                                                    <p:selectOneMenu id="municipioR" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.municipio}" required="true" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" requiredMessage="El municipio de residencia es requerid">
+                                                                                    <p:selectOneMenu id="municipioR" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.municipio}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" >
                                                                                         <f:selectItem itemValue="" itemLabel=""/>
                                                                                         <f:selectItems value="#{registrolDelEstudiante.rol.municipiosDl}" var="municipio" itemValue="#{municipio.municipioPK.claveMunicipio}" itemLabel="#{municipio.nombre}" />
                                                                                         <p:ajax listener="#{registrolDelEstudiante.asentamientosPorMunicipioDatosLaborales()}" update="asentamientoR"/>
@@ -1180,7 +1181,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="asentamientoR" style="font-size: large" value="Asentamiento*"/>
-                                                                                    <p:selectOneMenu id="asentamientoR" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.asentamiento}" filter="true" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" filterMatchMode="startsWith" required="true" requiredMessage="El asentamiento de residencia es requerido">
+                                                                                    <p:selectOneMenu id="asentamientoR" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.asentamiento}" filter="true" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" filterMatchMode="startsWith" >
                                                                                         <f:selectItem itemValue="#{null}"/>
                                                                                         <f:selectItems value="#{registrolDelEstudiante.rol.asentamientosDl}" var="asen" itemValue="#{asen.asentamientoPK.asentamiento}" itemLabel="#{asen.codigoPostal}--#{asen.nombreAsentamiento}" />
                                                                                         <p:ajax/>
@@ -1189,7 +1190,7 @@
                                                                                 </div>   
                                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="razonTra" style="font-size: large" value="Razon por la que Trabaja*"/>
-                                                                                    <p:inputTextarea id="razonTra" class="form-control" placeholder="Razon por la que Trabaja" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.razonDeTrabajo}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" required="true" requiredMessage="La calle de residencia es requerida"/>
+                                                                                    <p:inputTextarea id="razonTra" class="form-control" placeholder="Razon por la que Trabaja" value="#{registrolDelEstudiante.rol.regDatosLaborales.datosLaborales.razonDeTrabajo}" disabled="#{!registrolDelEstudiante.rol.respuestaTrabaja}" />
                                                                                     <p:message for="razonTra"><p:autoUpdate/></p:message>
                                                                                 </div>       
                                                                                 <div class="col-sm-3 col-md-3 col-lg-3">
@@ -1217,8 +1218,7 @@
                                             </div>
                                         </h:form>
                                     </p:tab>
-
-                                    <p:tab title="Datos Socioeconoicos y academicos" >
+                                    <p:tab title="Datos Socioeconoicos y academicos" titleStyle="#{registrolDelEstudiante.rol.sosioeconomicosR.econtrado eq true ?'background: #7F7E7E !important;':'background: #00a7d0 !important;'}">
                                         <h:form>
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <div class="col-md-12">
@@ -1231,7 +1231,7 @@
                                                                         <div class="form-group">
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:outputLabel for="viviendaR" style="font-size: large" value="¿La casa en la que habitas es?*"/>
-                                                                                <p:selectOneMenu id="viviendaR" value="#{registrolDelEstudiante.rol.sosioeconomicosR.socioeconomicos.vivienda}" required="true" requiredMessage="La respuesta es requerida">
+                                                                                <p:selectOneMenu id="viviendaR" value="#{registrolDelEstudiante.rol.sosioeconomicosR.socioeconomicos.vivienda}" >
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{registrolDelEstudiante.rol.viviendas}" var="viiv" itemValue="#{viiv}" itemLabel="#{viiv}" />
                                                                                     <p:ajax listener="#{registrolDelEstudiante.viviendadT()}" update="costoR" process="@this"/>
@@ -1245,7 +1245,7 @@
                                                                             </div>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:outputLabel for="transporteR" style="font-size: large" value="¿El transporte que utilizas es?*"/>
-                                                                                <p:selectOneMenu id="transporteR" value="#{registrolDelEstudiante.rol.sosioeconomicosR.socioeconomicos.transporte}" required="true" requiredMessage="La respuesta es requerida">
+                                                                                <p:selectOneMenu id="transporteR" value="#{registrolDelEstudiante.rol.sosioeconomicosR.socioeconomicos.transporte}" >
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{registrolDelEstudiante.rol.transportes}" var="tr" itemValue="#{tr}" itemLabel="#{tr}" />
                                                                                 </p:selectOneMenu>
@@ -1253,7 +1253,7 @@
                                                                             </div>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:outputLabel for="recEst" style="font-size: large" value="¿Cómo consideras tus recursos económicos para estudiar?*"/>
-                                                                                <p:selectOneMenu id="recEst" value="#{registrolDelEstudiante.rol.sosioeconomicosR.socioeconomicos.reParaEstudiar}" filter="true" filterMatchMode="startsWith" required="true" requiredMessage="El asentamiento de procedencia es requerido">
+                                                                                <p:selectOneMenu id="recEst" value="#{registrolDelEstudiante.rol.sosioeconomicosR.socioeconomicos.reParaEstudiar}" filter="true" filterMatchMode="startsWith" >
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{registrolDelEstudiante.rol.recursos}" var="pri" itemValue="#{pri}" itemLabel="#{pri}" />
                                                                                 </p:selectOneMenu>
@@ -1272,7 +1272,7 @@
                                                                         <div class="form-group">                                                                            
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:outputLabel for="prioR" style="font-size: large" value="¿Qué prioridad le das a tus estudios?*"/>
-                                                                                <p:selectOneMenu id="prioR" value="#{registrolDelEstudiante.rol.academicosCR.complementarios.prioridadEstudio}" filter="true" filterMatchMode="startsWith" required="true" requiredMessage="El asentamiento de procedencia es requerido">
+                                                                                <p:selectOneMenu id="prioR" value="#{registrolDelEstudiante.rol.academicosCR.complementarios.prioridadEstudio}" filter="true" filterMatchMode="startsWith" >
                                                                                     <f:selectItem itemValue="#{null}"/>
                                                                                     <f:selectItems value="#{registrolDelEstudiante.rol.prioridades}" var="pri" itemValue="#{pri}" itemLabel="#{pri}" />
                                                                                 </p:selectOneMenu>
@@ -1314,7 +1314,6 @@
                                             </div>
                                         </h:form>
                                     </p:tab>
-
                                     <p:tab title="Datos Complementarios" >
                                         <h:form prependId="false" class="form-horizontal">
                                             <div class="box box-primary">

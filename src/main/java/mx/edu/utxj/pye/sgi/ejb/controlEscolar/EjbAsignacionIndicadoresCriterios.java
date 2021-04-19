@@ -34,6 +34,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsigEvidenciasInstrumentosEval;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoConfiguracionUnidadMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsignadosIndicadoresCriterios;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInformePlaneaciones;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Informeplaneacioncuatrimestraldocenteprint;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaindicadoresporcriterioporconfiguracion;
@@ -53,6 +54,7 @@ public class EjbAsignacionIndicadoresCriterios {
     @EJB EjbEventoEscolar ejbEventoEscolar;
     @EJB EjbAreasLogeo ejbAreasLogeo;
     @Getter @Setter List<Reporteplaneacioncuatrimestralareaacademica> listaUnidadMatConfDet = new ArrayList<>();
+    @Getter @Setter List<DtoInformePlaneaciones> planeacioneses = new ArrayList<>();
     @Getter @Setter Integer integradoras = 0;
     private EntityManager em;
 
@@ -766,7 +768,7 @@ public class EjbAsignacionIndicadoresCriterios {
 //            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaConsulta " + listaUnidadMatConfDet.size());
             } else {
                 listaUnidadMatConfDet.clear();
-            }
+                }
             if (dtoCargaAcademica.getCargaAcademica().getTareaIntegradora() != null && !listaUnidadMatConfDet.isEmpty()) {
                 Informeplaneacioncuatrimestraldocenteprint i = new Informeplaneacioncuatrimestraldocenteprint();
                 i.setConfiguracionDetalle(0);
@@ -791,6 +793,107 @@ public class EjbAsignacionIndicadoresCriterios {
             return ResultadoEJB.crearCorrecto(listaUnidadMatConfDet, "Asignación de indicadores por criterio de la carga académica seleccionada.");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarAsignacionIndicadoresCargaAcademica)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<DtoInformePlaneaciones>> buscarUnidadMateriaConfiguracionDetalle(DtoCargaAcademica dtoCargaAcademica,Integer periodo) {
+        try {
+//            System.err.println("buscarAsignacionIndicadoresCargaAcademica - entro");
+            Boolean asigInd =Boolean.FALSE;
+//            System.err.println("buscarAsignacionIndicadoresCargaAcademica - valor " + asigInd);
+            planeacioneses = new ArrayList<>();
+            if (periodo <= 56) {
+                List<UnidadMateriaConfiguracionDetalle> configuracionDetalle = em.createQuery("SELECT i FROM UnidadMateriaConfiguracionDetalle i INNER JOIN i.configuracion c INNER JOIN c.carga ca WHERE ca.carga =:cargaAcademica", UnidadMateriaConfiguracionDetalle.class)
+                        .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
+                        .getResultList();
+                if (!configuracionDetalle.isEmpty()) {
+                    configuracionDetalle.forEach((t) -> {                        
+                        DtoInformePlaneaciones dip = new DtoInformePlaneaciones();
+                        dip.setConfiguracionDetalle(t.getConfiguracionDetalle());
+                        dip.setCarga(dtoCargaAcademica.getCargaAcademica().getCarga());
+                        dip.setConfiguracion(t.getConfiguracion().getConfiguracion());
+                        dip.setUnidad(t.getConfiguracion().getIdUnidadMateria().getNoUnidad());
+                        dip.setNombreUnidad(t.getConfiguracion().getIdUnidadMateria().getNombre());
+                        dip.setObjetivo(t.getConfiguracion().getIdUnidadMateria().getObjetivo());
+                        dip.setFechaInicio(t.getConfiguracion().getFechaInicio());
+                        dip.setFechaFin(t.getConfiguracion().getFechaFin());
+                        dip.setPorUnidad(t.getConfiguracion().getPorcentaje());
+                        dip.setIdCriterio(t.getCriterio().getCriterio());
+                        dip.setCriterio(t.getCriterio().getTipo());
+                        dip.setPorCriterio(t.getCriterio().getPorcentajeRecomendado());
+                        dip.setIdIndicador(t.getIndicador().getIndicador());
+                        dip.setIndicador(t.getIndicador().getNombre());
+                        dip.setPorcentaje(t.getPorcentaje());
+                        dip.setMeta(0D);
+                        dip.setEvidencia("");
+                        dip.setValidadoD(Boolean.FALSE);
+                        planeacioneses.add(dip);
+                    });
+                }
+            } else {
+                List<UnidadMateriaConfiguracionEvidenciaInstrumento> evidenciaInstrumento = em.createQuery("SELECT i FROM UnidadMateriaConfiguracionEvidenciaInstrumento i INNER JOIN i.configuracion c INNER JOIN c.carga ca WHERE ca.carga =:cargaAcademica", UnidadMateriaConfiguracionEvidenciaInstrumento.class)
+                        .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
+                        .getResultList();
+                if (!evidenciaInstrumento.isEmpty()) {
+                    evidenciaInstrumento.forEach((t) -> {
+                        DtoInformePlaneaciones dip = new DtoInformePlaneaciones();
+                        dip.setConfiguracionDetalle(t.getConfiguracionEvidenciaInstrumento());
+                        dip.setCarga(dtoCargaAcademica.getCargaAcademica().getCarga());
+                        dip.setConfiguracion(t.getConfiguracion().getConfiguracion());
+                        dip.setUnidad(t.getConfiguracion().getIdUnidadMateria().getNoUnidad());
+                        dip.setNombreUnidad(t.getConfiguracion().getIdUnidadMateria().getNombre());
+                        dip.setObjetivo(t.getConfiguracion().getIdUnidadMateria().getObjetivo());
+                        dip.setFechaInicio(t.getConfiguracion().getFechaInicio());
+                        dip.setFechaFin(t.getConfiguracion().getFechaFin());
+                        dip.setPorUnidad(t.getConfiguracion().getPorcentaje());
+                        dip.setIdCriterio(t.getEvidencia().getCriterio().getCriterio());
+                        dip.setCriterio(t.getEvidencia().getCriterio().getTipo());
+                        dip.setPorCriterio(t.getEvidencia().getCriterio().getPorcentajeRecomendado());
+                        dip.setIdIndicador(t.getInstrumento().getInstrumento());
+                        dip.setIndicador(t.getInstrumento().getDescripcion());
+                        dip.setPorcentaje(t.getPorcentaje());
+                        dip.setMeta(t.getMetaInstrumento());
+                        dip.setEvidencia(t.getEvidencia().getDescripcion());
+                        dip.setValidadoD(Boolean.FALSE);
+                        planeacioneses.add(dip);
+                    });
+                }
+            }
+//            if (asigInd == true) {
+//                listaUnidadMatConfDet = em.createQuery("SELECT i FROM Informeplaneacioncuatrimestraldocenteprint i WHERE i.carga =:cargaAcademica", Informeplaneacioncuatrimestraldocenteprint.class)
+//                        .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
+//                        .getResultList();
+////            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaConsulta " + listaUnidadMatConfDet.size());
+//            } else {
+//                listaUnidadMatConfDet.clear();
+//            }
+            if (dtoCargaAcademica.getCargaAcademica().getTareaIntegradora() != null && !planeacioneses.isEmpty()) {
+                DtoInformePlaneaciones dip = new DtoInformePlaneaciones();                
+                dip.setConfiguracionDetalle(0L);
+                dip.setCarga(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getCarga().getCarga());
+                dip.setConfiguracion(0);
+                dip.setUnidad(dtoCargaAcademica.getMateria().getUnidadMateriaList().size() + 1);
+                dip.setNombreUnidad("T.I.");
+                dip.setObjetivo(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getDescripcion());
+                dip.setFechaInicio(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getFechaEntrega());
+                dip.setFechaFin(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getFechaEntrega());
+                dip.setPorUnidad(dtoCargaAcademica.getCargaAcademica().getTareaIntegradora().getPorcentaje());
+                dip.setIdCriterio(0);
+                dip.setCriterio("");
+                dip.setPorCriterio(0D);
+                dip.setIdIndicador(0);
+                dip.setIndicador("");
+                dip.setPorcentaje(0D);
+                dip.setMeta(0D);
+                dip.setEvidencia("");
+                dip.setValidadoD(Boolean.FALSE);
+                planeacioneses.add(dip);
+
+            }
+//            System.err.println("buscarAsignacionIndicadoresCargaAcademica - listaFinal " + planeacioneses.size());
+            return ResultadoEJB.crearCorrecto(planeacioneses, "Asignación de indicadores por criterio de la carga académica seleccionada.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo asignación de indicadores por criterio de la carga académica seleccionada. (EjbAsignacionIndicadoresCriterios.buscarUnidadMateriaConfiguracionDetalle)", e, null);
         }
     }
 

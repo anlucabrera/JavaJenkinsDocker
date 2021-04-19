@@ -31,6 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Informeplaneacioncuatrimes
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionEvidenciaInstrumento;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import org.primefaces.model.chart.BarChartModel;
@@ -95,6 +96,7 @@ public class ResultadosPlaneacionesMultipleConsulta extends AbstractRol{
     @Getter @Setter @NonNull private Integer esBajD;
     @Getter @Setter @NonNull private Integer esRein;
     @Getter @Setter @NonNull private Integer configuracion;
+    @Getter @Setter @NonNull private Boolean render;
     /**
      * Representa la clave
      */
@@ -124,6 +126,8 @@ public class ResultadosPlaneacionesMultipleConsulta extends AbstractRol{
     @Getter    @Setter    private List<MetasPropuestas> propuestases;
     
     @Getter    @Setter    private AccionesDeMejora accionesDeMejora;
+    
+    @Getter @Setter @NonNull private List<UnidadMateriaConfiguracionEvidenciaInstrumento> listaEvidenciasInstrumentos;
     
     /**
      * Carga académica seleccionada
@@ -205,10 +209,11 @@ public class ResultadosPlaneacionesMultipleConsulta extends AbstractRol{
      /**
      * Lista de asignación de indicadores por carga académica
      */
-    @Getter @NonNull private List<Informeplaneacioncuatrimestraldocenteprint> informeplaneacioncuatrimestraldocenteprints;
     
     @Getter @Setter  @NonNull private List<DtoResultadosCargaAcademica> drcas;
     
+    @Getter @Setter  @NonNull private List<DtoInformePlaneaciones> planeacioneses;
+            
     public ResultadosPlaneacionesMultipleConsulta(Filter<PersonalActivo> filtro, PersonalActivo director, AreasUniversidad programa) {
         super(filtro);
         this.director = director;
@@ -325,11 +330,7 @@ public class ResultadosPlaneacionesMultipleConsulta extends AbstractRol{
 
     public void setExisteAsignacionIndicadores(Boolean existeAsignacionIndicadores) {
         this.existeAsignacionIndicadores = existeAsignacionIndicadores;
-    }
-
-    public void setInformeplaneacioncuatrimestraldocenteprints(List<Informeplaneacioncuatrimestraldocenteprint> informeplaneacioncuatrimestraldocenteprints) {
-        this.informeplaneacioncuatrimestraldocenteprints = informeplaneacioncuatrimestraldocenteprints;
-    }    
+    }  
 
     public void setAreaPlanEstudioMap(Map<AreasUniversidad, List<PlanEstudio>> areaPlanEstudioMap) {
         this.areaPlanEstudioMap = areaPlanEstudioMap;

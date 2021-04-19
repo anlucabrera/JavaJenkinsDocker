@@ -103,9 +103,13 @@ public class RegistrolDelEstudiante extends ViewScopedRol implements Desarrollab
             rol.setNombreR("Seleccione Un Tipo");
             rol.setTipoCal("Regulatoria");
             rol.setPuedeValidar(Boolean.FALSE);
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.init(A)");
             inicializarValoresEscolares();
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.init(B)");
             buscarRegistro();
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.init(C)");
             buscarRegistroEstudiante();
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.init(D)");
         }catch (Exception e){
             mostrarExcepcion(e);
         }
@@ -353,10 +357,15 @@ public class RegistrolDelEstudiante extends ViewScopedRol implements Desarrollab
 
 // Busquedas registros
     public void buscarRegistro(){
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(1)");
         inicializarValoresEscolares();
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(2)");
         ResultadoEJB<DtoReincorporacion.General> resAcceso = ejb.getDtoReincorporacion(rol.getCurpBusqueda(),Boolean.TRUE); 
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(3)");
         if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}
-        rol.setGeneral(resAcceso.getValor());        
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(4)");
+        rol.setGeneral(resAcceso.getValor());  
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(a)");
         if(rol.getGeneral().getEcontrado()){                 
             rol.setComunicacion(rol.getGeneral().getPr().getMedioComunicacion());
             rol.setPersonaD(rol.getGeneral().getPr());
@@ -369,32 +378,43 @@ public class RegistrolDelEstudiante extends ViewScopedRol implements Desarrollab
             rol.setEncuesta(rol.getGeneral().getEr());   
             rol.setEstudianteR(rol.getGeneral().getErs());  
             rol.setCalificacionesR(rol.getGeneral().getAcs());        
-            
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(b)");
             if (rol.getPersonaD().getEcontrado() && rol.getPersonaD().getPersona().getEstado() != null) {
                 rol.setExtran(Boolean.FALSE);
                 estadosPorPaisOrigen();
                 municipiosPorEstadoOrigen();
                 localidadPormunicipioOrigen();
             }
-            
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(c)");
             if(rol.getDdomicilios().getEcontrado()){
                 municipiosPorEstadoProcedencia();
                 municipiosPorEstadoResidencia();
                 asentamientosPorMunicipioProcedencia();
                 asentamientosPorMunicipioResidencia();
             }
-            
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(d)");
             if(rol.getTutor().getEcontrado()){
                 municipiosPorEstadoTutor();
                 asentamientosPorMunicipioTutor();
             }
-            
-            if(rol.getDfamiliares().getEcontrado()){
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(e)");
+            if (rol.getDfamiliares().getEcontrado()) {
+                if (rol.getDfamiliares().getDatosFamiliares().getAsentamientoMadre() == null) {
+                    rol.getDfamiliares().getDatosFamiliares().setAsentamientoMadre(rol.getTutor().getTutorFamiliar().getAsentamiento());
+                    rol.getDfamiliares().getDatosFamiliares().setMunicipioMadre(rol.getTutor().getTutorFamiliar().getMunicipio());
+                    rol.getDfamiliares().getDatosFamiliares().setEstadoMadre(rol.getTutor().getTutorFamiliar().getEstado());
+                }
+                if (rol.getDfamiliares().getDatosFamiliares().getAsentamientoPadre() == null) {
+                    rol.getDfamiliares().getDatosFamiliares().setAsentamientoPadre(rol.getTutor().getTutorFamiliar().getAsentamiento());
+                    rol.getDfamiliares().getDatosFamiliares().setMunicipioPadre(rol.getTutor().getTutorFamiliar().getMunicipio());
+                    rol.getDfamiliares().getDatosFamiliares().setEstadoPadre(rol.getTutor().getTutorFamiliar().getEstado());
+                }                
                 municipiosPorEstadoPadre();
                 asentamientosPorMunicipioPadre();
                 municipiosPorEstadoMadre();
                 asentamientosPorMunicipioMadre();
             }
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(f)");
             
             if(rol.getDacademicos().getEcontrado()){
                 municipiosPorEstadoIems();
@@ -403,10 +423,15 @@ public class RegistrolDelEstudiante extends ViewScopedRol implements Desarrollab
                 programasEducativosAcPo();
                 programasEducativosAcSo();
             }
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(g)");
             if (!rol.getEstudianteR().isEmpty()) {
+//                System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro()");
                 DtoReincorporacion.EstudianteR er = rol.getEstudianteR().get(rol.getEstudianteR().size() - 1);
+//                System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro()");
                 rol.setGrupos(ejb.getGruposCarrera(er.getEstudiante().getCarrera()).getValor());
+//                System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro()");
             }
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(h)");
             if (!rol.getCalificacionesR().isEmpty()) {
                 if (rol.getCalificacionesR().stream().filter(t -> Objects.equals(t.getPuedeValidar(), Boolean.FALSE)).collect(Collectors.toList()).isEmpty()) {
                     rol.setPuedeValidar(Boolean.TRUE);
@@ -414,6 +439,7 @@ public class RegistrolDelEstudiante extends ViewScopedRol implements Desarrollab
                     rol.setPuedeValidar(Boolean.FALSE);
                 }
             }
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(i)");
             if(rol.getEncuesta().getEcontrado()){
                 Integer tt=0;
                 if(rol.getEncuesta().getEncuestaAspirante().getR1Lenguaindigena()!= null){tt=tt+1;}
@@ -443,10 +469,12 @@ public class RegistrolDelEstudiante extends ViewScopedRol implements Desarrollab
                     rol.setFinalizado(Boolean.FALSE);
                 }
             }
-        }         
+        }       
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistro(5)");
     }
     
     public void buscarRegistroEstudiante(){
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistroEstudiante(I)");
         ResultadoEJB<DtoReincorporacion.RegistroEstudiante> resAcceso = ejb.getDtoRegistroEstudiante(rol.getAspirante().getAspirante(),rol.getPersonaD().getPersona()); 
         if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}
         rol.setRegistroEstudiante(resAcceso.getValor());        
@@ -465,6 +493,8 @@ public class RegistrolDelEstudiante extends ViewScopedRol implements Desarrollab
             asentamientosPorMunicipioDatosLaborales();
             rol.setRespuestaTrabaja(rol.getRegDatosLaborales().getDatosLaborales().getTrabajoActual());
         }
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistrolDelEstudiante.buscarRegistroEstudiante(II)");
+        
     }
      
     public void buscarReincorporacion(ValueChangeEvent event) {

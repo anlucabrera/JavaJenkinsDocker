@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 import lombok.*;
 
 import java.io.Serializable;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Informeplaneacioncuatrimestraldocenteprint;
 
 /**
@@ -10,7 +11,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Informeplaneacioncuatrimes
  */
 @RequiredArgsConstructor @ToString @EqualsAndHashCode
 public class DtoResultadosCargaAcademica implements Serializable {
-    @Getter @Setter @NonNull Informeplaneacioncuatrimestraldocenteprint informe;
+    @Getter @Setter @NonNull DtoInformePlaneaciones informe;
     @Getter @Setter @NonNull Integer estudiantesActivos;
     @Getter @Setter @NonNull Integer estudiantesAlcazanMeta;
     @Getter @Setter @NonNull Double metaAlacanzadaIndicador;

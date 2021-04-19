@@ -43,6 +43,8 @@ import org.primefaces.model.timeline.TimelineEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Objects;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInformePlaneaciones;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoResultadosCargaAcademica;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ResultadosPlaneacionesMultipleConsulta;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbResultadosConfiguraciones;
@@ -213,6 +215,11 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
             rol.setAccionesDeMejora(new AccionesDeMejora());
             rol.setFechaInpresion(new Date());
             existeAsignacion();
+            if (rol.getPeriodoActivo() <= 56) {
+                rol.setRender(Boolean.FALSE);
+            } else {
+                rol.setRender(Boolean.TRUE);
+            }
         }catch (Exception e){mostrarExcepcion(e); }
     }
 
@@ -273,6 +280,12 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
             rol.setCarga(null);
             return;
         }
+        rol.setPeriodoActivo(rol.getPeriodo().getPeriodo());
+        if(rol.getPeriodoActivo()<=56){
+            rol.setRender(Boolean.FALSE);
+        }else{
+            rol.setRender(Boolean.TRUE);
+        }
         if(rol.getTipoUser()!=3){
             rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
             ResultadoEJB<List<Grupo>> resgrupos = erpe.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
@@ -283,14 +296,14 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         }
         ResultadoEJB<List<DtoCargaAcademica>> resCarga;
         
-        if(rol.getTipoUser()!=3){ resCarga = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());            
+        if(rol.getTipoUser()!=3){ 
+            resCarga = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());            
             if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
         }else{
             resCarga = ejb.getCargaAcademicaDocente(rol.getDocente(), rol.getPeriodo());
         }
-        
         if (resCarga.getValor().isEmpty()) {
-            rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+            rol.setPlaneacioneses(Collections.EMPTY_LIST);
             rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
@@ -298,7 +311,7 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
             return;
         }
         rol.setCargas(resCarga.getValor());
-        rol.setCarga(resCarga.getValor().get(0));      
+        rol.setCarga(resCarga.getValor().get(resCarga.getValor().size()-1));      
         existeAsignacion();
     }
      
@@ -314,7 +327,7 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());            
         if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
         if (resCarga.getValor().isEmpty()) {
-            rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+            rol.setPlaneacioneses(Collections.EMPTY_LIST);
             rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
@@ -331,7 +344,7 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());            
         if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
         if (resCarga.getValor().isEmpty()) {
-            rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+            rol.setPlaneacioneses(Collections.EMPTY_LIST);
             rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
@@ -365,19 +378,19 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
     
     public void existeAsignacion() {
         if (rol.getCarga() == null) {      
-            rol.setDrcas(Collections.EMPTY_LIST);      
-            rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+            rol.setPlaneacioneses(Collections.EMPTY_LIST);      
+            rol.setPlaneacioneses(Collections.EMPTY_LIST);
             rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
             return;
         }
-        ResultadoEJB<List<Informeplaneacioncuatrimestraldocenteprint>> res = ejb.buscarInforme(rol.getCarga());
-        rol.setInformeplaneacioncuatrimestraldocenteprints(new ArrayList<>());
+        ResultadoEJB<List<DtoInformePlaneaciones>> res = ejb.buscarUnidadMateriaConfiguracionDetalle(rol.getCarga(),rol.getPeriodoActivo());
+        rol.setPlaneacioneses(new ArrayList<>());
         if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
             rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setExisteAsignacionIndicadores(true);
-            rol.setInformeplaneacioncuatrimestraldocenteprints(res.getValor());
+            rol.setPlaneacioneses(res.getValor());
             rol.setEstudioMateria(rol.getCarga().getPlanEstudioMateria());
             rol.setDrcas(Collections.EMPTY_LIST);
         }
@@ -386,11 +399,11 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         Ajax.update("frm");
     }
    
-    public void calcularesultados() {              
-        if(rol.getInformeplaneacioncuatrimestraldocenteprints().isEmpty())return;
+    public void calcularesultados() {  
+        if(rol.getPlaneacioneses().isEmpty())return;
         rol.setDrcas(new ArrayList<>());
-        rol.getInformeplaneacioncuatrimestraldocenteprints().forEach((t) -> {
-            ResultadoEJB<DtoResultadosCargaAcademica> resc = configuraciones.getCalificacionesPorConfiguracionDetalle(t, rol.getMetaP());
+        rol.getPlaneacioneses().forEach((t) -> {
+            ResultadoEJB<DtoResultadosCargaAcademica> resc = configuraciones.getCalificacionesPorConfiguracionDetalle(t, t.getMeta(),rol.getPeriodoActivo());
             if (!resc.getCorrecto()) {
                 mostrarMensajeResultadoEJB(resc);
             } else {
@@ -402,24 +415,20 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         ChartData data = new ChartData();
         
         rol.getEstudioMateria().getIndicadorAlineacionPlanMateriaList().forEach((t) -> {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ResultadosPlaneacionesConsulta.calcularesultados()");
             BarChartDataSet barDataSet = new BarChartDataSet();
             barDataSet.setLabel(t.getIndicadorAlineacion().getClave());
             barDataSet.setBackgroundColor("rgba(255, 99, 132, 0.2)");
             barDataSet.setBorderColor("rgb(255, 99, 132)");
             barDataSet.setBorderWidth(1);
             List<Number> values = new ArrayList<>();
-            rol.getInformeplaneacioncuatrimestraldocenteprints().forEach((i) -> {
-                if (rol.getCarga().getCargaAcademica().getCarga() == i.getCarga()) {
-                    ResultadoEJB<DtoResultadosCargaAcademica> resc = configuraciones.getCalificacionesPorConfiguracionDetalle(i, t.getMetaIndicador());
-                    if (!resc.getCorrecto()) {
-                        mostrarMensajeResultadoEJB(resc);
-                    } else {
-                        System.out.println(resc.getValor().getMetaAlacanzadaunidad());
-                        values.add(resc.getValor().getMetaAlacanzadaunidad());
-                    }
-                }
-            });
+            
+            ResultadoEJB<Double> resc = configuraciones.getCalificacionesIndicador(rol.getCarga().getCargaAcademica(), t.getMetaIndicador());
+            if (!resc.getCorrecto()) {
+                mostrarMensajeResultadoEJB(resc);
+            } else {
+                values.add(resc.getValor());
+            }
+            
             barDataSet.setData(values);            
             data.addChartDataSet(barDataSet);
         });
