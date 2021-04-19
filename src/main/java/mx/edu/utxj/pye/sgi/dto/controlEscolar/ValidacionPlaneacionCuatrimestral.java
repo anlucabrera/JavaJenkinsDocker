@@ -87,6 +87,7 @@ public class ValidacionPlaneacionCuatrimestral extends AbstractRol{
     @Getter @Setter private Integer cuatrimestre;
     @Getter @Setter private Double porcIni;
     @Getter @Setter private Integer numDtotales;
+    @Getter @Setter private Boolean render;
     
     @Getter @Setter private String mensajeV;
     @Getter    @NonNull    private Map<AreasUniversidad, List<PlanEstudio>> areaPlanEstudioMap;
@@ -177,7 +178,7 @@ public class ValidacionPlaneacionCuatrimestral extends AbstractRol{
      /**
      * Lista de asignación de indicadores por carga académica
      */
-    @Getter @NonNull private List<Informeplaneacioncuatrimestraldocenteprint> informeplaneacioncuatrimestraldocenteprints;
+    @Getter @NonNull private List<DtoInformePlaneaciones> informeplaneacioncuatrimestraldocenteprints;
     
     public ValidacionPlaneacionCuatrimestral(Filter<PersonalActivo> filtro, PersonalActivo director, AreasUniversidad programa) {
         super(filtro);
@@ -291,7 +292,7 @@ public class ValidacionPlaneacionCuatrimestral extends AbstractRol{
         this.existeAsignacionIndicadores = existeAsignacionIndicadores;
     }
 
-    public void setInformeplaneacioncuatrimestraldocenteprints(List<Informeplaneacioncuatrimestraldocenteprint> informeplaneacioncuatrimestraldocenteprints) {
+    public void setInformeplaneacioncuatrimestraldocenteprints(List<DtoInformePlaneaciones> informeplaneacioncuatrimestraldocenteprints) {
         this.informeplaneacioncuatrimestraldocenteprints = informeplaneacioncuatrimestraldocenteprints;
     }    
 

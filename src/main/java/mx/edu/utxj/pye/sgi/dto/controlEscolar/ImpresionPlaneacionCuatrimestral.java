@@ -78,6 +78,7 @@ public class ImpresionPlaneacionCuatrimestral extends AbstractRol{
     @Getter @Setter private Integer cuatrimestre;
     @Getter @Setter private Double porcIni;
     @Getter @Setter private Integer numDtotales;
+    @Getter @Setter private Boolean render;
     
     /**
      * Carga académica seleccionada
@@ -159,7 +160,7 @@ public class ImpresionPlaneacionCuatrimestral extends AbstractRol{
      /**
      * Lista de asignación de indicadores por carga académica
      */
-    @Getter @NonNull private List<Informeplaneacioncuatrimestraldocenteprint> informeplaneacioncuatrimestraldocenteprints;
+    @Getter @NonNull private List<DtoInformePlaneaciones> informeplaneacioncuatrimestraldocenteprints;
     
     public ImpresionPlaneacionCuatrimestral(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
@@ -269,7 +270,7 @@ public class ImpresionPlaneacionCuatrimestral extends AbstractRol{
         this.existeAsignacionIndicadores = existeAsignacionIndicadores;
     }
 
-    public void setInformeplaneacioncuatrimestraldocenteprints(List<Informeplaneacioncuatrimestraldocenteprint> informeplaneacioncuatrimestraldocenteprints) {
+    public void setInformeplaneacioncuatrimestraldocenteprints(List<DtoInformePlaneaciones> informeplaneacioncuatrimestraldocenteprints) {
         this.informeplaneacioncuatrimestraldocenteprints = informeplaneacioncuatrimestraldocenteprints;
     }
 }

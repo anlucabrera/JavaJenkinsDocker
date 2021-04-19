@@ -46,6 +46,7 @@ import org.primefaces.model.timeline.TimelineEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInformePlaneaciones;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -119,6 +120,7 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());            
             rol.setPeriodo(ejb.getPeriodoActual());
+            rol.setPeriodoActivo(rol.getPeriodo().getPeriodo());
             
             rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
             
@@ -154,6 +156,12 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
             rol.setGrupoSelec(new Grupo());            
             rol.setCarga(null);
             return;
+        }
+        rol.setPeriodoActivo(rol.getPeriodo().getPeriodo());
+        if(rol.getPeriodoActivo()<=56){
+            rol.setRender(Boolean.FALSE);
+        }else{
+            rol.setRender(Boolean.TRUE);
         }
         rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
         ResultadoEJB<List<Grupo>> resgrupos = erpe.getListaGrupoPlanEstudio(rol.getPlanEstudio(), rol.getPeriodo());
@@ -244,7 +252,7 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
         if (rol.getCarga() == null) {
             return;
         }
-        ResultadoEJB<List<Informeplaneacioncuatrimestraldocenteprint>> res = ejb.buscarInforme(rol.getCarga());
+        ResultadoEJB<List<DtoInformePlaneaciones>> res = ejb.buscarUnidadMateriaConfiguracionDetalle(rol.getCarga(),rol.getPeriodoActivo());
         rol.setInformeplaneacioncuatrimestraldocenteprints(new ArrayList<>());
 //        System.err.println("existeAsignacion - res " + res.getValor().size());
         if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
@@ -309,7 +317,7 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
     public void actualizarAP(ValueChangeEvent e) {
         try {
             String id = e.getComponent().getClientId();
-            Informeplaneacioncuatrimestraldocenteprint ag = rol.getInformeplaneacioncuatrimestraldocenteprints().get(Integer.parseInt(id.split("tbAsigInd1:")[1].split(":validar")[0]));
+            DtoInformePlaneaciones ag = rol.getInformeplaneacioncuatrimestraldocenteprints().get(Integer.parseInt(id.split("tbAsigInd1:")[1].split(":validar")[0]));
             ag.setValidadoD((Boolean) e.getNewValue());
             ejb.validadConfigunracionUnidad(ag.getConfiguracion(), ag.getValidadoD(), rol.getDirector().getPersonal().getClave());
 //            existeAsignacion();

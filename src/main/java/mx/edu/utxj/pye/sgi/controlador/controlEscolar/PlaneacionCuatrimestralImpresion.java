@@ -42,6 +42,7 @@ import org.primefaces.model.timeline.TimelineEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInformePlaneaciones;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -106,6 +107,7 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
             rol.setPeriodos(resPeriodos.getValor());
             rol.setPeriodo(ejb.getPeriodoActual());
+            rol.setPeriodoActivo(rol.getPeriodo().getPeriodo());
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.init()"+rol.getPeriodos().size());
             
             ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(docente, rol.getPeriodo());
@@ -154,14 +156,25 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
             rol.setCarga(null);
             return;
         }
+         rol.setPeriodoActivo(rol.getPeriodo().getPeriodo());
+        if(rol.getPeriodoActivo()<=56){
+            rol.setRender(Boolean.FALSE);
+        }else{
+            rol.setRender(Boolean.TRUE);
+        }
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo()"+rol.getPeriodoActivo());
         ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(rol.getDocente(), rol.getPeriodo());
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo()"+resCarga.getValor().size());
         rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
         rol.setCargas(Collections.EMPTY_LIST);
         rol.setCronograma(Collections.EMPTY_LIST);
         
         if (!resCarga.getValor().isEmpty()) {
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo(1)");
             rol.setCargas(resCarga.getValor());
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo(2)"+rol.getCargas().size());
             rol.setCarga(rol.getCargas().get(0));
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo(3)"+rol.getCarga());
             existeAsignacion();
             crearCronograma(rol.getCarga());
         }
@@ -179,7 +192,10 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
         if (rol.getCarga() == null) {
             return;
         }
-        ResultadoEJB<List<Informeplaneacioncuatrimestraldocenteprint>> res = ejb.buscarInforme(rol.getCarga());
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.existeAsignacion()"+rol.getCarga());        
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.existeAsignacion()"+rol.getPeriodoActivo());
+        ResultadoEJB<List<DtoInformePlaneaciones>> res = ejb.buscarUnidadMateriaConfiguracionDetalle(rol.getCarga(),rol.getPeriodoActivo());
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.existeAsignacion()"+res.getValor().size());
         rol.setInformeplaneacioncuatrimestraldocenteprints(new ArrayList<>());
 //        System.err.println("existeAsignacion - res " + res.getValor().size());
         if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
@@ -213,6 +229,7 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
     }
     
     private void crearCronograma(DtoCargaAcademica dca) {
+        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.crearCronograma()"+dca);
         rol.setCronograma(new ArrayList<>());
         rol.getCronograma().clear();
         rol.setPorcIni(0D);
