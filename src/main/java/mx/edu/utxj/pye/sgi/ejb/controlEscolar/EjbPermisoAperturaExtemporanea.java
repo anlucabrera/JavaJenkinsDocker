@@ -302,6 +302,38 @@ public class EjbPermisoAperturaExtemporanea {
         }
     }
     
+    /**
+     * Permite obtener el rango de fechas para nivelación final
+     * @param cargaAcademica Carga Académica seleccionada para registrar permiso
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DtoRangoFechasPermiso> getRangoFechasPermisoTI(DtoCargaAcademica cargaAcademica){
+        try{
+            TareaIntegradora tareaIntegradora = em.createQuery("SELECT t FROM TareaIntegradora t WHERE t.carga.carga=:carga", TareaIntegradora.class)
+                    .setParameter("carga", cargaAcademica.getCargaAcademica().getCarga())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+           
+            PeriodoEscolarFechas fechasPeriodos = em.createQuery("SELECT pef FROM PeriodoEscolarFechas pef WHERE pef.periodosEscolares.periodo =:periodo", PeriodoEscolarFechas.class)
+                    .setParameter("periodo", cargaAcademica.getCargaAcademica().getEvento().getPeriodo())
+                    .getSingleResult();
+            
+            Calendar fechaInicio = Calendar.getInstance();
+            fechaInicio.setTime(tareaIntegradora.getFechaEntrega());
+            fechaInicio.add(Calendar.DAY_OF_YEAR, 1);
+            Date rangoFechaInicio=fechaInicio.getTime();
+            
+            Date rangoFechaFin = fechasPeriodos.getFin();
+            
+            DtoRangoFechasPermiso dtoRangoFechasPermiso = new DtoRangoFechasPermiso(rangoFechaInicio, rangoFechaFin);
+            
+            return ResultadoEJB.crearCorrecto(dtoRangoFechasPermiso, "Rango de fechas obtenidas para nivelación final.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el rango de fechas para nivelación final. (EjbPermisoAperturaExtemporanea.getRangoFechasPermisoNivFinal)", e, null);
+        }
+    }
+    
      /**
      * Permite obtener el rango de fechas para nivelación final
      * @param cargaAcademica Carga Académica seleccionada para registrar permiso
@@ -309,13 +341,20 @@ public class EjbPermisoAperturaExtemporanea {
      */
     public ResultadoEJB<DtoRangoFechasPermiso> getRangoFechasPermisoNivFinal(DtoCargaAcademica cargaAcademica){
         try{
+            EventoEscolar eventoEscolar = em.createQuery("SELECT e FROM EventoEscolar e WHERE e.periodo =:periodo AND e.tipo =:tipo", EventoEscolar.class)
+                    .setParameter("periodo", cargaAcademica.getCargaAcademica().getEvento().getPeriodo())
+                    .setParameter("tipo", "Captura_tarea_integradora")
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+           
             PeriodoEscolarFechas fechasPeriodos = em.createQuery("SELECT pef FROM PeriodoEscolarFechas pef WHERE pef.periodosEscolares.periodo =:periodo", PeriodoEscolarFechas.class)
                     .setParameter("periodo", cargaAcademica.getCargaAcademica().getEvento().getPeriodo())
                     .getSingleResult();
-           
+            
             Calendar fechaInicio = Calendar.getInstance();
-            fechaInicio.setTime(fechasPeriodos.getFin());
-            fechaInicio.add(Calendar.DAY_OF_YEAR, -5);
+            fechaInicio.setTime(eventoEscolar.getFin());
+            fechaInicio.add(Calendar.DAY_OF_YEAR, 1);
             Date rangoFechaInicio=fechaInicio.getTime();
             
             Date rangoFechaFin = fechasPeriodos.getFin();

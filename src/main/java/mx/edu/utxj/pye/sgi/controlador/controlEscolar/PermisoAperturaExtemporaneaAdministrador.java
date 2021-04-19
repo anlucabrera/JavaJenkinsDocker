@@ -285,7 +285,16 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
                 Ajax.update("frm");
             }else mostrarMensajeResultadoEJB(res);
         }
-        else{
+        else if("Tarea Integradora".equals(rol.getTipoEvaluacion())){
+            ResultadoEJB<DtoRangoFechasPermiso> res = ejb.getRangoFechasPermisoTI(rol.getCarga());
+            if(res.getCorrecto()){
+                rol.setDtoRangoFechasPermiso(res.getValor());
+                rol.setRangoFechaInicial(rol.getDtoRangoFechasPermiso().getRangoFechaInicial());
+                rol.setRangoFechaFinal(rol.getDtoRangoFechasPermiso().getRangoFechaFinal());
+                Ajax.update("frm");
+            }else mostrarMensajeResultadoEJB(res);
+        }
+        else if("Nivelación Final".equals(rol.getTipoEvaluacion())){
             ResultadoEJB<DtoRangoFechasPermiso> res = ejb.getRangoFechasPermisoNivFinal(rol.getCarga());
             if(res.getCorrecto()){
                 rol.setDtoRangoFechasPermiso(res.getValor());
