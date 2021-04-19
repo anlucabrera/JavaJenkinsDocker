@@ -303,7 +303,7 @@ public class EjbPermisoAperturaExtemporanea {
     }
     
     /**
-     * Permite obtener el rango de fechas para nivelación final
+     * Permite obtener el rango de fechas para tarea integradora
      * @param cargaAcademica Carga Académica seleccionada para registrar permiso
      * @return Resultado del proceso
      */
@@ -328,9 +328,9 @@ public class EjbPermisoAperturaExtemporanea {
             
             DtoRangoFechasPermiso dtoRangoFechasPermiso = new DtoRangoFechasPermiso(rangoFechaInicio, rangoFechaFin);
             
-            return ResultadoEJB.crearCorrecto(dtoRangoFechasPermiso, "Rango de fechas obtenidas para nivelación final.");
+            return ResultadoEJB.crearCorrecto(dtoRangoFechasPermiso, "Rango de fechas obtenidas para tarea integradora.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el rango de fechas para nivelación final. (EjbPermisoAperturaExtemporanea.getRangoFechasPermisoNivFinal)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el rango de fechas para tarea integradora. (EjbPermisoAperturaExtemporanea.getRangoFechasPermisoTI)", e, null);
         }
     }
     
