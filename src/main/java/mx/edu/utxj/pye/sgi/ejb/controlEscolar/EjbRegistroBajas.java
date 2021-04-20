@@ -194,7 +194,7 @@ public class EjbRegistroBajas {
         try{
             
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date fechaMaxima= sdf.parse("2021-04-21");
+        Date fechaMaxima= sdf.parse("2021-04-24");
         Date fechaActual = new Date();
         List<BajasCausa> bajasCausas = new ArrayList<>();
          
