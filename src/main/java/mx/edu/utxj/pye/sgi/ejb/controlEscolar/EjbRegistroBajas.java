@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZoneId;
@@ -192,9 +193,18 @@ public class EjbRegistroBajas {
     public ResultadoEJB<List<BajasCausa>> getCausasBaja(){
         try{
             
-            List<BajasCausa> bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.cveCausa NOT IN (5,11,21,23,24) ORDER BY bc.causa ASC", BajasCausa.class)
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date fechaMaxima= sdf.parse("2021-04-21");
+        Date fechaActual = new Date();
+        List<BajasCausa> bajasCausas = new ArrayList<>();
+         
+            if(fechaActual.before(fechaMaxima)){
+                bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.cveCausa NOT IN (5,11,21,23,24) ORDER BY bc.causa ASC", BajasCausa.class)
                     .getResultList();
-              
+            } else{
+                bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.cveCausa IN (3) ORDER BY bc.causa ASC", BajasCausa.class)
+                    .getResultList();
+            }
             return ResultadoEJB.crearCorrecto(bajasCausas, "Lista de causas de baja para realizar el registro de baja.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de causas de baja para el registro de baja. (EjbRegistroBajas.getCausasBaja)", e, null);

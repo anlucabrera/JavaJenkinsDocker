@@ -31,6 +31,12 @@ public class CapturaTareaIntegradoraRolDocente  extends AbstractRol {
 
 //    @Getter private DtoUnidadesCalificacion dtoUnidadesCalificacion;
     @Getter private Map<DtoCargaAcademica, DtoUnidadesCalificacion> dtoUnidadesCalificacionMap = new HashMap<>();
+    
+    //    @Getter private List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones;
+    @Getter private Map<DtoCargaAcademica, List<DtoUnidadConfiguracionAlineacion>> dtoUnidadConfiguracionesAlineacionMap = new HashMap<>();
+
+//    @Getter private DtoUnidadesCalificacion dtoUnidadesCalificacion;
+    @Getter private Map<DtoCargaAcademica, DtoUnidadesCalificacionAlineacion> dtoUnidadesCalificacionAlineacionMap = new HashMap<>();
 
 //    @Getter @Setter private Boolean tieneIntegradora = false;
     @Getter @Setter private Map<DtoCargaAcademica, Boolean> tieneIntegradoraMap = new HashMap<>();

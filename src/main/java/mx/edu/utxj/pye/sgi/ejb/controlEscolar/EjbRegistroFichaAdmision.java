@@ -519,13 +519,31 @@ public class EjbRegistroFichaAdmision {
             datosAcademicos.getAcademicos().setInstitucionAcademica(datosAcademicos.getIems().getIems());
             switch (datosAcademicos.getOperacion()) {
                 case PERSISTIR:
-                    datosAcademicos.getAcademicos().setAspirante1(new Aspirante());
-
-                    datosAcademicos.getAcademicos().setAspirante(a.getIdAspirante());
-                    datosAcademicos.getAcademicos().setAspirante1(a);
-
-                    em.persist(datosAcademicos.getAcademicos()); f.setEntityClass(DatosAcademicos.class); f.flush(); datosAcademicos.setOperacion(Operacion.ACTUALIZAR); break;
-                case ACTUALIZAR: em.merge(datosAcademicos.getAcademicos());  f.setEntityClass(DatosAcademicos.class); f.flush();datosAcademicos.setOperacion(Operacion.ACTUALIZAR); break;
+                    Aspirante aNew = new Aspirante();
+                    aNew = em.createQuery("select a from Aspirante a where a.idAspirante=:id",Aspirante.class).setParameter("id",a.getIdAspirante()).getResultStream().findFirst().orElse(null);
+                    DatosAcademicos da = new DatosAcademicos();
+                    da =datosAcademicos.getAcademicos();
+                    da.setAspirante(aNew.getIdAspirante());
+                    da.setAspirante1(aNew);
+                    em.persist(da); f.setEntityClass(DatosAcademicos.class); f.flush();datosAcademicos.setAcademicos(da); ;datosAcademicos.setOperacion(Operacion.ACTUALIZAR);
+                    return getAcademicos(aNew);
+                case ACTUALIZAR:
+                    DatosAcademicos edDa = new DatosAcademicos();
+                    edDa= em.createQuery("select d from DatosAcademicos d where d.aspirante=:id",DatosAcademicos.class).setParameter("id",a.getIdAspirante()).getResultStream().findFirst().orElse(null);
+                    if(edDa!=null){
+                        edDa.setSistemaPrimeraOpcion(datosAcademicos.getSistemaPo());
+                        edDa.setSistemaSegundaOpcion(datosAcademicos.getSistemaSo());
+                        edDa.setPrimeraOpcion(datosAcademicos.getUniversidad1().getArea());
+                        edDa.setSegundaOpcion(datosAcademicos.getUniversidad2().getArea());
+                        edDa.setEspecialidadIems(datosAcademicos.getEspecialidad());
+                        edDa.setFechaTerminacion(datosAcademicos.getAcademicos().getFechaTerminacion());
+                        edDa.setInstitucionAcademica(datosAcademicos.getIems().getIems());
+                        edDa.setPromedio(datosAcademicos.getAcademicos().getPromedio());
+                        em.merge(edDa);
+                        em.flush();
+                        getAcademicos(a);
+                    }
+                    //em.merge(datosAcademicos.getAcademicos());  f.setEntityClass(DatosAcademicos.class); f.flush();datosAcademicos.setOperacion(Operacion.ACTUALIZAR); break;
             }
             return ResultadoEJB.crearCorrecto(datosAcademicos, "DTODatosAcademicos guardados/actualizados");
         } catch (Exception e) {

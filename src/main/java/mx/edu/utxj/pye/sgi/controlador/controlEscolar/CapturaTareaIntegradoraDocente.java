@@ -198,13 +198,24 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
     }*/
 
     public BigDecimal getPromedioAsignaturaEstudiante(@NonNull DtoEstudiante dtoEstudiante, @NonNull DtoCargaAcademica dtoCargaAcademica){
-        ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica), dtoCargaAcademica, dtoEstudiante);
-        if(res.getCorrecto()){
-            setExisteAperIndNiv(existeAperIndNivelacion(dtoCargaAcademica, dtoEstudiante));
-            return res.getValor();
+        if(rol.getPeriodoSeleccionado().getPeriodo()<=56){
+            ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica), dtoCargaAcademica, dtoEstudiante);
+            if(res.getCorrecto()){
+                setExisteAperIndNiv(existeAperIndNivelacion(dtoCargaAcademica, dtoEstudiante));
+                return res.getValor();
+            }else{
+                mostrarMensaje(String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", dtoEstudiante.getPersona().getApellidoPaterno(), dtoEstudiante.getPersona().getApellidoMaterno(), dtoEstudiante.getPersona().getNombre(), dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula()));
+                return BigDecimal.ZERO;
+            }
         }else{
-            mostrarMensaje(String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", dtoEstudiante.getPersona().getApellidoPaterno(), dtoEstudiante.getPersona().getApellidoMaterno(), dtoEstudiante.getPersona().getNombre(), dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula()));
-            return BigDecimal.ZERO;
+            ResultadoEJB<BigDecimal> res = ejb.promediarAsignaturaAlineacion(getContenedorAlineacion(dtoCargaAcademica), dtoCargaAcademica, dtoEstudiante);
+            if(res.getCorrecto()){
+                setExisteAperIndNiv(existeAperIndNivelacion(dtoCargaAcademica, dtoEstudiante));
+                return res.getValor();
+            }else{
+                mostrarMensaje(String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", dtoEstudiante.getPersona().getApellidoPaterno(), dtoEstudiante.getPersona().getApellidoMaterno(), dtoEstudiante.getPersona().getNombre(), dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula()));
+                return BigDecimal.ZERO;
+            }
         }
     }
 
@@ -212,6 +223,21 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
         ResultadoEJB<DtoCapturaCalificacion> packCapturaCalificacion = packer.packCapturaCalificacion(dtoEstudiante, rol.getCargaAcademicaSeleccionada(), dtoUnidadConfiguracion);
         if(packCapturaCalificacion.getCorrecto()){
             ResultadoEJB<BigDecimal> promediarUnidad = ejbCapturaCalificaciones.promediarUnidad(packCapturaCalificacion.getValor());
+            if(promediarUnidad.getCorrecto()) return promediarUnidad.getValor();
+            else{
+                mostrarMensajeResultadoEJB(promediarUnidad);
+                return BigDecimal.ZERO;
+            }
+        }else {
+            mostrarMensajeResultadoEJB(packCapturaCalificacion);
+            return BigDecimal.ZERO;
+        }
+    }
+    
+    public BigDecimal getPromedioUnidadAlineacion(@NonNull DtoEstudiante dtoEstudiante, @NonNull DtoUnidadConfiguracionAlineacion dtoUnidadConfiguracion){
+        ResultadoEJB<DtoCapturaCalificacionAlineacion> packCapturaCalificacion = packer.packCapturaCalificacionAlineacion(dtoEstudiante, rol.getCargaAcademicaSeleccionada(), dtoUnidadConfiguracion);
+        if(packCapturaCalificacion.getCorrecto()){
+            ResultadoEJB<BigDecimal> promediarUnidad = ejbCapturaCalificaciones.promediarUnidadAlineacion(packCapturaCalificacion.getValor());
             if(promediarUnidad.getCorrecto()) return promediarUnidad.getValor();
             else{
                 mostrarMensajeResultadoEJB(promediarUnidad);
@@ -300,6 +326,19 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
 
         return  rol.getDtoUnidadConfiguracionesMap().get(dtoCargaAcademica);
     }
+    
+    public List<DtoUnidadConfiguracionAlineacion> getUnidadesAlineacion(@NonNull DtoCargaAcademica dtoCargaAcademica){
+        if(rol.getDtoUnidadConfiguracionesAlineacionMap().containsKey(dtoCargaAcademica)) return  rol.getDtoUnidadConfiguracionesAlineacionMap().get(dtoCargaAcademica);
+
+        ResultadoEJB<List<DtoUnidadConfiguracionAlineacion>> resConfiguraciones = ejbCapturaCalificaciones.getConfiguracionesAlineacion(dtoCargaAcademica);
+        if(!resConfiguraciones.getCorrecto()){
+            mostrarMensaje("No se detectaron configuraciones de unidades en la materia de la carga académica seleccionada. " + resConfiguraciones.getMensaje());
+            return Collections.EMPTY_LIST;
+        }
+        rol.getDtoUnidadConfiguracionesAlineacionMap().put(dtoCargaAcademica, resConfiguraciones.getValor());
+
+        return  rol.getDtoUnidadConfiguracionesAlineacionMap().get(dtoCargaAcademica);
+    }
 
     public  Boolean tieneIntegradora(@NonNull DtoCargaAcademica dtoCargaAcademica){
         if(rol.getTieneIntegradoraMap().containsKey(dtoCargaAcademica)) return rol.getTieneIntegradoraMap().get(dtoCargaAcademica);
@@ -334,6 +373,19 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
         rol.getDtoUnidadesCalificacionMap().put(dtoCargaAcademica, resDtoUnidadesCalificacion.getValor());
         return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
     }
+    
+    public DtoUnidadesCalificacionAlineacion getContenedorAlineacion(@NonNull DtoCargaAcademica dtoCargaAcademica){
+        if(rol.getDtoUnidadesCalificacionAlineacionMap().containsKey(dtoCargaAcademica)) return rol.getDtoUnidadesCalificacionAlineacionMap().get(dtoCargaAcademica);
+
+        ResultadoEJB<DtoUnidadesCalificacionAlineacion> resDtoUnidadesCalificacion = packer.packDtoUnidadesCalificacionAlineacion(dtoCargaAcademica, getUnidadesAlineacion(dtoCargaAcademica), rol.getEventoActivo());
+        if(!resDtoUnidadesCalificacion.getCorrecto()){
+            mostrarMensaje("No se detectaron registros de calificaciones de la carga seleccionada. " + resDtoUnidadesCalificacion.getMensaje());
+            return null;
+        }
+
+        rol.getDtoUnidadesCalificacionAlineacionMap().put(dtoCargaAcademica, resDtoUnidadesCalificacion.getValor());
+        return rol.getDtoUnidadesCalificacionAlineacionMap().get(dtoCargaAcademica);
+    }
 
     public DtoCalificacionNivelacion getNivelacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
         DtoUnidadesCalificacion.DtoNivelacionPK pk = new DtoUnidadesCalificacion.DtoNivelacionPK(dtoCargaAcademica, dtoEstudiante);
@@ -359,11 +411,26 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
 
     public Boolean deshabilitarCaptura(@NonNull DtoCargaAcademica dtoCargaAcademica, BigDecimal promedio){
         try {
-            DtoUnidadesCalificacion contenedor = getContenedor(dtoCargaAcademica);
-            Boolean activa = contenedor.getActivaPorFecha() || contenedor.getActivaPorAperturaExtemporanea();
+            Boolean activa;
+            if(rol.getPeriodoSeleccionado().getPeriodo()<=56){
+                DtoUnidadesCalificacion contenedor = getContenedor(dtoCargaAcademica);
+                activa = contenedor.getActivaPorFecha() || contenedor.getActivaPorAperturaExtemporanea();
+            }else{
+                DtoUnidadesCalificacionAlineacion contenedor = getContenedorAlineacion(dtoCargaAcademica);
+                activa = contenedor.getActivaPorFecha() || contenedor.getActivaPorAperturaExtemporanea();
+            }
             return !(promedio.compareTo(new BigDecimal(8)) < 0 && activa);
         }catch (NullPointerException e){
             return Boolean.TRUE;
+        }
+    }
+    
+    public Boolean deshabilitarCapturaTI(@NonNull DtoCargaAcademica dtoCargaAcademica){
+        ResultadoEJB<Boolean> fechasApertura = ejb.fechasAperturaTI(dtoCargaAcademica);
+        if(fechasApertura.getCorrecto()){
+            return fechasApertura.getValor();
+        }else{
+            return Boolean.FALSE;
         }
     }
     
