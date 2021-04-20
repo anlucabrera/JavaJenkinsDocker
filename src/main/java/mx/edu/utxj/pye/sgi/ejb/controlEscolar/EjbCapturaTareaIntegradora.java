@@ -275,6 +275,32 @@ public class EjbCapturaTareaIntegradora {
     }
 
     /**
+     * Permite guardar la calificación de una tarea integradora
+     * @param tareaIntegradora Tarea integradora configurada por el docente
+     * @param dtoUnidadesCalificacion Empaquetado de las calificaciones por materia
+     * @param dtoEstudiante Empaquetado del estudiante del cual se guarda su calificación
+     * @return Devuelve la entity de la calificación o código de error en caso de no poder guardar
+     */
+    public ResultadoEJB<TareaIntegradoraPromedio> guardarCalificacionAlineacion(@NonNull TareaIntegradora tareaIntegradora, @NonNull DtoUnidadesCalificacionAlineacion dtoUnidadesCalificacion, @NonNull DtoEstudiante dtoEstudiante){
+        try{
+            @NonNull Map<DtoEstudiante, TareaIntegradoraPromedio> tareaIntegradoraPromedioMap = dtoUnidadesCalificacion.getTareaIntegradoraPromedioMap();
+            TareaIntegradoraPromedio tareaIntegradoraPromedio = tareaIntegradoraPromedioMap.get(dtoEstudiante);
+
+            if(tareaIntegradoraPromedio == null) return ResultadoEJB.crearErroneo(2, "El estudiante indicado no pertenece al grupo de la carga académica seleccionada", TareaIntegradoraPromedio.class);
+
+            if(em.contains(tareaIntegradoraPromedio)) em.persist(tareaIntegradoraPromedio);
+            else em.merge(tareaIntegradoraPromedio);
+            em.flush();
+
+            return ResultadoEJB.crearCorrecto(tareaIntegradoraPromedio, "Calificación guardada correctamente.");
+        }catch (Exception e){
+            System.err.println("EjbCapturaTareaIntegradora.guardarCalificacionAlineacion");
+            System.err.println("Error: tareaIntegradora = [" + tareaIntegradora + "], dtoUnidadesCalificacion = [" + dtoUnidadesCalificacion + "], dtoEstudiante = [" + dtoEstudiante + "]");
+            return ResultadoEJB.crearErroneo(1, "No se pudo guardar la calificación de la tarea integradora (EjbCapturaTareaIntegradora.generarContenedorCalificacionesAlineacion)", e, TareaIntegradoraPromedio.class);
+        }
+    }
+    
+    /**
      * Permite guardar la calificación de nivelación y recuperar el entity ya sincronizado con el contexto de persistencia
      * @param dtoUnidadesCalificacion EMpaquetado del contenedor de calidicaciones
      * @param dtoEstudiante EMpaquetado del estudiado al que se le guarda su calificación
@@ -321,6 +347,53 @@ public class EjbCapturaTareaIntegradora {
         }
     }
 
+    /**
+     * Permite guardar la calificación de nivelación y recuperar el entity ya sincronizado con el contexto de persistencia
+     * @param dtoUnidadesCalificacion EMpaquetado del contenedor de calidicaciones
+     * @param dtoEstudiante EMpaquetado del estudiado al que se le guarda su calificación
+     * @return Regresa el entity sincronizado, código de error 2 si la calificación del estudiante especificado no se encuentra en el contendor o código 1 para error desconocido
+     */
+    public ResultadoEJB<CalificacionNivelacion> guardarNivelacionAlineacion(@NonNull DtoUnidadesCalificacionAlineacion dtoUnidadesCalificacion, @NonNull DtoEstudiante dtoEstudiante){
+        try{
+            @NonNull DtoCargaAcademica dtoCargaAcademica = dtoUnidadesCalificacion.getDtoCargaAcademica();
+            DtoUnidadesCalificacionAlineacion.DtoNivelacionPK pk = new DtoUnidadesCalificacionAlineacion.DtoNivelacionPK(dtoCargaAcademica, dtoEstudiante);
+            if(dtoUnidadesCalificacion.getNivelacionMap().containsKey(pk)){
+                @NonNull DtoCalificacionNivelacion dtoCalificacionNivelacion = dtoUnidadesCalificacion.getNivelacionMap().get(pk);
+                @NonNull CalificacionNivelacion calificacionNivelacion = dtoCalificacionNivelacion.getCalificacionNivelacion();
+                @NonNull Indicador indicador = dtoCalificacionNivelacion.getIndicador();
+//                System.out.println("indicador = " + indicador);
+                ResultadoEJB<DtoInscripcion> dtoEstudianteToDtoInscripcionPorCargaAcademica = ejbConverter.dtoEstudianteToDtoInscripcionPorCargaAcademica(dtoEstudiante, dtoUnidadesCalificacion.getDtoCargaAcademica());
+                CalificacionNivelacionPK calificacionNivelacionPK = new CalificacionNivelacionPK(dtoCargaAcademica.getCargaAcademica().getCarga(), dtoEstudianteToDtoInscripcionPorCargaAcademica.getValor().getInscripcion().getIdEstudiante());
+                CalificacionNivelacion calificacionNivelacionBD = em.find(CalificacionNivelacion.class, calificacionNivelacionPK);
+                if(calificacionNivelacionBD != null) {
+                    Double valor = calificacionNivelacion.getValor();
+                    calificacionNivelacion = calificacionNivelacionBD;
+                    calificacionNivelacion.setValor(valor);
+                }
+                calificacionNivelacion.setIndicador(indicador);
+                calificacionNivelacion.setCargaAcademica(dtoCargaAcademica.getCargaAcademica());
+                calificacionNivelacion.setEstudiante(dtoEstudianteToDtoInscripcionPorCargaAcademica.getValor().getInscripcion());
+//                System.out.println("calificacionNivelacion = " + calificacionNivelacion.getIndicador());
+                if(em.contains(calificacionNivelacion)){
+//                    System.out.println(1);
+                    em.merge(calificacionNivelacion);
+                }else {
+//                    System.out.println(2);
+                    em.persist(calificacionNivelacion);
+                }
+                em.flush();
+//                System.out.println("calificacionNivelacionPK = " + calificacionNivelacion.getCalificacionNivelacionPK());
+//                System.out.println("calificacionNivelacionEM = " + calificacionNivelacion.getIndicador());
+                return ResultadoEJB.crearCorrecto(calificacionNivelacion, "Calificación de nivelación guardada correctamente.");
+            }else return ResultadoEJB.crearErroneo(2, "No se encontró la calificación de nivelación a guardar del estudiante indicado en el contenedor.", CalificacionNivelacion.class);
+        }catch (Exception e){
+            System.out.println("EjbCapturaTareaIntegradora.guardarNivelacionAlineacion");
+            System.out.println("dtoUnidadesCalificacion = [" + dtoUnidadesCalificacion + "], dtoEstudiante = [" + dtoEstudiante + "]");
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "EjbCapturaTareaIntegradora.guardarNivelacionAlineacion.", e, CalificacionNivelacion.class);
+        }
+    }
+    
     /**
      * Permite obtener la lista de indicadores de evaluación p
      * @return Lista de indicadores o código de error.

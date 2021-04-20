@@ -284,6 +284,30 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             Messages.addGlobalFatal("El estudiante ya se reinscribió al siguiente cuatrimestre, no se puede actualizar el resultado de tarea integradora");
         }
     }
+    
+    public void guardarCalificacionAlineacion(ValueChangeEvent event){
+        @NonNull DtoCargaAcademica dtoCargaAcademica = (DtoCargaAcademica)event.getComponent().getAttributes().get("carga");
+        @NonNull DtoEstudiante dtoEstudiante = (DtoEstudiante) event.getComponent().getAttributes().get("estudiante");
+        @NonNull Double valor = Double.parseDouble(event.getNewValue().toString());
+        Boolean validarReins = existeReinscripcion(dtoCargaAcademica, dtoEstudiante);
+        Boolean validarNivelacion = existeNivelacion(dtoCargaAcademica, dtoEstudiante);
+        if (!validarReins) {
+            if (!validarNivelacion) {
+                getContenedorAlineacion(dtoCargaAcademica).getTareaIntegradoraPromedioMap().get(dtoEstudiante).setValor(valor);
+                ResultadoEJB<TareaIntegradoraPromedio> guardarCalificacion = ejb.guardarCalificacionAlineacion(rol.getTareaIntegradoraMap().get(dtoCargaAcademica), getContenedorAlineacion(dtoCargaAcademica), dtoEstudiante);
+                ResultadoEJB<BigDecimal> promediarAsignatura = ejb.promediarAsignaturaAlineacion(getContenedorAlineacion(dtoCargaAcademica), rol.getCargaAcademicaSeleccionada(), dtoEstudiante);
+                if (guardarCalificacion.getCorrecto() && promediarAsignatura.getCorrecto()) {
+                    getContenedor(dtoCargaAcademica).getTareaIntegradoraPromedioMap().put(dtoEstudiante, guardarCalificacion.getValor());
+                } else {
+                    mostrarMensajeResultadoEJB(guardarCalificacion);
+                }
+           } else {
+            Messages.addGlobalFatal("El estudiante ya tiene nivelación final registrada, no se puede actualizar calificación tarea integradora");
+            }
+        } else {
+            Messages.addGlobalFatal("El estudiante ya se reinscribió al siguiente cuatrimestre, no se puede actualizar el resultado de tarea integradora");
+        }
+    }
 
     public void guardarNivelacion(ValueChangeEvent event){
         @NonNull DtoCargaAcademica dtoCargaAcademica = (DtoCargaAcademica)event.getComponent().getAttributes().get("carga");
@@ -305,6 +329,35 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
                 if(getNivelacion(dtoCargaAcademica, dtoEstudiante) != null) {
                     getNivelacion(dtoCargaAcademica, dtoEstudiante).setIndicador(indicador);
                     ResultadoEJB<CalificacionNivelacion> guardarNivelacion = ejb.guardarNivelacion(getContenedor(dtoCargaAcademica), dtoEstudiante);
+                    if(!guardarNivelacion.getCorrecto()) mostrarMensajeResultadoEJB(guardarNivelacion);
+                }
+            }
+        }else{
+            Messages.addGlobalFatal("El estudiante ya se reinscribió al siguiente cuatrimestre, no se puede actualizar el resultado de nivelación");
+        }
+
+    }
+    
+    public void guardarNivelacionAlineacion(ValueChangeEvent event){
+        @NonNull DtoCargaAcademica dtoCargaAcademica = (DtoCargaAcademica)event.getComponent().getAttributes().get("carga");
+//        System.out.println("dtoCargaAcademica = " + dtoCargaAcademica);
+        @NonNull DtoEstudiante dtoEstudiante = (DtoEstudiante) event.getComponent().getAttributes().get("estudiante");
+//        System.out.println("dtoEstudiante = " + dtoEstudiante);
+        Boolean validarReins = existeReinscripcion(dtoCargaAcademica, dtoEstudiante);
+        if(!validarReins){
+            if(event.getNewValue() instanceof Double){
+                Double valor = (Double)event.getNewValue();
+                if(getNivelacionAlineacion(dtoCargaAcademica, dtoEstudiante) != null) {
+                    getNivelacionAlineacion(dtoCargaAcademica, dtoEstudiante).getCalificacionNivelacion().setValor(valor);
+                    ResultadoEJB<CalificacionNivelacion> guardarNivelacion = ejb.guardarNivelacionAlineacion(getContenedorAlineacion(dtoCargaAcademica), dtoEstudiante);
+                    if(!guardarNivelacion.getCorrecto()) mostrarMensajeResultadoEJB(guardarNivelacion);
+                }
+            }else if(event.getNewValue() instanceof  Indicador){
+                Indicador indicador = (Indicador)event.getNewValue();
+//            System.out.println("indicador controller = " + indicador);
+                if(getNivelacionAlineacion(dtoCargaAcademica, dtoEstudiante) != null) {
+                    getNivelacionAlineacion(dtoCargaAcademica, dtoEstudiante).setIndicador(indicador);
+                    ResultadoEJB<CalificacionNivelacion> guardarNivelacion = ejb.guardarNivelacionAlineacion(getContenedorAlineacion(dtoCargaAcademica), dtoEstudiante);
                     if(!guardarNivelacion.getCorrecto()) mostrarMensajeResultadoEJB(guardarNivelacion);
                 }
             }
@@ -348,11 +401,19 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             rol.getTieneIntegradoraMap().put(dtoCargaAcademica, true);
             rol.getTareaIntegradoraMap().put(dtoCargaAcademica, tareaIntegradoraResultadoEJB.getValor());
 
-            ResultadoEJB<Map<DtoEstudiante, TareaIntegradoraPromedio>> generarContenedorCalificaciones = ejb.generarContenedorCalificaciones(getContenedor(dtoCargaAcademica).getDtoEstudiantes(), tareaIntegradoraResultadoEJB.getValor(), dtoCargaAcademica);
-            if(!generarContenedorCalificaciones.getCorrecto()){
-                mostrarMensajeResultadoEJB(generarContenedorCalificaciones);
+            if(rol.getPeriodoSeleccionado().getPeriodo()<=56)  {  
+                ResultadoEJB<Map<DtoEstudiante, TareaIntegradoraPromedio>> generarContenedorCalificaciones = ejb.generarContenedorCalificaciones(getContenedor(dtoCargaAcademica).getDtoEstudiantes(), tareaIntegradoraResultadoEJB.getValor(), dtoCargaAcademica);
+                if(!generarContenedorCalificaciones.getCorrecto()){
+                    mostrarMensajeResultadoEJB(generarContenedorCalificaciones);
+                }
+                rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica).setTareaIntegradoraPromedioMap(generarContenedorCalificaciones.getValor());
+            }else{
+                ResultadoEJB<Map<DtoEstudiante, TareaIntegradoraPromedio>> generarContenedorCalificaciones = ejb.generarContenedorCalificaciones(getContenedorAlineacion(dtoCargaAcademica).getDtoEstudiantes(), tareaIntegradoraResultadoEJB.getValor(), dtoCargaAcademica);
+                if(!generarContenedorCalificaciones.getCorrecto()){
+                    mostrarMensajeResultadoEJB(generarContenedorCalificaciones);
+                }
+                rol.getDtoUnidadesCalificacionAlineacionMap().get(dtoCargaAcademica).setTareaIntegradoraPromedioMap(generarContenedorCalificaciones.getValor());
             }
-            rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica).setTareaIntegradoraPromedioMap(generarContenedorCalificaciones.getValor());
         }
         else{
             rol.getTieneIntegradoraMap().put(dtoCargaAcademica, false);
@@ -403,6 +464,28 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
 //                System.out.println("dtoCalificacionNivelacion = " + dtoCalificacionNivelacion.getIndicador());
             getContenedor(dtoCargaAcademica).getNivelacionMap().put(pk, dtoCalificacionNivelacion);
             return getContenedor(dtoCargaAcademica).getNivelacionMap().get(pk);
+        }else {
+            mostrarMensajeResultadoEJB(packDtoCalificacionNivelacion);
+            return null;
+        }
+    }
+    
+    public DtoCalificacionNivelacion getNivelacionAlineacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
+        DtoUnidadesCalificacionAlineacion.DtoNivelacionPK pk = new DtoUnidadesCalificacionAlineacion.DtoNivelacionPK(dtoCargaAcademica, dtoEstudiante);
+        if(getContenedorAlineacion(dtoCargaAcademica).getNivelacionMap().containsKey(pk)) return getContenedorAlineacion(dtoCargaAcademica).getNivelacionMap().get(pk);
+
+        @NonNull List<Indicador> indicadores = rol.getIndicadores();
+        if(indicadores.isEmpty()){
+            mostrarMensaje("La lista de indicadores está vacía");
+            return null;
+        }
+        ResultadoEJB<DtoCalificacionNivelacion> packDtoCalificacionNivelacion = packer.packDtoCalificacionNivelacion(dtoCargaAcademica, dtoEstudiante, indicadores.get(0));
+        if(packDtoCalificacionNivelacion.getCorrecto()){
+            @NonNull DtoCalificacionNivelacion dtoCalificacionNivelacion = packDtoCalificacionNivelacion.getValor();
+//            if(dtoCalificacionNivelacion.getCalificacionNivelacion().getCargaAcademica().getCarga() == 161 && dtoCalificacionNivelacion.getCalificacionNivelacion().getEstudiante().getIdEstudiante() == 194)
+//                System.out.println("dtoCalificacionNivelacion = " + dtoCalificacionNivelacion.getIndicador());
+            getContenedorAlineacion(dtoCargaAcademica).getNivelacionMap().put(pk, dtoCalificacionNivelacion);
+            return getContenedorAlineacion(dtoCargaAcademica).getNivelacionMap().get(pk);
         }else {
             mostrarMensajeResultadoEJB(packDtoCalificacionNivelacion);
             return null;
