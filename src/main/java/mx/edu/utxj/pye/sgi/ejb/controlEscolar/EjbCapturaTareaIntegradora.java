@@ -335,6 +335,41 @@ public class EjbCapturaTareaIntegradora {
         }
     }
     
+     /**
+     * Permite comprobar las fechas de apertura del apartado de resultados de tarea integradora
+     * @param dtoCargaAcademica carga académica
+     * @return Regresa TRUE/FALSE según la comprobación o código de error en caso de no poder realizar la comprobación
+     */
+    public ResultadoEJB<Boolean> fechasAperturaTI(DtoCargaAcademica dtoCargaAcademica){
+        try{
+            TareaIntegradora tareaIntegradora = em.createQuery("select t from TareaIntegradora t where t.carga.carga =:carga", TareaIntegradora.class)
+                    .setParameter("carga", dtoCargaAcademica.getCargaAcademica().getCarga())
+                    .getResultStream()
+                    .findAny()
+                    .orElse(null);
+            
+            Calendar fechaMinima = Calendar.getInstance();
+            fechaMinima.setTime(tareaIntegradora.getFechaEntrega());
+            fechaMinima.add(Calendar.DAY_OF_YEAR, -8);
+            Date fechaInicio=fechaMinima.getTime();
+            
+            Calendar fechaMaxima = Calendar.getInstance();
+            fechaMaxima.setTime(tareaIntegradora.getFechaEntrega());
+            fechaMaxima.add(Calendar.DAY_OF_YEAR, 8);
+            Date fechaFin=fechaMaxima.getTime();
+            
+            Date fechaActual = new Date();
+            Boolean permiso = Boolean.FALSE;
+            if(fechaActual.after(fechaInicio)  && fechaActual.before(fechaFin)){
+                permiso = Boolean.TRUE;
+            }
+            
+            return ResultadoEJB.crearCorrecto(permiso, "Se comprobaron las fechas de apertura de tarea integradora");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
+    
       /**
      * Permite comprobar si existe apertura extemporánea de nivelación final de un estudiante
      * @param dtoCargaAcademica carga académica

@@ -234,7 +234,7 @@
                                                         <p:column>
                                                             <p:commandLink class="#{estudiante.tieneCasoCritico or estudiante.tieneCasoCriticoSistema?'promedio btn btn-sm btn-danger':'promedio btn btn-sm btn-default'}"
                                                                             process="@this"
-                                                                            actionListener="#{capturaCalificacionesDocente.iniciarRegistroCasoCritico(estudiante)}"
+                                                                            actionListener="#{capturaCalificacionesDocente.iniciarRegistroCasoCriticoAlineacion(estudiante)}"
                                                                             oncomplete="PF('modalCasoCritico').show();"
                                                                             title="Presione el botón para registrar caso crítico. #{estudiante.permisoExtInd}">
                                                                 <i class="fa fa-check-square"/>
@@ -322,6 +322,7 @@
                           widgetVar="modalCasoCritico" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
                           modal="true" draggable="true" header="Caso crítico" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
                     <p:autoUpdate />
+                    <c:if test="#{capturaCalificacionesDocente.rol.periodoSeleccionado.periodo le 56}">
                     <c:if test="#{!empty capturaCalificacionesDocente.rol.dtoCapturaCalificacionSeleccionada}">
                         <div class="box box-primary">
                             <h:form>
@@ -380,6 +381,68 @@
                                 </div>
                             </h:form>
                         </div>
+                    </c:if>
+                    </c:if>
+                     <c:if test="#{capturaCalificacionesDocente.rol.periodoSeleccionado.periodo >= 57}">
+                    <c:if test="#{!empty capturaCalificacionesDocente.rol.dtoCapturaCalificacionAlineacionSeleccionada}">
+                        <div class="box box-primary">
+                            <h:form>
+                                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.CasoCriticoTipo" var="casoCriticoTipo" allSuffix="ALL" />
+                                <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Registro de caso crítico</h3></div>
+                                <div class="box-body">
+                                    <div class="row margin-bottom">
+                                        <div class="col-md-12">
+                                            <div class="ui-material">
+                                                <p:inputText id="ccEstudiante" value="#{caster.dtoEstudianteToString(capturaCalificacionesDocente.rol.dtoCapturaCalificacionAlineacionSeleccionada.dtoEstudiante)}" readonly="true" styleClass="form-control" />
+                                                <p:outputLabel value="Estudiante" for="ccEstudiante"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row margin-bottom">
+                                        <div class="col-md-12">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="ccTipo" value="#{capturaCalificacionesDocente.rol.dtoCapturaCalificacionAlineacionSeleccionada.dtoCasoCritico.tipo}" converter="entityConverter" required="true" styleClass="form-control" >
+                                                    <f:selectItems value="#{capturaCalificacionesDocente.listaCasoCriticoTipos}" var="ccTipo" itemValue="#{ccTipo}" itemLabel="#{ccTipo.label}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Tipo" for="ccTipo"/>
+                                                <p:message for="ccTipo" ><p:autoUpdate/></p:message>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row margin-bottom">
+                                        <div class="col-md-12">
+                                            <div class="ui-material">
+                                                <p:inputTextarea id="ccDescripcion" maxlength="1500" styleClass="form-control"
+                                                                 value="#{capturaCalificacionesDocente.rol.dtoCapturaCalificacionAlineacionSeleccionada.dtoCasoCritico.casoCritico.descripcion}"
+                                                                 placeholder="Ingrese una descripción específica del levantamiento del caso crítico." />
+                                                <p:outputLabel value="Descripcion" for="ccDescripcion"/>
+                                                <p:message for="ccDescripcion" ><p:autoUpdate/></p:message>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <c:if test="#{capturaCalificacionesDocente.rol.dtoCapturaCalificacionAlineacionSeleccionada.tieneCasoCriticoSistema}">
+                                        <div class="row margin-bottom">
+                                            <div class="col-md-12">
+                                                <div class="ui-material">
+                                                    <p:dataList value="#{capturaCalificacionesDocente.rol.dtoCapturaCalificacionAlineacionSeleccionada.casosCriticosSistema}" var="entradaCasoCritico" type="definition">
+                                                        <f:facet name="header">
+                                                            Generados por sistema
+                                                        </f:facet>
+                                                        #{entradaCasoCritico.key.label}
+                                                    </p:dataList>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:if>
+                                </div>
+                                <div class="box-footer clearfix no-border">
+                                    <p:button value="Cancelar" styleClass="btn btn-primary pull-right" icon="fa fa-times" onclick="PF('modalCasoCritico').hide(); return false;" />
+                                    <p:commandButton value="Eliminar" actionListener="#{capturaCalificacionesDocente.eliminarCasoCritico}" oncomplete="actualizar();" rendered="#{capturaCalificacionesDocente.rol.dtoCapturaCalificacionAlineacionSeleccionada.tieneCasoCritico}" styleClass="btn btn-primary pull-right" icon="fa fa-trash" />
+                                    <p:commandButton value="Registrar" actionListener="#{capturaCalificacionesDocente.guardarCasoCritico}" oncomplete="actualizar();" styleClass="btn btn-primary pull-right" icon="fa fa-save" />
+                                </div>
+                            </h:form>
+                        </div>
+                    </c:if>
                     </c:if>
                 </p:dialog>
             </c:if>
