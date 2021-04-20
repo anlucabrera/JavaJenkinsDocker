@@ -47,6 +47,7 @@ import org.primefaces.model.timeline.TimelineEvent;
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInformePlaneaciones;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -153,6 +154,7 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
             mostrarMensaje("No hay periodo escolar seleccionado.");
             rol.setGrupos(Collections.EMPTY_LIST);
             rol.setCargas(Collections.EMPTY_LIST);  
+            rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setGrupoSelec(new Grupo());            
             rol.setCarga(null);
             return;
@@ -176,6 +178,7 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
             mostrarMensajeResultadoEJB(resCarga);
         }
         if (resCarga.getValor().isEmpty()) {
+            rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
@@ -199,6 +202,7 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
         if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
         if (resCarga.getValor().isEmpty()) {
             rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+            rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
             return;
@@ -216,6 +220,7 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
         if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
         if (resCarga.getValor().isEmpty()) {
             rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
+            rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
             return;
@@ -250,14 +255,17 @@ public class PlaneacionCuatrimestralValidacion extends ViewScopedRol implements 
     
     public void existeAsignacion() {
         if (rol.getCarga() == null) {
+            rol.setEstudioMateria(new PlanEstudioMateria());
             return;
         }
         ResultadoEJB<List<DtoInformePlaneaciones>> res = ejb.buscarUnidadMateriaConfiguracionDetalle(rol.getCarga(),rol.getPeriodoActivo());
         rol.setInformeplaneacioncuatrimestraldocenteprints(new ArrayList<>());
 //        System.err.println("existeAsignacion - res " + res.getValor().size());
         if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
+            rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setExisteAsignacionIndicadores(true);
             rol.setInformeplaneacioncuatrimestraldocenteprints(res.getValor());
+            rol.setEstudioMateria(rol.getCarga().getPlanEstudioMateria());
         }
         Ajax.update("frm");
     }

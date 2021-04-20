@@ -21,13 +21,11 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaindicadoresporcriterioporconfiguracion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Informeplaneacioncuatrimestraldocenteprint;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import org.primefaces.model.chart.LineChartModel;
-import org.primefaces.model.timeline.TimelineModel;
 
 /**
  *
@@ -97,6 +95,7 @@ public class ValidacionPlaneacionCuatrimestral extends AbstractRol{
     @Getter    @NonNull    private List<PlanEstudio> planesEstudios;
     @Getter    @Setter    private Grupo grupoSelec;
     @Getter    @Setter    private List<Grupo> grupos;
+    @Getter    @Setter    private PlanEstudioMateria estudioMateria;
     
     /**
      * Carga académica seleccionada

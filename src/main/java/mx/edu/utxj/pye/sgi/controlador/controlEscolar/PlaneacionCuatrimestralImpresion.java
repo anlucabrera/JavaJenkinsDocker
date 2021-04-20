@@ -43,6 +43,7 @@ import org.primefaces.model.timeline.TimelineEvent;
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInformePlaneaciones;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -108,7 +109,7 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
             rol.setPeriodos(resPeriodos.getValor());
             rol.setPeriodo(ejb.getPeriodoActual());
             rol.setPeriodoActivo(rol.getPeriodo().getPeriodo());
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.init()"+rol.getPeriodos().size());
+////            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.init()"+rol.getPeriodos().size());
             
             ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(docente, rol.getPeriodo());
             ResultadoEJB<List<DtoCargaAcademica>> resCarga2 = ejb.getCargaAcademicaDocente(docente, rol.getPeriodos().get(0));
@@ -149,7 +150,7 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
     }
 
     public void cambiarPeriodo() {
-//        System.out.println("rol.getPeriodoSeleccionado() = " + caster.periodoToString(rol.getPeriodoSeleccionado()));
+////        System.out.println("rol.getPeriodoSeleccionado() = " + caster.periodoToString(rol.getPeriodoSeleccionado()));
         if (rol.getPeriodo() == null) {
             mostrarMensaje("No hay periodo escolar seleccionado.");
             rol.setCargas(Collections.EMPTY_LIST);
@@ -162,19 +163,20 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
         }else{
             rol.setRender(Boolean.TRUE);
         }
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo()"+rol.getPeriodoActivo());
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo()"+rol.getPeriodoActivo());
         ResultadoEJB<List<DtoCargaAcademica>> resCarga = ejb.getCargaAcademicaDocente(rol.getDocente(), rol.getPeriodo());
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo()"+resCarga.getValor().size());
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo()"+resCarga.getValor().size());
         rol.setInformeplaneacioncuatrimestraldocenteprints(Collections.EMPTY_LIST);
         rol.setCargas(Collections.EMPTY_LIST);
         rol.setCronograma(Collections.EMPTY_LIST);
         
         if (!resCarga.getValor().isEmpty()) {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo(1)");
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo(1)");
             rol.setCargas(resCarga.getValor());
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo(2)"+rol.getCargas().size());
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo(2)"+rol.getCargas().size());
             rol.setCarga(rol.getCargas().get(0));
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo(3)"+rol.getCarga());
+//            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.cambiarPeriodo(3)"+rol.getCarga());
+            rol.setEstudioMateria(new PlanEstudioMateria());
             existeAsignacion();
             crearCronograma(rol.getCarga());
         }
@@ -190,17 +192,20 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
 
     public void existeAsignacion() {
         if (rol.getCarga() == null) {
+            rol.setEstudioMateria(new PlanEstudioMateria());
             return;
         }
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.existeAsignacion()"+rol.getCarga());        
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.existeAsignacion()"+rol.getPeriodoActivo());
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.existeAsignacion()"+rol.getCarga());        
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.existeAsignacion()"+rol.getPeriodoActivo());
         ResultadoEJB<List<DtoInformePlaneaciones>> res = ejb.buscarUnidadMateriaConfiguracionDetalle(rol.getCarga(),rol.getPeriodoActivo());
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.existeAsignacion()"+res.getValor().size());
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.existeAsignacion()"+res.getValor().size());
         rol.setInformeplaneacioncuatrimestraldocenteprints(new ArrayList<>());
-//        System.err.println("existeAsignacion - res " + res.getValor().size());
+////        System.err.println("existeAsignacion - res " + res.getValor().size());
         if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
+            rol.setEstudioMateria(new PlanEstudioMateria());
             rol.setExisteAsignacionIndicadores(true);
             rol.setInformeplaneacioncuatrimestraldocenteprints(res.getValor());
+            rol.setEstudioMateria(rol.getCarga().getPlanEstudioMateria());
         }
         Ajax.update("frm");
     }
@@ -229,7 +234,7 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
     }
     
     private void crearCronograma(DtoCargaAcademica dca) {
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.crearCronograma()"+dca);
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.PlaneacionCuatrimestralImpresion.crearCronograma()"+dca);
         rol.setCronograma(new ArrayList<>());
         rol.getCronograma().clear();
         rol.setPorcIni(0D);

@@ -15,12 +15,10 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaindicadoresporcriterioporconfiguracion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Informeplaneacioncuatrimestraldocenteprint;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import org.primefaces.model.chart.LineChartModel;
-import org.primefaces.model.timeline.TimelineModel;
 
 /**
  *
@@ -80,6 +78,7 @@ public class ImpresionPlaneacionCuatrimestral extends AbstractRol{
     @Getter @Setter private Integer numDtotales;
     @Getter @Setter private Boolean render;
     
+    @Getter    @Setter    private PlanEstudioMateria estudioMateria;
     /**
      * Carga académica seleccionada
      */

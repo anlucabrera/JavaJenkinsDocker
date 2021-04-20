@@ -281,10 +281,3 @@ body .ui-datatable tbody>tr.ui-widget-content, body .ui-treetable tbody>tr.ui-wi
 .ui-panelgrid .ui-grid-responsive .ui-panelgrid-cell {
     text-align: left;
 }
-
-.bg-aqua-active, .modal-info .modal-header, .modal-info .modal-footer{
-    background:#374850 !important;
-}
-.box.box-primary{
-    background:#374850 !important;
-}
