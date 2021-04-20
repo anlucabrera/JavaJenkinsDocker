@@ -144,7 +144,7 @@
                                                                 <p:column headerText="% Categoría" />
                                                                 <p:column headerText="Evidencia" />
                                                                 <p:column headerText="Instrumento de evaluación" />
-                                                                <p:column headerText="Porcentaje" />
+                                                                <p:column headerText="% Instrumento" />
                                                                 <p:column headerText="Meta del instrumento" />
                                                             </p:row>
                                                         </p:columnGroup>
@@ -152,7 +152,7 @@
                                                             <h:outputText value="#{evidInstReg.configuracion.idUnidadMateria.noUnidad}" />
                                                         </p:column>
                                                         <p:column groupRow="true" style="text-align: justify;">
-                                                            <h:outputText value="#{evidInstReg.configuracion.idUnidadMateria.nombre}" />
+                                                            <h:outputText value="#{evidInstReg.configuracion.idUnidadMateria.nombre}" /> - <h:outputText value="#{evidInstReg.configuracion.porcentaje}" style="font-weight: bold;"><f:convertNumber type="number"/></h:outputText>%
                                                         </p:column>
                                                         <p:column groupRow="true" style="text-align: justify;">
                                                             <h:outputText value="#{evidInstReg.evidencia.criterio.tipo}" />
