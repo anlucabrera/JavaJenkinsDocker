@@ -32,14 +32,9 @@
     <ui:define name="description">
         Desempeño docente por materia
     </ui:define>
-    <ui:define name="head-end">
-        <h:outputScript library="js" name="calendario.js" />
-        <h:outputScript library="js" name="dialogs.js"/>
-        <h:outputStylesheet library="css" name="tablaDatos.css"/>
-    </ui:define>
     <ui:define name="body">
         <c:if test="#{evaluacionDocenteEstudiante.cargada}">
-            <adm:breadcrumb title="Registro de cita"/>
+            <adm:breadcrumb title="Evaluación docente"/>
             <adm:sidebar collapsed="true"/>
             <div class="contenedor">
                 <c:if test="#{evaluacionDocenteEstudiante.cargada}">
