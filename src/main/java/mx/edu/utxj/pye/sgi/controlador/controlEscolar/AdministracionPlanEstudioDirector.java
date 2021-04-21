@@ -157,7 +157,7 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
     }
     
     public void guardarMeta() {
-        rol.getMateriaMetasPropuestas().getMetasPropuestas().setValorAlcanzado(0D);
+//        rol.getMateriaMetasPropuestas().getMetasPropuestas().setValorAlcanzado(0D);
         pem=new PlanEstudioMateria();
         rol.getPlanEstudioMaterias().forEach((t) -> {
              if((Objects.equals(t.getIdPlan().getIdPlanEstudio(), rol.getPlanEstudioMateriaCompetencias1().getPlanEstudio().getIdPlanEstudio()))&& (t.getIdMateria().getIdMateria()==rol.getMateriaMetasPropuestas().getMateria().getIdMateria())){

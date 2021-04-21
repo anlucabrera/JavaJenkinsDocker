@@ -305,6 +305,7 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         if (resCarga.getValor().isEmpty()) {
             rol.setPlaneacioneses(Collections.EMPTY_LIST);
             rol.setEstudioMateria(new PlanEstudioMateria());
+            rol.setMetasPropuestas(new MetasPropuestas());
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
             rol.setDrcas(Collections.EMPTY_LIST);
@@ -329,6 +330,7 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         if (resCarga.getValor().isEmpty()) {
             rol.setPlaneacioneses(Collections.EMPTY_LIST);
             rol.setEstudioMateria(new PlanEstudioMateria());
+            rol.setMetasPropuestas(new MetasPropuestas());
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
             return;
@@ -346,6 +348,7 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         if (resCarga.getValor().isEmpty()) {
             rol.setPlaneacioneses(Collections.EMPTY_LIST);
             rol.setEstudioMateria(new PlanEstudioMateria());
+            rol.setMetasPropuestas(new MetasPropuestas());
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
             return;
@@ -381,6 +384,8 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
             rol.setPlaneacioneses(Collections.EMPTY_LIST);      
             rol.setPlaneacioneses(Collections.EMPTY_LIST);
             rol.setEstudioMateria(new PlanEstudioMateria());
+            rol.setMetasPropuestas(new MetasPropuestas());
+            rol.setMetasPropuestas(new MetasPropuestas());
             rol.setCargas(Collections.EMPTY_LIST);
             rol.setCronograma(Collections.EMPTY_LIST);
             return;
@@ -389,9 +394,13 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         rol.setPlaneacioneses(new ArrayList<>());
         if (res.getValor().size() > 0 && !res.getValor().isEmpty()) {
             rol.setEstudioMateria(new PlanEstudioMateria());
+            rol.setMetasPropuestas(new MetasPropuestas());
             rol.setExisteAsignacionIndicadores(true);
             rol.setPlaneacioneses(res.getValor());
             rol.setEstudioMateria(rol.getCarga().getPlanEstudioMateria());
+            if(!rol.getEstudioMateria().getMetasPropuestasList().isEmpty()){
+                rol.setMetasPropuestas(rol.getEstudioMateria().getMetasPropuestasList().get(rol.getEstudioMateria().getMetasPropuestasList().size()-1));
+            }
             rol.setDrcas(Collections.EMPTY_LIST);
         }
         calculaDatosGenerales();
@@ -464,11 +473,6 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
     public void calculaDatosGenerales() {
         bt = 0;        bd = 0;        ri = 0;
         rol.setMetaP(0d);
-//        if (!rol.getCarga().getPlanEstudioMateria().getMetasPropuestasList().isEmpty()) {
-//            MetasPropuestas mp = new MetasPropuestas();
-//            mp = rol.getCarga().getPlanEstudioMateria().getMetasPropuestasList().get(rol.getCarga().getPlanEstudioMateria().getMetasPropuestasList().size() - 1);
-//            rol.setMetaP(mp.getValorPropuesto());
-//        }
         if (!rol.getCarga().getGrupo().getEstudianteList().isEmpty()) {
             List<Estudiante> es = new ArrayList<>();
             es = rol.getCarga().getGrupo().getEstudianteList();
@@ -484,6 +488,12 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
             rol.setEsBajD(bd);
             rol.setEsRein(ri);
         }
+        
+         rol.setAutonomo(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),1));
+         rol.setDestacado(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),2));
+         rol.setSatisfactorio(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),3));
+         rol.setNoAcreditado(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),4));
+        
     }
    
     public String buscarDirector(Short clave){

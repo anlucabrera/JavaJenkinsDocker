@@ -106,7 +106,11 @@ public class ResultadosPlaneacionesMultipleConsulta extends AbstractRol{
      * Representa la clave
      */
     @Getter @Setter private List<DtoGraficaCronograma> cronograma;
-    @Getter @Setter private Integer cuatrimestre;
+    @Getter @Setter private Integer cuatrimestre;    
+    @Getter @Setter Integer autonomo;
+    @Getter @Setter Integer destacado;
+    @Getter @Setter Integer satisfactorio;
+    @Getter @Setter Integer noAcreditado;
     @Getter @Setter private Double porcIni;
     @Getter @Setter private Integer numDtotales;
     
@@ -117,6 +121,7 @@ public class ResultadosPlaneacionesMultipleConsulta extends AbstractRol{
     // Representa el listado de las áreas de conocimiento
     @Getter    @NonNull    private List<PlanEstudio> planesEstudios;
     @Getter    @Setter    private PlanEstudioMateria estudioMateria;
+    @Getter    @Setter    private MetasPropuestas metasPropuestas;
     @Getter    @Setter    private Grupo grupoSelec;
     @Getter    @Setter    private List<Grupo> grupos;
     @Getter    @Setter    private List<ObjetivoEducacional> educacionals;

@@ -33,9 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "MetasPropuestas.findAll", query = "SELECT m FROM MetasPropuestas m")
     , @NamedQuery(name = "MetasPropuestas.findByIdMetapropuesta", query = "SELECT m FROM MetasPropuestas m WHERE m.idMetapropuesta = :idMetapropuesta")
-    , @NamedQuery(name = "MetasPropuestas.findByPeriodo", query = "SELECT m FROM MetasPropuestas m WHERE m.periodo = :periodo")
-    , @NamedQuery(name = "MetasPropuestas.findByValorPropuesto", query = "SELECT m FROM MetasPropuestas m WHERE m.valorPropuesto = :valorPropuesto")
-    , @NamedQuery(name = "MetasPropuestas.findByValorAlcanzado", query = "SELECT m FROM MetasPropuestas m WHERE m.valorAlcanzado = :valorAlcanzado")})
+    , @NamedQuery(name = "MetasPropuestas.findByPeriodo", query = "SELECT m FROM MetasPropuestas m WHERE m.periodo = :periodo")})
 public class MetasPropuestas implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,14 +46,6 @@ public class MetasPropuestas implements Serializable {
     @NotNull
     @Column(name = "periodo")
     private int periodo;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "valor_propuesto")
-    private Double valorPropuesto;
-    @Column(name = "valor_alcanzado")
-    private Double valorAlcanzado;
-    @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private PlanEstudioMateria idPlanMateria;
     @Lob
     @Size(max = 65535)
     @Column(name = "autonomo")
@@ -72,7 +62,10 @@ public class MetasPropuestas implements Serializable {
     @Size(max = 65535)
     @Column(name = "no_acreditado")
     private String noAcreditado;
-    
+    @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private PlanEstudioMateria idPlanMateria;
+
     public MetasPropuestas() {
     }
 
@@ -101,20 +94,36 @@ public class MetasPropuestas implements Serializable {
         this.periodo = periodo;
     }
 
-    public Double getValorPropuesto() {
-        return valorPropuesto;
+    public String getAutonomo() {
+        return autonomo;
     }
 
-    public void setValorPropuesto(Double valorPropuesto) {
-        this.valorPropuesto = valorPropuesto;
+    public void setAutonomo(String autonomo) {
+        this.autonomo = autonomo;
     }
 
-    public Double getValorAlcanzado() {
-        return valorAlcanzado;
+    public String getDestacado() {
+        return destacado;
     }
 
-    public void setValorAlcanzado(Double valorAlcanzado) {
-        this.valorAlcanzado = valorAlcanzado;
+    public void setDestacado(String destacado) {
+        this.destacado = destacado;
+    }
+
+    public String getSatisfactorio() {
+        return satisfactorio;
+    }
+
+    public void setSatisfactorio(String satisfactorio) {
+        this.satisfactorio = satisfactorio;
+    }
+
+    public String getNoAcreditado() {
+        return noAcreditado;
+    }
+
+    public void setNoAcreditado(String noAcreditado) {
+        this.noAcreditado = noAcreditado;
     }
 
     public PlanEstudioMateria getIdPlanMateria() {
@@ -148,38 +157,6 @@ public class MetasPropuestas implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.MetasPropuestas[ idMetapropuesta=" + idMetapropuesta + " ]";
-    }
-
-    public String getAutonomo() {
-        return autonomo;
-    }
-
-    public void setAutonomo(String autonomo) {
-        this.autonomo = autonomo;
-    }
-
-    public String getDestacado() {
-        return destacado;
-    }
-
-    public void setDestacado(String destacado) {
-        this.destacado = destacado;
-    }
-
-    public String getSatisfactorio() {
-        return satisfactorio;
-    }
-
-    public void setSatisfactorio(String satisfactorio) {
-        this.satisfactorio = satisfactorio;
-    }
-
-    public String getNoAcreditado() {
-        return noAcreditado;
-    }
-
-    public void setNoAcreditado(String noAcreditado) {
-        this.noAcreditado = noAcreditado;
     }
     
 }

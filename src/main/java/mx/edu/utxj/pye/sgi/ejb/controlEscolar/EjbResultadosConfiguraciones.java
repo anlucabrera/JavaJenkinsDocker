@@ -40,6 +40,11 @@ public class EjbResultadosConfiguraciones {
     @EJB EjbEventoEscolar ejbEventoEscolar;
     Double sumaC=0D;
     Integer esalcanzados=0;
+   
+    Integer a = 0;
+    Integer d = 0;
+    Integer s = 0;
+    Integer n = 0;
     private EntityManager em;
 
     @PostConstruct
@@ -169,6 +174,37 @@ public class EjbResultadosConfiguraciones {
             return ResultadoEJB.crearCorrecto(promediounidad, "Califiaciones Encontrados");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Los promedios por materia(EjbResultadosConfiguraciones.getCalificacionesIndicador).", e, null);
+        }
+    }
+    
+    public Integer getestudiantesAlcanzaMeta(CargaAcademica informe, Integer tipo) {
+        try {
+            n=0;
+            s=0;
+            d=0;
+            a=0;
+            Integer tes=informe.getCveGrupo().getEstudianteList().size();
+            List<CalificacionPromedio> cal = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.cargaAcademica dt WHERE dt.carga=:carga", CalificacionPromedio.class)
+                    .setParameter("carga", informe.getCarga())
+                    .getResultList();
+            if (!cal.isEmpty()) {
+                cal.forEach((t) -> {
+                    if (t.getValor() >= 8 && t.getValor() < 8.5){                        s=s+1;
+                    }else if (t.getValor() >= 8.5 && t.getValor() < 9){                        d=d+1;
+                    }else if (t.getValor() >= 9 && t.getValor() < 10){                        a=a+1;
+                    }
+                });
+            }
+            n=tes-(a+d+s);
+            switch (tipo) {
+                case 1:                    tipo = a;                    break;
+                case 2:                    tipo = d;                    break;
+                case 3:                    tipo = s;                    break;
+                case 4:                    tipo = n;                    break;
+            }
+            return tipo;
+        } catch (Exception e) {
+            return 0;
         }
     }
     
