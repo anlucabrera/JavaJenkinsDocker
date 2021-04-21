@@ -767,7 +767,10 @@ public class EjbPacker {
             if(res.getCorrecto()) {
                 List<DtoEstudiante> dtoEstudiantes = res.getValor();
                 String tipoEval ="Nivelación Final";
-                Boolean activaPorFecha = eventoEscolar == null?false:DateUtils.isBetweenWithRange(new Date(), eventoEscolar.getInicio(), eventoEscolar.getFin(), ejbCapturaCalificaciones.leerDiasRangoParaCapturarUnidad());
+                Boolean activaPorFecha = Boolean.FALSE;
+                if(dtoCargaAcademica.getPeriodo().getPeriodo() == eventoEscolar.getPeriodo()){
+                 activaPorFecha = eventoEscolar == null?false:DateUtils.isBetweenWithRange(new Date(), eventoEscolar.getInicio(), eventoEscolar.getFin(), ejbCapturaCalificaciones.leerDiasRangoParaCapturarUnidad());
+                }
                 PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.tipoEvaluacion=:tipo and p.validada=:valor", PermisosCapturaExtemporaneaGrupal.class)
                         .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                         .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
@@ -817,7 +820,10 @@ public class EjbPacker {
             if(res.getCorrecto()) {
                 List<DtoEstudiante> dtoEstudiantes = res.getValor();
                 String tipoEval ="Nivelación Final";
-                Boolean activaPorFecha = eventoEscolar == null?false:DateUtils.isBetweenWithRange(new Date(), eventoEscolar.getInicio(), eventoEscolar.getFin(), ejbCapturaCalificaciones.leerDiasRangoParaCapturarUnidad());
+                Boolean activaPorFecha = Boolean.FALSE;
+                if(dtoCargaAcademica.getPeriodo().getPeriodo() == eventoEscolar.getPeriodo()){
+                 activaPorFecha = eventoEscolar == null?false:DateUtils.isBetweenWithRange(new Date(), eventoEscolar.getInicio(), eventoEscolar.getFin(), ejbCapturaCalificaciones.leerDiasRangoParaCapturarUnidad());
+                }
                 PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.tipoEvaluacion=:tipo and p.validada=:valor", PermisosCapturaExtemporaneaGrupal.class)
                         .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                         .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
