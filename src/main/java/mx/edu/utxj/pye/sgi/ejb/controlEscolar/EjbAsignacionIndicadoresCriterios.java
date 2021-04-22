@@ -803,7 +803,7 @@ public class EjbAsignacionIndicadoresCriterios {
 //            System.err.println("buscarAsignacionIndicadoresCargaAcademica - valor " + asigInd);
             planeacioneses = new ArrayList<>();
             if (periodo <= 56) {
-                List<UnidadMateriaConfiguracionDetalle> configuracionDetalle = em.createQuery("SELECT i FROM UnidadMateriaConfiguracionDetalle i INNER JOIN i.configuracion c INNER JOIN c.carga ca WHERE ca.carga =:cargaAcademica", UnidadMateriaConfiguracionDetalle.class)
+                List<UnidadMateriaConfiguracionDetalle> configuracionDetalle = em.createQuery("SELECT i FROM UnidadMateriaConfiguracionDetalle i INNER JOIN i.configuracion c INNER JOIN c.carga ca WHERE ca.carga =:cargaAcademica ORDER BY i.criterio.criterio", UnidadMateriaConfiguracionDetalle.class)
                         .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                         .getResultList();
                 if (!configuracionDetalle.isEmpty()) {
@@ -831,7 +831,7 @@ public class EjbAsignacionIndicadoresCriterios {
                     });
                 }
             } else {
-                List<UnidadMateriaConfiguracionEvidenciaInstrumento> evidenciaInstrumento = em.createQuery("SELECT i FROM UnidadMateriaConfiguracionEvidenciaInstrumento i INNER JOIN i.configuracion c INNER JOIN c.carga ca WHERE ca.carga =:cargaAcademica", UnidadMateriaConfiguracionEvidenciaInstrumento.class)
+                List<UnidadMateriaConfiguracionEvidenciaInstrumento> evidenciaInstrumento = em.createQuery("SELECT i FROM UnidadMateriaConfiguracionEvidenciaInstrumento i INNER JOIN i.configuracion c INNER JOIN c.carga ca WHERE ca.carga =:cargaAcademica ORDER BY i.evidencia.criterio.criterio", UnidadMateriaConfiguracionEvidenciaInstrumento.class)
                         .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                         .getResultList();
                 if (!evidenciaInstrumento.isEmpty()) {

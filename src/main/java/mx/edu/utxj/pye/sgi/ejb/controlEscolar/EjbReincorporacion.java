@@ -1001,6 +1001,8 @@ public class EjbReincorporacion {
                 case 17:                    e.setR17Alergia(valor);                    break;
                 case 18:                    e.setR18padecesEnfermedad(valor);                    break;
                 case 19:                    e.setR19tratamientoMedico(valor);                    break;
+                case 20:                    e.setR20Hijos(valor);                    break;
+                case 21:                    e.setR21noHijos(valor);                    break;
             }
             
             switch (operacion) {

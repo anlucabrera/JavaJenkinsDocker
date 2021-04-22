@@ -248,11 +248,11 @@
                                                                                 <p:column headerText="No. de Evaluación" style="width: 20%;font-size: small;"  /> 
                                                                                 <p:column headerText="Periodo" style="width: 10%;font-size: small;"/> 
                                                                                 <p:column headerText="% Eval." style="width: 10%;font-size: small;"/>
-                                                                                <p:column headerText="Criterio de evaluacion" style="width: 10%;font-size: small;"/>
-                                                                                <p:column headerText="% Crit" style="width: 10%;font-size: small;"/>
+                                                                                <p:column headerText="Categoría de evaluacion" style="width: 10%;font-size: small;"/>
+                                                                                <p:column headerText="% Cat" style="width: 10%;font-size: small;"/>
+                                                                                <p:column headerText="Evidencia" style="width: 30%;font-size: small;" rendered="#{planeacionCuatrimestralValidacion.rol.render}"/> 
                                                                                 <p:column headerText="Instrumentos de evaluación" style="width: 30%;font-size: small;"/> 
                                                                                 <p:column headerText="% Ins." style="width: 10%;font-size: small;"/> 
-                                                                                <p:column headerText="Evidencia" style="width: 30%;font-size: small;" rendered="#{planeacionCuatrimestralValidacion.rol.render}"/> 
                                                                             </p:row>
                                                                         </p:columnGroup>
                                                                         <p:headerRow >
@@ -287,16 +287,16 @@
                                                                         </p:column>
                                                                         <p:column groupRow="true" style="border: #000000  !important;text-align: center;font-size: small; #{asignacionIndCA.nombreUnidad eq 'T.I.'?'background: #000000':''}">
                                                                             <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':asignacionIndCA.porCriterio}" style="text-align: center;"/>
+                                                                        </p:column>                                                                  
+                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;#{asignacionIndCA.nombreUnidad eq 'T.I.'?'background: #000000':''}" rendered="#{planeacionCuatrimestralValidacion.rol.render}">
+                                                                            <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':asignacionIndCA.evidencia}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
                                                                         </p:column>
                                                                         <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.nombreUnidad eq 'T.I.'?'background: #000000':''}">
                                                                             <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':asignacionIndCA.indicador}" />
                                                                         </p:column>
                                                                         <p:column style="border: #000000  !important;text-align: center;font-size: small;#{asignacionIndCA.nombreUnidad eq 'T.I.'?'background: #000000':''}">
                                                                             <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':asignacionIndCA.porcentaje}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
-                                                                        </p:column>                                                                    
-                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;#{asignacionIndCA.nombreUnidad eq 'T.I.'?'background: #000000':''}" rendered="#{planeacionCuatrimestralValidacion.rol.render}">
-                                                                            <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':asignacionIndCA.evidencia}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
-                                                                        </p:column>
+                                                                        </p:column>  
                                                                     </p:dataTable>       
                                                                 </div>
                                                             </div>

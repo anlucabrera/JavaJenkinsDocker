@@ -1315,7 +1315,7 @@
                                             </div>                                                                                                                                                                                                
                                         </h:form>
                                     </p:tab>
-                                    <p:tab title="Alineacion de calificaciones">
+                                    <!--p:tab title="Alineacion de calificaciones">
                                         <h:form id="capturaCalificaciones">
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <div class="col-md-12">
@@ -1324,39 +1324,39 @@
                                                             <div class="form-group">
                                                                 <div class="col-sm-2 col-md-2 col-lg-2">
                                                                     <p:outputLabel for="folioI" style="font-size: large;text-align: right;" value="Matrícula:" />
-                                                                    <p:inputText id="folioI" class="form-control" value="#{reincorporacionServiciosEscolares.rol.rein.matricula}"  placeholder="Ingresa tu folio de ficha de admisión" required="true" requiredMessage="Es necesario que ingrese su el folio de ficha de admisión" readonly="true"/>
+                                                                    <p:inputText id="folioI" class="form-control" value="# {reincorporacionServiciosEscolares.rol.rein.matricula}"  placeholder="Ingresa tu folio de ficha de admisión" required="true" requiredMessage="Es necesario que ingrese su el folio de ficha de admisión" readonly="true"/>
                                                                     <p:message for="folioI"><p:autoUpdate/></p:message>
                                                                 </div>
                                                                 <div class="col-sm-2 col-md-2 col-lg-2">
                                                                     <p:outputLabel for="nombre" style="font-size: large;text-align: right;" value="Nombre:" />
-                                                                    <p:inputText id="nombre" class="form-control" value="#{reincorporacionServiciosEscolares.rol.personaD.persona.nombre}" readonly="true"/>
+                                                                    <p:inputText id="nombre" class="form-control" value="# {reincorporacionServiciosEscolares.rol.personaD.persona.nombre}" readonly="true"/>
                                                                 </div>
                                                                 <div class="col-sm-2 col-md-2 col-lg-2">
                                                                     <p:outputLabel for="ap" style="font-size: large;text-align: right;" value="Apellido Paterno" />
-                                                                    <p:inputText id="ap" class="form-control" value="#{reincorporacionServiciosEscolares.rol.personaD.persona.apellidoPaterno}" readonly="true"/>
+                                                                    <p:inputText id="ap" class="form-control" value="# {reincorporacionServiciosEscolares.rol.personaD.persona.apellidoPaterno}" readonly="true"/>
                                                                 </div>
                                                                 <div class="col-sm-2 col-md-2 col-lg-2">
                                                                     <p:outputLabel for="am" style="font-size: large;text-align: right;" value="Apellido Materno" />
-                                                                    <p:inputText id="am" class="form-control" value="#{reincorporacionServiciosEscolares.rol.personaD.persona.apellidoMaterno}" readonly="true"/>
+                                                                    <p:inputText id="am" class="form-control" value="# {reincorporacionServiciosEscolares.rol.personaD.persona.apellidoMaterno}" readonly="true"/>
                                                                 </div>        
                                                                 <div class="col-sm-4 col-md-4 col-lg-4">
                                                                     <p:outputLabel for="pe" style="font-size: large;text-align: right;" value="Programa Educativo" />
-                                                                    <p:inputTextarea id="pe" class="form-control" value="#{reincorporacionServiciosEscolares.rol.rein.opcionIncripcion eq true?reincorporacionServiciosEscolares.rol.rein.primeraOp:reincorporacionServiciosEscolares.rol.rein.segundaOP}" readonly="true"/>
+                                                                    <p:inputTextarea id="pe" class="form-control" value="# {reincorporacionServiciosEscolares.rol.rein.opcionIncripcion eq true?reincorporacionServiciosEscolares.rol.rein.primeraOp:reincorporacionServiciosEscolares.rol.rein.segundaOP}" readonly="true"/>
                                                                 </div>
                                                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                                                     <p:panelGrid columns="3">                                                                        
-                                                                        <c:forEach var="i" begin="0" end="#{reincorporacionServiciosEscolares.rol.calificacionesR.size()-1}">
-                                                                            <c:set var="t" value="#{reincorporacionServiciosEscolares.rol.calificacionesR.get(i)}"/>
+                                                                        <c:forEach var="i" begin="0" end="# {reincorporacionServiciosEscolares.rol.calificacionesR.size()-1}">
+                                                                            <c:set var="t" value="# {reincorporacionServiciosEscolares.rol.calificacionesR.get(i)}"/>
                                                                             <p:panelGrid columns="2">
-                                                                                <f:facet name="header">#{t.grupo.grado}° #{t.grupo.literal}</f:facet>
-                                                                                <c:forEach var="h" begin="0" end="#{t.calificacionesReincorporacions.size()-1}">
-                                                                                    <c:set var="j" value="#{t.calificacionesReincorporacions.get(h)}"/>
-                                                                                    <p:outputLabel value="#{j.estudioMateria.claveMateria}#{j.materia.nombre}" />
-                                                                                    <p:inputNumber id="cal-#{j.academica.carga}-#{t.estudiante.idEstudiante}" 
+                                                                                <f:facet name="header"># {t.grupo.grado}° # {t.grupo.literal}</f:facet>
+                                                                                <c:forEach var="h" begin="0" end="# {t.calificacionesReincorporacions.size()-1}">
+                                                                                    <c:set var="j" value="# {t.calificacionesReincorporacions.get(h)}"/>
+                                                                                    <p:outputLabel value="# {j.estudioMateria.claveMateria}# {j.materia.nombre}" />
+                                                                                    <p:inputNumber id="cal-# {j.academica.carga}-# {t.estudiante.idEstudiante}" 
                                                                                                    placeholder="0" decimalPlaces="2" minValue="0" maxValue="10"
-                                                                                                   valueChangeListener="#{reincorporacionServiciosEscolares.guardaCalificaciones}" value="#{j.calificacionPromedio.valor}"  
-                                                                                                   disabled="#{!j.editable}">
-                                                                                        <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
+                                                                                                   valueChangeListener="# {reincorporacionServiciosEscolares.guardaCalificaciones}" value="# {j.calificacionPromedio.valor}"  
+                                                                                                   disabled="# {!j.editable}">
+                                                                                        <p:ajax update="@this" process="@this" listener="# {areaPoaProgramacion.imprimirValores()}"/>
                                                                                     </p:inputNumber>                                                                                                                                                                        
                                                                                 </c:forEach>
                                                                             </p:panelGrid>
@@ -1370,8 +1370,8 @@
                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                         <p:outputPanel>
                                                                             <p:autoUpdate/> 
-                                                                            <p:commandButton id="btnGuardaGrupos" value="Validar Reincorporacion" icon="fa fa-floppy-o" rendered="#{reincorporacionServiciosEscolares.rol.esEscolares}"
-                                                                                             class="btn-primary btn-block col-md-3" process="@this" update="@form" actionListener="#{reincorporacionServiciosEscolares.guardaCalificacionesValidadas()}" disabled="#{!reincorporacionServiciosEscolares.rol.puedeValidar}"/>
+                                                                            <p:commandButton id="btnGuardaGrupos" value="Validar Reincorporacion" icon="fa fa-floppy-o" rendered="# {reincorporacionServiciosEscolares.rol.esEscolares}"
+                                                                                             class="btn-primary btn-block col-md-3" process="@this" update="@form" actionListener="# {reincorporacionServiciosEscolares.guardaCalificacionesValidadas()}" disabled="# {!reincorporacionServiciosEscolares.rol.puedeValidar}"/>
                                                                         </p:outputPanel>
                                                                     </div>
                                                                 </div>
@@ -1381,7 +1381,7 @@
                                                 </div>
                                             </div>
                                         </h:form>
-                                    </p:tab>
+                                    </p:tab-->
                                 </p:tabView>
                             </div>
                         </div>
