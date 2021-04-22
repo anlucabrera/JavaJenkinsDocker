@@ -1187,8 +1187,9 @@ public class EjbAsignacionIndicadoresCriterios {
 
             listaUnidadesConfiguradas.forEach(unidadConfigurada -> {
                 
-                List<EvaluacionSugerida> listaEvaluacionesSugeridas = em.createQuery("SELECT e FROM EvaluacionSugerida e WHERE e.unidadMateria.idUnidadMateria=:unidad", EvaluacionSugerida.class)
+                List<EvaluacionSugerida> listaEvaluacionesSugeridas = em.createQuery("SELECT e FROM EvaluacionSugerida e WHERE e.unidadMateria.idUnidadMateria=:unidad AND e.activo=:valor", EvaluacionSugerida.class)
                         .setParameter("unidad", unidadConfigurada.getIdUnidadMateria().getIdUnidadMateria())
+                        .setParameter("valor", Boolean.TRUE)
                         .getResultStream()
                         .collect(Collectors.toList());
 
