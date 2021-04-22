@@ -138,14 +138,14 @@
                                                         </f:facet>
                                                         <p:columnGroup type="header">
                                                             <p:row class="success">
-                                                                <p:column headerText="No. Unidad" /> 
-                                                                <p:column headerText="Unidad" /> 
-                                                                <p:column headerText="Categoría de evaluación" />
-                                                                <p:column headerText="% Categoría" />
-                                                                <p:column headerText="Evidencia" />
-                                                                <p:column headerText="Instrumento de evaluación" />
-                                                                <p:column headerText="% Instrumento" />
-                                                                <p:column headerText="Meta del instrumento" />
+                                                                <p:column headerText="No. Unidad" style="width: 80px;"/> 
+                                                                <p:column headerText="Unidad" style="width: 250px;"/> 
+                                                                <p:column headerText="Categoría de evaluación" style="width: 120px;"/>
+                                                                <p:column headerText="% Categoría" style="width: 100px;"/>
+                                                                <p:column headerText="Evidencia" style="width: 150px;"/>
+                                                                <p:column headerText="Instrumento de evaluación" style="width: 150px;"/>
+                                                                <p:column headerText="% Instrumento" style="width: 100px;"/>
+                                                                <p:column headerText="Meta del instrumento" style="width: 100px;"/>
                                                             </p:row>
                                                         </p:columnGroup>
                                                         <p:column groupRow="true" style="text-align: center;">
@@ -434,27 +434,34 @@
                                                         </f:facet>
                                                         <p:columnGroup type="header">
                                                             <p:row class="success">
-                                                                <p:column headerText="No. Unidad" /> 
-                                                                <p:column headerText="Unidad" /> 
-                                                                <p:column headerText="Categoría de evaluación" />
-                                                                <p:column headerText="% Categoría" />
-                                                                <p:column headerText="Evidencia" />
-                                                                <p:column headerText="Instrumento de evaluación" />
-                                                                <p:column headerText="Porcentaje" />
-                                                                <p:column headerText="Meta del instrumento" />
+                                                                <p:column headerText="No. Unidad" style="width: 80px;"/> 
+                                                                <p:column headerText="Unidad" style="width: 250px;"/> 
+                                                                <p:column headerText="Categoría de evaluación" style="width: 120px;"/>
+                                                                <p:column headerText="% Categoría" style="width: 100px;"/>
+                                                                <p:column headerText="Eliminar" style="width: 100px;"/>
+                                                                <p:column headerText="Evidencia" style="width: 150px;"/>
+                                                                <p:column headerText="Instrumento de evaluación" style="width: 150px;"/>
+                                                                <p:column headerText="% Instrumento" style="width: 100px;"/>
+                                                                <p:column headerText="Meta del instrumento" style="width: 100px;"/>
                                                             </p:row>
                                                         </p:columnGroup>
                                                         <p:column groupRow="true" style="text-align: center;">
                                                             <h:outputText value="#{evidInstSug.unidadMateriaConfiguracion.idUnidadMateria.noUnidad}"/>
                                                         </p:column>
                                                         <p:column groupRow="true">
-                                                            <h:outputText value="#{evidInstSug.unidadMateriaConfiguracion.idUnidadMateria.nombre}"/>
+                                                            <h:outputText value="#{evidInstSug.unidadMateriaConfiguracion.idUnidadMateria.nombre}" /> - <h:outputText value="#{evidInstSug.unidadMateriaConfiguracion.porcentaje}" style="font-weight: bold;"><f:convertNumber type="number"/></h:outputText>%
                                                         </p:column>
                                                         <p:column groupRow="true">
                                                             <h:outputText value="#{evidInstSug.evidenciaEvaluacion.criterio.tipo}" style="text-align: center;"/>
                                                         </p:column>
                                                         <p:column groupRow="true" style="text-align: center;" >
                                                             <h:outputText value="#{evidInstSug.evidenciaEvaluacion.criterio.porcentajeRecomendado}"><f:convertNumber type="number"/></h:outputText>%
+                                                        </p:column>
+                                                        <p:column>
+                                                            <center>
+                                                            <p:commandButton actionListener="#{asignacionIndicadoresCriteriosDocente.eliminarEvidencia(evidInstSug)}" rendered="#{!evidInstSug.obligatorio}" class="btn btn-sm btn-info" icon="fa fa-minus" title="Eliminar evidencia."/>
+                                                            <h:outputText value="Obligatorio" style="text-align: center;" rendered="#{evidInstSug.obligatorio}"/>
+                                                            </center>
                                                         </p:column>
                                                         <p:column>
                                                             <h:outputText value="#{evidInstSug.evidenciaEvaluacion.descripcion}" />
