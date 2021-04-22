@@ -29,7 +29,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "EvaluacionSugerida.findAll", query = "SELECT e FROM EvaluacionSugerida e")
     , @NamedQuery(name = "EvaluacionSugerida.findByEvaluacionSugerida", query = "SELECT e FROM EvaluacionSugerida e WHERE e.evaluacionSugerida = :evaluacionSugerida")
-    , @NamedQuery(name = "EvaluacionSugerida.findByMetaInstrumento", query = "SELECT e FROM EvaluacionSugerida e WHERE e.metaInstrumento = :metaInstrumento")})
+    , @NamedQuery(name = "EvaluacionSugerida.findByMetaInstrumento", query = "SELECT e FROM EvaluacionSugerida e WHERE e.metaInstrumento = :metaInstrumento")
+    , @NamedQuery(name = "EvaluacionSugerida.findByPeriodoInicio", query = "SELECT e FROM EvaluacionSugerida e WHERE e.periodoInicio = :periodoInicio")
+    , @NamedQuery(name = "EvaluacionSugerida.findByActivo", query = "SELECT e FROM EvaluacionSugerida e WHERE e.activo = :activo")})
 public class EvaluacionSugerida implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,6 +44,14 @@ public class EvaluacionSugerida implements Serializable {
     @NotNull
     @Column(name = "meta_instrumento")
     private int metaInstrumento;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "periodo_inicio")
+    private int periodoInicio;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "activo")
+    private boolean activo;
     @JoinColumn(name = "evidencia", referencedColumnName = "evidencia")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EvidenciaEvaluacion evidencia;
@@ -103,6 +113,23 @@ public class EvaluacionSugerida implements Serializable {
     public void setUnidadMateria(UnidadMateria unidadMateria) {
         this.unidadMateria = unidadMateria;
     }
+    
+    public int getPeriodoInicio() {
+        return periodoInicio;
+    }
+
+    public void setPeriodoInicio(int periodoInicio) {
+        this.periodoInicio = periodoInicio;
+    }
+
+    public boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+    
 
     @Override
     public int hashCode() {

@@ -397,7 +397,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             }else{  
                 rol.setExisteAsignacionIndicadores(false);
                 existeConfiguracion();
-                mostrarMensajeResultadoEJB(res);  
+//                mostrarMensajeResultadoEJB(res);  
             } 
             Ajax.update("frm");
           }
@@ -565,6 +565,19 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             }else{
                 mostrarMensajeResultadoEJB(res);
             }
+        }
+    }
+    
+     /**
+     * Permite eliminar una evidencia e instrumentos de evaluación que no es obligatorio
+     * @param dtoAsigEvidenciasInstrumentosEval
+     */
+    public void eliminarEvidencia(DtoAsigEvidenciasInstrumentosEval dtoAsigEvidenciasInstrumentosEval){
+        ResultadoEJB<List<DtoAsigEvidenciasInstrumentosEval>> eliminar = ejb.eliminarEvidenciaUnidadListaSugerida(rol.getListaEvidenciasSugeridas(), dtoAsigEvidenciasInstrumentosEval);
+        if(eliminar.getCorrecto()){
+            rol.setListaEvidenciasSugeridas(eliminar.getValor());
+            Ajax.update("frm");
+            mostrarMensajeResultadoEJB(eliminar);
         }
     }
     

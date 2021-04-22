@@ -23,6 +23,7 @@ public class DtoAsigEvidenciasInstrumentosEval implements Serializable, Comparab
     @Getter @Setter @NonNull InstrumentoEvaluacion instrumentoEvaluacion;
     @Getter @Setter @NonNull Integer valorPorcentual;
     @Getter @Setter @NonNull Integer metaInstrumento;
+    @Getter @Setter @NonNull Boolean obligatorio;
     
     @Override
     public int compareTo(DtoAsigEvidenciasInstrumentosEval o) {

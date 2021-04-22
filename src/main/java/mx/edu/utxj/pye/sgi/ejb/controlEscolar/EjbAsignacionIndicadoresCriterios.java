@@ -1187,14 +1187,15 @@ public class EjbAsignacionIndicadoresCriterios {
 
             listaUnidadesConfiguradas.forEach(unidadConfigurada -> {
                 
-                List<EvaluacionSugerida> listaEvaluacionesSugeridas = em.createQuery("SELECT e FROM EvaluacionSugerida e WHERE e.unidadMateria.idUnidadMateria=:unidad", EvaluacionSugerida.class)
+                List<EvaluacionSugerida> listaEvaluacionesSugeridas = em.createQuery("SELECT e FROM EvaluacionSugerida e WHERE e.unidadMateria.idUnidadMateria=:unidad AND e.activo=:valor", EvaluacionSugerida.class)
                         .setParameter("unidad", unidadConfigurada.getIdUnidadMateria().getIdUnidadMateria())
+                        .setParameter("valor", Boolean.TRUE)
                         .getResultStream()
                         .collect(Collectors.toList());
 
                 listaEvaluacionesSugeridas.forEach(evaluacionSug -> {
                     Integer valorPorcentual = 0;
-                    DtoAsigEvidenciasInstrumentosEval dtoAsigEvidenciasInstrumentosEval = new DtoAsigEvidenciasInstrumentosEval(unidadConfigurada, evaluacionSug.getEvidencia(), evaluacionSug.getInstrumento(), valorPorcentual, evaluacionSug.getMetaInstrumento());
+                    DtoAsigEvidenciasInstrumentosEval dtoAsigEvidenciasInstrumentosEval = new DtoAsigEvidenciasInstrumentosEval(unidadConfigurada, evaluacionSug.getEvidencia(), evaluacionSug.getInstrumento(), valorPorcentual, evaluacionSug.getMetaInstrumento(), Boolean.TRUE);
                     listaEvidenciasInstrumentos.add(dtoAsigEvidenciasInstrumentosEval);
                 });
                 
@@ -1328,7 +1329,7 @@ public class EjbAsignacionIndicadoresCriterios {
            
            listaUnidadesConf.forEach(unidadConfigurada -> {
                     Integer valorPorcentual =0;
-                    DtoAsigEvidenciasInstrumentosEval dtoAsigEvidenciasInstrumentosEval = new DtoAsigEvidenciasInstrumentosEval(unidadConfigurada, evidencia, instrumento, valorPorcentual, metaInstrumento);
+                    DtoAsigEvidenciasInstrumentosEval dtoAsigEvidenciasInstrumentosEval = new DtoAsigEvidenciasInstrumentosEval(unidadConfigurada, evidencia, instrumento, valorPorcentual, metaInstrumento, Boolean.FALSE);
                     listaEvidenciasSugeridas.add(dtoAsigEvidenciasInstrumentosEval);
                 });
            
@@ -1349,12 +1350,28 @@ public class EjbAsignacionIndicadoresCriterios {
            UnidadMateriaConfiguracion unidadesConf = listaEvidenciasSugeridas.stream().filter(p->p.getUnidadMateriaConfiguracion().getIdUnidadMateria().getIdUnidadMateria().equals(dtoConfiguracionUnidadMateria.getUnidadMateria().getIdUnidadMateria())).map(p->p.getUnidadMateriaConfiguracion()).findFirst().orElse(null);
           
             Integer valorPorcentual = 0;
-            DtoAsigEvidenciasInstrumentosEval dtoAsigEvidenciasInstrumentosEval = new DtoAsigEvidenciasInstrumentosEval(unidadesConf, evidencia, instrumento, valorPorcentual, metaInstrumento);
+            DtoAsigEvidenciasInstrumentosEval dtoAsigEvidenciasInstrumentosEval = new DtoAsigEvidenciasInstrumentosEval(unidadesConf, evidencia, instrumento, valorPorcentual, metaInstrumento, Boolean.FALSE);
             listaEvidenciasSugeridas.add(dtoAsigEvidenciasInstrumentosEval);
              
             return ResultadoEJB.crearCorrecto(listaEvidenciasSugeridas.stream().sorted(DtoAsigEvidenciasInstrumentosEval::compareTo).collect(Collectors.toList()), "Lista de evidencias sugeridas con nueva evidencia agregada.");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias sugeridas con nueva evidencia agregada. (EjbAsignacionIndicadoresCriterios.agregarEvidenciaListaSugerida)", e, null);
+        }
+    }
+    
+    /**
+     * Permite eliminar evidencia e instrumento de evaluación que no es obligatorio de lista sugerida
+     * @param listaEvidenciasSugeridas
+     * @param dtoAsigEvidenciasInstrumentosEval
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoAsigEvidenciasInstrumentosEval>> eliminarEvidenciaUnidadListaSugerida(List<DtoAsigEvidenciasInstrumentosEval> listaEvidenciasSugeridas, DtoAsigEvidenciasInstrumentosEval dtoAsigEvidenciasInstrumentosEval){
+        try{
+            listaEvidenciasSugeridas.remove(dtoAsigEvidenciasInstrumentosEval);
+             
+            return ResultadoEJB.crearCorrecto(listaEvidenciasSugeridas.stream().sorted(DtoAsigEvidenciasInstrumentosEval::compareTo).collect(Collectors.toList()), "Lista de evidencias sugeridas sin evidencia seleccionada.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias sugeridas sin evidencia seleccionada. (EjbAsignacionIndicadoresCriterios.eliminarEvidenciaUnidadListaSugerida)", e, null);
         }
     }
     
