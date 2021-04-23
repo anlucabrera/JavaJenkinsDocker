@@ -43,6 +43,7 @@ import org.primefaces.model.timeline.TimelineEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.text.DecimalFormat;
 import java.util.Objects;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInformePlaneaciones;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoResultadosCargaAcademica;
@@ -54,6 +55,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.MetasPropuestas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.CartesianScales;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
@@ -409,6 +411,7 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
     }
    
     public void calcularesultados() {  
+        DecimalFormat df = new DecimalFormat("#.##");
         if(rol.getPlaneacioneses().isEmpty())return;
         rol.setDrcas(new ArrayList<>());
         rol.getPlaneacioneses().forEach((t) -> {
@@ -423,22 +426,32 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         barModel2=new BarChartModel();
         ChartData data = new ChartData();
         
+        rol.setAutonomo(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),1));
+        rol.setDestacado(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),2));
+        rol.setSatisfactorio(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),3));
+        rol.setNoAcreditado(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),4));
+        
         rol.getEstudioMateria().getIndicadorAlineacionPlanMateriaList().forEach((t) -> {
-            BarChartDataSet barDataSet = new BarChartDataSet();
-            barDataSet.setLabel(t.getIndicadorAlineacion().getClave());
-            barDataSet.setBackgroundColor("rgba(255, 99, 132, 0.2)");
-            barDataSet.setBorderColor("rgb(255, 99, 132)");
-            barDataSet.setBorderWidth(1);
-            List<Number> values = new ArrayList<>();
-            
-            ResultadoEJB<Double> resc = configuraciones.getCalificacionesIndicador(rol.getCarga().getCargaAcademica(), t.getMetaIndicador());
+            Double porcentaje=0D;
+             ResultadoEJB<Double> resc = configuraciones.getCalificacionesIndicador(rol.getCarga().getCargaAcademica(), t.getMetaIndicador());
             if (!resc.getCorrecto()) {
                 mostrarMensajeResultadoEJB(resc);
             } else {
-                values.add(resc.getValor());
+                porcentaje=resc.getValor();
             }
-            
-            barDataSet.setData(values);            
+            BarChartDataSet barDataSet = new BarChartDataSet();
+            barDataSet.setLabel(t.getIndicadorAlineacion().getClave() +" Meta esperada " + t.getMetaIndicador()+ " % " +" Meta alcanzada " + df.format(porcentaje)+ " % ");
+            if (porcentaje>t.getMetaIndicador()) {
+                barDataSet.setBackgroundColor("rgb(0,255,0)");
+                barDataSet.setBorderColor("rgb(0,255,0)");
+            } else {
+                barDataSet.setBackgroundColor("rgb(255,0,0)");
+                barDataSet.setBorderColor("rgb(255,0,0)");
+            }
+            barDataSet.setBorderWidth(1);
+            List<Number> values = new ArrayList<>();
+            values.add(porcentaje);
+            barDataSet.setData(values);
             data.addChartDataSet(barDataSet);
         });
         
@@ -467,9 +480,9 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         options.setTitle(title);
 
         barModel2.setOptions(options);
-        
+       
     }
-    
+
     public void calculaDatosGenerales() {
         bt = 0;        bd = 0;        ri = 0;
         rol.setMetaP(0d);
@@ -484,16 +497,11 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
                 }
             });
             rol.setEsInsc(es.size());
+            rol.setEsActivos((es.size()-bd-bt));
             rol.setEsBajT(bt);
             rol.setEsBajD(bd);
             rol.setEsRein(ri);
         }
-        
-         rol.setAutonomo(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),1));
-         rol.setDestacado(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),2));
-         rol.setSatisfactorio(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),3));
-         rol.setNoAcreditado(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),4));
-        
     }
    
     public String buscarDirector(Short clave){
@@ -514,6 +522,22 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         configuraciones.registrarAccionMejora(rol.getAccionesDeMejora(),rol.getConfiguracion(), Operacion.PERSISTIR);
         existeAsignacion();
         rol.setAccionesDeMejora(new AccionesDeMejora());
+    }
+    
+    public void actualizarAnalisisFinal() {
+        if (rol.getAnalisisDeResultados().length() < 200) {
+            rol.setMensajeVAnalisisF("Solo agrego "+rol.getAnalisisDeResultados().length() +" caracteres y se pide un mínimo de 200");
+            Ajax.oncomplete("PF('dlgAnalisisFina').update();");
+            Ajax.oncomplete("PF('dlgAnalisisFina').show();");
+        } else {
+            rol.setMensajeVAnalisisF("");
+            rol.getCarga().getCargaAcademica().setAnalisisDeResultados(rol.getAnalisisDeResultados());
+            configuraciones.agregaeAnalisisFinal(rol.getCarga());
+            existeAsignacion();
+            rol.setAccionesDeMejora(new AccionesDeMejora());
+            rol.setAnalisisDeResultados("");
+            Ajax.oncomplete("PF('dlgAnalisisFina').hide();");
+        }
     }
     
     public void onSelect(TimelineSelectEvent e) {  

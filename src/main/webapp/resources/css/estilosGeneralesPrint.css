@@ -125,5 +125,14 @@ h4, .h4, h5, .h5, h6, .h6 {
         color: #FFFFFF !important;
 
     }
+    .yesprint,.yesprint *{
+        display: inline !important;
+        visibility: visible !important;
+    }
+    
+    .noprint,.noprint *{
+        display: none !important;
+        visibility: hidden !important;
+    }
 
 }

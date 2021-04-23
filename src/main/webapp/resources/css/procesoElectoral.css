@@ -281,3 +281,11 @@ body .ui-datatable tbody>tr.ui-widget-content, body .ui-treetable tbody>tr.ui-wi
 .ui-panelgrid .ui-grid-responsive .ui-panelgrid-cell {
     text-align: left;
 }
+
+@media print {
+    .yesprint,.yesprint *{
+        display: inline !important;
+        visibility: visible !important;
+    }
+
+}

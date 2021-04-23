@@ -2,6 +2,8 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -10,6 +12,7 @@ import javax.ejb.Stateless;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCargaAcademica;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInformePlaneaciones;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoResultadosCargaAcademica;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
@@ -17,8 +20,10 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AccionesDeMejora;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionEvidenciaInstrumento;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ObjetivoEducacional;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ObjetivoEducacionalPlanMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
@@ -40,6 +45,7 @@ public class EjbResultadosConfiguraciones {
     @EJB EjbEventoEscolar ejbEventoEscolar;
     Double sumaC=0D;
     Integer esalcanzados=0;
+    Integer ttEs=0;
    
     Integer a = 0;
     Integer d = 0;
@@ -145,30 +151,40 @@ public class EjbResultadosConfiguraciones {
     
     public ResultadoEJB<Double> getCalificacionesIndicador(CargaAcademica cargaAcademica,Double mp) {
         try {
-            
-            sumaC = 0D;
             esalcanzados = 0;
-            Integer esAc = cargaAcademica.getCveGrupo().getEstudianteList().size();
+            ttEs = cargaAcademica.getCveGrupo().getEstudianteList().stream().filter(t -> (t.getTipoEstudiante().getIdTipoEstudiante()!= 2) && (t.getTipoEstudiante().getIdTipoEstudiante()!= 3)).collect(Collectors.toList()).size();
 
             List<CalificacionPromedio> cal = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.cargaAcademica dt WHERE dt.carga=:carga", CalificacionPromedio.class)
                     .setParameter("carga", cargaAcademica.getCarga())
                     .getResultList();
+            
+            List<CalificacionNivelacion> cal2 = em.createQuery("select t from CalificacionNivelacion t INNER JOIN t.cargaAcademica dt WHERE dt.carga=:carga", CalificacionNivelacion.class)
+                    .setParameter("carga", cargaAcademica.getCarga())
+                    .getResultList();
+            
             if (!cal.isEmpty()) {
                 cal.forEach((t) -> {
-//                    if (t.getValor() != null) {
-                        if (t.getValor() != 0) {
-                            sumaC = sumaC + t.getValor();
-                            if (t.getValor() >= 8D) {
+                    if (t.getEstudiante().getTipoEstudiante().getIdTipoEstudiante() != 2 && t.getEstudiante().getTipoEstudiante().getIdTipoEstudiante() != 3) {
+                        List<CalificacionNivelacion> cal3 = cal2.stream().filter(x -> Objects.equals(x.getEstudiante().getIdEstudiante(), t.getEstudiante().getIdEstudiante())).collect(Collectors.toList());
+                        Double i = 0D;
+                        if (cal3.isEmpty()) {
+                            i = t.getValor();
+                        } else {
+                            i = cal3.get(0).getValor();
+                        }
+                        if (i != 0) {
+                            if (i >= 8D) {
                                 esalcanzados = esalcanzados + 1;
                             }
                         }
-//                    }
+                    }else if(t.getEstudiante().getBaja().getCausaBaja()==3){
+                        ttEs=ttEs+1;
+                    }
                 });
             }
             Double promediounidad = 0D;
-            
             if (esalcanzados != 0) {
-                promediounidad = (Double.parseDouble(esalcanzados.toString()) * 100) / Double.parseDouble(esAc.toString());
+                promediounidad = (Double.parseDouble(esalcanzados.toString()) * 100) / Double.parseDouble(ttEs.toString());
             }
             
             return ResultadoEJB.crearCorrecto(promediounidad, "Califiaciones Encontrados");
@@ -184,18 +200,41 @@ public class EjbResultadosConfiguraciones {
             d=0;
             a=0;
             Integer tes=informe.getCveGrupo().getEstudianteList().size();
+            List<Estudiante> es=informe.getCveGrupo().getEstudianteList().stream().filter(t -> (t.getTipoEstudiante().getIdTipoEstudiante()!= 2) && (t.getTipoEstudiante().getIdTipoEstudiante()!= 3)).collect(Collectors.toList());
             List<CalificacionPromedio> cal = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.cargaAcademica dt WHERE dt.carga=:carga", CalificacionPromedio.class)
                     .setParameter("carga", informe.getCarga())
                     .getResultList();
+            
+             List<CalificacionNivelacion> cal2 = em.createQuery("select t from CalificacionNivelacion t INNER JOIN t.cargaAcademica dt WHERE dt.carga=:carga", CalificacionNivelacion.class)
+                    .setParameter("carga", informe.getCarga())
+                    .getResultList();
+             
             if (!cal.isEmpty()) {
                 cal.forEach((t) -> {
-                    if (t.getValor() >= 8 && t.getValor() < 8.5){                        s=s+1;
-                    }else if (t.getValor() >= 8.5 && t.getValor() < 9){                        d=d+1;
-                    }else if (t.getValor() >= 9 && t.getValor() < 10){                        a=a+1;
+                    if(t.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()!=2 && t.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()!=3){
+                    List<CalificacionNivelacion> cal3=cal2.stream().filter(x -> Objects.equals(x.getEstudiante().getIdEstudiante(), t.getEstudiante().getIdEstudiante())).collect(Collectors.toList());
+                    Double i=0D;
+                    if(cal3.isEmpty()){
+                        i=t.getValor();
+                    }else{
+                        i=cal3.get(0).getValor();
                     }
+                        if (i < 8) {
+                            n = n + 1;
+                        } else if (i >= 8 && i < 8.5) {
+                            s = s + 1;
+                        } else if (i >= 8.5 && i < 9) {
+                            d = d + 1;
+                        } else if (i >= 9 && i <= 10) {
+                            a = a + 1;
+                        }
+                    }else if(t.getEstudiante().getBaja().getCausaBaja()==3){
+                            n = n + 1;
+                        
+                    }
+                    
                 });
             }
-            n=tes-(a+d+s);
             switch (tipo) {
                 case 1:                    tipo = a;                    break;
                 case 2:                    tipo = d;                    break;
@@ -246,6 +285,17 @@ public class EjbResultadosConfiguraciones {
             }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar La Unidad Materia (EjbRegistroPlanEstudio)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<DtoCargaAcademica> agregaeAnalisisFinal(DtoCargaAcademica dca) {
+        try {
+            f.setEntityClass(CargaAcademica.class);
+            em.merge(dca.getCargaAcademica());
+            f.flush();
+            return ResultadoEJB.crearCorrecto(dca, "Se agrego el analisis final correctamente");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo Actualizar el analisis final (EjbRegistroPlanEstudio)", e, null);
         }
     }
     

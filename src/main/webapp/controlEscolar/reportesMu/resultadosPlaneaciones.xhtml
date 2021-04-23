@@ -14,6 +14,15 @@
                 console.log("ejemplo");
             }
             ;
+            
+             //<![CDATA[
+    function exportChart() {
+        //export image
+        $('#output').empty().append(PF('chart').exportAsImage());
+
+        //show the dialog
+    };
+    //]]>
 
         </script>
         <style type="text/css">
@@ -25,6 +34,10 @@
                 }
                 .ui-panelgrid .ui-panelgrid-cell{
                     border-style: hidden !important;
+                }
+                
+                .grafica grafica{
+                    visibility: visible !important;
                 }
             }
 
@@ -193,20 +206,23 @@
                                                                             <p:row><p:column colspan="6" style="border-style: groove !important;"/></p:row>
                                                                             <p:row >
                                                                                 <p:column colspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">TOTAL DE ESTUDIANTES INSCRITOS</p:column>
-                                                                                <p:column colspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">#{resultadosPlaneacionesConsulta.rol.esInsc}</p:column>
-                                                                                <p:column colspan="2" rowspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">NIVEL MINIMO DE LOGRO</p:column>
-                                                                            </p:row>
+                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">#{resultadosPlaneacionesConsulta.rol.esInsc}</p:column>
+                                                                                <p:column colspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">NIVEL MINIMO DE LOGRO</p:column>
+                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">8.0</p:column>
+                                                                            </p:row>  
                                                                             <p:row >
-                                                                                <p:column rowspan="2" colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">DE LOS CUALES TENEMOS</p:column>
+                                                                                <p:column colspan="2" rowspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">TOTAL DE ESTUDIANTES TENEMOS</p:column>
+                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">ACTIVOS</p:column>
                                                                                 <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">REINCORPORACIONES</p:column>
                                                                                 <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">BAJAS TEMPORALES</p:column>
                                                                                 <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">BAJAS DEFINITIVAS</p:column>
+
                                                                             </p:row>  
                                                                             <p:row >
+                                                                                <p:column style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esActivos}</p:column>
+                                                                                <p:column style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esRein}</p:column>      
                                                                                 <p:column style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esBajT}</p:column>
-                                                                                <p:column style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esBajD}</p:column>
-                                                                                <p:column style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esRein}</p:column>                                                                                
-                                                                                <p:column colspan="2" style="border-style: groove !important; text-align: center;" >8.0</p:column>
+                                                                                <p:column style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esBajD}</p:column>                                                                          
                                                                             </p:row>
 
                                                                             <p:row >
@@ -345,8 +361,9 @@
 
                                                                             <h:outputText value="#{asignacionIndCA.accionesMejora}" style="text-align: center;" rendered="#{asignacionIndCA.accionesMejora ne ''}"/>
 
-                                                                            <p:commandButton icon="fa fa-comment" styleClass="btn-primary" rendered="#{asignacionIndCA.accionesMejora eq ''?(resultadosPlaneacionesConsulta.rol.tipoUser eq 3?true:false):false}"
-                                                                                             oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
+                                                                            <!--p:commandButton icon="fa fa-comment" styleClass="btn-primary" rendered="# {asignacionIndCA.accionesMejora eq ''?(resultadosPlaneacionesConsulta.rol.tipoUser eq 3?true:false):false}"-->
+                                                                            <p:commandButton icon="fa fa-comment" styleClass="btn-primary" rendered="#{asignacionIndCA.accionesMejora eq ''?true:false}"
+                                                                                             oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario" class="noprint">
                                                                                 <f:setPropertyActionListener target="#{resultadosPlaneacionesConsulta.rol.configuracion}" value="#{asignacionIndCA.informe.configuracion}" />
                                                                             </p:commandButton>
                                                                         </p:column> 
@@ -382,7 +399,7 @@
                                                                             <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">#{resultadosPlaneacionesConsulta.rol.destacado}</p:column>                                                                                    
                                                                             <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">#{resultadosPlaneacionesConsulta.rol.satisfactorio}</p:column>                                                                                    
                                                                             <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">#{resultadosPlaneacionesConsulta.rol.noAcreditado}</p:column>                                                                                    
-                                                                            <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">#{resultadosPlaneacionesConsulta.rol.esInsc}</p:column>                                                                                    
+                                                                            <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">#{resultadosPlaneacionesConsulta.rol.esActivos}</p:column>                                                                                    
                                                                         </p:row>
                                                                     </p:panelGrid>
                                                                 </div>
@@ -392,7 +409,20 @@
                                                         <div class="row">
                                                             <div class="col-sm-12">
                                                                 <div class="description-block">
-                                                                    <p:barChart model="#{resultadosPlaneacionesConsulta.barModel2}" style="width: 100%; height: 500px;"  />
+                                                                    <p:barChart model="#{resultadosPlaneacionesConsulta.barModel2}" styleClass="yesprint" style="width: 100%; height: 500px;" transient="true"  />
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="description-block">
+                                                                    <p:commandButton icon="fa fa-comment" value="Registrar Analisis Final de Logros" styleClass="btn-primary" rendered="#{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.analisisDeResultados eq null?true:(resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.analisisDeResultados eq ''?true:false)}"
+                                                                                     oncomplete="PF('dlgAnalisisFina').show()" process="@this" update=":frmAnalisisFinal:pnlAgregarComentario"/>
+
+                                                                    <p:outputLabel value="Analisis de Valoración de los Resultados Alcanzados" style="font-weight: bold; text-align: center; font-size: x-large" rendered="#{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.analisisDeResultados eq null?false:(resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.analisisDeResultados eq ''?false:true)}"/>
+                                                                    <p:outputLabel  value="#{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.analisisDeResultados}" style="text-align: justify;" rendered="#{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.analisisDeResultados eq null?false:(resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.analisisDeResultados eq ''?false:true)}"/>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -417,6 +447,21 @@
                                 <h:outputText id="display" />
                                 <p:commandButton id="btnAceptarComentario" value="Aceptar" actionListener="#{resultadosPlaneacionesConsulta.guardarAccion()}"
                                                  icon="fa fa-chek" styleClass="btn-primary"  update="@form" oncomplete="PF('dlgComentario').hide()" />
+                            </p:panelGrid>
+                        </p:dialog>
+                    </h:form>
+
+                    <h:form id="frmAnalisisFinal">
+                        <p:dialog header="Agregar Acciones de mejora" widgetVar="dlgAnalisisFina" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+                            <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
+                                <p:outputLabel value="#{resultadosPlaneacionesConsulta.rol.mensajeVAnalisisF}" style="color: red"/>
+                                <p:inputTextarea id="txtComentario" value="#{resultadosPlaneacionesConsulta.rol.analisisDeResultados}" 
+                                                 rows="5" cols="95" counter="display" maxlength="500" counterTemplate="{0} caracteres restantes." 
+                                                 styleClass="form-control" minlength="200" autoResize="true" />
+                                <p:message for="txtComentario" />
+                                <h:outputText id="display" />
+                                <p:commandButton id="btnAceptarComentario" value="Aceptar" actionListener="#{resultadosPlaneacionesConsulta.actualizarAnalisisFinal()}"
+                                                 icon="fa fa-chek" styleClass="btn-primary"  update="@form" />
                             </p:panelGrid>
                         </p:dialog>
                     </h:form>

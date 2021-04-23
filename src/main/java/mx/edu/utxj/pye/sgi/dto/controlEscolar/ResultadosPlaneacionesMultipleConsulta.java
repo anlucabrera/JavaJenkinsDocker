@@ -91,12 +91,15 @@ public class ResultadosPlaneacionesMultipleConsulta extends AbstractRol{
     @Getter @NonNull private Double porcentajeSaber;
     
     @Getter @Setter @NonNull private Double metaP;
+    @Getter @Setter @NonNull private Integer esActivos;
     @Getter @Setter @NonNull private Integer esInsc;
     @Getter @Setter @NonNull private Integer esBajT;
     @Getter @Setter @NonNull private Integer esBajD;
     @Getter @Setter @NonNull private Integer esRein;
     @Getter @Setter @NonNull private Integer configuracion;
     @Getter @Setter @NonNull private Boolean render;
+    @Getter @Setter String analisisDeResultados;
+    @Getter @Setter String mensajeVAnalisisF;
     /**
      * Representa la clave
      */
