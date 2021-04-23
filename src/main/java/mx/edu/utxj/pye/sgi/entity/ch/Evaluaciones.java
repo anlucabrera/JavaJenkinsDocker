@@ -35,12 +35,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "evaluaciones", catalog = "capital_humano", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Evaluaciones.findAll", query = "SELECT e FROM Evaluaciones e")
-    , @NamedQuery(name = "Evaluaciones.findByEvaluacion", query = "SELECT e FROM Evaluaciones e WHERE e.evaluacion = :evaluacion")
-    , @NamedQuery(name = "Evaluaciones.findByPeriodo", query = "SELECT e FROM Evaluaciones e WHERE e.periodo = :periodo")
-    , @NamedQuery(name = "Evaluaciones.findByFechaInicio", query = "SELECT e FROM Evaluaciones e WHERE e.fechaInicio = :fechaInicio")
-    , @NamedQuery(name = "Evaluaciones.findByFechaFin", query = "SELECT e FROM Evaluaciones e WHERE e.fechaFin = :fechaFin")
-    , @NamedQuery(name = "Evaluaciones.findByTipo", query = "SELECT e FROM Evaluaciones e WHERE e.tipo = :tipo")})
+        @NamedQuery(name = "Evaluaciones.findAll", query = "SELECT e FROM Evaluaciones e")
+        , @NamedQuery(name = "Evaluaciones.findByEvaluacion", query = "SELECT e FROM Evaluaciones e WHERE e.evaluacion = :evaluacion")
+        , @NamedQuery(name = "Evaluaciones.findByPeriodo", query = "SELECT e FROM Evaluaciones e WHERE e.periodo = :periodo")
+        , @NamedQuery(name = "Evaluaciones.findByFechaInicio", query = "SELECT e FROM Evaluaciones e WHERE e.fechaInicio = :fechaInicio")
+        , @NamedQuery(name = "Evaluaciones.findByFechaFin", query = "SELECT e FROM Evaluaciones e WHERE e.fechaFin = :fechaFin")
+        , @NamedQuery(name = "Evaluaciones.findByTipo", query = "SELECT e FROM Evaluaciones e WHERE e.tipo = :tipo")})
 public class Evaluaciones implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -108,6 +108,8 @@ public class Evaluaciones implements Serializable {
     private List<EvaluacionDocentesMateriaResultados2> evaluacionDocentesMateriaResultados2List;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones", fetch = FetchType.LAZY)
     private List<EvaluacionDesempenioAmbientalUtxj> evaluacionDesempenioAmbientalUtxjList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionParesAcademicos> evaluacionParesAcademicosList;
 
     public Evaluaciones() {
     }
@@ -369,5 +371,14 @@ public class Evaluaciones implements Serializable {
     public void setEvaluacionDocentesMateriaResultados5List(List<EvaluacionDocentesMateriaResultados5> evaluacionDocentesMateriaResultados5List) {
         this.evaluacionDocentesMateriaResultados5List = evaluacionDocentesMateriaResultados5List;
     }
-    
+
+    @XmlTransient
+    public List<EvaluacionParesAcademicos> getEvaluacionParesAcademicosList() {
+        return evaluacionParesAcademicosList;
+    }
+
+    public void setEvaluacionParesAcademicosList(List<EvaluacionParesAcademicos> evaluacionParesAcademicosList) {
+        this.evaluacionParesAcademicosList = evaluacionParesAcademicosList;
+    }
+
 }

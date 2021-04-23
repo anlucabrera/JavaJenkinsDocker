@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Resultados
+    </ui:define>
+
+    <ui:define name="description">
+        Evaluación entre pares académicos
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{resultadosEvParesAcademicos.cargado}">
+        <adm:breadcrumb title="Resultados evaluación entre pares académicos"/>
+        <div class="contenedor">
+            <c:if test="#{resultadosEvParesAcademicos.tieneAcceso}">
+                <c:if test="#{resultadosEvParesAcademicos.rol.evaluaciones ne null}">
+                <!-- zona de importación de enums -->
+                    <div class="box box-primary">
+                 <div  align="center">
+                     <div class="box-body">
+                                 <h:form id="frmEvaluaciones">
+                                     <div class="box box-solid">
+                                         <div class="box-body">
+                                             <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                             <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                             <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                             <div class="row margin-bottom" style="margin-top: 20px;">
+                                                 <div class="#{casilla3}">
+                                                     <div class="ui-material">
+                                                         <p:selectOneMenu id="periodo" value="#{resultadosEvParesAcademicos.rol.evaluacion}" converter="entityConverter" styleClass="form-control" >
+                                                             <f:selectItems value="#{resultadosEvParesAcademicos.rol.evaluaciones}" var="ev" itemValue="#{ev}" itemLabel="#{caster.clavePeriodoToString(ev.periodo)}" />
+                                                             <p:ajax process="@this" update=":frmEvaluaciones" listener="#{resultadosEvParesAcademicos.getResultadosbyEvaluacion()}"/>
+                                                             <p:autoUpdate />
+                                                         </p:selectOneMenu>
+                                                         <p:outputLabel value="Periodo" for="periodo"/>
+                                                         <p:message for="periodo" />
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                             <div class="row">
+                                                 <center>
+
+                                                     <p:dataTable id="tbCombinaciones" var="com" value="#{resultadosEvParesAcademicos.rol.combinaciones}"
+                                                                  tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se encontraron combinaciones"
+                                                                  tableStyle="vertical-align: middle;" paginator="true" rows="30" rowsPerPageTemplate="30,60,90,120,150"
+                                                                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                  editable="true" editMode="cell"
+                                                     >
+                                                         <f:facet name="header">
+                                                             Resultados #{caster.clavePeriodoToString(resultadosEvParesAcademicos.rol.evaluacion.periodo)}
+                                                             <br></br>
+
+                                                             <p:commandLink  ajax="false">
+                                                                 <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                                                 <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tbCombinaciones"
+                                                                                 fileName="combinaciones_#{caster.clavePeriodoToString(resultadosEvParesAcademicos.rol.evaluacion.periodo)}"/>
+                                                             </p:commandLink>
+
+                                                         </f:facet>
+
+                                                         <p:columnGroup type="header">
+                                                             <p:row class="success">
+                                                                 <p:column rowspan="1" headerText="Clave evaluado" style="width: 180px;" sortBy="#{com.evaluado.personal.clave}" filterBy="#{com.evaluado.personal.clave}" filterMatchMode="contains"/>
+                                                                 <p:column rowspan="1" headerText="Nombre evaluado" style="width: 150px;" sortBy="#{com.evaluado.personal.nombre}" filterBy="#{com.evaluado.personal.nombre}" filterMatchMode="contains"/>
+                                                                 <p:column rowspan="1" headerText="Área operativa evaluado" style="width: 180px;" sortBy="#{com.evaluado.areaOperativa.nombre}" filterBy="#{com.evaluado.areaOperativa.nombre}" filterMatchMode="contains"/>
+                                                                 <p:column rowspan="1" headerText="Área superior evaluado" style="width: 180px;" sortBy="#{com.evaluado.areaSuperior.nombre}" filterBy="#{com.evaluado.areaSuperior.nombre}" filterMatchMode="contains"/>
+                                                                 <p:column rowspan="1" headerText="Categoría evaluado" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="Clave evaluador" style="width: 180px;" sortBy="#{com.evaluador.personal.clave}" filterBy="#{com.evaluador.personal.clave}" filterMatchMode="contains"/>
+                                                                 <p:column rowspan="1" headerText="Nombre evaluador" style="width: 150px;" sortBy="#{com.evaluador.personal.nombre}" filterBy="#{com.evaluador.personal.nombre}" filterMatchMode="contains"/>
+                                                                 <p:column rowspan="1" headerText="Área operativa evaluador" style="width: 180px;" sortBy="#{com.evaluador.areaOperativa.nombre}" filterBy="#{com.evaluador.areaOperativa.nombrcom.evaluador.personal.nombre}" filterMatchMode="contains"/>
+                                                                 <p:column rowspan="1" headerText="Área superior evaluador" style="width: 180px;" sortBy="#{com.evaluador.areaSuperior.nombre}" filterBy="#{com.evaluador.areaSuperior.nombree}" filterMatchMode="contains"/>
+                                                                 <p:column rowspan="1" headerText="Categoría evaluador" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R1" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R2" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R3" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R4" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R5" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R6" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R7" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R8" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R9" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R10" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R11" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R12" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R13" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R14" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R15" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R16" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R17" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R18" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R19" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R20" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R21" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="R22" style="width: 150px;"/>
+                                                                 <p:column rowspan="1" headerText="Promedio" style="width: 150px;"/>
+
+
+
+
+
+
+                                                             </p:row>
+                                                         </p:columnGroup>
+
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluado.personal.clave}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluado.personal.nombre}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluado.areaOperativa.nombre}"/>
+                                                         </p:column>
+
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluado.areaSuperior.nombre}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluado.personal.categoriaOperativa.nombre}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluador.personal.clave}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluador.personal.nombre}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluador.areaOperativa.nombre}"/>
+                                                         </p:column>
+
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluador.areaSuperior.nombre}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluador.personal.categoriaOperativa.nombre}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r1}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r2}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r3}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r4}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r5}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r6}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r7}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r8}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r9}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r10}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r11}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r12}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r13}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r14}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r15}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r16}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r17}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r18}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r19}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r20}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.r21}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                         <h:outputText value="#{com.combinacion.r22}"/>
+                                                        </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.combinacion.promedio}"/>
+                                                         </p:column>
+                                                     </p:dataTable>
+                                                     <p:spacer width="10px"/>
+                                                 </center>
+                                             </div>
+
+                                         </div>
+                                     </div>
+
+                                 </h:form>
+                     </div>
+                 </div>
+                    </div>
+
+
+
+                    <!-- Modal nueva combinacion  -->
+
+                    <p:dialog widgetVar="dglNuevaCombinación"
+                              header="Nueva combienación"
+                              modal="false"
+                              position="center center"
+                              showEffect="fade" hideEffect="fade"
+                              resizable="true"
+                              width="800px"
+                              height="300px"
+                              responsive="true"
+                    >
+
+                        <h:form id="frmNewCombinación">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="ui-material">
+                                            <p:outputLabel value="Periodo de la evaluación" for="periodoN" style="font-weight: bold; font-size: 14px;"/> <p:spacer width="10px"/>
+                                            <p:outputLabel id="periodoN"  value="#{caster.clavePeriodoToString(evaluacionParesAcademicosFortalecimiento.rol.evaluacion.periodo)}" />
+                                            <p:message for="periodoN" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-sm-2 col-md-2 col-lg-2"></div>
+                                        <div class="col-sm-6 col-md-8 col-lg-8">
+                                            <div class="ui-material">
+                                                <p:outputLabel value="Área" for="areaN" style="font-weight: bold; font-size: 14px;"/> <p:spacer width="10px"/>
+                                                <p:selectOneMenu id="areaN" value="#{evaluacionParesAcademicosFortalecimiento.rol.areaSelect}" class="form-control"  required="true" requiredMessage="Debe seleccinar un área" converter="entityConverter" >
+                                                    <f:selectItem itemValue="#{null}"/>
+                                                    <f:selectItems value="#{evaluacionParesAcademicosFortalecimiento.rol.areas}" var="a" itemValue="#{a}" itemLabel="#{a.nombre}" />
+                                                    <p:ajax  process="@this" listener="#{evaluacionParesAcademicosFortalecimiento.getPersonalbyAreaSeleccionada}" update="evaluadorN"/>
+                                                </p:selectOneMenu>
+                                                <p:message for="areaN" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-sm-6 col-md-6 col-lg-6">
+                                            <div class="ui-material">
+                                                <p:outputLabel value="Evaluador" for="evaluadorN" style="font-weight: bold; font-size: 14px;"/> <p:spacer width="10px"/>
+                                                <p:selectOneMenu id="evaluadorN" value="#{evaluacionParesAcademicosFortalecimiento.rol.nuevaCombinacion.evaluador}" class="form-control" required="true" requiredMessage="Debe seleccinar un evaluador" converter="entityConverter" >
+                                                    <f:selectItem itemValue="#{null}"/>
+                                                    <f:selectItems value="#{evaluacionParesAcademicosFortalecimiento.rol.docentesArea}" var="d" itemValue="#{d}" itemLabel="#{d.personal.nombre}" />
+                                                    <p:ajax  process="@this" listener="#{evaluacionParesAcademicosFortalecimiento.getDocentesParesbyEvaluador}" update="evaluadoN"/>
+                                                </p:selectOneMenu>
+                                                <p:message for="evaluadorN" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 col-md-6 col-lg-6">
+                                            <div class="ui-material">
+                                                <p:outputLabel value="Evaluado" for="evaluadoN" style="font-weight: bold; font-size: 14px;"/> <p:spacer width="10px"/>
+                                                <p:selectOneMenu id="evaluadoN" value="#{evaluacionParesAcademicosFortalecimiento.rol.nuevaCombinacion.evaluado}" class="form-control" required="true" requiredMessage="Debe seleccinar un evaluado" converter="entityConverter" >
+                                                    <f:selectItem itemValue="#{null}"/>
+                                                    <f:selectItems value="#{evaluacionParesAcademicosFortalecimiento.rol.docentesPares}" var="docente" itemValue="#{docente}" itemLabel="#{docente.personal.nombre}" />
+                                                    <p:ajax  process="@this"/>
+                                                </p:selectOneMenu>
+                                                <p:message for="evaluadoN" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+
+                                        <p:column colspan="2" style="align-content: center">
+                                            <center><p:commandButton  id="btnSave" value="Guardar combinacion" icon="fa fa-check" styleClass="btn-primary" style="width: 30%;" actionListener="#{evaluacionParesAcademicosFortalecimiento.saveCombinacion}" update=":frmEvaluaciones"  oncomplete="PF('dglNuevaCombinación').hide();"/></center>
+                                        </p:column>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+                    </p:dialog>
+
+
+                    <!-- Modal edicionevaluaciones -->
+                    <p:dialog widgetVar="dglEditarCombinacion"
+                              header="Editar combinación"
+                              modal="false"
+                              position="center center"
+                              showEffect="fade" hideEffect="fade"
+                              resizable="true"
+                              width="900px"
+                              height="300px"
+                              responsive="true"
+                    >
+                        <h:form id="frmEditCombinacion">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="ui-material">
+                                            <p:outputLabel value="Periodo de la evaluación" for="periodoA" style="font-weight: bold; font-size: 14px;"/> <p:spacer width="10px"/>
+                                            <p:outputLabel id="periodoA"  value="#{caster.clavePeriodoToString(evaluacionParesAcademicosFortalecimiento.rol.evaluacion.periodo)}" />
+                                            <p:message for="periodoA" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="areaEd" value="Área: " />
+                                            <p:inputText id="areaEd" readonly="true" value="#{evaluacionParesAcademicosFortalecimiento.rol.dtoSeleccionado.evaluador.areaSuperior.nombre}"></p:inputText>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="evaluadorEd" value="Evaluador:" />
+                                            <p:inputText id="evaluadorEd"  readonly="true" value="#{evaluacionParesAcademicosFortalecimiento.rol.dtoSeleccionado.evaluador.personal.nombre}"></p:inputText>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-sm-8 col-md-8 col-lg-8">
+                                        <div class="ui-material">
+                                            <p:outputLabel value="Evaluado" for="evaluadoEd" style="font-weight: bold; font-size: 14px;"/> <p:spacer width="10px"/>
+                                            <p:selectOneMenu id="evaluadoEd" value="#{evaluacionParesAcademicosFortalecimiento.rol.docenteEvaluadoUpdate}" class="form-control" required="true" requiredMessage="Debe seleccinar un docente" converter="entityConverter" >
+                                                <f:selectItem itemValue="#{null}"/>
+                                                <f:selectItems value="#{evaluacionParesAcademicosFortalecimiento.rol.docentesPares}" var="docente" itemValue="#{docente}" itemLabel="#{docente.personal.nombre}" />
+                                                <p:ajax  process="@this"/>
+                                            </p:selectOneMenu>
+                                            <p:message for="evaluadoEd" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+
+                                        <p:column colspan="2" style="align-content: center">
+                                            <center><p:commandButton  id="btnEditCom" value="Editar combinación" icon="fa fa-check" styleClass="btn-primary" style="width: 30%;" actionListener="#{evaluacionParesAcademicosFortalecimiento.updateCombinacion}" update=":frmEvaluaciones"  oncomplete="PF('dglEditarCombinacion').hide();"/></center>
+                                        </p:column>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para generar combinaciones</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{evaluacionParesAcademicosFortalecimiento.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+            </c:if>
+            <c:if test="#{!evaluacionParesAcademicosFortalecimiento.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal de fortalecimiento académico."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

@@ -332,12 +332,18 @@
                             </span>
                         </a>
                         <ul class="treeview-menu" style="display: none;">
+                            <c:if test="#{evaluacionParesAcademicosDocente.mostrarEnDesarrollo(request) and evaluacionParesAcademicosDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/evaluacionParesDocente.xhtml"><i class="fa fa-user-circle-o"></i><span>Evaluación pares académicos</span><span class="pull-right-container"></span></p:link></li></c:if>
                             <c:if test="#{evaluacionConocimientoCodigoEtica.mostrarEnDesarrollo(request) and evaluacionConocimientoCodigoEtica.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml"><i class="fa fa-check-square"></i><span>Evaluación de Ética</span></p:link></li></c:if>
                             <c:if test="#{evaluacionDesempenioAmbiental.mostrarEnDesarrollo(request) and evaluacionDesempenioAmbiental.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/evaluacionDesempenioAmbiental.xhtml"><i class="fa fa-check-square"></i><span>Evaluación de Desempeño Ambiental</span></p:link></li></c:if>
+                            <c:if test="#{evaluacionDesempenioAdmin.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/desempenio.xhtml"><i class="fa fa-line-chart"></i><span>Desempeño</span></p:link></li></c:if>
+                            <c:if test="#{evaluacion360Admin1.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/360_1.xhtml"><i class="fa fa-group"></i><span>360 grados</span></p:link></li></c:if>
+                            <c:if test="#{evaluacionControlInterno.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/evaControlInterno.xhtml"><i class="fa fa-group"></i><span>Evaluación de control interno</span></p:link></li></c:if>
+                            <c:if test="#{climaLaboral.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/climaLaboral.xhtml"><i class="fa fa-group"></i><span>Clima laboral</span></p:link></li></c:if>
                         </ul>
                     </li>
                 </c:if>
-                <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacionControlInterno.cargada || climaLaboral.cargada}">
+                <!--
+                <c:if test="#{controlEscolarMenu.tieneElementos()|| evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacionControlInterno.cargada || climaLaboral.cargada}">
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-list-alt"></i> <span>Evaluaciones</span>
@@ -354,6 +360,7 @@
                         </ul>
                     </li>
                 </c:if>
+                -->
                 <!--Cuestionarios a personal-->
 
                 <c:if test="#{controlEscolarMenu.tieneElementos()}">
@@ -415,7 +422,8 @@
                                     <c:if test="#{seguimientoCuestionariopsiPsicopedagogia.mostrarEnDesarrollo(request) and seguimientoCuestionariopsiPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/seguimientoCuestionarioPsicopedagogico.xhtml"><i class="fa fa-list-ol"></i><span>Cuestionario Psicopedagógico</span></p:link></li></c:if>
                                     <c:if test="#{seguimientoCuestionariopsiDirector.mostrarEnDesarrollo(request) and seguimientoCuestionariopsiDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/seguimientoCuestionarioPsicopedagogicoDirector.xhtml"><i class="fa fa-list-ol"></i><span>Cuestionario Psicopedagógico</span></p:link></li></c:if>
                                     <c:if test="#{seguimientoCuestionariopsiTutor.mostrarEnDesarrollo(request) and seguimientoCuestionariopsiTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/seguimientoCuestionarioPsicopedagogicoTutor.xhtml"><i class="fa fa-list-ol"></i><span>Cuestionario Psicopedagógico</span></p:link></li></c:if>
-                                    <c:if test="#{administracionEvaluacionAmbiental.mostrarEnDesarrollo(request) and administracionEvaluacionAmbiental.tieneAcceso}">   
+                                    <c:if test="#{seguimientoEvParesAcademicos.mostrarEnDesarrollo(request) and seguimientoEvParesAcademicos.tieneAcceso}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/seguimientoEvParesAcademicos.xhtml"><i class="fa fa-list-ol"></i><span>Ev. Pares Académicos</span></p:link></li></c:if>
+                                    <c:if test="#{administracionEvaluacionAmbiental.mostrarEnDesarrollo(request) and administracionEvaluacionAmbiental.tieneAcceso}">
                                         <li>
                                             <p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEvaluacionAmbiental.xhtml">
                                                 <i class="fa fa-list-ol"></i><span>Seguimiento Evaluación Ambiental</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span>
@@ -428,7 +436,22 @@
 
                         <!--Directivos/Directores de carrera-->
                         <c:if test="#{administracionEvaluacionesFortalecimiento.mostrarEnDesarrollo(request) and administracionEvaluacionesFortalecimiento.tieneAcceso}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionEvaluacionesFortalecimiento.xhtml"><i class="fa fa-unlock-alt"></i><span>Administración de Evaluaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                        <c:if test="#{evaluacionParesAcademicosFortalecimiento.mostrarEnDesarrollo(request) and evaluacionParesAcademicosFortalecimiento.tieneAcceso}">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-balance-scale"></i> <span>Ev. entre pares académicos</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu" style="display: none;">
+                                    <c:if test="#{evaluacionParesAcademicosFortalecimiento.mostrarEnDesarrollo(request) and evaluacionParesAcademicosFortalecimiento.tieneAcceso}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/combinacionesEvParesAcademicos.xhtml"><i class="fa fa-users"></i><span>Combinaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                                    <c:if test="#{resultadosEvParesAcademicos.mostrarEnDesarrollo(request) and resultadosEvParesAcademicos.tieneAcceso}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/resultadosEvParesAcademicos.xhtml"><i class="fa fa-list-ol"></i><span>Resultados</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
+                                </ul>
+                            </li>
+
+                        </c:if>
                         <c:if test="#{administracionEvaluacionesPsicopedagogia.mostrarEnDesarrollo(request) and administracionEvaluacionesPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/administracionEvaluacionesPsicopedagogia.xhtml"><i class="fa fa-unlock-alt"></i><span>Administración de Evaluaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                         <c:if test="#{utilidadesAdministracionEvaluaciones.directorDeCarrera}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Administración de evaluaciones</span></p:link></li></c:if>
                         <c:if test="#{utilidadesAdministracionEvaluaciones.directivo}"><li><p:link href="#{request.contextPath}/evaluaciones/administracion/administracionDirectivos.xhtml" ><i class="fa fa-bookmark"></i><span>Resultados subordinados</span></p:link></li></c:if>

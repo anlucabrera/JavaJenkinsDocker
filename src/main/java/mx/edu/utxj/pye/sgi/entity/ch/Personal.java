@@ -37,26 +37,26 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "personal", catalog = "capital_humano", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Personal.findAll", query = "SELECT p FROM Personal p")
-    , @NamedQuery(name = "Personal.findByClave", query = "SELECT p FROM Personal p WHERE p.clave = :clave")
-    , @NamedQuery(name = "Personal.findByNombre", query = "SELECT p FROM Personal p WHERE p.nombre = :nombre")
-    , @NamedQuery(name = "Personal.findByFechaIngreso", query = "SELECT p FROM Personal p WHERE p.fechaIngreso = :fechaIngreso")
-    , @NamedQuery(name = "Personal.findByStatus", query = "SELECT p FROM Personal p WHERE p.status = :status")
-    , @NamedQuery(name = "Personal.findByAreaOperativa", query = "SELECT p FROM Personal p WHERE p.areaOperativa = :areaOperativa")
-    , @NamedQuery(name = "Personal.findByAreaSuperior", query = "SELECT p FROM Personal p WHERE p.areaSuperior = :areaSuperior")
-    , @NamedQuery(name = "Personal.findByAreaOficial", query = "SELECT p FROM Personal p WHERE p.areaOficial = :areaOficial")
-    , @NamedQuery(name = "Personal.findByPerfilProfesional", query = "SELECT p FROM Personal p WHERE p.perfilProfesional = :perfilProfesional")
-    , @NamedQuery(name = "Personal.findByExperienciaDocente", query = "SELECT p FROM Personal p WHERE p.experienciaDocente = :experienciaDocente")
-    , @NamedQuery(name = "Personal.findByExperienciaLaboral", query = "SELECT p FROM Personal p WHERE p.experienciaLaboral = :experienciaLaboral")
-    , @NamedQuery(name = "Personal.findByFechaNacimiento", query = "SELECT p FROM Personal p WHERE p.fechaNacimiento = :fechaNacimiento")
-    , @NamedQuery(name = "Personal.findByEstado", query = "SELECT p FROM Personal p WHERE p.estado = :estado")
-    , @NamedQuery(name = "Personal.findByMunicipio", query = "SELECT p FROM Personal p WHERE p.municipio = :municipio")
-    , @NamedQuery(name = "Personal.findByLocalidad", query = "SELECT p FROM Personal p WHERE p.localidad = :localidad")
-    , @NamedQuery(name = "Personal.findByPais", query = "SELECT p FROM Personal p WHERE p.pais = :pais")
-    , @NamedQuery(name = "Personal.findBySni", query = "SELECT p FROM Personal p WHERE p.sni = :sni")
-    , @NamedQuery(name = "Personal.findByPerfilProdep", query = "SELECT p FROM Personal p WHERE p.perfilProdep = :perfilProdep")
-    , @NamedQuery(name = "Personal.findByCorreoElectronico", query = "SELECT p FROM Personal p WHERE p.correoElectronico = :correoElectronico")
-    , @NamedQuery(name = "Personal.findByCorreoElectronico2", query = "SELECT p FROM Personal p WHERE p.correoElectronico2 = :correoElectronico2")})
+        @NamedQuery(name = "Personal.findAll", query = "SELECT p FROM Personal p")
+        , @NamedQuery(name = "Personal.findByClave", query = "SELECT p FROM Personal p WHERE p.clave = :clave")
+        , @NamedQuery(name = "Personal.findByNombre", query = "SELECT p FROM Personal p WHERE p.nombre = :nombre")
+        , @NamedQuery(name = "Personal.findByFechaIngreso", query = "SELECT p FROM Personal p WHERE p.fechaIngreso = :fechaIngreso")
+        , @NamedQuery(name = "Personal.findByStatus", query = "SELECT p FROM Personal p WHERE p.status = :status")
+        , @NamedQuery(name = "Personal.findByAreaOperativa", query = "SELECT p FROM Personal p WHERE p.areaOperativa = :areaOperativa")
+        , @NamedQuery(name = "Personal.findByAreaSuperior", query = "SELECT p FROM Personal p WHERE p.areaSuperior = :areaSuperior")
+        , @NamedQuery(name = "Personal.findByAreaOficial", query = "SELECT p FROM Personal p WHERE p.areaOficial = :areaOficial")
+        , @NamedQuery(name = "Personal.findByPerfilProfesional", query = "SELECT p FROM Personal p WHERE p.perfilProfesional = :perfilProfesional")
+        , @NamedQuery(name = "Personal.findByExperienciaDocente", query = "SELECT p FROM Personal p WHERE p.experienciaDocente = :experienciaDocente")
+        , @NamedQuery(name = "Personal.findByExperienciaLaboral", query = "SELECT p FROM Personal p WHERE p.experienciaLaboral = :experienciaLaboral")
+        , @NamedQuery(name = "Personal.findByFechaNacimiento", query = "SELECT p FROM Personal p WHERE p.fechaNacimiento = :fechaNacimiento")
+        , @NamedQuery(name = "Personal.findByEstado", query = "SELECT p FROM Personal p WHERE p.estado = :estado")
+        , @NamedQuery(name = "Personal.findByMunicipio", query = "SELECT p FROM Personal p WHERE p.municipio = :municipio")
+        , @NamedQuery(name = "Personal.findByLocalidad", query = "SELECT p FROM Personal p WHERE p.localidad = :localidad")
+        , @NamedQuery(name = "Personal.findByPais", query = "SELECT p FROM Personal p WHERE p.pais = :pais")
+        , @NamedQuery(name = "Personal.findBySni", query = "SELECT p FROM Personal p WHERE p.sni = :sni")
+        , @NamedQuery(name = "Personal.findByPerfilProdep", query = "SELECT p FROM Personal p WHERE p.perfilProdep = :perfilProdep")
+        , @NamedQuery(name = "Personal.findByCorreoElectronico", query = "SELECT p FROM Personal p WHERE p.correoElectronico = :correoElectronico")
+        , @NamedQuery(name = "Personal.findByCorreoElectronico2", query = "SELECT p FROM Personal p WHERE p.correoElectronico2 = :correoElectronico2")})
 public class Personal implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -268,6 +268,8 @@ public class Personal implements Serializable {
     private List<CursosPersonal> cursosPersonalList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal", fetch = FetchType.LAZY)
     private List<Cuidados> cuidadosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<EvaluacionParesAcademicos> evaluacionParesAcademicosList;
 
     public Personal() {
     }
@@ -978,7 +980,7 @@ public class Personal implements Serializable {
         return "mx.edu.utxj.pye.sgi.entity.ch.Personal[ clave=" + clave + " ]";
     }
 
- 
+
     @XmlTransient
     public List<CuestionarioComplementarioInformacionPersonal> getCuestionarioComplementarioInformacionPersonalList() {
         return cuestionarioComplementarioInformacionPersonalList;
@@ -996,5 +998,5 @@ public class Personal implements Serializable {
     public void setEvaluacionDocentesMateriaResultados5List(List<EvaluacionDocentesMateriaResultados5> evaluacionDocentesMateriaResultados5List) {
         this.evaluacionDocentesMateriaResultados5List = evaluacionDocentesMateriaResultados5List;
     }
-    
+
 }

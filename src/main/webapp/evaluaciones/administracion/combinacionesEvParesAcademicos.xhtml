@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Generación de combinaciones
+    </ui:define>
+
+    <ui:define name="description">
+        Evaluación entre pares académicos
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{evaluacionParesAcademicosFortalecimiento.cargado}">
+        <adm:breadcrumb title="Combinaciones evaluación entre pares"/>
+        <div class="contenedor">
+            <c:if test="#{evaluacionParesAcademicosFortalecimiento.tieneAcceso}">
+                <c:if test="#{evaluacionParesAcademicosFortalecimiento.rol.evaluaciones ne null}">
+                <!-- zona de importación de enums -->
+                    <div class="box box-primary">
+                    <h:form id="frm" prependId="false" class="form-inline">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+
+                        </div>
+                </h:form>
+                 <div  align="center">
+                     <div class="box-body">
+                                 <h:form id="frmEvaluaciones">
+                                     <div class="box box-solid">
+                                         <div class="box-body">
+                                             <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                             <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                             <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                             <div class="row margin-bottom" style="margin-top: 20px;">
+                                                 <div class="#{casilla3}">
+                                                     <div class="ui-material">
+                                                         <p:selectOneMenu id="periodo" value="#{evaluacionParesAcademicosFortalecimiento.rol.evaluacion}" converter="entityConverter" styleClass="form-control" >
+                                                             <f:selectItems value="#{evaluacionParesAcademicosFortalecimiento.rol.evaluaciones}" var="ev" itemValue="#{ev}" itemLabel="#{caster.clavePeriodoToString(ev.periodo)}" />
+                                                             <p:ajax process="@this" update=":frmEvaluaciones" listener="#{evaluacionParesAcademicosFortalecimiento.getCombinacionesbyEvaluacion}"/>
+                                                             <p:autoUpdate />
+                                                         </p:selectOneMenu>
+                                                         <p:outputLabel value="Periodo" for="periodo"/>
+                                                         <p:message for="periodo" />
+                                                     </div>
+                                                 </div>
+                                                 <div class="#{casilla3}">
+                                                     <div class="ui-material">
+                                                         <p:selectOneMenu id="area" value="#{evaluacionParesAcademicosFortalecimiento.rol.areaSeleccionada}" converter="entityConverter" styleClass="form-control">
+                                                             <f:selectItems value="#{evaluacionParesAcademicosFortalecimiento.rol.areas}" var="a" itemValue="#{a}" itemLabel="#{a.nombre}" />
+                                                             <p:ajax process="@this" listener="#{evaluacionParesAcademicosFortalecimiento.getCombinacionesbyArea}" update="frmEvaluaciones:tbCombinaciones"/>
+                                                             <p:autoUpdate />
+                                                         </p:selectOneMenu>
+                                                         <p:outputLabel value="Área académica" for="area"/>
+                                                         <p:message for="periodo" />
+                                                     </div>
+                                                 </div>
+                                                 <p:spacer width="10px"/>
+                                                 <c:if test="#{evaluacionParesAcademicosFortalecimiento.rol.evaluacionActiva ne null}">
+                                                     <p:commandLink class="btn btn-success btn-sm"
+                                                                    actionListener="#{evaluacionParesAcademicosFortalecimiento.getCombinacionNueva}"
+                                                                    onclick="PF('dglNuevaCombinación').show();"
+                                                                    update=":frmNewCombinación"
+                                                                    title="Nueva combinacion"><i class="fa fa-plus" />
+                                                     </p:commandLink>
+                                                 </c:if>
+                                             </div>
+                                             <div class="row">
+                                                 <center>
+                                                     <p:remoteCommand name="actualizar" update="@form:tbCombinaciones" />
+                                                     <p:dataTable id="tbCombinaciones" var="com" value="#{evaluacionParesAcademicosFortalecimiento.rol.combinaciones}"
+                                                                  tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se encontraron combinaciones"
+                                                                  tableStyle="vertical-align: middle;" paginator="true" rows="30" rowsPerPageTemplate="30,60,90,120,150"
+                                                                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                    editable="true" editMode="cell"
+                                                     >
+                                                         <f:facet name="header">
+                                                             Combinaciones generadas en el periodo #{caster.clavePeriodoToString(evaluacionParesAcademicosFortalecimiento.rol.evaluacion.periodo)}
+                                                             <br></br>
+
+                                                             <p:commandLink  ajax="false">
+                                                                 <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                                                 <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tbCombinaciones"
+                                                                                 fileName="combinaciones_#{evaluacionParesAcademicosFortalecimiento.rol.areaSeleccionada.siglas}_#{caster.clavePeriodoToString(evaluacionParesAcademicosFortalecimiento.rol.evaluacion.periodo)}"/>
+                                                             </p:commandLink>
+
+                                                         </f:facet>
+
+                                                         <p:columnGroup type="header">
+                                                             <p:row class="success">
+                                                                 <p:column rowspan="2" headerText="Opciones" style="width: 80px;"/>
+                                                                 <p:column rowspan="1" headerText="Evaluador" style="width: 180px;" sortBy="#{com.evaluador.personal.nombre}" filterBy="#{com.evaluador.personal.nombre}" filterMatchMode="contains"/>
+                                                                 <p:column rowspan="2" headerText="Categoría evaluador" style="width: 150px;"/>
+                                                                 <p:column rowspan="2" headerText="Evaluado" style="width: 180px;" sortBy="#{com.evaluado.personal.nombre}" filterBy="#{com.evaluado.personal.nombre}" filterMatchMode="contains"/>
+                                                                 <p:column rowspan="2" headerText="Categoría evaluado" style="width: 150px;"/>
+
+                                                             </p:row>
+                                                         </p:columnGroup>
+                                                         <p:column style="text-align: center;">
+                                                             <p:commandButton disabled="#{com.combinacion.combinacionValidada}"
+                                                                              class="btn btn-sm btn-info"
+                                                                              icon="fa fa-check"
+                                                                              title="Validar"
+                                                                              actionListener="#{evaluacionParesAcademicosFortalecimiento.validaCombinacion(com)}"
+                                                                              update=":frmEvaluaciones"
+
+
+                                                             />
+                                                             <p:commandButton disabled="#{com.combinacion.combinacionValidada}"
+                                                                              class="btn btn-sm btn-warning"
+                                                                              icon="fa fa-edit"
+                                                                              title="Editar"
+                                                                              actionListener="#{evaluacionParesAcademicosFortalecimiento.getCombinaciónEdit(com)}"
+                                                                              onclick="PF('dglEditarCombinacion').show();"
+
+
+                                                             />
+                                                             <p:commandButton disabled="#{com.combinacion.combinacionValidada}"
+                                                                              class="btn btn-sm btn-danger"
+                                                                              icon="fa fa-trash"
+                                                                              title="Eliminar"
+                                                                              actionListener="#{evaluacionParesAcademicosFortalecimiento.deleteCombinacion(com)}"
+                                                                              onclick="return confirm('¿Estás seguro de eliminar la combinación?')"
+                                                                              update=":frmEvaluaciones"
+
+
+                                                             />
+                                                         </p:column>
+
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluador.personal.nombre}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluador.personal.categoriaOperativa.nombre}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluado.personal.nombre}"/>
+                                                         </p:column>
+                                                         <p:column style="text-align: center;">
+                                                             <h:outputText value="#{com.evaluado.personal.categoriaOperativa.nombre}"/>
+                                                         </p:column>
+                                                     </p:dataTable>
+                                                     <p:spacer width="10px"/>
+                                                     <div class="row">
+                                                         <div class="col-sm-12 col-md-12 col-lg-12">
+
+                                                             <p:column colspan="2" style="align-content: center">
+                                                                 <center><p:commandButton onclick="return confirm('¿Estás seguro de validar todas las combinaciones del área?')" id="btnValidar" value="Validar combinaciones" icon="fa fa-check" styleClass="btn-primary" style="width: 30%;" actionListener="#{evaluacionParesAcademicosFortalecimiento.validarListaCombinaciones}" update=":frmEvaluaciones"  oncomplete="PF('dglNuevaCombinación').hide();"/></center>
+                                                             </p:column>
+
+                                                         </div>
+                                                     </div>
+                                                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                         <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                         <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                     </p:confirmDialog>
+                                                 </center>
+                                             </div>
+
+                                         </div>
+                                     </div>
+
+                                 </h:form>
+                     </div>
+                 </div>
+                    </div>
+
+
+
+                    <!-- Modal nueva combinacion  -->
+
+                    <p:dialog widgetVar="dglNuevaCombinación"
+                              header="Nueva combienación"
+                              modal="false"
+                              position="center center"
+                              showEffect="fade" hideEffect="fade"
+                              resizable="true"
+                              width="800px"
+                              height="300px"
+                              responsive="true"
+                    >
+
+                        <h:form id="frmNewCombinación">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="ui-material">
+                                            <p:outputLabel value="Periodo de la evaluación" for="periodoN" style="font-weight: bold; font-size: 14px;"/> <p:spacer width="10px"/>
+                                            <p:outputLabel id="periodoN"  value="#{caster.clavePeriodoToString(evaluacionParesAcademicosFortalecimiento.rol.evaluacion.periodo)}" />
+                                            <p:message for="periodoN" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-sm-2 col-md-2 col-lg-2"></div>
+                                        <div class="col-sm-6 col-md-8 col-lg-8">
+                                            <div class="ui-material">
+                                                <p:outputLabel value="Área" for="areaN" style="font-weight: bold; font-size: 14px;"/> <p:spacer width="10px"/>
+                                                <p:selectOneMenu id="areaN" value="#{evaluacionParesAcademicosFortalecimiento.rol.areaSelect}" class="form-control"  required="true" requiredMessage="Debe seleccinar un área" converter="entityConverter" >
+                                                    <f:selectItem itemValue="#{null}"/>
+                                                    <f:selectItems value="#{evaluacionParesAcademicosFortalecimiento.rol.areas}" var="a" itemValue="#{a}" itemLabel="#{a.nombre}" />
+                                                    <p:ajax  process="@this" listener="#{evaluacionParesAcademicosFortalecimiento.getPersonalbyAreaSeleccionada}" update="evaluadorN"/>
+                                                </p:selectOneMenu>
+                                                <p:message for="areaN" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-sm-6 col-md-6 col-lg-6">
+                                            <div class="ui-material">
+                                                <p:outputLabel value="Evaluador" for="evaluadorN" style="font-weight: bold; font-size: 14px;"/> <p:spacer width="10px"/>
+                                                <p:selectOneMenu id="evaluadorN" value="#{evaluacionParesAcademicosFortalecimiento.rol.nuevaCombinacion.evaluador}" class="form-control" required="true" requiredMessage="Debe seleccinar un evaluador" converter="entityConverter" >
+                                                    <f:selectItem itemValue="#{null}"/>
+                                                    <f:selectItems value="#{evaluacionParesAcademicosFortalecimiento.rol.docentesArea}" var="d" itemValue="#{d}" itemLabel="#{d.personal.nombre}" />
+                                                    <p:ajax  process="@this" listener="#{evaluacionParesAcademicosFortalecimiento.getDocentesParesbyEvaluador}" update="evaluadoN"/>
+                                                </p:selectOneMenu>
+                                                <p:message for="evaluadorN" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 col-md-6 col-lg-6">
+                                            <div class="ui-material">
+                                                <p:outputLabel value="Evaluado" for="evaluadoN" style="font-weight: bold; font-size: 14px;"/> <p:spacer width="10px"/>
+                                                <p:selectOneMenu id="evaluadoN" value="#{evaluacionParesAcademicosFortalecimiento.rol.nuevaCombinacion.evaluado}" class="form-control" required="true" requiredMessage="Debe seleccinar un evaluado" converter="entityConverter" >
+                                                    <f:selectItem itemValue="#{null}"/>
+                                                    <f:selectItems value="#{evaluacionParesAcademicosFortalecimiento.rol.docentesPares}" var="docente" itemValue="#{docente}" itemLabel="#{docente.personal.nombre}" />
+                                                    <p:ajax  process="@this"/>
+                                                </p:selectOneMenu>
+                                                <p:message for="evaluadoN" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+
+                                        <p:column colspan="2" style="align-content: center">
+                                            <center><p:commandButton  id="btnSave" value="Guardar combinacion" icon="fa fa-check" styleClass="btn-primary" style="width: 30%;" actionListener="#{evaluacionParesAcademicosFortalecimiento.saveCombinacion}" update=":frmEvaluaciones"  oncomplete="PF('dglNuevaCombinación').hide();"/></center>
+                                        </p:column>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+                    </p:dialog>
+
+
+                    <!-- Modal edicionevaluaciones -->
+                    <p:dialog widgetVar="dglEditarCombinacion"
+                              header="Editar combinación"
+                              modal="false"
+                              position="center center"
+                              showEffect="fade" hideEffect="fade"
+                              resizable="true"
+                              width="900px"
+                              height="300px"
+                              responsive="true"
+                    >
+                        <h:form id="frmEditCombinacion">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="ui-material">
+                                            <p:outputLabel value="Periodo de la evaluación" for="periodoA" style="font-weight: bold; font-size: 14px;"/> <p:spacer width="10px"/>
+                                            <p:outputLabel id="periodoA"  value="#{caster.clavePeriodoToString(evaluacionParesAcademicosFortalecimiento.rol.evaluacion.periodo)}" />
+                                            <p:message for="periodoA" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="areaEd" value="Área: " />
+                                            <p:inputText id="areaEd" readonly="true" value="#{evaluacionParesAcademicosFortalecimiento.rol.dtoSeleccionado.evaluador.areaSuperior.nombre}"></p:inputText>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                        <div class="ui-material">
+                                            <p:outputLabel for="evaluadorEd" value="Evaluador:" />
+                                            <p:inputText id="evaluadorEd"  readonly="true" value="#{evaluacionParesAcademicosFortalecimiento.rol.dtoSeleccionado.evaluador.personal.nombre}"></p:inputText>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-sm-8 col-md-8 col-lg-8">
+                                        <div class="ui-material">
+                                            <p:outputLabel value="Evaluado" for="evaluadoEd" style="font-weight: bold; font-size: 14px;"/> <p:spacer width="10px"/>
+                                            <p:selectOneMenu id="evaluadoEd" value="#{evaluacionParesAcademicosFortalecimiento.rol.docenteEvaluadoUpdate}" class="form-control" required="true" requiredMessage="Debe seleccinar un docente" converter="entityConverter" >
+                                                <f:selectItem itemValue="#{null}"/>
+                                                <f:selectItems value="#{evaluacionParesAcademicosFortalecimiento.rol.docentesPares}" var="docente" itemValue="#{docente}" itemLabel="#{docente.personal.nombre}" />
+                                                <p:ajax  process="@this"/>
+                                            </p:selectOneMenu>
+                                            <p:message for="evaluadoEd" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+
+                                        <p:column colspan="2" style="align-content: center">
+                                            <center><p:commandButton  id="btnEditCom" value="Editar combinación" icon="fa fa-check" styleClass="btn-primary" style="width: 30%;" actionListener="#{evaluacionParesAcademicosFortalecimiento.updateCombinacion}" update=":frmEvaluaciones"  oncomplete="PF('dglEditarCombinacion').hide();"/></center>
+                                        </p:column>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para generar combinaciones</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{evaluacionParesAcademicosFortalecimiento.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+            </c:if>
+            <c:if test="#{!evaluacionParesAcademicosFortalecimiento.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal de fortalecimiento académico."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>
