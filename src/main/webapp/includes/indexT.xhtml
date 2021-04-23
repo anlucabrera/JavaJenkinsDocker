@@ -402,6 +402,28 @@
                                 </c:if>
                             </c:if>
                         </div>
+                        <div class="row">
+                            <c:if test="#{evaluacionParesAcademicosDocente.tieneAcceso}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-red">
+                                        <div class="inner" style="cursor: pointer;" onclick="cuestionario();">
+                                            <h3>
+                                                <h:outputLabel value="#{evaluacionParesAcademicosDocente.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="tutores();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Evaluación entre pares académicos<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-user"></i>
+                                        </div>
+                                        <p:link outcome="evaluaciones/evaluacion/evaluacionParesDocente"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                        <h:form><p:remoteCommand name="cuestionario" action="/evaluaciones/evaluacion/evaluacionParesDocente" /></h:form>
+                                    </div>
+                                </div>
+                            </c:if>
+                        </div>
                     </div>
                 </div>
             </div> 

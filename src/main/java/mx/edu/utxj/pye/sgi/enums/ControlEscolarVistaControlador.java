@@ -73,6 +73,8 @@ public enum ControlEscolarVistaControlador {
     ADMINISTRACION_EVALUACIONES_PSICOPEDAGOGIA("/controlEscolar/psicopedagogia/administracionEvaluacionesPsicopedagogia.xhtml", AdministracionEvaluacionesPsicopedagogia.class),
 
     ADMINISTRACION_EVALUACIONES_FORTALECIMIENTO("/evaluaciones/administracion/administracionEvaluacionesFortalecimiento.xhtml", AdministracionEvaluacionesFortalecimiento.class),
+    COMBINACIONES_EVALUACION_PARES_ACADEMICOS("/evaluaciones/administracion/combinacionesEvParesAcademicos.xhtml", EvaluacionParesAcademicosFortalecimiento.class),
+    RESULTADOS_EVALUACION_PARES_ACADEMICOS("/evaluaciones/administracion/resultadosEvParesAcademicos.xhtml", ResultadosEvParesAcademicos.class),
 
 
     PASE_DE_LISTA_TUTOR("/controlEscolar/tutor/seguimientoPaseListaTutor.xhtml", PaseListaSegTutor.class),
@@ -101,7 +103,9 @@ public enum ControlEscolarVistaControlador {
     ASIGNACION_ESTUDIANTES_ESTADIA("/controlEscolar/docente/asignacionEstudiantesEstadia.xhtml",AsignacionEstudiantesEstadiaDocente.class),
     SEGUIMIENTO_ESTADIA_ASESOR("/controlEscolar/docente/seguimientoEstadiaAsesor.xhtml",SeguimientoEstadiaAsesor.class),
     SEGUIMIENTO_ESTADIA_COORDINADOR("/controlEscolar/docente/seguimientoEstadiaCoordinador.xhtml",SeguimientoEstadiaCoordinador.class),
-    
+    EVALUACION_PARES_ACADEMICOS("/evaluaciones/evaluacion/evaluacionParesDocente.xhtml", EvaluacionParesAcademicosDocente.class),
+
+
     REPORTE_BECAS("/becas/reporteBecas.xhtml", reporteBecas.class),
     SEGUIMIENTO_EV_TUTOR("/evaluaciones/administracion/administracionEvaluacionTutor.xhtml", AdministracionEvaluacionTutor.class),
     SEGUIMIENTO_EV_DOCENTE("/evaluaciones/administracion/administracionEvaluacionDocente.xhtml", AdministracionEvaluacionDocente.class),
@@ -131,6 +135,7 @@ public enum ControlEscolarVistaControlador {
     RESULTADOS_PLANEACIONES("/controlEscolar/reportesMu/resultadosPlaneaciones.xhtml", ResultadosPlaneacionesConsulta.class),
     FICHA_ADMISION_REPORTE("/controlEscolar/reporteFichaAdmision.xhtml",FichaAdmisionReporte.class),
     REGISTRO_ESTUDIANTE_CONSULTA("/controlEscolar/reportesMu/registroEstudianteConsulta.xhtml", RegistroDeEstudianteConsulta.class),
+    SEGUIMIENTO_EV_PARES_ACADEMICOS("/evaluaciones/administracion/seguimientoEvParesAcademicos.xhtml", SeguimientoEvParesAcademicos.class),
 
     EVALUACION_CONOCIMIENTO_CUMPLIMIENTO("/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml", EvaluacionConocimientoCodigoEtica.class),
     CUESTIONARIO_COMPLEMENTARIO_INF_PERSONAL("/cuestionarios/cuestionarioComplemenarioInfPersonal.xhtml", CuestionarioComplementarioInfPersonal.class),
