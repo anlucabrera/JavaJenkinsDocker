@@ -233,6 +233,7 @@ public class EjbAsignacionIndicadoresCriterios {
             List<UnidadMateriaConfiguracion> listaUnidMatConf = em.createQuery("SELECT umc FROM UnidadMateriaConfiguracion umc WHERE umc.carga.carga =:cargaAcademica", UnidadMateriaConfiguracion.class)
                     .setParameter("cargaAcademica", dtoCargaAcademica.getCargaAcademica().getCarga())
                     .getResultList();
+            
             return ResultadoEJB.crearCorrecto(listaUnidMatConf, "Lista de configuración de la unidad materia seleccionada.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de configuración de la materia del docente. (EjbAsignacionIndicadoresCriterios.buscarConfiguracionUnidadMateria)", e, null);
@@ -1215,11 +1216,16 @@ public class EjbAsignacionIndicadoresCriterios {
         try {
             
             List<UnidadMateriaConfiguracion> listaUnidadesConfiguradas = buscarConfiguracionUnidadMateria(dtoCargaAcademica).getValor();
+            
+            List<UnidadMateriaConfiguracionEvidenciaInstrumento>  listaEvidenciasInstrumentos = new ArrayList<>();
+            
+            if(!listaUnidadesConfiguradas.isEmpty()){
            
-            List<UnidadMateriaConfiguracionEvidenciaInstrumento> listaEvidenciasInstrumentos = em.createQuery("SELECT u FROM UnidadMateriaConfiguracionEvidenciaInstrumento u WHERE u.configuracion  IN :lista ORDER BY u.configuracion.idUnidadMateria.noUnidad, u.evidencia.criterio.criterio, u.evidencia.descripcion ASC", UnidadMateriaConfiguracionEvidenciaInstrumento.class)
+            listaEvidenciasInstrumentos = em.createQuery("SELECT u FROM UnidadMateriaConfiguracionEvidenciaInstrumento u WHERE u.configuracion  IN :lista ORDER BY u.configuracion.idUnidadMateria.noUnidad, u.evidencia.criterio.criterio, u.evidencia.descripcion ASC", UnidadMateriaConfiguracionEvidenciaInstrumento.class)
                     .setParameter("lista", listaUnidadesConfiguradas)
                     .getResultStream()
                     .collect(Collectors.toList());
+            }
             
             return ResultadoEJB.crearCorrecto(listaEvidenciasInstrumentos, "Lista de evidencias e instrumentos de evaluación registrados.");
         } catch (Exception e) {
