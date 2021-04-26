@@ -184,6 +184,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             }
         }else{  
             rol.setExisteConfiguracion(false);
+            Ajax.update("frm");
             mostrarMensajeResultadoEJB(res);  
         } 
     }
