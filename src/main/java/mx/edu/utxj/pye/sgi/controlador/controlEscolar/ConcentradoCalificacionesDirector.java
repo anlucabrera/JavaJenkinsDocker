@@ -207,6 +207,12 @@ public class ConcentradoCalificacionesDirector extends ViewScopedRol implements 
         rol.setTitulos(new ArrayList<>());
         rol.setDvcs(new ArrayList<>());
         rol.setPlanEstudio((PlanEstudio) event.getNewValue());
+
+        ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosRegistrosPE(rol.getPlanEstudio());
+        if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
+        rol.setPeriodos(resPeriodos.getValor());
+        rol.setPeriodo(rol.getPeriodos().get(0));        
+        
         ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
         if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
         rol.setGrupos(resgrupos.getValor());          

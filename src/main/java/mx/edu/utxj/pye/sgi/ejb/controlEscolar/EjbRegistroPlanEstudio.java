@@ -442,8 +442,9 @@ public class EjbRegistroPlanEstudio {
     }
 
     public List<PlanEstudio> generarPlanesEstudio(AreasUniversidad programas) {
-        return em.createQuery("SELECT pe FROM PlanEstudio pe WHERE pe.idPe = :idPe", PlanEstudio.class)
+        return em.createQuery("SELECT pe FROM PlanEstudio pe WHERE pe.idPe = :idPe AND pe.estatus=:estatus", PlanEstudio.class)
                 .setParameter("idPe", programas.getArea())
+                .setParameter("estatus", Boolean.TRUE)
                 .getResultList();
     }
 
