@@ -270,11 +270,10 @@ public class EjbReincorporacion {
         }
     }
     
-    public ResultadoEJB<List<Grupo>> getGrupos(Short pe, Generaciones g) {
+    public ResultadoEJB<List<Grupo>> getGrupos(Short pe) {
         try {
-            List<Grupo> grupos = em.createQuery("select t from Grupo t WHERE t.idPe=:idPe AND t.generacion=:generacion", Grupo.class)
-                    .setParameter("idPe", pe)
-                    .setParameter("generacion", g.getGeneracion()).getResultList();
+            List<Grupo> grupos = em.createQuery("select t from Grupo t WHERE t.idPe=:idPe ORDER BY t.generacion, t.literal, t.grado", Grupo.class)
+                    .setParameter("idPe", pe).getResultList();
             return ResultadoEJB.crearCorrecto(grupos, "Grupo Encontrados");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Grupo(EjbReincorporacion.getGrupos).", e, null);
@@ -430,7 +429,7 @@ public class EjbReincorporacion {
             DtoReincorporacion.General rr=new DtoReincorporacion.General(pr, ar, mr, fr, tr, dr, ac, er, es,al, encontrado);
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getDtoReincorporacion).", e, null);
         }
     }
     
@@ -511,7 +510,7 @@ public class EjbReincorporacion {
             }
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getMedicosR).", e, null);
         }
     }
 
@@ -537,7 +536,7 @@ public class EjbReincorporacion {
 
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getFamiliaresR).", e, null);
         }
     }
 
@@ -607,7 +606,7 @@ public class EjbReincorporacion {
             }
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getAcademicosR).", e, null);
         }
     }
 
@@ -623,7 +622,7 @@ public class EjbReincorporacion {
             }                        
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getEncuestaR).", e, null);
         }
     }
     
@@ -822,7 +821,7 @@ public class EjbReincorporacion {
 
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.operacionesPersonaR).", e, null);
         }
     }
 
@@ -845,7 +844,7 @@ public class EjbReincorporacion {
             }
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.operacionesAspiranteR).", e, null);
         }
     }
 
@@ -865,7 +864,7 @@ public class EjbReincorporacion {
             }
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.operacionesMedicosR).", e, null);
         }
     }
 
@@ -881,7 +880,7 @@ public class EjbReincorporacion {
             }
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.operacionesTutorR).", e, null);
         }
     }
     
@@ -907,7 +906,7 @@ public class EjbReincorporacion {
             }
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.operacionesFamiliaresR).", e, null);
         }
     }
 
@@ -923,7 +922,7 @@ public class EjbReincorporacion {
             }
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.operacionesDomicilioR).", e, null);
         }
     }
 
@@ -948,7 +947,7 @@ public class EjbReincorporacion {
             }
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.operacionesAcademicosR).", e, null);
         }
     }
 
@@ -1018,7 +1017,7 @@ public class EjbReincorporacion {
             ResultadoEJB<DtoReincorporacion.EncuestaR> b= getEncuestaR(a);
             return ResultadoEJB.crearCorrecto(b.getValor(), "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.operacionesEncuestaR).", e, null);
         }
     }
     
@@ -1083,7 +1082,7 @@ public class EjbReincorporacion {
             }
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.operacionesEstudianteRegistrados).", e, null);
         }
     }
     
@@ -1246,7 +1245,7 @@ public class EjbReincorporacion {
             }
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.operacionesEstudianteR).", e, null);
         }
     }
     
@@ -1281,7 +1280,7 @@ public class EjbReincorporacion {
             }
             return ResultadoEJB.crearCorrecto(rr.getDocumentosentregadosestudiante(), "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.operacionesDocumentosentregadosestudiante).", e, null);
         }
     }
     
@@ -1437,7 +1436,7 @@ public class EjbReincorporacion {
             
         return ResultadoEJB.crearCorrecto(promedio, "DTOPersona Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.getPersonaR).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.registrarCalificacionesPorPromedio).", e, null);
         }
     }   
     

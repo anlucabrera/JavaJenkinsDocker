@@ -195,7 +195,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         rol.setTipoCal("Regulatoria");
         rol.setPuedeValidar(Boolean.FALSE);
         rol.setGeneraciones(ejb.getgeneracion().getValor());
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares.inicializarValoresEscolares()"+rol.getGeneraciones());
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares.inicializarValoresEscolares()"+rol.getGeneraciones());
     }        
 
 // Validaciones Acceso
@@ -333,7 +333,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         List<Grupo> gs = new ArrayList<>();
         if (!rol.getEstudianteR().isEmpty()) {
             DtoReincorporacion.EstudianteR er = rol.getEstudianteR().get(rol.getEstudianteR().size() - 1);
-            rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera(),rol.getGeneraciones()).getValor());
+            rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera()).getValor());
             primeraOp = er.getEstudiante().getOpcionIncripcion();
             matr = er.getEstudiante().getMatricula();
             if (er.getEstudiante().getTipoRegistro().equals("Equivalencia")) {
@@ -345,7 +345,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             });
             gs = gs2;
         } else {
-            rol.setGrupos(ejb.getGrupos(rol.getDacademicos().getAcademicos().getPrimeraOpcion(),rol.getGeneraciones()).getValor());
+            rol.setGrupos(ejb.getGrupos(rol.getDacademicos().getAcademicos().getPrimeraOpcion()).getValor());
             primeraOp = Boolean.TRUE;
             matr = 0;
             gs = new ArrayList<>();
@@ -387,7 +387,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
                 }
             });
         }
-        rol.setGrupos(ejb.getGrupos(carrera, rol.getGeneraciones()).getValor());
+        rol.setGrupos(ejb.getGrupos(carrera).getValor());
     }
     
 
@@ -450,7 +450,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             }
             if (!rol.getEstudianteR().isEmpty()) {
                 DtoReincorporacion.EstudianteR er = rol.getEstudianteR().get(rol.getEstudianteR().size() - 1);
-                rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera(),rol.getGeneraciones()).getValor());
+                rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera()).getValor());
                 llenarProceso();
             }
             if (!rol.getCalificacionesR().isEmpty()) {
@@ -611,6 +611,8 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             case "p17": numeroP=17; valor=event.getNewValue().toString();  break;
             case "p18": numeroP=18; valor=event.getNewValue().toString();  break;
             case "p19": numeroP=19; valor=event.getNewValue().toString();  break;
+            case "p20": numeroP=19; valor=event.getNewValue().toString();  break;
+            case "p21": numeroP=19; valor=event.getNewValue().toString();  break;
         }      
         ResultadoEJB<DtoReincorporacion.EncuestaR> rejb =ejb.operacionesEncuestaR(rol.getAspirante().getAspirante(),valor,numeroP);
         if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}

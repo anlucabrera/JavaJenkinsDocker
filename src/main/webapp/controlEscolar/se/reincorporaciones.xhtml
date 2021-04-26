@@ -548,6 +548,22 @@
                                                                                 <p:inputText id="amTutor" class="form-control" placeholder="Apellido Materno del Tutor" value="#{reincorporacionServiciosEscolares.rol.tutor.tutorFamiliar.apellidoMaterno}" required="true" requiredMessage="Debe de indicar el apellido materno del tutor familiar"/>
                                                                                 <p:message for="amTutor"><p:autoUpdate/></p:message>
                                                                             </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                <p:outputLabel for="ocupacionT" style="font-size: large" value="Ocupación*"/>
+                                                                                <p:selectOneMenu id="ocupacionT" value="#{reincorporacionServiciosEscolares.rol.tutor.ocupacion}" converter="reincorporacionConverter" required="true" requiredMessage="Debe de indicar la ocupación de tu padre">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.ocupacions}" var="oc" itemValue="#{oc}" itemLabel="#{oc.descripcion}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="ocupacionT"><p:autoUpdate/></p:message>
+                                                                            </div>
+                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                <p:outputLabel for="escolaridadt" style="font-size: large" value="Escolaridad*"/>
+                                                                                <p:selectOneMenu id="escolaridadt" value="#{reincorporacionServiciosEscolares.rol.tutor.escolaridad}" converter="reincorporacionConverter" required="true" requiredMessage="Debe de indicar la escolaridad de tu padre">
+                                                                                    <f:selectItem itemValue="#{null}"/>
+                                                                                    <f:selectItems value="#{reincorporacionServiciosEscolares.rol.escolaridads}" var="esm" itemValue="#{esm}" itemLabel="#{esm.descripcion}"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="escolaridadt"><p:autoUpdate/></p:message>
+                                                                            </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="calleTutor" style="font-size: large" value="Calle*"/>
                                                                                 <p:inputText id="calleTutor" class="form-control" placeholder="Calle" value="#{reincorporacionServiciosEscolares.rol.tutor.tutorFamiliar.calle}" required="true" requiredMessage="Debe de indicar la calle de su tutor familiar"/>
@@ -558,7 +574,7 @@
                                                                                 <p:inputText id="numeroTutor" class="form-control" placeholder="Numero" value="#{reincorporacionServiciosEscolares.rol.tutor.tutorFamiliar.numero}" required="true" requiredMessage="Debe de indicar el numero de casa de su tutor familiar"/>
                                                                                 <p:message for="numeroTutor"><p:autoUpdate/></p:message>
                                                                             </div>
-                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:outputLabel for="estadoT" style="font-size: large" value="Estado*"/>
                                                                                 <p:selectOneMenu id="estadoT" value="#{reincorporacionServiciosEscolares.rol.tutor.tutorFamiliar.estado}" required="true" requiredMessage="Debe de indicar el estado de recidencia de su tutor familiar">
                                                                                     <f:selectItem itemValue="#{null}"/>
@@ -567,7 +583,7 @@
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="estadoT"><p:autoUpdate/></p:message>
                                                                             </div>
-                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:outputLabel for="municipioT" style="font-size: large" value="Municipio*"/>
                                                                                 <p:selectOneMenu id="municipioT" value="#{reincorporacionServiciosEscolares.rol.tutor.tutorFamiliar.municipio}" required="true" requiredMessage="Debe de indicar el municipio de recidencia de su tutor familiar">
                                                                                     <f:selectItem itemValue="#{null}"/>
@@ -576,7 +592,7 @@
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="municipioT"><p:autoUpdate/></p:message>
                                                                             </div>
-                                                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                 <p:outputLabel for="asentamientoT" style="font-size: large" value="Asentamiento*"/>
                                                                                 <p:selectOneMenu id="asentamientoT" value="#{reincorporacionServiciosEscolares.rol.tutor.tutorFamiliar.asentamiento}" filter="true" filterMatchMode="startsWith" style="width:  375px" required="true" requiredMessage="Debe de indicar el asentamiento de recidencia de su tutor familiar">
                                                                                     <f:selectItem itemValue="#{null}"/>
@@ -1104,7 +1120,7 @@
                                                                             <td>20.0</td>
                                                                             <td style="text-align: justify;">¿Tienes hijos?</td>
                                                                             <td class="danger text-center" style="min-width: 120px;">
-                                                                                <p:selectOneRadio id="p20" value="#{reincorporacionServiciosEscolares.rol.encuesta.encuestaAspirante.r20Hijos}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{reincorporacionServiciosEscolares.saveEncuesta}">
+                                                                                <p:selectOneRadio id="p20" value="#{reincorporacionServiciosEscolares.rol.encuesta.encuestaAspirante.r20Hijos}" required="true" requiredMessage="Es necesario elegir una opción" valueChangeListener="#{reincorporacionServiciosEscolares.guardaEncuesta}">
                                                                                     <f:selectItem itemLabel="Si" itemValue="Si" />
                                                                                     <f:selectItem itemLabel="No" itemValue="No" />
                                                                                     <p:ajax update="@form" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
@@ -1117,7 +1133,7 @@
                                                                                 <td>20.1</td>
                                                                                 <td style="text-align: justify;">Número de hijos</td>
                                                                                 <td class="danger text-center" style="min-width: 120px;">
-                                                                                    <p:spinner id="p21" value="#{reincorporacionServiciosEscolares.rol.encuesta.encuestaAspirante.r21noHijos}" valueChangeListener="#{reincorporacionServiciosEscolares.saveEncuesta}" min="1" >
+                                                                                    <p:spinner id="p21" value="#{reincorporacionServiciosEscolares.rol.encuesta.encuestaAspirante.r21noHijos}" valueChangeListener="#{reincorporacionServiciosEscolares.guardaEncuesta}" min="1" >
                                                                                         <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
 
                                                                                     </p:spinner>
@@ -1400,11 +1416,11 @@
                                         <hr/>
                                         <p:outputLabel style="font-size: large" value="Opción dos: #{reincorporacionServiciosEscolares.rol.rein.segundaOP}"/>
                                         <hr/>
-                                         <p:outputLabel style="font-size: large" value="Ultimo grupo activo: #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.grado}° #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.literal}, #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.periodo}"/>
+                                        <p:outputLabel style="font-size: large" value="Ultimo grupo activo: #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.grado}° #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.literal}, #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.periodo}"/>
                                         <hr/>
                                     </p:outputPanel>
                                 </div>
-                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                <div class="col-sm-12 col-md-12 col-lg-6">
                                     <p:outputLabel for="prgP" style="font-size: large" value="Selecciona Opción de Inscripción"/>
                                     <p:selectOneRadio id="prgP" layout="responsive" columns="2" value="#{reincorporacionServiciosEscolares.rol.rein.opcionIncripcion}">
                                         <f:selectItem itemValue="#{true}" itemLabel="Primera Opción"/>
@@ -1412,18 +1428,18 @@
                                         <p:ajax listener="#{reincorporacionServiciosEscolares.opcionInscripcion()}" update=":frmActualizaActividad:grupo" process="@this" global="false"/>
                                     </p:selectOneRadio>
                                 </div>
-                                <div class="col-sm-6 col-md-6 col-lg-4">
+                                <div class="col-sm-6 col-md-6 col-lg-6">
                                     <p:outputLabel for="matricula" style="font-size: large;text-align: right;" value="Matrícula" />
                                     <p:inputText id="matricula" class="form-control" value="#{reincorporacionServiciosEscolares.rol.rein.matricula}"/>
                                 </div>
-                                <div class="col-sm-6 col-md-6 col-lg-4">
+                                <div class="col-sm-12 col-md-12 col-lg-12">
                                     <p:outputPanel>
                                         <p:autoUpdate/>
                                         <p:outputLabel for="grupo"  style="font-size: large;text-align: right;" value="Grupo" />
-                                        <p:selectCheckboxMenu id="grupo" required="true" value="#{reincorporacionServiciosEscolares.rol.rein.grupos}" 
-                                                              converter="reincorporacionConverter" multiple="true" requiredMessage="Debe de indicar el turno del programa educativo">
+                                        <p:selectManyCheckbox id="grupo" required="true" value="#{reincorporacionServiciosEscolares.rol.rein.grupos}" layout="responsive"
+                                                              columns="3" converter="reincorporacionConverter"  requiredMessage="Debe de indicar el turno del programa educativo">
                                             <f:selectItems value="#{reincorporacionServiciosEscolares.rol.grupos}" var="grup" itemValue="#{grup}" itemLabel="#{grup.grado}°-- #{grup.literal}, #{grup.periodo} -- #{grup.idSistema.nombre}"/>
-                                        </p:selectCheckboxMenu>
+                                        </p:selectManyCheckbox>
                                     </p:outputPanel>
                                 </div>
                             </div> 
