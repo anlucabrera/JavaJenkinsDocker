@@ -628,7 +628,7 @@ public class EjbPermisoAperturaExtemporanea {
      */
     public ResultadoEJB<PermisosCapturaExtemporaneaEstudiante> guardarPermisoCapturaOrdinariaEstudiante(DtoCargaAcademica cargaAcademica, Estudiante estudiante, UnidadMateria unidadMateria, String tipoEvaluacion, Date fechaInicio, Date fechaFin, JustificacionPermisosExtemporaneos justificacion, PersonalActivo administrador){
         try{
-            if(cargaAcademica == null || estudiante == null || unidadMateria == null || tipoEvaluacion == null || fechaInicio == null || fechaFin == null || justificacion == null || administrador == null) return ResultadoEJB.crearErroneo(2, "No se guardar el permiso de apertura porque los datos están incompletos.", PermisosCapturaExtemporaneaEstudiante.class);
+            if(cargaAcademica == null || estudiante == null || tipoEvaluacion == null || fechaInicio == null || fechaFin == null || justificacion == null || administrador == null) return ResultadoEJB.crearErroneo(2, "No se guardar el permiso de apertura porque los datos están incompletos.", PermisosCapturaExtemporaneaEstudiante.class);
             
             Date fechaFinCompleta = obtenerFechaFin(fechaFin);
             
@@ -654,9 +654,9 @@ public class EjbPermisoAperturaExtemporanea {
             em.persist(permisosCapturaExtemporaneaEstudiante);
             f.flush();
             
-            return ResultadoEJB.crearCorrecto(permisosCapturaExtemporaneaEstudiante, "El permiso de captura extemporánea ordinaria del estudiante se ha registrado correctamente.");
+            return ResultadoEJB.crearCorrecto(permisosCapturaExtemporaneaEstudiante, "El permiso de captura extemporánea del estudiante se ha registrado correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar el permiso de captura extemporánea ordinaria del estudiante. (EjbPermisoAperturaExtemporanea.guardarPermisoCapturaOrdinariaEstudiante)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar el permiso de captura extemporánea del estudiante. (EjbPermisoAperturaExtemporanea.guardarPermisoCapturaOrdinariaEstudiante)", e, null);
         }
     }
     
