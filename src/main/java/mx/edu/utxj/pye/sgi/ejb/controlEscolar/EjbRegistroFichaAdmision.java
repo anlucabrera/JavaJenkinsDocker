@@ -1905,10 +1905,13 @@ public class EjbRegistroFichaAdmision {
     public ResultadoEJB<AreasUniversidad> getOpcionArea(@NonNull Short clave) {
         try {
             if(clave==null){return ResultadoEJB.crearErroneo(2,new AreasUniversidad(),"La clave del área no debe ser nula");}
-            AreasUniversidad areasS = ejbAreasLogeo.mostrarAreasUniversidad(clave);
-            AreasUniversidad areasO = ejbAreasLogeo.mostrarAreasUniversidad(areasS.getAreaSuperior());
-
-            return ResultadoEJB.crearCorrecto(areasO, "Area Encontrados");
+            AreasUniversidad a = em.createQuery("select a from AreasUniversidad  a where a.area=:area", AreasUniversidad.class)
+                    .setParameter("area",clave)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(new AreasUniversidad());
+            if(a!=null){return ResultadoEJB.crearCorrecto(a,"Area encontrada");}
+            else {return ResultadoEJB.crearErroneo(4,a,"Error");}
 
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar el Area (EjbRegistroFichaAdmision.getOpcionArea).", e, null);
