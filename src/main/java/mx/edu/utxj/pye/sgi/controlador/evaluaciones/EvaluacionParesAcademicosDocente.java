@@ -61,25 +61,28 @@ public class EvaluacionParesAcademicosDocente extends ViewScopedRol implements D
             cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.EVALUACION_PARES_ACADEMICOS);
             ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejbEvaluacionParesAcademicos.validaPersonalDocente(logonMB.getPersonal().getClave());
-            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
-
+            //System.out.println("EvaluacionParesAcademicosDocente.init" + resValidacion.getValor());
+            if(!resValidacion.getCorrecto()){tieneAcceso=false; mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
             Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
             PersonalActivo docente = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
             rol = new EvaluacionParesAcademicosRolDocente(filtro, docente);
             tieneAcceso = rol.tieneAcceso(docente);
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
-            if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
-            //if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
+           // if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
             ResultadoEJB<Evaluaciones> resEv= ejbEvaluacionParesAcademicos.getEvaluacionActivaDoc();
             if(resEv.getCorrecto()){ rol.setEvaluacionActiva(resEv.getValor());}
             else {tieneAcceso= false;return;}
+            //System.out.println("EV " + rol.getEvaluacionActiva());
+            getApartados();
             rol.setEvaluados(new ArrayList<>());
             rol.setPocentaje(new Double(0));
             rol.setTotalDocentes(new Integer(0));
             rol.setTotalEvaluados(new Integer(0));
-            getApartados();
             resultados();
+           // System.out.println("EvaluacionParesAcademicosDocente.init");
             rol.setDtoSeleccionado(rol.getEvaluados().get(0));
+            if(rol.getEvaluados().isEmpty()|| rol.getEvaluados()==null){tieneAcceso=false;}
 
         } catch (Exception e) {
             mostrarExcepcion(e);
@@ -120,12 +123,12 @@ public class EvaluacionParesAcademicosDocente extends ViewScopedRol implements D
                     rol.setEvaluados(new ArrayList<>());
                     rol.setEvaluados(resPack.getValor().stream().filter(d->d.getCombinacion().getCombinacionValidada()==true).collect(Collectors.toList()));
                     if(rol.getEvaluados().isEmpty()|| rol.getEvaluados()==null){
-                        tieneAcceso=false;return;
+                        tieneAcceso=false;
                     }else {
                         tieneAcceso=true;
                         rol.setTotalDocentes(rol.getEvaluados().size());
                         rol.setTotalEvaluados((int) rol.getEvaluados().stream().filter(e->e.getCombinacion().getCompleto()==true).count());
-                        //System.out.println("Lista evaluados "+ rol.getEvaluados());
+                        System.out.println("Lista evaluados "+ rol.getEvaluados());
                         //rol.setDtoSeleccionado(rol.getEvaluados().get(0));
                         //System.out.println("Docente eva" +rol.getDtoSeleccionado().getEvaluado().getPersonal().getClave());
                         Double dte = new Double(rol.getTotalDocentes());
@@ -135,7 +138,9 @@ public class EvaluacionParesAcademicosDocente extends ViewScopedRol implements D
                         else {finalizado =false;}
                     }
                 }else {mostrarMensajeResultadoEJB(resPack);}
-            }else {mostrarMensajeResultadoEJB(resRes);}
+            }else {
+                tieneAcceso=false;
+                mostrarMensajeResultadoEJB(resRes);}
 
         }catch (Exception e){mostrarExcepcion(e);}
     }

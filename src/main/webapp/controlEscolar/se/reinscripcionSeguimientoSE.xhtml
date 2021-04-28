@@ -136,6 +136,13 @@
                                                              tableStyle="vertical-align: middle;"
                                                              filteredValue="#{reinscripcionExtemporaneaSE.rol.filter}"
                                                 >
+                                                    <f:facet name="header">
+                                                        <p:commandLink  ajax="false">
+                                                            <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                                            <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tbl3"
+                                                                            fileName="estudiantes_faltantes"/>
+                                                        </p:commandLink>
+                                                    </f:facet>
                                                     <p:column headerText="Matricula" style="width: 70px;" filterBy="#{faltantes.estudiante.matricula}"  sortBy="#{faltantes.estudiante.matricula}" filterMatchMode="contains"><h:outputText value="#{faltantes.estudiante.matricula}"/></p:column>
                                                     <p:column headerText="Nombre" style="width: 300px;"><h:outputText value="#{faltantes.estudiante.aspirante.idPersona.nombre.concat(faltantes.estudiante.aspirante.idPersona.apellidoPaterno).concat(' ').concat(faltantes.estudiante.aspirante.idPersona.apellidoMaterno)}"/></p:column>
                                                     <p:column headerText="Carrera" style="width: 70px;" ><h:outputText value="#{faltantes.carrera.siglas}"/></p:column>
