@@ -397,7 +397,12 @@
                                                                                 <br/>
                                                                                 <br/>
                                                                                 <br/>
-                                                                                <h:outputLabel value="#{planeacionCuatrimestralImpresion.buscarDirector(planeacionCuatrimestralImpresion.rol.carga.programa.areaSuperior)}" style="font-weight: bold;"/>
+                                                                                <c:if test="#{planeacionCuatrimestralImpresion.rol.carga.programa.areaSuperior eq 27}">
+                                                                                    <h:outputLabel value="#{planeacionCuatrimestralImpresion.buscarDirector(28)}" style="font-weight: bold;"/>
+                                                                                </c:if>
+                                                                                <c:if test="#{planeacionCuatrimestralImpresion.rol.carga.programa.areaSuperior ne 27}">
+                                                                                    <h:outputLabel value="#{planeacionCuatrimestralImpresion.buscarDirector(planeacionCuatrimestralImpresion.rol.carga.programa.areaSuperior)}" style="font-weight: bold;"/>
+                                                                                </c:if>
                                                                                 <br/>
                                                                                 <h:outputLabel value="_____________________________" style="font-weight: bold;"/>
                                                                                 <br/>
