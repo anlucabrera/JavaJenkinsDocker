@@ -1185,6 +1185,8 @@ public class EjbAsignacionIndicadoresCriterios {
             List<UnidadMateriaConfiguracion> listaUnidadesConfiguradas = buscarConfiguracionUnidadMateria(dtoCargaAcademica).getValor();
             
             List<DtoAsigEvidenciasInstrumentosEval> listaEvidenciasInstrumentos = new ArrayList<>();
+            
+            if(!listaUnidadesConfiguradas.isEmpty()){
 
             listaUnidadesConfiguradas.forEach(unidadConfigurada -> {
                 
@@ -1200,7 +1202,8 @@ public class EjbAsignacionIndicadoresCriterios {
                     listaEvidenciasInstrumentos.add(dtoAsigEvidenciasInstrumentosEval);
                 });
                 
-            });
+              });
+            }
             return ResultadoEJB.crearCorrecto(listaEvidenciasInstrumentos, "Lista de evidencias e instrumentos de evaluación sugeridos.");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias e instrumentos de evaluación sugeridos. (EjbAsignacionIndicadoresCriterios.getEvidenciasInstrumentosSugeridos)", e, null);

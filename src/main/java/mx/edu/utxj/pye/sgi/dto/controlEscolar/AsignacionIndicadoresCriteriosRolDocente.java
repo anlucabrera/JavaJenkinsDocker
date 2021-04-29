@@ -178,6 +178,11 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
     @Getter @NonNull private Boolean agregarEvidencia;
     
      /**
+     * Representa valor componente para habilitar o deshabilitar opciones par agregar evidencias
+     */
+    @Getter @NonNull private String valorAgregarEvid;
+    
+     /**
      * Representa si se agregará de manera masiva o individual la evidencia e instrumento de evaluación
      */
     @Getter @NonNull private String tipoAgregarEvid;
@@ -355,6 +360,10 @@ public class AsignacionIndicadoresCriteriosRolDocente extends AbstractRol{
         this.agregarEvidencia = agregarEvidencia;
     }
 
+    public void setValorAgregarEvid(String valorAgregarEvid) {
+        this.valorAgregarEvid = valorAgregarEvid;
+    }
+    
     public void setTipoAgregarEvid(String tipoAgregarEvid) {
         this.tipoAgregarEvid = tipoAgregarEvid;
     }

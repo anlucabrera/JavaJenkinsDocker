@@ -346,12 +346,19 @@
                                                    <center>
                                                        <br />
                                                        <br />
-                                                       <p:outputLabel for="agregarEvidencia" style="font-size: large" value="#{asignacionIndicadoresCriteriosDocente.rol.agregarEvidencia?'No agregará más evidencias':'Agregar más evidencias'}" />
-                                                       <p:inputSwitch id="agregarEvidencia" class="form-control" value="#{asignacionIndicadoresCriteriosDocente.rol.agregarEvidencia}" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarAgregarEvid}"> 
+<!--                                                       <p:outputLabel for="agregarEvidencia" style="font-size: large" value="# {asignacionIndicadoresCriteriosDocente.rol.agregarEvidencia?'No agregará más evidencias':'Agregar más evidencias'}" />
+                                                       <p:inputSwitch id="agregarEvidencia" class="form-control" value="# {asignacionIndicadoresCriteriosDocente.rol.agregarEvidencia}" valueChangeListener="# {asignacionIndicadoresCriteriosDocente.cambiarAgregarEvid}"> 
                                                            <p:ajax update="tbAgregarEvid" process="@this" />
                                                            <p:autoUpdate />
                                                        </p:inputSwitch>
-                                                       <p:message for="agregarEvidencia" display="tooltip" />
+                                                       <p:message for="agregarEvidencia" display="tooltip" />-->
+                                                       <p:outputLabel for="agregarEvidencia" style="font-size: large" value="#{asignacionIndicadoresCriteriosDocente.rol.agregarEvidencia?'No agregará más evidencias':'Agregar más evidencias'}"/>
+                                                       <p:selectOneRadio id="agregarEvidencia" value="#{asignacionIndicadoresCriteriosDocente.rol.valorAgregarEvid}" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarValorAgregEvid}">
+                                                           <f:selectItem itemLabel="Sí" itemValue="Si" />
+                                                           <f:selectItem itemLabel="No" itemValue="No" />
+                                                           <p:ajax update="tbAgregarEvid" process="@this"/>
+                                                           <p:autoUpdate />
+                                                       </p:selectOneRadio> 
                                                        <br />
                                                        <br />
                                                        <p:panel id="tbAgregarEvid" rendered="#{asignacionIndicadoresCriteriosDocente.rol.agregarEvidencia}">
@@ -413,7 +420,8 @@
                                                            <div class="col-sm-12 col-md-12 col-lg-4">
                                                                <strong>Meta instrumento:</strong> 
                                                                <p class="text-muted">                             
-                                                                   <p:inputNumber id="metaInstrumento" value="#{asignacionIndicadoresCriteriosDocente.rol.metaInstrumento}" size="5" symbol="%" symbolPosition="s" required="true" emptyValue="empty" minValue="0" maxValue="100"/>
+<!--                                                                   <p:inputNumber id="metaInstrumento" value="# {asignacionIndicadoresCriteriosDocente.rol.metaInstrumento}" size="5" symbol="%" symbolPosition="s" required="true" emptyValue="empty" minValue="0" maxValue="100"/>-->
+                                                                       <p:inputText value="#{asignacionIndicadoresCriteriosDocente.rol.metaInstrumento}" onkeypress="return soloNumeros(event)"/>
                                                                </p>
                                                            </div>
                                                            <div class="col-sm-12 col-md-12 col-lg-4">
@@ -470,7 +478,8 @@
                                                             <h:outputText value="#{evidInstSug.instrumentoEvaluacion.descripcion}" />
                                                         </p:column>
                                                         <p:column style="text-align: center;" >
-                                                            <p:inputNumber id="porcentaje" value="#{evidInstSug.valorPorcentual}" size="5" symbol="%" symbolPosition="s" required="true" emptyValue="empty" minValue="0" maxValue="100"/>
+<!--                                                            <p:inputNumber id="porcentaje" value="# {evidInstSug.valorPorcentual}" size="5" symbol="%" symbolPosition="s" required="true" emptyValue="empty" minValue="0" maxValue="100"/>-->
+                                                            <p:inputText value="#{evidInstSug.valorPorcentual}" onkeypress="return soloNumeros(event)"/>
                                                         </p:column>
                                                         <p:column style="text-align: center;" >
                                                             <h:outputText value="#{evidInstSug.metaInstrumento}"><f:convertNumber type="number"/></h:outputText>%
