@@ -127,6 +127,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
             rol.setExisteConfiguracion(Boolean.FALSE);
             rol.setExisteAsignacionIndicadores(Boolean.FALSE);
             existeAsignacion();
+            rol.setValorAgregarEvid("No");
             rol.setAgregarEvidencia(Boolean.FALSE);
             rol.setTipoAgregarEvid("masivaEvid");
 //            existeConfiguracion();
@@ -496,6 +497,17 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
     public void cambiarOpcionAsignacion(ValueChangeEvent event){
         rol.setOpcAsignacion((String)event.getNewValue());
         Ajax.update("frm");
+    }
+    
+    public void cambiarValorAgregEvid(ValueChangeEvent event){
+        rol.setValorAgregarEvid((String)event.getNewValue());
+        if(rol.getAgregarEvidencia()){
+            rol.setAgregarEvidencia(false);
+            Ajax.update("frm");
+        }else{
+            rol.setAgregarEvidencia(true);
+            Ajax.update("frm");
+        }
     }
     
     public void cambiarAgregarEvid(ValueChangeEvent event){
