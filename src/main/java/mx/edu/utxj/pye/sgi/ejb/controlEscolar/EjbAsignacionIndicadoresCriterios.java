@@ -827,7 +827,11 @@ public class EjbAsignacionIndicadoresCriterios {
                         dip.setPorcentaje(t.getPorcentaje());
                         dip.setMeta(0D);
                         dip.setEvidencia("");
+                        if(t.getConfiguracion().getDirector()!=null){
+                        dip.setValidadoD(Boolean.TRUE);
+                        }else{
                         dip.setValidadoD(Boolean.FALSE);
+                        }
                         planeacioneses.add(dip);
                     });
                 }
@@ -855,7 +859,11 @@ public class EjbAsignacionIndicadoresCriterios {
                         dip.setPorcentaje(t.getPorcentaje());
                         dip.setMeta(t.getMetaInstrumento());
                         dip.setEvidencia(t.getEvidencia().getDescripcion());
+                        if(t.getConfiguracion().getDirector()!=null){
+                        dip.setValidadoD(Boolean.TRUE);
+                        }else{
                         dip.setValidadoD(Boolean.FALSE);
+                        }
                         planeacioneses.add(dip);
                     });
                 }
@@ -887,7 +895,7 @@ public class EjbAsignacionIndicadoresCriterios {
                 dip.setPorcentaje(0D);
                 dip.setMeta(0D);
                 dip.setEvidencia("");
-                dip.setValidadoD(Boolean.FALSE);
+                dip.setValidadoD(Boolean.TRUE);
                 planeacioneses.add(dip);
 
             }
