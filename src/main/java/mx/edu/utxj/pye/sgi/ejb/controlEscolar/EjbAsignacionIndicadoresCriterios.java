@@ -167,6 +167,29 @@ public class EjbAsignacionIndicadoresCriterios {
     
     }
     
+    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosTutor(PersonalActivo tuto){
+        try{
+             List<Integer> claves = em.createQuery("SELECT c FROM Grupo c WHERE c.tutor=:tutor", Grupo.class)
+                .setParameter("tutor", tuto.getPersonal().getClave())
+                .getResultStream()
+                .map(a -> a.getPeriodo())
+                .collect(Collectors.toList());
+        
+            if (claves.isEmpty()) {
+                claves.add(0, ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.ASIGNACION_INDICADORES_CRITERIOS).getValor().getPeriodo());
+            }
+            List<PeriodosEscolares> periodos = em.createQuery("select p from PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class)
+                    .setParameter("periodos", claves)
+                    .getResultStream()
+                    .distinct()
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(periodos, "Periodos ordenados de forma descendente");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares. (EjbAsignacionIndicadoresCriterios.getPeriodosDescendentes)", e, null);
+        }
+    }
+    
     /**
      * Permite obtener la lista de cargas académicas de un docente, en todos los programas educativos que participe
      * @param docente Docente de quien se quiere obtener la lista

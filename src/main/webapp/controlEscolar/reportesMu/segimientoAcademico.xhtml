@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <script type="text/javascript">
+            function myconfig() {
+                console.log("ejemplo");
+            }
+            ;
+            
+             //<![CDATA[
+    function exportChart() {
+        //export image
+        $('#output').empty().append(PF('chart').exportAsImage());
+
+        //show the dialog
+    };
+    //]]>
+
+        </script>
+        <style type="text/css">
+            @media print{
+                /* indicamos el salto de pagina */
+                .saltoDePagina{
+                    display:block;
+                    page-break-inside:auto  !important;
+                }
+                .ui-panelgrid .ui-panelgrid-cell{
+                    border-style: hidden !important;
+                }
+                
+                .grafica grafica{
+                    visibility: visible !important;
+                }
+            }
+
+            .ui-panelgrid .ui-panelgrid-cell{
+                border-style: hidden !important;
+            }
+        </style>
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />
+        </c:if>      
+        <!-- Fin estilos par proceso electoral -->
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="title">
+        Planeación Cuatrimestral
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{segimientoAcademicoConsulta.cargado}">
+            <adm:breadcrumb title="Planeación Cuatrimestral"/>
+            <div class="contenedor">
+                <c:if test="#{segimientoAcademicoConsulta.tieneAcceso}">
+                    <!-- zona de importación de enums -->
+                    <h:form id="frm" prependId="false" class="form-inline">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <div id="main-buttons" class="hidden-sm hidden-xs">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+
+                                        </f:facet>
+                                        <f:facet name="right">
+
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                                <div class="box box-solid">
+                                    <div class="box-body">
+                                        <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
+                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                        <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
+                                        <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="# {segimientoAcademicoConsulta.actualizarCargaAcademica}" update="@form" />
+                                        <div class="row margin-bottom" style="margin-top: 20px;">
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="periodo" value="#{segimientoAcademicoConsulta.rol.periodo}" converter="entityConverter" styleClass="form-control" >
+                                                        <f:selectItems value="#{segimientoAcademicoConsulta.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                        <p:ajax process="@this, grupo" listener="#{segimientoAcademicoConsulta.cambiarPeriodo}"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Periodo" for="periodo"/>
+                                                    <p:message for="periodo" />
+                                                </div>
+                                                <br/>
+                                            </div>
+                                            <div class="#{casilla2}" style="visibility:#{segimientoAcademicoConsulta.rol.tipoUser eq 3?'hidden':'visible'}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="planEstudio" value="#{segimientoAcademicoConsulta.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{segimientoAcademicoConsulta.cambiarPlanestudio}">
+                                                        <f:selectItem itemValue="#{null}"/>
+                                                        <f:selectItems value="#{segimientoAcademicoConsulta.rol.planesEstudios}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                        <p:ajax update="@this, grupo" process="@this"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Programa Educativo" for="planEstudio"/>
+                                                    <p:message for="planEstudio" />
+                                                </div>
+                                                <br/>
+                                            </div>
+                                            <div class="#{casilla}" style="visibility:#{segimientoAcademicoConsulta.rol.tipoUser eq 3?'hidden':'visible'}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="grupo" value="#{segimientoAcademicoConsulta.rol.grupoSelec}" converter="entityConverter" valueChangeListener="#{segimientoAcademicoConsulta.cambiarGrupo}">
+                                                        <f:selectItems value="#{segimientoAcademicoConsulta.rol.grupos}" var="grupo"
+                                                                       itemValue="#{grupo}" itemLabel="#{grupo.grado}° #{grupo.literal} #{grupo.idSistema.nombre}"/>
+                                                        <p:ajax update="@this" process="@this"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Grupo - Programa Educativo" for="grupo"/>
+                                                    <p:message for="grupo" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <c:if test="#{segimientoAcademicoConsulta.rol.existeAsignacionIndicadores}">
+                                                <center>
+                                                    <p:panel id="CV" style="overflow: hidden;">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <div class="description-block">
+                                                                    <p:dataTable id="tbAsigInd1" var="asignacionIndCA" value="#{segimientoAcademicoConsulta.rol.drcas}" 
+                                                                                 sortBy="#{asignacionIndCA.informe.unidad}" rowStyleClass="subactiviades"
+                                                                                 styleClass="saltoDePagina">
+                                                                        <f:facet name="header">
+                                                                        </f:facet>
+                                                                        <p:columnGroup type="header">
+                                                                            <p:row class="success">         
+                                                                                <p:column rowspan="3" headerText="Matricula"/>
+                                                                                <p:column rowspan="3" headerText="Nombre"/>
+                                                                                <p:column headerText="Materia 1"/> 
+                                                                                <p:column headerText="Materia 2"/> 
+                                                                                <p:column headerText="Materia 3"/>   
+                                                                                <p:column headerText="Materia 4"/> 
+                                                                                <p:column headerText="Materia 5"/> 
+                                                                                <p:column headerText="Materia 6"/> 
+                                                                                <p:column headerText="Materia 7"/> 
+                                                                                <p:column headerText="Materia 8"/> 
+                                                                                <p:column headerText="Materia 9"/> 
+                                                                                <p:column headerText="Materia 10"/>                                                                        
+                                                                            </p:row>
+                                                                            <p:row class="success">         
+                                                                                <p:column headerText="Docente 1"/> 
+                                                                                <p:column headerText="Docente 2"/> 
+                                                                                <p:column headerText="Docente 3"/>   
+                                                                                <p:column headerText="Docente 4"/> 
+                                                                                <p:column headerText="Docente 5"/> 
+                                                                                <p:column headerText="Docente 6"/> 
+                                                                                <p:column headerText="Docente 7"/> 
+                                                                                <p:column headerText="Docente 8"/> 
+                                                                                <p:column headerText="Docente 9"/> 
+                                                                                <p:column headerText="Docente 10"/>                                                                        
+                                                                            </p:row>
+                                                                            <p:row class="success">         
+                                                                                <p:column headerText="unidades 1"/> 
+                                                                                <p:column headerText="unidades 2"/> 
+                                                                                <p:column headerText="unidades 3"/>   
+                                                                                <p:column headerText="unidades 4"/> 
+                                                                                <p:column headerText="unidades 5"/> 
+                                                                                <p:column headerText="unidades 6"/> 
+                                                                                <p:column headerText="unidades 7"/> 
+                                                                                <p:column headerText="unidades 8"/> 
+                                                                                <p:column headerText="unidades 9"/> 
+                                                                                <p:column headerText="unidades 10"/>                                                                        
+                                                                            </p:row>
+                                                                        </p:columnGroup>
+                                                                    </p:dataTable>       
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:panel>
+                                                </center>
+                                            </c:if>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                </c:if>
+                <c:if test="#{!segimientoAcademicoConsulta.tieneAcceso}">
+                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="#{segimientoAcademicoConsulta.rol.mensajeV}"/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </div>
+            <script>
+                //collapseSidebar(); activar para colapsar barra lateral
+            </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

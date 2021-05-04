@@ -133,6 +133,7 @@ public enum ControlEscolarVistaControlador {
 
     CONSULTA_CALIFICACION("/controlEscolar/consultarCalificaciones.xhtml", ConsultaCalificaciones.class),
     RESULTADOS_PLANEACIONES("/controlEscolar/reportesMu/resultadosPlaneaciones.xhtml", ResultadosPlaneacionesConsulta.class),
+    SEGIMIENTO_ACADEMICO("/controlEscolar/reportesMu/segimientoAcademico.xhtml", SegimientoAcademicoConsulta.class),
     FICHA_ADMISION_REPORTE("/controlEscolar/reporteFichaAdmision.xhtml",FichaAdmisionReporte.class),
     REGISTRO_ESTUDIANTE_CONSULTA("/controlEscolar/reportesMu/registroEstudianteConsulta.xhtml", RegistroDeEstudianteConsulta.class),
     SEGUIMIENTO_EV_PARES_ACADEMICOS("/evaluaciones/administracion/seguimientoEvParesAcademicos.xhtml", SeguimientoEvParesAcademicos.class),
