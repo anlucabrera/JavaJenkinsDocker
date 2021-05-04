@@ -106,7 +106,7 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
         try {
             if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
             cargado = true;
-            setVistaControlador(ControlEscolarVistaControlador.SEGIMIENTO_ACADEMICO);
+//            setVistaControlador(ControlEscolarVistaControlador.SEGIMIENTO_ACADEMICO);
             
             ResultadoEJB<Filter<PersonalActivo>> resValidacionDi = evr.validarDirector(logon.getPersonal().getClave());
             ResultadoEJB<Filter<PersonalActivo>> resValidacionEn = evr.validarEncargadoDireccion(logon.getPersonal().getClave());//validar si es director                        
