@@ -59,23 +59,24 @@ public class ReinscripcionAutonomaEstudiante extends ViewScopedRol implements De
         try{
             if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19))return;
             cargado=true;
-                setVistaControlador(ControlEscolarVistaControlador.REINSCRIPCION_AUTONOMA);
-
-                ResultadoEJB<Estudiante> resAcceso = ejbReinscripcionAutonoma.validaEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
-                //System.out.println(resAcceso.getValor());
-                if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
-                ResultadoEJB<Estudiante> resValidacion = ejbReinscripcionAutonoma.validaEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
-                if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
-                Estudiante estudiante = resValidacion.getValor();
-                tieneAcceso = rol.tieneAcceso(estudiante,UsuarioTipo.ESTUDIANTE19);
-                if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
-                rol.setEstudiante(estudiante);
-                ResultadoEJB<EventoEscolar> resEvento = ejbReinscripcionAutonoma.verificarEvento();
-                if(!resEvento.getCorrecto())  tieneAcceso = false; //Debe negarle el acceso en caso de no haber un cuestionario activo
-                else {rol.setEventoReinscripcion(resEvento.getValor()); }
-                //----------------------------------------------------------------------------------------------------------------------------
-                //if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
-                if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
+            setVistaControlador(ControlEscolarVistaControlador.REINSCRIPCION_AUTONOMA);
+            ResultadoEJB<Estudiante> resAcceso = ejbReinscripcionAutonoma.validaEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
+            //System.out.println(resAcceso.getValor().getPeriodo());
+            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
+            ResultadoEJB<Estudiante> resValidacion = ejbReinscripcionAutonoma.validaEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
+            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
+            Estudiante estudiante = resValidacion.getValor();
+            tieneAcceso = rol.tieneAcceso(estudiante,UsuarioTipo.ESTUDIANTE19);
+            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            rol.setEstudiante(estudiante);
+            ResultadoEJB<EventoEscolar> resEvento = ejbReinscripcionAutonoma.verificarEvento();
+            if(!resEvento.getCorrecto())  tieneAcceso = false; //Debe negarle el acceso en caso de no haber un cuestionario activo
+            else {rol.setEventoReinscripcion(resEvento.getValor()); }
+            if(rol.getEstudiante().getPeriodo()==rol.getEventoReinscripcion().getPeriodo()){tieneAcceso=true;}
+            else {tieneAcceso=false;}
+            //----------------------------------------------------------------------------------------------------------------------------
+            //if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
 
                //Obtiene la lista de estados, municipios y asentamientos
                 step ="0";
