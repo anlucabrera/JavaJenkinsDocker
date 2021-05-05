@@ -286,8 +286,9 @@ public class ServicioConvenios implements EjbConvenios {
     }
 
     @Override
-    public void guardaConvenios(List<DtoConvenioEventoRegistro> listaConvenios, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable {
+    public void guardaConvenios(List<DtoConvenioEventoRegistro> listaConvenios, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area) throws Throwable {
         List<String> listaCondicional = new ArrayList<>();
+//        try {
         listaConvenios.forEach((convenios) -> {
             facadeVinculacion.setEntityClass(Convenios.class);
             Convenios convenioEncontrado = getConvenio(convenios.getConvenio());
@@ -315,6 +316,11 @@ public class ServicioConvenios implements EjbConvenios {
             facadeVinculacion.flush();
         });
         Messages.addGlobalInfo("<b>Se actualizaron los registros con los siguientes datos: </b> " + listaCondicional.toString());
+//        } catch (NullPointerException e){
+//            System.err.println(" e " + e.getMessage() + " causa " + e.getCause());
+//        } catch (Exception ex){
+//            System.err.println(" e" + ex.getMessage() + " causa " + ex.getCause());
+//        }
     }
 
     @Override

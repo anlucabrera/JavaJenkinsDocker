@@ -332,7 +332,7 @@ public class ServicioActFormacionIntegral implements EjbActFormacionIntegral{
         List<String> listaCondicional = new ArrayList<>();
         lista.forEach((actFormacionIntegral) -> {
            
-            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), actFormacionIntegral.getActividadesFormacionIntegral().getPeriodo())) {
+            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), actFormacionIntegral.getActividadesFormacionIntegral().getPeriodo())) {
                 f.setEntityClass(ActividadesFormacionIntegral.class);
                 ActividadesFormacionIntegral afi = getRegistroActividadesFormacionIntegral(actFormacionIntegral.getActividadesFormacionIntegral().getActividadFormacionIntegral());
                 Boolean registroAlmacenado = false;

@@ -177,7 +177,7 @@ public class ServicioBecasPeriodo implements EjbBecasPeriodo{
 
         List<String> listaCondicional = new ArrayList<>();
         listaBecasPeriodo.getBecasPeriodosEscolares().forEach((becasPeriodosEscolares) -> {
-            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().getPeriodo())) {
+            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), becasPeriodosEscolares.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().getPeriodo())) {
             f.setEntityClass(BecasPeriodosEscolares.class);
             BecasPeriodosEscolares becasperescEncontrada = getRegistroBecasPeriodosEscolares(becasPeriodosEscolares.getBecasPeriodosEscolares());
             Boolean registroAlmacenado = false;

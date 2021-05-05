@@ -310,7 +310,7 @@ public class ServicioAcervoBibliografico implements EjbAcervoBibliografico{
         lista.forEach((acervoBibliografico) -> {
            
         
-           if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), acervoBibliografico.getAcervoBibliograficoPeriodosEscolares().getPeriodoEscolar())) {
+           if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), acervoBibliografico.getAcervoBibliograficoPeriodosEscolares().getPeriodoEscolar())) {
                f.setEntityClass(AcervoBibliograficoPeriodosEscolares.class);
                AcervoBibliograficoPeriodosEscolares abpe = getRegistroAcervoBibliografico(acervoBibliografico.getAcervoBibliograficoPeriodosEscolares().getCicloEscolar(), acervoBibliografico.getAcervoBibliograficoPeriodosEscolares().getPeriodoEscolar(), acervoBibliografico.getAcervoBibliograficoPeriodosEscolares().getProgramaEducativo());
                Boolean registroAlmacenado = false;

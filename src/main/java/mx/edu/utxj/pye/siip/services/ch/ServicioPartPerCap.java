@@ -137,7 +137,7 @@ public class ServicioPartPerCap implements EjbPartPerCap{
                 Messages.addGlobalWarn("<b>No existe la Clave de la Capacitación</b>");
 
             } else {
-                if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), personalCapacitado.getPeriodo())) {
+                if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), personalCapacitado.getPeriodo())) {
                     List<String> listaCondicional = new ArrayList<>();
                     f.setEntityClass(ParticipantesPersonalCapacitado.class);
                     ParticipantesPersonalCapacitado partEncontrado = getRegistroParticipantesPersonalCapacitado(participantes.getParticipantesPersonalCapacitado());

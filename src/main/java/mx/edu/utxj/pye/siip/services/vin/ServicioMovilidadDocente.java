@@ -136,7 +136,7 @@ public class ServicioMovilidadDocente implements EjbMovilidadDocente{
                 Messages.addGlobalWarn("<b>No existe la Clave del Registro de Movilidad</b>");
 
             } else {
-                if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), registrosMovilidad.getPeriodoEscolarCursado())) {
+                if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), registrosMovilidad.getPeriodoEscolarCursado())) {
 
                     List<String> listaCondicional = new ArrayList<>();
                     f.setEntityClass(RegistroMovilidadDocente.class);

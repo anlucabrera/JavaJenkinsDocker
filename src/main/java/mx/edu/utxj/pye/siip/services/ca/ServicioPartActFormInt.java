@@ -152,9 +152,9 @@ public class ServicioPartActFormInt implements EjbPartFormInt{
                 Messages.addGlobalWarn("<b>No existe la Clave de Actividad de Formación Integral</b>");
 
             } else {
-                if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), actividadesFormacionIntegral.getPeriodo())) {
+                if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), actividadesFormacionIntegral.getPeriodo())) {
                     List<String> listaCondicional = new ArrayList<>();
-                    if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getPeriodo())) {
+                    if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), partActFormInt.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getPeriodo())) {
                         f.setEntityClass(ParticipantesActividadesFormacionIntegral.class);
                         ParticipantesActividadesFormacionIntegral partAFIEncontrada = getRegistroParticipantesActividadesFormacionIntegral(partActFormInt.getParticipantesActividadesFormacionIntegral());
                         Boolean registroAlmacenado = false;

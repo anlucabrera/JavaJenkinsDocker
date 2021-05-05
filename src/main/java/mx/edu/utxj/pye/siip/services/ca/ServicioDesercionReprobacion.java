@@ -179,7 +179,7 @@ public class ServicioDesercionReprobacion implements EjbDesercionReprobacion{
                 }
                 if (registroAlmacenado) {
 
-                    if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), desercionPeriodosEscolares.getMatriculaPeriodosEscolares().getPeriodo())) {
+                    if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), desercionPeriodosEscolares.getMatriculaPeriodosEscolares().getPeriodo())) {
 
                         reprobacion.getDesercionReprobacionMaterias().setRegistro(desRepMatEncontrada.getRegistro());
                         reprobacion.getDesercionReprobacionMaterias().getDpe().setRegistro(ejbDesercionPeriodos.getRegistroDesercionPeriodosEspecifico(reprobacion.getDesercionReprobacionMaterias().getDpe().getDpe()));

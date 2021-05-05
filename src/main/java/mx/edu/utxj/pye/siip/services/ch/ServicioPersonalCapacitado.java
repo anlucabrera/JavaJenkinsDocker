@@ -296,7 +296,7 @@ public class ServicioPersonalCapacitado implements EjbPersonalCapacitado{
         List<String> listaCondicional = new ArrayList<>();
         lista.forEach((personalCapacitado) -> {
            
-            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), personalCapacitado.getPersonalCapacitado().getPeriodo())) {
+            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), personalCapacitado.getPersonalCapacitado().getPeriodo())) {
                 f.setEntityClass(PersonalCapacitado.class);
                 PersonalCapacitado pc = getRegistroPersonalCapacitado(personalCapacitado.getPersonalCapacitado().getCurso());
                 Boolean registroAlmacenado = false;

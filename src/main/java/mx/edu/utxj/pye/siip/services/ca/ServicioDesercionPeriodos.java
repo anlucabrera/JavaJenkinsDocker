@@ -207,7 +207,7 @@ public class ServicioDesercionPeriodos implements EjbDesercionPeriodos{
 
             List<String> listaCondicional = new ArrayList<>();
             listaDesercionPeriodos.getDesercion().forEach((desercion) -> {
-            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), desercion.getDesercionPeriodosEscolares().getMatriculaPeriodosEscolares().getPeriodo())) {
+            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), desercion.getDesercionPeriodosEscolares().getMatriculaPeriodosEscolares().getPeriodo())) {
             f.setEntityClass(DesercionPeriodosEscolares.class);
             DesercionPeriodosEscolares derPerEscEncontrada = getRegistroDesercionPeriodosEscolares(desercion.getDesercionPeriodosEscolares());
             Boolean registroAlmacenado = false;
