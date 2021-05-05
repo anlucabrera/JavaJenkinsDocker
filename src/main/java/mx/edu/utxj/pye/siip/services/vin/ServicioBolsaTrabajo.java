@@ -213,7 +213,7 @@ public class ServicioBolsaTrabajo implements EjbBolsaTrabajo{
         List<String> listaCondicional = new ArrayList<>();
         lista.forEach((bolsa) -> {
             
-            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), bolsa.getBolsaTrabajo().getPeriodo())) {
+            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), bolsa.getBolsaTrabajo().getPeriodo())) {
                 f.setEntityClass(BolsaTrabajo.class);
                 BolsaTrabajo bt = getRegistroBolsaTrabajo(bolsa.getBolsaTrabajo());
                 Boolean registroAlmacenado = false;

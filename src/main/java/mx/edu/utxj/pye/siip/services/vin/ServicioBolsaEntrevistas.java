@@ -207,7 +207,7 @@ public class ServicioBolsaEntrevistas implements EjbBolsaEntrevistas{
 
             } else {
                 
-                if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), bolsaTrabajo.getPeriodo())) {
+                if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), bolsaTrabajo.getPeriodo())) {
 
                     f.setEntityClass(BolsaTrabajoEntrevistas.class);
                     BolsaTrabajoEntrevistas bolTrabEntEncontrado = getRegistroBolsaTrabajoEntrevistas(bolsaEntrevistas.getBolsaTrabajoEntrevistas());

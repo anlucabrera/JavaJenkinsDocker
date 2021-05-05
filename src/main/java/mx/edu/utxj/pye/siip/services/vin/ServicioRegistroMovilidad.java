@@ -412,7 +412,7 @@ public class ServicioRegistroMovilidad implements EjbRegistroMovilidad{
         List<String> listaCondicional = new ArrayList<>();
         lista.forEach((movilidad) -> {
             
-            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActual(), movilidad.getRegistrosMovilidad().getPeriodoEscolarCursado())) {
+            if (ejbModulos.validaPeriodoRegistro(ejbModulos.getPeriodoEscolarActivo(), movilidad.getRegistrosMovilidad().getPeriodoEscolarCursado())) {
                 f.setEntityClass(RegistrosMovilidad.class);
                 RegistrosMovilidad regMovEncontrada = getRegistrosMovilidad(movilidad.getRegistrosMovilidad());
                 Boolean registroAlmacenado = false;

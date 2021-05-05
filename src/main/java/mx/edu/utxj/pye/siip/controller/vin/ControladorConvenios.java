@@ -126,7 +126,7 @@ public class ControladorConvenios implements Serializable {
     public void guardaConvenios() {
         if (dtoConvenios.getLstDtoConvenios() != null) {
             try {
-                ejbConvenios.guardaConvenios(dtoConvenios.getLstDtoConvenios(), dtoConvenios.getRegistroTipo(), dtoConvenios.getEjesRegistro(), dtoConvenios.getArea().getArea(), controladorModulosRegistro.getEventosRegistros());
+                ejbConvenios.guardaConvenios(dtoConvenios.getLstDtoConvenios(), dtoConvenios.getRegistroTipo(), dtoConvenios.getEjesRegistro(), dtoConvenios.getArea().getArea());
                 Messages.addGlobalInfo("La información se ha almacenado de manera correcta");
             } catch (Throwable ex) {
                 Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());

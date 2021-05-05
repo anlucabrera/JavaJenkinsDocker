@@ -351,6 +351,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     // Tutorias Grupales Concentrado Mensual
     
     public Integer noTutoriasGrupalesConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         List<SesionesGrupalesTutorias> sesionesGrupales = new ArrayList<>();
         dtoPat.getPlanAccionTutorial().getSesionesGrupalesTutoriasList().stream().forEach((t) -> {
             sesionesGrupales.add(t);
@@ -370,6 +373,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     }
     
     public Integer noAsistentesMujeresTutoriaGrupalConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         List<SesionesGrupalesTutorias> sesionesGrupales = new ArrayList<>();
         dtoPat.getPlanAccionTutorial().getSesionesGrupalesTutoriasList().stream().forEach((t) -> {
             sesionesGrupales.add(t);
@@ -402,6 +408,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     }
     
     public Integer noAsistentesHombresTutoriaGrupalConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         List<SesionesGrupalesTutorias> sesionesGrupales = new ArrayList<>();
         dtoPat.getPlanAccionTutorial().getSesionesGrupalesTutoriasList().stream().forEach((t) -> {
             sesionesGrupales.add(t);
@@ -436,6 +445,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     // Tutorias Individuales Concentrado Mensual
     
     public Integer noTutoriasIndividualesConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         List<Estudiante> estudiante = new ArrayList<>();
         dtoPat.getPlanAccionTutorial().getGrupo().getEstudianteList().stream().forEach((e) -> {
             estudiante.add(e);
@@ -456,6 +468,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     }
     
     public Integer noAsistentesMujeresTutoriaIndividualConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         List<Estudiante> estudiante = new ArrayList<>();
         dtoPat.getPlanAccionTutorial().getGrupo().getEstudianteList().stream().forEach((e) -> {
             estudiante.add(e);
@@ -477,6 +492,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     }
     
     public Integer noAsistentesHombresTutoriaIndividualConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         List<Estudiante> estudiante = new ArrayList<>();
         dtoPat.getPlanAccionTutorial().getGrupo().getEstudianteList().stream().forEach((e) -> {
             estudiante.add(e);
@@ -500,6 +518,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     // Asesorias Grupales Concentrado Mensual
     
     public Integer noAsesoriasGrupalesConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         ResultadoEJB<List<Asesoria>> resultadoAsesorias = ejbConsultaTutoriasAsesorias.buscaAsesoriasGrupalesPorGrupoEventoRegistro(dtoPat.getPlanAccionTutorial().getGrupo(), eventoRegistro.getEventoRegistro());
         if(resultadoAsesorias.getCorrecto()){
             return resultadoAsesorias.getValor().size();
@@ -509,6 +530,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     }
     
     public Integer noAsistentesMujeresAsesoriaGrupalConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         ResultadoEJB<List<Asesoria>> resultadoAsesorias = ejbConsultaTutoriasAsesorias.buscaAsesoriasGrupalesPorGrupoEventoRegistro(dtoPat.getPlanAccionTutorial().getGrupo(), eventoRegistro.getEventoRegistro());
         if(resultadoAsesorias.getCorrecto()){
             List<Estudiante> estudiantes = new ArrayList<>();
@@ -534,6 +558,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     }
     
     public Integer noAsistentesHombresAsesoriaGrupalConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         ResultadoEJB<List<Asesoria>> resultadoAsesorias = ejbConsultaTutoriasAsesorias.buscaAsesoriasGrupalesPorGrupoEventoRegistro(dtoPat.getPlanAccionTutorial().getGrupo(), eventoRegistro.getEventoRegistro());
         if(resultadoAsesorias.getCorrecto()){
             List<Estudiante> estudiantes = new ArrayList<>();
@@ -561,6 +588,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     // Asesorias Individuales Concentrado Mensual
     
     public Integer noAsesoriasIndividualesConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         ResultadoEJB<List<Asesoria>> resultadoAsesorias = ejbConsultaTutoriasAsesorias.buscaAsesoriasInvidualesPorGrupoEventoRegistro(dtoPat.getPlanAccionTutorial().getGrupo(), eventoRegistro.getEventoRegistro());
         if(resultadoAsesorias.getCorrecto()){
             return resultadoAsesorias.getValor().size();
@@ -570,6 +600,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     }
     
     public Integer noAsistentesMujeresAsesoriaIndividualConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         ResultadoEJB<List<Asesoria>> resultadoAsesorias = ejbConsultaTutoriasAsesorias.buscaAsesoriasInvidualesPorGrupoEventoRegistro(dtoPat.getPlanAccionTutorial().getGrupo(), eventoRegistro.getEventoRegistro());
         if(resultadoAsesorias.getCorrecto()){
             List<Estudiante> estudiantes = new ArrayList<>();
@@ -595,6 +628,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     }
     
     public Integer noAsistentesHombresAsesoriaIndividualConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         ResultadoEJB<List<Asesoria>> resultadoAsesorias = ejbConsultaTutoriasAsesorias.buscaAsesoriasInvidualesPorGrupoEventoRegistro(dtoPat.getPlanAccionTutorial().getGrupo(), eventoRegistro.getEventoRegistro());
         if(resultadoAsesorias.getCorrecto()){
             List<Estudiante> estudiantes = new ArrayList<>();
@@ -622,6 +658,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     // Asesorias Individuales Generales Concentrado Mensual
     
     public Integer noAsesoriasIndividualesGeneralesConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         ResultadoEJB<List<AsesoriasEstudiantes>> resultadoAsesoriasEstudiantes = ejbConsultaTutoriasAsesorias.buscaAsesoriasIndividualesEstudiantesPorGrupoEventoRegistro(dtoPat.getPlanAccionTutorial().getGrupo(), eventoRegistro.getEventoRegistro());
         if(resultadoAsesoriasEstudiantes.getCorrecto()){
             return resultadoAsesoriasEstudiantes.getValor().size();
@@ -631,6 +670,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     }
     
     public Integer noAsistentesMujeresAsesoriaGeneralConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         ResultadoEJB<List<AsesoriasEstudiantes>> resultadoAsesoriasEstudiantes = ejbConsultaTutoriasAsesorias.buscaAsesoriasIndividualesEstudiantesPorGrupoEventoRegistro(dtoPat.getPlanAccionTutorial().getGrupo(), eventoRegistro.getEventoRegistro());
         if(resultadoAsesoriasEstudiantes.getCorrecto()){
             List<Estudiante> estudiantes = new ArrayList<>();
@@ -656,6 +698,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     }
     
     public Integer noAsistentesHombresAsesoriaGeneralConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         ResultadoEJB<List<AsesoriasEstudiantes>> resultadoAsesoriasEstudiantes = ejbConsultaTutoriasAsesorias.buscaAsesoriasIndividualesEstudiantesPorGrupoEventoRegistro(dtoPat.getPlanAccionTutorial().getGrupo(), eventoRegistro.getEventoRegistro());
         if(resultadoAsesoriasEstudiantes.getCorrecto()){
             List<Estudiante> estudiantes = new ArrayList<>();
@@ -684,6 +729,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     // Asesorias Grupales Generales Concentrado Mensual
     
     public Integer noAsesoriasGrupalesGeneralesConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         ResultadoEJB<List<AsesoriasEstudiantes>> resultadoAsesoriasEstudiantes = ejbConsultaTutoriasAsesorias.buscaAsesoriasGrupalesEstudiantesPorGrupoEventoRegistro(dtoPat.getPlanAccionTutorial().getGrupo(), eventoRegistro.getEventoRegistro());
         if(resultadoAsesoriasEstudiantes.getCorrecto()){
             return resultadoAsesoriasEstudiantes.getValor().size();
@@ -693,6 +741,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     }
     
     public Integer noAsistentesMujeresAsesoriaGrupalGeneralConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         ResultadoEJB<List<AsesoriasEstudiantes>> resultadoAsesoriasEstudiantes = ejbConsultaTutoriasAsesorias.buscaAsesoriasGrupalesEstudiantesPorGrupoEventoRegistro(dtoPat.getPlanAccionTutorial().getGrupo(), eventoRegistro.getEventoRegistro());
         if(resultadoAsesoriasEstudiantes.getCorrecto()){
             List<Estudiante> estudiantes = new ArrayList<>();
@@ -718,6 +769,9 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     }
     
     public Integer noAsistentesHombresAsesoriaGrupalGeneralConcentradoMensual(DtoPlanAccionTutorial dtoPat, EventosRegistros eventoRegistro){
+        if(dtoPat == null || eventoRegistro == null){
+            return 0;
+        }
         ResultadoEJB<List<AsesoriasEstudiantes>> resultadoAsesoriasEstudiantes = ejbConsultaTutoriasAsesorias.buscaAsesoriasGrupalesEstudiantesPorGrupoEventoRegistro(dtoPat.getPlanAccionTutorial().getGrupo(), eventoRegistro.getEventoRegistro());
         if(resultadoAsesoriasEstudiantes.getCorrecto()){
             List<Estudiante> estudiantes = new ArrayList<>();

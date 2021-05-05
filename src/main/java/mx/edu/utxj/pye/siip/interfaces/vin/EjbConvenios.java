@@ -24,7 +24,7 @@ public interface EjbConvenios {
     
     public List<DtoConvenioEventoRegistro> getListaConvenios(String rutaArchivo) throws Throwable;
     
-    public void guardaConvenios(List<DtoConvenioEventoRegistro> listaConvenios, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area, EventosRegistros eventosRegistros) throws Throwable;
+    public void guardaConvenios(List<DtoConvenioEventoRegistro> listaConvenios, RegistrosTipo registrosTipo, EjesRegistro ejesRegistro, Short area) throws Throwable;
     
     public Convenios getConvenio(Convenios convenio);
     
