@@ -72,8 +72,10 @@ public class ReinscripcionAutonomaEstudiante extends ViewScopedRol implements De
             ResultadoEJB<EventoEscolar> resEvento = ejbReinscripcionAutonoma.verificarEvento();
             if(!resEvento.getCorrecto())  tieneAcceso = false; //Debe negarle el acceso en caso de no haber un cuestionario activo
             else {rol.setEventoReinscripcion(resEvento.getValor()); }
-            if(rol.getEstudiante().getPeriodo()==rol.getEventoReinscripcion().getPeriodo()){tieneAcceso=true;}
-            else {tieneAcceso=false;}
+            //System.out.println("ReinscripcionAutonomaEstudiante.init " + rol.getEstudiante().getTipoEstudiante().getIdTipoEstudiante());
+            if(rol.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==2 || rol.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==3){tieneAcceso=false;}
+            else {tieneAcceso=true;}
+           // System.out.println("ReinscripcionAutonomaEstudiante.init 2");
             //----------------------------------------------------------------------------------------------------------------------------
             //if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
             if(!tieneAcceso){mostrarMensajeNoAcceso();return;}

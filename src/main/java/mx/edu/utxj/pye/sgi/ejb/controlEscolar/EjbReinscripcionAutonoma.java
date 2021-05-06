@@ -45,9 +45,9 @@ public class EjbReinscripcionAutonoma {
      */
     public ResultadoEJB<Estudiante> validaEstudiante(Integer matricula){
         try{
-            Estudiante e = em.createQuery("select e from Estudiante as e where e.matricula =:matricula and e.tipoEstudiante.idTipoEstudiante=:tipo order by e.periodo desc ", Estudiante.class)
+            Estudiante e = em.createQuery("select e from Estudiante as e where e.matricula =:matricula order by e.periodo desc ", Estudiante.class)
                     .setParameter("matricula", matricula)
-                    .setParameter("tipo",1)
+                   // .setParameter("tipo",1)
                     .getResultStream().findFirst().orElse(new Estudiante());
             return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante.");
         }catch (Exception e){
