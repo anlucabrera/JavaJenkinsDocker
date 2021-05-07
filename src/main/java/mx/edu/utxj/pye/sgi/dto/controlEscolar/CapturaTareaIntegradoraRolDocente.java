@@ -14,6 +14,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvidenciaEvaluacion;
 
 public class CapturaTareaIntegradoraRolDocente  extends AbstractRol {
     @Getter private PersonalActivo docenteLogueado;
@@ -45,6 +46,8 @@ public class CapturaTareaIntegradoraRolDocente  extends AbstractRol {
     @Getter @Setter private Map<DtoCargaAcademica, TareaIntegradora> tareaIntegradoraMap = new HashMap<>();
 
     @Getter @Setter private List<Indicador> indicadores;
+    
+    @Getter @Setter private List<EvidenciaEvaluacion> evidencias;
 
     public CapturaTareaIntegradoraRolDocente(@NonNull Filter<PersonalActivo> filtro) {
         super(filtro);

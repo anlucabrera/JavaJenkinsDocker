@@ -408,7 +408,7 @@ public class EjbCapturaCalificaciones {
 
             List<Criterio> criterios = dtoCapturaCalificacion.getCapturas()
                     .stream()
-                    .map(captura -> captura.getDetalle().getCriterio())
+                    .map(captura -> captura.getDetalle().getEvidencia().getCriterio())
                     .distinct()
                     .sorted(Comparator.comparingInt(Criterio::getCriterio))
                     .collect(Collectors.toList());
@@ -467,7 +467,7 @@ public class EjbCapturaCalificaciones {
 //            System.out.println("criterio.getTipo() = " + criterio.getTipo());
             BigDecimal suma = capturas
                     .stream()
-                    .filter(captura -> Objects.equals(captura.getDetalle().getCriterio(), criterio))
+                    .filter(captura -> Objects.equals(captura.getDetalle().getEvidencia().getCriterio(), criterio))
                     .map(captura -> calificarCapturaAlineacion(captura))
                     .filter(ResultadoEJB::getCorrecto)
                     .map(ResultadoEJB::getValor)

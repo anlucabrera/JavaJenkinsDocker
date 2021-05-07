@@ -42,6 +42,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorEmpresarialEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -163,6 +164,7 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
         ResultadoEJB<List<DtoSeguimientoEstadia>> res = ejb.getListaEstudiantesSeguimiento(rol.getGeneracion(), rol.getNivelEducativo(), rol.getDocente().getPersonal());
         if(res.getCorrecto()){
             rol.setEstudiantesSeguimiento(res.getValor());
+            deshabilitarEvaluacion();
             Ajax.update("tbListaSeguimientoEstadia");
         }else mostrarMensajeResultadoEJB(res);
     
@@ -511,15 +513,15 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
     
      /**
      * Método para verificar si existe evento de estadía activo para el registro de evaluación
-     * @return Verdadero o Falso, según sea el caso
      */
-    public Boolean deshabilitarEvaluacion(){
-        Boolean permiso= Boolean.FALSE;
-        ResultadoEJB<Boolean> res = ejb.buscarEventoActivo(rol.getEstudianteSeguimiento().getSeguimientoEstadiaEstudiante().getEvento(), "Registro cedula evaluacion empresarial","Estudiante");
-        if(res.getCorrecto()){
-            permiso=res.getValor();
-        }else mostrarMensajeResultadoEJB(res);
-        return permiso;
+    public void deshabilitarEvaluacion(){
+        EventoEstadia evento = rol.getEstudiantesSeguimiento().stream().map(p->p.getSeguimientoEstadiaEstudiante().getEvento()).distinct().findFirst().orElse(null);
+        if(evento != null){
+            ResultadoEJB<Boolean> res = ejb.buscarEventoActivo(rol.getEstudianteSeguimiento().getSeguimientoEstadiaEstudiante().getEvento(), "Registro cedula evaluacion empresarial","Estudiante");
+            if(res.getCorrecto()){
+                rol.setHabilitarEvaluacion(res.getValor());
+            }else mostrarMensajeResultadoEJB(res);
+        }
     }
     
      /**

@@ -318,7 +318,7 @@
                                                         <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaAsesor.consultarExisteDocumento(41, segEst)}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <p:commandButton actionListener="#{seguimientoEstadiaAsesor.editarEvaluacion(segEst)}" class="btn btn-sm btn-info" icon="fa fa-edit" title="Evaluación estadía"/>
+                                                        <p:commandButton actionListener="#{seguimientoEstadiaAsesor.editarEvaluacion(segEst)}" class="btn btn-sm btn-info" icon="fa fa-edit" title="Evaluación estadía" disabled="#{!seguimientoEstadiaAsesor.rol.habilitarEvaluacion}"/>
                                                         <p:commandButton actionListener="#{seguimientoEstadiaAsesor.generarCedEvalAcredEstadia(segEst)}" action="/controlEscolar/formatos/cedulaEvalAcredEstadia?faces-redirect=true" 
                                                                                   class="btn btn-sm btn-primary" 
                                                                                   disabled="#{!seguimientoEstadiaAsesor.aproboEstadia(segEst)}"
