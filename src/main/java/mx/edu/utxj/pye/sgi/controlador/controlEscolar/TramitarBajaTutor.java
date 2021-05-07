@@ -205,7 +205,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      */
     public void causasBaja(){
         if(rol.getGrupo()== null) return;
-        ResultadoEJB<List<BajasCausa>> res = ejb.getCausasBaja();
+        ResultadoEJB<List<BajasCausa>> res = ejb.getCausasBajaTutor();
         if(res.getCorrecto()){
             rol.setCausasBaja(res.getValor());
         }else mostrarMensajeResultadoEJB(res);

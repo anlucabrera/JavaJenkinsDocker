@@ -154,6 +154,22 @@ public class EjbRegistroBajas {
         }
     }
     
+     /**
+     * Permite verificar si existe evento activo para bajas de causas no académicas
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<Boolean> buscarEventoActivoBajas(){
+        try{
+            EventoEscolar eventoBajas = em.createQuery("SELECT e FROM EventoEscolar e WHERE e.periodo=:periodo AND e.tipo=:tipo AND current_date between e.inicio and e.fin", EventoEscolar.class)
+                    .setParameter("periodo", getPeriodoActual().getPeriodo())
+                    .setParameter("tipo", "Bajas_causas_no_academicas")
+                    .getResultStream().findFirst().orElse(null);
+           return ResultadoEJB.crearCorrecto(eventoBajas != null, "Evento activo de bajas casusas no académicas");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
+    
       /**
      * Permite obtener la lista de tipos de baja activas para registrar la baja
      * @return Resultado del proceso
@@ -185,20 +201,30 @@ public class EjbRegistroBajas {
         }
     }
     
-    
      /**
      * Permite obtener la lista de causas de baja para registrar la baja
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<BajasCausa>> getCausasBaja(){
         try{
-            
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date fechaMaxima= sdf.parse("2021-04-24");
-        Date fechaActual = new Date();
-        List<BajasCausa> bajasCausas = new ArrayList<>();
-         
-            if(fechaActual.before(fechaMaxima)){
+            List<BajasCausa> bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.cveCausa NOT IN (5,11,21,23,24) ORDER BY bc.causa ASC", BajasCausa.class)
+                    .getResultList();
+        
+            return ResultadoEJB.crearCorrecto(bajasCausas, "Lista de causas de baja para realizar el registro de baja.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de causas de baja para el registro de baja. (EjbRegistroBajas.getCausasBaja)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de causas de baja para trámite de baje del tutor
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<BajasCausa>> getCausasBajaTutor(){
+        try{
+         Boolean eventoBajas = buscarEventoActivoBajas().getValor();
+         List<BajasCausa> bajasCausas = new ArrayList<>();
+            if(eventoBajas){
                 bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.cveCausa NOT IN (5,11,21,23,24) ORDER BY bc.causa ASC", BajasCausa.class)
                     .getResultList();
             } else{
@@ -207,7 +233,7 @@ public class EjbRegistroBajas {
             }
             return ResultadoEJB.crearCorrecto(bajasCausas, "Lista de causas de baja para realizar el registro de baja.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de causas de baja para el registro de baja. (EjbRegistroBajas.getCausasBaja)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de causas de baja para el registro de baja. (EjbRegistroBajas.getCausasBajaTutor)", e, null);
         }
     }
 
@@ -285,7 +311,9 @@ public class EjbRegistroBajas {
                            .setParameter("grupo", estudiante.getEstudiante().getGrupo().getIdGrupo())
                            .getResultList();
                    
-                    listaCargasAcademicas.forEach(cargaAcademica -> {
+                    List<CargaAcademica> listaCargasReprobadas = obtenerMateriasReprobadas(listaCargasAcademicas, estudianteBaja).getValor();
+                   
+                    listaCargasReprobadas.forEach(cargaAcademica -> {
                             BajaReprobacion bajaReprobacion = new BajaReprobacion();
                             bajaReprobacion.setRegistroBaja(registroBaja);
                             bajaReprobacion.setCargaAcademica(cargaAcademica);
@@ -400,7 +428,46 @@ public class EjbRegistroBajas {
             
             return ResultadoEJB.crearCorrecto(listaMateriasReprobadas, "Lista de materias reprobadas.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias reprobdas. (EjbRegistroBajas.buscarMateriasReprobadas)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias reprobadas. (EjbRegistroBajas.buscarMateriasReprobadas)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de materias que reprobó el estudiante y se registrarán en la baja por reprobación
+     * @param listaCargasAcademicas
+     * @param estudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<CargaAcademica>> obtenerMateriasReprobadas(List<CargaAcademica> listaCargasAcademicas, Estudiante estudiante) {
+        try{
+            List<CargaAcademica> listaMateriasReprobadas = new ArrayList<>();
+           
+            listaCargasAcademicas.forEach(carga -> {
+                CalificacionPromedio calificacionPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionPromedio.class)
+                    .setParameter("carga", carga.getCarga())
+                    .setParameter("estudiante", estudiante.getIdEstudiante())
+                    .getResultStream().findFirst().orElse(null);
+                
+                if(calificacionPromedio == null){
+                    listaMateriasReprobadas.add(carga);
+                }else{
+                    if(calificacionPromedio.getValor()<8){
+                        CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
+                            .setParameter("carga", carga.getCarga())
+                            .setParameter("estudiante", estudiante.getIdEstudiante())
+                            .getResultStream().findFirst().orElse(null);
+                        
+                        if(calificacionNivelacion == null || calificacionNivelacion.getValor()<8){
+                            listaMateriasReprobadas.add(carga);
+                        }
+                    }
+                }
+                
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaMateriasReprobadas, "Lista de materias reprobadas del estudiante a registrar.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias reprobadas del estudiante a registrar. (EjbRegistroBajas.obtenerMateriasReprobadas)", e, null);
         }
     }
     
@@ -657,7 +724,9 @@ public class EjbRegistroBajas {
                            .setParameter("grupo", estudiante.getEstudiante().getGrupo().getIdGrupo())
                            .getResultList();
                    
-                    listaCargasAcademicas.forEach(cargaAcademica -> {
+                    List<CargaAcademica> listaCargasReprobadas = obtenerMateriasReprobadas(listaCargasAcademicas, estudianteBaja).getValor();
+                   
+                    listaCargasReprobadas.forEach(cargaAcademica -> {
                             BajaReprobacion bajaReprobacion = new BajaReprobacion();
                             bajaReprobacion.setRegistroBaja(registroBaja);
                             bajaReprobacion.setCargaAcademica(cargaAcademica);
@@ -708,7 +777,9 @@ public class EjbRegistroBajas {
                            .setParameter("grupo", registroBaja.getEstudiante().getGrupo().getIdGrupo())
                            .getResultList();
                    
-                    listaCargasAcademicas.forEach(cargaAcademica -> {
+                    List<CargaAcademica> listaCargasReprobadas = obtenerMateriasReprobadas(listaCargasAcademicas, registroBaja.getEstudiante()).getValor();
+                   
+                    listaCargasReprobadas.forEach(cargaAcademica -> {
                             BajaReprobacion bajaReprobacion = new BajaReprobacion();
                             bajaReprobacion.setRegistroBaja(registroBaja);
                             bajaReprobacion.setCargaAcademica(cargaAcademica);
