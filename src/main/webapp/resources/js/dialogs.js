@@ -26,3 +26,19 @@ function contarCaracteresAcciones(){
 function contarCaracteresObservaciones(){
 	document.getElementById('frmModalEditarObservaciones:txtCaracteresRestantes').value = 500 - document.getElementById('frmModalEditarObservaciones:observacionesDocumento').value.length;
 }
+
+function contarCaracteresProyectoEstadiaRegistro(){
+	document.getElementById('frmModalRegistroInfEst:txtCaracteresRestantesR').value = 1000 - document.getElementById('frmModalRegistroInfEst:proyectoR').value.length;
+}
+
+function contarCaracteresProyectoEstadiaEdicion(){
+	document.getElementById('frmModalEdicionInfEst:txtCaracteresRestantesA').value = 1000 - document.getElementById('frmModalEdicionInfEst:proyectoA').value.length;
+}
+
+function calcularSemanasEstadia(){
+	var fechaini = new Date(document.getElementById('frmModalCapturaEmpProy:fechaInicio').value);
+	var fechafin = new Date(document.getElementById('frmModalCapturaEmpProy:fechaFin').value);
+	var diasdif= fechafin.getTime()-fechaini.getTime();
+	var contdias = Math.round(diasdif/(1000*60*60*24));
+	document.getElementById('frmModalCapturaEmpProy:txtCaracteresRestantes').value = contdias;
+}

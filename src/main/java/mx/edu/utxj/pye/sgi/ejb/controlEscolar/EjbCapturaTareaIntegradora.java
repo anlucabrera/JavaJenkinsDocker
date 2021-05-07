@@ -404,7 +404,21 @@ public class EjbCapturaTareaIntegradora {
             return ResultadoEJB.crearCorrecto(indicadores, "Lista de indicadores de evaluación.");
         }catch (Exception e){
             System.out.println("EjbCapturaTareaIntegradora.consultarIndicadores");
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores de evaluación (EjbCapturaTareaIntegradora.generarContenedorCalificaciones)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de indicadores de evaluación (EjbCapturaTareaIntegradora.consultarIndicadores)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de evidencias de evaluación
+     * @return Lista de indicadores o código de error.
+     */
+    public ResultadoEJB<List<EvidenciaEvaluacion>> consultarEvidencias(){
+        try{
+            List<EvidenciaEvaluacion> evidencias = em.createQuery("select e from EvidenciaEvaluacion e where e.activo=true order by e.descripcion", EvidenciaEvaluacion.class).getResultList();
+            return ResultadoEJB.crearCorrecto(evidencias, "Lista de evidencias de evaluación.");
+        }catch (Exception e){
+            System.out.println("EjbCapturaTareaIntegradora.consultarEvidencias");
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias de evaluación (EjbCapturaTareaIntegradora.consultarEvidencias)", e, null);
         }
     }
     

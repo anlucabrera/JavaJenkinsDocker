@@ -395,7 +395,7 @@ public class EjbPacker {
             DtoGrupoEstudiante dtoGrupoEstudiante = new DtoGrupoEstudiante(dtoCargaAcademica, dtoCapturaCalificaciones);
             return ResultadoEJB.crearCorrecto(dtoGrupoEstudiante, "Grupo empaquetado");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el grupo con estudiantes a partir de una carga academica(EjbPacker.packEstudiante).", e, DtoGrupoEstudiante.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el grupo con estudiantes a partir de una carga academica(EjbPacker.packGrupoEstudiante).", e, DtoGrupoEstudiante.class);
         }
     }
     
@@ -564,7 +564,7 @@ public class EjbPacker {
             return ResultadoEJB.crearCorrecto(dtoCapturaCalificacion, "Captura de calificación empaquetada");
         }catch (Exception e){
             e.printStackTrace();
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la captura de calificaciones a partir del empaquetado de estudiante y carga academica(EjbPacker.packCapturaCalificacion).", e, DtoCapturaCalificacionAlineacion.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la captura de calificaciones a partir del empaquetado de estudiante y carga academica(EjbPacker.packCapturaCalificacionAlineacion).", e, DtoCapturaCalificacionAlineacion.class);
         }
     }
 
@@ -820,10 +820,10 @@ public class EjbPacker {
             if(res.getCorrecto()) {
                 List<DtoEstudiante> dtoEstudiantes = res.getValor();
                 String tipoEval ="Nivelación Final";
-                Boolean activaPorFecha = Boolean.FALSE;
-                if(dtoCargaAcademica.getPeriodo().getPeriodo() == eventoEscolar.getPeriodo()){
-                 activaPorFecha = eventoEscolar == null?false:DateUtils.isBetweenWithRange(new Date(), eventoEscolar.getInicio(), eventoEscolar.getFin(), ejbCapturaCalificaciones.leerDiasRangoParaCapturarUnidad());
-                }
+//                Boolean activaPorFecha = Boolean.FALSE;
+//                if(dtoCargaAcademica.getPeriodo().getPeriodo() == eventoEscolar.getPeriodo()){
+                 Boolean activaPorFecha = eventoEscolar == null?false:DateUtils.isBetweenWithRange(new Date(), eventoEscolar.getInicio(), eventoEscolar.getFin(), ejbCapturaCalificaciones.leerDiasRangoParaCapturarUnidad());
+//                }
                 PermisosCapturaExtemporaneaGrupal permiso = em.createQuery("select p from PermisosCapturaExtemporaneaGrupal p inner join p.idPlanMateria pm inner join p.idGrupo g where current_date between  p.fechaInicio and p.fechaFin and g.idGrupo=:grupo and p.docente=:docente and pm.idMateria.idMateria=:materia and p.tipoEvaluacion=:tipo and p.validada=:valor", PermisosCapturaExtemporaneaGrupal.class)
                         .setParameter("docente", dtoCargaAcademica.getDocente().getPersonal().getClave())
                         .setParameter("grupo", dtoCargaAcademica.getGrupo().getIdGrupo())
@@ -958,8 +958,8 @@ public class EjbPacker {
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la calificación de nivelación (EjbPacker.packDtoCalificacionNivelacion).", e, DtoCalificacionNivelacion.class);
         }
     }
-
-    /**
+    
+     /**
      * Permite empaquetar un área institucional y su categoría
      * @param area Clave del área requerida
      * @return Regresa el empaquetado, código 1 para error desconocido, código 2  para indicar una clave incorrecta o código 3 para indicar que el área no tiene categoría

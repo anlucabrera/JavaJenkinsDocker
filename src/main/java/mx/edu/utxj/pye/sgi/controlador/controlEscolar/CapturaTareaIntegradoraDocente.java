@@ -99,6 +99,10 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             ResultadoEJB<List<Indicador>> consultarIndicadores = ejb.consultarIndicadores();
             if(consultarIndicadores.getCorrecto()) rol.setIndicadores(consultarIndicadores.getValor());
             else mostrarMensajeResultadoEJB(consultarIndicadores);
+            
+            ResultadoEJB<List<EvidenciaEvaluacion>> consultarEvidencias = ejb.consultarEvidencias();
+            if(consultarEvidencias.getCorrecto()) rol.setEvidencias(consultarEvidencias.getValor());
+            else mostrarMensajeResultadoEJB(consultarEvidencias);
 
             //Faces.getContext().getExternalContext().get
 //            PeriodosEscolares periodo = Faces.getSessionAttribute("periodo");
@@ -123,8 +127,13 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
         //Se tiene que comentar antes de que inicie el próximo cuatrimestre
         try {
             if(rol.getDocenteLogueado().getPersonal().getClave().intValue() == 169) {
-                ResultadoEJB<Point> registrarMasivamentePromedios = ejbRegistraPromedioAsignatura.registrarMasivamentePromedios();
-                System.out.println("registrarMasivamentePromedios = " + registrarMasivamentePromedios);
+                if(rol.getPeriodoSeleccionado().getPeriodo()<=56){
+                    ResultadoEJB<Point> registrarMasivamentePromedios = ejbRegistraPromedioAsignatura.registrarMasivamentePromedios();
+                    System.out.println("registrarMasivamentePromedios = " + registrarMasivamentePromedios);
+                }else{
+                    ResultadoEJB<Point> registrarMasivamentePromedios = ejbRegistraPromedioAsignatura.registrarMasivamentePromediosAlineacion();
+                    System.out.println("registrarMasivamentePromediosAlineacion = " + registrarMasivamentePromedios);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -424,28 +433,36 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
 
     public DtoUnidadesCalificacion getContenedor(@NonNull DtoCargaAcademica dtoCargaAcademica){
         if(rol.getDtoUnidadesCalificacionMap().containsKey(dtoCargaAcademica)) return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
-
-        ResultadoEJB<DtoUnidadesCalificacion> resDtoUnidadesCalificacion = packer.packDtoUnidadesCalificacion(dtoCargaAcademica, getUnidades(dtoCargaAcademica), rol.getEventoActivo());
-        if(!resDtoUnidadesCalificacion.getCorrecto()){
-            mostrarMensaje("No se detectaron registros de calificaciones de la carga seleccionada. " + resDtoUnidadesCalificacion.getMensaje());
-            return null;
+        
+        if(rol.getEventoActivo()!= null){
+            ResultadoEJB<DtoUnidadesCalificacion> resDtoUnidadesCalificacion = packer.packDtoUnidadesCalificacion(dtoCargaAcademica, getUnidades(dtoCargaAcademica), rol.getEventoActivo());
+                if(!resDtoUnidadesCalificacion.getCorrecto()){
+                mostrarMensaje("No se detectaron registros de calificaciones de la carga seleccionada. " + resDtoUnidadesCalificacion.getMensaje());
+                return null;
+            }
+            rol.getDtoUnidadesCalificacionMap().put(dtoCargaAcademica, resDtoUnidadesCalificacion.getValor());
+            return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
+        }else{
+            mostrarMensaje("No existe evento activo para captura de tarea integradora y nivelación final. ");
+            return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
         }
-
-        rol.getDtoUnidadesCalificacionMap().put(dtoCargaAcademica, resDtoUnidadesCalificacion.getValor());
-        return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
     }
     
     public DtoUnidadesCalificacionAlineacion getContenedorAlineacion(@NonNull DtoCargaAcademica dtoCargaAcademica){
         if(rol.getDtoUnidadesCalificacionAlineacionMap().containsKey(dtoCargaAcademica)) return rol.getDtoUnidadesCalificacionAlineacionMap().get(dtoCargaAcademica);
-
-        ResultadoEJB<DtoUnidadesCalificacionAlineacion> resDtoUnidadesCalificacion = packer.packDtoUnidadesCalificacionAlineacion(dtoCargaAcademica, getUnidadesAlineacion(dtoCargaAcademica), rol.getEventoActivo());
-        if(!resDtoUnidadesCalificacion.getCorrecto()){
-            mostrarMensaje("No se detectaron registros de calificaciones de la carga seleccionada. " + resDtoUnidadesCalificacion.getMensaje());
-            return null;
+           
+        if(rol.getEventoActivo()!= null){
+            ResultadoEJB<DtoUnidadesCalificacionAlineacion> resDtoUnidadesCalificacion = packer.packDtoUnidadesCalificacionAlineacion(dtoCargaAcademica, getUnidadesAlineacion(dtoCargaAcademica), rol.getEventoActivo());
+            if(!resDtoUnidadesCalificacion.getCorrecto()){
+                mostrarMensaje("No se detectaron registros de calificaciones de la carga seleccionada. " + resDtoUnidadesCalificacion.getMensaje());
+                return null;
+            }
+             rol.getDtoUnidadesCalificacionAlineacionMap().put(dtoCargaAcademica, resDtoUnidadesCalificacion.getValor());
+             return rol.getDtoUnidadesCalificacionAlineacionMap().get(dtoCargaAcademica);
+        }else{
+            mostrarMensaje("No existe evento activo para captura de tarea integradora y nivelación final. ");
+            return rol.getDtoUnidadesCalificacionAlineacionMap().get(dtoCargaAcademica);
         }
-
-        rol.getDtoUnidadesCalificacionAlineacionMap().put(dtoCargaAcademica, resDtoUnidadesCalificacion.getValor());
-        return rol.getDtoUnidadesCalificacionAlineacionMap().get(dtoCargaAcademica);
     }
 
     public DtoCalificacionNivelacion getNivelacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
