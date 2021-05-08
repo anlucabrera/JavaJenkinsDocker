@@ -108,7 +108,7 @@
                                             <center>
                                                 <p:remoteCommand name="actualizar" update="@form:tbListaSeguimientoEstadia" />
                                                 <p:dataTable id="tbListaSeguimientoEstadia" var="segEst" value="#{seguimientoEstadiaVinculacion.rol.estudiantesSeguimiento}"
-                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No hay seguimientos de estadía registrados para esta generación"
                                                              tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50,60" resizeMode="expand"
                                                              editable="true" editMode="cell" expandableRowGroups="true"
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">

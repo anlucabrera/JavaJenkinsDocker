@@ -108,7 +108,7 @@
                                             <center>
                                                 <p:remoteCommand name="actualizar" update="@form:tbListaSeguimientoEstadia" />
                                                 <p:dataTable id="tbListaSeguimientoEstadia" var="segEst" value="#{seguimientoEstadiaDirector.rol.estudiantesSeguimiento}"
-                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="Los asesores académicos no han realizado la asignación de estudiantes de esta generación"
                                                              tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50,60" resizeMode="expand"
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                                     <f:facet name="header">
