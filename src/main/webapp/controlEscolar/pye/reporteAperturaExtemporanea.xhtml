@@ -115,7 +115,7 @@
                                                             <p:column rowspan="2" headerText="Estudiante" style="width: 300px;" sortBy="#{permiso.estudiante}" filterBy="#{permiso.estudiante}" filterMatchMode="contains"/>
                                                             <p:column rowspan="2" headerText="Grupo" style="width: 150px;" sortBy="#{permiso.grupo.grado}° #{permiso.grupo.literal} #{permiso.grupo.idSistema.nombre}" filterBy="#{permiso.grupo.grado}° #{permiso.grupo.literal} #{permiso.grupo.idSistema.nombre}" filterMatchMode="contains"/>
                                                             <p:column rowspan="2" headerText="Materia" style="width: 250px;" sortBy="#{permiso.planMateria.idMateria.nombre}" filterBy="#{permiso.planMateria.idMateria.nombre}" filterMatchMode="contains"/>
-                                                            <p:column rowspan="2" headerText="Unidad" style="width: 300px;" sortBy="#{permiso.unidadMateria.noUnidad}. #{permiso.unidadMateria.nombre}" filterBy="#{permiso.unidadMateria.noUnidad}. #{permiso.unidadMateria.nombre}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Unidad" style="width: 300px;" sortBy="#{permiso.unidad}" filterBy="#{permiso.unidad}" filterMatchMode="contains"/>
                                                             <p:column rowspan="2" headerText="Justificación" style="width: 300px;" sortBy="#{permiso.justificacion}" filterBy="#{permiso.justificacion}" filterMatchMode="contains"/>
                                                         </p:row>
                                                         <p:row>
@@ -152,7 +152,7 @@
                                                         <h:outputText value="#{permiso.planMateria.idMateria.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: justify;">
-                                                        <h:outputText value="#{permiso.unidadMateria.noUnidad}. #{permiso.unidadMateria.nombre}"/>
+                                                        <h:outputText value="#{permiso.unidad}"/>
                                                     </p:column>
                                                     <p:column style="text-align: justify;">
                                                         <h:outputText value="#{permiso.justificacion}"/>
