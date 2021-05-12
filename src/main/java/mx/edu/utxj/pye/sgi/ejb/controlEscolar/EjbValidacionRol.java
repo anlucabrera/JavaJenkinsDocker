@@ -237,6 +237,27 @@ public class EjbValidacionRol {
             return ResultadoEJB.crearErroneo(1, "No se ha podido realizar correctamente la validación. (EjbValidacionRol.validarPsicopedagogia)", e, null);
         }
     }
+    public ResultadoEJB<Filter<PersonalActivo>> validarRegistroPlantillaPlanAccionTutorial(Integer clave){   
+        try {
+            String pista = ",".concat(String.valueOf(clave).trim()).concat(",").trim();
+            ConfiguracionPropiedades claveConfiguracionPropiedad = Objects.requireNonNull(em.createQuery("SELECT c FROM ConfiguracionPropiedades c WHERE c.tipo = :tipo AND c.clave = :clave AND c.valorCadena LIKE CONCAT('%',:pista,'%')", ConfiguracionPropiedades.class)
+                    .setParameter("tipo", "Cadena")
+                    .setParameter("pista", pista)
+                    .setParameter("clave", "registroPlantillaPlanAccionTutorial")
+                    .getResultStream()
+                    .findFirst().orElse(new ConfiguracionPropiedades()));
+            if (claveConfiguracionPropiedad.getClave() == null || claveConfiguracionPropiedad.getClave().equals("") || claveConfiguracionPropiedad.getClave().isEmpty()) {
+                return ResultadoEJB.crearErroneo(2, null, "No se ha encontrado la clave del trabajador, no tiene asignado el módulo");
+            } else {
+                PersonalActivo p = ejbPersonalBean.pack(clave);
+                Filter<PersonalActivo> filtro = new Filter<>();
+                filtro.setEntity(p);
+                return ResultadoEJB.crearCorrecto(filtro, "Se ha encontrado la clave de trabajador asignada a este módulo");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido realizar correctamente la validación. (EjbValidacionRol.validarRegistroPlantillaPlanAccionTutorial)", e, null);
+        }
+    }
     public ResultadoEJB<Filter<PersonalActivo>> validarFortalecimiento(Integer clave){
         try{
             PersonalActivo p = ejbPersonalBean.pack(clave);
