@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Registro de evidencias e instrumentos de evaluación
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{registroEvidInstEvalMateriasDireccion.cargado}">
+            <adm:breadcrumb title="Registro de evidencias e instrumentos de evaluación"/>
+            <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
+            <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+            </p:panel>
+            <div class="contenedor">
+                <c:if test="#{registroEvidInstEvalMateriasDireccion.tieneAcceso}">
+                    <!-- zona de importación de enums -->
+                    <h:form id="frm" prependId="false" class="form-inline">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <div id="main-buttons" class="hidden-sm hidden-xs">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+                                            <p:outputLabel value="Periodo activo para registro:" />
+                                            <p:spacer width="5" />
+
+                                        </f:facet>
+                                        <f:facet name="right">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <div class="btn-group">
+                                            <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
+                                        </div>
+                                        <c:if test="#{controladorArchivoRegistroEvidInst.etapa eq etapa.CARGAR}">
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="registroEvidInstEvalMateria?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
+                                        </c:if>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{registroEvidInstEvalMateriasDireccion.descargarPlantilla()}" title="Descargar Plantilla"><i class="fa fa-download" /></p:commandLink>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/controlEscolar/director/registroAlineacion?faces-redirect=true" title="Regresar a menú registro de alineación"><i class="fa fa-reply"></i></p:commandLink>
+                                        <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}" onclick="PF('modalAyuda').show();" title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question"/></p:commandLink>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                                <div class="box box-solid">
+                                    <div class="box-body">
+                                        <c:set var="casilla1" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                        <div class="row margin-bottom" style="margin-top: 20px;">
+                                            <div class="#{casilla1}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="programa" value="#{registroEvidInstEvalMateriasDireccion.rol.programaEducativo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarPrograma}">
+                                                        <f:selectItems value="#{registroEvidInstEvalMateriasDireccion.rol.programasEducativos}" var="programa" itemValue="#{programa}" itemLabel="#{programa.nombre}" />
+                                                        <p:ajax process="@this"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Programa Educativo" for="programa"/>
+                                                    <p:message for="programa" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="periodo" value="#{registroEvidInstEvalMateriasDireccion.rol.periodoEscolar}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarPeriodo}">
+                                                        <f:selectItems value="#{registroEvidInstEvalMateriasDireccion.rol.periodosEscolares}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}"/>
+                                                        <p:ajax update="@this" process="@this"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Periodo" for="periodo"/>
+                                                    <p:message for="periodo" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12 border-right">
+                                                <div class="description-block">
+                                                    <div class="box box-primary">
+                                                        <div class="box-header with-border">                                                                    
+                                                            <div class="col-sm-12">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong>Clave plan</strong>
+                                                                        <p class="text-muted">
+                                                                        #{registroEvidInstEvalMateriasDireccion.rol.planEstudioRegistrado.idPlanEstudio} 
+                                                                        </p>
+                                                                        <hr/>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong>Programa educativo</strong>
+                                                                        <p class="text-muted">
+                                                                         #{registroEvidInstEvalMateriasDireccion.rol.programaEducativo.nombre}
+                                                                        </p>
+                                                                        <hr/>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong>Año</strong>
+                                                                        <p class="text-muted">
+                                                                         #{registroEvidInstEvalMateriasDireccion.rol.planEstudioRegistrado.anio}
+                                                                        </p>
+                                                                        <hr/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                                <center>
+                                                    <br />
+                                                    <br />
+                                                    <p:outputLabel for="agregarEvidencia" style="font-size: large" value="#{registroEvidInstEvalMateriasDireccion.rol.agregarEvidencia?'No agregará más evidencias':'Agregar más evidencias'}" />
+                                                       <p:inputSwitch id="agregarEvidencia" class="form-control" value="#{registroEvidInstEvalMateriasDireccion.rol.agregarEvidencia}" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarAgregarEvid}"> 
+                                                           <p:ajax update="tbAgregarEvid" process="@this" />
+                                                           <p:autoUpdate />
+                                                        </p:inputSwitch>
+                                                    <p:message for="agregarEvidencia" display="tooltip" />
+                                                       <br />
+                                                       <br />
+                                                       <p:panel id="tbAgregarEvid" rendered="#{registroEvidInstEvalMateriasDireccion.rol.agregarEvidencia}">
+                                                           <div class="form-group">
+                                                               <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                   <strong>¿Cómo desea agregar la nueva evidencia e instrumentos de evaluación?</strong> 
+                                                                   <p class="text-muted">                             
+                                                                       <p:selectOneRadio id="tipoAgregarEvid" value="#{registroEvidInstEvalMateriasDireccion.rol.tipoAgregarEvid}" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarTipoAgregarEvid}">
+                                                                           <f:selectItem itemLabel="Masiva (Aplicar asignación a todas las unidades)" itemValue="masivaEvid" />
+                                                                           <f:selectItem itemLabel="Por Unidad (Asignación por unidad)" itemValue="individualEvid" />
+                                                                           <p:ajax update="@this" process="@this"/>
+                                                                           <p:autoUpdate />
+                                                                       </p:selectOneRadio> 
+                                                                   </p>
+                                                               </div>
+                                                               <div class="col-sm-12 col-md-12 col-lg-12"></div>
+                                                               <div class="col-sm-12 col-md-12 col-lg-12"></div>
+                                                               <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                   <strong>Grados:</strong> 
+                                                                   <p class="text-muted">                             
+                                                                       <p:selectOneMenu id="grado" value="#{registroEvidInstEvalMateriasDireccion.rol.grado}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarGrado}">
+                                                                           <f:selectItems value="#{registroEvidInstEvalMateriasDireccion.rol.grados}" var="grado" itemValue="#{grado}" itemLabel="#{grado}°" />
+                                                                           <p:ajax update="@this" process="@this" />
+                                                                           <p:autoUpdate />
+                                                                       </p:selectOneMenu>  
+                                                                   </p>
+                                                               </div>
+                                                               <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                   <strong>Materias:</strong> 
+                                                                   <p class="text-muted">                             
+                                                                       <p:selectOneMenu id="materia" value="#{registroEvidInstEvalMateriasDireccion.rol.materia}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarMateria}">
+                                                                           <f:selectItems value="#{registroEvidInstEvalMateriasDireccion.rol.materias}" var="materia" itemValue="#{materia}" itemLabel="#{materia.nombre}" />
+                                                                           <p:ajax update="@this" process="@this" />
+                                                                           <p:autoUpdate />
+                                                                       </p:selectOneMenu>  
+                                                                   </p>
+                                                               </div>
+                                                               
+                                                               <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                   <strong>Unidades:</strong> 
+                                                                   <p class="text-muted">                             
+                                                                       <p:selectOneMenu id="unidad" value="#{registroEvidInstEvalMateriasDireccion.rol.unidadMateria}" rendered="#{registroEvidInstEvalMateriasDireccion.rol.tipoAgregarEvid eq 'individualEvid'}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarUnidad}">
+                                                                           <f:selectItems value="#{registroEvidInstEvalMateriasDireccion.rol.unidadMaterias}" var="unidad" itemValue="#{unidad}" itemLabel="#{unidad.unidadMateria.noUnidad}. #{unidad.unidadMateria.nombre}" />
+                                                                           <p:ajax update="@this" process="@this" />
+                                                                           <p:autoUpdate />
+                                                                       </p:selectOneMenu>  
+                                                                       <h:outputText value="Todas las unidades" rendered="#{registroEvidInstEvalMateriasDireccion.rol.tipoAgregarEvid eq 'masivaEvid'}"/>
+                                                                   </p>
+                                                               </div>
+                                                               <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                   <strong>Categoría:</strong> 
+                                                                   <p class="text-muted">                               
+                                                                       <p:selectOneMenu id="categoria" value="#{registroEvidInstEvalMateriasDireccion.rol.categoria}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarCategoria}">
+                                                                           <f:selectItems value="#{registroEvidInstEvalMateriasDireccion.rol.categorias}" var="categoria" itemValue="#{categoria}" itemLabel="#{categoria.tipo}"/>
+                                                                           <p:ajax update="@this" process="@this" />
+                                                                           <p:autoUpdate />
+                                                                       </p:selectOneMenu>  
+                                                                   </p>
+                                                               </div>
+                                                               <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                   <strong>Evidencia:</strong> 
+                                                                   <p class="text-muted">                               
+                                                                       <p:selectOneMenu id="evidencia" value="#{registroEvidInstEvalMateriasDireccion.rol.evidencia}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarEvidencia}">
+                                                                           <f:selectItems value="#{registroEvidInstEvalMateriasDireccion.rol.evidencias}" var="evidencia" itemValue="#{evidencia}" itemLabel="#{evidencia.descripcion}" />
+                                                                           <p:ajax update="@this" process="@this" />
+                                                                           <p:autoUpdate />
+                                                                       </p:selectOneMenu>
+                                                                   </p>
+                                                               </div>
+                                                               <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                   <strong>Instrumento:</strong> 
+                                                                   <p class="text-muted">                             
+                                                                       <p:selectOneMenu id="instrumento" value="#{registroEvidInstEvalMateriasDireccion.rol.instrumento}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarInstrumento}">
+                                                                           <f:selectItems value="#{registroEvidInstEvalMateriasDireccion.rol.instrumentos}" var="instrumento" itemValue="#{instrumento}" itemLabel="#{instrumento.descripcion}" />
+                                                                           <p:ajax update="@this" process="@this" />
+                                                                           <p:autoUpdate />
+                                                                       </p:selectOneMenu>
+                                                                   </p>
+                                                               </div>
+                                                               <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                   <strong>Meta instrumento:</strong> 
+                                                                   <p class="text-muted">                             
+                                                                       <p:inputNumber id="metaInstrumento" value="#{registroEvidInstEvalMateriasDireccion.rol.metaInstrumento}" size="5" symbol="%" symbolPosition="s" required="true" emptyValue="empty" minValue="0" maxValue="100"/>
+                                                                   </p>
+                                                               </div>
+                                                               <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                   <strong>Agregar</strong> 
+                                                                   <p class="text-muted">
+                                                                       <p:commandButton actionListener="#{registroEvidInstEvalMateriasDireccion.agregarNuevaEvidencia()}" class="btn btn-sm btn-info" icon="fa fa-check" title="Agregar evidencia."/>
+                                                                   </p>
+                                                               </div>
+                                                               <br/><br/>
+                                                           </div>
+                                                       </p:panel>
+                                                       <br />
+                                                       <br />
+                                                    <p:dataTable id="tbEvidInstReg" var="evidInstReg" value="#{registroEvidInstEvalMateriasDireccion.rol.listaEvidenciasInstrumentos}"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive" resizeMode="expand" emptyMessage="No hay información registrada">
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column headerText="Grado" style="width: 80px;" sortBy="#{evidInstReg.planEstudioMateria.grado}" filterBy="#{evidInstReg.planEstudioMateria.grado}" filterMatchMode="contains"/>
+                                                                <p:column headerText="Materia" style="width: 80px;" sortBy="#{evidInstReg.planEstudioMateria.idMateria.nombre}" filterBy="#{evidInstReg.planEstudioMateria.idMateria.nombre}" filterMatchMode="contains"/> 
+                                                                <p:column headerText="Clave Materia" style="width: 80px;"/> 
+                                                                <p:column headerText="No. Unidad" style="width: 80px;" sortBy="#{evidInstReg.evaluacionSugerida.unidadMateria.noUnidad}" filterBy="#{evidInstReg.evaluacionSugerida.unidadMateria.noUnidad}" filterMatchMode="contains"/> 
+                                                                <p:column headerText="Unidad" style="width: 250px;"/> 
+                                                                <p:column headerText="Categoría de evaluación" style="width: 120px;"/>
+                                                                <p:column headerText="% Categoría" style="width: 100px;"/>
+                                                                <p:column headerText="Eliminar" style="width: 100px;"/>
+                                                                <p:column headerText="Evidencia" style="width: 150px;"/>
+                                                                <p:column headerText="Instrumento de evaluación" style="width: 150px;"/>
+                                                                <p:column headerText="Meta del instrumento" style="width: 100px;"/>
+                                                            </p:row>
+                                                        </p:columnGroup>
+                                                        <p:column groupRow="true" style="text-align: center;">
+                                                            <h:outputText value="#{evidInstReg.planEstudioMateria.grado}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true" style="text-align: center;">
+                                                            <h:outputText value="#{evidInstReg.planEstudioMateria.idMateria.nombre}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true" style="text-align: center;">
+                                                            <h:outputText value="#{evidInstReg.planEstudioMateria.claveMateria}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true" style="text-align: center;">
+                                                            <h:outputText value="#{evidInstReg.evaluacionSugerida.unidadMateria.noUnidad}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true" style="text-align: justify;">
+                                                            <h:outputText value="#{evidInstReg.evaluacionSugerida.unidadMateria.nombre}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true" style="text-align: justify;">
+                                                            <h:outputText value="#{evidInstReg.evaluacionSugerida.evidencia.criterio.tipo}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true" style="text-align: center;">
+                                                            <h:outputText value="#{evidInstReg.evaluacionSugerida.evidencia.criterio.porcentajeRecomendado}"><f:convertNumber type="number"/></h:outputText>%
+                                                        </p:column>
+                                                        <p:column>
+                                                            <center>
+                                                                <p:commandButton actionListener="#{registroEvidInstEvalMateriasDireccion.eliminarEvidencia(evidInstReg)}" class="btn btn-sm btn-info" icon="fa fa-minus" title="Eliminar evidencia."/>
+                                                            </center>
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{evidInstReg.evaluacionSugerida.evidencia.descripcion}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{evidInstReg.evaluacionSugerida.instrumento.descripcion}" />
+                                                        </p:column>
+                                                        <p:column style="text-align: center;">
+                                                            <h:outputText value="#{evidInstReg.evaluacionSugerida.metaInstrumento}"><f:convertNumber type="number"/></h:outputText>%
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                    <p></p>
+                                                    <p></p>
+                                                    <p></p>
+                                                </center>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                    <c:if test="#{!empty registroEvidInstEvalMateriasDireccion.alertas || true}">
+                        <div class="box box-info">
+                            <div class="box-header">
+                                <ui:include src="/includes/alertas.xhtml">
+                                    <ui:param name="alertas" value="#{registroEvidInstEvalMateriasDireccion.alertas}"></ui:param>
+                                </ui:include>
+                            </div>
+                        </div>
+                    </c:if>
+                    <!-- Zona de cuadros de diálogo -->
+                    <p:dialog id="modalAyuda"
+                              widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                              modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                        <div class="box box-primary">
+                            <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para el registro de evidencias e instrumentos de evaluación</h3></div>
+                            <div class="box-body">
+                                <ul class="todo-list">
+                                    <c:forEach items="#{registroEvidInstEvalMateriasDireccion.rol.instrucciones}" var="instruccion">
+                                        <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                            <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                        </div>
+                    </p:dialog>
+                </c:if>
+                <c:if test="#{!registroEvidInstEvalMateriasDireccion.tieneAcceso}">
+                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="El acceso solo está autorizado para direcciones de carrera."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </div>
+            <script>
+                //collapseSidebar(); activar para colapsar barra lateral
+            </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

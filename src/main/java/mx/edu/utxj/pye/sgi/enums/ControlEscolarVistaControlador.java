@@ -38,7 +38,8 @@ public enum ControlEscolarVistaControlador {
     SEGUIMIENTO_CUESTIONARIO_PSICOPEDAGOGICO_DIRECTOR("/controlEscolar/director/seguimientoCuestionarioPsicopedagogicoDirector.xhtml", SeguimientoCuestionariopsiDirector.class),
     ASIGNACION_ROLES_ESTADIA("/controlEscolar/director/asignacionesRolesEstadia.xhtml", AsignacionRolesEstadiaDirector.class),
     SEGUIMIENTO_ESTADIA_DIRECTOR("/controlEscolar/director/seguimientoEstadiaDirector.xhtml", SeguimientoEstadiaDirector.class),
-
+    REGISTRO_EVIDINST_EVALUACION("/controlEscolar/director/registroEvidInstEvalMateria.xhtml", RegistroEvidInstEvalMateriasDireccion.class),
+    
     REASIGNACION_ACADEMICA("/controlEscolar/se/asignacion_academica.xhtml",  AsignacionAcademicaEscolares.class),
     REINCORPORACION("/controlEscolar/se/reincorporaciones.xhtml", ReincorporacionServiciosEscolares.class),
     GENERACION_GRUPOS("/controlEscolar/se/generacionGrupos.xhtml", GeneracionGruposServiciosEscolares.class),
