@@ -68,14 +68,22 @@ public class PlantillaPlanAccionTutorialPsicopedagogia extends ViewScopedRol imp
             cargado = true;
             
             setVistaControlador(ControlEscolarVistaControlador.REGISTRO_PlANTILLA_PLAN_ACCION_TUTORIAL_PSICOPEDAGOGIA);
+            
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejbValidacionRol.validarPsicopedagogia(logonMB.getPersonal().getClave());
-            if(!resAcceso.getCorrecto()){mostrarMensajeResultadoEJB(resAcceso);return;}
+            ResultadoEJB<Filter<PersonalActivo>> resAccesoTrabajador = ejbValidacionRol.validarRegistroPlantillaPlanAccionTutorial(logonMB.getPersonal().getClave());
+            
+            if(!resAcceso.getCorrecto() && !resAccesoTrabajador.getCorrecto()){mostrarMensajeResultadoEJB(resAcceso);return;}
             
             Filter<PersonalActivo> filtro = resAcceso.getValor();
             PersonalActivo psicopedagogia = filtro.getEntity();
             
             rol = new PlantillaPlanAccionTutorialRolPsicopedagogia(filtro);
             tieneAcceso = rol.tieneAcceso(psicopedagogia);
+            
+            if(!tieneAcceso){
+                rol.setFiltro(resAccesoTrabajador.getValor());
+                tieneAcceso = rol.tieneAcceso(psicopedagogia);
+            }
             
             if(!tieneAcceso){return;}
             if(verificarInvocacionMenu()) return;

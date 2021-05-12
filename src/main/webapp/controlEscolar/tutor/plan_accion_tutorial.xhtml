@@ -396,6 +396,9 @@
                                                                                     mask="true"
                                                                                     mindate="#{registroPlanTutoriaTutor.rol.periodoSeleccionado.periodoEscolarFechas.inicio}"
                                                                                     maxdate="#{registroPlanTutoriaTutor.rol.periodoSeleccionado.periodoEscolarFechas.fin}"
+                                                                                    rendered="#{registroPlanTutoriaTutor.rol.tab3}"     
+                                                                                    disabled="#{registroPlanTutoriaTutor.rol.planRegistrado}"     
+                                                                                    readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
                                                                                     >
                                                                         </p:calendar>
                                                                     </div>
@@ -485,6 +488,9 @@
                                                                                          class="form-control"
                                                                                          requiredMessage="Es requerido el campo de observaciones o recomendaciones / alguna situación emergente"
                                                                                          value="#{registroPlanTutoriaTutor.rol.sesionesGrupalesTutorias.observacionesRecomendaciones}"
+                                                                                         rendered="#{registroPlanTutoriaTutor.rol.tab3}"     
+                                                                                         disabled="#{registroPlanTutoriaTutor.rol.planRegistrado}"     
+                                                                                         readonly="#{registroPlanTutoriaTutor.rol.planAccionTutorial.estatus eq patEstado.VALIDADO.label}"
                                                                                          />
                                                                         <h:outputText id="displaySgtObservacionesRecomendaciones" />
                                                                         <p:watermark for="sgtObservacionesRecomendaciones" value="Ejemplo de observaciones o recomendaciones / alguna situación emergente de la sesión grupal de la tutoria *" />
