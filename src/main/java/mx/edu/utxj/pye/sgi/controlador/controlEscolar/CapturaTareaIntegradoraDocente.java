@@ -125,19 +125,19 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             e.printStackTrace();
         }
         //Se tiene que comentar antes de que inicie el próximo cuatrimestre
-        try {
-            if(rol.getDocenteLogueado().getPersonal().getClave().intValue() == 169) {
-                if(rol.getPeriodoSeleccionado().getPeriodo()<=56){
-                    ResultadoEJB<Point> registrarMasivamentePromedios = ejbRegistraPromedioAsignatura.registrarMasivamentePromedios();
-                    System.out.println("registrarMasivamentePromedios = " + registrarMasivamentePromedios);
-                }else{
-                    ResultadoEJB<Point> registrarMasivamentePromedios = ejbRegistraPromedioAsignatura.registrarMasivamentePromediosAlineacion();
-                    System.out.println("registrarMasivamentePromediosAlineacion = " + registrarMasivamentePromedios);
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+//        try {
+//            if(rol.getDocenteLogueado().getPersonal().getClave().intValue() == 169) {
+//                if(rol.getPeriodoSeleccionado().getPeriodo()<=56){
+//                    ResultadoEJB<Point> registrarMasivamentePromedios = ejbRegistraPromedioAsignatura.registrarMasivamentePromedios();
+//                    System.out.println("registrarMasivamentePromedios = " + registrarMasivamentePromedios);
+//                }else{
+//                    ResultadoEJB<Point> registrarMasivamentePromedios = ejbRegistraPromedioAsignatura.registrarMasivamentePromediosAlineacion();
+//                    System.out.println("registrarMasivamentePromediosAlineacion = " + registrarMasivamentePromedios);
+//                }
+//            }
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
     }
 
     public void actualizar(){

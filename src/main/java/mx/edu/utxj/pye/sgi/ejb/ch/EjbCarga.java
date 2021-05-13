@@ -171,4 +171,26 @@ public interface EjbCarga extends Serializable {
      * @return Retorna la ruta del directorio
      */
     public String crearDirectorioReportePlaneacion(String periodoEscolar);
+    
+     /**
+     * Método que crea o comprueba si el directorio de las plantillas de los
+     * Módulos de registro de evidencias e instrumentos de evaluación se encuentra disponible
+     *
+     * @param plan Es ocupado para crear o comprobar de que plan de estudio es la plantilla
+     * @param programa Es ocupado para crear o comprobar de que carrera es la plantilla
+     * que se esta generando
+     * @return Retorna la ruta del directorio
+     */
+    public String crearDirectorioPlantillaAlineacionMaterias(String plan, String programa);
+    
+     /**
+     * Método que crea o comprueba si el directorio de las plantillas actualizadas de los
+     * Módulos de registro de evidencias e instrumentos de evaluación se encuentra disponible
+     *
+     * @param plan Es ocupado para crear o comprobar de que plan de estudio es la plantilla
+     * @param programa Es ocupado para crear o comprobar de que carrera es la plantilla
+     * que se esta generando
+     * @return Retorna la ruta del directorio
+     */
+    public String crearDirectorioPlantillaAlineacionMateriasCompleto (String plan, String programa);
 }

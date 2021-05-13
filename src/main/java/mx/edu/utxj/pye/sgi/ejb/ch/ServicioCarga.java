@@ -175,6 +175,7 @@ public class ServicioCarga implements EjbCarga {
     public static final String formatosEscolares = "formatosEscolares";
     public static final String seguimientoEstadia = "seguimientoEstadia";
     public static final String reportesPlaneacion = "reportesPlaneacion";
+    public static final String alineacionMaterias = "alineacionMaterias";
 
 //    Método que se encarga de crear la carpeta raíz en caso de que no exista para poder almacenar el archivo
     static {
@@ -211,7 +212,7 @@ public class ServicioCarga implements EjbCarga {
     public static String genCarpetaRelativaReporte(String modulosRegistro, String reportes, String eje, String completo){
         return carpetaRaiz + modulosRegistro + File.separator + reportes + File.separator + eje + File.separator + completo + File.separator;
     }
-    
+        
     @Override
     public String subirExcelRegistro(String ejercicio, String area, String eje, String registro, Part file) {
         try {
@@ -529,6 +530,20 @@ public class ServicioCarga implements EjbCarga {
     @Override
     public String crearDirectorioReportePlaneacion(String periodoEscolar) {
         String rutaRelativa = genCarpetaRelativa(reportesPlaneacion, reportes, periodoEscolar);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+    
+    @Override
+    public String crearDirectorioPlantillaAlineacionMaterias(String plan, String programa) {
+        String rutaRelativa = genCarpetaRelativa(alineacionMaterias, plantillas, programa, plan);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+    
+    @Override
+    public String crearDirectorioPlantillaAlineacionMateriasCompleto(String plan, String programa) {
+        String rutaRelativa = genCarpetaRelativa(alineacionMaterias, plantillas, programa, plan, completo);
         addCarpetaRelativa(rutaRelativa);
         return rutaRelativa;
     }

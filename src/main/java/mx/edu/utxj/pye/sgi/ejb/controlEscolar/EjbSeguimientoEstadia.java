@@ -510,7 +510,9 @@ public class EjbSeguimientoEstadia {
             if(seguimientoEstadiaEstudiante.getEmpresa() == null){
               empresa = null;
             }else{
-              empresa = em.find(OrganismosVinculados.class, seguimientoEstadiaEstudiante.getEmpresa());
+              empresa = em.createQuery("SELECT o FROM OrganismosVinculados o WHERE o.empresa=:clave",  OrganismosVinculados.class)
+                    .setParameter("clave",  seguimientoEstadiaEstudiante.getEmpresa())
+                    .getResultStream().findFirst().orElse(null);
             }
             
             Double semanas = null;

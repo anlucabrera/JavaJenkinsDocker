@@ -1168,8 +1168,8 @@ public class EjbPermisoAperturaExtemporanea {
                     listaPermisosApertura.add(dtoValidarPermisoCapExt);
                 }
             });
-          
-            return ResultadoEJB.crearCorrecto(listaPermisosApertura.stream().sorted(DtoValidarPermisoCapExt::compareTo).collect(Collectors.toList()), "Lista de aperturas extemporáneas registradas en el periodo escolar y programa educativo seleccionado");
+            
+            return ResultadoEJB.crearCorrecto(listaPermisosApertura.stream().sorted(Comparator.comparing(DtoValidarPermisoCapExt::getFechaValidacion).reversed()).collect(Collectors.toList()), "Lista de aperturas extemporáneas registradas en el periodo escolar y programa educativo seleccionado");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de aperturas extemporáneas registradas en el periodo escolar y programa educativo seleccionado. (EjbPermisoAperturaExtemporanea.obtenerListaPermisosPeriodoProgramaEducativo)", e, null);
         }
@@ -1269,7 +1269,7 @@ public class EjbPermisoAperturaExtemporanea {
                 }
             });
           
-            return ResultadoEJB.crearCorrecto(listaPermisosApertura.stream().sorted(DtoValidarPermisoCapExt::compareTo).collect(Collectors.toList()), "Lista de aperturas extemporáneas registradas en el periodo escolar seleccionado");
+            return ResultadoEJB.crearCorrecto(listaPermisosApertura.stream().sorted(Comparator.comparing(DtoValidarPermisoCapExt::getFechaValidacion).reversed()).collect(Collectors.toList()), "Lista de aperturas extemporáneas registradas en el periodo escolar seleccionado");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de aperturas extemporáneas registradas en el periodo escolar seleccionado. (EjbPermisoAperturaExtemporanea.obtenerListaPermisosPeriodoEscolarReporte)", e, null);
         }
@@ -1293,7 +1293,7 @@ public class EjbPermisoAperturaExtemporanea {
                 }
             });
             
-            return ResultadoEJB.crearCorrecto(listaPermisosSolicitados.stream().sorted(DtoValidarPermisoCapExt::compareTo).collect(Collectors.toList()), "Lista de solicitudes de aperturas extemporáneas registradas en el periodo escolar y programa educativo seleccionado");
+            return ResultadoEJB.crearCorrecto(listaPermisosSolicitados.stream().sorted(Comparator.comparing(DtoValidarPermisoCapExt::getFechaValidacion).reversed()).collect(Collectors.toList()), "Lista de solicitudes de aperturas extemporáneas registradas en el periodo escolar y programa educativo seleccionado");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de solicitudes de aperturas extemporáneas registradas en el periodo escolar y programa educativo seleccionado. (EjbPermisoAperturaExtemporanea.obtenerListaSolicitudesPeriodoProgramaEducativo)", e, null);
         }

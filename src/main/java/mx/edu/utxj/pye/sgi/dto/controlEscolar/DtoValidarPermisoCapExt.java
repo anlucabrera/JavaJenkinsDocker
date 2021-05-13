@@ -23,7 +23,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
  * @author UTXJ
  */
 @RequiredArgsConstructor @ToString
-public class DtoValidarPermisoCapExt implements Serializable, Comparable<DtoValidarPermisoCapExt>{
+public class DtoValidarPermisoCapExt implements Serializable {
     @Getter @Setter @NonNull Integer clavePermiso;
     @Getter @Setter @NonNull String periodoEscolar;
     @Getter @Setter @NonNull String tipoApertura;
@@ -65,19 +65,5 @@ public class DtoValidarPermisoCapExt implements Serializable, Comparable<DtoVali
         this.personaValido = personaValido;
         this.fechaValidacion = fechaValidacion;
         this.validado = validado;
-    }
-    
-    @Override
-    public int compareTo(DtoValidarPermisoCapExt o) {
-        return toLabel(this).compareTo(toLabel(o));
-    }
-
-    public static String toLabel(DtoValidarPermisoCapExt dtoValidarPermisoCapExt){
-         return String.valueOf(dtoValidarPermisoCapExt.getFechaValidacion()).concat(" ")
-                 .concat(dtoValidarPermisoCapExt.getProgramaEducativo().getNombre()).concat(" ")
-                 .concat(String.valueOf(dtoValidarPermisoCapExt.getGrupo().getGrado()).concat(" "))
-                 .concat(String.valueOf(dtoValidarPermisoCapExt.getGrupo().getLiteral()).concat(" "))
-                 .concat(dtoValidarPermisoCapExt.getPlanMateria().getClaveMateria().concat(" "))
-                 .concat(String.valueOf(dtoValidarPermisoCapExt.getUnidadMateria().getIdUnidadMateria()));
     }
 }
