@@ -58,7 +58,8 @@ public class LogonMB extends AdminSession implements Serializable {
     @Getter @Setter private String password;
     @Getter @Setter private Boolean acceso=true;    
     @Getter @Setter private Integer g2=0;   
-    @Getter @Setter private Integer per=0;
+    @Getter @Setter private Integer per=0; 
+    @Getter @Setter private Integer pes=0;
     @Getter @Setter private boolean remember;
       
     @Getter    @Setter    private Bitacoraacceso nuevaBitacoraacceso;

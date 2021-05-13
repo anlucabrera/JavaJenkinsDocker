@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -32,6 +33,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionEvidenciaInstrumento;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import org.primefaces.model.chart.BarChartModel;
@@ -100,6 +102,13 @@ public class SegimientoAcadmicoSet extends AbstractRol{
     @Getter @Setter @NonNull private Boolean render;
     @Getter @Setter String analisisDeResultados;
     @Getter @Setter String mensajeVAnalisisF;
+    
+    @Getter    @Setter    private List<Listaalumnosca> listaalumnoscas;
+    @Getter    @Setter    private List<DtoVistaCalificacionestitulosTabla> titulos;    
+    @Getter    @Setter    private List<DtoPresentacionCalificacionesReporte> dvcs;
+    
+    
+    @Getter    @Setter    private DecimalFormat df = new DecimalFormat("#.00");
     /**
      * Representa la clave
      */

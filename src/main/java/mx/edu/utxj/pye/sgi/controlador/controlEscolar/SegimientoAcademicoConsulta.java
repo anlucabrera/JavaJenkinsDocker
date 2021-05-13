@@ -42,25 +42,37 @@ import org.primefaces.model.timeline.TimelineEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.text.DecimalFormat;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInformePlaneaciones;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoResultadosCargaAcademica;
+import java.math.BigDecimal;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCapturaCalificacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCapturaCalificacionAlineacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInscripcion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPresentacionCalificacionesReporte;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracionAlineacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoVistaCalificaciones;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoVistaCalificacionestitulosTabla;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.SegimientoAcadmicoSet;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbResultadosConfiguraciones;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AccionesDeMejora;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionEvidenciaInstrumento;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MetasPropuestas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
-import mx.edu.utxj.pye.sgi.enums.Operacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.axes.cartesian.CartesianScales;
-import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
-import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearTicks;
-import org.primefaces.model.charts.bar.BarChartDataSet;
+import org.omnifaces.util.Faces;
 import org.primefaces.model.charts.bar.BarChartModel;
-import org.primefaces.model.charts.bar.BarChartOptions;
-import org.primefaces.model.charts.optionconfig.title.Title;
 
 
 
@@ -79,12 +91,16 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
     @EJB EjbValidacionRol evr;
     @EJB EjbPropiedades ep;
     @EJB EjbAsistencias ea;
+    @EJB EjbCapturaCalificaciones calificaciones;
+    @EJB EjbPacker packer;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     @Inject LogonMB logon;
     @Getter Boolean tieneAcceso = false;
     @Getter    @Setter    private BarChartModel barModel2;
     Integer bt=0,bd=0,ri=0;
+    List<BigDecimal> promedios;
+    List<DtoVistaCalificaciones> dvc;
 
     /**
      * Inicializa:<br/>
@@ -106,7 +122,7 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
         try {
             if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
             cargado = true;
-//            setVistaControlador(ControlEscolarVistaControlador.SEGIMIENTO_ACADEMICO);
+            setVistaControlador(ControlEscolarVistaControlador.SEGIMIENTO_ACADEMICO);
             
             ResultadoEJB<Filter<PersonalActivo>> resValidacionDi = evr.validarDirector(logon.getPersonal().getClave());
             ResultadoEJB<Filter<PersonalActivo>> resValidacionEn = evr.validarEncargadoDireccion(logon.getPersonal().getClave());//validar si es director                        
@@ -175,45 +191,56 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
                     }
                 }
             }
-           
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso           
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
             if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
               
-            if(!rol.getTipoUser().equals(3)){
+            if(rol.getTipoUser().equals(3)){
+                ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosTutor(rol.getDocente());
+                if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
+                rol.setPeriodos(resPeriodos.getValor());
+            }else{
                 ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
                 if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
-                
                 rol.setPeriodos(resPeriodos.getValor());
-                rol.setPeriodo(ea.getPeriodoActual());
-                rol.setPeriodoActivo(rol.getPeriodo().getPeriodo());
-                ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan;
+            }
+            periodoseleccionado();            
+            rol.setPeriodoActivo(rol.getPeriodo().getPeriodo());
+            ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan;            
+            if (rol.getTipoUser().equals(3)) {
+                resProgramaPlan= erpe.getProgramasEducativosTutorados(rol.getDocente().getPersonal().getClave());
+                if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
+                rol.setAreaPlanEstudioMap(resProgramaPlan.getValor());
+            } else {
                 if (rol.getTipoUser().equals(2)) {
                     resProgramaPlan = erpe.getProgramasEducativostotal();
                 } else {
                     resProgramaPlan = erpe.getProgramasEducativos(rol.getDirector());
                 }
                 if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
-                
-                rol.setAreaPlanEstudioMap(resProgramaPlan.getValor());           
-                rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
-                ResultadoEJB<List<Grupo>> resgrupos = erpe.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
-                if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
-                
-                rol.setGrupos(resgrupos.getValor()); 
-                rol.setGrupoSelec(rol.getGrupos().get(0));                       
-            }else{
-                llenaListasDo();
-            }
+                rol.setAreaPlanEstudioMap(resProgramaPlan.getValor()); 
+            }          
             
-            rol.setAccionesDeMejora(new AccionesDeMejora());
-            rol.setFechaInpresion(new Date());
+            planEstudioseleccionado();
+            
+            ResultadoEJB<List<Grupo>> resgrupos;
+                
+            if (rol.getTipoUser().equals(3)) {
+                resgrupos = erpe.getListaGrupoPorTutorYPe(rol.getDocente(),rol.getPeriodo(),rol.getPlanEstudio().getIdPe());
+            }else{
+                resgrupos = erpe.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
+            }
+            if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);            
+            rol.setGrupos(resgrupos.getValor()); 
+            gruposeleccionado();
+                            
             existeAsignacion();
             if (rol.getPeriodoActivo() <= 56) {
                 rol.setRender(Boolean.FALSE);
             } else {
                 rol.setRender(Boolean.TRUE);
             }
+            logon.setG2(0);
         }catch (Exception e){mostrarExcepcion(e); }
     }
 
@@ -222,24 +249,58 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
         String valor = "resultados pleneaciones";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
+    }  
+    
+    public void periodoseleccionado() {
+        try {
+            if (logon.getPer()== 0) {
+                rol.setPeriodo(rol.getPeriodos().get(0));
+            } else {
+                rol.getPeriodos().forEach((t) -> {
+                    if (Objects.equals(logon.getPer(), t.getPeriodo())) {
+                        rol.setPeriodo(t);
+                    }
+                });
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
-    public void llenaListasDo() {
-        rol.setPeriodoActivo(ejb.getPeriodoActual().getPeriodo());
-        ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
-        ResultadoEJB<List<PeriodosEscolares>> resPeriodos2 = ejb.getPeriodosTutor(rol.getDocente());
-        if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
-        rol.setPeriodos(resPeriodos.getValor());
-        rol.setPeriodo(ejb.getPeriodoActual());
-            
-        ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan= erpe.getProgramasEducativostotal();
-        if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
-        rol.setAreaPlanEstudioMap(resProgramaPlan.getValor());
-        rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
-        rol.setGrupos(new ArrayList<>());
-        rol.setGrupoSelec(new Grupo());
-
-    }    
+    public void planEstudioseleccionado() {
+        try {
+            if (logon.getPes()== 0) {
+                rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
+            } else {
+                rol.getPlanesEstudios().forEach((t) -> {
+                    if (Objects.equals(logon.getPes(), t.getIdPlanEstudio())) {
+                        rol.setPlanEstudio(t);
+                    }
+                });
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void gruposeleccionado() {
+        try {
+            if (logon.getG2()== 0) {
+                rol.setGrupoSelec(rol.getGrupos().get(0));
+            } else {
+                rol.getGrupos().forEach((t) -> {
+                    if (Objects.equals(logon.getG2(), t.getIdGrupo())) {
+                        rol.setGrupoSelec(t);
+                    }
+                });
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     public void cambiarPeriodo() {
         if (rol.getPeriodo() == null) {
@@ -250,30 +311,38 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
         }
         rol.setPeriodoActivo(rol.getPeriodo().getPeriodo());
         
-        if(rol.getTipoUser()!=3){
-            rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
-            ResultadoEJB<List<Grupo>> resgrupos = erpe.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
-            if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
-
-            rol.setGrupos(resgrupos.getValor()); 
-            rol.setGrupoSelec(rol.getGrupos().get(0));
-        }
-        ResultadoEJB<List<DtoCargaAcademica>> resCarga;
+        ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan;
         
-        if(rol.getTipoUser()!=3){ 
-            resCarga = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());            
-            if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
-        }else{
-            resCarga = ejb.getCargaAcademicaDocente(rol.getDocente(), rol.getPeriodo());
-        }
-        if (resCarga.getValor().isEmpty()) {
-            rol.setPlaneacioneses(Collections.EMPTY_LIST);
-            rol.setEstudioMateria(new PlanEstudioMateria());
-            rol.setMetasPropuestas(new MetasPropuestas());
-            rol.setCronograma(Collections.EMPTY_LIST);
-            rol.setDrcas(Collections.EMPTY_LIST);
-            return;
-        }     
+        if (rol.getTipoUser().equals(3)) {
+                resProgramaPlan= erpe.getProgramasEducativosTutorados(rol.getDocente().getPersonal().getClave());
+                if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
+                rol.setAreaPlanEstudioMap(resProgramaPlan.getValor());
+            } else {
+                if (rol.getTipoUser().equals(2)) {
+                    resProgramaPlan = erpe.getProgramasEducativostotal();
+                } else {
+                    resProgramaPlan = erpe.getProgramasEducativos(rol.getDirector());
+                }
+                if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
+                rol.setAreaPlanEstudioMap(resProgramaPlan.getValor()); 
+            }          
+            
+            rol.setPlanEstudio(rol.getPlanesEstudios().get(0));
+            ResultadoEJB<List<Grupo>> resgrupos;
+                
+            if (rol.getTipoUser().equals(3)) {
+                resgrupos = erpe.getListaGrupoPorTutorYPe(rol.getDocente(),rol.getPeriodo(),rol.getPlanEstudio().getIdPe());
+            }else{
+                resgrupos = erpe.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
+            }
+                
+            if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);            
+            rol.setGrupos(resgrupos.getValor()); 
+            rol.setGrupoSelec(rol.getGrupos().get(0)); 
+            logon.setPer(rol.getPeriodo().getPeriodo());        
+            logon.setG2(0);
+            logon.setPes(rol.getPlanEstudio().getIdPlanEstudio());
+            Faces.redirect("controlEscolar/reportesMu/segimientoAcademico.xhtml");
         existeAsignacion();
     }
      
@@ -281,33 +350,34 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
         rol.setGrupos(new ArrayList<>());
         rol.setGrupoSelec(new Grupo());
         rol.setPlanEstudio((PlanEstudio) event.getNewValue());
-        ResultadoEJB<List<Grupo>> resgrupos = erpe.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
-        if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
-        rol.setGrupos(resgrupos.getValor()); 
-        rol.setGrupoSelec(rol.getGrupos().get(0));
-        ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());            
-        if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
-        if (resCarga.getValor().isEmpty()) {
-            rol.setPlaneacioneses(Collections.EMPTY_LIST);
-            rol.setEstudioMateria(new PlanEstudioMateria());
-            rol.setMetasPropuestas(new MetasPropuestas());
-            rol.setCronograma(Collections.EMPTY_LIST);
-            return;
+        ResultadoEJB<List<Grupo>> resgrupos;
+
+        if (rol.getTipoUser().equals(3)) {
+            resgrupos = erpe.getListaGrupoPorTutorYPe(rol.getDocente(), rol.getPeriodo(), rol.getPlanEstudio().getIdPe());
+        } else {
+            resgrupos = erpe.getListaGrupoPlanEstudio(rol.getPlanEstudio(), rol.getPeriodo());
         }
+                
+        if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);            
+        rol.setGrupos(resgrupos.getValor()); 
+        rol.setGrupoSelec(rol.getGrupos().get(0)); 
+        logon.setG2(0);
+        logon.setPes(rol.getPlanEstudio().getIdPlanEstudio());  
+        Faces.redirect("controlEscolar/reportesMu/segimientoAcademico.xhtml");
         existeAsignacion();
     }    
     
    public void cambiarGrupo(ValueChangeEvent event) {
         rol.setGrupoSelec((Grupo) event.getNewValue());
-        ResultadoEJB<List<DtoCargaAcademica>> resCarga = ea.getCargaAcademicasPorGrupo(rol.getGrupoSelec().getIdGrupo(), rol.getPeriodo());            
-        if(!resCarga.getCorrecto()) mostrarMensajeResultadoEJB(resCarga);
-        if (resCarga.getValor().isEmpty()) {
-            rol.setPlaneacioneses(Collections.EMPTY_LIST);
-            rol.setEstudioMateria(new PlanEstudioMateria());
-            rol.setMetasPropuestas(new MetasPropuestas());
-            rol.setCronograma(Collections.EMPTY_LIST);
-            return;
-        }
+        rol.setListaalumnoscas(new ArrayList<>());
+        rol.setTitulos(new ArrayList<>());
+        rol.setDvcs(new ArrayList<>());
+        rol.setGrupoSelec((Grupo) event.getNewValue());
+        ResultadoEJB<List<Listaalumnosca>> rejb = erpe.getListaAlumnosPorGrupo(rol.getGrupoSelec());
+        if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
+        rol.setListaalumnoscas(rejb.getValor());  
+        logon.setG2(rol.getGrupoSelec().getIdGrupo());
+        Faces.redirect("controlEscolar/reportesMu/segimientoAcademico.xhtml");
         existeAsignacion();
     }
     
@@ -328,9 +398,93 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
     }
     
     public void existeAsignacion() {
-        
+        rol.setTitulos(new ArrayList<>());
+        rol.setDvcs(new ArrayList<>());
+        ResultadoEJB<List<DtoCargaAcademica>> rejb = ejb.getCargaAcademicasPorGrupo(rol.getGrupoSelec(), rol.getPeriodo());
+        if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
+        List<DtoCargaAcademica> dcas=rejb.getValor();
+
+        if(!dcas.isEmpty()){
+            dcas.forEach((t) -> {
+                Boolean ti=Boolean.TRUE;
+                if(t.getCargaAcademica().getTareaIntegradora() == null){
+                    ti=Boolean.FALSE;
+                }
+            rol.getTitulos().add(new DtoVistaCalificacionestitulosTabla(t.getDocente().getPersonal().getNombre(),t.getMateria().getNombre(), t.getMateria().getUnidadMateriaList().size(), ti));
+            });            
+        }
+     
+        rol.getGrupoSelec().getEstudianteList().forEach((e) -> {
+            String nomEs =  e.getAspirante().getIdPersona().getNombre()+" "+e.getAspirante().getIdPersona().getApellidoPaterno()+" "+e.getAspirante().getIdPersona().getApellidoMaterno();             
+            if (!dcas.isEmpty()) {
+                dvc= new ArrayList<>(); 
+                dcas.forEach((c) -> {                    
+                    promedios= new ArrayList<>();
+                    c.getCargaAcademica().getUnidadMateriaConfiguracionList().forEach((um) -> { 
+                        if (rol.getPeriodoActivo() <= 56) {
+                            ResultadoEJB<BigDecimal> resBig=calificaciones.promediarUnidadConsultaCal(crearCapturas(um, e));
+                            if(!resBig.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
+                            promedios.add(resBig.getValor());
+                        }else{
+                            ResultadoEJB<BigDecimal> resBig=calificaciones.promediarUnidadAlineacionConsultaCal(crearCapturasAlineacion(um, e));
+                            if(!resBig.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
+                            promedios.add(resBig.getValor());
+                        }
+                    }); 
+                    BigDecimal ti=BigDecimal.ZERO; ;
+                    if(c.getCargaAcademica().getTareaIntegradora() != null){
+                        List<TareaIntegradoraPromedio> tis=c.getCargaAcademica().getTareaIntegradora().getTareaIntegradoraPromedioList().stream().filter(t-> Objects.equals(t.getEstudiante().getIdEstudiante(), e.getIdEstudiante())).collect(Collectors.toList());
+                        if(!tis.isEmpty()){
+                            TareaIntegradoraPromedio promedio=tis.get(0);
+                            ti=BigDecimal.valueOf(promedio.getValor());
+                        }
+                    }
+                    List<CalificacionNivelacion> cns=c.getCargaAcademica().getCalificacionNivelacionList().stream().filter(t-> Objects.equals(t.getEstudiante().getIdEstudiante(), e.getIdEstudiante())).collect(Collectors.toList());
+                    BigDecimal niv=BigDecimal.ZERO;   
+                    BigDecimal pfinal=BigDecimal.ZERO;   
+                    if(!cns.isEmpty()){
+                        CalificacionNivelacion cn=cns.get(0);                            
+                        niv= BigDecimal.valueOf(cn.getValor());
+                        pfinal=BigDecimal.valueOf(cn.getValor());
+                    }else{
+                        pfinal=BigDecimal.ZERO;   
+                    }  
+                    dvc.add(new DtoVistaCalificaciones(c.getMateria(), promedios, ti, BigDecimal.ZERO, niv, pfinal));
+                });
+                rol.getDvcs().add(new DtoPresentacionCalificacionesReporte(e.getMatricula(), e.getTipoEstudiante().getIdTipoEstudiante(), nomEs, dvc, BigDecimal.ZERO));
+            }
+        });
         Ajax.update("frm");
     }  
+    
+    public List<DtoCapturaCalificacionAlineacion.Captura> crearCapturasAlineacion(UnidadMateriaConfiguracion dca, Estudiante e) {
+        List<DtoCapturaCalificacionAlineacion.Captura> cs= new ArrayList<>();
+        dca.getUnidadMateriaConfiguracionEvidenciaInstrumentoList().forEach((u) -> {
+                DtoUnidadConfiguracionAlineacion.Detalle d= new DtoUnidadConfiguracionAlineacion.Detalle(u, u.getEvidencia().getCriterio(), u.getEvidencia(), u.getInstrumento());
+                List<CalificacionEvidenciaInstrumento> cal=u.getCalificacionEvidenciaInstrumentoList().stream().filter(est -> Objects.equals(est.getIdEstudiante().getIdEstudiante(), e.getIdEstudiante())).collect(Collectors.toList());
+                if (cal.isEmpty()) {
+                    cs.add(new DtoCapturaCalificacionAlineacion.Captura(d, new CalificacionEvidenciaInstrumento(0L)));
+                } else {
+                    cs.add(new DtoCapturaCalificacionAlineacion.Captura(d, cal.get(0)));
+                }
+            });    
+        return cs;
+    }
+    
+    public List<DtoCapturaCalificacion.Captura> crearCapturas(UnidadMateriaConfiguracion dca, Estudiante e) {
+        List<DtoCapturaCalificacion.Captura> cs= new ArrayList<>();
+        dca.getUnidadMateriaConfiguracionDetalleList().forEach((u) -> {
+                DtoUnidadConfiguracion.Detalle d= new DtoUnidadConfiguracion.Detalle(u, u.getCriterio(), u.getIndicador());
+                List<Calificacion> cal=u.getCalificacionList().stream().filter(est -> Objects.equals(est.getIdEstudiante().getIdEstudiante(), e.getIdEstudiante())).collect(Collectors.toList());
+                if (cal.isEmpty()) {
+                    cs.add(new DtoCapturaCalificacion.Captura(d, new Calificacion(0L)));
+                } else {
+                    cs.add(new DtoCapturaCalificacion.Captura(d, cal.get(0)));
+                }
+            });    
+        return cs;
+    }
+    
     
     public void onSelect(TimelineSelectEvent e) {  
         TimelineEvent timelineEvent = e.getTimelineEvent();  

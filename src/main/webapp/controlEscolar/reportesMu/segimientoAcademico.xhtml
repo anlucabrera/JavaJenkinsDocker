@@ -14,15 +14,16 @@
                 console.log("ejemplo");
             }
             ;
-            
-             //<![CDATA[
-    function exportChart() {
-        //export image
-        $('#output').empty().append(PF('chart').exportAsImage());
 
-        //show the dialog
-    };
-    //]]>
+            //<![CDATA[
+            function exportChart() {
+                //export image
+                $('#output').empty().append(PF('chart').exportAsImage());
+
+                //show the dialog
+            }
+            ;
+            //]]>
 
         </script>
         <style type="text/css">
@@ -35,7 +36,7 @@
                 .ui-panelgrid .ui-panelgrid-cell{
                     border-style: hidden !important;
                 }
-                
+
                 .grafica grafica{
                     visibility: visible !important;
                 }
@@ -69,7 +70,7 @@
 
     <ui:define name="body">
         <c:if test="#{segimientoAcademicoConsulta.cargado}">
-            <adm:breadcrumb title="Planeación Cuatrimestral"/>
+            <adm:breadcrumb title="Segimiento academico"/>
             <div class="contenedor">
                 <c:if test="#{segimientoAcademicoConsulta.tieneAcceso}">
                     <!-- zona de importación de enums -->
@@ -88,9 +89,8 @@
                                 </div>
                                 <div class="box box-solid">
                                     <div class="box-body">
-                                        <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
-                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
-                                        <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
+                                        <c:set var="casilla" value="#{'col-sm-12 col-md-3 col-lg-3'}" />
+                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-6 col-lg-6'}" />
                                         <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="# {segimientoAcademicoConsulta.actualizarCargaAcademica}" update="@form" />
                                         <div class="row margin-bottom" style="margin-top: 20px;">
                                             <div class="#{casilla}">
@@ -130,65 +130,118 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <c:if test="#{segimientoAcademicoConsulta.rol.existeAsignacionIndicadores}">
-                                                <center>
-                                                    <p:panel id="CV" style="overflow: hidden;">
-                                                        <div class="row">
-                                                            <div class="col-sm-12">
-                                                                <div class="description-block">
-                                                                    <p:dataTable id="tbAsigInd1" var="asignacionIndCA" value="#{segimientoAcademicoConsulta.rol.drcas}" 
-                                                                                 sortBy="#{asignacionIndCA.informe.unidad}" rowStyleClass="subactiviades"
-                                                                                 styleClass="saltoDePagina">
-                                                                        <f:facet name="header">
-                                                                        </f:facet>
-                                                                        <p:columnGroup type="header">
-                                                                            <p:row class="success">         
-                                                                                <p:column rowspan="3" headerText="Matricula"/>
-                                                                                <p:column rowspan="3" headerText="Nombre"/>
-                                                                                <p:column headerText="Materia 1"/> 
-                                                                                <p:column headerText="Materia 2"/> 
-                                                                                <p:column headerText="Materia 3"/>   
-                                                                                <p:column headerText="Materia 4"/> 
-                                                                                <p:column headerText="Materia 5"/> 
-                                                                                <p:column headerText="Materia 6"/> 
-                                                                                <p:column headerText="Materia 7"/> 
-                                                                                <p:column headerText="Materia 8"/> 
-                                                                                <p:column headerText="Materia 9"/> 
-                                                                                <p:column headerText="Materia 10"/>                                                                        
-                                                                            </p:row>
-                                                                            <p:row class="success">         
-                                                                                <p:column headerText="Docente 1"/> 
-                                                                                <p:column headerText="Docente 2"/> 
-                                                                                <p:column headerText="Docente 3"/>   
-                                                                                <p:column headerText="Docente 4"/> 
-                                                                                <p:column headerText="Docente 5"/> 
-                                                                                <p:column headerText="Docente 6"/> 
-                                                                                <p:column headerText="Docente 7"/> 
-                                                                                <p:column headerText="Docente 8"/> 
-                                                                                <p:column headerText="Docente 9"/> 
-                                                                                <p:column headerText="Docente 10"/>                                                                        
-                                                                            </p:row>
-                                                                            <p:row class="success">         
-                                                                                <p:column headerText="unidades 1"/> 
-                                                                                <p:column headerText="unidades 2"/> 
-                                                                                <p:column headerText="unidades 3"/>   
-                                                                                <p:column headerText="unidades 4"/> 
-                                                                                <p:column headerText="unidades 5"/> 
-                                                                                <p:column headerText="unidades 6"/> 
-                                                                                <p:column headerText="unidades 7"/> 
-                                                                                <p:column headerText="unidades 8"/> 
-                                                                                <p:column headerText="unidades 9"/> 
-                                                                                <p:column headerText="unidades 10"/>                                                                        
-                                                                            </p:row>
-                                                                        </p:columnGroup>
-                                                                    </p:dataTable>       
+                                        <div class="row">                                           
+                                            <center>
+                                                <p:panel id="CV" >
+                                                    <p:autoUpdate/>
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row hidden-sm hidden-xs" style="align-content:  center">
+                                                                    <div class="col-sm-3 pull-left">
+                                                                        <div class="description-block" style="text-align: center">
+                                                                            <img src="../../resources/img/logoSep.jpg" alt="" height="80px"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-sm-6 pull-left" >
+                                                                        <div class="row">
+                                                                            <div class="row">
+                                                                                <div id="tituloCV" class="col-sm-12">
+                                                                                    <div class="description-block" style="text-align: center">
+                                                                                        <h3><strong>Universidad Tecnológica De</strong></h3>
+                                                                                        <h3><strong>Xicotepec de Juárez</strong></h3>
+                                                                                        <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>       
+                                                                                        <h4><strong>Calificaciones</strong></h4>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-sm-3">
+                                                                        <div class="description-block" style="text-align: center">
+                                                                            <img src="../../resources/img/utxj.png" alt="" height="100px"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <br/>
+                                                                <div class="row hidden-sm hidden-xs">
+                                                                    <div class="col-sm-12">
+                                                                        <div class="description-block" style="text-align: right">
+                                                                            <h:outputLabel value="Fecha de Reporte" style="font-weight: bold;"/> <p:spacer width="10px"/> <h:outputLabel value="#{segimientoAcademicoConsulta.rol.fechaInpresion}"><f:convertDateTime pattern="dd/MM/yyyy HH:mm"/></h:outputLabel><p:spacer width="10px"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm-12">
+                                                                        <div class="description-block" style="text-align: left">
+                                                                            <h:outputLabel value="ÁREA ACADEMICA:"/> <p:spacer width="10px"/> <h:outputLabel value="#{segimientoAcademicoConsulta.rol.programa.nombre}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                            <h:outputLabel value="CARRERA:"/> <p:spacer width="10px"/> <h:outputLabel value="#{segimientoAcademicoConsulta.rol.planEstudio.descripcion}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                            <h:outputLabel value="PERIODO:"/> <p:spacer width="10px"/> <h:outputLabel value="#{segimientoAcademicoConsulta.rol.periodo.mesInicio.mes} - #{segimientoAcademicoConsulta.rol.periodo.mesFin.mes} #{segimientoAcademicoConsulta.rol.periodo.anio}" style="font-weight: bold;"/><p:spacer width="10px"/> <h:outputLabel value="GRUPO:"/> <p:spacer width="10px"/> 
+                                                                            <h:outputLabel value="#{segimientoAcademicoConsulta.rol.grupoSelec.grado}° #{segimientoAcademicoConsulta.rol.grupoSelec.literal}" style="font-weight: bold;"/><p:spacer width="10px"/><br/>
+                                                                            <h:outputLabel value="NOMBRE DEL TUTOR"/> <p:spacer width="10px"/> <h:outputLabel value="#{segimientoAcademicoConsulta.buscarPersonal(segimientoAcademicoConsulta.rol.grupoSelec.tutor)}" style="font-weight: bold;"/><p:spacer width="10px"/>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </p:panel>
-                                                </center>
-                                            </c:if>
+                                                    </div>
+                                                    <br/>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="description-block">
+                                                                <p:outputPanel>     
+                                                                    <p:autoUpdate/>
+                                                                    <p:panelGrid style="width: 100%">
+                                                                        <f:facet name="header">
+                                                                            <p:row>
+                                                                                <p:column rowspan="3" style="background: #00a7d0">Matricula</p:column>
+                                                                                <p:column rowspan="3" style="background: #00a7d0">Nombre</p:column>
+                                                                                <c:forEach var="i" begin="0" end="#{segimientoAcademicoConsulta.rol.titulos.size()-1}">
+                                                                                    <c:set var="t" value="#{segimientoAcademicoConsulta.rol.titulos.get(i)}"/>
+                                                                                    <p:column colspan="#{t.ti eq true?t.tunidades+4:t.tunidades+3}" style="font-size: smaller;background: #00D8D8 ">#{t.unidad}<hr/> #{t.docente}</p:column>
+                                                                                </c:forEach> 
+                                                                                <p:column rowspan="3" style="background: #00a7d0">General</p:column>
+                                                                            </p:row>
+                                                                            <p:row>
+                                                                                <c:forEach var="i" begin="0" end="#{segimientoAcademicoConsulta.rol.titulos.size()-1}">
+                                                                                    <c:set var="t" value="#{segimientoAcademicoConsulta.rol.titulos.get(i)}"/>
+                                                                                    <c:forEach var="g" begin="0" end="#{t.tunidades-1}">
+                                                                                        <p:column style="font-size: smaller;background: #00C853">#{g+1}</p:column>
+                                                                                    </c:forEach>
+                                                                                    <p:column style="font-size: x-small;background: #00C853" rendered="#{t.ti}">T.I</p:column>
+                                                                                    <p:column style="font-size: x-small;background: #00C853">P.O.</p:column>
+                                                                                    <p:column style="font-size: x-small;background: #00C853">Niv.</p:column>
+                                                                                    <p:column style="font-size: x-small;background: #00C853">P.F.</p:column>
+                                                                                </c:forEach>
+                                                                            </p:row>
+                                                                        </f:facet>
+
+                                                                        <c:forEach var="a" begin="0" end="#{segimientoAcademicoConsulta.rol.dvcs.size()-1}">
+                                                                            <c:set var="b" value="#{segimientoAcademicoConsulta.rol.dvcs.get(a)}"/>
+                                                                            <p:row >
+                                                                                <p:column style="font-size: small">#{b.matricula}</p:column>
+                                                                                <p:column style="text-align: justify; font-size: small">#{b.nombre}</p:column>                                                                            
+                                                                                <c:forEach var="c" begin="0" end="#{b.materias.size()-1}">
+                                                                                    <c:set var="d" value="#{b.materias.get(c)}"/> 
+                                                                                    <c:forEach var="e" begin="0" end="#{d.promedios.size()-1}">
+                                                                                        <c:set var="f" value="#{d.promedios.get(e)}"/> 
+                                                                                        <p:column style="font-size: smaller;#{f ge 8 ? 'color: #000000':'color: #E53935;font-weight: bold;' or f gt 0 ? 'color: #E53935;font-weight: bold;':'color: #000000'}">#{f gt 0?segimientoAcademicoConsulta.rol.df.format(f):0}</p:column>
+                                                                                    </c:forEach>
+                                                                                    <p:column style="font-size: smaller; #{d.promedioFinalO ge 8 ? 'color: #000000':'color: #E53935' or d.tareaI gt 0 ? 'color: #E53935':'color: #000000'}" rendered="#{d.tareaI ne ''}">#{d.tareaI}</p:column>
+                                                                                    <p:column style="font-size: smaller; #{d.promedioFinalO ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalO gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalO gt 0?segimientoAcademicoConsulta.rol.df.format(d.promedioFinalO):0}</p:column>                                                                                
+                                                                                    <p:column style="font-size: smaller; #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.nivelacion gt 0 ? 'color: #E53935':'color: #000000'}">#{d.nivelacion gt 0?segimientoAcademicoConsulta.rol.df.format(d.nivelacion):0}</p:column>
+                                                                                    <p:column style="background: #cccccc; font-weight: bold; font-size: smaller;  #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalN gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalN gt 0?segimientoAcademicoConsulta.rol.df.format(d.promedioFinalN):0}</p:column>                                                                                
+                                                                                </c:forEach>
+                                                                                <p:column style="font-size: smaller; font-weight: bold; #{b.promedioFinal ge 8 ? 'color: #000000':'color: #E53935' or b.promedioFinal gt 0 ? 'color: #E53935':'color: #000000'}">#{b.promedioFinal gt 0?segimientoAcademicoConsulta.rol.df.format(b.promedioFinal):0}</p:column>
+                                                                            </p:row>
+                                                                        </c:forEach>
+                                                                    </p:panelGrid>
+                                                                </p:outputPanel>     
+                                                            </div>
+                                                        </div>
+                                                    </div>    
+                                                </p:panel>
+                                            </center>
                                         </div>
                                     </div>
                                 </div>

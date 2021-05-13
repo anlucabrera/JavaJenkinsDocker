@@ -1469,4 +1469,28 @@ public class EjbAsignacionIndicadoresCriterios {
             return ResultadoEJB.crearErroneo(1, "No se eliminaron las evidencias e instrumentos de evaluación registrados. (EjbAsignacionIndicadoresCriterios.eliminarEvidenciasInstrumentos)", e, null);
         }
     }
+    
+    
+    public ResultadoEJB<List<DtoCargaAcademica>> getCargaAcademicasPorGrupo(Grupo g, PeriodosEscolares periodo){
+        try{
+            List<Integer> grados = new ArrayList<>();
+            grados.add(6);
+            grados.add(11);
+            //buscar carga académica del personal docente logeado del periodo seleccionado
+            List<DtoCargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c INNER JOIN c.cveGrupo g WHERE g.idGrupo =:idGrupo AND c.evento.periodo =:periodo AND c.cveGrupo.grado NOT IN :grados", CargaAcademica.class)
+                    .setParameter("idGrupo", g.getIdGrupo())
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("grados", grados)
+                    .getResultStream()
+                    .distinct()
+                    .map(cargaAcademica -> pack(cargaAcademica))
+                    .filter(res -> res.getCorrecto())
+                    .map(ResultadoEJB::getValor)
+                    .sorted(DtoCargaAcademica::compareTo)
+                    .collect(Collectors.toList());
+            return ResultadoEJB.crearCorrecto(cargas, "Lista de cargas académicas por docente.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de cargas académicas por docente. (EjbAsignacionIndicadoresCriterios.getCargaAcademicaPorDocente)", e, null);
+        }
+    }
 }

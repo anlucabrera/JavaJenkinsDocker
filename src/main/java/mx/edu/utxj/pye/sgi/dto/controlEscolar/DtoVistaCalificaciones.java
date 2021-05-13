@@ -26,12 +26,12 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 public class DtoVistaCalificaciones implements Serializable{
     @Getter @Setter private Materia materia;
     @Getter @Setter private List<BigDecimal> promedios;
-    @Getter @Setter private String tareaI;
+    @Getter @Setter private BigDecimal tareaI;
     @Getter @Setter private BigDecimal promedioFinalO;
     @Getter @Setter private BigDecimal nivelacion;
     @Getter @Setter private BigDecimal promedioFinalN;
 
-    public DtoVistaCalificaciones(Materia materia, List<BigDecimal> promedios, String tareaI, BigDecimal promedioFinalO, BigDecimal nivelacion, BigDecimal promedioFinalN) {
+    public DtoVistaCalificaciones(Materia materia, List<BigDecimal> promedios, BigDecimal tareaI, BigDecimal promedioFinalO, BigDecimal nivelacion, BigDecimal promedioFinalN) {
         this.materia = materia;
         this.promedios = promedios;
         this.tareaI = tareaI;

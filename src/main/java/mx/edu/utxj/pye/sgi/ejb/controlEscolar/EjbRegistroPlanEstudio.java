@@ -208,6 +208,30 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearErroneo(1, "No fue posible obtener el listado de programas educativos. (EjbRegistroPlanEstudio)", e, null);
         }
     }
+    
+    public ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> getProgramasEducativosTutorados(Integer cvTutor) {
+        try {
+            Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
+
+            List<Short> gs = em.createQuery("SELECT g FROM Grupo g WHERE g.tutor=:tutor", Grupo.class)
+                    .setParameter("tutor", cvTutor)
+                    .getResultStream()
+                    .map(a -> a.getIdPe())
+                    .collect(Collectors.toList());
+
+            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.categoria.categoria=:categoria and a.vigente = '1' AND a.area IN :petutorados order by a.nombre", AreasUniversidad.class)
+                    .setParameter("categoria", programaEducativoCategoria)
+                    .setParameter("petutorados", gs)
+                    .getResultList();
+
+            Map<AreasUniversidad, List<PlanEstudio>> programasPlanMap = programas.stream()
+                    .collect(Collectors.toMap(programa -> programa, programa -> generarPlanesEstudio(programa)));
+
+            return ResultadoEJB.crearCorrecto(programasPlanMap, "Listado de Programas Educativos");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No fue posible obtener el listado de programas educativos. (EjbRegistroPlanEstudio)", e, null);
+        }
+    }
 
     /**
      * Permite listar las materias registradas
@@ -598,6 +622,20 @@ public class EjbRegistroPlanEstudio {
             List<Grupo> gs = em.createQuery("select g from Grupo g where g.tutor=:tutor AND g.periodo=:periodo", Grupo.class)
                     .setParameter("tutor", tutor.getPersonal().getClave())
                     .setParameter("periodo", escolares.getPeriodo())
+                    .getResultList();
+
+            return ResultadoEJB.crearCorrecto(gs, "Listado de grupos por tutor");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de Planes de estudio(EjbRegistroPlanEstudio)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<Grupo>> getListaGrupoPorTutorYPe(PersonalActivo tutor, PeriodosEscolares escolares, Short pe) {
+        try {
+            List<Grupo> gs = em.createQuery("select g from Grupo g where g.tutor=:tutor AND g.periodo=:periodo AND g.idPe:=idpe", Grupo.class)
+                    .setParameter("tutor", tutor.getPersonal().getClave())
+                    .setParameter("periodo", escolares.getPeriodo())
+                    .setParameter("idpe", pe)
                     .getResultList();
 
             return ResultadoEJB.crearCorrecto(gs, "Listado de grupos por tutor");

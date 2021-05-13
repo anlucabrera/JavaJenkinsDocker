@@ -628,4 +628,59 @@ public class EjbCapturaCalificaciones {
             return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
         }
     }
+    
+    /*---------------------------------------------------Concsulta de promedios-----------------------------------------------------------------*/
+    public ResultadoEJB<BigDecimal> promediarUnidadAlineacionConsultaCal(List<DtoCapturaCalificacionAlineacion.Captura> dtoCapturaCalificacion){
+        try{
+//            System.out.println("EjbCapturaCalificaciones.promediarUnidad");
+            if(dtoCapturaCalificacion == null) return ResultadoEJB.crearErroneo(2, "El DTO de captura de calificación es nulo", BigDecimal.class);
+            if(dtoCapturaCalificacion.isEmpty()) return  ResultadoEJB.crearErroneo(3, "La lista de capturas de calificaciones es nula.", BigDecimal.class);
+
+            List<Criterio> criterios = dtoCapturaCalificacion
+                    .stream()
+                    .map(captura -> captura.getDetalle().getEvidencia().getCriterio())
+                    .distinct()
+                    .sorted(Comparator.comparingInt(Criterio::getCriterio))
+                    .collect(Collectors.toList());
+
+            BigDecimal suma = criterios
+                    .stream()
+                    .map(criterio -> promediarCriterioAlineacion(dtoCapturaCalificacion, criterio))
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+//            System.out.println("promedioUnidad = " + suma);
+            return ResultadoEJB.crearCorrecto(suma, "Promedio calculado");
+        }catch (Exception e){
+//            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo promediar la unidad (EjbCapturaCalificaciones.promediarUnidadAlineacionConsultaCal).", e, BigDecimal.class);
+        }
+    }
+    
+    public ResultadoEJB<BigDecimal> promediarUnidadConsultaCal(List<DtoCapturaCalificacion.Captura>  dtoCapturaCalificacion){
+        try{
+//            System.out.println("EjbCapturaCalificaciones.promediarUnidad");
+            if(dtoCapturaCalificacion == null) return ResultadoEJB.crearErroneo(2, "El DTO de captura de calificación es nulo", BigDecimal.class);
+            if(dtoCapturaCalificacion.isEmpty()) return  ResultadoEJB.crearErroneo(3, "La lista de capturas de calificaciones es nula.", BigDecimal.class);
+
+            List<Criterio> criterios = dtoCapturaCalificacion
+                    .stream()
+                    .map(captura -> captura.getDetalle().getCriterio())
+                    .distinct()
+                    .sorted(Comparator.comparingInt(Criterio::getCriterio))
+                    .collect(Collectors.toList());
+
+            BigDecimal suma = criterios
+                    .stream()
+                    .map(criterio -> promediarCriterio(dtoCapturaCalificacion, criterio))
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+//            System.out.println("promedioUnidad = " + suma);
+            return ResultadoEJB.crearCorrecto(suma, "Promedio calculado");
+        }catch (Exception e){
+//            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo promediar la unidad (EjbCapturaCalificaciones.promediarUnidadConsultaCal).", e, BigDecimal.class);
+        }
+    }
 }
