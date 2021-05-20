@@ -573,9 +573,9 @@
                                                                                                 <h5 style="text-align: center;">Original, este documento es entregado por<br/> el Departamento de Servicios Escolares</h5>
                                                                                             </p:outputPanel>
                                                                                             <br/>
-                                                                                            <center><o:inputFile id="fileCEIL" value="#{controladorArchTit.fileCEIL}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." />
+                                                                                            <center><o:inputFile id="fileCETSU" value="#{controladorArchTit.fileCETSU}" accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF." maxsize="#{caster.docsTitulacionTamanioLimite}" maxsizeMessage="El tamaño máximo permitido son #{caster.bytesToMegabytes(caster.docsTitulacionTamanioLimite)}." />
                                                                                             <br/>
-                                                                                            <h:message id="messageForFileCEIL" for="fileCEIL" />
+                                                                                            <h:message id="messageForFileCETSU" for="fileCETSU" />
                                                                                             <br/>
                                                                                             <h:commandButton onclick="PF('bloqueoCargaFile').show()"  value="Subir archivo" class="btn-primary btn-info" action="#{controladorArchTit.subirDocumentoCertEstTSU}" />
                                                                                             </center>
