@@ -283,17 +283,17 @@ public class ConcentradoCalificacionesSecAca extends ViewScopedRol implements De
                         cnpm = cnpms.get(0);
                         niv = Boolean.TRUE;
                         if (cnpm.getPromedio() != BigDecimal.ZERO) {
-                            dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), cnpm.getPromedio(), cnpm.getPromedio()));
+                            dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, BigDecimal.ZERO, cm.getPromedio(), cnpm.getPromedio(), cnpm.getPromedio(),Boolean.FALSE));
                         } else {
-                            dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), BigDecimal.ZERO, cm.getPromedio()));
+                            dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, BigDecimal.ZERO, cm.getPromedio(), BigDecimal.ZERO, cm.getPromedio(),Boolean.FALSE));
                         }
                     }else if(!tips.isEmpty() && cnpms.isEmpty()){   
                         tip = tips.get(0);                     
                         niv = Boolean.FALSE;
-                        dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, tip.getPromedio(), cm.getPromedio(), BigDecimal.ZERO, cm.getPromedio()));
+                        dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, BigDecimal.ZERO, cm.getPromedio(), BigDecimal.ZERO, cm.getPromedio(),Boolean.FALSE));
                     }else{
                         niv = Boolean.FALSE;
-                        dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, "0", cm.getPromedio(), BigDecimal.ZERO, cm.getPromedio()));
+                        dvcs.add(new DtoVistaCalificaciones(cm.getMateria(), proUni, BigDecimal.ZERO, cm.getPromedio(), BigDecimal.ZERO, cm.getPromedio(),Boolean.FALSE));
                     }                                                                                                                        
                     niv = Boolean.FALSE;
                 });
@@ -302,7 +302,7 @@ public class ConcentradoCalificacionesSecAca extends ViewScopedRol implements De
                     t.getEstudiante().getTipoEstudiante().getIdTipoEstudiante(),
                     t.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " " + t.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + " " + t.getEstudiante().getAspirante().getIdPersona().getNombre(),
                     dvcs,
-                    t.getPromedioF()));
+                    t.getPromedioF(),""));
             }
         });
         rol.setTitulos(new ArrayList<>());

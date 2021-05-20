@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -106,6 +107,11 @@ public class SegimientoAcadmicoSet extends AbstractRol{
     @Getter    @Setter    private List<Listaalumnosca> listaalumnoscas;
     @Getter    @Setter    private List<DtoVistaCalificacionestitulosTabla> titulos;    
     @Getter    @Setter    private List<DtoPresentacionCalificacionesReporte> dvcs;
+    
+    @Getter private Map<DtoCargaAcademica, DtoUnidadesCalificacionAlineacion> dtoUnidadesCalificacionAlineacionMap = new HashMap<>();
+    @Getter private Map<DtoCargaAcademica, List<DtoUnidadConfiguracionAlineacion>> dtoUnidadConfiguracionesAlineacionMap = new HashMap<>();
+    @Getter private Map<DtoCargaAcademica, DtoUnidadesCalificacion> dtoUnidadesCalificacionMap = new HashMap<>();
+    @Getter private Map<DtoCargaAcademica, List<DtoUnidadConfiguracion>> dtoUnidadConfiguracionesMap = new HashMap<>();
     
     
     @Getter    @Setter    private DecimalFormat df = new DecimalFormat("#.00");

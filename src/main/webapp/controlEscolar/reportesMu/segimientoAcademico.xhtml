@@ -71,6 +71,7 @@
     <ui:define name="body">
         <c:if test="#{segimientoAcademicoConsulta.cargado}">
             <adm:breadcrumb title="Segimiento academico"/>
+        <adm:sidebar collapsed="true"/>
             <div class="contenedor">
                 <c:if test="#{segimientoAcademicoConsulta.tieneAcceso}">
                     <!-- zona de importación de enums -->
@@ -105,7 +106,7 @@
                                                 </div>
                                                 <br/>
                                             </div>
-                                            <div class="#{casilla2}" style="visibility:#{segimientoAcademicoConsulta.rol.tipoUser eq 3?'hidden':'visible'}">
+                                            <div class="#{casilla2}">
                                                 <div class="ui-material">
                                                     <p:selectOneMenu id="planEstudio" value="#{segimientoAcademicoConsulta.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{segimientoAcademicoConsulta.cambiarPlanestudio}">
                                                         <f:selectItem itemValue="#{null}"/>
@@ -117,7 +118,7 @@
                                                 </div>
                                                 <br/>
                                             </div>
-                                            <div class="#{casilla}" style="visibility:#{segimientoAcademicoConsulta.rol.tipoUser eq 3?'hidden':'visible'}">
+                                            <div class="#{casilla}">
                                                 <div class="ui-material">
                                                     <p:selectOneMenu id="grupo" value="#{segimientoAcademicoConsulta.rol.grupoSelec}" converter="entityConverter" valueChangeListener="#{segimientoAcademicoConsulta.cambiarGrupo}">
                                                         <f:selectItems value="#{segimientoAcademicoConsulta.rol.grupos}" var="grupo"
@@ -194,8 +195,9 @@
                                                                     <p:panelGrid style="width: 100%">
                                                                         <f:facet name="header">
                                                                             <p:row>
-                                                                                <p:column rowspan="3" style="background: #00a7d0">Matricula</p:column>
-                                                                                <p:column rowspan="3" style="background: #00a7d0">Nombre</p:column>
+                                                                                <p:column rowspan="2" style="background: #00a7d0">Matricula</p:column>
+                                                                                <p:column colspan="9" style="background: #00a7d0;">Nombre</p:column>                                                                                
+                                                                                <p:column colspan="5" style="background: #00a7d0;">Estatus</p:column>
                                                                                 <c:forEach var="i" begin="0" end="#{segimientoAcademicoConsulta.rol.titulos.size()-1}">
                                                                                     <c:set var="t" value="#{segimientoAcademicoConsulta.rol.titulos.get(i)}"/>
                                                                                     <p:column colspan="#{t.ti eq true?t.tunidades+4:t.tunidades+3}" style="font-size: smaller;background: #00D8D8 ">#{t.unidad}<hr/> #{t.docente}</p:column>
@@ -203,15 +205,29 @@
                                                                                 <p:column rowspan="3" style="background: #00a7d0">General</p:column>
                                                                             </p:row>
                                                                             <p:row>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
+                                                                                <p:column style="font-size: smaller;background: #00a7d0;color: #00a7d0;">1</p:column>
                                                                                 <c:forEach var="i" begin="0" end="#{segimientoAcademicoConsulta.rol.titulos.size()-1}">
                                                                                     <c:set var="t" value="#{segimientoAcademicoConsulta.rol.titulos.get(i)}"/>
                                                                                     <c:forEach var="g" begin="0" end="#{t.tunidades-1}">
-                                                                                        <p:column style="font-size: smaller;background: #00C853">#{g+1}</p:column>
+                                                                                        <p:column style="font-size: smaller;background: #00C853;padding: 2px 5px">#{g+1}</p:column>
                                                                                     </c:forEach>
-                                                                                    <p:column style="font-size: x-small;background: #00C853" rendered="#{t.ti}">T.I</p:column>
-                                                                                    <p:column style="font-size: x-small;background: #00C853">P.O.</p:column>
-                                                                                    <p:column style="font-size: x-small;background: #00C853">Niv.</p:column>
-                                                                                    <p:column style="font-size: x-small;background: #00C853">P.F.</p:column>
+                                                                                    <p:column style="font-size: x-small;background: #00C853;padding: 2px 5px" rendered="#{t.ti}">T.I</p:column>
+                                                                                    <p:column style="font-size: x-small;background: #00C853;padding: 2px 5px">P.O.</p:column>
+                                                                                    <p:column style="font-size: x-small;background: #00C853;padding: 2px 5px">Niv.</p:column>
+                                                                                    <p:column style="font-size: x-small;background: #00C853;padding: 2px 5px">P.F.</p:column>
                                                                                 </c:forEach>
                                                                             </p:row>
                                                                         </f:facet>
@@ -220,19 +236,20 @@
                                                                             <c:set var="b" value="#{segimientoAcademicoConsulta.rol.dvcs.get(a)}"/>
                                                                             <p:row >
                                                                                 <p:column style="font-size: small">#{b.matricula}</p:column>
-                                                                                <p:column style="text-align: justify; font-size: small">#{b.nombre}</p:column>                                                                            
+                                                                                <p:column colspan="9" style="text-align: justify; font-size: small">#{b.nombre}</p:column>                                                                                  
+                                                                                <p:column colspan="5" style="text-align: justify; font-size: small">#{b.tipoEs}</p:column> 
                                                                                 <c:forEach var="c" begin="0" end="#{b.materias.size()-1}">
                                                                                     <c:set var="d" value="#{b.materias.get(c)}"/> 
                                                                                     <c:forEach var="e" begin="0" end="#{d.promedios.size()-1}">
                                                                                         <c:set var="f" value="#{d.promedios.get(e)}"/> 
-                                                                                        <p:column style="font-size: smaller;#{f ge 8 ? 'color: #000000':'color: #E53935;font-weight: bold;' or f gt 0 ? 'color: #E53935;font-weight: bold;':'color: #000000'}">#{f gt 0?segimientoAcademicoConsulta.rol.df.format(f):0}</p:column>
+                                                                                        <p:column style="padding: 2px 5px;font-size: smaller;#{f ge 8 ? 'color: #000000':'color: #E53935;font-weight: bold;' or f gt 0 ? 'color: #E53935;font-weight: bold;':'color: #000000'}">#{f gt 0?segimientoAcademicoConsulta.rol.df.format(f):0}</p:column>
                                                                                     </c:forEach>
-                                                                                    <p:column style="font-size: smaller; #{d.promedioFinalO ge 8 ? 'color: #000000':'color: #E53935' or d.tareaI gt 0 ? 'color: #E53935':'color: #000000'}" rendered="#{d.tareaI ne ''}">#{d.tareaI}</p:column>
-                                                                                    <p:column style="font-size: smaller; #{d.promedioFinalO ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalO gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalO gt 0?segimientoAcademicoConsulta.rol.df.format(d.promedioFinalO):0}</p:column>                                                                                
-                                                                                    <p:column style="font-size: smaller; #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.nivelacion gt 0 ? 'color: #E53935':'color: #000000'}">#{d.nivelacion gt 0?segimientoAcademicoConsulta.rol.df.format(d.nivelacion):0}</p:column>
-                                                                                    <p:column style="background: #cccccc; font-weight: bold; font-size: smaller;  #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalN gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalN gt 0?segimientoAcademicoConsulta.rol.df.format(d.promedioFinalN):0}</p:column>                                                                                
+                                                                                    <p:column style="padding: 2px 5px;font-size: smaller; #{d.tareaI ge 8 ? 'color: #000000':'color: #E53935' or d.tareaI gt 0 ? 'color: #E53935':'color: #000000'}" rendered="#{d.tieneTi}">#{d.tareaI}</p:column>
+                                                                                    <p:column style="padding: 2px 5px;font-size: smaller; #{d.promedioFinalO ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalO gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalO gt 0?segimientoAcademicoConsulta.rol.df.format(d.promedioFinalO):0}</p:column>                                                                                
+                                                                                    <p:column style="padding: 2px 5px;font-size: smaller; #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.nivelacion gt 0 ? 'color: #E53935':'color: #000000'}">#{d.nivelacion gt 0?segimientoAcademicoConsulta.rol.df.format(d.nivelacion):0}</p:column>
+                                                                                    <p:column style="padding: 2px 5px;background: #cccccc; font-weight: bold; font-size: smaller;  #{d.promedioFinalN ge 8 ? 'color: #000000':'color: #E53935' or d.promedioFinalN gt 0 ? 'color: #E53935':'color: #000000'}">#{d.promedioFinalN gt 0?segimientoAcademicoConsulta.rol.df.format(d.promedioFinalN):0}</p:column>                                                                                
                                                                                 </c:forEach>
-                                                                                <p:column style="font-size: smaller; font-weight: bold; #{b.promedioFinal ge 8 ? 'color: #000000':'color: #E53935' or b.promedioFinal gt 0 ? 'color: #E53935':'color: #000000'}">#{b.promedioFinal gt 0?segimientoAcademicoConsulta.rol.df.format(b.promedioFinal):0}</p:column>
+                                                                                <p:column style="padding: 2px 5px;font-size: smaller; font-weight: bold; #{b.promedioFinal ge 8 ? 'color: #000000':'color: #E53935' or b.promedioFinal gt 0 ? 'color: #E53935':'color: #000000'}">#{b.promedioFinal gt 0?segimientoAcademicoConsulta.rol.df.format(b.promedioFinal):0}</p:column>
                                                                             </p:row>
                                                                         </c:forEach>
                                                                     </p:panelGrid>

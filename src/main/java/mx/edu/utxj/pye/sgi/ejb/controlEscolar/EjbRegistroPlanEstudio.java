@@ -632,7 +632,7 @@ public class EjbRegistroPlanEstudio {
     
     public ResultadoEJB<List<Grupo>> getListaGrupoPorTutorYPe(PersonalActivo tutor, PeriodosEscolares escolares, Short pe) {
         try {
-            List<Grupo> gs = em.createQuery("select g from Grupo g where g.tutor=:tutor AND g.periodo=:periodo AND g.idPe:=idpe", Grupo.class)
+            List<Grupo> gs = em.createQuery("select g from Grupo g where g.tutor=:tutor AND g.periodo=:periodo AND g.idPe=:idpe", Grupo.class)
                     .setParameter("tutor", tutor.getPersonal().getClave())
                     .setParameter("periodo", escolares.getPeriodo())
                     .setParameter("idpe", pe)

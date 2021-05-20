@@ -45,6 +45,7 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCapturaCalificacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCapturaCalificacionAlineacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
@@ -52,10 +53,13 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInscripcion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPresentacionCalificacionesReporte;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracionAlineacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadesCalificacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadesCalificacionAlineacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoVistaCalificaciones;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoVistaCalificacionestitulosTabla;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.SegimientoAcadmicoSet;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaTareaIntegradora;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbResultadosConfiguraciones;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AccionesDeMejora;
@@ -63,6 +67,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionEvidenciaInstrumento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MetasPropuestas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
@@ -70,6 +75,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Faces;
 import org.primefaces.model.charts.bar.BarChartModel;
@@ -92,6 +98,7 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
     @EJB EjbPropiedades ep;
     @EJB EjbAsistencias ea;
     @EJB EjbCapturaCalificaciones calificaciones;
+    @EJB EjbCapturaTareaIntegradora tareaIntegradora;
     @EJB EjbPacker packer;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
@@ -100,6 +107,7 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
     @Getter    @Setter    private BarChartModel barModel2;
     Integer bt=0,bd=0,ri=0;
     List<BigDecimal> promedios;
+    BigDecimal sumatoriaPromedios;
     List<DtoVistaCalificaciones> dvc;
 
     /**
@@ -233,13 +241,18 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
             if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);            
             rol.setGrupos(resgrupos.getValor()); 
             gruposeleccionado();
-                            
+                 
+            rol.setEventoActivo(new EventoEscolar(0, rol.getPeriodoActivo(), new Date(), "Captura_tarea_integradora", 0));
+            rol.getEventoActivo().setFin(new Date());           
+            
             existeAsignacion();
+            
             if (rol.getPeriodoActivo() <= 56) {
                 rol.setRender(Boolean.FALSE);
             } else {
                 rol.setRender(Boolean.TRUE);
             }
+            
             logon.setG2(0);
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -418,7 +431,7 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
             String nomEs =  e.getAspirante().getIdPersona().getNombre()+" "+e.getAspirante().getIdPersona().getApellidoPaterno()+" "+e.getAspirante().getIdPersona().getApellidoMaterno();             
             if (!dcas.isEmpty()) {
                 dvc= new ArrayList<>(); 
-                dcas.forEach((c) -> {                    
+                dcas.forEach((c) -> {                
                     promedios= new ArrayList<>();
                     c.getCargaAcademica().getUnidadMateriaConfiguracionList().forEach((um) -> { 
                         if (rol.getPeriodoActivo() <= 56) {
@@ -432,13 +445,41 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
                         }
                     }); 
                     BigDecimal ti=BigDecimal.ZERO; ;
+                    Boolean tiv=Boolean.FALSE;
+                
                     if(c.getCargaAcademica().getTareaIntegradora() != null){
+                        tiv=Boolean.TRUE;
                         List<TareaIntegradoraPromedio> tis=c.getCargaAcademica().getTareaIntegradora().getTareaIntegradoraPromedioList().stream().filter(t-> Objects.equals(t.getEstudiante().getIdEstudiante(), e.getIdEstudiante())).collect(Collectors.toList());
                         if(!tis.isEmpty()){
                             TareaIntegradoraPromedio promedio=tis.get(0);
                             ti=BigDecimal.valueOf(promedio.getValor());
                         }
                     }
+                    BigDecimal pordinario=BigDecimal.ZERO; 
+                    ResultadoEJB<DtoEstudiante> resEst=packer.packEstudiante(e);      
+                        if(resEst.getCorrecto()){
+                            DtoEstudiante est=resEst.getValor();                        
+                            if(rol.getPeriodoActivo()<=56){
+                                ResultadoEJB<BigDecimal> res = tareaIntegradora.promediarAsignatura(getContenedor(c), c, est);
+                                if(res.getCorrecto()){
+                                    pordinario= res.getValor();
+                                }else{
+                                    mostrarMensaje(String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", est.getPersona().getApellidoPaterno(), est.getPersona().getApellidoMaterno(), est.getPersona().getNombre(), est.getInscripcionActiva().getInscripcion().getMatricula()));
+                                    pordinario= BigDecimal.ZERO;
+                                }
+                            }else{
+                                ResultadoEJB<BigDecimal> res = tareaIntegradora.promediarAsignaturaAlineacion(getContenedorAlineacion(c), c, est);
+                                if(res.getCorrecto()){
+                                    pordinario= res.getValor();
+                                }else{
+                                    mostrarMensaje(String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", est.getPersona().getApellidoPaterno(), est.getPersona().getApellidoMaterno(), est.getPersona().getNombre(), est.getInscripcionActiva().getInscripcion().getMatricula()));
+                                    pordinario= BigDecimal.ZERO;
+                                }
+                            }
+                        }else{
+                            pordinario= BigDecimal.ZERO;
+                        }
+                    
                     List<CalificacionNivelacion> cns=c.getCargaAcademica().getCalificacionNivelacionList().stream().filter(t-> Objects.equals(t.getEstudiante().getIdEstudiante(), e.getIdEstudiante())).collect(Collectors.toList());
                     BigDecimal niv=BigDecimal.ZERO;   
                     BigDecimal pfinal=BigDecimal.ZERO;   
@@ -447,11 +488,21 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
                         niv= BigDecimal.valueOf(cn.getValor());
                         pfinal=BigDecimal.valueOf(cn.getValor());
                     }else{
-                        pfinal=BigDecimal.ZERO;   
+                        pfinal=pordinario;   
                     }  
-                    dvc.add(new DtoVistaCalificaciones(c.getMateria(), promedios, ti, BigDecimal.ZERO, niv, pfinal));
+                    dvc.add(new DtoVistaCalificaciones(c.getMateria(), promedios, ti, pordinario, niv, pfinal,tiv));
                 });
-                rol.getDvcs().add(new DtoPresentacionCalificacionesReporte(e.getMatricula(), e.getTipoEstudiante().getIdTipoEstudiante(), nomEs, dvc, BigDecimal.ZERO));
+                String tipoEs="r";
+                switch (e.getTipoEstudiante().getIdTipoEstudiante()){
+                    case 1: tipoEs="Regular"; break;
+                    case 2: tipoEs="Baja Temporal"; break;
+                    case 3: tipoEs="Baja Definitiva"; break;
+                    case 4: tipoEs="Egresado No Titulado"; break;
+                    case 5: tipoEs="Reincorporacion"; break;
+                }
+                BigDecimal pf=BigDecimal.ZERO;
+                pf=promedioCuatrimestral(dvc);
+                rol.getDvcs().add(new DtoPresentacionCalificacionesReporte(e.getMatricula(), e.getTipoEstudiante().getIdTipoEstudiante(), nomEs, dvc, pf,tipoEs));
             }
         });
         Ajax.update("frm");
@@ -485,11 +536,75 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
         return cs;
     }
     
-    
     public void onSelect(TimelineSelectEvent e) {  
         TimelineEvent timelineEvent = e.getTimelineEvent();  
-   
         FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Selected event:", timelineEvent.getData().toString());  
         FacesContext.getCurrentInstance().addMessage(null, msg);  
+    }
+    
+    public DtoUnidadesCalificacion getContenedor(@NonNull DtoCargaAcademica dtoCargaAcademica){
+        if(rol.getDtoUnidadesCalificacionMap().containsKey(dtoCargaAcademica)) return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
+        if(rol.getEventoActivo()!= null){
+            ResultadoEJB<DtoUnidadesCalificacion> resDtoUnidadesCalificacion = packer.packDtoUnidadesCalificacion(dtoCargaAcademica, getUnidades(dtoCargaAcademica), rol.getEventoActivo());
+            if(!resDtoUnidadesCalificacion.getCorrecto()){
+                mostrarMensaje("No se detectaron registros de calificaciones de la carga seleccionada. " + resDtoUnidadesCalificacion.getMensaje());
+                return null;
+            }
+            rol.getDtoUnidadesCalificacionMap().put(dtoCargaAcademica, resDtoUnidadesCalificacion.getValor());
+            return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
+        }else{
+            mostrarMensaje("No existe evento activo para captura de tarea integradora y nivelación final. ");
+            return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
+        }
+    }
+    
+    public List<DtoUnidadConfiguracion> getUnidades(@NonNull DtoCargaAcademica dtoCargaAcademica){
+        if(rol.getDtoUnidadConfiguracionesMap().containsKey(dtoCargaAcademica)) return  rol.getDtoUnidadConfiguracionesMap().get(dtoCargaAcademica);
+        ResultadoEJB<List<DtoUnidadConfiguracion>> resConfiguraciones = calificaciones.getConfiguraciones(dtoCargaAcademica);
+        if(!resConfiguraciones.getCorrecto()){
+            mostrarMensaje("No se detectaron configuraciones de unidades en la materia de la carga académica seleccionada. " + resConfiguraciones.getMensaje());
+            return Collections.EMPTY_LIST;
+        }
+        rol.getDtoUnidadConfiguracionesMap().put(dtoCargaAcademica, resConfiguraciones.getValor());
+        return  rol.getDtoUnidadConfiguracionesMap().get(dtoCargaAcademica);
+    }
+    
+    public DtoUnidadesCalificacionAlineacion getContenedorAlineacion(@NonNull DtoCargaAcademica dtoCargaAcademica){
+        if(rol.getDtoUnidadesCalificacionAlineacionMap().containsKey(dtoCargaAcademica)) return rol.getDtoUnidadesCalificacionAlineacionMap().get(dtoCargaAcademica);
+        if(rol.getEventoActivo()!= null){
+            ResultadoEJB<DtoUnidadesCalificacionAlineacion> resDtoUnidadesCalificacion = packer.packDtoUnidadesCalificacionAlineacion(dtoCargaAcademica, getUnidadesAlineacion(dtoCargaAcademica), rol.getEventoActivo());
+            if(!resDtoUnidadesCalificacion.getCorrecto()){
+                mostrarMensaje("No se detectaron registros de calificaciones de la carga seleccionada. " + resDtoUnidadesCalificacion.getMensaje());
+                return null;
+            }
+            rol.getDtoUnidadesCalificacionAlineacionMap().put(dtoCargaAcademica, resDtoUnidadesCalificacion.getValor());
+            return rol.getDtoUnidadesCalificacionAlineacionMap().get(dtoCargaAcademica);
+        }else{
+            mostrarMensaje("No existe evento activo para captura de tarea integradora y nivelación final. ");
+            return rol.getDtoUnidadesCalificacionAlineacionMap().get(dtoCargaAcademica);
+        }
+    }
+    
+    public List<DtoUnidadConfiguracionAlineacion> getUnidadesAlineacion(@NonNull DtoCargaAcademica dtoCargaAcademica){
+        if(rol.getDtoUnidadConfiguracionesAlineacionMap().containsKey(dtoCargaAcademica)) return  rol.getDtoUnidadConfiguracionesAlineacionMap().get(dtoCargaAcademica);
+        ResultadoEJB<List<DtoUnidadConfiguracionAlineacion>> resConfiguraciones = calificaciones.getConfiguracionesAlineacion(dtoCargaAcademica);
+        if(!resConfiguraciones.getCorrecto()){
+            mostrarMensaje("No se detectaron configuraciones de unidades en la materia de la carga académica seleccionada. " + resConfiguraciones.getMensaje());
+            return Collections.EMPTY_LIST;
+        }
+        rol.getDtoUnidadConfiguracionesAlineacionMap().put(dtoCargaAcademica, resConfiguraciones.getValor());
+        return  rol.getDtoUnidadConfiguracionesAlineacionMap().get(dtoCargaAcademica);
+    }
+    
+    public BigDecimal promedioCuatrimestral(List<DtoVistaCalificaciones> vistaCal){
+        sumatoriaPromedios =BigDecimal.ZERO;
+        BigDecimal promedio=BigDecimal.ZERO;
+        vistaCal.forEach((t) -> {
+            sumatoriaPromedios=sumatoriaPromedios.add(t.getPromedioFinalN());            
+        });  
+        if(!sumatoriaPromedios.equals(promedio)){
+            promedio=sumatoriaPromedios.divide(BigDecimal.valueOf(vistaCal.size()));
+        }        
+        return promedio;
     }
 }

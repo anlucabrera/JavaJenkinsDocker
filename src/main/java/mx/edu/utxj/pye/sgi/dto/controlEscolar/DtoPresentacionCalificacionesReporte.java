@@ -26,12 +26,14 @@ public class DtoPresentacionCalificacionesReporte implements Serializable{
     @Getter @Setter private String nombre;
     @Getter @Setter private List<DtoVistaCalificaciones> materias;
     @Getter @Setter private BigDecimal promedioFinal;
+    @Getter @Setter private String tipoEs;
 
-    public DtoPresentacionCalificacionesReporte(Integer matricula, Short tipoEstudiante, String nombre, List<DtoVistaCalificaciones> materias, BigDecimal promedioFinal) {
+    public DtoPresentacionCalificacionesReporte(Integer matricula, Short tipoEstudiante, String nombre, List<DtoVistaCalificaciones> materias, BigDecimal promedioFinal, String tipoEs) {
         this.matricula = matricula;
         this.tipoEstudiante = tipoEstudiante;
         this.nombre = nombre;
         this.materias = materias;
         this.promedioFinal = promedioFinal;
-    }
+        this.tipoEs = tipoEs;
+    }   
 }
