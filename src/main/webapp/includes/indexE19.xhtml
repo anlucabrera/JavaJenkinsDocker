@@ -81,6 +81,23 @@
                             </div>
                         </c:if>
                         <div class="row">
+                            <div class="#{claseResumen}" style="max-height: 154px;">
+                                <div class="small-box bg-red">
+                                    <div class="inner" style="cursor: pointer;" onclick="cuestionario();">
+                                        <h3>
+                                            <h:outputLabel value="#{censoCovid.comprobarCensoEstudiante(logonMB.email)?'Terminada':'Pendiente'}" style="cursor: pointer; color: #ffffff"/>
+                                            <sup style="font-size: 20px"></sup>
+                                        </h3>
+                                        <p style="color: #ffffff">Censo de estudiantes<br/></p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fa fa-stethoscope"></i>
+                                    </div>
+                                    <p:link href="http://siip.utxj.edu.mx/sii2-ws-contingencia-censos/censoEstudiante/#{logonMB.email}" target="_blank" class="small-box-footer">
+                                        <span> Ingresar</span>
+                                    </p:link>
+                                </div>
+                            </div>
                             <c:if test="#{cuestionarioPsicopedagogicoEstudiante.tieneAcceso}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-yellow">
