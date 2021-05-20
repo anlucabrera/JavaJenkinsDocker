@@ -48,7 +48,7 @@ public class ControladorArchivosTitulacion implements Serializable{
     @Getter private String matricula;
     
     @Getter @Setter private Integer claveDoc;
-    @Getter @Setter private Part fileC, fileAN, fileCB, fileAEE, fileCSS, fileCEIL, fileAE, fileFotoIL, fileCTTSU, fileLibSCLTF, fileFotoTSU, fileAEETSU, fileCSSTSU, fileCETSU; 
+    @Getter @Setter private Part fileC, fileAN, fileCB, fileAEE, fileCSS, fileCEIL, fileAE, fileFotoIL, fileCTTSU, fileLibSCLTF, fileFotoTSU, fileCETSU; 
    
     @Inject LogonMB logonMB;
     @Inject UtilidadesCH utilidadesCH;
@@ -421,7 +421,7 @@ public class ControladorArchivosTitulacion implements Serializable{
             if (expediente.getNivel() == 4) {
                 nivel = "LIC";
             }
-
+            
             Documentos doc = new Documentos();
             doc = ejbEstudianteRegistro.obtenerInformacionDocumento(claveDoc);
 
@@ -430,7 +430,7 @@ public class ControladorArchivosTitulacion implements Serializable{
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
 
-            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileAEETSU, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileAEE, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);
@@ -518,7 +518,7 @@ public class ControladorArchivosTitulacion implements Serializable{
 
             String nombreEstMat = nuevoOBJegresado.getApellidoPaterno() + "_" + nuevoOBJegresado.getApellidoMaterno() + "_" + nuevoOBJegresado.getNombre() + "_" + nuevoOBJegresado.getMatricula();
 
-            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileCSSTSU, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
+            nuevoOBJdocExp.setRuta(utilidadesCH.agregarDocExpTit(fileCSS, generacion , nivel, expediente.getProgramaEducativo(), nombreEstMat, doc.getNomenclatura(), expediente.getMatricula().getMatricula()));
             nuevoOBJdocExp.setFechaCarga(new Date());
             nuevoOBJdocExp.setObservaciones("Sin revisar");
             nuevoOBJdocExp.setFechaValidacion(null);
@@ -597,7 +597,7 @@ public class ControladorArchivosTitulacion implements Serializable{
             if (expediente.getNivel() == 4) {
                 nivel = "LIC";
             }
-
+            
             Documentos doc = new Documentos();
             doc = ejbEstudianteRegistro.obtenerInformacionDocumento(claveDoc);
 
