@@ -38,7 +38,7 @@ public class CensoCovid implements Serializable {
         Client client = ClientBuilder.newClient().register(new JacksonFeature());
         //System.out.println("CensoCovid.comprobarCensoTrabajador");
         ArrayList res = client
-                .target("http://siip.utxj.edu.mx/sii2-ws-contingencia-censos/validarCensoColaboradorPorClave/"+clave)
+                .target("http://150.140.1.26:8080/sii2-ws-contingencia-censos/validarCensoColaboradorPorClave/"+clave)
                 .request(MediaType.APPLICATION_JSON).get(new GenericType<ArrayList>() {
                 });
         //System.out.println("CensoCovid.comprobarCensoTrabajador" + res);
@@ -60,7 +60,7 @@ public class CensoCovid implements Serializable {
         Client client = ClientBuilder.newClient().register(new JacksonFeature());
         //System.out.println("CensoCovid.comprobarCensoEstudiante");
         ArrayList res = client
-                .target("http://siip.utxj.edu.mx/sii2-ws-contingencia-censos/validarCensoEstudiantePorClave/"+matricula)
+                .target("http://150.140.1.26:8080/sii2-ws-contingencia-censos/validarCensoEstudiantePorClave/"+matricula)
                 .request(MediaType.APPLICATION_JSON).get(new GenericType<ArrayList>() {
                 });
         //System.out.println("CensoCovid.comprobarCensoEstudiante" + res);

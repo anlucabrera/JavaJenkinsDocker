@@ -43,6 +43,7 @@ import org.primefaces.model.timeline.TimelineEvent;
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.NonNull;
@@ -431,7 +432,7 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
             String nomEs =  e.getAspirante().getIdPersona().getNombre()+" "+e.getAspirante().getIdPersona().getApellidoPaterno()+" "+e.getAspirante().getIdPersona().getApellidoMaterno();             
             if (!dcas.isEmpty()) {
                 dvc= new ArrayList<>(); 
-                dcas.forEach((c) -> {                
+                dcas.forEach((c) -> { 
                     promedios= new ArrayList<>();
                     c.getCargaAcademica().getUnidadMateriaConfiguracionList().forEach((um) -> { 
                         if (rol.getPeriodoActivo() <= 56) {
@@ -603,8 +604,8 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
             sumatoriaPromedios=sumatoriaPromedios.add(t.getPromedioFinalN());            
         });  
         if(!sumatoriaPromedios.equals(promedio)){
-            promedio=sumatoriaPromedios.divide(BigDecimal.valueOf(vistaCal.size()));
-        }        
+            promedio=sumatoriaPromedios.divide(BigDecimal.valueOf(vistaCal.size()), 8, RoundingMode.HALF_DOWN);
+        } 
         return promedio;
     }
 }
