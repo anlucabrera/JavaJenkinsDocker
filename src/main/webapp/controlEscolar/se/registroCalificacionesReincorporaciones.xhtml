@@ -63,7 +63,7 @@
                                                                        itemValue="#{estur}"
                                                                        itemLabel="#{estur.matricula}--#{estur.aspirante.idPersona.nombre}--#{estur.aspirante.idPersona.apellidoPaterno}--#{estur.aspirante.idPersona.apellidoMaterno}---#{estur.tipoRegistro} " />                                                                                    
 
-                                                        <p:ajax process="@this" update=":regCal" listener="#{reincorporacionCalificacionesServiciosEscolares.buscarAlineacionCalificaciones}"/>
+                                                        <p:ajax process="@this" update=":regCal" listener="#{reincorporacionCalificacionesServiciosEscolares.asignaEstudianteconsulta}"/>
 
                                                     </p:selectOneMenu>
                                                     <hr/>
@@ -102,18 +102,19 @@
                                                             <div class="col-sm-2 col-md-2 col-lg-2">
                                                                 <p:outputLabel for="am" style="font-size: large;text-align: right;" value="Apellido Materno" />
                                                                 <p:inputText id="am" class="form-control" value="#{reincorporacionCalificacionesServiciosEscolares.rol.estudiante.aspirante.idPersona.apellidoMaterno}" readonly="true"/>
-                                                                <p:inputText id="rt" class="form-control" value="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesR.size()}" readonly="true"/>
                                                             </div>        
                                                             <!--div class="col-sm-4 col-md-4 col-lg-4">
                                                                 <p:outputLabel for="pe" style="font-size: large;text-align: right;" value="Programa Educativo" />
                                                                 <p:inputTextarea id="pe" class="form-control" value="# {reincorporacionCalificacionesServiciosEscolares.rol.rein.opcionIncripcion eq true?reincorporacionCalificacionesServiciosEscolares.rol.rein.primeraOp:reincorporacionCalificacionesServiciosEscolares.rol.rein.segundaOP}" readonly="true"/>
                                                             </div-->
                                                             <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                <br/>
+                                                                <br/>
                                                                 <p:panelGrid columns="3">                                                                        
                                                                     <c:forEach var="i" begin="0" end="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesR.size()-1}">
                                                                         <c:set var="t" value="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesR.get(i)}"/>
                                                                         <p:panelGrid columns="2">
-                                                                            <f:facet name="header">#{t.grupo.grado}° #{t.grupo.literal}</f:facet>
+                                                                            <f:facet name="header">#{t.grupo.grado}° #{t.grupo.literal}-- #{t.grupo.plan.descripcion} -- #{t.estudiante.tipoEstudiante.descripcion}</f:facet>
                                                                             <c:forEach var="h" begin="0" end="#{t.calificacionesReincorporacions.size()-1}">
                                                                                 <c:set var="j" value="#{t.calificacionesReincorporacions.get(h)}"/>
                                                                                 <p:outputLabel value="#{j.estudioMateria.claveMateria}  #{j.materia.nombre}" />

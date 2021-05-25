@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -23,6 +25,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.persistence.EntityManager;
+import mx.edu.utxj.pye.sgi.controladores.ch.CvHabilidades;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
@@ -35,6 +38,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistencias;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionEvidenciaInstrumento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedioPK;
@@ -58,11 +62,14 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.IntegrantesFamilia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.LenguaIndigena;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioComunicacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioDifusion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
@@ -73,6 +80,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TutorFamiliar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionEvidenciaInstrumento;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
@@ -413,7 +421,7 @@ public class EjbReincorporacion {
                             if (resES.getCorrecto()) {
                                 es = resES.getValor();
                                 if(!es.isEmpty()){
-                                    ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> resAl = getAlineacionCalificaciones(ar.getAspirante(),esEscolares);
+                                    ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> resAl = getAlineacionCalificaciones(ar.getAspirante(),esEscolares,0);
                                     if (resAl.getCorrecto()) {
                                         al = resAl.getValor();}
                                 }
@@ -670,68 +678,65 @@ public class EjbReincorporacion {
         }
     }
     
-    public ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> getAlineacionCalificaciones(Aspirante a, Boolean esEscolares) {
+    public ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> getAlineacionCalificaciones(Aspirante a, Boolean esEscolares,Integer matricula) {
         try {
-            List<Estudiante> das = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a WHERE a.idAspirante=:idAspirante", Estudiante.class).setParameter("idAspirante", a.getIdAspirante()).getResultList();
+            List<Estudiante> das = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a WHERE a.idAspirante=:idAspirante AND e.matricula=:matricula ORDER BY e.grupo.grado", Estudiante.class).setParameter("idAspirante", a.getIdAspirante()).setParameter("matricula", matricula).getResultList();
+            
             List<DtoReincorporacion.AlineacionCalificaciones> rr = new ArrayList<>();
             if (!das.isEmpty()) {
                 das.forEach((t) -> {
-//                    System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getAlineacionCalificaciones()"+t.getGrupo().getGrado());
                     if (!t.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("2")) && !t.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("3"))) {
                         List<DtoReincorporacion.CalificacionesR> crs = new ArrayList<>();
-                        List<CargaAcademica> cas = new ArrayList<>();
                         Boolean validar = Boolean.FALSE;
-                        if (!t.getGrupo().getCargaAcademicaList().isEmpty()) {
-                            cas = t.getGrupo().getCargaAcademicaList();
+                        List<CargaAcademica> cas = em.createQuery("select c from CargaAcademica c INNER JOIN c.cveGrupo g WHERE g.idGrupo=:idGrupo", CargaAcademica.class).setParameter("idGrupo", t.getGrupo().getIdGrupo()).getResultList();
+                        if (!cas.isEmpty()) {
                             cas.forEach((cg) -> {
                                 List<CalificacionPromedio> cps = em.createQuery("select d from CalificacionPromedio d INNER JOIN d.estudiante a INNER JOIN d.cargaAcademica c WHERE a.idEstudiante=:idEstudiante AND c.carga=:carga", CalificacionPromedio.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("carga", cg.getCarga()).getResultList();
                                 List<CalificacionNivelacion> cns = em.createQuery("select d from CalificacionNivelacion d INNER JOIN d.estudiante a INNER JOIN d.cargaAcademica c WHERE a.idEstudiante=:idEstudiante AND c.carga=:carga", CalificacionNivelacion.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("carga", cg.getCarga()).getResultList();
-                                Personal p = new Personal();
                                 CalificacionPromedio cp = new CalificacionPromedio();
                                 CalificacionNivelacion cn = new CalificacionNivelacion();
-
+                                Personal p = new Personal();
                                 try {
                                     p = ejbPersonal.mostrarPersonalLogeado(cg.getDocente());
                                 } catch (Throwable ex) {
                                     Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
                                 }
-                                Boolean editable = Boolean.TRUE;
+                                Boolean editable = Boolean.FALSE;
                                 Boolean ordinaria = Boolean.TRUE;
-                                if (!cps.isEmpty()) {
-                                    cp = cps.get(0);
-                                    if (!cns.isEmpty()) {
-                                        cn = cns.get(0);
-                                        if (cp.getValor() > cn.getValor()) {
-                                            ordinaria = Boolean.TRUE;
-                                        } else {
-                                            cp.setValor(cn.getValor());
-                                            ordinaria = Boolean.FALSE;
-                                        }
-                                    } else {
-                                        ordinaria = Boolean.TRUE;
-                                    }
-                                    if (cp.getTipo().equals("Oficial")) {
-                                        editable = Boolean.FALSE;
-                                    } else if (esEscolares && (t.getTipoRegistro().equals("Equivalencia") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
-                                        editable = Boolean.FALSE;
-                                    } else if (!esEscolares && (t.getTipoRegistro().equals("Equivalencia") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
-                                        editable = Boolean.TRUE;
-                                    } else {
-                                        editable = esEscolares;
-                                    }
+                              
+                                if (!cns.isEmpty()) {
+                                    cn=cns.get(0);
+                                    cp=cps.get(0);
+                                    cp.setValor(cn.getValor());
+                                    ordinaria = Boolean.FALSE;
+                                } else if(!cps.isEmpty()){
+                                    cp=cps.get(0);
+                                    ordinaria = Boolean.TRUE;                                    
+                                }
+                                if(t.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("5"))){editable = Boolean.TRUE;}
+                                
+                                if (cps.isEmpty()) {
                                     crs.add(new DtoReincorporacion.CalificacionesR(cg, cg.getIdPlanMateria(), cg.getIdPlanMateria().getIdMateria(), p, cp, editable, ordinaria, Operacion.PERSISTIR, Boolean.FALSE));
-                                } else {
-
-                                    if (!esEscolares && (t.getTipoRegistro().equals("Equivalencia") || t.getTipoRegistro().equals("Cambio de programa educativo") || t.getTipoRegistro().equals("Cambio de plan de estudio"))) {
-                                        editable = Boolean.TRUE;
-                                    } else if (t.getTipoRegistro().equals("Equivalencia") && esEscolares) {
-                                        editable = Boolean.FALSE;
-                                    } else {
-                                        editable = esEscolares;
-                                    }
-                                    crs.add(new DtoReincorporacion.CalificacionesR(cg, cg.getIdPlanMateria(), cg.getIdPlanMateria().getIdMateria(), p, new CalificacionPromedio(), editable, ordinaria, Operacion.ACTUALIZAR, Boolean.TRUE));
+                                }else{
+                                    crs.add(new DtoReincorporacion.CalificacionesR(cg, cg.getIdPlanMateria(), cg.getIdPlanMateria().getIdMateria(), p, cp, editable, ordinaria, Operacion.ACTUALIZAR, Boolean.FALSE));
                                 }
                             });
+                        } else {
+                            if (t.getGrupo().getGrado() == 6 || t.getGrupo().getGrado() == 11) {
+                                if (t.getSeguimientoEstadiaEstudianteList().isEmpty()) {
+                                    List<SeguimientoEstadiaEstudiante> e = t.getSeguimientoEstadiaEstudianteList().stream().filter(s -> s.getEvento().getGeneracion() == t.getGrupo().getGeneracion()).collect(Collectors.toList());
+                                    if (!e.isEmpty()) {
+                                        SeguimientoEstadiaEstudiante see = e.get(0);
+                                        Personal p = new Personal();
+                                        try {
+                                            p = ejbPersonal.mostrarPersonalLogeado(see.getAsesor().getPersonal());
+                                        } catch (Throwable ex) {
+                                            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+                                        }
+                                        crs.add(new DtoReincorporacion.CalificacionesR(new CargaAcademica(), new PlanEstudioMateria(), new Materia(0, "Periodo de estadia", true), p , new CalificacionPromedio(), Boolean.FALSE, Boolean.TRUE, Operacion.ACTUALIZAR, Boolean.FALSE));
+                                    }
+                                }
+                            }
                         }
                         if (crs.stream().filter(cal -> cal.getCalificacionPromedio().getValor() < 8D).collect(Collectors.toList()).isEmpty()) {
                             validar = Boolean.TRUE;
@@ -739,6 +744,14 @@ public class EjbReincorporacion {
                             validar = Boolean.FALSE;
                         }
                         rr.add(new DtoReincorporacion.AlineacionCalificaciones(t, t.getGrupo(), crs, validar, Operacion.ACTUALIZAR, Boolean.TRUE));
+                    } else {
+                        List<DtoReincorporacion.CalificacionesR> crs = new ArrayList<>();
+                        Personal p = new Personal();
+                        p.setClave(0);
+                        p.setNombre("Baja");
+                        crs.add(new DtoReincorporacion.CalificacionesR(new CargaAcademica(), new PlanEstudioMateria(), new Materia(0, t.getTipoEstudiante().getDescripcion(), true), p, new CalificacionPromedio(), Boolean.FALSE, Boolean.TRUE, Operacion.ACTUALIZAR, Boolean.FALSE));
+                        
+                        rr.add(new DtoReincorporacion.AlineacionCalificaciones(t, t.getGrupo(), crs, Boolean.TRUE, Operacion.ACTUALIZAR, Boolean.TRUE));
                     }
                 });
             }
@@ -1242,6 +1255,7 @@ public class EjbReincorporacion {
                 }
                 operacionesDocumentosentregadosestudiante(rr);
                 operacionesLogin(e);
+                generaraRegistroCalificaciones(a, escolar);
             }
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
         } catch (Exception e) {
@@ -1283,6 +1297,90 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.operacionesDocumentosentregadosestudiante).", e, null);
         }
     }
+    
+    public void generaraRegistroCalificaciones(Aspirante aspirante,EventoEscolar escolar) {
+        try {
+            List<Estudiante> estudiante = em.createQuery("select e from Estudiante e WHERE e.aspirante.idAspirante=:idAspirante ORDER BY e.periodo", Estudiante.class).setParameter("idAspirante", aspirante.getIdAspirante()).getResultList();
+            if (!estudiante.isEmpty()) {
+                estudiante.forEach((t) -> {
+                    if (t.getGrupo().getPeriodo() != escolar.getPeriodo()) {
+                        if (t.getGrupo().getCargaAcademicaList().isEmpty()) {
+                            t.getGrupo().getCargaAcademicaList().forEach((c) -> {
+                                if (!c.getUnidadMateriaConfiguracionList().isEmpty()) {
+                                    c.getUnidadMateriaConfiguracionList().forEach((um) -> {
+                                        if (t.getGrupo().getPeriodo() <= 56) {
+                                            if (!um.getUnidadMateriaConfiguracionDetalleList().isEmpty()) {
+                                                um.getUnidadMateriaConfiguracionDetalleList().forEach((umcd) -> {
+                                                    Calificacion c1 = new Calificacion();
+                                                    c1.setConfiguracionDetalle(new UnidadMateriaConfiguracionDetalle());
+                                                    c1.setConfiguracionDetalle(umcd);
+                                                    c1.setIdEstudiante(new Estudiante());
+                                                    c1.setIdEstudiante(t);
+                                                    c1.setValor(0D);
+                                                    em.persist(c1);
+                                                    f.setEntityClass(Calificacion.class);
+                                                    f.flush();
+                                                });
+                                            }
+                                        } else {
+                                            if (!um.getUnidadMateriaConfiguracionEvidenciaInstrumentoList().isEmpty()) {
+                                                um.getUnidadMateriaConfiguracionEvidenciaInstrumentoList().forEach((umce) -> {
+                                                    CalificacionEvidenciaInstrumento c1 = new CalificacionEvidenciaInstrumento();
+                                                    c1.setConfiguracionEvidencia(new UnidadMateriaConfiguracionEvidenciaInstrumento());
+                                                    c1.setConfiguracionEvidencia(umce);
+                                                    c1.setIdEstudiante(new Estudiante());
+                                                    c1.setIdEstudiante(t);
+                                                    c1.setValor(0D);
+                                                    em.persist(c1);
+                                                    f.setEntityClass(CalificacionEvidenciaInstrumento.class);
+                                                    f.flush();
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                                if (c.getTareaIntegradora() != null) {
+                                    TareaIntegradora integradora = new TareaIntegradora();
+                                    integradora = c.getTareaIntegradora();
+                                    TareaIntegradoraPromedio tip = new TareaIntegradoraPromedio();
+                                    TareaIntegradoraPromedioPK tippk = new TareaIntegradoraPromedioPK();
+                                    tippk.setIdEstudiante(t.getIdEstudiante());
+                                    tippk.setIdTareaIntegradora(integradora.getIdTareaIntegradora());
+                                    tip.setEstudiante(new Estudiante());
+                                    tip.setEstudiante(t);
+                                    tip.setTareaIntegradoraPromedioPK(new TareaIntegradoraPromedioPK());
+                                    tip.setTareaIntegradoraPromedioPK(tippk);
+                                    tip.setValor(0D);
+                                    em.persist(tip);
+                                    f.setEntityClass(TareaIntegradoraPromedio.class);
+                                    f.flush();
+                                }
+                                CalificacionPromedio promedio = new CalificacionPromedio();
+                                CalificacionPromedioPK promedioPK = new CalificacionPromedioPK();
+                                promedioPK.setCarga(c.getCarga());
+                                promedioPK.setIdEstudiante(t.getIdEstudiante());
+                                promedio.setCalificacionPromedioPK(new CalificacionPromedioPK());
+                                promedio.setCalificacionPromedioPK(promedioPK);
+                                promedio.setCargaAcademica(new CargaAcademica());
+                                promedio.setCargaAcademica(c);
+                                promedio.setEstudiante(new Estudiante());
+                                promedio.setEstudiante(t);
+                                promedio.setFechaActualizacion(new Date());
+                                promedio.setTipo("Regulatoria");
+                                em.persist(promedio);
+                                f.setEntityClass(CalificacionPromedio.class);
+                                f.flush();
+                            });
+                        }
+                    }
+                });
+            }            
+        } catch (Exception e) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + e.getMessage());
+            Logger.getLogger(CvHabilidades.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+    
     
     public ResultadoEJB<Login> operacionesLogin(Estudiante et) {
         try {

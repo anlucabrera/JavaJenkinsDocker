@@ -652,14 +652,14 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     
     public void guardaEstudiante() {   
         rol.getRein().setTrabajadorInscribe(rol.getPersonalActivoSe().getPersonal().getClave());            
-        prepararCoreo(null);
+//        prepararCoreo(null);
         ResultadoEJB<DtoReincorporacion.ProcesoInscripcionRein> rejb =ejb.operacionesEstudianteR(rol.getRein(),rol.getAspirante().getAspirante(),rol.getEventoActivo());
         if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
         rol.setRein(rejb.getValor());
         
-        ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> eJB =ejb.getAlineacionCalificaciones(rol.getAspirante().getAspirante(),rol.getEsEscolares());
-        if(!eJB.getCorrecto()){ mostrarMensajeResultadoEJB(eJB);return;}
-        rol.setCalificacionesR(eJB.getValor());
+//        ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> eJB =ejb.getAlineacionCalificaciones(rol.getAspirante().getAspirante(),rol.getEsEscolares(),);
+//        if(!eJB.getCorrecto()){ mostrarMensajeResultadoEJB(eJB);return;}
+//        rol.setCalificacionesR(eJB.getValor());
         buscarRegistro();
         rol.setPaso(7);
     }

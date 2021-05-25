@@ -140,7 +140,7 @@ public class ServiciosPersonal implements EjbPersonal {
     public Personal mostrarPersonalLogeado(Integer claveTrabajador) throws Throwable {
         Personal pr = em.find(Personal.class, claveTrabajador);
         if (pr == null) {
-            return null;
+            return new Personal(claveTrabajador);
         } else {
             return pr;
         }

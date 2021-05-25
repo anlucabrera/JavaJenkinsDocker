@@ -22,8 +22,11 @@ import java.util.Map;
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReincorporacion;
@@ -32,6 +35,8 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmision;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Faces;
+import org.omnifaces.util.Messages;
 
 
 
@@ -87,6 +92,9 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
             if (!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}   
             rol.setEstudiantesReincorporaciones(resAcceso.getValor());
         
+            if (logonMB.getPer() != 0) {
+                estudianteSeleccionado();
+            }
         }catch (Exception e){
             mostrarExcepcion(e);
         }
@@ -100,8 +108,29 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
         return mostrar(request, map.containsValue(valor));
     }
 
-    public void buscarAlineacionCalificaciones(){    
-        ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> resAcceso = ejb.getAlineacionCalificaciones(rol.getEstudiante().getAspirante(),Boolean.TRUE); 
+    public void estudianteSeleccionado(){    
+        try {
+            if (logonMB.getPer()!= 0) {                
+                rol.getEstudiantesReincorporaciones().forEach((t) -> {
+                    if (Objects.equals(logonMB.getPer(), t.getIdEstudiante())) {
+                        rol.setEstudiante(t);
+                    }
+                });
+            }
+            buscarAlineacionCalificaciones();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void asignaEstudianteconsulta() {
+        logonMB.setPer(rol.getEstudiante().getIdEstudiante());
+        Faces.redirect("controlEscolar/se/registroCalificacionesReincorporaciones.xhtml");
+    }
+    
+    public void buscarAlineacionCalificaciones(){          
+        ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> resAcceso = ejb.getAlineacionCalificaciones(rol.getEstudiante().getAspirante(),Boolean.TRUE,rol.getEstudiante().getMatricula()); 
         if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}
         rol.setCalificacionesR(resAcceso.getValor());        
     }
