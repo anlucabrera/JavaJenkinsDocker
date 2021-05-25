@@ -34,20 +34,27 @@ public class CensoCovid implements Serializable {
      * @return
      */
     public Boolean comprobarCensoTrabajador (Integer clave){
-        //System.out.println("CensoCovid.comprobarCensoTrabajador");
-        Client client = ClientBuilder.newClient().register(new JacksonFeature());
-        //System.out.println("CensoCovid.comprobarCensoTrabajador");
-        ArrayList res = client
-                .target("http://150.140.1.26:8080/sii2-ws-contingencia-censos/validarCensoColaboradorPorClave/"+clave)
-                .request(MediaType.APPLICATION_JSON).get(new GenericType<ArrayList>() {
-                });
-        //System.out.println("CensoCovid.comprobarCensoTrabajador" + res);
-        if(res.isEmpty()|| res ==null){
-            //System.out.println("CensoCovid.comprobarCensoTrabajador false");
-            return true;}
-        else {
-            //System.out.println("CensoCovid.comprobarCensoTrabajador true");
-            return false;}
+        try{
+            //System.out.println("CensoCovid.comprobarCensoTrabajador");
+            Client client = ClientBuilder.newClient().register(new JacksonFeature());
+            //System.out.println("CensoCovid.comprobarCensoTrabajador");
+            ArrayList res = client
+                    .target("http://150.140.1.26:8080/sii2-ws-contingencia-censos/validarCensoColaboradorPorClave/"+clave)
+                    .request(MediaType.APPLICATION_JSON).get(new GenericType<ArrayList>() {
+                    });
+            //System.out.println("CensoCovid.comprobarCensoTrabajador" + res);
+            if(res.isEmpty()|| res ==null){
+                //System.out.println("CensoCovid.comprobarCensoTrabajador false");
+                return true;}
+            else {
+                //System.out.println("CensoCovid.comprobarCensoTrabajador true");
+                return false;}
+
+        }catch (Exception e){
+            System.out.println("CensoCovid.comprobarCensoTrabajador" + e.getMessage());
+            return false ;
+        }
+
     }
 
     /**
@@ -56,20 +63,26 @@ public class CensoCovid implements Serializable {
      * @return
      */
     public Boolean comprobarCensoEstudiante(String matricula){
-        //System.out.println("CensoCovid.comprobarCensoEstudiante");
-        Client client = ClientBuilder.newClient().register(new JacksonFeature());
-        //System.out.println("CensoCovid.comprobarCensoEstudiante");
-        ArrayList res = client
-                .target("http://150.140.1.26:8080/sii2-ws-contingencia-censos/validarCensoEstudiantePorClave/"+matricula)
-                .request(MediaType.APPLICATION_JSON).get(new GenericType<ArrayList>() {
-                });
-        //System.out.println("CensoCovid.comprobarCensoEstudiante" + res);
-        if(res.isEmpty()|| res ==null){
-           // System.out.println("CensoCovid.comprobarCensoEstudiante true");
-            return true;}
-        else {
-           //System.out.println("CensoCovid.comprobarCensoEstudiante false");
-            return false;}
+        try{
+            //System.out.println("CensoCovid.comprobarCensoEstudiante");
+            Client client = ClientBuilder.newClient().register(new JacksonFeature());
+            //System.out.println("CensoCovid.comprobarCensoEstudiante");
+            ArrayList res = client
+                    .target("http://150.140.1.26:8080/sii2-ws-contingencia-censos/validarCensoEstudiantePorClave/"+matricula)
+                    .request(MediaType.APPLICATION_JSON).get(new GenericType<ArrayList>() {
+                    });
+            //System.out.println("CensoCovid.comprobarCensoEstudiante" + res);
+            if(res.isEmpty()|| res ==null){
+                // System.out.println("CensoCovid.comprobarCensoEstudiante true");
+                return true;}
+            else {
+                //System.out.println("CensoCovid.comprobarCensoEstudiante false");
+                return false;}
+        }catch (Exception e){
+            System.out.println("CensoCovid.comprobarCensoEstudiante" + e.getMessage());
+            return false;
+        }
+
     }
 
 
