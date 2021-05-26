@@ -14,6 +14,8 @@
 
     <ui:define name="head-end">
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
@@ -23,16 +25,6 @@
 
     <ui:define name="title">
         Calendario de eventos de estadía
-    </ui:define>
-
-    <ui:define name="description">
-
-    </ui:define>
-
-    <ui:define name="head-end">
-        <h:outputStylesheet library="css" name="tablaDatos.css"/>
-        <h:outputScript library="js" name="dialogs.js"/>
-        <h:outputScript library="js" name="calendario.js" />
     </ui:define>
 
     <ui:define name="body">
@@ -103,8 +95,8 @@
                                                             <p:column rowspan="2" headerText="Actividad" style="width: 350px;"/>
                                                             <p:column rowspan="2" headerText="Rol responsable" style="width: 150px;"/>
                                                             <p:column rowspan="2" headerText="Fecha inicio" style="width: 150px;"/>
-                                                            <p:column rowspan="2" headerText="Fecha fin" style="width: 150px;"/>
-                                                            <p:column rowspan="2" headerText="Situación (Verde: activo, Rojo: inactivo)" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Fecha fin" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="Situación (Verde: activo, Rojo: inactivo)" style="width: 200px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column style="text-align: justify;">
@@ -117,7 +109,7 @@
                                                         <h:outputText value="#{evenEst.eventoEstadia.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{evenEst.eventoEstadia.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        <h:outputText value="#{evenEst.eventoEstadia.fechaFin}"><f:convertDateTime dateStyle="long" timeZone="America/Mexico_City" type="both"/></h:outputText>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <img src="../resources/img/#{evenEst.situacion}.png" width="25" height="25" alt="#{evenEst.situacion eq 'circuloRojo'?'Inactivo':'Activo'}"/>
