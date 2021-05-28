@@ -267,6 +267,11 @@ public class EjbHistorialMovEstudiante {
             listaTiposMovimientos.add("Reincorporación otra UT");
             listaTiposMovimientos.add("Reincorporación misma UT");
             listaTiposMovimientos.add("Regularización de calificaciones por reincoporación");
+            listaTiposMovimientos.add("Reincorporación otra generación");
+            listaTiposMovimientos.add("Cambio de grupo");
+            listaTiposMovimientos.add("Cambio de plan de estudio");
+            listaTiposMovimientos.add("Cambio de programa educativo");
+            listaTiposMovimientos.add("Equivalencia");
             
             
             List<Estudiante> listaEstudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula=:matricula AND e.tipoRegistro IN :tipoRegistro", Estudiante.class)
