@@ -79,6 +79,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TutorFamiliar;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionEvidenciaInstrumento;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -1425,10 +1426,16 @@ public class EjbReincorporacion {
             Operacion opera;
             Estudiante estudiante = em.find(Estudiante.class, idEstudiante);
             CargaAcademica cargaAcademica = em.find(CargaAcademica.class, idCarga);
+            List<UnidadMateriaConfiguracionDetalle> umcd = new ArrayList<>();
+            List<UnidadMateriaConfiguracionEvidenciaInstrumento> umcei = new ArrayList<>();
+            if (estudiante.getPeriodo() <= 56) {
+                umcd = em.createQuery("select cs from UnidadMateriaConfiguracionDetalle cs INNER JOIN cs.configuracion con INNER JOIN con.carga c WHERE c.carga=:carga", UnidadMateriaConfiguracionDetalle.class).setParameter("carga", cargaAcademica.getCarga()).getResultList();
+            } else {
+                umcei = em.createQuery("select cs from UnidadMateriaConfiguracionEvidenciaInstrumento cs INNER JOIN cs.configuracion con INNER JOIN con.carga c WHERE c.carga=:carga", UnidadMateriaConfiguracionEvidenciaInstrumento.class).setParameter("carga", cargaAcademica.getCarga()).getResultList();
+            }
             List<CalificacionPromedio> cps = em.createQuery("select calP from CalificacionPromedio calP INNER JOIN calP.cargaAcademica c INNER JOIN calP.estudiante est WHERE c.carga=:carga AND est.idEstudiante=:idEstudiante", CalificacionPromedio.class).setParameter("carga", cargaAcademica.getCarga()).setParameter("idEstudiante", estudiante.getIdEstudiante()).getResultList();
-            List<UnidadMateriaConfiguracionDetalle> cs = em.createQuery("select cs from UnidadMateriaConfiguracionDetalle cs INNER JOIN cs.configuracion con INNER JOIN con.carga c WHERE c.carga=:carga", UnidadMateriaConfiguracionDetalle.class).setParameter("carga", cargaAcademica.getCarga()).getResultList();
             List<TareaIntegradora> tps = em.createQuery("select t from TareaIntegradora t INNER JOIN t.carga c WHERE c.carga=:carga ", TareaIntegradora.class).setParameter("carga", cargaAcademica.getCarga()).getResultList();
-        
+            
             CalificacionPromedio promedio = new CalificacionPromedio();
             if (!cps.isEmpty()) {
                 promedio = cps.get(0);
@@ -1461,37 +1468,68 @@ public class EjbReincorporacion {
                     em.flush();
                     break;
             }
-            if (!cs.isEmpty()) {
-                cs.forEach((t) -> {
-                    Operacion op;
-                    List<Calificacion> cal = em.createQuery("select calP from Calificacion calP INNER JOIN calP.configuracionDetalle c INNER JOIN calP.idEstudiante est WHERE c.configuracionDetalle=:configuracionDetalle AND est.idEstudiante=:idEstudiante", Calificacion.class).setParameter("configuracionDetalle", t.getConfiguracionDetalle()).setParameter("idEstudiante", estudiante.getIdEstudiante()).getResultList();
-                    Calificacion c=new Calificacion();
-                    if (!cal.isEmpty()) {
-                        op = Operacion.PERSISTIR;
-                        c=cal.get(0);
-                    } else {
-                        op = Operacion.PERSISTIR;
-                        c=new Calificacion();
-                        c.setConfiguracionDetalle(new UnidadMateriaConfiguracionDetalle());
-                        c.setIdEstudiante(new Estudiante());
-                        
-                        c.setConfiguracionDetalle(t);
-                        c.setIdEstudiante(estudiante);
-                    }
-                    c.setValor(calificacion);
-                    switch (op) {
-                        case PERSISTIR:
-                            em.persist(c);
-                            em.flush();
-                            break;
-                        case ACTUALIZAR:
-                            em.merge(c);
-                            em.flush();
-                            break;
-                    }
-                });
+            if (estudiante.getPeriodo() <= 56) {
+                if (!umcd.isEmpty()) {
+                    umcd.forEach((t) -> {
+                        Operacion op;
+                        List<Calificacion> cal = em.createQuery("select calP from Calificacion calP INNER JOIN calP.configuracionDetalle c INNER JOIN calP.idEstudiante est WHERE c.configuracionDetalle=:configuracionDetalle AND est.idEstudiante=:idEstudiante", Calificacion.class).setParameter("configuracionDetalle", t.getConfiguracionDetalle()).setParameter("idEstudiante", estudiante.getIdEstudiante()).getResultList();
+                        Calificacion c = new Calificacion();
+                        if (!cal.isEmpty()) {
+                            op = Operacion.PERSISTIR;
+                            c = cal.get(0);
+                        } else {
+                            op = Operacion.PERSISTIR;
+                            c = new Calificacion();
+                            c.setConfiguracionDetalle(new UnidadMateriaConfiguracionDetalle());
+                            c.setIdEstudiante(new Estudiante());
+
+                            c.setConfiguracionDetalle(t);
+                            c.setIdEstudiante(estudiante);
+                        }
+                        c.setValor(calificacion);
+                        switch (op) {
+                            case PERSISTIR:
+                                em.persist(c);
+                                em.flush();
+                                break;
+                            case ACTUALIZAR:
+                                em.merge(c);
+                                em.flush();
+                                break;
+                        }
+                    });
+                }
+            } else {
+                if (!umcei.isEmpty()) {
+                    umcei.forEach((t) -> {
+                        Operacion op;
+                        List<CalificacionEvidenciaInstrumento> cal = em.createQuery("select calP from CalificacionEvidenciaInstrumento calP INNER JOIN calP.configuracionEvidencia c INNER JOIN calP.idEstudiante est WHERE c.configuracionEvidenciaInstrumento=:configuracionDetalle AND est.idEstudiante=:idEstudiante", CalificacionEvidenciaInstrumento.class).setParameter("configuracionDetalle", t.getConfiguracionEvidenciaInstrumento()).setParameter("idEstudiante", estudiante.getIdEstudiante()).getResultList();
+                        CalificacionEvidenciaInstrumento c = new CalificacionEvidenciaInstrumento();
+                        if (!cal.isEmpty()) {
+                            op = Operacion.PERSISTIR;
+                            c = cal.get(0);
+                        } else {
+                            op = Operacion.PERSISTIR;
+                            c = new CalificacionEvidenciaInstrumento();
+                            c.setConfiguracionEvidencia(new UnidadMateriaConfiguracionEvidenciaInstrumento());
+                            c.setIdEstudiante(new Estudiante());
+                            c.setConfiguracionEvidencia(t);
+                            c.setIdEstudiante(estudiante);
+                        }
+                        c.setValor(calificacion);
+                        switch (op) {
+                            case PERSISTIR:
+                                em.persist(c);
+                                em.flush();
+                                break;
+                            case ACTUALIZAR:
+                                em.merge(c);
+                                em.flush();
+                                break;
+                        }
+                    });
+                }
             }
-            
             if (!tps.isEmpty()) {
                 tps.forEach((t) -> {
                     Operacion op;

