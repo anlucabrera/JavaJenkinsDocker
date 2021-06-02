@@ -2,8 +2,9 @@ package mx.edu.utxj.pye.sgi.controlador.evaluaciones;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
-import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
+import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.omnifaces.cdi.ViewScoped;
 
@@ -11,6 +12,7 @@ import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -21,13 +23,19 @@ import javax.ws.rs.core.MediaType;
 
 @Named(value = "censoCovid")
 @ViewScoped
-public class CensoCovid implements Serializable {
+public class CensoCovid extends ViewScopedRol {
     @Inject private LogonMB logonMB;
     //@Getter @Setter List<> res = new ArrayList();
     @Getter  @Setter boolean terminado;
+    @EJB EjbPersonalBean ejbPersonalBean;
+    @Getter @Setter Boolean tieneAccesoT, tieneAccesoEs;
     private static final long serialVersionUID = 6285845014865471015L;
 
-
+    @PostConstruct
+    public void init(){
+        validaAccesoReporteTrabajadores();
+        validaAccesoReporteEstudiantes();
+    }
     /**
      * Comprueba si ya ha concluido el censo
      * @param clave Clave del trabajdor
@@ -83,6 +91,39 @@ public class CensoCovid implements Serializable {
             return false;
         }
 
+    }
+
+    public void validaAccesoReporteTrabajadores(){
+        try{
+            tieneAccesoT = Boolean.FALSE;
+            PersonalActivo pa = ejbPersonalBean.pack(logonMB.getPersonal().getClave());
+            //Valida que sea directivo
+            if(pa.getPersonal().getCategoriaOperativa().getCategoria()==48 || pa.getPersonal().getCategoriaOperativa().getCategoria()==18){
+                tieneAccesoT =true;
+            }else {tieneAccesoT=false;}
+
+
+            }catch (Exception e){mostrarExcepcion(e);}
+    }
+
+    public void  validaAccesoReporteEstudiantes(){
+        try{
+            tieneAccesoEs = Boolean.FALSE;
+            PersonalActivo pa = ejbPersonalBean.pack(logonMB.getPersonal().getClave());
+            //Valida Director de Area academica
+            if(pa.getAreaSuperior().getArea()==2 & pa.getPersonal().getCategoriaOperativa().getCategoria()==18 || pa.getPersonal().getCategoriaOperativa().getCategoria()==48){
+                tieneAccesoEs = true; }
+            //Valida que sea director de planeación
+            else if(pa.getAreaOperativa().getArea()==6  &pa.getAreaSuperior().getArea()==1 & pa.getPersonal().getCategoriaOperativa().getCategoria()==18 || pa.getPersonal().getCategoriaOperativa().getCategoria()==48){
+              tieneAccesoEs = true; }
+            //Valida que sea Rector
+            else if(pa.getAreaOperativa().getArea()==1 & pa.getPersonal().getCategoriaOperativa().getCategoria() ==33){
+                tieneAccesoEs= true; }
+            //Valida que sea SA
+            else  if(pa.getAreaOperativa().getArea()== 2 & pa.getPersonal().getCategoriaOperativa().getCategoria()==38 & pa.getAreaSuperior().getArea()==1){
+              tieneAccesoEs = true; }
+            else {tieneAccesoEs= false;}
+            }catch (Exception e){mostrarExcepcion(e);}
     }
 
 

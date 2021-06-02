@@ -320,6 +320,45 @@
                                     </p:link>
                                 </div>
                             </div>
+                            <c:if test="#{censoCovid.tieneAccesoEs}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-green">
+                                        <div class="inner" style="cursor: pointer;" onclick="cuestionario();">
+                                            <h3>
+                                                <h:outputLabel value="Seguimiento" style="cursor: pointer; color: #ffffff"/>
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p style="color: #ffffff">Cuestionario de Autodiagnóstico | Estudiantes<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-stethoscope"></i>
+                                        </div>
+                                        <p:link href="http://siip.utxj.edu.mx/sii2-ws-contingencia-censos/reporteEstudiantesPendientes" target="_blank" class="small-box-footer">
+                                            <span> Ingresar</span>
+                                        </p:link>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <c:if test="#{censoCovid.tieneAccesoT}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-green">
+                                        <div class="inner" style="cursor: pointer;" onclick="cuestionario();">
+                                            <h3>
+                                                <h:outputLabel value="Seguimiento" style="cursor: pointer; color: #ffffff"/>
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p style="color: #ffffff">Cuestionario de Autodiagnóstico | Trabajadores<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-stethoscope"></i>
+                                        </div>
+                                        <p:link href="http://siip.utxj.edu.mx/sii2-ws-contingencia-censos/reporteColaboradoresPendientes" target="_blank" class="small-box-footer">
+                                            <span> Ingresar</span>
+                                        </p:link>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <br/>
                             <div class="col-lg-3 col-md-6 col-xs-12">
                                 <div class="small-box bg-green">
                                     <div class="inner">
