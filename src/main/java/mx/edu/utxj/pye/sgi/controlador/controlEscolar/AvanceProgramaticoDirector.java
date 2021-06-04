@@ -53,6 +53,8 @@ import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupoEstudianteAlineacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracionAlineacion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -76,6 +78,8 @@ public class AvanceProgramaticoDirector extends ViewScopedRol implements Desarro
     
     private ResultadoEJB<DtoGrupoEstudiante> resGrupo;
     private ResultadoEJB<DtoUnidadConfiguracion> ducB;
+    private ResultadoEJB<DtoGrupoEstudianteAlineacion> resGrupoalineacion;
+    private ResultadoEJB<DtoUnidadConfiguracionAlineacion> ducAl;
     private Integer tasis = 0;
     private Integer totalEs =0;
     private Integer totalD =0;
@@ -208,21 +212,35 @@ public class AvanceProgramaticoDirector extends ViewScopedRol implements Desarro
             umcs.forEach((t) -> {
                 Boolean activaPorFecha = DateUtils.isBetweenWithRange(new Date(), t.getFechaInicio(), t.getFechaFin(), calificaciones.leerDiasRangoParaCapturarUnidad());
                 if (activaPorFecha || (t.getFechaFin().before(new Date()))) {
-                    ducB = packer.packUnidadConfiguracion(t, a);
-                    resGrupo = packer.packGrupoEstudiante(a, ducB.getValor());
-                    totalEs = resGrupo.getValor().getEstudiantes().size();
                     tasis = 0;
-                    p=0D;
-                    resGrupo.getValor().getEstudiantes().forEach((e) -> {
-                        ResultadoEJB<Boolean> rejb1 = calificaciones.verificarCapturaCompleta(e);
-                        if (rejb1.getCorrecto()) {
-                            Boolean finalizado = rejb1.getValor();
-                            if (finalizado) {
-                                tasis = tasis + 1;
+                    p = 0D;
+                    if (rol.getPeriodo().getPeriodo() <= 56) {
+                        ducB = packer.packUnidadConfiguracion(t, a);
+                        resGrupo = packer.packGrupoEstudiante(a, ducB.getValor());
+                        totalEs = resGrupo.getValor().getEstudiantes().size();
+                        resGrupo.getValor().getEstudiantes().forEach((e) -> {
+                            ResultadoEJB<Boolean> rejb1 = calificaciones.verificarCapturaCompleta(e);
+                            if (rejb1.getCorrecto()) {
+                                Boolean finalizado = rejb1.getValor();
+                                if (finalizado) {
+                                    tasis = tasis + 1;
+                                }
                             }
-                        }
-                    });
-
+                        });
+                    } else {
+                        ducAl = packer.packUnidadConfiguracionAlineacion(t, a);
+                        resGrupoalineacion = packer.packGrupoEstudianteAlineacion(a, ducAl.getValor());
+                        totalEs = resGrupoalineacion.getValor().getEstudiantes().size();
+                        resGrupoalineacion.getValor().getEstudiantes().forEach((e) -> {
+                            ResultadoEJB<Boolean> rejb1 = calificaciones.verificarCapturaCompletaAlineacion(e);
+                            if (rejb1.getCorrecto()) {
+                                Boolean finalizado = rejb1.getValor();
+                                if (finalizado) {
+                                    tasis = tasis + 1;
+                                }
+                            }
+                        });
+                    }
                     if (tasis != 0) {
                         p = ((100.0 * tasis) / totalEs);
                     }

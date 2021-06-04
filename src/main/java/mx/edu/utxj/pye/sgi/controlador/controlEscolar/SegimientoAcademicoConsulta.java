@@ -427,9 +427,13 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
             rol.getTitulos().add(new DtoVistaCalificacionestitulosTabla(t.getDocente().getPersonal().getNombre(),t.getMateria().getNombre(), t.getMateria().getUnidadMateriaList().size(), ti));
             });            
         }
-     
-        rol.getGrupoSelec().getEstudianteList().forEach((e) -> {
-            String nomEs =  e.getAspirante().getIdPersona().getNombre()+" "+e.getAspirante().getIdPersona().getApellidoPaterno()+" "+e.getAspirante().getIdPersona().getApellidoMaterno();             
+        
+        ResultadoEJB<List<Estudiante>> rejb1= ea.buscaEstudiantesGrupo(rol.getGrupoSelec());
+        if(!rejb1.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
+        List<Estudiante> estudiantes=rejb1.getValor();
+        
+        estudiantes.forEach((e) -> {
+            String nomEs =  e.getAspirante().getIdPersona().getApellidoPaterno()+" "+e.getAspirante().getIdPersona().getApellidoMaterno()+" "+e.getAspirante().getIdPersona().getNombre();             
             if (!dcas.isEmpty()) {
                 dvc= new ArrayList<>(); 
                 dcas.forEach((c) -> { 
@@ -506,6 +510,7 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
                 rol.getDvcs().add(new DtoPresentacionCalificacionesReporte(e.getMatricula(), e.getTipoEstudiante().getIdTipoEstudiante(), nomEs, dvc, pf,tipoEs));
             }
         });
+         
         Ajax.update("frm");
     }  
     

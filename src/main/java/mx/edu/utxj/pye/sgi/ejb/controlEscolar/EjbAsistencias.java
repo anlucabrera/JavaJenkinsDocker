@@ -803,6 +803,17 @@ public class EjbAsistencias {
         }
     }
     
+    public ResultadoEJB<List<Estudiante>> buscaEstudiantesGrupo(Grupo g) {
+        try {
+            List<Estudiante> e = em.createQuery("SELECT es FROM Estudiante es INNER JOIN es.grupo g INNER JOIN es.aspirante a INNER JOIN a.idPersona p WHERE g.idGrupo =:idGrupo ORDER BY p.apellidoPaterno,p.apellidoMaterno,p.nombre", Estudiante.class)
+                    .setParameter("idGrupo", g.getIdGrupo())
+                    .getResultList();
+            return ResultadoEJB.crearCorrecto(e, "Pase de lista y seguimiento por docente y tutor.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se obtuvo Pase de lista y seguimiento por docente y tutor. (EjbAsistencias.buscaEstudiante)", e, null);
+        }
+    }
+    
     public ResultadoEJB<CargaAcademica> buscaCargaAcademica(Integer carga) {
         try {
             CargaAcademica c = new CargaAcademica();
