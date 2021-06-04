@@ -212,6 +212,10 @@ public class ServicioCarga implements EjbCarga {
     public static String genCarpetaRelativaReporte(String modulosRegistro, String reportes, String eje, String completo){
         return carpetaRaiz + modulosRegistro + File.separator + reportes + File.separator + eje + File.separator + completo + File.separator;
     }
+    
+     public static String genCarpetaRelativa(String alineacionMaterias){
+        return carpetaRaiz + alineacionMaterias + File.separator ;
+    }
         
     @Override
     public String subirExcelRegistro(String ejercicio, String area, String eje, String registro, Part file) {
@@ -535,8 +539,8 @@ public class ServicioCarga implements EjbCarga {
     }
     
     @Override
-    public String crearDirectorioPlantillaAlineacionMaterias(String plan, String programa) {
-        String rutaRelativa = genCarpetaRelativa(alineacionMaterias, plantillas, programa, plan);
+    public String crearDirectorioPlantillaAlineacionMaterias() {
+        String rutaRelativa = genCarpetaRelativa(alineacionMaterias);
         addCarpetaRelativa(rutaRelativa);
         return rutaRelativa;
     }
@@ -546,5 +550,32 @@ public class ServicioCarga implements EjbCarga {
         String rutaRelativa = genCarpetaRelativa(alineacionMaterias, plantillas, programa, plan, completo);
         addCarpetaRelativa(rutaRelativa);
         return rutaRelativa;
+    }
+    
+    @Override
+    public String subirPlantillaAlineacionMaterias(String plan, String programa, Part file) {
+        try {
+            byte[] content = Utils.toByteArray(file.getInputStream());
+            String rutaRelativa = genCarpetaRelativa(alineacionMaterias, programa, plan);
+            addCarpetaRelativa(rutaRelativa);
+            String nombreArchivo1 = file.getSubmittedFileName().trim().toLowerCase();
+            nombreArchivo1 = prettyURL(nombreArchivo1);
+
+            for (int i = 1; i <= 10; i++) {
+                int numero = (int) Math.round(Math.random() * 35);
+                aleatorio = aleatorio + abecedarioMinusculas[numero];
+            }
+
+            LocalDate localDateOf = LocalDate.now();
+            String name = rutaRelativa.concat(String.valueOf(localDateOf)).concat("_").concat(aleatorio).concat("_").concat(nombreArchivo1);
+            FileOutputStream fos = new FileOutputStream(name);
+            FileCopyUtils.copy(content, fos);
+            aleatorio = "";
+
+            return name;
+        } catch (IOException ex) {
+            Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);
+            return "Error: No se pudo leer el archivo";
+        }
     }
 }

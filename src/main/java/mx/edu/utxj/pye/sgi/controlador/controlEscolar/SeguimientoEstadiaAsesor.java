@@ -517,7 +517,7 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
     public void deshabilitarEvaluacion(){
         EventoEstadia evento = rol.getEstudiantesSeguimiento().stream().map(p->p.getSeguimientoEstadiaEstudiante().getEvento()).distinct().findFirst().orElse(null);
         if(evento != null){
-            ResultadoEJB<Boolean> res = ejb.buscarEventoActivo(rol.getEstudianteSeguimiento().getSeguimientoEstadiaEstudiante().getEvento(), "Registro cedula evaluacion empresarial","Estudiante");
+            ResultadoEJB<Boolean> res = ejb.buscarEventoActivo(evento, "Registro cedula evaluacion empresarial","Estudiante");
             if(res.getCorrecto()){
                 rol.setHabilitarEvaluacion(res.getValor());
             }else mostrarMensajeResultadoEJB(res);

@@ -176,12 +176,10 @@ public interface EjbCarga extends Serializable {
      * Método que crea o comprueba si el directorio de las plantillas de los
      * Módulos de registro de evidencias e instrumentos de evaluación se encuentra disponible
      *
-     * @param plan Es ocupado para crear o comprobar de que plan de estudio es la plantilla
-     * @param programa Es ocupado para crear o comprobar de que carrera es la plantilla
      * que se esta generando
      * @return Retorna la ruta del directorio
      */
-    public String crearDirectorioPlantillaAlineacionMaterias(String plan, String programa);
+    public String crearDirectorioPlantillaAlineacionMaterias();
     
      /**
      * Método que crea o comprueba si el directorio de las plantillas actualizadas de los
@@ -193,4 +191,15 @@ public interface EjbCarga extends Serializable {
      * @return Retorna la ruta del directorio
      */
     public String crearDirectorioPlantillaAlineacionMateriasCompleto (String plan, String programa);
+    
+    /**
+     * Método de subida de archivos en el servidor para los módulos de
+     * registro de alineacion materias el cual recibe los siguiente parámetros:
+     *
+     * @param plan Es ocupado para guardar de que plan de estudio es la plantilla que se subirá
+     * @param programa Es ocupado para comprobar de que carrera es la plantilla que se subirá
+     * @param file Archivo de excel
+     * @return Devuelve la ruta completa del archivo
+     */
+    public String subirPlantillaAlineacionMaterias(String plan, String programa, Part file);
 }
