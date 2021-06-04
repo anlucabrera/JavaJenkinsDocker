@@ -12,16 +12,18 @@
     <ui:define name="head-end">
         <ui:param name="renderBreadCrumb" value="false"/>
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
-        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
     <ui:define name="title">
         Carga documentos para admisión e inscripción
-    </ui:define>
-    
-    <ui:define name="description">
-        
     </ui:define>
 
     <ui:define name="body">

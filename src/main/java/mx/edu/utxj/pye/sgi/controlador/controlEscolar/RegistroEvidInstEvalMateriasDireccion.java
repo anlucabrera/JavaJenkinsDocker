@@ -153,7 +153,6 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
     }
     
     public void listaPeriodosEscolares(){
-        System.err.println("listaPeriodosEscolares - programa " + rol.getProgramaEducativo().getNombre());
         ResultadoEJB<List<PeriodosEscolares>> res = ejb.getPeriodosEscolares(rol.getProgramaEducativo());
         if(res.getCorrecto()){
             rol.setPeriodosEscolares(res.getValor());
@@ -398,8 +397,8 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
 //            mostrarMensajeResultadoEJB(configuracion);
 //        }
 //    }
-//    public void descargarPlantilla() throws IOException, Throwable{
-//        File f = new File(ejb.getPlantillaEvidInstMateria(rol.getPlanEstudioRegistrado(), rol.getProgramaEducativo()));
-//        Faces.sendFile(f, true);
-//    }
+    public void descargarPlantilla() throws IOException, Throwable{
+        File f = new File(ejb.getPlantillaEvidInstMateria(rol.getPlanEstudioRegistrado(), rol.getProgramaEducativo()));
+        Faces.sendFile(f, true);
+    }
 }

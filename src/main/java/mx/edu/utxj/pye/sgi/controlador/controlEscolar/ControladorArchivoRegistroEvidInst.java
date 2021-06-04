@@ -7,7 +7,11 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
@@ -50,6 +54,16 @@ public class ControladorArchivoRegistroEvidInst implements Serializable{
     
     @EJB EjbCarga ejbCarga;
     @EJB EjbModulos ejbModulos;
+//    
+//    @PostConstruct
+//    public void init(){
+//        try{
+//            
+//        }catch (Throwable ex) {
+//            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+//            Logger.getLogger(ControladorArchivoRegistroEvidInst.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
     
      public void recibirArchivo(ValueChangeEvent e){
         file = (Part)e.getNewValue();
@@ -59,24 +73,24 @@ public class ControladorArchivoRegistroEvidInst implements Serializable{
         this.etapa = etapa;
     }
 
-//    //ActionListener
-//    public void subirExcelEvidInstMateria() throws IOException {
-//         
-//        if (file != null) {
-//            rutaArchivo = ejbCarga.subirExcelRegistroMensual(String.valueOf(ejercicio),String.valueOf(area.getSiglas()),eje,ejbModulos.getEventoRegistro().getMes(),"actividades_formacion_integral",file);
-//            if (!"Error: No se pudo leer el archivo".equals(rutaArchivo)) {
-//                setEtapa(RegistroSiipEtapa.CARGAR);
-//                registroEvidInstEvalMateriasDireccion.listaEvidInsMateriaPrevia(rutaArchivo);
-//                rutaArchivo = null;
-//                file.delete();
-//            } else {
-//                rutaArchivo = null;
-//                file.delete();
-//                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente");
-//            }
-//        } else {
-//             Messages.addGlobalWarn("Es necesario seleccionar un archivo");
-//        }
-//    }
+    //ActionListener
+    public void subirExcelEvidInstMateria() throws IOException {
+         
+        if (file != null) {
+            rutaArchivo = ejbCarga.subirPlantillaAlineacionMaterias(String.valueOf(registroEvidInstEvalMateriasDireccion.rol.getPlanEstudioRegistrado().getAnio()), registroEvidInstEvalMateriasDireccion.rol.getProgramaEducativo().getSiglas(),file);
+            if (!"Error: No se pudo leer el archivo".equals(rutaArchivo)) {
+                setEtapa(RegistroSiipEtapa.CARGAR);
+//                registroEvidInstEvalMateriasDireccion.rol.listaEvidInsMateriaPrevia(rutaArchivo);
+                rutaArchivo = null;
+                file.delete();
+            } else {
+                rutaArchivo = null;
+                file.delete();
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente");
+            }
+        } else {
+             Messages.addGlobalWarn("Es necesario seleccionar un archivo");
+        }
+    }
     
 }

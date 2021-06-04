@@ -14,6 +14,8 @@
 
     <ui:define name="head-end">
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
@@ -23,16 +25,6 @@
 
     <ui:define name="title">
         Validación Baja
-    </ui:define>
-
-    <ui:define name="description">
-
-    </ui:define>
-
-    <ui:define name="head-end">
-        <h:outputStylesheet library="css" name="tablaDatos.css"/>
-        <h:outputScript library="js" name="dialogs.js"/>
-        <h:outputScript library="js" name="calendario.js" />
     </ui:define>
 
     <ui:define name="body">

@@ -24,6 +24,7 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroEvidInstEvaluacionMateria;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
+import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionSugerida;
@@ -45,7 +46,8 @@ import net.sf.jxls.transformer.XLSTransformer;
  */
 @Stateless(name = "EjbRegistroEvidInstEvalMaterias")
 public class EjbRegistroEvidInstEvalMaterias {
-    @EJB mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean ejbPersonalBean;
+    @EJB EjbPersonalBean ejbPersonalBean;
+    @EJB EjbAsignacionIndicadoresCriterios ejbAsignacionIndicadoresCriterios;
     @EJB EjbPropiedades ep;
     @EJB Facade f;
     @EJB EjbEventoEscolar ejbEventoEscolar;
@@ -431,20 +433,103 @@ public class EjbRegistroEvidInstEvalMaterias {
         }
     }
     
-//    public String getPlantillaEvidInstMateria(PlanEstudio plan, AreasUniversidad programa) throws Throwable {
-//        String rutaPlantilla = ejbCarga.crearDirectorioPlantillaAlineacionMaterias(String.valueOf(plan.getAnio()), programa.getSiglas());
-//        String rutaPlantillaC = ejbCarga.crearDirectorioPlantillaAlineacionMateriasCompleto(String.valueOf(plan.getAnio()), programa.getSiglas());
-//        String plantilla = rutaPlantilla.concat(EVIDINSTMAT_PLANTILLA);
-//        String plantillaC = rutaPlantillaC.concat(EVIDINSTMAT_ACTUALIZADO);
-//        Map beans = new HashMap();
-//        beans.put("materiasGrados", getMateriasGrados(plan));
-//        beans.put("unidadesMateria", getUnidadesMateria(plan));
-//        beans.put("categoriasEvaluacion",getCategoriasNivel(programa));
-//        beans.put("evidenciasCategoria", getEvidenciasCategorias());
-//        beans.put("instrumentosEvaluacion", getInstrumentos());
-//        XLSTransformer transformer = new XLSTransformer();
-//        transformer.transformXLS(plantilla, beans, plantillaC);
-//
-//        return plantillaC;
-//    }
+    /* Método para decarga de plantilla */
+    
+    public String getPlantillaEvidInstMateria(PlanEstudio plan, AreasUniversidad programa) throws Throwable {
+        String rutaPlantilla = ejbCarga.crearDirectorioPlantillaAlineacionMaterias();
+        String rutaPlantillaC = ejbCarga.crearDirectorioPlantillaAlineacionMateriasCompleto(String.valueOf(plan.getAnio()), programa.getSiglas());
+        String plantilla = rutaPlantilla.concat(EVIDINSTMAT_PLANTILLA);
+        String plantillaC = rutaPlantillaC.concat(EVIDINSTMAT_ACTUALIZADO);
+        Map beans = new HashMap();
+        beans.put("grados", getGrados(plan).getValor());
+        beans.put("materiasGrados", getMateriasGradosPlanEstudio(plan).getValor());
+        beans.put("unidadesMateria", getUnidadesMateriasPlanEstudio(getMateriasGradosPlanEstudio(plan).getValor()).getValor());
+        beans.put("categoriasEvaluacion",getCategoriasNivel(programa).getValor());
+        beans.put("evidenciasCategoria", getEvidenciasCategorias().getValor());
+        beans.put("instrumentosEvaluacion", ejbAsignacionIndicadoresCriterios.getInstrumentosEvaluacion().getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(plantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+    /**
+     * Permite obtener la lista de grados
+     * @param planEstudio Plan de estudio
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Integer>> getGrados(PlanEstudio planEstudio){
+        try {
+            
+            List<Integer> listaGrados = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan ORDER BY p.grado ASC", PlanEstudioMateria.class)
+                    .setParameter("plan", planEstudio.getIdPlanEstudio())
+                    .getResultStream()
+                    .map(p->p.getGrado())
+                    .distinct()
+                    .filter(a -> a != 6 && a != 11)
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(listaGrados, "Lista de grados.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de grados. (EjbRegistroEvidInstEvalMaterias.getGrados)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de materias del plan de estudio seleccionado
+     * @param planEstudio Plan de estudio
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<PlanEstudioMateria>> getMateriasGradosPlanEstudio(PlanEstudio planEstudio){
+        try {
+            
+            List<PlanEstudioMateria> listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan ORDER BY p.grado, p.idMateria.nombre ASC", PlanEstudioMateria.class)
+                    .setParameter("plan", planEstudio.getIdPlanEstudio())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(listaMaterias, "Lista de materias del plan de estudio seleccionado.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias del plan de estudio seleccionado. (EjbRegistroEvidInstEvalMaterias.getMateriasGradosPlanEstudio)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de unidades que integran las materias del plan de estudio seleccionado
+     * @param listaPlanEstudioMateria Lista de materias qie integran el plan de estudio
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<UnidadMateria>> getUnidadesMateriasPlanEstudio(List<PlanEstudioMateria> listaPlanEstudioMateria){
+        try {
+            
+            List<Materia>  listaMaterias = listaPlanEstudioMateria.stream().map(p->p.getIdMateria()).collect(Collectors.toList());
+            
+            List<UnidadMateria> listaUnidadesMaterias = em.createQuery("SELECT u FROM UnidadMateria u WHERE u.idMateria IN :materias ORDER BY u.idMateria.idMateria,u.noUnidad,u.nombre ASC", UnidadMateria.class)
+                    .setParameter("materias", listaMaterias)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(listaUnidadesMaterias, "Lista de lista de unidades que integran las materias del plan de estudio seleccionado.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de unidades que integran las materias del plan de estudio seleccionado. (EjbRegistroEvidInstEvalMaterias.getUnidadesMateriasPlanEstudio)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de evidencias de evaluación activas en la base de datos
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<EvidenciaEvaluacion>> getEvidenciasCategorias(){
+        try {
+            
+            List<EvidenciaEvaluacion> listaEvidenciasCategoria = em.createQuery("SELECT e FROM EvidenciaEvaluacion e WHERE e.activo=:valor ORDER BY e.criterio.criterio, e.descripcion ASC", EvidenciaEvaluacion.class)
+                    .setParameter("valor", Boolean.TRUE)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(listaEvidenciasCategoria, "Lista de evidencias de evaluación.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias de evaluación. (EjbRegistroEvidInstEvalMaterias.getEvidenciasCategorias)", e, null);
+        }
+    }
 }
