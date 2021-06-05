@@ -65,7 +65,11 @@ public class CargaArchivosSeguimientoEstadia implements Serializable{
    
     public void editarDocumento(DtoDocumentoEstadiaEstudiante registro, EventoEstadia evento) {
         dtoDocumentoEstadiaEstudiante = registro;
-        eventoEstadia = evento;
+        if(evento==null){
+            eventoEstadia = ejbSeguimientoEstadia.buscarAperturaExtemporaneaDocumento(seguimientoEstadiaPorEstudiante.getRol().getDtoSeguimientoEstadiaEstudiante(), dtoDocumentoEstadiaEstudiante, "Estudiante").getValor();
+        }else{
+            eventoEstadia = evento;
+        }
     }
     
     public void subirDocumento() {
