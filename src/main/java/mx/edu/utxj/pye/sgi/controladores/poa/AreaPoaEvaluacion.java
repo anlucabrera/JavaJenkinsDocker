@@ -150,6 +150,8 @@ public class AreaPoaEvaluacion implements Serializable {
         procesopoa = new Procesopoa();
         procesopoa = controladorEmpleado.getProcesopoas().get(0);
         calendarioevaluacionpoa = new Calendarioevaluacionpoa();
+        calendarioevaluacionpoas= new ArrayList<>();
+        calendarioevaluacionpoas=ejbUtilidadesCH.mostrarCalendaiosActivosAreaPOA(fechaActual, procesopoa, procesopoa.getArea());
         calendarioevaluacionpoa = pOAUtilidades.buscarCalendarioPOA(procesopoa, celEva,ejercicioFiscal);
         celEva = calendarioevaluacionpoa.getEvaluacionPOA();
     }

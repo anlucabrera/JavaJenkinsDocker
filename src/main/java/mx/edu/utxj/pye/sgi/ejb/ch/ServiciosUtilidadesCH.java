@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.ejb.ch;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
@@ -24,12 +25,15 @@ import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Reporteerrores;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import org.omnifaces.util.Messages;
 
 @Stateful
 public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
 
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
     private EntityManager em;
+    
+    List<Calendarioevaluacionpoa> calendarioevaluacionpoas = new ArrayList<>();
 
     @EJB
     Facade facade;
@@ -134,6 +138,35 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
             return new ArrayList<>();
         } else {
             return pr;
+        }
+    }
+    @Override
+    public List<Calendarioevaluacionpoa> mostrarCalendaiosActivosAreaPOA(Date fecha, Procesopoa idP, Short area) {
+        try {
+            
+            calendarioevaluacionpoas = new ArrayList<>();
+            List<Calendarioevaluacionpoa> calendarios = new ArrayList<>();
+            calendarios = mostrarCalendarioevaluacionpoas();
+            calendarios.forEach((t) -> {
+                if((fecha.after(t.getFechaInicio()) && fecha.before(t.getFechaFin())) || (fecha.equals(t.getFechaInicio()) || fecha.equals(t.getFechaFin()))){
+                    calendarioevaluacionpoas.add(t);
+                }
+            });
+            List<Permisosevaluacionpoaex> ps= new ArrayList<>();
+            ps=mostrarPermisosEvaluacionExtemporaneaPOA(fecha, idP);
+            if (!ps.isEmpty()) {
+                ps.forEach((t) -> {
+                    Calendarioevaluacionpoa c = new Calendarioevaluacionpoa();
+                    c = t.getEvaluacionPOA();
+                    c.setFechaFin(t.getFechaCierre());
+                    c.setFechaInicio(t.getFechaCierre());
+                    calendarioevaluacionpoas.add(c);
+                });
+            }     
+            return calendarioevaluacionpoas;
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());            
+            return new ArrayList<>();
         }
     }
 

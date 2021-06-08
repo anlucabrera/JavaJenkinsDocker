@@ -41,6 +41,8 @@ public interface EjbUtilidadesCH {
     
     public List<Permisosevaluacionpoaex> mostrarPermisosEvaluacionExtemporaneaPOA(Date fecha,Procesopoa idP) throws Throwable;
     
+    public List<Calendarioevaluacionpoa> mostrarCalendaiosActivosAreaPOA(Date fecha,Procesopoa idP,Short area);
+    
     public Calendarioevaluacionpoa mostrarCalendarioEvaluacion(Date fecha) throws Throwable;
         
     public List<Calendarioevaluacionpoa> mostrarCalendariosEvaluacionActivos(Date fecha) throws Throwable;
