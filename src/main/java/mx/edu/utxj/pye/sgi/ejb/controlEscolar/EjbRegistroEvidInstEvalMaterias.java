@@ -532,4 +532,5 @@ public class EjbRegistroEvidInstEvalMaterias {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias de evaluación. (EjbRegistroEvidInstEvalMaterias.getEvidenciasCategorias)", e, null);
         }
     }
+    
 }

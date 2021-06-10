@@ -44,6 +44,8 @@
                                 <div id="main-buttons" class="hidden-sm hidden-xs">
                                     <p:toolbar id="tb">
                                         <f:facet name="left">
+                                            <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(registroEvidInstEvalMateriasDireccion.rol.periodoActivo.periodo)}" />
+                                            <p:spacer width="5" />
                                         </f:facet>
                                         <f:facet name="right">
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
@@ -288,6 +290,59 @@
                                                     <p></p>
                                                     <p></p>
                                                     <p></p>
+                                                </center>
+                                        </div>
+                                    </div>
+                                    </c:if>
+                                    <c:if test="#{controladorArchivoRegistroEvidInst.etapa eq etapa.CARGAR}">
+                                    <div class="box-body">
+                                        <div class="row">
+                                                <center>
+                                                    <br />
+                                                    <br />
+                                                    <p:dataTable id="tbEvidInstRegPrevio" var="evidInstRegPrev" value="#{registroEvidInstEvalMateriasDireccion.rol.listaPreviaEvidenciasInstrumentos}"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive" resizeMode="expand" emptyMessage="El archivo no contiene información o no se puede leer"
+                                                                 paginator="true" rows="10" rowsPerPageTemplate="5,10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column headerText="Grado" style="width: 80px;" />
+                                                                <p:column headerText="Materia" style="width: 80px;" /> 
+                                                                <p:column headerText="Unidad" style="width: 250px;"/> 
+                                                                <p:column headerText="Categoría de evaluación" style="width: 120px;"/>
+                                                                <p:column headerText="Evidencia" style="width: 150px;"/>
+                                                                <p:column headerText="Instrumento de evaluación" style="width: 150px;"/>
+                                                                <p:column headerText="Meta del instrumento" style="width: 100px;"/>
+                                                            </p:row>
+                                                        </p:columnGroup>
+                                                        <p:column groupRow="true" style="text-align: center;">
+                                                            <h:outputText value="#{evidInstRegPrev.grado}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true" style="text-align: center;">
+                                                            <h:outputText value="#{evidInstRegPrev.materia.nombre}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true" style="text-align: justify;">
+                                                            <h:outputText value="#{evidInstRegPrev.unidadMateria.noUnidad}. #{evidInstRegPrev.unidadMateria.nombre}" />
+                                                        </p:column>
+                                                        <p:column groupRow="true" style="text-align: justify;">
+                                                            <h:outputText value="#{evidInstRegPrev.criterio.tipo}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{evidInstRegPrev.evidenciaEvaluacion.descripcion}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{evidInstRegPrev.instrumentoEvaluacion.descripcion}" />
+                                                        </p:column>
+                                                        <p:column style="text-align: center;">
+                                                            <h:outputText value="#{evidInstRegPrev.metaInstrumento}"><f:convertNumber type="number"/></h:outputText>%
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                     
+                                                    <p></p>
+                                                    <center>
+                                                        <p:commandButton id="btnGuardar" value="Guardar Datos" actionListener="#{registroEvidInstEvalMateriasDireccion.guardarEvidInstEval()}" icon="fa fa-pencil-square-o" class="btn-primary" update="@form"/>
+                                                        <p:spacer width="5" />
+                                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{registroEvidInstEvalMateriasDireccion.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update="@form"/>
+                                                     </center>
                                                 </center>
                                         </div>
                                     </div>

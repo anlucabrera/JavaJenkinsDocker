@@ -9,8 +9,11 @@ import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -26,6 +29,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroEvidInstEvaluacionMater
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.RegistroEvidInstEvalMateriasRolDirector;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroEvidInstEvalMaterias;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.ServicioRegEvidInsEval;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvidenciaEvaluacion;
@@ -39,6 +43,7 @@ import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
+import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
@@ -55,6 +60,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
 
     @EJB EjbRegistroEvidInstEvalMaterias ejb;
     @EJB EjbAsignacionIndicadoresCriterios ejbAsignacionIndicadoresCriterios;
+    @EJB ServicioRegEvidInsEval ejbServicioRegEvidInsEval;
     
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
@@ -98,6 +104,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
 
             rol.setDirector(director);
             rol.setNivelRol(NivelRol.OPERATIVO);
+            rol.setPeriodoActivo(ejbAsignacionIndicadoresCriterios.getPeriodoActual());
 //            rol.setSoloLectura(true);
             
             listaProgramasEducativos();
@@ -400,5 +407,48 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
     public void descargarPlantilla() throws IOException, Throwable{
         File f = new File(ejb.getPlantillaEvidInstMateria(rol.getPlanEstudioRegistrado(), rol.getProgramaEducativo()));
         Faces.sendFile(f, true);
+    }
+    
+    public void listaPreviaEvidenciasInstrumentos(String rutaArchivo) {
+       try {
+            if(rutaArchivo != null){
+                rol.setRutaArchivo(rutaArchivo);
+                rol.setListaPreviaEvidenciasInstrumentos(ejbServicioRegEvidInsEval.getListaRegEvidInstEvaluacion(rutaArchivo));
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage());
+            Logger.getLogger(RegistroEvidInstEvalMateriasDireccion.class.getName()).log(Level.SEVERE, null, ex);
+            if(rutaArchivo != null){
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+            }
+        }
+    }
+    
+    public void guardarEvidInstEval() {
+       if (rol.getListaPreviaEvidenciasInstrumentos()!= null) {
+           
+            try {
+                ejbServicioRegEvidInsEval.guardarEvidInstEval(rol.getListaPreviaEvidenciasInstrumentos(), rol.getPeriodoActivo());
+            } catch (Throwable ex) {
+                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage());
+                Logger.getLogger(RegistroEvidInstEvalMateriasDireccion.class.getName()).log(Level.SEVERE, null, ex);
+                if (rol.getRutaArchivo() != null) {
+                    ServicioArchivos.eliminarArchivo(rol.getRutaArchivo());
+                }
+            } finally {
+                rol.getListaPreviaEvidenciasInstrumentos().clear();
+                rol.setRutaArchivo(null);
+            }
+        } else {
+            Messages.addGlobalWarn("¡Es necesario cargar un achivo!");
+        }
+    }
+    
+    public void cancelarArchivo(){
+        rol.getListaPreviaEvidenciasInstrumentos().clear();
+        if (rol.getRutaArchivo() != null) {
+            ServicioArchivos.eliminarArchivo(rol.getRutaArchivo());
+            rol.setRutaArchivo(null);
+        }
     }
 }

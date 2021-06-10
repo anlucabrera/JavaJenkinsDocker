@@ -31,6 +31,11 @@ public class RegistroEvidInstEvalMateriasRolDirector extends AbstractRol{
     */
     @Getter @NonNull private PersonalActivo director;
     
+     /**
+     * Periodo escolar seleccionado para registro
+     */
+    @Getter @NonNull private PeriodosEscolares periodoActivo;
+    
     /**
      * Programa educativo seleccionado para registro
      */
@@ -60,6 +65,16 @@ public class RegistroEvidInstEvalMateriasRolDirector extends AbstractRol{
      * Lista de evidencias e instrumentos de evaluación sugeridos
      */
     @Getter private List<DtoRegistroEvidInstEvaluacionMateria> listaEvidenciasInstrumentos;
+    
+    /**
+     * Lista previa de evidencias e instrumentos de evaluación por registrar
+     */
+     @Getter private List<DtoRegistroPrevioEvidInstEval> listaPreviaEvidenciasInstrumentos;
+     
+      /**
+     * Representa la ruta del archivo que se cargará a sistema
+     */
+    @Getter @NonNull private String rutaArchivo;
     
      /**
      * Representa si se desea agregar más evidencias e instrumentos de evaluación
@@ -144,6 +159,10 @@ public class RegistroEvidInstEvalMateriasRolDirector extends AbstractRol{
         this.director = director;
     }
 
+    public void setPeriodoActivo(PeriodosEscolares periodoActivo) {
+        this.periodoActivo = periodoActivo;
+    }
+    
     public void setDirector(PersonalActivo director) {
         this.director = director;
     }
@@ -179,6 +198,14 @@ public class RegistroEvidInstEvalMateriasRolDirector extends AbstractRol{
         this.listaEvidenciasInstrumentos = listaEvidenciasInstrumentos;
     }
 
+    public void setListaPreviaEvidenciasInstrumentos(List<DtoRegistroPrevioEvidInstEval> listaPreviaEvidenciasInstrumentos) {
+        this.listaPreviaEvidenciasInstrumentos = listaPreviaEvidenciasInstrumentos;
+    }
+
+    public void setRutaArchivo(String rutaArchivo) {
+        this.rutaArchivo = rutaArchivo;
+    }
+    
     public void setAgregarEvidencia(Boolean agregarEvidencia) {
         this.agregarEvidencia = agregarEvidencia;
     }

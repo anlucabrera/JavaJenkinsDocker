@@ -216,7 +216,7 @@ public class ServicioCarga implements EjbCarga {
      public static String genCarpetaRelativa(String alineacionMaterias){
         return carpetaRaiz + alineacionMaterias + File.separator ;
     }
-        
+            
     @Override
     public String subirExcelRegistro(String ejercicio, String area, String eje, String registro, Part file) {
         try {
@@ -554,7 +554,7 @@ public class ServicioCarga implements EjbCarga {
     
     @Override
     public String subirPlantillaAlineacionMaterias(String plan, String programa, Part file) {
-        try {
+       try {
             byte[] content = Utils.toByteArray(file.getInputStream());
             String rutaRelativa = genCarpetaRelativa(alineacionMaterias, programa, plan);
             addCarpetaRelativa(rutaRelativa);
