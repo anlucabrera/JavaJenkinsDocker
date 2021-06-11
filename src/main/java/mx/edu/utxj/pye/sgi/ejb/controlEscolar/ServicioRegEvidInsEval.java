@@ -216,34 +216,6 @@ public class ServicioRegEvidInsEval {
 
     }
     
-//    public void guardarEvidInstEval(List<DtoRegistroPrevioEvidInstEval> lista, PeriodosEscolares periodosEscolar) {
-//        try{
-//            List<String> listaCondicional = new ArrayList<>();
-//            lista.forEach((regEvidInstEval) -> {
-//           
-////                EvaluacionSugerida evalSug = getRegistroEvaluacionSugerida(regEvidInstEval.getUnidadMateria()).getValor();
-////                if (evalSug != null) {
-////                    evalSug.setActivo(false);
-////                    listaCondicional.add(regEvidInstEval.getUnidadMateria().getNombre());
-////                    em.merge(evalSug);
-////                }
-//                EvaluacionSugerida evalSugReg = new EvaluacionSugerida();
-//                evalSugReg.setUnidadMateria(regEvidInstEval.getUnidadMateria());
-//                evalSugReg.setEvidencia(regEvidInstEval.getEvidenciaEvaluacion());
-//                evalSugReg.setInstrumento(regEvidInstEval.getInstrumentoEvaluacion());
-//                evalSugReg.setMetaInstrumento(regEvidInstEval.getMetaInstrumento());
-//                evalSugReg.setPeriodoInicio(periodosEscolar.getPeriodo());
-//                evalSugReg.setActivo(true);
-//                em.persist(evalSugReg);
-//                Messages.addGlobalInfo("<b>Se guardaron los registros correctamente </b>");
-//                em.flush();
-//            });
-//        }catch(Throwable ex) {
-//           Logger.getLogger(EjbRegistroEvidInstEvalMaterias.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        
-//    }
-    
     /**
      * Permite guardar la asignación de indicadores del criterio SABER
      * @param lista Lista de indicadores que se guardarán
