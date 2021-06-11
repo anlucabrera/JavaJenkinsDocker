@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.io.Serializable;
 import java.util.*;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 
 @Stateless
 public class EjbEncuestaServicios implements Serializable {
@@ -96,11 +97,11 @@ public class EjbEncuestaServicios implements Serializable {
         }
     }
 
-    public ResultadoEJB<Boolean> verificarEvaluacionCOmpleta(Evaluaciones evaluacion, DtoEstudiante dtoEstudiante){
+    public ResultadoEJB<Boolean> verificarEvaluacionCOmpleta(Evaluaciones evaluacion, Integer matricula){
         EncuestaServiciosResultados esr = em.createQuery("select e from EncuestaServiciosResultados as e " +
                 "where e.encuestaServiciosResultadosPK.evaluacion = :evaluacion and e.encuestaServiciosResultadosPK.evaluador = :dtoEstudiante", EncuestaServiciosResultados.class)
                 .setParameter("evaluacion", evaluacion.getEvaluacion())
-                .setParameter("dtoEstudiante", dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula())
+                .setParameter("dtoEstudiante", matricula)
                 .getResultStream().findFirst().orElse(new EncuestaServiciosResultados());
         Comparador<EncuestaServiciosResultados> comparador = new ComparadorEncuestaServicios();
         if(comparador.isCompleto(esr)){
@@ -736,5 +737,23 @@ public class EjbEncuestaServicios implements Serializable {
                 .findFirst().get();
         if(!vp.getValor().equals("1")) return Boolean.FALSE;
         return Boolean.TRUE;
+    }
+    
+    public ResultadoEJB<Estudiante> validarEstudiante(Integer matricula, Integer periodo) throws Exception{
+        Estudiante e = em.createQuery("select e "
+                + "from Estudiante as e "
+                + "where e.matricula = :matricula "
+                + "and e.periodo = :periodo "
+                + "and (e.grupo.grado = :grado1 or e.grupo.grado = :grado2 or e.grupo.grado = :grado3 or e.grupo.grado = :grado4)", Estudiante.class)
+                .setParameter("matricula", matricula)
+                .setParameter("periodo", periodo)
+                .setParameter("grado1", Integer.parseInt(obtenerGrado1()))
+                .setParameter("grado2", Integer.parseInt(obtenerGrado2()))
+                .setParameter("grado3", Integer.parseInt(obtenerGrado3()))
+                .setParameter("grado4", Integer.parseInt(obtenerGrado4()))
+                .getResultStream().findFirst().orElse(new Estudiante());
+        if(e.equals(new Estudiante())) return ResultadoEJB.crearErroneo(2, "El estudiante que ingreso no se encuentra o está en periodo de estadía", Estudiante.class);
+        return ResultadoEJB.crearCorrecto(e, "Estudiante activo");
+                
     }
 }

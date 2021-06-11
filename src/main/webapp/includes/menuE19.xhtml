@@ -15,8 +15,8 @@
         <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.ESTUDIANTE19}">
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Control escolar</li>
             <c:if test="#{cambioPwdEstudiante.mostrarEnDesarrollo(request) and cambioPwdEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/modificacionDatosEstudiante.xhtml"><i class="fa fa-user-circle"></i><span>Mi perfil</span><span class="pull-right-container"></span></p:link></li></c:if>
-            <!--c:if test="# {consultaCalificacionesEstudiante.mostrarEnDesarrollo(request) and consultaCalificacionesEstudiante.tieneAcceso}"><li>
-            <p:link href="# {request.contextPath}/controlEscolar/estudiante/consultarCalificaciones.xhtml"><i class="fa fa-list-alt"></i><span>Consultar mis calificaciones</span></p:link></li></c:if-->
+            <c:if test="#{consultaCalificacionesEstudiante.mostrarEnDesarrollo(request) and consultaCalificacionesEstudiante.tieneAcceso}"><li>
+            <p:link href="#{request.contextPath}/controlEscolar/estudiante/consultarCalificaciones.xhtml"><i class="fa fa-list-alt"></i><span>Consultar mis calificaciones</span></p:link></li></c:if>
             <c:if test="#{registrolDelEstudiante.mostrarEnDesarrollo(request) and registrolDelEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/registroEstudiante.xhtml"><i class="fa fa-slideshare"></i><span>Registro Estudiante</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
             <c:if test="#{casosCriticosEstudiante.mostrarEnDesarrollo(request) and casosCriticosEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/casosCriticos.xhtml"><i class="fa fa-slideshare"></i><span>Casos Críticos Registrados</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
             <c:if test="#{reinscripcionAutonomaEstudiante.mostrarEnDesarrollo(request) and reinscripcionAutonomaEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/reinscripcionAutonoma.xhtml"><i class="fa fa-id-badge"></i><span>Reinscripción Autónoma</span><span class="pull-right-container"></span></p:link></li></c:if>
@@ -32,6 +32,12 @@
                 <li><p:link href="#{request.contextPath}/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-check-square"></i><span>Servicios</span></p:link></li>
             </c:if>
             <c:if test="#{encuestaCondicionesEstudio.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/condiciones_estudio.xhtml"><i class="fa fa-check-square"></i><span>Condiciones de estudio</span></p:link></li></c:if>
+            <c:if test="#{testDiagnosticoAprendizajeEstudiante.mostrarEnDesarrollo(request) and testDiagnosticoAprendizajeEstudiante.tieneAcceso}">
+                <li><p:link href="#{request.contextPath}/controlEscolar/estudiante/testAprendizaje.xhtml"><i class="fa fa-check-square"></i><span>Test de Diagnóstico de Aprendizaje</span></p:link></li>
+            </c:if>
+            <c:if test="#{encuestaSatisfaccionEgresadosTsu.mostrarEnDesarrollo(request) and encuestaSatisfaccionEgresadosTsu.tieneAcceso}">
+                <li><p:link href="#{request.contextPath}/controlEscolar/estudiante/satisfaccionEgresadosTsu.xhtml"><i class="fa fa-check-square"></i><span>Satisfacción de Egresados T.S.U</span></p:link></li>
+            </c:if>
             <c:if test="#{evaluacionDesempenioAmbientalEstudiante19.mostrarEnDesarrollo(request) and evaluacionDesempenioAmbientalEstudiante19.tieneAcceso}">
                 <li><p:link href="#{request.contextPath}/encuestas/evaluacionDesempenioAmbiental.xhtml"><i class="fa fa-check-square"></i><span>Evaluación de Desempeño Ambiental</span></p:link></li>
             </c:if>

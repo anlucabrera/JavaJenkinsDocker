@@ -32,6 +32,8 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 
 
 /**
@@ -55,49 +57,39 @@ public class EncuestaServiciosEstudiante19 extends ViewScopedRol implements Desa
 
 
     @PostConstruct
-    public void init() {
-        try{
+    public void init(){
+        try {
             if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19)) return;
-            cargado = true;
-            setVistaControlador(ControlEscolarVistaControlador.ENCUESTA_SERVICIOS);
-            //System.out.println("1");
-            if(ejb.denegarAcceso() == Boolean.TRUE) return;
-            //System.out.println("2");
-            ResultadoEJB<DtoEstudiante> resAcceso = ejbC.validadEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
-            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
-            ResultadoEJB<DtoEstudiante> resValidacion = ejbC.validadEstudiante(Integer.parseInt(logonMB.getCurrentUser()));
-            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
-            rol.setEstudiante(resValidacion.getValor());
-            //System.out.println("Grado:"+rol.getEstudiante().getInscripcionActiva().getGrupo().getGrado());
-            if(rol.getEstudiante().getInscripcionActiva().getGrupo().getGrado() != Integer.parseInt(ejb.obtenerGrado1()) || 
-                    rol.getEstudiante().getInscripcionActiva().getGrupo().getGrado() != Integer.parseInt(ejb.obtenerGrado2()) ||
-                    rol.getEstudiante().getInscripcionActiva().getGrupo().getGrado() != Integer.parseInt(ejb.obtenerGrado3()) || 
-                    rol.getEstudiante().getInscripcionActiva().getGrupo().getGrado() != Integer.parseInt(ejb.obtenerGrado4())) return;
-            //System.out.println("3");
-            tieneAcceso = rol.tieneAcceso(rol.getEstudiante(), UsuarioTipo.ESTUDIANTE19);
-            //System.out.println("4");
-            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
-            ResultadoEJB<Evaluaciones> resEvento = ejb.verificarEvaluacion();
-            if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
-            //if(rol.getEstudiante().getInscripcionActiva().getGrupo().getGrado() != )
+                if(Objects.equals(ejb.denegarAcceso(), Boolean.FALSE)) return; 
+                    cargado = true;
+                    setVistaControlador(ControlEscolarVistaControlador.ENCUESTA_SERVICIOS);
+                    Evaluaciones evaluacion = ejb.getEvaluacionActiva();
+                    if(evaluacion == null) return;
+                        ResultadoEJB<Estudiante> resAcceso = ejb.validarEstudiante(Integer.parseInt(logonMB.getCurrentUser()),evaluacion.getPeriodo());
+                        if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
+                            ResultadoEJB<Estudiante> resValidacion = ejb.validarEstudiante(Integer.parseInt(logonMB.getCurrentUser()), evaluacion.getPeriodo());
+                            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
+                                rol.setEstudianteCE(resValidacion.getValor());
+                                tieneAcceso = rol.tieneAcceso(rol.getEstudianteCE(), UsuarioTipo.ESTUDIANTE19);
+                                if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+                                    ResultadoEJB<Boolean> resultadoEJB = ejb.verificarEvaluacionCOmpleta(evaluacion, rol.getEstudianteCE().getMatricula());
+                                    rol.setCompleto(resultadoEJB.getValor());
+                                    
+                                    if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+                                    if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
+                                    rol.setNivelRol(NivelRol.OPERATIVO);
+                                    rol.setRespuestas(new HashMap<>());
+                                    rol.respuestasPosibles = ejb.getRespuestasPosibles();
+                                    EncuestaServiciosResultados resTest = ejb.getResultado(evaluacion, rol.getEstudianteCE().getMatricula(), rol.getRespuestas());
+                                    rol.resultado = resTest;
+                                    //dto.fechaAplicacion = dto.sdf.format(dto.resultadoTest.getFechaAplicacion());
+                                    if(rol.resultado == null) return;
+                                        //ResultadoEJB<List<Apartado>> resPartados = ejbTA.obtenerApartados();
+                                        rol.apartados = ejb.getApartados();
+                                        //System.out.println("Apartados:"+dto.apartados);
+                                        finalizado = ejb.actualizarResultado(rol.resultado);
             
-            ResultadoEJB<Boolean> resultadoEJB = ejb.verificarEvaluacionCOmpleta(resEvento.getValor(), rol.getEstudiante());
-            rol.setCompleto(resultadoEJB.getValor());
-            // ----------------------------------------------------------------------------------------------------------------------------------------------------------
-            if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
-            if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
-            if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
-            rol.setNivelRol(NivelRol.OPERATIVO);
-            rol.setRespuestas(new HashMap<>());
-            rol.respuestasPosibles = ejb.getRespuestasPosibles();
-            rol.setEvaluadorr(rol.getEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
-            EncuestaServiciosResultados resultados = ejb.getResultado(resEvento.getValor(), rol.getEvaluadorr(), rol.getRespuestas());
-            rol.setResultado(resultados);
-            if(rol.getResultado() != null){
-                rol.setApartados(ejb.getApartados());
-                finalizado = ejb.actualizarResultado(rol.getResultado());
-            }
-        }catch (Exception e){
+        } catch (Exception e) {
             mostrarExcepcion(e);
         }
     }

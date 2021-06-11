@@ -7,7 +7,7 @@
                 xmlns:adm="http://github.com/adminfaces"
                 template="#{layoutMB.template}"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
-    
+
 
     <ui:define name="title">
         Calificaciones
@@ -20,7 +20,7 @@
     <ui:define name="head-end">
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
         <h:outputScript library="js" name="dialogs.js"/>
-         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
         </c:if>
     </ui:define>
@@ -54,70 +54,73 @@
                                     <h:form id="frmGeneral">
                                         <div class="#{panel}">
                                             <div class="row">
+
+                                            </div>
+                                            <div class="row">
                                                 <br/>
                                                 <div class="#{casilla7}">
                                                     <table class="table table-condensed table-bordered table-hover table-responsive" style="text-align: left">
                                                         <tbody>
-                                                        <tr>
-                                                            <td colspan="6" style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">
-                                                                Datos generales del estudiante
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="font-size: x-small; font-weight: bold; width: 120px;">Matricula:</td>
-                                                            <td style="font-size: x-small; font-weight: bold; text-align: left; width: 270px;">#{consultaCalificacionesEstudiante.rol.estudiante.inscripcionActiva.inscripcion.matricula}</td>
-                                                            <td rowspan="3" colspan="3" style="font-size: x-small; font-weight: bold; align-content: center">
-                                                                <p:panelGrid columns="2" style="align-content: center">
-                                                                    <h:outputText value="Promedio acumulado:" style="font-size: medium"/>
-                                                                    <h:outputText value="#{consultaCalificacionesEstudiante.obtenerPromedioAcumulado()}" style="font-size: medium">
-                                                                        <f:convertNumber type="number" pattern="#.##"/>
-                                                                    </h:outputText>
-                                                                    <p:commandButton icon="fa fa-download" value="Descargar kardex" styleClass="btn btn-primary" ajax="false"
-                                                                                     actionListener="#{generacionKardex.controlPDF(consultaCalificacionesEstudiante.rol.estudiante)}">
-                                                                        <p:fileDownload value="#{generacionKardex.download}" />
-                                                                    </p:commandButton>
-                                                                </p:panelGrid>
-                                                            </td>
-                                                            <td rowspan="6" style="font-size: x-small; font-weight: bold; width: 70px; text-align: center">
-                                                                <div class="widget-user-header bg-aqua-active">
-                                                                    <div class="widget-user-image">
-                                                                        <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{consultaCalificacionesEstudiante.rol.estudiante.inscripcionActiva.inscripcion.matricula}.jpg"
-                                                                             class="img-circle" alt="#{consultaCalificacionesEstudiante.rol.estudiante.inscripcionActiva.inscripcion.matricula}"
-                                                                             title="Alumno #{consultaCalificacionesEstudiante.rol.estudiante.inscripcionActiva.inscripcion.matricula}"
-                                                                             style="width: 80px; height: 80px;"/>
+                                                            <tr>
+                                                                <td colspan="6" style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">
+                                                                    Datos generales del estudiante
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="font-size: x-small; font-weight: bold; width: 120px;">Matricula:</td>
+                                                                <td style="font-size: x-small; font-weight: bold; text-align: left; width: 270px;">#{consultaCalificacionesEstudiante.rol.estudiante.inscripcionActiva.inscripcion.matricula}</td>
+                                                                <td rowspan="3" colspan="3" style="font-size: x-small; font-weight: bold; align-content: center">
+                                                                    <p:panelGrid columns="2" style="align-content: center">
+                                                                        <h:outputText value="Promedio acumulado:" style="font-size: medium"/>
+                                                                        <h:outputText value="#{consultaCalificacionesEstudiante.obtenerPromedioAcumulado()}" style="font-size: medium">
+                                                                            <f:convertNumber type="number" pattern="#.##"/>
+                                                                        </h:outputText>
+                                                                        <p:commandButton icon="fa fa-download" value="Descargar kardex" styleClass="btn btn-primary" ajax="false"
+                                                                                         actionListener="#{generacionKardex.controlPDF(consultaCalificacionesEstudiante.rol.estudiante)}">
+                                                                            <p:fileDownload value="#{generacionKardex.download}" />
+                                                                        </p:commandButton>
+                                                                    </p:panelGrid>
+                                                                </td>
+                                                                <td rowspan="6" style="font-size: x-small; font-weight: bold; width: 70px; text-align: center">
+                                                                    <div class="widget-user-header bg-aqua-active">
+                                                                        <div class="widget-user-image">
+                                                                            <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{consultaCalificacionesEstudiante.rol.estudiante.inscripcionActiva.inscripcion.matricula}.jpg"
+                                                                                 class="img-circle" alt="#{consultaCalificacionesEstudiante.rol.estudiante.inscripcionActiva.inscripcion.matricula}"
+                                                                                 title="Alumno #{consultaCalificacionesEstudiante.rol.estudiante.inscripcionActiva.inscripcion.matricula}"
+                                                                                 style="width: 80px; height: 80px;"/>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="font-size: x-small; font-weight: bold">Nombre completo:</td>
-                                                            <td style="font-size: x-small; font-weight: bold; text-align: left">#{consultaCalificacionesEstudiante.rol.estudiante.aspirante.idPersona.nombre} #{consultaCalificacionesEstudiante.rol.estudiante.aspirante.idPersona.apellidoPaterno} #{consultaCalificacionesEstudiante.rol.estudiante.aspirante.idPersona.apellidoMaterno}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="font-size: x-small; font-weight: bold">Fecha de nacimiento:</td>
-                                                            <td style="font-size: x-small; font-weight: bold; text-align: left">
-                                                                <h:outputText value="#{consultaCalificacionesEstudiante.rol.estudiante.aspirante.idPersona.fechaNacimiento}">
-                                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
-                                                                </h:outputText>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="4" style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">
-                                                                Datos académicos
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="font-size: x-small; font-weight: bold;">Carrera:</td>
-                                                            <td style="font-size: x-small; font-weight: bold; text-align: left">#{consultaCalificacionesEstudiante.rol.estudiante.inscripcionActiva.inscripcion.grupo.plan.descripcion}</td>
-                                                            <td style="font-size: x-small; font-weight: bold; width: 120px">Turno:</td>
-                                                            <td style="font-size: x-small; font-weight: bold; text-align: left; width: 150px">#{consultaCalificacionesEstudiante.rol.estudiante.inscripcionActiva.inscripcion.grupo.idSistema.nombre}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="font-size: x-small; font-weight: bold">Grado actual:</td>
-                                                            <td style="font-size: x-small; font-weight: bold; text-align: left">#{consultaCalificacionesEstudiante.rol.estudianteCE.grupo.grado}</td>
-                                                            <td style="font-size: x-small; font-weight: bold">Grupo actual:</td>
-                                                            <td style="font-size: x-small; font-weight: bold; text-align: left">#{consultaCalificacionesEstudiante.rol.estudianteCE.grupo.literal}</td>
-                                                        </tr>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="font-size: x-small; font-weight: bold">Nombre completo:</td>
+                                                                <td style="font-size: x-small; font-weight: bold; text-align: left">#{consultaCalificacionesEstudiante.rol.estudiante.aspirante.idPersona.nombre} #{consultaCalificacionesEstudiante.rol.estudiante.aspirante.idPersona.apellidoPaterno} #{consultaCalificacionesEstudiante.rol.estudiante.aspirante.idPersona.apellidoMaterno}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="font-size: x-small; font-weight: bold">Fecha de nacimiento:</td>
+                                                                <td style="font-size: x-small; font-weight: bold; text-align: left">
+                                                                    <h:outputText value="#{consultaCalificacionesEstudiante.rol.estudiante.aspirante.idPersona.fechaNacimiento}">
+                                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                                    </h:outputText>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="4" style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">
+                                                                    Datos académicos
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="font-size: x-small; font-weight: bold;">Carrera:</td>
+                                                                <td style="font-size: x-small; font-weight: bold; text-align: left">#{consultaCalificacionesEstudiante.rol.estudiante.inscripcionActiva.inscripcion.grupo.plan.descripcion}</td>
+                                                                <td style="font-size: x-small; font-weight: bold; width: 120px">Turno:</td>
+                                                                <td style="font-size: x-small; font-weight: bold; text-align: left; width: 150px">#{consultaCalificacionesEstudiante.rol.estudiante.inscripcionActiva.inscripcion.grupo.idSistema.nombre}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="font-size: x-small; font-weight: bold">Grado actual:</td>
+                                                                <td style="font-size: x-small; font-weight: bold; text-align: left">#{consultaCalificacionesEstudiante.rol.estudianteCE.grupo.grado}</td>
+                                                                <td style="font-size: x-small; font-weight: bold">Grupo actual:</td>
+                                                                <td style="font-size: x-small; font-weight: bold; text-align: left">#{consultaCalificacionesEstudiante.rol.estudianteCE.grupo.literal}</td>
+                                                            </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -132,134 +135,248 @@
                                                 <c:forEach var="estudiante" items="#{consultaCalificacionesEstudiante.rol.inscripciones}">
                                                     <p:accordionPanel dynamic="true" cache="true" id="acordion" tabindex="#{index}">
                                                         <p:tab id="tab#{index}" title="Grado: #{estudiante.inscripcion.grupo.grado} '#{estudiante.inscripcion.grupo.literal}'
-                                                            Periodo escolar: #{caster.clavePeriodoToString(estudiante.inscripcion.periodo)}"
+                                                               Periodo escolar: #{caster.clavePeriodoToString(estudiante.inscripcion.periodo)}"
                                                                titletip="Da click para visualizar tus calificaciones">
-                                                            <table class="table table-condensed table-bordered table-hover table-responsive tabla ui-datatable">
-                                                                <thead>
-                                                                <tr role="row">
-                                                                    <th role="columnheader" class="ui-state-default" width="250"><span class="ui-column-title">Materias</span></th>
-                                                                    <th role="columnheader" class="ui-state-default" width="250"><span class="ui-column-title">Nombre</span></th>
-                                                                    <c:forEach items="#{consultaCalificacionesEstudiante.obtenerUnidadesPorMateria(estudiante.inscripcion)}" var="unidad">
-                                                                        <th role="columnheader" class="ui-state-default" width="100">
+                                                            <c:if test="#{estudiante.inscripcion.grupo.grado ne 6}">
+                                                                <table class="table table-condensed table-bordered table-hover table-responsive tabla ui-datatable">
+                                                                    <thead>
+                                                                        <tr role="row">
+                                                                            <th role="columnheader" class="ui-state-default" width="250"><span class="ui-column-title">Materias</span></th>
+                                                                            <th role="columnheader" class="ui-state-default" width="250"><span class="ui-column-title">Nombre</span></th>
+                                                                            <c:forEach items="#{consultaCalificacionesEstudiante.obtenerUnidadesPorMateria(estudiante.inscripcion)}" var="unidad">
+                                                                                <th role="columnheader" class="ui-state-default" width="100">
+                                                                                    <span class="ui-column-title">
+                                                                                        <h:outputLabel value="Unidad Temática # #{unidad.noUnidad}"/>
+                                                                                    </span>
+                                                                                </th>
+                                                                            </c:forEach>
+                                                                            <th role="columnheader" class="ui-state-default" width="100">
                                                                                 <span class="ui-column-title">
-                                                                                    <h:outputLabel value="Unidad Temática # #{unidad.noUnidad}"/>
+                                                                                    Tarea integradora
                                                                                 </span>
-                                                                        </th>
-                                                                    </c:forEach>
-                                                                    <th role="columnheader" class="ui-state-default" width="100">
-                                                                        <span class="ui-column-title">
-                                                                            Tarea integradora
-                                                                        </span>
-                                                                    </th>
-                                                                    <th role="columnheader" class="ui-state-default" width="130"><span class="ui-column-title">Calificación Final Ordinaria</span></th>
-                                                                    <th role="columnheader" class="ui-state-default" width="100"><span class="ui-column-title">Nivelación Final #1</span></th>
-                                                                    <th role="columnheader" class="ui-state-default" width="100"><span class="ui-column-title">Calificación Final</span></th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                <c:forEach items="#{consultaCalificacionesEstudiante.getCargasAcademicas(estudiante.inscripcion)}" var="carga1" varStatus="status">
-                                                                    <tr data-ri="#{status.index}" class="ui-widget-content #{status.index%2 eq 1?'ui-datatable-odd':'ui-datatable-even'}">
-                                                                        <td role="gridcell">#{carga1.planEstudioMateria.claveMateria} - #{carga1.materia.nombre}</td>
-                                                                        <td role="gridcell" style="text-align: left;">#{carga1.docente.personal.nombre}</td>
-                                                                        <c:forEach var="unity" items="#{consultaCalificacionesEstudiante.obtenerUnidadesPorMateria(estudiante.inscripcion)}">
-                                                                            <c:forEach items="#{consultaCalificacionesEstudiante.getContenedor(carga1, estudiante.inscripcion).dtoUnidadConfiguraciones}" var="unidad">
-                                                                                <c:if test="#{unity.noUnidad eq unidad.unidadMateria.noUnidad and carga1.materia.idMateria eq unidad.dtoCargaAcademica.materia.idMateria}">
-                                                                                    <td role="gridcell">
-                                                                                        <c:set var="promedio" value="#{consultaCalificacionesEstudiante.getContenedor(carga1, estudiante.inscripcion).getPromedioUnidad(unidad, carga1)}"/>
-                                                                                        <c:set var="escala" value="#{consultaCalificacionesEstudiante.getContenedor(carga1, estudiante.inscripcion).getEscala(unidad, carga1)}"/>
-                                                                                        <p:panelGrid columns="2" style="height: 20px; align-content: center">
-                                                                                            <h:outputText style="font-weight: bold; font-size: x-small; #{promedio > 7.9 ? 'color: #000000':'color: #E53935'}"
-                                                                                                          value="#{escala}"/>
-                                                                                            <h:outputText style="font-weight: bold; font-size: small" value=""/>
-                                                                                            <h:outputText style="font-weight: bold; font-size: small; #{promedio > 7.9 ? 'color: #000000':'color: #E53935'}"
-                                                                                                          value="#{promedio}">
-                                                                                                <f:convertNumber pattern="#.##"/>
-                                                                                            </h:outputText>
-                                                                                            <h:outputText value="#{unidad.unidadMateriaConfiguracion.porcentaje / 100}" >
-                                                                                                <f:convertNumber pattern="#.###"/>
-                                                                                            </h:outputText>
-                                                                                        </p:panelGrid>
+                                                                            </th>
+                                                                            <th role="columnheader" class="ui-state-default" width="130"><span class="ui-column-title">Calificación Final Ordinaria</span></th>
+                                                                            <th role="columnheader" class="ui-state-default" width="100"><span class="ui-column-title">Nivelación Final #1</span></th>
+                                                                            <th role="columnheader" class="ui-state-default" width="100"><span class="ui-column-title">Calificación Final</span></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <c:if test="#{estudiante.inscripcion.calificacionEvidenciaInstrumentoList.size() eq 0}">
+                                                                            <c:forEach items="#{consultaCalificacionesEstudiante.getCargasAcademicas(estudiante.inscripcion)}" var="carga1" varStatus="status">
+                                                                                <tr data-ri="#{status.index}" class="ui-widget-content #{status.index%2 eq 1?'ui-datatable-odd':'ui-datatable-even'}">
+                                                                                    <td role="gridcell">#{carga1.planEstudioMateria.claveMateria} - #{carga1.materia.nombre}</td>
+                                                                                    <td role="gridcell" style="text-align: left;">#{carga1.docente.personal.nombre}</td>
+                                                                                    <c:forEach var="unity" items="#{consultaCalificacionesEstudiante.obtenerUnidadesPorMateria(estudiante.inscripcion)}">
+                                                                                        <c:forEach items="#{consultaCalificacionesEstudiante.getContenedor(carga1, estudiante.inscripcion).dtoUnidadConfiguraciones}" var="unidad">
+                                                                                            <c:if test="#{unity.noUnidad eq unidad.unidadMateria.noUnidad and carga1.materia.idMateria eq unidad.dtoCargaAcademica.materia.idMateria}">
+                                                                                                <td role="gridcell">
+                                                                                                    <c:set var="promedio" value="#{consultaCalificacionesEstudiante.getContenedor(carga1, estudiante.inscripcion).getPromedioUnidad(unidad, carga1)}"/>
+                                                                                                    <c:set var="escala" value="#{consultaCalificacionesEstudiante.getContenedor(carga1, estudiante.inscripcion).getEscala(unidad, carga1)}"/>
+                                                                                                    <p:panelGrid columns="2" style="height: 20px; align-content: center">
+                                                                                                        <h:outputText style="font-weight: bold; font-size: x-small; #{promedio > 7.9 ? 'color: #000000':'color: #E53935'}"
+                                                                                                                      value="#{escala}"/>
+                                                                                                        <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                                                        <h:outputText style="font-weight: bold; font-size: small; #{promedio > 7.9 ? 'color: #000000':'color: #E53935'}"
+                                                                                                                      value="#{promedio}">
+                                                                                                            <f:convertNumber pattern="#.##"/>
+                                                                                                        </h:outputText>
+                                                                                                        <h:outputText value="#{unidad.unidadMateriaConfiguracion.porcentaje / 100}" >
+                                                                                                            <f:convertNumber pattern="#.###"/>
+                                                                                                        </h:outputText>
+                                                                                                    </p:panelGrid>
+                                                                                                </td>
+                                                                                            </c:if>
+                                                                                        </c:forEach>
+                                                                                    </c:forEach>
+                                                                                    <c:set var="columna" value="#{consultaCalificacionesEstudiante.obtenerUnidadesPorMateria(estudiante.inscripcion).size() - consultaCalificacionesEstudiante.getContenedor(carga1, estudiante.inscripcion).dtoUnidadConfiguraciones.size()}"/>
+                                                                                    <c:if test="#{columna >= 0}">
+                                                                                        <c:forEach begin="1" end="#{columna}">
+                                                                                            <td role="gridcell">
+                                                                                                <h:outputLabel value=""/>
+                                                                                            </td>
+                                                                                        </c:forEach>
+                                                                                    </c:if>
+                                                                                    <c:if test="#{consultaCalificacionesEstudiante.tieneIntegradora(carga1, estudiante.inscripcion) eq true}">
+                                                                                        <td role="gridcell">
+                                                                                            <p:panelGrid columns="2" >
+                                                                                                <c:set var="promedioInt" value="#{consultaCalificacionesEstudiante.getContenedor(carga1, estudiante.inscripcion).tareaIntegradoraPromedioMap[carga1].valor}"/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small;" value=""/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small; #{promedioInt >= 8 ? 'color: #000000':'color: #E53935' or promedioInt > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                                              value="#{promedioInt}"/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small; #{promedioInt >= 8 ? 'color: #000000':'color: #E53935' or promedioInt > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                                              value="#{consultaCalificacionesEstudiante.getContenedor(carga1, estudiante.inscripcion).tareaIntegradoraPromedioMap[carga1].tareaIntegradora.porcentaje / 100}"/>
+                                                                                            </p:panelGrid>
+                                                                                        </td>
+                                                                                    </c:if>
+                                                                                    <c:if test="#{consultaCalificacionesEstudiante.tieneIntegradora(carga1, estudiante.inscripcion) eq false}">
+                                                                                        <td role="gridcell" style="text-align: center">
+                                                                                            <p:panelGrid columns="2" >
+                                                                                                <h:outputText style="font-weight: bold; font-size: small;" value=""/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                                            </p:panelGrid>
+                                                                                        </td>
+                                                                                    </c:if>
+                                                                                    <c:set var="valor" value="#{consultaCalificacionesEstudiante.getPromedioAsignaturaEstudiante(carga1, estudiante.inscripcion)}" />
+                                                                                    <td role="gridcell" class="promedio" style="text-align: center">
+                                                                                        <h:outputLabel value="#{valor}" styleClass="promedio"
+                                                                                                       style="font-weight: bold; font-size: small; #{valor >= 8 ? 'color: #000000':'color: #E53935' or valor > 0 ? 'color: #E53935':'color: #000000'}">
+                                                                                            <f:convertNumber pattern="#.##" />
+                                                                                        </h:outputLabel>
                                                                                     </td>
-                                                                                </c:if>
+                                                                                    <c:set var="nivelacion" value="#{consultaCalificacionesEstudiante.getNivelacion(carga1, estudiante.inscripcion).calificacionNivelacion.valor}"/>
+                                                                                    <c:if test="#{nivelacion eq 0}">
+                                                                                        <td role="gridcell" class="promedio">
+                                                                                            <h:outputLabel value="" styleClass="promedio"/>
+                                                                                        </td>
+                                                                                    </c:if>
+                                                                                    <c:if test="#{nivelacion ne 0}">
+                                                                                        <td role="gridcell" class="promedio" style="text-align: center">
+                                                                                            <h:outputLabel value="#{nivelacion}" styleClass="promedio" style="font-weight: bold; font-size: small; #{nivelacion >= 8 ? 'color: #000000':'color: #E53935' or nivelacion > 0 ? 'color: #E53935':'color: #000000'}">
+                                                                                                <f:convertNumber pattern="#.##" />
+                                                                                            </h:outputLabel>
+                                                                                        </td>
+                                                                                    </c:if>
+                                                                                    <c:set value="#{consultaCalificacionesEstudiante.getPromedioFinal(carga1, estudiante.inscripcion)}" var="promedioFinal"/>
+                                                                                    <td role="gridcell" class="promedio" style="text-align: center">
+                                                                                        <h:outputLabel value="#{promedioFinal}" styleClass="promedio" style="font-weight: bold; font-size: small; #{promedioFinal >= 8 ? 'color: #000000':'color: #E53935' or promedioFinal > 0 ? 'color: #E53935':'color: #000000'}">
+                                                                                            <f:convertNumber pattern="#.##" />
+                                                                                        </h:outputLabel>
+                                                                                    </td>
+
+                                                                                </tr>
                                                                             </c:forEach>
-                                                                        </c:forEach>
-                                                                        <c:set var="columna" value="#{consultaCalificacionesEstudiante.obtenerUnidadesPorMateria(estudiante.inscripcion).size() - consultaCalificacionesEstudiante.getContenedor(carga1, estudiante.inscripcion).dtoUnidadConfiguraciones.size()}"/>
-                                                                        <c:if test="#{columna >= 0}">
-                                                                            <c:forEach begin="1" end="#{columna}">
-                                                                                <td role="gridcell">
-                                                                                    <h:outputLabel value=""/>
-                                                                                </td>
+                                                                        </c:if>
+                                                                        <c:if test="#{estudiante.inscripcion.calificacionList.size() eq 0}">
+                                                                            <c:forEach items="#{consultaCalificacionesEstudiante.getCargasAcademicas(estudiante.inscripcion)}" var="carga1" varStatus="status">
+                                                                                <tr data-ri="#{status.index}" class="ui-widget-content #{status.index%2 eq 1?'ui-datatable-odd':'ui-datatable-even'}">
+                                                                                    <td role="gridcell">#{carga1.planEstudioMateria.claveMateria} - #{carga1.materia.nombre}</td>
+                                                                                    <td role="gridcell" style="text-align: left;">#{carga1.docente.personal.nombre}</td>
+                                                                                    <c:forEach var="unity" items="#{consultaCalificacionesEstudiante.obtenerUnidadesPorMateria(estudiante.inscripcion)}">
+                                                                                        <c:forEach items="#{consultaCalificacionesEstudiante.getContenedor2(carga1, estudiante.inscripcion).dtoUnidadConfiguraciones}" var="unidad">
+                                                                                            <c:if test="#{unity.noUnidad eq unidad.unidadMateria.noUnidad and carga1.materia.idMateria eq unidad.dtoCargaAcademica.materia.idMateria}">
+                                                                                                <td role="gridcell">
+                                                                                                    <c:set var="promedio" value="#{consultaCalificacionesEstudiante.getContenedor2(carga1, estudiante.inscripcion).getPromedioUnidad(unidad, carga1)}"/>
+                                                                                                    <c:set var="escala" value="#{consultaCalificacionesEstudiante.getContenedor2(carga1, estudiante.inscripcion).getEscala(unidad, carga1)}"/>
+                                                                                                    <p:panelGrid columns="2" style="height: 20px; align-content: center">
+                                                                                                        <h:outputText style="font-weight: bold; font-size: x-small; #{promedio > 7.9 ? 'color: #000000':'color: #E53935'}"
+                                                                                                                      value="#{escala}"/>
+                                                                                                        <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                                                        <h:outputText style="font-weight: bold; font-size: small; #{promedio > 7.9 ? 'color: #000000':'color: #E53935'}"
+                                                                                                                      value="#{promedio}">
+                                                                                                            <f:convertNumber pattern="#.##"/>
+                                                                                                        </h:outputText>
+                                                                                                        <h:outputText value="#{unidad.unidadMateriaConfiguracion.porcentaje / 100}" >
+                                                                                                            <f:convertNumber pattern="#.###"/>
+                                                                                                        </h:outputText>
+                                                                                                    </p:panelGrid>
+                                                                                                </td>
+                                                                                            </c:if>
+                                                                                        </c:forEach>
+                                                                                    </c:forEach>
+                                                                                    <c:set var="columna" value="#{consultaCalificacionesEstudiante.obtenerUnidadesPorMateria(estudiante.inscripcion).size() - consultaCalificacionesEstudiante.getContenedor2(carga1, estudiante.inscripcion).dtoUnidadConfiguraciones.size()}"/>
+                                                                                    <c:if test="#{columna >= 0}">
+                                                                                        <c:forEach begin="1" end="#{columna}">
+                                                                                            <td role="gridcell">
+                                                                                                <h:outputLabel value=""/>
+                                                                                            </td>
+                                                                                        </c:forEach>
+                                                                                    </c:if>
+                                                                                    <c:if test="#{consultaCalificacionesEstudiante.tieneIntegradora(carga1, estudiante.inscripcion) eq true}">
+                                                                                        <td role="gridcell">
+                                                                                            <p:panelGrid columns="2" >
+                                                                                                <c:set var="promedioInt" value="#{consultaCalificacionesEstudiante.getContenedor2(carga1, estudiante.inscripcion).tareaIntegradoraPromedioMap[carga1].valor}"/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small;" value=""/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small; #{promedioInt >= 8 ? 'color: #000000':'color: #E53935' or promedioInt > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                                              value="#{promedioInt}"/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small; #{promedioInt >= 8 ? 'color: #000000':'color: #E53935' or promedioInt > 0 ? 'color: #E53935':'color: #000000'}"
+                                                                                                              value="#{consultaCalificacionesEstudiante.getContenedor2(carga1, estudiante.inscripcion).tareaIntegradoraPromedioMap[carga1].tareaIntegradora.porcentaje / 100}"/>
+                                                                                            </p:panelGrid>
+                                                                                        </td>
+                                                                                    </c:if>
+                                                                                    <c:if test="#{consultaCalificacionesEstudiante.tieneIntegradora(carga1, estudiante.inscripcion) eq false}">
+                                                                                        <td role="gridcell" style="text-align: center">
+                                                                                            <p:panelGrid columns="2" >
+                                                                                                <h:outputText style="font-weight: bold; font-size: small;" value=""/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                                                <h:outputText style="font-weight: bold; font-size: small" value=""/>
+                                                                                            </p:panelGrid>
+                                                                                        </td>
+                                                                                    </c:if>
+                                                                                    <c:set var="valor" value="#{consultaCalificacionesEstudiante.getPromedioAsignaturaAlineacionEstudiante(carga1, estudiante.inscripcion)}" />
+                                                                                    <td role="gridcell" class="promedio" style="text-align: center">
+                                                                                        <h:outputLabel value="#{valor}" styleClass="promedio"
+                                                                                                       style="font-weight: bold; font-size: small; #{valor >= 8 ? 'color: #000000':'color: #E53935' or valor > 0 ? 'color: #E53935':'color: #000000'}">
+                                                                                            <f:convertNumber pattern="#.##" />
+                                                                                        </h:outputLabel>
+                                                                                    </td>
+                                                                                    <c:set var="nivelacion" value="#{consultaCalificacionesEstudiante.getNivelacion2(carga1, estudiante.inscripcion).calificacionNivelacion.valor}"/>
+                                                                                    <c:if test="#{nivelacion eq 0}">
+                                                                                        <td role="gridcell" class="promedio">
+                                                                                            <h:outputLabel value="" styleClass="promedio"/>
+                                                                                        </td>
+                                                                                    </c:if>
+                                                                                    <c:if test="#{nivelacion ne 0}">
+                                                                                        <td role="gridcell" class="promedio" style="text-align: center">
+                                                                                            <h:outputLabel value="#{nivelacion}" styleClass="promedio" style="font-weight: bold; font-size: small; #{nivelacion >= 8 ? 'color: #000000':'color: #E53935' or nivelacion > 0 ? 'color: #E53935':'color: #000000'}">
+                                                                                                <f:convertNumber pattern="#.##" />
+                                                                                            </h:outputLabel>
+                                                                                        </td>
+                                                                                    </c:if>
+                                                                                    <c:set value="#{consultaCalificacionesEstudiante.getPromedioFinalAlineacion(carga1, estudiante.inscripcion)}" var="promedioFinal"/>
+                                                                                    <td role="gridcell" class="promedio" style="text-align: center">
+                                                                                        <h:outputLabel value="#{promedioFinal}" styleClass="promedio" style="font-weight: bold; font-size: small; #{promedioFinal >= 8 ? 'color: #000000':'color: #E53935' or promedioFinal > 0 ? 'color: #E53935':'color: #000000'}">
+                                                                                            <f:convertNumber pattern="#.##" />
+                                                                                        </h:outputLabel>
+                                                                                    </td>
+
+                                                                                </tr>
                                                                             </c:forEach>
                                                                         </c:if>
-                                                                        <c:if test="#{consultaCalificacionesEstudiante.tieneIntegradora(carga1, estudiante.inscripcion) eq true}">
-                                                                            <td role="gridcell">
-                                                                                <p:panelGrid columns="2" >
-                                                                                    <c:set var="promedioInt" value="#{consultaCalificacionesEstudiante.getContenedor(carga1, estudiante.inscripcion).tareaIntegradoraPromedioMap[carga1].valor}"/>
-                                                                                    <h:outputText style="font-weight: bold; font-size: small;" value=""/>
-                                                                                    <h:outputText style="font-weight: bold; font-size: small" value=""/>
-                                                                                    <h:outputText style="font-weight: bold; font-size: small; #{promedioInt >= 8 ? 'color: #000000':'color: #E53935' or promedioInt > 0 ? 'color: #E53935':'color: #000000'}"
-                                                                                                  value="#{promedioInt}"/>
-                                                                                    <h:outputText style="font-weight: bold; font-size: small; #{promedioInt >= 8 ? 'color: #000000':'color: #E53935' or promedioInt > 0 ? 'color: #E53935':'color: #000000'}"
-                                                                                                  value="#{consultaCalificacionesEstudiante.getContenedor(carga1, estudiante.inscripcion).tareaIntegradoraPromedioMap[carga1].tareaIntegradora.porcentaje / 100}"/>
-                                                                                </p:panelGrid>
-                                                                            </td>
-                                                                        </c:if>
-                                                                        <c:if test="#{consultaCalificacionesEstudiante.tieneIntegradora(carga1, estudiante.inscripcion) eq false}">
-                                                                            <td role="gridcell" style="text-align: center">
-                                                                                <p:panelGrid columns="2" >
-                                                                                    <h:outputText style="font-weight: bold; font-size: small;" value=""/>
-                                                                                    <h:outputText style="font-weight: bold; font-size: small" value=""/>
-                                                                                    <h:outputText style="font-weight: bold; font-size: small" value=""/>
-                                                                                    <h:outputText style="font-weight: bold; font-size: small" value=""/>
-                                                                                </p:panelGrid>
-                                                                            </td>
-                                                                        </c:if>
-                                                                        <c:set var="valor" value="#{consultaCalificacionesEstudiante.getPromedioAsignaturaEstudiante(carga1, estudiante.inscripcion)}" />
-                                                                        <td role="gridcell" class="promedio" style="text-align: center">
-                                                                            <h:outputLabel value="#{valor}" styleClass="promedio"
-                                                                                           style="font-weight: bold; font-size: small; #{valor >= 8 ? 'color: #000000':'color: #E53935' or valor > 0 ? 'color: #E53935':'color: #000000'}">
-                                                                                <f:convertNumber pattern="#.##" />
-                                                                            </h:outputLabel>
-                                                                        </td>
-                                                                        <c:set var="nivelacion" value="#{consultaCalificacionesEstudiante.getNivelacion(carga1, estudiante.inscripcion).calificacionNivelacion.valor}"/>
-                                                                        <c:if test="#{nivelacion eq 0}">
-                                                                            <td role="gridcell" class="promedio">
-                                                                                <h:outputLabel value="" styleClass="promedio"/>
-                                                                            </td>
-                                                                        </c:if>
-                                                                        <c:if test="#{nivelacion ne 0}">
-                                                                            <td role="gridcell" class="promedio" style="text-align: center">
-                                                                                <h:outputLabel value="#{nivelacion}" styleClass="promedio" style="font-weight: bold; font-size: small; #{nivelacion >= 8 ? 'color: #000000':'color: #E53935' or nivelacion > 0 ? 'color: #E53935':'color: #000000'}">
+                                                                    </tbody>
+                                                                    <tfoot>
+                                                                        <tr>
+                                                                            <th colspan="1">
+                                                                                <h:outputLabel style="font-weight: bold; font-size: small" value="Promedio cuatrimestral"/>
+                                                                            </th>
+                                                                            <th colspan="#{4 + consultaCalificacionesEstudiante.obtenerUnidadesPorMateria(estudiante.inscripcion).size()}" style="text-align: right">
+                                                                            </th>
+                                                                            <th colspan="1" style="text-align: center">
+                                                                                <c:set var="promedioCuat" value="#{consultaCalificacionesEstudiante.getPromedioCuatrimestral(estudiante.inscripcion)}"/>
+                                                                                <h:outputLabel value="#{promedioCuat}" rendered="#{promedioCuat > 0}" styleClass="promedio" style="font-weight: bold; font-size: small; #{promedioCuat >= 8 ? 'color: #000000':'color: #E53935' or promedioCuat > 0 ? 'color: #E53935':'color: #000000'}">
                                                                                     <f:convertNumber pattern="#.##" />
                                                                                 </h:outputLabel>
-                                                                            </td>
-                                                                        </c:if>
-                                                                        <c:set value="#{consultaCalificacionesEstudiante.getPromedioFinal(carga1, estudiante.inscripcion)}" var="promedioFinal"/>
-                                                                        <td role="gridcell" class="promedio" style="text-align: center">
-                                                                            <h:outputLabel value="#{promedioFinal}" styleClass="promedio" style="font-weight: bold; font-size: small; #{promedioFinal >= 8 ? 'color: #000000':'color: #E53935' or promedioFinal > 0 ? 'color: #E53935':'color: #000000'}">
-                                                                                <f:convertNumber pattern="#.##" />
-                                                                            </h:outputLabel>
-                                                                        </td>
+                                                                            </th>
+                                                                        </tr>
+                                                                    </tfoot>
+                                                                </table>
+                                                            </c:if>
+                                                            <c:if test="#{estudiante.inscripcion.grupo.grado eq 6}">
+                                                                <table class="table table-condensed table-bordered table-hover table-responsive tabla ui-datatable">
+                                                                    <thead>
+                                                                        <tr role="row">
+                                                                            <th role="columnheader" class="ui-state-default" width="250"><span class="ui-column-title">Materia</span></th>
+                                                                            <th role="columnheader" class="ui-state-default" width="100"><span class="ui-column-title">Estatus</span></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr role="row">
+                                                                            <td class="ui-state-default" width="250"><span class="ui-column-title">Estadía Técnica</span></td>
+                                                                            <c:if test="#{estudiante.inscripcion.tipoEstudiante.idTipoEstudiante eq 4}">
+                                                                                <td class="ui-state-default" width="100"><span class="ui-column-title">Acreditado</span></td>
+                                                                            </c:if>
+                                                                            <c:if test="#{estudiante.inscripcion.tipoEstudiante.idTipoEstudiante eq 1}">
+                                                                                <td class="ui-state-default" width="100"><span class="ui-column-title">En proceso de estadía</span></td>
+                                                                            </c:if>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </c:if>
 
-                                                                    </tr>
-                                                                </c:forEach>
-                                                                </tbody>
-                                                                <tfoot>
-                                                                <tr>
-                                                                    <th colspan="1">
-                                                                        <h:outputLabel style="font-weight: bold; font-size: small" value="Promedio cuatrimestral"/>
-                                                                    </th>
-                                                                    <th colspan="#{4 + consultaCalificacionesEstudiante.obtenerUnidadesPorMateria(estudiante.inscripcion).size()}" style="text-align: right">
-                                                                    </th>
-                                                                    <th colspan="1" style="text-align: center">
-                                                                        <c:set var="promedioCuat" value="#{consultaCalificacionesEstudiante.getPromedioCuatrimestral(estudiante.inscripcion)}"/>
-                                                                        <h:outputLabel value="#{promedioCuat}" rendered="#{promedioCuat > 0}" styleClass="promedio" style="font-weight: bold; font-size: small; #{promedioCuat >= 8 ? 'color: #000000':'color: #E53935' or promedioCuat > 0 ? 'color: #E53935':'color: #000000'}">
-                                                                            <f:convertNumber pattern="#.##" />
-                                                                        </h:outputLabel>
-                                                                    </th>
-                                                                </tr>
-                                                                </tfoot>
-                                                            </table>
                                                         </p:tab>
                                                         <c:set var="index" value="#{index + 1}"/>
                                                     </p:accordionPanel>
@@ -272,25 +389,25 @@
                                                     <div class="col-xs-12" style="text-align: center">
                                                         <table class="table table-condensed table-bordered table-hover table-responsive" style="text-align: center">
                                                             <tbody>
-                                                            <tr>
-                                                                <td colspan="5" style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">
-                                                                    Escalas alfabéticas para las calificaciones alcanzadas
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td style="font-size: x-small; font-weight: bold">Asignatura No Integradora</td>
-                                                                <td style="font-size: x-small; font-weight: bold">AU = Autónomo 10</td>
-                                                                <td style="font-size: x-small; font-weight: bold">DE = Destacado 9</td>
-                                                                <td style="font-size: x-small; font-weight: bold">SA = Satisfactorio 8</td>
-                                                                <td style="font-size: x-small; font-weight: bold">NA = No Acreditado menor a 8</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td style="font-size: x-small; font-weight: bold">Asignatura Integradora</td>
-                                                                <td style="font-size: x-small; font-weight: bold">CA = Competente Autónomo 10</td>
-                                                                <td style="font-size: x-small; font-weight: bold">CD = Competente Destacado 9</td>
-                                                                <td style="font-size: x-small; font-weight: bold">CO = Competente 8</td>
-                                                                <td style="font-size: x-small; font-weight: bold">NA = No Acreditado menor a 8</td>
-                                                            </tr>
+                                                                <tr>
+                                                                    <td colspan="5" style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">
+                                                                        Escalas alfabéticas para las calificaciones alcanzadas
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-size: x-small; font-weight: bold">Asignatura No Integradora</td>
+                                                                    <td style="font-size: x-small; font-weight: bold">AU = Autónomo 10</td>
+                                                                    <td style="font-size: x-small; font-weight: bold">DE = Destacado 9</td>
+                                                                    <td style="font-size: x-small; font-weight: bold">SA = Satisfactorio 8</td>
+                                                                    <td style="font-size: x-small; font-weight: bold">NA = No Acreditado menor a 8</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-size: x-small; font-weight: bold">Asignatura Integradora</td>
+                                                                    <td style="font-size: x-small; font-weight: bold">CA = Competente Autónomo 10</td>
+                                                                    <td style="font-size: x-small; font-weight: bold">CD = Competente Destacado 9</td>
+                                                                    <td style="font-size: x-small; font-weight: bold">CO = Competente 8</td>
+                                                                    <td style="font-size: x-small; font-weight: bold">NA = No Acreditado menor a 8</td>
+                                                                </tr>
                                                             </tbody>
                                                         </table>
                                                     </div>

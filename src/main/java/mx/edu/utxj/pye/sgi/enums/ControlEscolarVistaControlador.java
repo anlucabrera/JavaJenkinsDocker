@@ -72,6 +72,7 @@ public enum ControlEscolarVistaControlador {
     REGISTRO_PlANTILLA_PLAN_ACCION_TUTORIAL_PSICOPEDAGOGIA("/controlEscolar/psicopedagogia/plantilla_plan_accion_tutorial.xhtml", PlantillaPlanAccionTutorialPsicopedagogia.class),
     SEGUIMIENTO_CUESTIONARIO_PSICOPEDAGOGICO("/controlEscolar/psicopedagogia/seguimientoCuestionarioPsicopedagogico.xhtml", SeguimientoCuestionariopsiPsicopedagogia.class),
     ADMINISTRACION_EVALUACIONES_PSICOPEDAGOGIA("/controlEscolar/psicopedagogia/administracionEvaluacionesPsicopedagogia.xhtml", AdministracionEvaluacionesPsicopedagogia.class),
+    SEGUIMIENTO_TEST_APRENDIZAJE_PSICOPEDAGOGIA("/controlEscolar/psicopedagogia/seguimientoTestAprendizaje.xhtml", SeguimientoTestAprendizajePsicopedagogia.class),
 
     ADMINISTRACION_EVALUACIONES_FORTALECIMIENTO("/evaluaciones/administracion/administracionEvaluacionesFortalecimiento.xhtml", AdministracionEvaluacionesFortalecimiento.class),
     COMBINACIONES_EVALUACION_PARES_ACADEMICOS("/evaluaciones/administracion/combinacionesEvParesAcademicos.xhtml", EvaluacionParesAcademicosFortalecimiento.class),
@@ -89,6 +90,7 @@ public enum ControlEscolarVistaControlador {
     REGISTRO_TUTORIA_INDIVIDUAL("/controlEscolar/tutor/registro_tutoria_individual.xhtml", RegistroTutoriaIndividual.class),
     CONSULTA_PLANES_ACCION_TUTORIAL_COORDINADOR_TUTORES("/controlEscolar/tutor/consulta_plan_accion_tutorial_tutores.xhtml", ConsultaPlanesAccionTutoralCoordinadorTutores.class),
     SEGUIMIENTO_CUESTIONARIO_PSICOPEDAGOGICO_TUTOR("/controlEscolar/tutor/seguimientoCuestionarioPsicopedagogicoTutor.xhtml", SeguimientoCuestionariopsiTutor.class),
+    SEGUIMIENTO_TEST_DIAGNOSTICO_APRENDIZAJE_TUTOR("/controlEscolar/seguimientoTestAprendizaje.xhtml", SeguimientoTestAprendizajeTutor.class),
 
 
     CAPTURA_CALIFICACIONES("/controlEscolar/docente/captura_calificaciones.xhtml", CapturaCalificacionesDocente.class),
@@ -125,6 +127,9 @@ public enum ControlEscolarVistaControlador {
     REGISTRO_DEL_ESTUDIANTE("/controlEscolar/estudiante/registroEstudiante.xhtml", RegistrolDelEstudiante.class),
     SEGUIMIENTO_ESTADIA_ESTUDIANTE("/controlEscolar/estudiante/seguimientoEstadia.xhtml",SeguimientoEstadiaPorEstudiante.class),
     LETRERO_FOTOGRAFIAS("/controlEscolar/formatos/letreroFotografías.xhtml",LetreroFotografiasEstudiante.class),
+    TEST_DIAGNOSTICO_APRENDIZAJE("/controlEscolar/estudiante/testAprendizaje.xhtml", TestDiagnosticoAprendizajeEstudiante.class),
+    TEST_DIAGNOSTICO_APRENDIZAJE_SAIIUT("/encuestas/Estudiantes/testAprendizaje.xhtml", TestDiagnosticoAprendizaje.class),
+    ENCUESTA_SATISFACCION_TSU("/controlEscolar/estudiante/satisfaccionEgresadosTsu.xhtml", EncuestaSatisfaccionEgresadosTsu.class),
 
     REGISTRO_FICHA_ASPIRANTE("/controlEscolar/aspirante/registroFichaAspirante.xhtml", RegistroFichaAdmisionAspirante.class),
     CARGA_DOCUMENTOS_ASPIRANTE("/controlEscolar/aspirante/cargaDocumentos.xhtml", CargaDocumentosAspirante.class),

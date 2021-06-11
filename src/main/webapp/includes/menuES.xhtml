@@ -35,6 +35,9 @@
                 <c:if test="#{evaluacionDesempenioAmbientalEstudiante.mostrarEnDesarrollo(request) and evaluacionDesempenioAmbientalEstudiante.tieneAcceso}">
                     <li><p:link href="#{request.contextPath}/encuestas/evaluacionDesempenioAmbiental.xhtml">
                         <i class="fa fa-check-square"></i><span>Evaluación de Desempeño Ambiental</span></p:link></li></c:if>
+                <c:if test="#{testDiagnosticoAprendizaje.mostrarEnDesarrollo(request) and testDiagnosticoAprendizaje.tieneAcceso}">
+                    <li><p:link href="#{request.contextPath}/encuestas/Estudiantes/testAprendizaje.xhtml">
+                        <i class="fa fa-check-square"></i><span>Test de Diagnostico de Aprendizaje</span></p:link></li></c:if>
             </li>
             <c:if test="#{controladorEstReg.cargada}">
                 <li class="header" style="color: #040404;background: #ffffff">Expediente Titulación</li>

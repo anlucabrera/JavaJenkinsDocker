@@ -69,8 +69,19 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
                 if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
 
                 rol.setNivelRol(NivelRol.CONSULTA);
-
-                rol.setInscripciones(rol.getEstudiante().getInscripciones());
+                
+                
+                rol.setInscripciones(
+                        rol.getEstudiante()
+                                .getInscripciones()
+                                .stream()
+                                .filter(x -> x.getInscripcion().getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("1")) || 
+                                        x.getInscripcion().getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("5")) || 
+                                        x.getInscripcion().getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("4")))
+                                .collect(Collectors.toList())
+                                
+                );
+                
                         //.stream()
                         //.filter(dtoInscripcion -> dtoInscripcion.getInscripcion().getPeriodo() == ejb.getPeriodoActual().getPeriodo())
                         //.collect(Collectors.toList())
@@ -109,6 +120,13 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
             mostrarMensaje("La clave del grupo del estudiante es nula");
             return Collections.EMPTY_LIST;
         }
+        if(estudiante.getGrupo().getGrado() == 6 || estudiante.getGrupo().getGrado() == 11) {
+            return Collections.EMPTY_LIST;
+        }
+        if(estudiante.getCalificacionList().isEmpty() && estudiante.getCalificacionEvidenciaInstrumentoList().isEmpty()){
+            mostrarMensaje("No se encontro registro de calificaciones en el cuatrimestre: "+ estudiante.getGrupo().getGrado());
+            return Collections.EMPTY_LIST;
+        }
         String clave = "cargasPorGrupo".concat(estudiante.getGrupo().getIdGrupo().toString());
         List<DtoCargaAcademica> cargas = Faces.getApplicationAttribute(clave);
         if (cargas != null) {
@@ -141,6 +159,19 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
 
         return  rol.getDtoUnidadConfiguracionesMap().get(dtoCargaAcademica);
     }
+    
+    public List<DtoUnidadConfiguracionAlineacion> getUnidadesAlineacion(DtoCargaAcademica dtoCargaAcademica){
+        if(rol.getDtoUnidadConfiguracionesAlineacionMap().containsKey(dtoCargaAcademica)) return  rol.getDtoUnidadConfiguracionesAlineacionMap().get(dtoCargaAcademica);
+
+        ResultadoEJB<List<DtoUnidadConfiguracionAlineacion>> resConfiguraciones = ejbCapturaCalificaciones.getConfiguracionesAlineacion(dtoCargaAcademica);
+        if(!resConfiguraciones.getCorrecto()){
+            //mostrarMensaje("No se detectaron configuraciones de unidades en la materia de la carga académica seleccionada. " + resConfiguraciones.getMensaje());
+            return Collections.EMPTY_LIST;
+        }
+        rol.getDtoUnidadConfiguracionesAlineacionMap().put(dtoCargaAcademica, resConfiguraciones.getValor());
+
+        return  rol.getDtoUnidadConfiguracionesAlineacionMap().get(dtoCargaAcademica);
+    }
 
     public DtoUnidadesCalificacionEstudiante getContenedor(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
         if(rol.getDtoUnidadesCalificacionMap().containsKey(dtoCargaAcademica)) return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
@@ -152,6 +183,18 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
 
         rol.getDtoUnidadesCalificacionMap().put(dtoCargaAcademica, resDtoUnidadesCalificacion.getValor());
         return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
+    }
+    
+    public DtoUnidadesCalificacionEstudianteAlineacion getContenedor2(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
+        if(rol.getDtoUnidadesCalificacioAlineacionnMap().containsKey(dtoCargaAcademica)) return rol.getDtoUnidadesCalificacioAlineacionnMap().get(dtoCargaAcademica);
+        ResultadoEJB<DtoUnidadesCalificacionEstudianteAlineacion> resDtoUnidadesCalificacion = ejb.packDtoUnidadesCalificacionAlineacion(estudiante, dtoCargaAcademica, getUnidadesAlineacion(dtoCargaAcademica));
+        if(!resDtoUnidadesCalificacion.getCorrecto()){
+            mostrarMensaje("No se detectaron registros de calificaciones de la carga seleccionada. " + resDtoUnidadesCalificacion.getMensaje());
+            return null;
+        }
+
+        rol.getDtoUnidadesCalificacioAlineacionnMap().put(dtoCargaAcademica, resDtoUnidadesCalificacion.getValor());
+        return rol.getDtoUnidadesCalificacioAlineacionnMap().get(dtoCargaAcademica);
     }
 
     public  Boolean tieneIntegradora(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
@@ -167,7 +210,19 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
             if(!generarContenedorCalificaciones.getCorrecto()){
                 mostrarMensajeResultadoEJB(generarContenedorCalificaciones);
             }
-            rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica).setTareaIntegradoraPromedioMap(generarContenedorCalificaciones.getValor());
+            if(estudiante.getCalificacionEvidenciaInstrumentoList().isEmpty() && estudiante.getCalificacionList().isEmpty()){
+                //System.out.println("Ambos estan vacios");
+                rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica).setTareaIntegradoraPromedioMap(generarContenedorCalificaciones.getValor());
+            }
+            if(estudiante.getCalificacionEvidenciaInstrumentoList().isEmpty() && !estudiante.getCalificacionList().isEmpty()){
+                //System.out.println("Vacio el primero pero el segundo no");
+                rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica).setTareaIntegradoraPromedioMap(generarContenedorCalificaciones.getValor());
+            }
+            if(estudiante.getCalificacionList().isEmpty() && !estudiante.getCalificacionEvidenciaInstrumentoList().isEmpty()){
+                //System.out.println("Vacio el segundo pero el primero no");
+                rol.getDtoUnidadesCalificacioAlineacionnMap().get(dtoCargaAcademica).setTareaIntegradoraPromedioMap(generarContenedorCalificaciones.getValor());
+            }
+            
         }
         else{
             rol.getTieneIntegradoraMap().put(dtoCargaAcademica, false);
@@ -179,6 +234,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
     public DtoCalificacionNivelacion getNivelacion(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
         DtoUnidadesCalificacionEstudiante.DtoNivelacionPK pk = new DtoUnidadesCalificacionEstudiante.DtoNivelacionPK(dtoCargaAcademica, estudiante);
         if(getContenedor(dtoCargaAcademica, estudiante).getNivelacionMap().containsKey(pk)) return getContenedor(dtoCargaAcademica, estudiante).getNivelacionMap().get(pk);
+        //if(getContenedor2(dtoCargaAcademica, estudiante).getNivelacionMap().containsKey(pk)) return getContenedor2(dtoCargaAcademica, estudiante).getNivelacionMap().get(pk);
         ResultadoEJB<DtoCalificacionNivelacion> packDtoCalificacionNivelacion = ejb.packDtoCalificacionNivelacion(dtoCargaAcademica, estudiante);
         if(packDtoCalificacionNivelacion.getCorrecto()){
             DtoCalificacionNivelacion dtoCalificacionNivelacion = packDtoCalificacionNivelacion.getValor();
@@ -189,9 +245,33 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
             return new DtoCalificacionNivelacion(new CalificacionNivelacion(), new Indicador());
         }
     }
+    
+    public DtoCalificacionNivelacion getNivelacion2(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
+        DtoUnidadesCalificacionEstudianteAlineacion.DtoNivelacionPK pk = new DtoUnidadesCalificacionEstudianteAlineacion.DtoNivelacionPK(dtoCargaAcademica, estudiante);
+        if(getContenedor2(dtoCargaAcademica, estudiante).getNivelacionMap().containsKey(pk)) return getContenedor2(dtoCargaAcademica, estudiante).getNivelacionMap().get(pk);
+        //if(getContenedor2(dtoCargaAcademica, estudiante).getNivelacionMap().containsKey(pk)) return getContenedor2(dtoCargaAcademica, estudiante).getNivelacionMap().get(pk);
+        ResultadoEJB<DtoCalificacionNivelacion> packDtoCalificacionNivelacion = ejb.packDtoCalificacionNivelacion(dtoCargaAcademica, estudiante);
+        if(packDtoCalificacionNivelacion.getCorrecto()){
+            DtoCalificacionNivelacion dtoCalificacionNivelacion = packDtoCalificacionNivelacion.getValor();
+            getContenedor2(dtoCargaAcademica, estudiante).getNivelacionMap().put(pk, dtoCalificacionNivelacion);
+            return getContenedor2(dtoCargaAcademica, estudiante).getNivelacionMap().get(pk);
+        }else {
+            mostrarMensajeResultadoEJB(packDtoCalificacionNivelacion);
+            return new DtoCalificacionNivelacion(new CalificacionNivelacion(), new Indicador());
+        }
+    }
 
     public BigDecimal getPromedioAsignaturaEstudiante(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
         ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica, estudiante), dtoCargaAcademica, estudiante);
+        if(res.getCorrecto()){
+            return res.getValor().setScale(2, RoundingMode.HALF_UP);
+        }else{
+            return BigDecimal.ZERO;
+        }
+    }
+    
+    public BigDecimal getPromedioAsignaturaAlineacionEstudiante(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
+        ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor2(dtoCargaAcademica, estudiante), dtoCargaAcademica, estudiante);
         if(res.getCorrecto()){
             return res.getValor().setScale(2, RoundingMode.HALF_UP);
         }else{
@@ -210,6 +290,18 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         }
         return promedioFinal;
     }
+    
+    public BigDecimal getPromedioFinalAlineacion(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
+        BigDecimal promedioOrdinario = getPromedioAsignaturaAlineacionEstudiante(dtoCargaAcademica, estudiante);
+        BigDecimal nivelacion = new BigDecimal(getNivelacion2(dtoCargaAcademica, estudiante).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal promedioFinal = BigDecimal.ZERO;
+        if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
+            promedioFinal = promedioFinal.add(promedioOrdinario);
+        }else{
+            promedioFinal = promedioFinal.add(nivelacion);
+        }
+        return promedioFinal;
+    }
 
     public BigDecimal getPromedioCuatrimestral(Estudiante estudiante){
         BigDecimal promedioCuatrimestral;
@@ -220,10 +312,17 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         if(!resCargas.getCorrecto()) mostrarMensajeResultadoEJB(resCargas);
         else rol.setCargasEstudiante(resCargas.getValor());
         rol.getCargasEstudiante().forEach(dtoCargaAcademica -> {
-            lista.add(getPromedioFinal(dtoCargaAcademica, estudiante));
+            if(estudiante.getCalificacionEvidenciaInstrumentoList().isEmpty()){
+                lista.add(getPromedioFinal(dtoCargaAcademica, estudiante));
+            }
+            if(estudiante.getCalificacionList().isEmpty()){
+                lista.add(getPromedioFinalAlineacion(dtoCargaAcademica, estudiante));
+            }
         });
         BigDecimal totalMaterias = new BigDecimal(rol.getCargasEstudiante().size());
+        
         BigDecimal suma = lista.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        //System.out.println("Estudiante:"+estudiante.getMatricula()+"- Materias:"+ totalMaterias+" Suma calificaciones:"+ suma);
         promedioCuatrimestral = suma.divide(totalMaterias, RoundingMode.HALF_UP);
         return promedioCuatrimestral.setScale(2, RoundingMode.HALF_UP);
     }
@@ -231,7 +330,13 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
     public BigDecimal obtenerPromedioAcumulado(){
         try{
         BigDecimal promedio;
-        BigDecimal totalRegistro = new BigDecimal(rol.getEstudiante().getInscripciones().size());
+        BigDecimal totalRegistro = BigDecimal.ZERO;
+        if(rol.getEstudiante().getInscripcionActiva().getGrupo().getGrado() == 6){
+            totalRegistro = new BigDecimal(rol.getEstudiante().getInscripciones().size() - 1);
+        }else{
+            totalRegistro = new BigDecimal(rol.getEstudiante().getInscripciones().size());
+        }
+        
         BigDecimal suma;
         List<BigDecimal> promedios = new ArrayList<>();
         rol.getEstudiante().getInscripciones().forEach(estudiante -> {
