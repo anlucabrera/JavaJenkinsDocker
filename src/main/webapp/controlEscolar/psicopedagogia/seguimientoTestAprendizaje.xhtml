@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:ice="http://www.icefaces.org/icefaces/core"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+
+    <ui:define name="head-end">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .description-block{
+                text-align: justify;
+            }
+
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado {
+                background-color: #00a7d0  !important;
+                text-align: left !important;
+            }
+            .denegado{
+                background-color: #f39c12 !important;
+            }
+            .ui-progressbar{
+                position: relative;
+                height: 2em;
+            }
+
+            .ui-progressbar .ui-progressbar-label {
+                color: #000000;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                display: none;
+                font-weight: bold;
+            }
+        </style>
+
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento:
+    </ui:define>
+
+    <ui:define name="description">
+        Test de Diagnóstico de Estilos de Aprendizaje
+    </ui:define>
+
+    <ui:define name="body">
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+
+        </script>
+        <section>
+            <c:if test="#{seguimientoTestAprendizajePsicopedagogia.cargado}">
+                <div class="contenedor">
+                    <c:if test="#{seguimientoTestAprendizajePsicopedagogia.tieneAcceso}">
+                        <h:form id="frm" prependId="false" class="form-inline">
+                            <div class="col-md-12">
+                                <div class="box box-primary">
+                                    <div class="box-header with-border">
+                                        <div id="main-buttons" class="hidden-sm hidden-xs">
+                                            <p:toolbar id="tb">
+                                                <f:facet name="left">
+                                                    <p:outputLabel style="font-weight: bold" rendered="#{seguimientoTestAprendizajePsicopedagogia.tieneAcceso}"
+                                                                   value="Periodo activo: #{caster.clavePeriodoToString(seguimientoTestAprendizajePsicopedagogia.rol.periodoActivo)}"/>
+                                                </f:facet>
+                                                <f:facet name="right">
+                                                    <!--p:commandButton value="Generar Excel" actionListener="# {seguimientoTestAprendizajePsicopedagogia.generarExcelTest}" 
+                                                                     class="btn btn-primary oculto-impresion"
+                                                                     title="Generar los resultados del Test" icon="fa fa-file-excel-o" process="@this" 
+                                                                     styleClass="btn-primary"  update="@this"/>
+                                                    <p:commandButton value="Generar Informe" actionListener="# {seguimientoTestAprendizajePsicopedagogia.generarInformeWord}" 
+                                                                     class="btn btn-primary oculto-impresion"
+                                                                     title="Generar informe de Test" icon="fa fa-file-word-o" process="@this" 
+                                                                     styleClass="btn-primary"  update="@this"/-->
+
+                                                    <!--p:commandLink
+                                                        class="btn btn-info"
+                                                        disabled=" #{false}"
+                                                        onclick="PF('modalAyuda').show();"
+                                                        title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                            class="fa fa-question"/>
+                                                    </p:commandLink-->
+                                                </f:facet>
+                                            </p:toolbar>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="box box-body">
+                                        <div class="row">
+                                            <div class="col-sm-4" >
+                                                <h:outputText value="Periodos Escolares:" class=" hidden-sm hidden-xs"/>
+                                                <p:selectOneMenu id="periodo" value="#{seguimientoTestAprendizajePsicopedagogia.rol.periodo}">
+                                                    <f:selectItem itemLabel="Selecccionar periodo escolar"/>
+                                                    <f:selectItems value="#{seguimientoTestAprendizajePsicopedagogia.rol.listaPeriodosEscolares}" var="periodo" 
+                                                                   itemLabel="#{periodo.periodoEsolar}" 
+                                                                   itemValue="#{periodo.periodo}"/>
+                                                    <p:ajax update="@this carrera grupo tabView:tblTestCompleto tabView:tblTestInCompleto" process="@this" 
+                                                            listener="#{seguimientoTestAprendizajePsicopedagogia.obtenerProgramasEducativos()}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <div class="col-sm-4" >
+                                                <h:outputText value="Programas Educativo:" class=" hidden-sm hidden-xs"/>
+                                                <p:selectOneMenu id="carrera" value="#{seguimientoTestAprendizajePsicopedagogia.rol.cveCarrera}">
+                                                    <f:selectItem itemLabel="Selecccionar programa educativo"/>
+                                                    <f:selectItems value="#{seguimientoTestAprendizajePsicopedagogia.rol.listaProgramasEducativos}" var="programa" 
+                                                                   itemLabel="#{programa.nombre}" 
+                                                                   itemValue="#{programa.area}"/>
+                                                    <p:ajax update="@this periodo grupo tabView:tblTestCompleto tabView:tblTestInCompleto" 
+                                                            process="periodo, @this" listener="#{seguimientoTestAprendizajePsicopedagogia.obtenerGruposPE()}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <div class="col-sm-4" >
+                                                <h:outputText value="Grupos:" class=" hidden-sm hidden-xs"/>
+                                                <p:selectOneMenu id="grupo" value="#{seguimientoTestAprendizajePsicopedagogia.rol.idGrupo}">
+                                                    <f:selectItem itemLabel="Selecccionar grupo"/>
+                                                    <f:selectItems value="#{seguimientoTestAprendizajePsicopedagogia.rol.dtoGrupos}" var="grupo" 
+                                                                   itemLabel="#{grupo.grado}° #{grupo.literal}" 
+                                                                   itemValue="#{grupo.idGrupo}"/>
+                                                    <p:ajax update="@this periodo grupo tabView:tblTestCompleto tabView:tblTestInCompleto" 
+                                                            process="periodo, @this, grupo" listener="#{seguimientoTestAprendizajePsicopedagogia.consultarEstudiantes()}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                        <p:separator/>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p:tabView id="tabView">
+                                                    <!--p:ajax event="tabChange" listener="# {seguimientoTestAprendizajePsicopedagogia.consultarAvance}"
+                                                            update="tabView:tblTestAvance"/-->
+                                                    <p:tab>
+                                                        <f:facet name="title"><i class="fa fa-list"></i><span> Seguimiento</span></f:facet>
+                                                        <div class="col-lg-6">
+                                                            <div class="box box-default direct-chat direct-chat-warning">
+                                                                <div class="box-header with-border">
+                                                                    <h3 class="box-title">Estudiantes con Test Completo</h3>
+
+                                                                    <div class="box-tools pull-right">
+                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.box-header -->
+                                                                <div class="box-body">
+                                                                    <p:dataTable var="estudiante" value="#{seguimientoTestAprendizajePsicopedagogia.rol.listaAlumnosTestCompleto}" paginator="true" rows="10"
+                                                                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                                                 rowsPerPageTemplate="5,10,15" id="tblTestCompleto" lazy="true" paginatorPosition="top">
+                                                                        <p:column headerText="Clave" width="20" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.matricula}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Nombre completo" width="70" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.nombre}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Cuatrimestre" width="70" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.grado}° #{estudiante.grupo}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Carrera" width="70" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.siglas}" />
+                                                                        </p:column>
+                                                                    </p:dataTable>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <div class="box box-default direct-chat direct-chat-warning">
+                                                                <div class="box-header with-border">
+                                                                    <h3 class="box-title">Estudiantes con Test Incompleto</h3>
+
+                                                                    <div class="box-tools pull-right">
+                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.box-header -->
+                                                                <div class="box-body">
+                                                                    <p:dataTable var="estudiante" value="#{seguimientoTestAprendizajePsicopedagogia.rol.listaAlumnosTestIncompleto}" paginator="true" rows="10"
+                                                                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                                                 rowsPerPageTemplate="5,10,15" id="tblTestInCompleto" lazy="true" paginatorPosition="top">
+                                                                        <p:column headerText="Clave" width="20" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.matricula}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Nombre completo" width="70" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.nombre}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Cuatrimestre" width="70" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.grado}° #{estudiante.grupo}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Carrera" width="70" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.siglas}" />
+                                                                        </p:column>
+                                                                    </p:dataTable>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:tab>
+                                                    <p:tab rendered="#{seguimientoTestAprendizajePsicopedagogia.coordinadorTutor eq false}">
+                                                        <f:facet name="title"><i class="fa fa-list-ol"></i><span> Avance</span></f:facet>
+                                                        <div class="col-lg-12">
+                                                            <div class="box box-default direct-chat direct-chat-warning">
+                                                                <div class="box-header with-border">
+                                                                    <h3 class="box-title">Porcentaje de Avance por Programa Educativo</h3>
+
+                                                                    <div class="box-tools pull-right">
+                                                                        <p:commandButton value="Consultar Avance" actionListener="#{seguimientoTestAprendizajePsicopedagogia.consultarAvance()}"
+                                                                                         update="tblTestAvance" process="@this" class="btn btn-primary"/>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.box-header -->
+                                                                <div class="box-body">
+                                                                    <p:dataTable var="pe" value="#{seguimientoTestAprendizajePsicopedagogia.rol.listaAvanceTest}" paginator="true" rows="10"
+                                                                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} {Exporters}"
+                                                                                 rowsPerPageTemplate="5,10,15" id="tblTestAvance" lazy="true" paginatorPosition="top">
+                                                                        <p:columnGroup type="header">
+                                                                            <p:row>
+                                                                                <p:column colspan="1" style="color: #ffffff; border: 0" headerText="Programa Educativo" width="170"/>
+                                                                                <p:column colspan="1" style="color: #ffffff; border: 0" headerText="Matrícula Total" width="50"/>
+                                                                                <p:column colspan="1" style="color: #ffffff; border: 0" headerText="Total Test Completo" width="50"/>
+                                                                                <p:column colspan="1" style="color: #ffffff; border: 0" headerText="Total Test Incompleto" width="50"/>
+                                                                                <p:column colspan="1" style="color: #ffffff; border: 0" headerText="Porcentaje de avance: Meta 100%" width="70"/>
+                                                                            </p:row>
+                                                                        </p:columnGroup>
+                                                                        <p:column style="font-size: small; text-align: justify"><h:outputText value="#{pe.programa}" /></p:column>
+                                                                        <p:column style="font-size: small; text-align: center"><h:outputText value="#{pe.totalMatricula}" /></p:column>
+                                                                        <p:column style="font-size: small; text-align: center"><h:outputText value="#{pe.totalCompletos}" /></p:column>
+                                                                        <p:column style="font-size: small; text-align: center"><h:outputText value="#{pe.totalIncompleto}" /></p:column>
+                                                                        <p:column style="font-size: small; text-align: center">
+                                                                            <div class="progress">
+                                                                                <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                                                                     aria-valuenow="#{pe.porcentaje}" aria-valuemin="0" aria-valuemax="100"
+                                                                                     style="background-color: #00a65a; width:#{pe.porcentaje}%">
+                                                                                    <span class="progress-completed">
+                                                                                        <h:outputText value="#{pe.porcentaje}" style="color: #0E0000; font-weight: bold">
+                                                                                            <f:convertNumber type="number" pattern="0.00"/>
+                                                                                        </h:outputText>
+                                                                                    </span>
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </p:column>
+                                                                    </p:dataTable>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:tab>
+                                                    <p:tab rendered="#{seguimientoTestAprendizajePsicopedagogia.coordinadorTutor eq false}">
+                                                        <f:facet name="title"><i class="fa fa-check-square"></i><span> Configurar Test</span></f:facet>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="box box-primary">
+                                                                    <div class="box-header panel-heading with-border">
+                                                                        <div class="pull-left">
+                                                                            <i class="fa fa-plus-square "></i>
+                                                                            <span class="box-title">  Agregar nuevo test</span>
+                                                                        </div>
+                                                                        <div class="box-tools pull-right">
+                                                                            <p:commandButton value="Agregar" class="btn btn-primary" update="periodo, inicio, fin, tipo, tblAvance" 
+                                                                                             process="@this, periodo, inicio, fin, tipo"
+                                                                                             actionListener="#{seguimientoTestAprendizajePsicopedagogia.crearTest()}"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="box-body">
+                                                                        <i class="fa fa-info-circle "></i><span class="box-title"> Nota:</span> Solo se permite configurar un Test por periodo, verificar en la tabla que se encuentra en la parte inferior.
+                                                                        <p:separator style="border: 0"/>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="ui-material">
+                                                                                    <p:outputLabel for="periodo" value="Periodo"/>
+                                                                                    <p:selectOneMenu id="periodo" value="#{seguimientoTestAprendizajePsicopedagogia.rol.periodoEvaluacion}">
+                                                                                        <f:selectItem itemLabel="Seleccionar Periodo" itemValue="#{null}"/>
+                                                                                        <f:selectItem itemLabel="#{caster.clavePeriodoToString(seguimientoTestAprendizajePsicopedagogia.rol.periodoActivo)}"
+                                                                                                      itemValue="#{seguimientoTestAprendizajePsicopedagogia.rol.periodoActivo}"/>
+                                                                                        <p:ajax update="@this" process="@this"/>
+                                                                                    </p:selectOneMenu>
+                                                                                    <p:message for="periodo"/>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="ui-material">
+                                                                                    <p:outputLabel for="inicio" value="Fecha de Inicio"/>
+                                                                                    <p:calendar id="inicio" value="#{seguimientoTestAprendizajePsicopedagogia.rol.fechaInicio}" locale="es" mask="true" pattern="dd-MM-yyyy"/>
+                                                                                    <p:messages for="inicio"><p:autoUpdate/> </p:messages>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="ui-material">
+                                                                                    <p:outputLabel for="fin" value="Fecha de cierre"/>
+                                                                                    <p:calendar id="fin" value="#{seguimientoTestAprendizajePsicopedagogia.rol.fechaFin}" locale="es" mask="true" pattern="dd-MM-yyyy"/>
+                                                                                    <p:messages for="fin"><p:autoUpdate/> </p:messages>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="ui-material">
+                                                                                    <p:outputLabel for="tipo" value="Test a aplicar"/>
+                                                                                    <p:selectOneMenu id="tipo" value="#{seguimientoTestAprendizajePsicopedagogia.rol.tipo}">
+                                                                                        <f:selectItem itemLabel="Seleccionar test" itemValue="#{null}"/>
+                                                                                        <f:selectItem itemLabel="Test de Diagnósitco de Aprendizaje" itemValue="Test de Diagnósitco de Aprendizaje"/>
+                                                                                        <p:ajax update="@this" process="@this"/>
+                                                                                    </p:selectOneMenu>
+                                                                                    <p:message for="tipo"/>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <br/><br/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="box box-primary">
+                                                                    <div class="box-header panel-heading with-border">
+                                                                        <div class="pull-left">
+                                                                            <i class="fa fa-plus-square "></i>
+                                                                            <span class="box-title">  Configurar cuatrimestres permitidos</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="box-body">
+                                                                        <i class="fa fa-info-circle "></i><span class="box-title"> Nota:</span> Al elegir una opcion dentro de la lista de opciones, se actualizará automaticamente.
+                                                                        <p:separator style="border: 0"/>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="ui-material">
+                                                                                    <p:outputLabel id="var1" for="variable1" value="Cuatrimestre: #{seguimientoTestAprendizajePsicopedagogia.rol.variable1.valor}°"/>
+                                                                                    <p:selectOneMenu id="variable1" value="#{seguimientoTestAprendizajePsicopedagogia.rol.var1}">
+                                                                                        <f:selectItem itemLabel="Selecciona el cuatrimestre a aplicar" itemValue="#{null}"/>
+                                                                                        <f:selectItem itemLabel="1° Cuatrimestre" itemValue="1"/>
+                                                                                        <f:selectItem itemLabel="2° Cuatrimestre" itemValue="2"/>
+                                                                                        <f:selectItem itemLabel="3° Cuatrimestre" itemValue="3"/>
+                                                                                        <p:ajax update="@this var1" process="@this" listener="#{seguimientoTestAprendizajePsicopedagogia.actualizarVariable1}"/>
+                                                                                    </p:selectOneMenu>
+                                                                                    <p:message for="variable1"/>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="ui-material">
+                                                                                    <p:outputLabel id="var2" for="variable2" value="Cuatrimestre: #{seguimientoTestAprendizajePsicopedagogia.rol.variable2.valor}°"/>
+                                                                                    <p:selectOneMenu id="variable2" value="#{seguimientoTestAprendizajePsicopedagogia.rol.var2}">
+                                                                                        <f:selectItem itemLabel="Selecciona el cuatrimestre a aplicar" itemValue="#{null}"/>
+                                                                                        <f:selectItem itemLabel="7° Cuatrimestre" itemValue="7"/>
+                                                                                        <f:selectItem itemLabel="8° Cuatrimestre" itemValue="8"/>
+                                                                                        <f:selectItem itemLabel="9° Cuatrimestre" itemValue="9"/>
+                                                                                        <p:ajax update="@this var2" process="@this" listener="#{seguimientoTestAprendizajePsicopedagogia.actualizarVariable2}"/>
+                                                                                    </p:selectOneMenu>
+                                                                                    <p:message for="variable2"/>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="ui-material">
+                                                                                    <p:outputLabel id="var3" for="variable3" value="Cuatrimestre: #{seguimientoTestAprendizajePsicopedagogia.rol.variable3.valor}°"/>
+                                                                                    <p:selectOneMenu id="variable3" value="#{seguimientoTestAprendizajePsicopedagogia.rol.var3}">
+                                                                                        <f:selectItem itemLabel="Selecciona el cuatrimestre a aplicar" itemValue="#{null}"/>
+                                                                                        <f:selectItem itemLabel="4° Cuatrimestre" itemValue="4"/>
+                                                                                        <f:selectItem itemLabel="5° Cuatrimestre" itemValue="5"/>
+                                                                                        <p:ajax update="@this var3" process="@this" listener="#{seguimientoTestAprendizajePsicopedagogia.actualizarVariable3}"/>
+                                                                                    </p:selectOneMenu>
+                                                                                    <p:message for="variable3"/>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="ui-material">
+                                                                                    <p:outputLabel id="var4" for="variable4" value="Cuatrimestre: #{seguimientoTestAprendizajePsicopedagogia.rol.variable4.valor}°"/>
+                                                                                    <p:selectOneMenu id="variable4" value="#{seguimientoTestAprendizajePsicopedagogia.rol.var4}">
+                                                                                        <f:selectItem itemLabel="Selecciona el cuatrimestre a aplicar" itemValue="#{null}"/>
+                                                                                        <f:selectItem itemLabel="10° Cuatrimestre" itemValue="10"/>
+                                                                                        <p:ajax update="@this var4" process="@this" listener="#{seguimientoTestAprendizajePsicopedagogia.actualizarVariable4}"/>
+                                                                                    </p:selectOneMenu>
+                                                                                    <p:message for="variable1"/>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <br/><br/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="box box-primary">
+                                                                <div class="box-header panel-heading with-border">
+                                                                    <div class="pull-left">
+                                                                        <i class="fa fa-list-ol "></i>
+                                                                        <span class="box-title">  Histórico de Test aplicados</span>
+                                                                    </div>
+                                                                    <div class="pull-right">
+
+                                                                    </div>
+                                                                </div>
+                                                                <div class="box-body">
+                                                                    <i class="fa fa-info-circle "></i>
+                                                                    <span class="box-title">  NOTA:</span> Actualice fecha de inicio y cierre, de acuerdo al periodo escolar en el que se encuentra
+                                                                    <p:dataTable var="evaluacion" value="#{seguimientoTestAprendizajePsicopedagogia.rol.listaEvaluacines}" sortBy="#{evaluacion.evaluacion}"
+                                                                                 expandableRowGroups="true"
+                                                                                 paginator="true" rows="10" paginatorPosition="top" rowsPerPageTemplate="10,20,30,40,50"
+                                                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                                                 {RowsPerPageDropdown}" rendered="true" emptyMessage="Sin registros." id="tblAvance" rowIndexVar="rowIndex" editable="true"
+                                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                                 tableStyle="vertical-align: middle;" editMode="cell">
+                                                                        <p:ajax event="cellEdit" listener="#{seguimientoTestAprendizajePsicopedagogia.actualizarGrupo}"/>
+                                                                        <p:columnGroup type="header">
+                                                                            <p:row>
+                                                                                <p:column colspan="1" style="color: #ffffff; border: 0" headerText="Periodo" width="50"/>
+                                                                                <p:column colspan="1" style="color: #ffffff; border: 0" headerText="Fecha de inicio" width="50"/>
+                                                                                <p:column colspan="1" style="color: #ffffff; border: 0" headerText="Fecha de cierre" width="50"/>
+                                                                                <p:column colspan="1" style="color: #ffffff; border: 0" headerText="Test" width="100"/>
+                                                                            </p:row>
+                                                                        </p:columnGroup>
+                                                                        <p:column style="font-size: small; text-align: justify">
+                                                                            <h:outputText value="#{caster.clavePeriodoToString(evaluacion.periodo)}" /></p:column>
+                                                                        <p:column style="font-size: small; text-align: justify">
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"><p:calendar value="#{evaluacion.fechaInicio}" locale="es" mask="true" pattern="dd-MM-yyyy"/></f:facet>
+                                                                                <f:facet name="input"><p:calendar value="#{evaluacion.fechaInicio}" locale="es" mask="true" pattern="dd-MM-yyyy"/></f:facet>
+                                                                            </p:cellEditor>
+                                                                        </p:column>
+                                                                        <p:column style="font-size: small; text-align: justify">
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"><p:calendar value="#{evaluacion.fechaFin}" locale="es" mask="true" pattern="dd-MM-yyyy"/></f:facet>
+                                                                                <f:facet name="input"><p:calendar value="#{evaluacion.fechaFin}" locale="es" mask="true" pattern="dd-MM-yyyy"/></f:facet>
+                                                                            </p:cellEditor>
+                                                                        </p:column>
+                                                                        <p:column style="font-size: small; text-align: center"><h:outputText value="#{evaluacion.tipo}" /></p:column>
+                                                                    </p:dataTable>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:tab>
+                                                </p:tabView>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                        <p:dialog id="modalAyuda" widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                                  modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                            <div class="box box-primary">
+                                <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Instructivo de operación</h3></div>
+                                <div class="box-body">
+                                    <ul class="todo-list">
+                                        <c:forEach items="#{seguimientoTestAprendizajePsicopedagogia.rol.instrucciones}" var="instruccion">
+                                            <li><span class="text" style="text-align: justify;">
+                                                    <i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                        </c:forEach>
+                                    </ul>
+                                </div>
+                                <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();">
+                                        <i class="fa fa-times"></i> Cerrar</button></div>
+                            </div>
+                        </p:dialog>
+                    </c:if>
+                </div>
+            </c:if>
+        </section>
+    </ui:define>
+
+</ui:composition>

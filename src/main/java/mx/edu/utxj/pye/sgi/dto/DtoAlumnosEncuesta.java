@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.dto;
 
+import java.util.List;
 import lombok.*;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
@@ -18,6 +19,7 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.ListaUsuarioClaveNomina;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Personas;
 
 import javax.validation.constraints.NotNull;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
  *
@@ -173,4 +175,66 @@ public class DtoAlumnosEncuesta {
         @Getter @Setter private Integer cveDirector;
 
     }
+    
+    @RequiredArgsConstructor @AllArgsConstructor @ToString
+    public static class DtoAlumnosTest{
+        @Getter @Setter private Integer matricula;
+        @Getter @Setter private String nombre;
+        @Getter @Setter private Short grado;
+        @Getter @Setter private String grupo;
+        @Getter @Setter private String siglas;
+    }
+    
+    @RequiredArgsConstructor @AllArgsConstructor @ToString
+    public static class DtoGruposTutor{
+        @Getter @Setter private Integer idGrupo;
+        @Getter @Setter private PeriodosEscolares periodo;
+        @Getter @Setter private Integer grado;
+        @Getter @Setter private String literal;
+        @Getter @Setter private Integer responsable;
+    }
+    
+    @RequiredArgsConstructor @AllArgsConstructor @ToString
+    public static class DtoResultadoTestEstudiante{
+        @Getter @Setter private Integer matricula;
+        @Getter @Setter private List<Integer> listaV;
+        @Getter @Setter private List<Integer> listaA;
+        @Getter @Setter private List<Integer> listaK;
+    }
+    
+    @RequiredArgsConstructor @AllArgsConstructor @ToString
+    public static class DtoResultadoTestEstudiantePorcentaje{
+        @Getter @Setter private Integer matricula;
+        @Getter @Setter private Double pV;
+        @Getter @Setter private Double pA;
+        @Getter @Setter private Double pK;
+    }
+    
+    @RequiredArgsConstructor @AllArgsConstructor @ToString @EqualsAndHashCode
+    public static class DtoProgramaEducativo{
+        @Getter @Setter private Short area;
+        @Getter @Setter private String nombre;
+        @Getter @Setter private String siglas;
+        @Getter @Setter private String nivelEducativo;
+        @Getter @Setter private String bd;
+    }
+    
+    @RequiredArgsConstructor @AllArgsConstructor @ToString
+    public static class DtoPeriodoEscolar{
+        @Getter @Setter private Integer periodo;
+        @Getter @Setter private String periodoEsolar;
+        @Getter @Setter private String anio;
+        @Getter @Setter private Integer ciclo;
+    }
+    
+    @RequiredArgsConstructor @AllArgsConstructor @ToString
+    public static class DtoAvaceTestProgramaEducativo{
+        @Getter @Setter private String programa;
+        @Getter @Setter private Integer totalMatricula;
+        @Getter @Setter private Integer totalCompletos;
+        @Getter @Setter private Integer totalIncompleto;
+        @Getter @Setter private Double porcentaje;
+    }
+    
+    
 }

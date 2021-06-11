@@ -34,10 +34,12 @@ public class ConsultaCalificacionesRolMultiple extends AbstractRol {
     @Getter @NonNull private BigDecimal promedioAcumluado = BigDecimal.ZERO;
 
     @Getter @NonNull private List<DtoCargaAcademica> cargasEstudiante = new ArrayList<>();
-    @Getter @Setter @NonNull List<DtoUnidadConfiguracion> dtoUnidadConfiguraciones = new ArrayList<>();
-    @Getter private Map<DtoCargaAcademica, List<DtoUnidadConfiguracion>> dtoUnidadConfiguracionesMap = new HashMap<>();
+    @Getter private final Map<DtoCargaAcademica, List<DtoUnidadConfiguracion>> dtoUnidadConfiguracionesMap = new HashMap<>();
+    @Getter private final Map<DtoCargaAcademica, List<DtoUnidadConfiguracionAlineacion>> dtoUnidadConfiguracionesAlineacionMap = new HashMap<>();
     @Getter @NonNull private DtoUnidadesCalificacionEstudiante dtoUnidadesCalificacionEstudiante;
-    @Getter private Map<DtoCargaAcademica, DtoUnidadesCalificacionEstudiante> dtoUnidadesCalificacionMap = new HashMap<>();
+    @Getter @NonNull private DtoUnidadesCalificacionEstudianteAlineacion dtoUnidadesCalificacionEstudianteAlineacion;
+    @Getter private final Map<DtoCargaAcademica, DtoUnidadesCalificacionEstudiante> dtoUnidadesCalificacionMap = new HashMap<>();
+    @Getter private final Map<DtoCargaAcademica, DtoUnidadesCalificacionEstudianteAlineacion> dtoUnidadesCalificacioAlineacionnMap = new HashMap<>();
     @Getter @NonNull private List<DtoCalificacionEstudiante.UnidadesPorMateria> unidadesPorMateria;
     @Getter @Setter private Boolean tieneIntegradora = false;
     @Getter @Setter private Map<DtoCargaAcademica, Boolean> tieneIntegradoraMap = new HashMap<>();

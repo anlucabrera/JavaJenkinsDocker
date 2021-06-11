@@ -89,10 +89,10 @@ public class EjbAdministracionEncuestaServicios {
      * @return Devuelve la lista completa de los estudiantes activos
      */
     public ResultadoEJB<List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral>> obtenerAlumnosNoAccedieron() {
-        String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+        String periodoEscolar = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
                 .setParameter("nombre", "periodoEncuestaServiciosActual")
                 .getResultStream().findFirst().orElse(null)).getValor();
-        String periodoEscolarAnterior = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+        String periodoEscolarAnterior = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
                 .setParameter("nombre", "periodoEncuestaServicios")
                 .getResultStream().findFirst().orElse(null)).getValor();
         String grado1 = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
@@ -126,7 +126,7 @@ public class EjbAdministracionEncuestaServicios {
     
     public ResultadoEJB<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE> obtenerAlumnosNoAccedieron(Integer matricula, Short grado) {
         
-        DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE dtoAlumnosEncuesta = em2.createQuery("select a from Alumnos as a " +
+        DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE dtoAlumnosEncuesta = f2.getEntityManager().createQuery("select a from Alumnos as a " +
                 "where (a.cveStatus = :estatus or a.cveStatus = :estatus2) " +
                 "and (a.matricula = :matricula) " +
                 "and (a.gradoActual = :grado1)", Alumnos.class)
@@ -143,10 +143,10 @@ public class EjbAdministracionEncuestaServicios {
     }
 
     public ResultadoEJB<List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar>> obtenerAlumnosNoAccedieronCE() {
-        String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+        String periodoEscolar = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
                 .setParameter("nombre", "periodoEncuestaServiciosActual")
                 .getResultStream().findFirst().orElse(null)).getValor();
-        String periodoEscolarAnterior = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+        String periodoEscolarAnterior = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
                 .setParameter("nombre", "periodoEncuestaServicios")
                 .getResultStream().findFirst().orElse(null)).getValor();
         String grado1 = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
@@ -195,9 +195,19 @@ public class EjbAdministracionEncuestaServicios {
         try{
             if(estudiante == null) return ResultadoEJB.crearErroneo(2, "No se encontro al estudiante enviado", DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar.class);
             Estudiante estudianteBD = em.find(Estudiante.class, estudiante.getIdEstudiante());
-            Grupo grupo = em.find(Grupo.class, estudianteBD.getGrupo().getIdGrupo());
-            AreasUniversidad areasUniversidad = em.find(AreasUniversidad.class, estudianteBD.getCarrera());
-            Personal tutor = em.find(Personal.class, grupo.getTutor());
+            Grupo grupo;
+            AreasUniversidad areasUniversidad;
+            Personal tutor;
+            if(estudianteBD.getGrupo().getTutor() == null){
+                grupo = new Grupo(estudianteBD.getGrupo().getIdGrupo(), estudianteBD.getGrupo().getLiteral(), estudianteBD.getGrupo().getGrado(), estudianteBD.getGrupo().getCapMaxima(), estudianteBD.getGrupo().getIdPe(), estudianteBD.getGrupo().getPeriodo(), estudianteBD.getGrupo().getGeneracion());
+                tutor = new Personal();
+            }else{
+                grupo = em.find(Grupo.class, estudianteBD.getGrupo().getIdGrupo());
+                tutor = em.find(Personal.class, grupo.getTutor());
+            }
+            
+            areasUniversidad = em.find(AreasUniversidad.class, estudianteBD.getCarrera());
+            
             DtoAlumnosEncuesta.DtoDirectores dtoDirector = listaDirectores().getValor().stream()
                     .filter(siglas -> siglas.getSiglas().equals(areasUniversidad.getSiglas())).findFirst().orElse(null);
             assert dtoDirector != null;
@@ -255,6 +265,9 @@ public class EjbAdministracionEncuestaServicios {
             if(carrerasCgut.getAbreviatura().equals("LGASTRO")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "LGASTRO");}
             if(carrerasCgut.getAbreviatura().equals("AACH")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "AACH");}
             if(carrerasCgut.getAbreviatura().equals("TIEVND")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "TIEVND");}
+            if(carrerasCgut.getAbreviatura().equals("IASP")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IASP");}
+            if(carrerasCgut.getAbreviatura().equals("IEVND")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IEVND");}
+            if(carrerasCgut.getAbreviatura().equals("IDGS")){dtoCarrera = new DtoAlumnosEncuesta.DtoCarrera(carrerasCgut.getCveCarrera(), carrerasCgut.getNombre(), "IDGS");}
             //System.out.println("Transformación de la carrera:"+ dtoCarrera.getNombre()+"-"+dtoCarrera.getAbreviatura());
             Personas docente = em2.createQuery("select p from Personas as p where p.personasPK.cvePersona = :cvePersona", Personas.class)
                     .setParameter("cvePersona", grupos.getCveMaestro()).getResultStream().findFirst().orElse(new Personas());
@@ -394,14 +407,14 @@ public class EjbAdministracionEncuestaServicios {
     public List<ListaDatosAvanceEncuestaServicio> obtenerListaDatosAvanceEncuestaServicio(){
         List<ListaDatosAvanceEncuestaServicio> ldaes = new ArrayList<>();
         List<ListadoGraficaEncuestaServicios> lges = new ArrayList<>();
-        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> ae = obtenerAlumnosNoAccedieron().getValor();
+        List<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE> ae = obtenerEstudiantesSaiiutyCE().getValor();
         ae.forEach(x -> {
             try {
-                EncuestaServiciosResultados listaCompleta = obtenerResultadosEncServXMatricula(Integer.parseInt(x.getAlumnos().getMatricula()));
+                EncuestaServiciosResultados listaCompleta = obtenerResultadosEncServXMatricula(x.getMatricula());
                 Comparador<EncuestaServiciosResultados> comparador = new ComparadorEncuestaServicios();
                 if (listaCompleta != null) {
                     if(comparador.isCompleto(listaCompleta)){
-                        lges.add(new ListadoGraficaEncuestaServicios(x.getSiglas(), Long.parseLong(x.getAlumnos().getMatricula())));
+                        lges.add(new ListadoGraficaEncuestaServicios(x.getSiglas(), (long)x.getMatricula()));
                     }
                 }
             } catch (Throwable ex) {
@@ -410,7 +423,7 @@ public class EjbAdministracionEncuestaServicios {
         });
         Map<String, Long> gropingByCareer = lges.stream().collect(Collectors.groupingBy(ListadoGraficaEncuestaServicios::getSiglas, Collectors.counting()));
         gropingByCareer.forEach((k, v) -> {
-            Map<String, Long> groupingByCareer = ae.stream().collect(Collectors.groupingBy(DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral::getSiglas, Collectors.counting()));
+            Map<String, Long> groupingByCareer = ae.stream().collect(Collectors.groupingBy(DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE::getSiglas, Collectors.counting()));
             groupingByCareer.forEach((k1, v1) -> {
                 if(k.equals(k1)){
                     ldaes.add(new ListaDatosAvanceEncuestaServicio(k, Math.toIntExact(v1), Math.toIntExact(v), Math.toIntExact(v1 - v), (v.doubleValue() * 100) / v1.doubleValue()));
@@ -486,6 +499,8 @@ public class EjbAdministracionEncuestaServicios {
     }
 
     public ResultadoEJB<List<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE>> obtenerEstudiantesSaiiutyCE(){
+        //System.out.println("Lista SAIIUT:"+ obtenerListaCompletaSaiiut().getValor().size());
+        //System.out.println("Lista Control Escolar"+ obtenerListaCompletaControlEscolar().getValor().size());
         List<DtoAlumnosEncuesta.DtoAlumnosEncuestaSaiiutyCE> estudiantes = Stream.concat(obtenerListaCompletaSaiiut().getValor().stream(), obtenerListaCompletaControlEscolar().getValor().stream()).collect(Collectors.toList());
         return ResultadoEJB.crearCorrecto(estudiantes, "Lista completa");
     }

@@ -10,9 +10,11 @@ import javax.persistence.TypedQuery;
 
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsu;
 import mx.edu.utxj.pye.sgi.entity.ch.ResultadosEncuestaSatisfaccionTsuPK;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.VariablesProntuario;
 import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -46,6 +48,15 @@ public class EjbSatisfaccionEgresadosTsu {
         }else{
             return l.get(0);
         }
+    }
+    
+    public ResultadoEJB<Boolean> tieneAccesoTest(){
+        VariablesProntuario v = em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "denegarAccesoETSU")
+                .getResultStream()
+                .findFirst().get();
+        if(v.getValor().equals("1")) return ResultadoEJB.crearErroneo(2, "No hay acceso al Test de Diagnóstico de Aprendizaje", Boolean.class);
+        return ResultadoEJB.crearCorrecto(Boolean.TRUE, "El estudiante tiene acceso al Test");
     }
 
     public ResultadosEncuestaSatisfaccionTsu getResultado(Evaluaciones evaluacion, Integer evaluador, Map<String,String> respuestas){
@@ -158,7 +169,22 @@ public class EjbSatisfaccionEgresadosTsu {
         List<ResultadosEncuestaSatisfaccionTsu> pr = q.getResultList();
         return pr;
     }
-
+    
+    public ResultadoEJB<Estudiante> validarEstudiante(Integer matricula, Integer periodo){
+        Estudiante e = em.createQuery("select e "
+                + "from Estudiante as e "
+                + "where e.matricula = :matricula "
+                + "and e.periodo = :periodo "
+                + "and e.grupo.grado = :grado1", Estudiante.class)
+                .setParameter("matricula", matricula)
+                .setParameter("periodo", periodo)
+                .setParameter("grado1", 6)
+                .getResultStream().findFirst().orElse(new Estudiante());
+        if(e.equals(new Estudiante())) return ResultadoEJB.crearErroneo(2, "El estudiante que ingreso no se encuentra o está en periodo de estadía", Estudiante.class);
+        return ResultadoEJB.crearCorrecto(e, "Estudiante activo");
+                
+    }
+    
     public Alumnos obtenerAlumnos(String matricula) {
         String periodoEscolar = Objects.requireNonNull(f.getEntityManager().createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
                 .setParameter("nombre", "periodoEncuestaSatisfaccionTSU")
@@ -176,5 +202,18 @@ public class EjbSatisfaccionEgresadosTsu {
                 .setParameter("grado2", Short.parseShort(grado2))
                 .setParameter("periodo", Integer.parseInt(periodoEscolar))
                 .setParameter("matricula", matricula).getResultStream().findFirst().orElse(null);
+    }
+    
+    public ResultadoEJB<Boolean> verificarEncuestaCompleta(Evaluaciones evaluacion, Integer matricula){
+        ResultadosEncuestaSatisfaccionTsu tda = em.createQuery("select r from ResultadosEncuestaSatisfaccionTsu as r where r.resultadosEncuestaSatisfaccionTsuPK.evaluacion = :evaluacion and r.resultadosEncuestaSatisfaccionTsuPK.evaluador = :evaluador", ResultadosEncuestaSatisfaccionTsu.class)
+                .setParameter("evaluacion", evaluacion.getEvaluacion())
+                .setParameter("evaluador", matricula)
+                .getResultStream().findFirst().orElse(new ResultadosEncuestaSatisfaccionTsu());
+        Comparador<ResultadosEncuestaSatisfaccionTsu> comparador = new ComparadorEncuestaSatisfaccionEgresadosTsu();
+        if(comparador.isCompleto(tda)){
+            return ResultadoEJB.crearCorrecto(Boolean.TRUE,"La evaluacion esta completa");
+        }else {
+            return ResultadoEJB.crearErroneo(1, Boolean.FALSE,"La encuesta no ha sido finalzada");
+        }
     }
 }

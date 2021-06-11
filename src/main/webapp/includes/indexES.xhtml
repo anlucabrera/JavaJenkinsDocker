@@ -258,6 +258,27 @@
                                     </div>
                                 </div>
                             </c:if>
+                            <c:if test="#{testDiagnosticoAprendizaje.tieneAcceso}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;">
+                                            <p:link outcome="encuestas/Estudiantes/testAprendizaje">
+                                                <h3>
+                                                    <h:outputLabel value="#{testDiagnosticoAprendizaje.dto.testCompleto?'Terminada':'Pendiente'}" style="cursor: pointer; color: #ffffff"/>
+                                                    <sup style="font-size: 20px"></sup>
+                                                </h3>
+                                                <p style="color: #ffffff">Test de Diagnóstico de Aprendizaje<br/></p>
+                                            </p:link>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-tty"></i>
+                                        </div>
+                                        <p:link outcome="encuestas/Estudiantes/testAprendizaje"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                    </div>
+                                </div>
+                            </c:if>
                             <!-- Evaluacion Docente-->
                             <c:if test="#{evaluacionDocenteEstudiante.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">

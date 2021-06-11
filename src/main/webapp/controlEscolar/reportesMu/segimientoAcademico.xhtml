@@ -71,7 +71,7 @@
     <ui:define name="body">
         <c:if test="#{segimientoAcademicoConsulta.cargado}">
             <adm:breadcrumb title="Segimiento academico"/>
-        <adm:sidebar collapsed="true"/>
+            <adm:sidebar collapsed="true"/>
             <div class="contenedor">
                 <c:if test="#{segimientoAcademicoConsulta.tieneAcceso}">
                     <!-- zona de importación de enums -->
@@ -84,7 +84,13 @@
 
                                         </f:facet>
                                         <f:facet name="right">
-
+                                            <p:commandButton value="Generar pdf" icon="fa fa-download" styleClass="btn btn-primary" ajax="false"
+                                                             actionListener="#{generacionConcentradoCalificaciones
+                                                                               .generarPdf(segimientoAcademicoConsulta.rol.grupoSelec,
+                                                                               segimientoAcademicoConsulta.rol.titulos, segimientoAcademicoConsulta.rol.periodo,
+                                                                               segimientoAcademicoConsulta.rol.dvcs, segimientoAcademicoConsulta.rol.programa)}">
+                                                <p:fileDownload value="#{generacionConcentradoCalificaciones.download}" />
+                                            </p:commandButton>
                                         </f:facet>
                                     </p:toolbar>
                                 </div>

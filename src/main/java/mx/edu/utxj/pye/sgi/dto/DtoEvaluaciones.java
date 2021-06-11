@@ -18,10 +18,15 @@ import mx.edu.utxj.pye.sgi.saiiut.entity.ViewEstudianteAsesorAcademico;
 
 import javax.faces.model.SelectItem;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TestDiagnosticoAprendizaje;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.saiiut.entity.CarrerasCgut;
+import mx.edu.utxj.pye.sgi.saiiut.entity.Personas;
 
 /**
  *
@@ -37,16 +42,34 @@ public class DtoEvaluaciones implements Serializable{
         if(!usuarioTipo.equals(UsuarioTipo.ESTUDIANTE19)) return false;
         return true;
     }
+    
+    public Boolean tieneAcceso(Estudiante estudiante, UsuarioTipo usuarioTipo){
+        if(estudiante == null) return false;
+        if(!usuarioTipo.equals(UsuarioTipo.ESTUDIANTE19)) return false;
+        return true;
+    }
+    
+    public Boolean tieneAcceso(Alumnos estudiante, UsuarioTipo usuarioTipo){
+        if(estudiante == null) return false;
+        if(!usuarioTipo.equals(UsuarioTipo.ESTUDIANTE)) return false;
+        return true;
+    }
     /////////////////////////General wrappers\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    @Getter @Setter public Boolean mostrarES, completo, cargada, finalizado, estSexto, estOnceavo ,esDeIyE,director, tutor, tutorCe,tutor2,esSecretario, planeacion,esPsicopedagogia, ESActiva, ESTsuActiva, ESIngActiva, ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2, eCEActiva;
+    @Getter @Setter public SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    @Getter @Setter public Boolean mostrarES, completo, testCompleto, cargada, finalizado, estSexto, estOnceavo ,
+            esDeIyE,director, tutor, tutorCe,tutor2,esSecretario, planeacion,esPsicopedagogia, ESActiva, ESTsuActiva, ESIngActiva, 
+            ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2, eCEActiva, encuestaTSUCompleto;
     @Getter @Setter public Short grado;
-    @Getter @Setter public String evaluador, valor, cveDirector, nombreCompletoTutor;
+    @Getter @Setter public String evaluador, valor, cveDirector, nombreCompletoTutor, fechaAplicacion;
     @Getter @Setter public Integer evaluadorr,cveTrabajador,usuarioNomina, periodo;
     @Getter @Setter public Long total,total2;
     //////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     ////////////////////////General entity's\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     @Getter @Setter public Evaluaciones evaluacion, evaluacionAnterior;
     @Getter @Setter public Alumnos alumno;
+    @Getter @Setter public Personas personas;
+    @Getter @Setter public CarrerasCgut carrera;
+    @Getter @Setter public Estudiante estudianteCE;
     //////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     ///////////////////////Maps and lists generals\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     @Getter @Setter public Map<String, String> respuestas;
@@ -55,6 +78,7 @@ public class DtoEvaluaciones implements Serializable{
     //////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     
     @Getter @Setter public EncuestaServiciosResultados resultado;
+    @Getter @Setter public TestDiagnosticoAprendizaje resultadoTest;
     @Getter @Setter public ResultadoEJB<EncuestaServiciosResultados> resultadoEJB;
     @Getter @Setter public ResultadosEncuestaSatisfaccionTsu resultadoREST;
     @Getter @Setter public EncuestaSatisfaccionEgresadosIng resultadoESEI;
