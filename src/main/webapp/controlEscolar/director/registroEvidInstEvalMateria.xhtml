@@ -156,7 +156,7 @@
                                                                </div>
                                                                <div class="col-sm-12 col-md-12 col-lg-12"></div>
                                                                <div class="col-sm-12 col-md-12 col-lg-12"></div>
-                                                               <div class="col-sm-12 col-md-12 col-lg-6">
+                                                               <div class="col-sm-12 col-md-12 col-lg-3">
                                                                    <strong>Grados:</strong> 
                                                                    <p class="text-muted">                             
                                                                        <p:selectOneMenu id="grado" value="#{registroEvidInstEvalMateriasDireccion.rol.grado}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarGrado}">
@@ -166,7 +166,7 @@
                                                                        </p:selectOneMenu>  
                                                                    </p>
                                                                </div>
-                                                               <div class="col-sm-12 col-md-12 col-lg-6">
+                                                               <div class="col-sm-12 col-md-12 col-lg-4">
                                                                    <strong>Materias:</strong> 
                                                                    <p class="text-muted">                             
                                                                        <p:selectOneMenu id="materia" value="#{registroEvidInstEvalMateriasDireccion.rol.materia}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarMateria}">
@@ -177,11 +177,11 @@
                                                                    </p>
                                                                </div>
                                                                
-                                                               <div class="col-sm-12 col-md-12 col-lg-4">
+                                                               <div class="col-sm-12 col-md-12 col-lg-5">
                                                                    <strong>Unidades:</strong> 
                                                                    <p class="text-muted">                             
                                                                        <p:selectOneMenu id="unidad" value="#{registroEvidInstEvalMateriasDireccion.rol.unidadMateria}" rendered="#{registroEvidInstEvalMateriasDireccion.rol.tipoAgregarEvid eq 'individualEvid'}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarUnidad}">
-                                                                           <f:selectItems value="#{registroEvidInstEvalMateriasDireccion.rol.unidadMaterias}" var="unidad" itemValue="#{unidad}" itemLabel="#{unidad.unidadMateria.noUnidad}. #{unidad.unidadMateria.nombre}" />
+                                                                           <f:selectItems value="#{registroEvidInstEvalMateriasDireccion.rol.unidadMaterias}" var="unidad" itemValue="#{unidad}" itemLabel="#{unidad.noUnidad}. #{unidad.nombre}" />
                                                                            <p:ajax update="@this" process="@this" />
                                                                            <p:autoUpdate />
                                                                        </p:selectOneMenu>  
@@ -230,6 +230,7 @@
                                                                        <p:commandButton actionListener="#{registroEvidInstEvalMateriasDireccion.agregarNuevaEvidencia()}" class="btn btn-sm btn-info" icon="fa fa-check" title="Agregar evidencia."/>
                                                                    </p>
                                                                </div>
+                                                               <div class="col-sm-12 col-md-12 col-lg-4"/>
                                                                <br/><br/>
                                                            </div>
                                                        </p:panel>

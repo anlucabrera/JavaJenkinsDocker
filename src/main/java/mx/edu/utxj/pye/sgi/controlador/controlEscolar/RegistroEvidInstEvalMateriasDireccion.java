@@ -269,7 +269,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
     }
     
     public void cambiarMateria(ValueChangeEvent event){
-        rol.setCategoria((Criterio)event.getNewValue());
+        rol.setMateria((Materia)event.getNewValue());
         listaUnidadesMateria();
         Ajax.update("frm");
     }
@@ -300,30 +300,30 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
      */
     public void agregarNuevaEvidencia(){
         if("masivaEvid".equals(rol.getTipoAgregarEvid())){
-            ResultadoEJB<Boolean> res = ejb.buscarEvidenciaListaEvidenciasInstrumentos(rol.getListaEvidenciasInstrumentos(), rol.getEvidencia());
-            if(res.getCorrecto() && res.getValor()){
-                ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> agregar = ejb.agregarEvidenciaListaEvidenciasInstrumentos(rol.getListaEvidenciasInstrumentos(), rol.getEvidencia(), rol.getInstrumento(), rol.getMetaInstrumento());
+            ResultadoEJB<Integer> res = ejb.buscarEvidenciaListaEvidenciasInstrumentos(rol.getUnidadMaterias(), rol.getEvidencia());
+            if(res.getCorrecto() && res.getValor()==0){
+                ResultadoEJB<List<EvaluacionSugerida>> agregar = ejb.agregarEvidenciaListaEvidenciasInstrumentos(rol.getUnidadMaterias(), rol.getEvidencia(), rol.getInstrumento(), rol.getMetaInstrumento(), rol.getPeriodoActivo());
                 if(agregar.getCorrecto()){
-                    rol.setListaEvidenciasInstrumentos(agregar.getValor());
-                    Ajax.update("frm");
                     mostrarMensajeResultadoEJB(agregar);
+                    listaEvaluacionesRegistradas();
+                    Ajax.update("frm");
                 }
-            }else if(res.getCorrecto() && !res.getValor()){
-                Messages.addGlobalWarn("La evidencia ya está en lista de evidencias sugeridas.");
+            }else if(res.getCorrecto() && res.getValor()>0){
+                Messages.addGlobalWarn("La evidencia ya se encuentra registrada en las unidades seleccionadas.");
             }else{
                 mostrarMensajeResultadoEJB(res);
             }
         }else{
-            ResultadoEJB<Boolean> res = ejb.buscarEvidenciaUnidadListaEvidenciasInstrumentos(rol.getUnidadMateria(), rol.getListaEvidenciasInstrumentos(), rol.getEvidencia());
-            if(res.getCorrecto() && res.getValor()){
-                ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> agregar = ejb.agregarEvidenciaUnidadListaEvidenciasInstrumentos(rol.getListaEvidenciasInstrumentos(), rol.getUnidadMateria(), rol.getEvidencia(), rol.getInstrumento(), rol.getMetaInstrumento());
+            ResultadoEJB<Boolean> res = ejb.buscarEvidenciaUnidadListaEvidenciasInstrumentos(rol.getUnidadMateria(), rol.getEvidencia());
+            if(res.getCorrecto() && !res.getValor()){
+                ResultadoEJB<EvaluacionSugerida> agregar = ejb.agregarEvidenciaUnidadListaEvidenciasInstrumentos(rol.getUnidadMateria(), rol.getEvidencia(), rol.getInstrumento(), rol.getMetaInstrumento(), rol.getPeriodoActivo());
                 if(agregar.getCorrecto()){
-                    rol.setListaEvidenciasInstrumentos(agregar.getValor());
-                    Ajax.update("frm");
                     mostrarMensajeResultadoEJB(agregar);
+                    listaEvaluacionesRegistradas();
+                    Ajax.update("frm");
                 }
-            }else if(res.getCorrecto() && !res.getValor()){
-                Messages.addGlobalWarn("La evidencia ya está en lista de evidencias sugeridas para esa unidad.");
+            }else if(res.getCorrecto() && res.getValor()){
+                Messages.addGlobalWarn("La evidencia ya se encuentra en las unidad de la materia seleccionada.");
             }else{
                 mostrarMensajeResultadoEJB(res);
             }

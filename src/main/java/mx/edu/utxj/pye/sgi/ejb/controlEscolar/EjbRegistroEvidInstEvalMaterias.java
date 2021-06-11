@@ -323,50 +323,65 @@ public class EjbRegistroEvidInstEvalMaterias {
     }
     
       /**
-     * Permite verificar si existe la evidencia en la lista registrada
-     * @param listaEvidenciasEvidenciasInstrumentos
+     * Permite verificar si existe la evidencia de evaluación en las unidades seleccionadas
+     * @param listaUnidades
      * @param evidencia
      * @return Verdadero o Falso según sea el caso
      */
-    public ResultadoEJB<Boolean> buscarEvidenciaListaEvidenciasInstrumentos(List<DtoRegistroEvidInstEvaluacionMateria> listaEvidenciasEvidenciasInstrumentos, EvidenciaEvaluacion evidencia){
+    public ResultadoEJB<Integer> buscarEvidenciaListaEvidenciasInstrumentos(List<UnidadMateria> listaUnidades, EvidenciaEvaluacion evidencia){
         try{
-           List<DtoRegistroEvidInstEvaluacionMateria> listaCoincidencias = listaEvidenciasEvidenciasInstrumentos.stream().filter(p-> Objects.equals(p.getEvaluacionSugerida().getEvidencia().getEvidencia(), evidencia.getEvidencia())).collect(Collectors.toList());
+            List<Boolean> listaValidacion = new ArrayList<>();
+            
+            listaUnidades.forEach(unidad -> {            
+            
+                EvaluacionSugerida evaluacionReg = em.createQuery("SELECT e FROM EvaluacionSugerida e WHERE e.unidadMateria.idUnidadMateria=:unidad and e.evidencia.evidencia=:evidencia", EvaluacionSugerida.class)
+                        .setParameter("unidad", unidad.getIdUnidadMateria())
+                        .setParameter("evidencia", evidencia.getEvidencia())
+                        .getResultStream()
+                        .findFirst().orElse(null);
+                
+                listaValidacion.add(evaluacionReg!=null);
+            
+            });
+            
+            Integer verdaderos = listaValidacion.stream().filter(p->p.equals(true)).collect(Collectors.toList()).size();           
            
-           return ResultadoEJB.crearCorrecto(listaCoincidencias.isEmpty(), "Resultado búsqueda de evidencia en el listado de evidencias sugeridas");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+           return ResultadoEJB.crearCorrecto(verdaderos, "Evidencia de evaluación encontrada en las unidades de la materia seleccionada.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener registro de la evidencia de evaluación en las unidades de la materia seleccionada. (EjbRegistroEvidInstEvalMaterias.buscarEvidenciaListaEvidenciasInstrumentos)", e, null);
         }
     }
     
     /**
-     * Permite verificar si existe la evidencia en la lista registrada en la unidad seleccionada
+     * Permite verificar si existe la evidencia de evaluación en la unidad seleccionadas
      * @param unidadMateria
-     * @param listaEvidenciasEvidenciasInstrumentos
      * @param evidencia
      * @return Verdadero o Falso según sea el caso
      */
-    public ResultadoEJB<Boolean> buscarEvidenciaUnidadListaEvidenciasInstrumentos(UnidadMateria unidadMateria, List<DtoRegistroEvidInstEvaluacionMateria> listaEvidenciasEvidenciasInstrumentos, EvidenciaEvaluacion evidencia){
+    public ResultadoEJB<Boolean> buscarEvidenciaUnidadListaEvidenciasInstrumentos(UnidadMateria unidadMateria, EvidenciaEvaluacion evidencia){
         try{
-           List<DtoRegistroEvidInstEvaluacionMateria> listaCoincidencias = listaEvidenciasEvidenciasInstrumentos.stream().filter(p-> Objects.equals(p.getEvaluacionSugerida().getUnidadMateria().getIdUnidadMateria(), unidadMateria.getIdUnidadMateria()) && p.getEvaluacionSugerida().getEvidencia().getEvidencia() == evidencia.getEvidencia()).collect(Collectors.toList());
+            EvaluacionSugerida evaluacionReg = em.createQuery("SELECT e FROM EvaluacionSugerida e WHERE e.unidadMateria.idUnidadMateria=:unidad and e.evidencia.evidencia=:evidencia", EvaluacionSugerida.class)
+                    .setParameter("unidad", unidadMateria.getIdUnidadMateria())
+                    .setParameter("evidencia", evidencia.getEvidencia())
+                    .getResultStream()
+                    .findFirst().orElse(null);
            
-           return ResultadoEJB.crearCorrecto(listaCoincidencias.isEmpty(), "Resultado búsqueda de evidencia en la unidad seleccionada en el listado de evidencias sugeridas");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+           return ResultadoEJB.crearCorrecto(evaluacionReg!=null, "Evidencia de evaluación encontrada en la unidad seleccionada.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener registro de la evidencia de evaluación en la unidad seleccionada. (EjbRegistroEvidInstEvalMaterias.buscarEvidenciaListaEvidenciasInstrumentos)", e, null);
         }
     }
     
     /**
      * Permite agregar la evidencia a la lista registrada
-     * @param listaEvidenciasEvidenciasInstrumentos
      * @param evidencia
      * @param instrumento
      * @param metaInstrumento
      * @return Verdadero o Falso según sea el caso
      */
-    public ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> agregarEvidenciaListaEvidenciasInstrumentos(List<DtoRegistroEvidInstEvaluacionMateria> listaEvidenciasEvidenciasInstrumentos, EvidenciaEvaluacion evidencia, InstrumentoEvaluacion instrumento, Integer metaInstrumento){
+    public ResultadoEJB<List<EvaluacionSugerida>> agregarEvidenciaListaEvidenciasInstrumentos(List<UnidadMateria> listaUnidadesMateria, EvidenciaEvaluacion evidencia, InstrumentoEvaluacion instrumento, Integer metaInstrumento, PeriodosEscolares periodoEscolar){
         try{
-           List<UnidadMateria> listaUnidadesMateria = listaEvidenciasEvidenciasInstrumentos.stream().map(p->p.getEvaluacionSugerida().getUnidadMateria()).distinct().collect(Collectors.toList());
-           Integer periodoEscolar = listaEvidenciasEvidenciasInstrumentos.stream().map(p->p.getEvaluacionSugerida().getPeriodoInicio()).distinct().findFirst().orElse(null);
+           List<EvaluacionSugerida> listaEvaluacionesSugeridas = new ArrayList<>();
            
            listaUnidadesMateria.forEach(unidad -> {
                try {
@@ -376,21 +391,11 @@ public class EjbRegistroEvidInstEvalMaterias {
                     evalSug.setEvidencia(evidencia);
                     evalSug.setInstrumento(instrumento);
                     evalSug.setMetaInstrumento(metaInstrumento);
-                    evalSug.setPeriodoInicio(periodoEscolar);
+                    evalSug.setPeriodoInicio(periodoEscolar.getPeriodo());
                     evalSug.setActivo(true);
                     em.persist(evalSug);
                     
-                    PlanEstudioMateria planEstudioMateria = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idMateria.idMateria=:materia", PlanEstudioMateria.class)
-                        .setParameter("materia",unidad.getIdMateria().getIdMateria())
-                        .getResultStream()
-                        .findFirst()
-                        .orElse(null);
-                     
-                    PeriodosEscolares periodoPK = em.find(PeriodosEscolares.class, evalSug.getPeriodoInicio());
-                    String periodo = periodoPK.getMesInicio().getAbreviacion().concat(" - ").concat(periodoPK.getMesFin().getAbreviacion().concat(" ").concat(String.valueOf(periodoPK.getAnio())));    
-                    
-                    DtoRegistroEvidInstEvaluacionMateria dto = new DtoRegistroEvidInstEvaluacionMateria(evalSug, planEstudioMateria, periodo);
-                    listaEvidenciasEvidenciasInstrumentos.add(dto);
+                    listaEvaluacionesSugeridas.add(evalSug);
                     }
                 } catch (Throwable ex) {
                     Logger.getLogger(EjbRegistroEvidInstEvalMaterias.class.getName()).log(Level.SEVERE, null, ex);
@@ -398,51 +403,37 @@ public class EjbRegistroEvidInstEvalMaterias {
                
            });
            
-            return ResultadoEJB.crearCorrecto(listaEvidenciasEvidenciasInstrumentos.stream().sorted(DtoRegistroEvidInstEvaluacionMateria::compareTo).collect(Collectors.toList()), "Lista de evidencias registradas con nueva evidencia agregada.");
+            return ResultadoEJB.crearCorrecto(listaEvaluacionesSugeridas, "Lista de evidencias e instrumentos registrados en las unidades de la materia seleccionada.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias registradas con nueva evidencia agregada. (EjbRegistroEvidInstEvalMaterias.agregarEvidenciaListaSugerida)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias e instrumentos registrados en las unidades de la materia seleccionada. (EjbRegistroEvidInstEvalMaterias.agregarEvidenciaListaEvidenciasInstrumentos)", e, null);
         }
     }
     
     /**
      * Permite agregar la evidencia a la lista registrada en la unidad seleccionada
-     * @param listaEvidenciasEvidenciasInstrumentos
      * @param unidadMateria
      * @param evidencia
      * @param metaInstrumento
      * @param instrumento
      * @return Verdadero o Falso según sea el caso
      */
-    public ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> agregarEvidenciaUnidadListaEvidenciasInstrumentos(List<DtoRegistroEvidInstEvaluacionMateria> listaEvidenciasEvidenciasInstrumentos, UnidadMateria unidadMateria, EvidenciaEvaluacion evidencia, InstrumentoEvaluacion instrumento, Integer metaInstrumento){
+    public ResultadoEJB<EvaluacionSugerida> agregarEvidenciaUnidadListaEvidenciasInstrumentos(UnidadMateria unidadMateria, EvidenciaEvaluacion evidencia, InstrumentoEvaluacion instrumento, Integer metaInstrumento, PeriodosEscolares periodoEscolar){
         try{
-           Integer periodoEscolar = listaEvidenciasEvidenciasInstrumentos.stream().map(p->p.getEvaluacionSugerida().getPeriodoInicio()).distinct().findFirst().orElse(null);
-           
+            
+            EvaluacionSugerida evalSug = new EvaluacionSugerida();
             if (metaInstrumento != 0) {
-                EvaluacionSugerida evalSug = new EvaluacionSugerida();
                 evalSug.setUnidadMateria(unidadMateria);
                 evalSug.setEvidencia(evidencia);
                 evalSug.setInstrumento(instrumento);
                 evalSug.setMetaInstrumento(metaInstrumento);
-                evalSug.setPeriodoInicio(periodoEscolar);
+                evalSug.setPeriodoInicio(periodoEscolar.getPeriodo());
                 evalSug.setActivo(true);
                 em.persist(evalSug);
-
-                PlanEstudioMateria planEstudioMateria = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idMateria.idMateria=:materia", PlanEstudioMateria.class)
-                        .setParameter("materia", unidadMateria.getIdMateria().getIdMateria())
-                        .getResultStream()
-                        .findFirst()
-                        .orElse(null);
-                
-                PeriodosEscolares periodoPK = em.find(PeriodosEscolares.class, evalSug.getPeriodoInicio());
-                String periodo = periodoPK.getMesInicio().getAbreviacion().concat(" - ").concat(periodoPK.getMesFin().getAbreviacion().concat(" ").concat(String.valueOf(periodoPK.getAnio())));    
-
-                DtoRegistroEvidInstEvaluacionMateria dto = new DtoRegistroEvidInstEvaluacionMateria(evalSug, planEstudioMateria, periodo);
-                listaEvidenciasEvidenciasInstrumentos.add(dto);
             }
              
-            return ResultadoEJB.crearCorrecto(listaEvidenciasEvidenciasInstrumentos.stream().sorted(DtoRegistroEvidInstEvaluacionMateria::compareTo).collect(Collectors.toList()), "Lista de evidencias registradas con nueva evidencia agregada a la unidad seleccionada.");
+            return ResultadoEJB.crearCorrecto(evalSug, "Evidencia e instrumento de evaluación registrada en la unidad seleccionada.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias registradas con nueva evidencia agregada a la unidad seleccionada. (EjbRegistroEvidInstEvalMaterias.agregarEvidenciaListaSugerida)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar la evidencia e instrumento de evaluación en la unidad seleccionada. (EjbRegistroEvidInstEvalMaterias.agregarEvidenciaUnidadListaEvidenciasInstrumentos)", e, null);
         }
     }
     
