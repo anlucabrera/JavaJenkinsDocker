@@ -21,6 +21,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 public class DtoRegistroEvidInstEvaluacionMateria implements Serializable, Comparable<DtoRegistroEvidInstEvaluacionMateria>{
     @Getter @Setter @NonNull EvaluacionSugerida evaluacionSugerida;
     @Getter @Setter @NonNull PlanEstudioMateria planEstudioMateria;
+    @Getter @Setter @NonNull String periodoEscolar;
     
     @Override
     public int compareTo(DtoRegistroEvidInstEvaluacionMateria o) {

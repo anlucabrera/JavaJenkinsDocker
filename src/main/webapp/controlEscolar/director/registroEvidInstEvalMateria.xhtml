@@ -242,14 +242,14 @@
                                                                 <p:column headerText="Grado" style="width: 80px;" sortBy="#{evidInstReg.planEstudioMateria.grado}" filterBy="#{evidInstReg.planEstudioMateria.grado}" filterMatchMode="contains"/>
                                                                 <p:column headerText="Materia" style="width: 80px;" sortBy="#{evidInstReg.planEstudioMateria.idMateria.nombre}" filterBy="#{evidInstReg.planEstudioMateria.idMateria.nombre}" filterMatchMode="contains"/> 
                                                                 <p:column headerText="Clave Materia" style="width: 80px;"/> 
-                                                                <p:column headerText="No. Unidad" style="width: 80px;" sortBy="#{evidInstReg.evaluacionSugerida.unidadMateria.noUnidad}" filterBy="#{evidInstReg.evaluacionSugerida.unidadMateria.noUnidad}" filterMatchMode="contains"/> 
-                                                                <p:column headerText="Unidad" style="width: 250px;"/> 
+                                                                <p:column headerText="Unidad" style="width: 80px;" sortBy="#{evidInstReg.evaluacionSugerida.unidadMateria.noUnidad}. #{evidInstReg.evaluacionSugerida.unidadMateria.nombre}" filterBy="#{evidInstReg.evaluacionSugerida.unidadMateria.noUnidad}. #{evidInstReg.evaluacionSugerida.unidadMateria.nombre}" filterMatchMode="contains"/> 
                                                                 <p:column headerText="Categoría de evaluación" style="width: 120px;"/>
                                                                 <p:column headerText="% Categoría" style="width: 100px;"/>
-                                                                <p:column headerText="Eliminar" style="width: 100px;"/>
                                                                 <p:column headerText="Evidencia" style="width: 150px;"/>
                                                                 <p:column headerText="Instrumento de evaluación" style="width: 150px;"/>
                                                                 <p:column headerText="Meta del instrumento" style="width: 100px;"/>
+                                                                <p:column headerText="Periodo en que se registró" style="width: 150px;"/>
+                                                                <p:column headerText="Eliminar" style="width: 100px;"/>
                                                             </p:row>
                                                         </p:columnGroup>
                                                         <p:column groupRow="true" style="text-align: center;">
@@ -262,21 +262,13 @@
                                                             <h:outputText value="#{evidInstReg.planEstudioMateria.claveMateria}" />
                                                         </p:column>
                                                         <p:column groupRow="true" style="text-align: center;">
-                                                            <h:outputText value="#{evidInstReg.evaluacionSugerida.unidadMateria.noUnidad}" />
-                                                        </p:column>
-                                                        <p:column groupRow="true" style="text-align: justify;">
-                                                            <h:outputText value="#{evidInstReg.evaluacionSugerida.unidadMateria.nombre}" />
+                                                            <h:outputText value="#{evidInstReg.evaluacionSugerida.unidadMateria.noUnidad}. #{evidInstReg.evaluacionSugerida.unidadMateria.nombre}" />
                                                         </p:column>
                                                         <p:column groupRow="true" style="text-align: justify;">
                                                             <h:outputText value="#{evidInstReg.evaluacionSugerida.evidencia.criterio.tipo}" />
                                                         </p:column>
                                                         <p:column groupRow="true" style="text-align: center;">
                                                             <h:outputText value="#{evidInstReg.evaluacionSugerida.evidencia.criterio.porcentajeRecomendado}"><f:convertNumber type="number"/></h:outputText>%
-                                                        </p:column>
-                                                        <p:column>
-                                                            <center>
-                                                                <p:commandButton actionListener="#{registroEvidInstEvalMateriasDireccion.eliminarEvidencia(evidInstReg)}" class="btn btn-sm btn-info" icon="fa fa-minus" title="Eliminar evidencia."/>
-                                                            </center>
                                                         </p:column>
                                                         <p:column>
                                                             <h:outputText value="#{evidInstReg.evaluacionSugerida.evidencia.descripcion}" />
@@ -286,6 +278,14 @@
                                                         </p:column>
                                                         <p:column style="text-align: center;">
                                                             <h:outputText value="#{evidInstReg.evaluacionSugerida.metaInstrumento}"><f:convertNumber type="number"/></h:outputText>%
+                                                        </p:column>
+                                                        <p:column>
+                                                            <h:outputText value="#{evidInstReg.periodoEscolar}" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <center>
+                                                                <p:commandButton actionListener="#{registroEvidInstEvalMateriasDireccion.eliminarEvidencia(evidInstReg)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar evidencia."/>
+                                                            </center>
                                                         </p:column>
                                                     </p:dataTable>
                                                     <p></p>

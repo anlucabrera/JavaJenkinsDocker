@@ -35,6 +35,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -201,7 +202,10 @@ public class EjbRegistroEvidInstEvalMaterias {
                     .findFirst()
                     .orElse(null);  
                     
-                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria);
+                PeriodosEscolares periodoPK = em.find(PeriodosEscolares.class, evaluacion.getPeriodoInicio());
+                String periodo = periodoPK.getMesInicio().getAbreviacion().concat(" - ").concat(periodoPK.getMesFin().getAbreviacion().concat(" ").concat(String.valueOf(periodoPK.getAnio())));    
+                    
+                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria, periodo);
                 listaDtoEvaluacionSugeridas.add(dtoRegistroEvidInstEvaluacionMateria);
                 });
             });
@@ -300,18 +304,21 @@ public class EjbRegistroEvidInstEvalMaterias {
     }
     
     /**
-     * Permite eliminar evidencia e instrumento de evaluación registrado
-     * @param listaEvidenciasInstrumentos
+     * Permite eliminar el registro de evidencia e instrumento de evaluación seleccionado
      * @param dtoRegistroEvidInstEvaluacionMateria
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> eliminarEvidenciaUnidadListaEvidenciasInstrumentos(List<DtoRegistroEvidInstEvaluacionMateria> listaEvidenciasInstrumentos, DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria){
-        try{
-            listaEvidenciasInstrumentos.remove(dtoRegistroEvidInstEvaluacionMateria);
-             
-            return ResultadoEJB.crearCorrecto(listaEvidenciasInstrumentos.stream().sorted(DtoRegistroEvidInstEvaluacionMateria::compareTo).collect(Collectors.toList()), "Lista de evidencias e instrumentos de evaluación actualizada.");
-        } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar la lista de evidencias e instrumentos seleccionada. (EjbRegistroEvidInstEvalMaterias.eliminarEvidenciaUnidadListaEvidenciasInstrumentos)", e, null);
+    public ResultadoEJB<Integer> eliminarEvidenciaUnidadListaEvidenciasInstrumentos(DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria){
+       try{
+            EvaluacionSugerida evalSug = em.find(EvaluacionSugerida.class, dtoRegistroEvidInstEvaluacionMateria.getEvaluacionSugerida().getEvaluacionSugerida());
+           
+            Integer delete = em.createQuery("DELETE FROM EvaluacionSugerida e WHERE e.evaluacionSugerida=:evaluacion", EvaluacionSugerida.class)
+                .setParameter("evaluacion", evalSug.getEvaluacionSugerida())
+                .executeUpdate();
+            
+            return ResultadoEJB.crearCorrecto(delete, "Registro de evidencia e instrumento de evaluación eliminado correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el registro de evidencia e instrumento de evaluación. (EjbRegistroEvidInstEvalMaterias.eliminarEvidenciaUnidadListaEvidenciasInstrumentos)", e, null);
         }
     }
     
@@ -379,7 +386,10 @@ public class EjbRegistroEvidInstEvalMaterias {
                         .findFirst()
                         .orElse(null);
                      
-                    DtoRegistroEvidInstEvaluacionMateria dto = new DtoRegistroEvidInstEvaluacionMateria(evalSug, planEstudioMateria);
+                    PeriodosEscolares periodoPK = em.find(PeriodosEscolares.class, evalSug.getPeriodoInicio());
+                    String periodo = periodoPK.getMesInicio().getAbreviacion().concat(" - ").concat(periodoPK.getMesFin().getAbreviacion().concat(" ").concat(String.valueOf(periodoPK.getAnio())));    
+                    
+                    DtoRegistroEvidInstEvaluacionMateria dto = new DtoRegistroEvidInstEvaluacionMateria(evalSug, planEstudioMateria, periodo);
                     listaEvidenciasEvidenciasInstrumentos.add(dto);
                     }
                 } catch (Throwable ex) {
@@ -422,8 +432,11 @@ public class EjbRegistroEvidInstEvalMaterias {
                         .getResultStream()
                         .findFirst()
                         .orElse(null);
+                
+                PeriodosEscolares periodoPK = em.find(PeriodosEscolares.class, evalSug.getPeriodoInicio());
+                String periodo = periodoPK.getMesInicio().getAbreviacion().concat(" - ").concat(periodoPK.getMesFin().getAbreviacion().concat(" ").concat(String.valueOf(periodoPK.getAnio())));    
 
-                DtoRegistroEvidInstEvaluacionMateria dto = new DtoRegistroEvidInstEvaluacionMateria(evalSug, planEstudioMateria);
+                DtoRegistroEvidInstEvaluacionMateria dto = new DtoRegistroEvidInstEvaluacionMateria(evalSug, planEstudioMateria, periodo);
                 listaEvidenciasEvidenciasInstrumentos.add(dto);
             }
              

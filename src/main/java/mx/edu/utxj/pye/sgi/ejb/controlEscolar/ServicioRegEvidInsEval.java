@@ -12,11 +12,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroEvidInstEvaluacionMateria;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroPrevioEvidInstEval;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvidenciaEvaluacion;
@@ -49,6 +51,12 @@ public class ServicioRegEvidInsEval {
         em = f.getEntityManager();
     }
     
+    /**
+     * Permite leer los registros capturados en la plantilla de excel
+     * @param rutaArchivo Lista de indicadores que se guardarán
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
     public List<DtoRegistroPrevioEvidInstEval> getListaRegEvidInstEvaluacion(String rutaArchivo) throws Throwable {
         
         List<Boolean> validarCelda = new ArrayList<>();
@@ -198,7 +206,7 @@ public class ServicioRegEvidInsEval {
                     return Collections.EMPTY_LIST;
                 } else {
                     Messages.addGlobalInfo("<b>Hoja de registros de evidencias e instrumentos de evaluación validada favor de verificar sus datos antes de guardar su información</b>");
-                    return listaDtoRegEvidInstEvaluacion;
+                    return listaDtoRegEvidInstEvaluacion.stream().sorted(DtoRegistroPrevioEvidInstEval::compareTo).collect(Collectors.toList());
                 }
         } else {
             libroRegistro.close();
@@ -217,9 +225,9 @@ public class ServicioRegEvidInsEval {
     }
     
     /**
-     * Permite guardar la asignación de indicadores del criterio SABER
-     * @param lista Lista de indicadores que se guardarán
-     * @param periodosEscolar Lista de indicadores que se guardarán
+     * Permite guardar los registros capturados en la plantilla de excel
+     * @param lista Lista de evidencias e instrumentos de evaluación de cada unidad que se guardarán
+     * @param periodosEscolar Periodo escolar activo
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<EvaluacionSugerida>> guardarEvidInstEval(List<DtoRegistroPrevioEvidInstEval> lista, PeriodosEscolares periodosEscolar){
@@ -262,10 +270,15 @@ public class ServicioRegEvidInsEval {
             });
             return ResultadoEJB.crearCorrecto(l, "El registro de evidencias e instrumentos de evaluación se ha guardado correctamente.");
         }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar las evidencias e instrumentos de evaluación se ha guardado correctamente. (EjbAsignacionIndicadoresCriterios.guardarListaEvidenciasInstrumentos)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar las evidencias e instrumentos de evaluación. (ServicioRegEvidInsEval.guardarListaEvidenciasInstrumentos)", e, null);
         }
     }
     
+    /**
+     * Permite buscar si existe un registro con la unidad y evidencia de la lista previa
+     * @param dtoRegistroPrevioEvidInstEval Registro de la lista previa
+     * @return Resultado del proceso
+     */
     public ResultadoEJB<EvaluacionSugerida> getRegistroEvaluacionSugerida(DtoRegistroPrevioEvidInstEval dtoRegistroPrevioEvidInstEval){
         try {
             

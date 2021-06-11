@@ -335,12 +335,10 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
      * @param dtoRegistroEvidInstEvaluacionMateria
      */
     public void eliminarEvidencia(DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria){
-        ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> eliminar = ejb.eliminarEvidenciaUnidadListaEvidenciasInstrumentos(rol.getListaEvidenciasInstrumentos(), dtoRegistroEvidInstEvaluacionMateria);
-        if(eliminar.getCorrecto()){
-            rol.setListaEvidenciasInstrumentos(eliminar.getValor());
-            Ajax.update("frm");
-            mostrarMensajeResultadoEJB(eliminar);
-        }
+        ResultadoEJB<Integer> resEliminar = ejb.eliminarEvidenciaUnidadListaEvidenciasInstrumentos(dtoRegistroEvidInstEvaluacionMateria);
+        mostrarMensajeResultadoEJB(resEliminar);
+        listaEvaluacionesRegistradas();
+        Ajax.update("frm");
     }
 //    
 //    public void guardarEvidenciasInstrumentos(){
