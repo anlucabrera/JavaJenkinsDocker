@@ -12,6 +12,7 @@ import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionSugerida;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvidenciaEvaluacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.InstrumentoEvaluacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
@@ -75,6 +76,11 @@ public class RegistroEvidInstEvalMateriasRolDirector extends AbstractRol{
      * Representa la ruta del archivo que se cargará a sistema
      */
     @Getter @NonNull private String rutaArchivo;
+    
+     /**
+     * Lista registro guardados de evidencias e instrumentos de evaluación
+     */
+     @Getter private List<EvaluacionSugerida> listaEvaluacioneGuardadas;
     
      /**
      * Representa si se desea agregar más evidencias e instrumentos de evaluación
@@ -205,7 +211,11 @@ public class RegistroEvidInstEvalMateriasRolDirector extends AbstractRol{
     public void setRutaArchivo(String rutaArchivo) {
         this.rutaArchivo = rutaArchivo;
     }
-    
+
+    public void setListaEvaluacioneGuardadas(List<EvaluacionSugerida> listaEvaluacioneGuardadas) {
+        this.listaEvaluacioneGuardadas = listaEvaluacioneGuardadas;
+    }
+        
     public void setAgregarEvidencia(Boolean agregarEvidencia) {
         this.agregarEvidencia = agregarEvidencia;
     }

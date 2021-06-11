@@ -32,6 +32,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.ServicioRegEvidInsEval;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionSugerida;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvidenciaEvaluacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.InstrumentoEvaluacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
@@ -425,12 +426,17 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
     }
     
     public void guardarEvidInstEval() {
-       if (rol.getListaPreviaEvidenciasInstrumentos()!= null) {
-           
+        if (rol.getListaPreviaEvidenciasInstrumentos() != null) {
             try {
-                ejbServicioRegEvidInsEval.guardarEvidInstEval(rol.getListaPreviaEvidenciasInstrumentos(), rol.getPeriodoActivo());
+                ResultadoEJB<List<EvaluacionSugerida>> resGuardar = ejbServicioRegEvidInsEval.guardarEvidInstEval(rol.getListaPreviaEvidenciasInstrumentos(), rol.getPeriodoActivo());
+                if (resGuardar.getCorrecto()) {
+                    rol.setListaEvaluacioneGuardadas(resGuardar.getValor());
+                    mostrarMensajeResultadoEJB(resGuardar);
+                } else {
+                    mostrarMensajeResultadoEJB(resGuardar);
+                }
             } catch (Throwable ex) {
-                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage());
+                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage());
                 Logger.getLogger(RegistroEvidInstEvalMateriasDireccion.class.getName()).log(Level.SEVERE, null, ex);
                 if (rol.getRutaArchivo() != null) {
                     ServicioArchivos.eliminarArchivo(rol.getRutaArchivo());

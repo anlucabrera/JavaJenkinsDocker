@@ -29,6 +29,7 @@
     <ui:define name="body">
         <c:if test="#{registroEvidInstEvalMateriasDireccion.cargado}">
             <adm:breadcrumb title="Registro de evidencias e instrumentos de evaluación"/>
+            <adm:sidebar collapsed="true"/>
             <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
             <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
             <h1>
@@ -321,7 +322,7 @@
                                                             <h:outputText value="#{evidInstRegPrev.materia.nombre}" />
                                                         </p:column>
                                                         <p:column groupRow="true" style="text-align: justify;">
-                                                            <h:outputText value="#{evidInstRegPrev.unidadMateria.noUnidad}. #{evidInstRegPrev.unidadMateria.nombre}" />
+                                                            <h:outputText value="#{evidInstRegPrev.noUnidad}. #{evidInstRegPrev.unidadMateria.nombre}" />
                                                         </p:column>
                                                         <p:column groupRow="true" style="text-align: justify;">
                                                             <h:outputText value="#{evidInstRegPrev.criterio.tipo}" />
