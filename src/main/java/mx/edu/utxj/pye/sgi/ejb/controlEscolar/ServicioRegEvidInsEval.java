@@ -131,7 +131,6 @@ public class ServicioRegEvidInsEval {
                 }
                 switch (fila.getCell(12).getCellTypeEnum()) {
                     case FORMULA:
-                        System.err.println("No Unidad " + fila.getCell(12).getNumericCellValue());
                         dtoRegEvidInstEvaluacion.setNoUnidad((int)fila.getCell(12).getNumericCellValue());
                         break;
                     default:
@@ -265,7 +264,7 @@ public class ServicioRegEvidInsEval {
                         }
                     }
                 } catch (Throwable ex) {
-                    Logger.getLogger(EjbRegistroEvidInstEvalMaterias.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ServicioRegEvidInsEval.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
             return ResultadoEJB.crearCorrecto(l, "El registro de evidencias e instrumentos de evaluación se ha guardado correctamente.");

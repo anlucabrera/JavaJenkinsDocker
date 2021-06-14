@@ -69,7 +69,9 @@
                                     <c:if test="#{controladorArchivoRegistroEvidInst.etapa eq etapa.MOSTRAR}">
                                     <div class="box-body">
                                         <c:set var="casilla1" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
-                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
+                                        <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
+                                        <c:set var="casilla4" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
                                         <div class="row margin-bottom" style="margin-top: 20px;">
                                             <div class="#{casilla1}">
                                                 <div class="ui-material">
@@ -84,13 +86,36 @@
                                             </div>
                                             <div class="#{casilla2}">
                                                 <div class="ui-material">
-                                                    <p:selectOneMenu id="periodo" value="#{registroEvidInstEvalMateriasDireccion.rol.periodoEscolar}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarPeriodo}">
-                                                        <f:selectItems value="#{registroEvidInstEvalMateriasDireccion.rol.periodosEscolares}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}"/>
+                                                    <p:selectOneMenu id="plan" value="#{registroEvidInstEvalMateriasDireccion.rol.planEstudio}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarPlan}">
+                                                        <f:selectItems value="#{registroEvidInstEvalMateriasDireccion.rol.planesEstudio}" var="plan" itemValue="#{plan}" itemLabel="#{plan.anio}"/>
                                                         <p:ajax update="@this" process="@this"/>
                                                         <p:autoUpdate />
                                                     </p:selectOneMenu>
-                                                    <p:outputLabel value="Periodo" for="periodo"/>
-                                                    <p:message for="periodo" />
+                                                    <p:outputLabel value="Plan de estudio" for="plan"/>
+                                                    <p:message for="plan" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:selectOneRadio id="tipoBusqueda" value="#{registroEvidInstEvalMateriasDireccion.rol.tipoBusqueda}" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarTipoBusqueda}">
+                                                        <f:selectItem itemLabel="Búsqueda General" itemValue="busquedaGeneral" />
+                                                        <f:selectItem itemLabel="Búsqueda por Grado" itemValue="busquedaGrado" />
+                                                        <p:ajax update="@this" process="@this"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneRadio> 
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla4}">
+                                                <div class="ui-material">
+                                                    <c:if test="#{registroEvidInstEvalMateriasDireccion.rol.tipoBusqueda eq 'busquedaGrado'}">
+                                                    <p:selectOneMenu id="cuatrimestre" value="#{registroEvidInstEvalMateriasDireccion.rol.cuatrimestre}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarCuatrimestre}">
+                                                        <f:selectItems value="#{registroEvidInstEvalMateriasDireccion.rol.cuatrimestres}" var="cuatrimestre" itemValue="#{cuatrimestre}" itemLabel="#{cuatrimestre}"/>
+                                                        <p:ajax update="@this" process="@this"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Grados" for="cuatrimestre"/>
+                                                    <p:message for="cuatrimestre" />
+                                                    </c:if>
                                                 </div>
                                             </div>
                                         </div>
@@ -101,10 +126,10 @@
                                                         <div class="box-header with-border">                                                                    
                                                             <div class="col-sm-12">
                                                                 <div class="row">
-                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-3">
                                                                         <strong>Clave plan</strong>
                                                                         <p class="text-muted">
-                                                                        #{registroEvidInstEvalMateriasDireccion.rol.planEstudioRegistrado.idPlanEstudio} 
+                                                                        #{registroEvidInstEvalMateriasDireccion.rol.planEstudio.idPlanEstudio} 
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -115,10 +140,17 @@
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
-                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-3">
                                                                         <strong>Año</strong>
                                                                         <p class="text-muted">
-                                                                         #{registroEvidInstEvalMateriasDireccion.rol.planEstudioRegistrado.anio}
+                                                                         #{registroEvidInstEvalMateriasDireccion.rol.planEstudio.anio}
+                                                                        </p>
+                                                                        <hr/>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                        <strong>Activo</strong>
+                                                                        <p class="text-muted">
+                                                                            <h:outputText id="situacion" value="#{registroEvidInstEvalMateriasDireccion.rol.planEstudio.estatus?'Sí':'No'}" style="color: #{registroEvidInstEvalMateriasDireccion.rol.planEstudio.estatus?'black;':'red;'}"/>
                                                                         </p>
                                                                         <hr/>
                                                                     </div>

@@ -9,9 +9,11 @@ import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -107,9 +109,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
             rol.setNivelRol(NivelRol.OPERATIVO);
             rol.setPeriodoActivo(ejbAsignacionIndicadoresCriterios.getPeriodoActual());
 //            rol.setSoloLectura(true);
-            
-            listaProgramasEducativos();
-
+           
             rol.getInstrucciones().add("Para poder realizar la Asignación de Indicadores por Criterio debe haber realizado previamente la Configuración de la Unidad Materia.");
             rol.getInstrucciones().add("Seleccionar periodo escolar activo, de lo contrario solo podrá consultar asignaciones anteriores.");
             rol.getInstrucciones().add("Seleccionar Materia - Grupo - Programa Educativo que va a configurar.");
@@ -122,65 +122,72 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
             rol.getInstrucciones().add("Usted podrá actualizar la asignación de indicadores de la unidad siempre y cuando no haya terminado de configurar todas las unidades.");
             rol.getInstrucciones().add("Una vez que realice la asignación de indicadores de todas las unidades podrá VISUALIZAR la asignación general de la materia, y podrá ELIMINARLA siempre y cuando no esté VALIDADA.");
 
+            rol.setTipoBusqueda("busquedaGeneral");
             rol.setAgregarEvidencia(Boolean.FALSE);
             rol.setTipoAgregarEvid("masivaEvid");
             
+            listaProgramasEducativos();
+
         }catch (Exception e){mostrarExcepcion(e); }
     }
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
-        String valor = "registro evidencias e instrumetnos evaluacion materia";
+        String valor = "registro evidencias e instrumentos evaluacion materia";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
     }
-    
-    /**
-     * Permite actualizar la carga académica del docente correspondiente al periodo seleccionado
-     */
-//    public void actualizarCargaAcademica(){
-//        setAlertas(Collections.EMPTY_LIST);
-//        if(rol.getPeriodo() == null) return;
-//        if(rol.getDocente()== null) return;
-//
-//        ResultadoEJB<List<DtoCargaAcademica>> res = ejb.getCargaAcademicaDocente(rol.getDocente(), rol.getPeriodo());
-//        if(res.getCorrecto()){
-//            rol.setCargas(res.getValor());
-//            existeConfiguracion();
-//        }else mostrarMensajeResultadoEJB(res);
-//        
-//    }
     
     public void listaProgramasEducativos(){
         ResultadoEJB<List<AreasUniversidad>> res = ejb.getProgramasEducativos(rol.getDirector());
         if(res.getCorrecto()){
             rol.setProgramasEducativos(res.getValor());
             rol.setProgramaEducativo(rol.getProgramasEducativos().get(0));
-            listaPeriodosEscolares();
+            listaPlanesEstudio();
         }else mostrarMensajeResultadoEJB(res);  
     }
     
-    public void listaPeriodosEscolares(){
-        ResultadoEJB<List<PeriodosEscolares>> res = ejb.getPeriodosEscolares(rol.getProgramaEducativo());
+    public void listaPlanesEstudio(){
+        ResultadoEJB<List<PlanEstudio>> res = ejb.getPlanesEstudio(rol.getProgramaEducativo());
         if(res.getCorrecto()){
-            rol.setPeriodosEscolares(res.getValor());
-            rol.setPeriodoEscolar(rol.getPeriodosEscolares().get(0));
-            listaEvaluacionesRegistradas();
-        }else mostrarMensajeResultadoEJB(res);  
-    }
-    
-    public void listaEvaluacionesRegistradas(){
-        ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> res = ejb.buscarEvaluacionSugerida(rol.getProgramaEducativo(), rol.getPeriodoEscolar());
-        if(res.getCorrecto()){
-            rol.setListaEvidenciasInstrumentos(res.getValor());
-            if(!rol.getListaEvidenciasInstrumentos().isEmpty()|| rol.getListaEvidenciasInstrumentos().size()>0){                   
-                rol.setPlanEstudioRegistrado(rol.getListaEvidenciasInstrumentos().stream().map(p->p.getPlanEstudioMateria().getIdPlan()).findFirst().orElse(new PlanEstudio()));
+            rol.setPlanesEstudio(res.getValor());
+            if (!rol.getPlanesEstudio().isEmpty()) {
+                rol.setPlanEstudio(rol.getPlanesEstudio().get(0));
+                ejb.activarDesactivarEvaluacionSugerida(rol.getPlanEstudio());
+                listaCuatrimestres();
+                listaEvaluacionesRegistradas();
+            }else{
+            rol.setPlanEstudio(null);
+            rol.setCuatrimestres(Collections.emptyList());
+            rol.setListaEvidenciasInstrumentos(Collections.emptyList());
             }
         }else mostrarMensajeResultadoEJB(res);  
     }
     
+    public void listaCuatrimestres(){
+        ResultadoEJB<List<Integer>> res = ejb.getGradosProgramaEducativo(rol.getPlanEstudio());
+        if(res.getCorrecto()){
+            rol.setCuatrimestres(res.getValor());
+            rol.setCuatrimestre(rol.getCuatrimestres().get(0));
+        }else mostrarMensajeResultadoEJB(res); 
+    }
+    
+    public void listaEvaluacionesRegistradas(){
+        if(rol.getTipoBusqueda().equals("busquedaGeneral")){
+            ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> res = ejb.buscarEvaluacionSugerida(rol.getProgramaEducativo(), rol.getPlanEstudio());
+            if(res.getCorrecto()){
+                rol.setListaEvidenciasInstrumentos(res.getValor());
+            }else mostrarMensajeResultadoEJB(res);  
+        }else{
+            ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> res = ejb.buscarEvaluacionSugeridaGrado(rol.getProgramaEducativo(), rol.getPlanEstudio(), rol.getCuatrimestre());
+            if(res.getCorrecto()){
+                rol.setListaEvidenciasInstrumentos(res.getValor());
+            }else mostrarMensajeResultadoEJB(res);  
+        }
+    }
+    
     public void listaGrados(){
-            ResultadoEJB<List<Integer>> res = ejb.getGradosProgramaEducativo(rol.getPlanEstudioRegistrado());
+            ResultadoEJB<List<Integer>> res = ejb.getGradosProgramaEducativo(rol.getPlanEstudio());
             if(res.getCorrecto()){
                 rol.setGrados(res.getValor());
                 rol.setGrado(rol.getGrados().get(0));
@@ -189,7 +196,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
     }
     
     public void listaMateriasGrado(){
-            ResultadoEJB<List<Materia>> res = ejb.getMateriasGrado(rol.getPlanEstudioRegistrado(), rol.getGrado());
+            ResultadoEJB<List<Materia>> res = ejb.getMateriasGrado(rol.getPlanEstudio(), rol.getGrado());
             if(res.getCorrecto()){
                 rol.setMaterias(res.getValor());
                 rol.setMateria(rol.getMaterias().get(0));
@@ -236,14 +243,27 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
     
      public void cambiarPrograma(ValueChangeEvent event){
         rol.setProgramaEducativo((AreasUniversidad)event.getNewValue());
-        listaPeriodosEscolares();
+        listaPlanesEstudio();
         Ajax.update("frm");
     }
         
     
-    public void cambiarPeriodo(ValueChangeEvent event){
-        rol.setPeriodoEscolar((PeriodosEscolares)event.getNewValue());
+    public void cambiarPlan(ValueChangeEvent event){
+        rol.setPlanEstudio((PlanEstudio)event.getNewValue());
+        ejb.activarDesactivarEvaluacionSugerida(rol.getPlanEstudio());
         listaEvaluacionesRegistradas();
+    }
+    
+    public void cambiarCuatrimestre(ValueChangeEvent event){
+        rol.setCuatrimestre((Integer)event.getNewValue());
+        listaEvaluacionesRegistradas();
+        Ajax.update("frm");
+    }
+    
+    public void cambiarTipoBusqueda(ValueChangeEvent event){
+        rol.setTipoBusqueda((String)event.getNewValue());
+        listaEvaluacionesRegistradas();
+        Ajax.update("frm");
     }
  
     public void cambiarAgregarEvid(ValueChangeEvent event){
@@ -296,7 +316,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
     }
 //    
      /**
-     * Permite registrar una evaluación a un evento de estadía
+     * Permite registrar una evidencia e intrumento de evaluación a una unidad o todas las unidades de una materia
      */
     public void agregarNuevaEvidencia(){
         if("masivaEvid".equals(rol.getTipoAgregarEvid())){
@@ -329,7 +349,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
             }
         }
     }
-//    
+  
      /**
      * Permite eliminar una evidencia e instrumentos de evaluación registrado
      * @param dtoRegistroEvidInstEvaluacionMateria
@@ -340,51 +360,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
         listaEvaluacionesRegistradas();
         Ajax.update("frm");
     }
-//    
-//    public void guardarEvidenciasInstrumentos(){
-//        Integer totalUnidades = (int) (long) rol.getListaEvidenciasSugeridas().stream().mapToInt(p->p.getUnidadMateriaConfiguracion().getIdUnidadMateria().getIdUnidadMateria()).distinct().count();
-//        
-//        Integer sumaTotalUnidades = totalUnidades * 100;
-//        
-//        Integer sumaSer = rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Ser")).mapToInt(p->p.getValorPorcentual()).sum();
-//       
-//        if(sumaSer < sumaTotalUnidades){
-//            Messages.addGlobalWarn("Criterios SER: La suma de los porcentajes por indicador es menor a 100%.");
-//        }else if(sumaSer > sumaTotalUnidades){
-//            Messages.addGlobalWarn("Criterios SER: La suma de los porcentajes por indicador es mayor a 100%.");
-//        }
-//        
-//        Integer sumaSaber = rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Saber")).mapToInt(p->p.getValorPorcentual()).sum();
-//        if(sumaSaber < sumaTotalUnidades){
-//             Messages.addGlobalWarn("Criterios SABER: La suma de los porcentajes por indicador es menor a 100%.");
-//        }else if(sumaSaber > sumaTotalUnidades){
-//             Messages.addGlobalWarn("Criterios SABER: La suma de los porcentajes por indicador es mayor a 100%.");
-//        }
-//        
-//        Integer sumaSaberHacer = rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Saber hacer")).mapToInt(p->p.getValorPorcentual()).sum();
-//        if(sumaSaberHacer < sumaTotalUnidades){
-//            Messages.addGlobalWarn("Criterios SABER - HACER: La suma de los porcentajes por indicador es menor a 100%.");
-//        }else if(sumaSaberHacer > sumaTotalUnidades){
-//            Messages.addGlobalWarn("Criterios SABER - HACER: La suma de los porcentajes por indicador es mayor a 100%.");
-//        }
-//        
-//        Integer comparador = sumaTotalUnidades * 3;
-//        
-//        Integer sumaTotalCat = sumaSer + sumaSaber + sumaSaberHacer;
-//        
-//        if(sumaTotalCat.equals(comparador))
-//        {
-//            ResultadoEJB<List<UnidadMateriaConfiguracionEvidenciaInstrumento>> resGuardar = ejb.guardarListaEvidenciasInstrumentos(rol.getListaEvidenciasSugeridas());
-//            if (resGuardar.getCorrecto()) {
-//                mostrarMensajeResultadoEJB(resGuardar);
-//                Ajax.update("frm");
-//                existeAsignacion();
-//            } else {
-//                mostrarMensajeResultadoEJB(resGuardar);
-//            }
-//        
-//        }
-//    }
+
 //    
 //    public void eliminarEvidenciasInstrumentos(){
 //        ResultadoEJB<UnidadMateriaConfiguracion> configuracion = ejb.verificarValidacionConfiguracion(rol.getCarga().getCargaAcademica());
@@ -403,11 +379,20 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
 //            mostrarMensajeResultadoEJB(configuracion);
 //        }
 //    }
+    
+     /**
+     * Permite descargar la plantilla con datos del plan de estudio seleccionado
+     * @throws java.io.IOException
+     */
     public void descargarPlantilla() throws IOException, Throwable{
-        File f = new File(ejb.getPlantillaEvidInstMateria(rol.getPlanEstudioRegistrado(), rol.getProgramaEducativo()));
+        File f = new File(ejb.getPlantillaEvidInstMateria(rol.getPlanEstudio(), rol.getProgramaEducativo()));
         Faces.sendFile(f, true);
     }
     
+     /**
+     * Permite mostrar la lista de evidencias e instrumentos de evaluación de la plantilla cargada de excel, previa a guardarse.
+     * @param rutaArchivo
+     */
     public void listaPreviaEvidenciasInstrumentos(String rutaArchivo) {
        try {
             if(rutaArchivo != null){
@@ -423,6 +408,9 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
         }
     }
     
+    /**
+     * Permite guardar la lista de evidencias e instrumentos de evaluación de la plantilla cargada de excel.
+     */
     public void guardarEvidInstEval() {
         if (rol.getListaPreviaEvidenciasInstrumentos() != null) {
             try {
@@ -448,6 +436,9 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
         }
     }
     
+    /**
+     * Permite cancelar el registro de la lista de evidencias e instrumentos de evaluación de la plantilla cargada de excel, así como la carga del archivo al servidor.
+    */
     public void cancelarArchivo(){
         rol.getListaPreviaEvidenciasInstrumentos().clear();
         if (rol.getRutaArchivo() != null) {

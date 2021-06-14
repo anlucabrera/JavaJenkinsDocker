@@ -54,7 +54,7 @@ public class ControladorArchivoRegistroEvidInst implements Serializable{
     @PostConstruct
     public void init(){
         setEtapa(RegistroSiipEtapa.MOSTRAR);
-        plan = String.valueOf(registroEvidInstEvalMateriasDireccion.getRol().getPlanEstudioRegistrado().getAnio());
+        plan = String.valueOf(registroEvidInstEvalMateriasDireccion.getRol().getPlanEstudio().getAnio());
         programa = registroEvidInstEvalMateriasDireccion.getRol().getProgramaEducativo().getSiglas();
     }
     
