@@ -107,18 +107,23 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
             rol.setNivelRol(NivelRol.OPERATIVO);
             rol.setPeriodoActivo(ejbAsignacionIndicadoresCriterios.getPeriodoActual());
 //            rol.setSoloLectura(true);
-           
-            rol.getInstrucciones().add("Para poder realizar la Asignación de Indicadores por Criterio debe haber realizado previamente la Configuración de la Unidad Materia.");
-            rol.getInstrucciones().add("Seleccionar periodo escolar activo, de lo contrario solo podrá consultar asignaciones anteriores.");
-            rol.getInstrucciones().add("Seleccionar Materia - Grupo - Programa Educativo que va a configurar.");
-            rol.getInstrucciones().add("Seleccionar si asignará indicadores de forma INDIVIDUAL(por unidad) o MASIVA (aplicar para todas las unidades).");
+
+            rol.getInstrucciones().add("CARGA MASIVA DE EVIDENCIAS E INSTRUMENTOS DE EVALUACIÓN DESDE PLANTILLA.");
+            rol.getInstrucciones().add("Descargue la plantilla, dando clic en el icono de descarga ubicado en la parte superior derecha.");
+            rol.getInstrucciones().add("Abrir la plantilla con excel, deberá de llenar la información correspondiente.");
+            rol.getInstrucciones().add("Para la información, deberá de dar clic en el botón CARGAR ARCHIVO, seleccionar el documento y dar clic en subir.");
+            rol.getInstrucciones().add("A continuación visualizará la información que contiene el documento de excel, para guardar deberá dar clic en el botón GUARDAR, en caso contrario en CANCELAR");
+            rol.getInstrucciones().add("ASIGNAR EVIDENCIA E INSTRUMENTO DE EVALUACIÓN DESDE INTERFAZ.");
+            rol.getInstrucciones().add("Seleccionar programa educativo y plan de estudio del que desea registrar información.");
+            rol.getInstrucciones().add("Dar clic en Agregar más evidencias.");
+            rol.getInstrucciones().add("Seleccionar si asignará evidencia e intrumento de forma INDIVIDUAL(por unidad) o MASIVA (para todas las unidades).");
+            rol.getInstrucciones().add("Seleccionar grado y mateia.");
             rol.getInstrucciones().add("Si seleccionó INDIVIDUAL, deberá seleccionar Unidad a la que aplicará la asignación que configurará.");
-            rol.getInstrucciones().add("Seleccionar la pestaña del criterio: Ser, Saber o Saber - Hacer.");
-            rol.getInstrucciones().add("Capturar porcentaje que valdrá el o los indicadores que utilizará por criterio.");
-            rol.getInstrucciones().add("La suma de los porcentajes por criterio deben sumar 100%, de lo contrario el sistema no le permitirá guardar.");
-            rol.getInstrucciones().add("Una vez que haya seleccionado indicadores de los TRES criterios puede proceder a GUARDAR la información.");
-            rol.getInstrucciones().add("Usted podrá actualizar la asignación de indicadores de la unidad siempre y cuando no haya terminado de configurar todas las unidades.");
-            rol.getInstrucciones().add("Una vez que realice la asignación de indicadores de todas las unidades podrá VISUALIZAR la asignación general de la materia, y podrá ELIMINARLA siempre y cuando no esté VALIDADA.");
+            rol.getInstrucciones().add("Seleccionar categoría: Ser, Saber o Saber - Hacer.");
+            rol.getInstrucciones().add("Seleccionar evidencia de la lista de opciones, las opciones dependen de la categoría seleccionada previamente.");
+            rol.getInstrucciones().add("Seleccionar instrumento de la lista de opciones.");
+            rol.getInstrucciones().add("Ingresar valor de la meta del instrumento.");
+            rol.getInstrucciones().add("Una vez que haya realizado los pasos anteriores, de clic en AGREGAR para guardar la información.");
 
             rol.setTipoBusqueda("busquedaGeneral");
             rol.setAgregarEvidencia(Boolean.FALSE);

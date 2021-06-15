@@ -191,7 +191,7 @@
                                                                </div>
                                                                <div class="col-sm-12 col-md-12 col-lg-12"></div>
                                                                <div class="col-sm-12 col-md-12 col-lg-12"></div>
-                                                               <div class="col-sm-12 col-md-12 col-lg-3">
+                                                               <div class="col-sm-12 col-md-12 col-lg-2">
                                                                    <strong>Grados:</strong> 
                                                                    <p class="text-muted">                             
                                                                        <p:selectOneMenu id="grado" value="#{registroEvidInstEvalMateriasDireccion.rol.grado}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarGrado}">
@@ -212,7 +212,7 @@
                                                                    </p>
                                                                </div>
                                                                
-                                                               <div class="col-sm-12 col-md-12 col-lg-5">
+                                                               <div class="col-sm-12 col-md-12 col-lg-3">
                                                                    <strong>Unidades:</strong> 
                                                                    <p class="text-muted">                             
                                                                        <p:selectOneMenu id="unidad" value="#{registroEvidInstEvalMateriasDireccion.rol.unidadMateria}" rendered="#{registroEvidInstEvalMateriasDireccion.rol.tipoAgregarEvid eq 'individualEvid'}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarUnidad}">
@@ -220,10 +220,10 @@
                                                                            <p:ajax update="@this" process="@this" />
                                                                            <p:autoUpdate />
                                                                        </p:selectOneMenu>  
-                                                                       <h:outputText value="Todas las unidades" rendered="#{registroEvidInstEvalMateriasDireccion.rol.tipoAgregarEvid eq 'masivaEvid'}"/>
+                                                                       <h:outputText value="Todas las unidades seleccionadas" rendered="#{registroEvidInstEvalMateriasDireccion.rol.tipoAgregarEvid eq 'masivaEvid'}"/>
                                                                    </p>
                                                                </div>
-                                                               <div class="col-sm-12 col-md-12 col-lg-4">
+                                                               <div class="col-sm-12 col-md-12 col-lg-2">
                                                                    <strong>Categoría:</strong> 
                                                                    <p class="text-muted">                               
                                                                        <p:selectOneMenu id="categoria" value="#{registroEvidInstEvalMateriasDireccion.rol.categoria}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarCategoria}">
@@ -233,7 +233,7 @@
                                                                        </p:selectOneMenu>  
                                                                    </p>
                                                                </div>
-                                                               <div class="col-sm-12 col-md-12 col-lg-4">
+                                                               <div class="col-sm-12 col-md-12 col-lg-3">
                                                                    <strong>Evidencia:</strong> 
                                                                    <p class="text-muted">                               
                                                                        <p:selectOneMenu id="evidencia" value="#{registroEvidInstEvalMateriasDireccion.rol.evidencia}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarEvidencia}">
@@ -243,7 +243,7 @@
                                                                        </p:selectOneMenu>
                                                                    </p>
                                                                </div>
-                                                               <div class="col-sm-12 col-md-12 col-lg-4">
+                                                               <div class="col-sm-12 col-md-12 col-lg-3">
                                                                    <strong>Instrumento:</strong> 
                                                                    <p class="text-muted">                             
                                                                        <p:selectOneMenu id="instrumento" value="#{registroEvidInstEvalMateriasDireccion.rol.instrumento}" converter="entityConverter" valueChangeListener="#{registroEvidInstEvalMateriasDireccion.cambiarInstrumento}">
@@ -253,13 +253,13 @@
                                                                        </p:selectOneMenu>
                                                                    </p>
                                                                </div>
-                                                               <div class="col-sm-12 col-md-12 col-lg-4">
+                                                               <div class="col-sm-12 col-md-12 col-lg-2">
                                                                    <strong>Meta instrumento:</strong> 
                                                                    <p class="text-muted">                             
                                                                        <p:inputNumber id="metaInstrumento" value="#{registroEvidInstEvalMateriasDireccion.rol.metaInstrumento}" size="5" symbol="%" symbolPosition="s" required="true" emptyValue="empty" minValue="0" maxValue="100"/>
                                                                    </p>
                                                                </div>
-                                                               <div class="col-sm-12 col-md-12 col-lg-4">
+                                                               <div class="col-sm-12 col-md-12 col-lg-2">
                                                                    <strong>Agregar</strong> 
                                                                    <p class="text-muted">
                                                                        <p:commandButton actionListener="#{registroEvidInstEvalMateriasDireccion.agregarNuevaEvidencia()}" class="btn btn-sm btn-info" icon="fa fa-check" title="Agregar evidencia."/>
