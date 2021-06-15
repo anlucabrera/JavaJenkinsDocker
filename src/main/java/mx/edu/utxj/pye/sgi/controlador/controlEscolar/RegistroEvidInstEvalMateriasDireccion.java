@@ -360,25 +360,21 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
         listaEvaluacionesRegistradas();
         Ajax.update("frm");
     }
-
-//    
-//    public void eliminarEvidenciasInstrumentos(){
-//        ResultadoEJB<UnidadMateriaConfiguracion> configuracion = ejb.verificarValidacionConfiguracion(rol.getCarga().getCargaAcademica());
-//        if (configuracion.getCorrecto()) {
-//            rol.setDirectorValido(configuracion.getValor().getDirector());
-//            if (rol.getDirectorValido() == null){
-//                ResultadoEJB<Integer> resEliminar = ejb.eliminarEvidenciasInstrumentos(rol.getCarga().getCargaAcademica());
-//                existeAsignacion();
-//                mostrarMensajeResultadoEJB(resEliminar);
-//                
-//            } else {
-//               Messages.addGlobalWarn("La configuración ya ha sido validada por el director de carrera, por lo que no puede eliminarla");
-//            }
-//            
-//        } else {
-//            mostrarMensajeResultadoEJB(configuracion);
-//        }
-//    }
+    
+     /**
+     * Permite eliminar los registros del plan de estudio activo seleccionado
+     * @param planEstudio
+     */
+    public void eliminarEvaluacionSugerida(PlanEstudio planEstudio){
+        if(planEstudio.getEstatus()){
+            ResultadoEJB<Integer> resEliminar = ejb.eliminarRegistrosPlanEstudio(planEstudio);
+            mostrarMensajeResultadoEJB(resEliminar);
+            rol.setListaEvidenciasInstrumentos(Collections.EMPTY_LIST);
+            Ajax.update("frm");
+        }else{
+            Messages.addGlobalWarn("No se pueden eliminar registros de un plan de estudio inactivo.");
+        }
+    }
     
      /**
      * Permite descargar la plantilla con datos del plan de estudio seleccionado

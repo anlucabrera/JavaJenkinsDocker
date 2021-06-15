@@ -622,4 +622,25 @@ public class EjbRegistroEvidInstEvalMaterias {
         }
     }
     
+    /**
+     * Permite eliminar los registros del plan de estudio activo seleccionado
+     * @param planEstudio
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> eliminarRegistrosPlanEstudio(PlanEstudio planEstudio){
+       try{
+            List<PlanEstudioMateria> listaPlanMaterias = getMateriasGradosPlanEstudio(planEstudio).getValor();
+            
+            List<UnidadMateria> listaUnidadesMaterias = getUnidadesMateriasPlanEstudio(listaPlanMaterias).getValor();
+           
+            Integer delete = em.createQuery("DELETE FROM EvaluacionSugerida e WHERE e.unidadMateria IN :lista", EvaluacionSugerida.class)
+                .setParameter("lista", listaUnidadesMaterias)
+                .executeUpdate();
+            
+            return ResultadoEJB.crearCorrecto(delete, "Se han eliminado correctamente los registro del plan de estudio seleccionado.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se eliminaron los registros del plan de estudio seleccionado. (EjbRegistroEvidInstEvalMaterias.eliminarRegistroPlanEstudio)", e, null);
+        }
+    }
+    
 }

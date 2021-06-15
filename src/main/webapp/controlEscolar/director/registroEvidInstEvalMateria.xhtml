@@ -58,9 +58,12 @@
                                             <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="registroEvidInstEvalMateria?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
                                         </c:if>
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                        <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{registroEvidInstEvalMateriasDireccion.descargarPlantilla()}" title="Descargar Plantilla"><i class="fa fa-download" /></p:commandLink>
+                                        <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{registroEvidInstEvalMateriasDireccion.descargarPlantilla()}" title="Descargar Plantilla" rendered="#{registroEvidInstEvalMateriasDireccion.rol.planEstudio.estatus}"><i class="fa fa-download" /></p:commandLink>
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{registroEvidInstEvalMateriasDireccion.descargarRegistrosPlan()}" target="_blank" title="Descargar Registros"><i class="fa fa-file-excel-o" /></p:commandLink>
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/controlEscolar/director/registroAlineacion?faces-redirect=true" title="Regresar a menú registro de alineación"><i class="fa fa-reply"></i></p:commandLink>
+                                        <p:commandButton actionListener="#{registroEvidInstEvalMateriasDireccion.eliminarEvaluacionSugerida(plan)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar registros." rendered="#{registroEvidInstEvalMateriasDireccion.rol.planEstudio.estatus}">
+                                            <p:confirm header="Eliminar registros" message="¿Está seguro de eliminar todos los registros del plan de estudio seleccionado?" icon="ui-icon-alert" />
+                                        </p:commandButton>
                                         <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}" onclick="PF('modalAyuda').show();" title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question"/></p:commandLink>
                                         </f:facet>
                                     </p:toolbar>
@@ -317,10 +320,16 @@
                                                         </p:column>
                                                         <p:column>
                                                             <center>
-                                                                <p:commandButton actionListener="#{registroEvidInstEvalMateriasDireccion.eliminarEvidencia(evidInstReg)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar evidencia."/>
+                                                                <p:commandButton actionListener="#{registroEvidInstEvalMateriasDireccion.eliminarEvidencia(evidInstReg)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar evidencia.">
+                                                                     <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro seleccionado?" icon="ui-icon-alert" />
+                                                                </p:commandButton>
                                                             </center>
                                                         </p:column>
                                                     </p:dataTable>
+                                                       <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                           <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check"/>
+                                                           <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close"/>
+                                                       </p:confirmDialog>
                                                     <p></p>
                                                     <p></p>
                                                     <p></p>
