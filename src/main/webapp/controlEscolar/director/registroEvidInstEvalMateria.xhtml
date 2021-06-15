@@ -59,9 +59,9 @@
                                         </c:if>
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{registroEvidInstEvalMateriasDireccion.descargarPlantilla()}" title="Descargar Plantilla" rendered="#{registroEvidInstEvalMateriasDireccion.rol.planEstudio.estatus}"><i class="fa fa-download" /></p:commandLink>
-                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{registroEvidInstEvalMateriasDireccion.descargarRegistrosPlan()}" target="_blank" title="Descargar Registros"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                        <p:commandLink class="btn btn-success" ajax="false" action="#{registroEvidInstEvalMateriasDireccion.descargarRegistrosPlan()}" target="_blank" title="Descargar Registros"><i class="fa fa-file-excel-o" /></p:commandLink>
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                        <p:commandButton actionListener="#{registroEvidInstEvalMateriasDireccion.eliminarEvaluacionSugerida(plan)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar registros." rendered="#{registroEvidInstEvalMateriasDireccion.rol.planEstudio.estatus}">
+                                        <p:commandButton actionListener="#{registroEvidInstEvalMateriasDireccion.eliminarEvaluacionSugerida()}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar registros." rendered="#{registroEvidInstEvalMateriasDireccion.rol.planEstudio.estatus}">
                                             <p:confirm header="Eliminar registros" message="¿Está seguro de eliminar todos los registros del plan de estudio seleccionado?" icon="ui-icon-alert" />
                                         </p:commandButton>
                                         <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}" onclick="PF('modalAyuda').show();" title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question"/></p:commandLink>

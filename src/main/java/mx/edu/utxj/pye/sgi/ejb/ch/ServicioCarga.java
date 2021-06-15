@@ -578,4 +578,11 @@ public class ServicioCarga implements EjbCarga {
             return "Error: No se pudo leer el archivo";
         }
     }
+    
+    @Override
+    public String crearDirectorioReporteAlineacionMaterias(String plan, String programa) {
+        String rutaRelativa = genCarpetaRelativa(alineacionMaterias, reportes,  programa, plan);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
 }

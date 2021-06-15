@@ -58,6 +58,7 @@ public class EjbRegistroEvidInstEvalMaterias {
 
     public static final String EVIDINSTMAT_PLANTILLA = "registroEvidenciasInstrumentos.xlsx";
     public static final String EVIDINSTMAT_ACTUALIZADO = "registroEvidenciasInstrumentos_actualizado.xlsx";
+    public static final String ACTUALIZADO_REGEVIDINSTMAT = "registrosAlineacionMateriasPlan.xlsx";
     
     @PostConstruct
     public void init(){
@@ -241,8 +242,8 @@ public class EjbRegistroEvidInstEvalMaterias {
                     
                 PeriodosEscolares periodoPK = em.find(PeriodosEscolares.class, evaluacion.getPeriodoInicio());
                 String periodo = periodoPK.getMesInicio().getAbreviacion().concat(" - ").concat(periodoPK.getMesFin().getAbreviacion().concat(" ").concat(String.valueOf(periodoPK.getAnio())));    
-                    
-                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria, periodo);
+                
+                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria, periodo, programaEducativo);
                 listaDtoEvaluacionSugeridas.add(dtoRegistroEvidInstEvaluacionMateria);
                 });
             });
@@ -290,7 +291,7 @@ public class EjbRegistroEvidInstEvalMaterias {
                 PeriodosEscolares periodoPK = em.find(PeriodosEscolares.class, evaluacion.getPeriodoInicio());
                 String periodo = periodoPK.getMesInicio().getAbreviacion().concat(" - ").concat(periodoPK.getMesFin().getAbreviacion().concat(" ").concat(String.valueOf(periodoPK.getAnio())));    
                     
-                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria, periodo);
+                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria, periodo, programaEducativo);
                 listaDtoEvaluacionSugeridas.add(dtoRegistroEvidInstEvaluacionMateria);
                 });
             });
@@ -522,7 +523,13 @@ public class EjbRegistroEvidInstEvalMaterias {
         }
     }
     
-    /* Método para decarga de plantilla */
+   /**
+     * Permite generar la información que contendrá la plantilla 
+     * @param plan Plan de estudio
+     * @param programa Programa educativo
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
     
     public String getPlantillaEvidInstMateria(PlanEstudio plan, AreasUniversidad programa) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioPlantillaAlineacionMaterias();
@@ -538,6 +545,28 @@ public class EjbRegistroEvidInstEvalMaterias {
         beans.put("instrumentosEvaluacion", ejbAsignacionIndicadoresCriterios.getInstrumentosEvaluacion().getValor());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+     /**
+     * Permite generar reporte de registros del plan de estudio seleccionado
+     * @param plan Plan de estudio
+     * @param programa Programa educativo
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
+    
+    public String getRegistrosPlan(PlanEstudio plan, AreasUniversidad programa) throws Throwable {
+        String rutaPlantilla = "C:\\archivos\\alineacionMaterias\\reportes\\registrosEvidInstPlan.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReporteAlineacionMaterias(String.valueOf(plan.getAnio()), programa.getSiglas());
+
+        String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_REGEVIDINSTMAT);
+        
+        Map beans = new HashMap();
+        beans.put("regEvidInstPlan", buscarEvaluacionSugerida(programa, plan).getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 
         return plantillaC;
     }

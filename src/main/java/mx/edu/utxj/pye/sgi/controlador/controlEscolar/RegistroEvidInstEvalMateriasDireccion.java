@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -41,7 +40,6 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
@@ -314,9 +312,9 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
         rol.setInstrumento((InstrumentoEvaluacion)event.getNewValue());
         Ajax.update("frm");
     }
-//    
+   
      /**
-     * Permite registrar una evidencia e intrumento de evaluación a una unidad o todas las unidades de una materia
+     * Permite registrar una evidencia e intrumento de evaluación a una unidad o a todas las unidades de una materia
      */
     public void agregarNuevaEvidencia(){
         if("masivaEvid".equals(rol.getTipoAgregarEvid())){
@@ -363,11 +361,10 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
     
      /**
      * Permite eliminar los registros del plan de estudio activo seleccionado
-     * @param planEstudio
      */
-    public void eliminarEvaluacionSugerida(PlanEstudio planEstudio){
-        if(planEstudio.getEstatus()){
-            ResultadoEJB<Integer> resEliminar = ejb.eliminarRegistrosPlanEstudio(planEstudio);
+    public void eliminarEvaluacionSugerida(){
+        if(rol.getPlanEstudio().getEstatus()){
+            ResultadoEJB<Integer> resEliminar = ejb.eliminarRegistrosPlanEstudio(rol.getPlanEstudio());
             mostrarMensajeResultadoEJB(resEliminar);
             rol.setListaEvidenciasInstrumentos(Collections.EMPTY_LIST);
             Ajax.update("frm");
@@ -382,6 +379,15 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
      */
     public void descargarPlantilla() throws IOException, Throwable{
         File f = new File(ejb.getPlantillaEvidInstMateria(rol.getPlanEstudio(), rol.getProgramaEducativo()));
+        Faces.sendFile(f, true);
+    }
+    
+     /**
+     * Permite descargar reporte de registros del plan de estudio seleccionado
+     * @throws java.io.IOException
+     */
+    public void descargarRegistrosPlan() throws IOException, Throwable{
+        File f = new File(ejb.getRegistrosPlan(rol.getPlanEstudio(), rol.getProgramaEducativo()));
         Faces.sendFile(f, true);
     }
     
