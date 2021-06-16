@@ -21,8 +21,8 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 @RequiredArgsConstructor @ToString
 public class DtoAsigAsesorAcadEstadia implements Serializable, Comparable<DtoAsigAsesorAcadEstadia>{
     @Getter @Setter @NonNull AreasUniversidad programaEducativo;
-    @Getter @Setter Personal asesorAcademico;
-    @Getter @Setter Integer estudiantesAsignados;
+    @Getter @Setter @NonNull Personal asesorAcademico;
+    @Getter @Setter @NonNull Integer estudiantesAsignados;
 
     public DtoAsigAsesorAcadEstadia() {
     }

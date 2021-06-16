@@ -251,31 +251,33 @@ public class EjbReportesEstadia {
                     listaProgramasGeneracion.forEach(programa -> {
                         AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, programa);
                         
-                        List<Integer> listaAsesorAcademicosPE = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.matricula.carrera=:programa", SeguimientoEstadiaEstudiante.class)
+                        List<Integer> grados = new ArrayList<>();
+                        grados.add(6);
+                        grados.add(11);
+                        
+                        List<SeguimientoEstadiaEstudiante> listaSeguimientosPE = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.matricula.carrera=:programa AND s.matricula.grupo.grado IN :grados", SeguimientoEstadiaEstudiante.class)
                                 .setParameter("evento", eventoSeleccionado.getEvento())
-                                .setParameter("programa", programa)
+                                .setParameter("programa", programaEducativo.getArea())
+                                .setParameter("grados", grados)
                                 .getResultStream()
-                                .distinct()
-                                .map(p->p.getAsesor().getPersonal())
                                 .collect(Collectors.toList());
+                        
+                        List<Integer> listaAsesorAcademicosPE = listaSeguimientosPE.stream().map(p->p.getAsesor().getAsesorEstadia()).distinct().collect(Collectors.toList());
                         
                             listaAsesorAcademicosPE.forEach(asesor -> {
                                 
-                                AsesorAcademicoEstadia asesorAcademicoEstadia = em.createQuery("SELECT a FROM AsesorAcademicoEstadia a WHERE a.evento.generacion=:generacion AND a.evento.nivel=:nivel AND a.personal=:personal", AsesorAcademicoEstadia.class)
+                                AsesorAcademicoEstadia asesorAcademicoEstadia = em.createQuery("SELECT a FROM AsesorAcademicoEstadia a WHERE a.evento.generacion=:generacion AND a.evento.nivel=:nivel AND a.asesorEstadia=:clave", AsesorAcademicoEstadia.class)
                                     .setParameter("generacion", eventoSeleccionado.getGeneracion())
                                     .setParameter("nivel", eventoSeleccionado.getNivel())
-                                    .setParameter("personal", asesor)
+                                    .setParameter("clave", asesor)
                                     .getResultStream()
                                     .findFirst()
                                     .orElse(null);
+                               
+                                List<SeguimientoEstadiaEstudiante> listaEstudiantesAsignados = listaSeguimientosPE.stream().filter(p->p.getAsesor().getAsesorEstadia().equals(asesorAcademicoEstadia.getAsesorEstadia())).collect(Collectors.toList());
                                 
-                                List<SeguimientoEstadiaEstudiante> listaEstudiantesAsignados = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.asesor.asesorEstadia=:asesor", SeguimientoEstadiaEstudiante.class)
-                                    .setParameter("asesor", asesorAcademicoEstadia.getAsesorEstadia())
-                                    .getResultStream()
-                                    .collect(Collectors.toList());
+                                Personal asesorAcademico = em.find(Personal.class, asesorAcademicoEstadia.getPersonal());
                                 
-                                
-                                Personal asesorAcademico = em.find(Personal.class, asesor);
                                 DtoAsigAsesorAcadEstadia dtoAsigAsesorAcadEstadia = new DtoAsigAsesorAcadEstadia();
                                 dtoAsigAsesorAcadEstadia.setProgramaEducativo(programaEducativo);
                                 dtoAsigAsesorAcadEstadia.setAsesorAcademico(asesorAcademico);
@@ -285,7 +287,7 @@ public class EjbReportesEstadia {
                     });
                     
                 }
-            return ResultadoEJB.crearCorrecto(listaAsigAsesorAcadPE, "Lista de estudiantes asignados por programa educativo y asesor académico.");
+            return ResultadoEJB.crearCorrecto(listaAsigAsesorAcadPE.stream().sorted(DtoAsigAsesorAcadEstadia::compareTo).collect(Collectors.toList()), "Lista de estudiantes asignados por programa educativo y asesor académico.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista estudiantes asignados por programa educativo y asesor académico. (EjbReportesEstadia.getAsignacionAsesorAcademicoPE)", e, null);
         }
