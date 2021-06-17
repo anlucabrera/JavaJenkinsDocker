@@ -23,7 +23,6 @@ import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.SatisfaccionServiciosApartado;
 import mx.edu.utxj.pye.sgi.enums.converter.SatisfaccionServiciosApartadoConverter;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
-import mx.edu.utxj.pye.sgi.util.Serializador;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Faces;
 

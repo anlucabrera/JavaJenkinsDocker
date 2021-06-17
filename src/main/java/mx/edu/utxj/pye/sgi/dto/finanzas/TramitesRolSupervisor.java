@@ -16,7 +16,6 @@ import mx.edu.utxj.pye.sgi.enums.ComisionOficioEstatus;
 import mx.edu.utxj.pye.sgi.enums.TarifaTipo;
 import mx.edu.utxj.pye.sgi.enums.TramitesSupervisorFiltro;
 import mx.edu.utxj.pye.sgi.exception.RolSinAccesoException;
-import sun.nio.cs.ext.DoubleByteEncoder;
 
 import javax.faces.context.FacesContext;
 import java.util.Arrays;
