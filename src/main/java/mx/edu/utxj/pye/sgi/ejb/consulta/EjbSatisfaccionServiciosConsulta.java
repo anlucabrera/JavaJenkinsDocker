@@ -46,6 +46,8 @@ public class EjbSatisfaccionServiciosConsulta {
 
     public synchronized ResultadoEJB<DtoSatisfaccionServiciosEncuesta> calcularConcentrado(@NonNull Evaluaciones evaluacion, DtoSatisfaccionServiciosCuestionario cuestionario, ServiciosConsultaDto dto2){
         try{
+            final Integer serviciosConsultaSatisfaccionServiciosSerializacion = ep.leerPropiedadEntera("serviciosConsultaSatisfaccionServiciosSerializacion").orElse(0);
+
 //            System.out.println();
 //            System.out.println("EjbSatisfaccionServiciosConsulta.calcularConcentrado");
 //            System.out.println("evaluacion = " + evaluacion);
@@ -58,10 +60,12 @@ public class EjbSatisfaccionServiciosConsulta {
             Evaluaciones evaluacionBD = em.find(Evaluaciones.class, evaluacion.getEvaluacion());
 //            System.out.println("evaluacionBD = " + evaluacionBD);
 
-            ResultadoEJB<DtoSatisfaccionServiciosEncuesta> deserializarDtoSatisfaccionServiciosEncuesta = Serializador.deserializarDtoSatisfaccionServiciosEncuesta(evaluacion.getTipo(), evaluacion.getEvaluacion());
-            if(deserializarDtoSatisfaccionServiciosEncuesta.getCorrecto()){
+            if(serviciosConsultaSatisfaccionServiciosSerializacion != 0){
+                ResultadoEJB<DtoSatisfaccionServiciosEncuesta> deserializarDtoSatisfaccionServiciosEncuesta = Serializador.deserializarDtoSatisfaccionServiciosEncuesta(evaluacion.getTipo(), evaluacion.getEvaluacion());
+                if(deserializarDtoSatisfaccionServiciosEncuesta.getCorrecto()){
 //                System.out.println("deserializarDtoSatisfaccionServiciosEncuesta 0 = " + deserializarDtoSatisfaccionServiciosEncuesta);
-                return ResultadoEJB.crearCorrecto(deserializarDtoSatisfaccionServiciosEncuesta.getValor(), "Concentrado localizado como serializado");
+                    return ResultadoEJB.crearCorrecto(deserializarDtoSatisfaccionServiciosEncuesta.getValor(), "Concentrado localizado como serializado");
+                }
             }
 
             PeriodosEscolares periodo = em.find(PeriodosEscolares.class, evaluacion.getPeriodo());
@@ -77,7 +81,9 @@ public class EjbSatisfaccionServiciosConsulta {
                 encuestaServiciosResultados = em.createQuery("select r from EncuestaServiciosResultados r inner join r.evaluaciones e where r.evaluaciones=:evaluacion ", EncuestaServiciosResultados.class)
                         .setParameter("evaluacion", evaluacionBD)
                         .getResultList();
-                encuestaServiciosResultados.parallelStream().forEach(encuestaServiciosResultados1 -> Serializador.serializarEncuestaServiciosResultados(encuestaServiciosResultados1));
+
+                if(serviciosConsultaSatisfaccionServiciosSerializacion != 0)
+                    encuestaServiciosResultados.parallelStream().forEach(encuestaServiciosResultados1 -> Serializador.serializarEncuestaServiciosResultados(encuestaServiciosResultados1));
             }
 //            System.out.println("encuestaServiciosResultados = " + encuestaServiciosResultados.size());
 
@@ -89,7 +95,7 @@ public class EjbSatisfaccionServiciosConsulta {
 //                System.out.println("1 = " + 1);
                 calcularFrecuencias(dtoSatisfaccionServiciosEncuesta, dto2.getRespuestas(), dtoSatisfaccionServiciosEncuesta.getSatisfaccionServiciosEstudiantes());
 //                System.out.println("2 = " + 2);
-                Serializador.serializarDtoSatisfaccionServiciosEncuesta(dtoSatisfaccionServiciosEncuesta);
+                if(serviciosConsultaSatisfaccionServiciosSerializacion != 0) Serializador.serializarDtoSatisfaccionServiciosEncuesta(dtoSatisfaccionServiciosEncuesta);
 //                System.out.println("3 = " + 3);
                 return ResultadoEJB.crearCorrecto(dtoSatisfaccionServiciosEncuesta, "Concentrado de encuestas de satisfacción de servicios realizado.");
             }
@@ -101,7 +107,9 @@ public class EjbSatisfaccionServiciosConsulta {
                 matriculaPeriodosEscolaresList = em.createQuery("select m from MatriculaPeriodosEscolares m where m.periodo=:periodo", MatriculaPeriodosEscolares.class)
                         .setParameter("periodo", evaluacion.getPeriodo())
                         .getResultList();
-                matriculaPeriodosEscolaresList.parallelStream().forEach(matriculaPeriodosEscolares -> Serializador.serializarMatriculaPeriodoEscolar(matriculaPeriodosEscolares));
+
+                if(serviciosConsultaSatisfaccionServiciosSerializacion != 0)
+                    matriculaPeriodosEscolaresList.parallelStream().forEach(matriculaPeriodosEscolares -> Serializador.serializarMatriculaPeriodoEscolar(matriculaPeriodosEscolares));
             }
 //            System.out.println("matriculaPeriodosEscolaresList = " + matriculaPeriodosEscolaresList.size());
             List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad a inner join a.categoria c where c.categoria=:categoria", AreasUniversidad.class)
@@ -116,13 +124,16 @@ public class EjbSatisfaccionServiciosConsulta {
                     .map(ResultadoEJB::getValor)
                     .collect(Collectors.toList());
 //            System.out.println("dtoSatisfaccionServiciosEstudiantes = " + dtoSatisfaccionServiciosEstudiantes.size());
-            dtoSatisfaccionServiciosEstudiantes.parallelStream().forEach(dtoSatisfaccionServiciosEstudiante -> Serializador.serializarDtoSatisfaccionServiciosEstudiante(dtoSatisfaccionServiciosEstudiante));
+            if(serviciosConsultaSatisfaccionServiciosSerializacion != 0)
+                dtoSatisfaccionServiciosEstudiantes.parallelStream().forEach(dtoSatisfaccionServiciosEstudiante -> Serializador.serializarDtoSatisfaccionServiciosEstudiante(dtoSatisfaccionServiciosEstudiante));
 
             DtoSatisfaccionServiciosEncuesta dtoSatisfaccionServiciosEncuesta = new DtoSatisfaccionServiciosEncuesta(evaluacionBD, periodo, periodo.getCiclo(), cuestionario);
 //            System.out.println("dtoSatisfaccionServiciosEncuesta = " + dtoSatisfaccionServiciosEncuesta);
             dtoSatisfaccionServiciosEncuesta.setSatisfaccionServiciosEstudiantes(dtoSatisfaccionServiciosEstudiantes);
             calcularFrecuencias(dtoSatisfaccionServiciosEncuesta, dto2.getRespuestas(), dtoSatisfaccionServiciosEstudiantes);
-            Serializador.serializarDtoSatisfaccionServiciosEncuesta(dtoSatisfaccionServiciosEncuesta);
+
+            if(serviciosConsultaSatisfaccionServiciosSerializacion != 0)
+                Serializador.serializarDtoSatisfaccionServiciosEncuesta(dtoSatisfaccionServiciosEncuesta);
             return ResultadoEJB.crearCorrecto(dtoSatisfaccionServiciosEncuesta, "Concentrado de encuestas de satisfacción de servicios realizado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Ocurrió un error al intentar crear el concentraro de encuesta de satisfacción de servicios (EjbSatisfaccionServiciosConsulta.calcularConcentrado).", e, DtoSatisfaccionServiciosEncuesta.class);
@@ -131,6 +142,8 @@ public class EjbSatisfaccionServiciosConsulta {
 
     public ResultadoEJB<List<DtoAreaAcademica>> getProgramasEvaluacion(Evaluaciones evaluacion, DtoSatisfaccionServiciosEncuesta encuesta){
         try{
+            final Integer serviciosConsultaSatisfaccionServiciosSerializacion = ep.leerPropiedadEntera("serviciosConsultaSatisfaccionServiciosSerializacion").orElse(0);
+
             ResultadoEJB<List<DtoAreaAcademica>> leerDtoAreaAcademicaSerializadas = leerDtoAreaAcademicaSerializadas(evaluacion.getPeriodo());
             if(leerDtoAreaAcademicaSerializadas.getCorrecto()) return ResultadoEJB.crearCorrecto(leerDtoAreaAcademicaSerializadas.getValor(), "Objetos ya serializados");
             List<AreasUniversidad> areas = em.createQuery("select a from AreasUniversidad a inner join a.categoria c where c.categoria=:categoria order by a.nombre", AreasUniversidad.class).setParameter("categoria", (short) 8).getResultList();
@@ -147,7 +160,7 @@ public class EjbSatisfaccionServiciosConsulta {
                 DtoAreaAcademica dtoAreaAcademica = new DtoAreaAcademica(area, evaluacion.getPeriodo());
                 List<AreasUniversidad> programasPorArea = programas.stream().filter(programa -> Objects.equals(programa.getAreaSuperior(), area.getArea())).collect(Collectors.toList());
                 dtoAreaAcademica.setProgramas(programasPorArea);
-                Serializador.serializarDtoAreaAcademica(dtoAreaAcademica);
+                if(serviciosConsultaSatisfaccionServiciosSerializacion != 0) Serializador.serializarDtoAreaAcademica(dtoAreaAcademica);
                 dtoAreaAcademicas.add(dtoAreaAcademica);
             });
             return ResultadoEJB.crearCorrecto(dtoAreaAcademicas.stream().sorted(Comparator.comparing(dtoAreaAcademica -> dtoAreaAcademica.getAreaAcademica().getArea())).collect(Collectors.toList()),"Areas académicas empaquetadas");
@@ -182,6 +195,11 @@ public class EjbSatisfaccionServiciosConsulta {
     }
 
     public ResultadoEJB<List<MatriculaPeriodosEscolares>> leerMatriculasSerializadas(List<EncuestaServiciosResultados> encuestaServiciosResultados, Integer periodo){
+        final Integer serviciosConsultaSatisfaccionServiciosSerializacion = ep.leerPropiedadEntera("serviciosConsultaSatisfaccionServiciosSerializacion").orElse(0);
+
+        if(serviciosConsultaSatisfaccionServiciosSerializacion == 0)
+            return ResultadoEJB.crearErroneo(-1, null, "La serialización está desactivada");
+
         try{
             List<MatriculaPeriodosEscolares> lista = new Vector<>();
             encuestaServiciosResultados.parallelStream().forEach(encuestaServiciosResultado -> {
@@ -210,6 +228,12 @@ public class EjbSatisfaccionServiciosConsulta {
     }
 
     public ResultadoEJB<List<EncuestaServiciosResultados>> leerEncuestaServiciosResultadosSerializadas(Integer periodo){
+        final Integer serviciosConsultaSatisfaccionServiciosSerializacion = ep.leerPropiedadEntera("serviciosConsultaSatisfaccionServiciosSerializacion").orElse(0);
+
+        if(serviciosConsultaSatisfaccionServiciosSerializacion == 0)
+            return ResultadoEJB.crearErroneo(-1, null, "La serialización está desactivada");
+
+
         try{
             ResultadoEJB<List<EncuestaServiciosResultados>> deserializarMasivo = Serializador.deserializarMasivo(EncuestaServiciosResultados.class.getName(), periodo, EncuestaServiciosResultados.class);
             if(deserializarMasivo.getCorrecto()) return ResultadoEJB.crearCorrecto(deserializarMasivo.getValor(), deserializarMasivo.getMensaje());
@@ -220,6 +244,11 @@ public class EjbSatisfaccionServiciosConsulta {
     }
 
     public ResultadoEJB<List<DtoAreaAcademica>> leerDtoAreaAcademicaSerializadas(Integer periodoDeConsulta){
+        final Integer serviciosConsultaSatisfaccionServiciosSerializacion = ep.leerPropiedadEntera("serviciosConsultaSatisfaccionServiciosSerializacion").orElse(0);
+
+        if(serviciosConsultaSatisfaccionServiciosSerializacion == 0)
+            return ResultadoEJB.crearErroneo(-1, null, "La serialización está desactivada");
+
         try{
             ResultadoEJB<List<DtoAreaAcademica>> deserializarMasivo = Serializador.deserializarMasivo(DtoAreaAcademica.class.getName(), periodoDeConsulta, DtoAreaAcademica.class);
             if(deserializarMasivo.getCorrecto()) return ResultadoEJB.crearCorrecto(deserializarMasivo.getValor(), deserializarMasivo.getMensaje());

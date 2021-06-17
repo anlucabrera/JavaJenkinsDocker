@@ -1,7 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import edu.mx.utxj.pye.seut.util.dto.Dto;
-import javafx.print.Collation;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.*;
