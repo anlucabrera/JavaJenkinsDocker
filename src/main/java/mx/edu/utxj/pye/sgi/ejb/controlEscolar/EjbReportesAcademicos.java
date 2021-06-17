@@ -16,11 +16,21 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePlaneacionDocente;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionEvidenciaInstrumento;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
@@ -156,6 +166,110 @@ public class EjbReportesAcademicos {
             return ResultadoEJB.crearCorrecto(listaProgramasEducativos.stream().filter(p->p.getNivelEducativo().equals(nivel)).collect(Collectors.toList()), "Lista de programas educativos del periodo y nivel seleccionado en que existen eventos escolares registrados.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de programas educativos del periodo y nivel seleccionado en los que existen eventos escolares registrados. (EjbReportesAcademicos.getProgramasEducativosNivel)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de estudiantes del periodo y programa educativo seleccionado
+     * @param periodo
+     * @param programa
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoDatosEstudiante>> getMatricula(PeriodosEscolares periodo, AreasUniversidad programa){
+        try{
+            List<DtoDatosEstudiante> listaEstudiantes = new ArrayList<>();
+            
+            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e WHERE e.periodo=:periodo AND e.carrera=:programa", Estudiante.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programa", programa.getArea())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            estudiantes.forEach(estudiante -> {
+                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
+                PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
+                DtoDatosEstudiante dtoDatosEstudiante = new DtoDatosEstudiante(estudiante, programaEducativo, periodoEscolar);
+                listaEstudiantes.add(dtoDatosEstudiante);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaEstudiantes.stream().sorted(DtoDatosEstudiante::compareTo).collect(Collectors.toList()), "Lista de estudiantes del periodo y programa educativo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getMatricula)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de planeacion docente del periodo y programa educativo seleccionado
+     * @param periodo
+     * @param programa
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoReportePlaneacionDocente>> getPlaneacionesDocente(PeriodosEscolares periodo, AreasUniversidad programa){
+        try{
+            List<DtoReportePlaneacionDocente> listaPlaneaciones = new ArrayList<>();
+            
+            List<Integer> grados = new ArrayList<>();
+            grados.add(6);
+            grados.add(11);
+            
+            List<CargaAcademica> cargasAcademicas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.cveGrupo.periodo=:periodo AND c.cveGrupo.idPe=:programa AND c.cveGrupo.grado NOT IN :grados", CargaAcademica.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programa", programa.getArea())
+                    .setParameter("grados", grados)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            cargasAcademicas.forEach(carga -> {
+                PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, carga.getIdPlanMateria().getIdPlanMateria());
+                Personal docente = em.find(Personal.class, carga.getDocente());
+                
+                List<UnidadMateria> unidadesMaterias = em.createQuery("SELECT u FROM UnidadMateria u WHERE u.idMateria.idMateria=:materia", UnidadMateria.class)
+                    .setParameter("materia", carga.getIdPlanMateria().getIdMateria().getIdMateria())
+                    .getResultStream()
+                    .collect(Collectors.toList()); 
+                
+                List<UnidadMateriaConfiguracion> unidadesConfiguradas = em.createQuery("SELECT u FROM UnidadMateriaConfiguracion u WHERE u.carga.carga=:carga", UnidadMateriaConfiguracion.class)
+                    .setParameter("carga", carga.getCarga())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+                
+                Integer unidadesValidadas = (int) unidadesConfiguradas.stream().filter(p->p.getDirector()!=null).count();
+                
+                Integer evidenciasSer = 0, evidenciasSaber = 0, evidenciasSaberHacer = 0;
+                Boolean asignacionCompleta = true;
+                       
+                if(periodo.getPeriodo()<57){
+                    List<UnidadMateriaConfiguracionDetalle> indicadoresRegistrados = em.createQuery("SELECT u FROM UnidadMateriaConfiguracionDetalle u WHERE u.configuracion.carga.carga=:carga", UnidadMateriaConfiguracionDetalle.class)
+                            .setParameter("carga", carga.getCarga())
+                            .getResultStream()
+                            .collect(Collectors.toList());
+            
+                    evidenciasSer = (int)indicadoresRegistrados.stream().filter(p->p.getCriterio().getTipo().equals("Ser")).count();
+                    evidenciasSaber = (int)indicadoresRegistrados.stream().filter(p->p.getCriterio().getTipo().equals("Saber")).count();
+                    evidenciasSaberHacer = (int)indicadoresRegistrados.stream().filter(p->p.getCriterio().getTipo().equals("Saber hacer")).count();
+                    
+                }
+                else{
+                    List<UnidadMateriaConfiguracionEvidenciaInstrumento> evidenciasRegistradas = em.createQuery("SELECT u FROM UnidadMateriaConfiguracionEvidenciaInstrumento u WHERE u.configuracion.carga.carga=:carga", UnidadMateriaConfiguracionEvidenciaInstrumento.class)
+                            .setParameter("carga", carga.getCarga())
+                            .getResultStream()
+                            .collect(Collectors.toList());
+                    
+                    evidenciasSer = (int)evidenciasRegistradas.stream().filter(p->p.getEvidencia().getCriterio().getTipo().equals("Ser")).count();
+                    evidenciasSaber = (int)evidenciasRegistradas.stream().filter(p->p.getEvidencia().getCriterio().getTipo().equals("Saber")).count();
+                    evidenciasSaberHacer = (int)evidenciasRegistradas.stream().filter(p->p.getEvidencia().getCriterio().getTipo().equals("Saber hacer")).count();
+                }
+                
+                if(evidenciasSer ==0 || evidenciasSaber ==0 || evidenciasSaberHacer==0){
+                    asignacionCompleta = false;
+                }
+                DtoReportePlaneacionDocente dtoReportePlaneacionDocente = new DtoReportePlaneacionDocente(carga, planEstudioMateria, programa, docente, unidadesMaterias.size(), unidadesConfiguradas.size(), unidadesValidadas, evidenciasSer, evidenciasSaber, evidenciasSaberHacer, asignacionCompleta);
+                listaPlaneaciones.add(dtoReportePlaneacionDocente);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaPlaneaciones.stream().sorted(DtoReportePlaneacionDocente::compareTo).collect(Collectors.toList()), "Lista de planeaciones docente del periodo y programa seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de planeaciones docente del periodo y programa seleccionado. (EjbReportesAcademicos.getPlaneacionDocente)", e, null);
         }
     }
     

@@ -76,10 +76,10 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
      */
     @Getter @NonNull private List<Estudiante> estudiantesIrregulares;
     
-//    /**
-//     * Reporte de planeación docente
-//     */
-//    @Getter @NonNull private List<DtoReportePlaneacionDocente> planeacionDocente;
+    /**
+     * Reporte de planeación docente
+     */
+    @Getter @NonNull private List<DtoReportePlaneacionDocente> planeacionDocente;
 //    
 //      /**
 //     * Reporte de aprovechamiento escolar
@@ -94,7 +94,7 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
       /**
      * Reporte de matricula activa
      */
-    @Getter @NonNull private List<Estudiante> matricula;
+    @Getter @NonNull private List<DtoDatosEstudiante> matricula;
     
      /**
      * Reporte de deserción académica 
@@ -156,9 +156,9 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
         this.estudiantesIrregulares = estudiantesIrregulares;
     }
 
-//    public void setPlaneacionDocente(List<DtoReportePlaneacionDocente> planeacionDocente) {
-//        this.planeacionDocente = planeacionDocente;
-//    }
+    public void setPlaneacionDocente(List<DtoReportePlaneacionDocente> planeacionDocente) {
+        this.planeacionDocente = planeacionDocente;
+    }
 //
 //    public void setAprovechamientoEscolar(List<DtoReporteAprovechamientoEscolar> aprovechamientoEscolar) {
 //        this.aprovechamientoEscolar = aprovechamientoEscolar;
@@ -168,7 +168,7 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
 //        this.asignaturasReprobadas = asignaturasReprobadas;
 //    }
 
-    public void setMatricula(List<Estudiante> matricula) {
+    public void setMatricula(List<DtoDatosEstudiante> matricula) {
         this.matricula = matricula;
     }
 

@@ -24,6 +24,8 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePlaneacionDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ReportesAcademicosRolMultiple;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoValidacionesBaja;
@@ -31,7 +33,6 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbEventoEscolar;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReportesAcademicos;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroBajas;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -41,7 +42,6 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
-import org.omnifaces.util.Faces;
 
 /**
  *
@@ -185,13 +185,13 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if("Estudiantes irregulares".equals(rol.getReporte())){
 //           generarEstudiantesIrregulares();
         }else if("Planeación docente".equals(rol.getReporte())){
-//           generarPlaneacionDocente();
+           generarPlaneacionDocente();
         }else if("Aprovechamiento escolar".equals(rol.getReporte())){
 //           generarAprovechamientoEscolar();
         }else if("Asignaturas reprobadas".equals(rol.getReporte())){
 //           generarAsignaturasReprobadas();
         }else if("Matricula".equals(rol.getReporte())){
-//           generarMatricula();
+           generarMatricula();
         }else if("Deserción académica".equals(rol.getReporte())){
            generarDesercionAcademica();
         }
@@ -209,21 +209,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
     }
     
     /**
-     * Permite generar el listado de estudiantes asignados por programa educativo y asesor académico
-     */
-    public void generarDesercionAcademica(){
-        ResultadoEJB<List<DtoTramitarBajas>> res1 = ejbRegistroBajas.obtenerListaBajasPeriodo(rol.getPeriodo());
-        if(res1.getCorrecto()){
-             ResultadoEJB<List<DtoTramitarBajas>> res2 = ejbRegistroBajas.obtenerListaBajasProgramaEducativo(res1.getValor(), rol.getPrograma());
-            if(res1.getCorrecto()){
-                rol.setDesercionAcademica(res2.getValor());
-                Ajax.update("tbDesercionAcademica");
-             }else mostrarMensajeResultadoEJB(res2);
-         }else mostrarMensajeResultadoEJB(res1);
-    }
-    
-    /**
-     * Permite que al cambiar o seleccionar una generación se pueda actualizar la lista de ´niveles educativos
+     * Permite que al cambiar o seleccionar un periodo se pueda actualizar la lista de ´niveles educativos
      * @param e Evento del cambio de valor
      */
     public void cambiarPeriodo(ValueChangeEvent e){
@@ -231,24 +217,34 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             PeriodosEscolares periodo = (PeriodosEscolares)e.getNewValue();
             rol.setPeriodo(periodo);
             listaNivelesPeriodo();
+            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
+                generarReportesDireccionAcademica();
+            }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){
+                generarReportes();
+            }
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
     
     /**
-     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la información
+     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la lista de programas educativos
      * @param e Evento del cambio de valor
      */
     public void cambiarNivelEducativo(ValueChangeEvent e){
         if(e.getNewValue() instanceof  ProgramasEducativosNiveles){
             ProgramasEducativosNiveles nivel = (ProgramasEducativosNiveles)e.getNewValue();
             rol.setNivel(nivel);
+            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
+                generarReportesDireccionAcademica();
+            }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){
+                generarReportes();
+            }
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
     
     /**
-     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la información
+     * Permite que al cambiar o seleccionar un programa educativo se actualice la información
      * @param e Evento del cambio de valor
      */
     public void cambiarProgramaEducativo(ValueChangeEvent e){
@@ -304,6 +300,21 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
 //        }
 //    }
     
+    
+    /**
+     * Permite generar el listado de estudiantes con registro de baja del periodo y programa educativo seleccionado
+     */
+    public void generarDesercionAcademica(){
+        ResultadoEJB<List<DtoTramitarBajas>> res1 = ejbRegistroBajas.obtenerListaBajasPeriodo(rol.getPeriodo());
+        if(res1.getCorrecto()){
+            ResultadoEJB<List<DtoTramitarBajas>> res2 = ejbRegistroBajas.obtenerListaBajasProgramaEducativo(res1.getValor(), rol.getPrograma());
+            if(res1.getCorrecto()){
+                rol.setDesercionAcademica(res2.getValor().stream().filter(p->p.getDtoRegistroBaja().getRegistroBaja().getValidada()==1).collect(Collectors.toList()));
+                Ajax.update("tbDesercionAcademica");
+             }else mostrarMensajeResultadoEJB(res2);
+         }else mostrarMensajeResultadoEJB(res1);
+    }
+    
      /**
      * Permite verificar el status de la baja
      * @param baja Registro de la baja
@@ -312,6 +323,28 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
     public DtoValidacionesBaja consultarStatus(DtoTramitarBajas baja){
         rol.setDtoValidacionesBaja(ejbRegistroBajas.buscarValidacionesBaja(baja.getDtoRegistroBaja().getRegistroBaja()).getValor());
         return rol.getDtoValidacionesBaja();
+    }
+    
+    /**
+     * Permite generar el listado de estudiantes del periodo y programa educativo seleccionado
+     */
+    public void generarMatricula(){
+        ResultadoEJB<List<DtoDatosEstudiante>> res = ejb.getMatricula(rol.getPeriodo(), rol.getPrograma());
+        if(res.getCorrecto()){
+            rol.setMatricula(res.getValor());
+            Ajax.update("tbMatricula");
+         }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite generar reporte de planeación docente del periodo y programa educativo seleccionado
+     */
+    public void generarPlaneacionDocente(){
+        ResultadoEJB<List<DtoReportePlaneacionDocente>> res = ejb.getPlaneacionesDocente(rol.getPeriodo(), rol.getPrograma());
+        if(res.getCorrecto()){
+            rol.setPlaneacionDocente(res.getValor());
+            Ajax.update("tbPlaneacionDocente");
+         }else mostrarMensajeResultadoEJB(res);
     }
    
 }

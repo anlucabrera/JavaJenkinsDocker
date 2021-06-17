@@ -40,8 +40,8 @@
                             <div id="main-buttons" class="hidden-sm hidden-xs">
                                 <p:toolbar id="tb">
                                     <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(reportesAcademicos.rol.periodoActivo)}" />
                                         <p:spacer width="5" />
-
                                     </f:facet>
                                     <f:facet name="right">
                                         <p:commandLink
@@ -111,10 +111,129 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <c:if test="#{reportesAcademicos.rol.reporte eq 'Planeación docente'}">
+                                            <center>
+                                                 <p:remoteCommand name="actualizar" update="@form:tbPlaneacionDocente" />
+                                                 <p:dataTable id="tbPlaneacionDocente" var="planDoc" value="#{reportesAcademicos.rol.planeacionDocente}" emptyMessage="No hay planeaciones docente registradas del programa educativo en el periodo seleccionado"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="100" rowsPerPageTemplate="50,200,300,400,500,600,700,800,900,1000" 
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <f:facet name="header">
+                                                        Planeación Docente 
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column rowspan="2" headerText="Grupo" style="width: 150px;" sortBy="#{planDoc.cargaAcademica.cveGrupo.grado}° #{planDoc.cargaAcademica.cveGrupo.literal} #{planDoc.cargaAcademica.cveGrupo.idSistema.nombre}" filterBy="#{planDoc.cargaAcademica.cveGrupo.grado}° #{planDoc.cargaAcademica.cveGrupo.literal} #{planDoc.cargaAcademica.cveGrupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Clave materia" style="width: 150px;" sortBy="#{planDoc.planEstudioMateria.claveMateria}" filterBy="#{planDoc.planEstudioMateria.claveMateria}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Materia" style="width: 300px;" sortBy="#{planDoc.planEstudioMateria.idMateria.nombre}" filterBy="#{planDoc.planEstudioMateria.idMateria.nombre}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Docente" style="width: 300px;" sortBy="#{planDoc.docente.nombre}" filterBy="#{planDoc.docente.nombre}" filterMatchMode="contains"/>
+                                                            <p:column colspan="3" headerText="Configuración de materia" style="width: 300px;"/>
+                                                            <p:column colspan="3" headerText="Evidencias de evaluación" style="width: 300px;"/>
+                                                            <p:column colspan="3" headerText="Situación" style="width: 300px;"/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Unidades materia" style="width: 100px;" sortBy="#{planDoc.unidadesMateria}"/> 
+                                                            <p:column headerText="Unidades configuradas" style="width: 100px;" sortBy="#{planDoc.unidadesConfiguradas}"/>
+                                                            <p:column headerText="Unidades validadas" style="width: 100px;" sortBy="#{planDoc.unidadesValidadas}"/>
+                                                            <p:column headerText="Evidencias Ser" style="width: 100px;" sortBy="#{planDoc.evidenciasSer}"/>
+                                                            <p:column headerText="Evidencias Saber" style="width: 100px;" sortBy="#{planDoc.evidenciasSaber}"/>
+                                                            <p:column headerText="Evidencias Saber hacer" style="width: 100px;" sortBy="#{planDoc.evidenciasSaberHacer}"/>
+                                                            <p:column headerText="Configuración unidades" style="width: 100px;"/>
+                                                            <p:column headerText="Asignación evidencias" style="width: 100px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                     <p:column style="text-align: center;" groupRow="true">
+                                                        <h:outputText value="#{planDoc.cargaAcademica.cveGrupo.grado}° #{planDoc.cargaAcademica.cveGrupo.literal} #{planDoc.cargaAcademica.cveGrupo.idSistema.nombre}"/>
+                                                     </p:column>
+                                                     <p:column style="text-align: center;">
+                                                        <h:outputText value="#{planDoc.planEstudioMateria.claveMateria}"/>
+                                                     </p:column>
+                                                     <p:column>
+                                                        <h:outputText value="#{planDoc.planEstudioMateria.idMateria.nombre}"/>
+                                                     </p:column>
+                                                     <p:column>
+                                                        <h:outputText value="#{planDoc.docente.nombre}"/>
+                                                     </p:column>
+                                                     <p:column style="text-align: center;">
+                                                         <h:outputText value="#{planDoc.unidadesMateria}"/>
+                                                     </p:column>
+                                                     <p:column style="text-align: center;">
+                                                         <h:outputText value="#{planDoc.unidadesConfiguradas}"/>
+                                                     </p:column>
+                                                     <p:column style="text-align: center;">
+                                                         <h:outputText value="#{planDoc.unidadesValidadas}"/>
+                                                     </p:column>
+                                                     <p:column style="text-align: center;">
+                                                         <h:outputText value="#{planDoc.evidenciasSer}"/>
+                                                     </p:column>
+                                                     <p:column style="text-align: center;">
+                                                         <h:outputText value="#{planDoc.evidenciasSaber}"/>
+                                                     </p:column>
+                                                     <p:column style="text-align: center;">
+                                                         <h:outputText value="#{planDoc.evidenciasSaberHacer}"/>
+                                                     </p:column>
+                                                     <p:column style="text-align: center;"> 
+                                                         <h:outputText value="#{planDoc.unidadesMateria eq planDoc.unidadesConfiguradas?'Completo':'Incompleto'}" style="color: #{!planDoc.asignacionCompleta?'red':'black'}"/>
+                                                     </p:column>
+                                                     <p:column style="text-align: center;"> 
+                                                         <h:outputText value="#{planDoc.asignacionCompleta?'Completo':'Incompleto'}" style="color: #{!planDoc.asignacionCompleta?'red':'black'}"/>
+                                                     </p:column>
+                                                     <p:column style="text-align: center;"> 
+                                                         <h:outputText value="#{planDoc.unidadesConfiguradas eq planDoc.unidadesValidadas?'Completo':'Incompleto'}" style="color: #{!planDoc.asignacionCompleta?'red':'black'}"/>
+                                                     </p:column>
+                                                </p:dataTable>
+                                            </center>
+                                        </c:if>
+                                        <c:if test="#{reportesAcademicos.rol.reporte eq 'Matricula'}">
+                                            <center>
+                                                 <p:remoteCommand name="actualizar" update="@form:tbMatricula" />
+                                                 <p:dataTable id="tbMatricula" var="matricula" value="#{reportesAcademicos.rol.matricula}" emptyMessage="No hay matricula registrada del programa educativo en el periodo seleccionado"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="100" rowsPerPageTemplate="100,200,300,400,500,600,700,800,900,1000" 
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <f:facet name="header">
+                                                        Matricula 
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Matricula" style="width: 100px;" sortBy="#{matricula.estudiante.matricula}" filterBy="#{matricula.estudiante.matricula}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Nombre" style="width: 350px;" sortBy="#{matricula.estudiante.aspirante.idPersona.apellidoPaterno} #{matricula.estudiante.aspirante.idPersona.apellidoMaterno} #{matricula.estudiante.aspirante.idPersona.nombre}" filterBy="#{matricula.estudiante.aspirante.idPersona.apellidoPaterno} #{matricula.estudiante.aspirante.idPersona.apellidoMaterno} #{matricula.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Género" style="width: 100px;" sortBy="#{matricula.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" filterBy="#{matricula.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Programa educativo" style="width: 300px;"/>
+                                                            <p:column headerText="Grupo" style="width: 150px;" sortBy="#{matricula.estudiante.grupo.grado}° #{matricula.estudiante.grupo.literal} #{matricula.estudiante.grupo.idSistema.nombre}" filterBy="#{matricula.estudiante.grupo.grado}° #{matricula.estudiante.grupo.literal} #{matricula.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Situación académica" style="width: 200px;" sortBy="#{matricula.estudiante.tipoEstudiante.descripcion}" filterBy="#{matricula.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Tipo de registro" style="width: 200px;" sortBy="#{matricula.estudiante.tipoRegistro}" filterBy="#{matricula.estudiante.tipoRegistro}" filterMatchMode="contains"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{matricula.estudiante.matricula}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{matricula.estudiante.aspirante.idPersona.apellidoPaterno} #{matricula.estudiante.aspirante.idPersona.apellidoMaterno} #{matricula.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{matricula.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{matricula.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{matricula.estudiante.grupo.grado}° #{matricula.estudiante.grupo.literal} #{matricula.estudiante.grupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{matricula.estudiante.tipoEstudiante.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{matricula.estudiante.tipoRegistro}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </center>
+                                        </c:if>
                                         <c:if test="#{reportesAcademicos.rol.reporte eq 'Deserción académica'}">
                                             <center>
                                                  <p:remoteCommand name="actualizar" update="@form:tbDesercionAcademica" />
-                                                 <p:dataTable id="tbDesercionAcademica" var="desAcad" value="#{reportesAcademicos.rol.desercionAcademica}"
+                                                 <p:dataTable id="tbDesercionAcademica" var="desAcad" value="#{reportesAcademicos.rol.desercionAcademica}" emptyMessage="No hay bajas registradas del programa educativo en el periodo seleccionado"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
                                                              tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" 
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
@@ -123,60 +242,24 @@
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column rowspan="2" headerText="Opciones" style="width: 120px;"/>
-                                                            <p:column rowspan="2" headerText="Clave" style="width: 80px;"/>
-                                                            <p:column colspan="2" headerText="Validación" style="width: 400px;"/>
-                                                            <p:column rowspan="2" headerText="Fecha de Baja" style="width: 100px;"/>
-                                                            <p:column rowspan="2" headerText="Grupo" style="width: 150px;"/>
-                                                            <p:column rowspan="2" headerText="Matricula" style="width: 80px;"/> 
-                                                            <p:column rowspan="2" headerText="Nombre" style="width: 250px;"/>
-                                                            <p:column rowspan="2" headerText="Género" style="width: 80px;"/>
-                                                            <p:column rowspan="2" headerText="Situación" style="width: 120px;"/>
-                                                            <p:column rowspan="2" headerText="Tipo de Baja" style="width: 120px;"/>
-                                                            <p:column rowspan="2" headerText="Causa Baja" style="width: 150px;"/>
-                                                            <p:column rowspan="2" headerText="Acciones tomadas por el tutor" style="width: 300px;"/>
-                                                            <p:column rowspan="2" headerText="Dictamen Psicopedagogía" style="width: 300px;"/>
-                                                            <p:column rowspan="2" headerText="Personal registró" style="width: 300px;"/>
-                                                        </p:row>
-                                                        <p:row>
-                                                            <p:column headerText="Baja" style="width: 300px;"/>
-                                                            <p:column headerText="Psicopedagogía" style="width: 100px;"/>
+                                                            <p:column headerText="Clave" style="width: 100px;"/>
+                                                            <p:column headerText="Fecha de Baja" style="width: 100px;" sortBy="#{desAcad.dtoRegistroBaja.registroBaja.fechaBaja}" filterBy="#{desAcad.dtoRegistroBaja.registroBaja.fechaBaja}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Matricula" style="width: 100px;" sortBy="#{desAcad.dtoEstudiante.estudiante.matricula}" filterBy="#{desAcad.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Nombre" style="width: 350px;" sortBy="#{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Género" style="width: 100px;" sortBy="#{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" filterBy="#{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Grupo" style="width: 150px;" sortBy="#{desAcad.dtoEstudiante.estudiante.grupo.grado}° #{desAcad.dtoEstudiante.estudiante.grupo.literal} #{desAcad.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterBy="#{desAcad.dtoEstudiante.estudiante.grupo.grado}° #{desAcad.dtoEstudiante.estudiante.grupo.literal} #{desAcad.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Tipo de Baja" style="width: 150px;" sortBy="#{desAcad.dtoRegistroBaja.tipoBaja.descripcion}" filterBy="#{desAcad.dtoRegistroBaja.tipoBaja.descripcion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Causa Baja" style="width: 150px;" sortBy="#{desAcad.dtoRegistroBaja.causaBaja.causa}" filterBy="#{desAcad.dtoRegistroBaja.causaBaja.causa}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Personal registró" style="width: 300px;" sortBy="#{desAcad.dtoRegistroBaja.personalRegistro.nombre} - #{desAcad.dtoRegistroBaja.personalRegistro.clave}" filterBy="#{desAcad.dtoRegistroBaja.personalRegistro.nombre} - #{desAcad.dtoRegistroBaja.personalRegistro.clave}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Validación" style="width: 300px;" sortBy="#{statusBaja.fechaValidacionBaja} - #{statusBaja.areaValidacionBaja}" filterBy="#{statusBaja.fechaValidacionBaja} - #{statusBaja.areaValidacionBaja}" filterMatchMode="contains"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <c:set var="statusBaja" value="#{reportesAcademicos.consultarStatus(desAcad)}" />
-                                                    <c:set var="baja" value="#{desAcad}"/>
-                                                    <c:set var="registro" value="#{desAcad.dtoRegistroBaja.registroBaja}"/>
-                                                    <p:column>
-                                                        <center>
-                                                        <div class="btn-group">
-<!--                                                            <p:commandButton actionListener="# {reportesAcademicos.buscarMateriasReprobadas(registro)}"
-                                                            class="btn btn-sm btn-warning" 
-                                                            icon="fa fa-search"
-                                                            title="# {baja.dtoRegistroBaja.causaBaja.cveCausa ne 3?'Sin materias reprobadas':'Consultar materias reprobadas'}" disabled="# {baja.dtoRegistroBaja.causaBaja.cveCausa ne 3}"/>
-                                                            <p:commandButton actionListener="# {reporteBajasServiciosEscolares.generarFormatoBaja(registro)}" action="/controlEscolar/formatos/formatoBaja?faces-redirect=true" 
-                                                                                  class="btn btn-sm btn-primary" 
-                                                                                  icon="fa fa-file-text-o"
-                                                                                  title="Generar Formato de Baja"  disabled="# {baja.dtoRegistroBaja.registroBaja.idBajas eq null}"/>
-                                                            <p:commandButton title="Eliminar baja" class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="# {reporteBajasServiciosEscolares.eliminarRegistroBaja(registro)}">
-                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
-                                                            </p:commandButton>-->
-                                                        </div>
-                                                        </center>
-                                                    </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{desAcad.dtoRegistroBaja.registroBaja.idBajas}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{statusBaja.fechaValidacionBaja} - #{statusBaja.areaValidacionBaja}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                        <h:outputText value="#{statusBaja.fechaValidacionPsic}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
                                                         <h:outputText value="#{desAcad.dtoRegistroBaja.registroBaja.fechaBaja}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                                    </p:column>
-                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{desAcad.dtoEstudiante.estudiante.grupo.grado}° #{desAcad.dtoEstudiante.estudiante.grupo.literal} #{desAcad.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{desAcad.dtoEstudiante.estudiante.matricula}"/>
@@ -187,8 +270,8 @@
                                                     <p:column style="text-align: center;"> 
                                                         <h:outputText value="#{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" />
                                                     </p:column>
-                                                    <p:column style="text-align: center;"> 
-                                                        <h:outputText value="#{desAcad.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" />
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{desAcad.dtoEstudiante.estudiante.grupo.grado}° #{desAcad.dtoEstudiante.estudiante.grupo.literal} #{desAcad.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{desAcad.dtoRegistroBaja.tipoBaja.descripcion}"/>
@@ -196,20 +279,13 @@
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{desAcad.dtoRegistroBaja.causaBaja.causa}"/>
                                                     </p:column>
-                                                    <p:column>
-                                                         <h:outputText value="#{desAcad.dtoRegistroBaja.registroBaja.accionesTutor}"/>
-                                                    </p:column>
-                                                    <p:column>
-                                                        <h:outputText value="#{desAcad.dtoRegistroBaja.registroBaja.dictamenPsicopedagogia}"/>
-                                                    </p:column>
                                                     <p:column style="text-align: center;">
                                                          <h:outputText value="#{desAcad.dtoRegistroBaja.personalRegistro.nombre} - #{desAcad.dtoRegistroBaja.personalRegistro.clave}"/>
                                                     </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{statusBaja.fechaValidacionBaja} - #{statusBaja.areaValidacionBaja}"/>
+                                                    </p:column>
                                                 </p:dataTable>
-                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                                </p:confirmDialog> 
                                             </center>
                                         </c:if>
                                     </div>
