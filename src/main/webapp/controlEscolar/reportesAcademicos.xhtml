@@ -174,13 +174,13 @@
                                                          <h:outputText value="#{planDoc.evidenciasSaberHacer}"/>
                                                      </p:column>
                                                      <p:column style="text-align: center;"> 
-                                                         <h:outputText value="#{planDoc.unidadesMateria eq planDoc.unidadesConfiguradas?'Completo':'Incompleto'}" style="color: #{!planDoc.asignacionCompleta?'red':'black'}"/>
+                                                         <h:outputText value="#{planDoc.unidadesMateria eq planDoc.unidadesConfiguradas?'Completo':'Incompleto'}" style="color: #{planDoc.unidadesMateria eq planDoc.unidadesConfiguradas?'black':'red'}"/>
                                                      </p:column>
                                                      <p:column style="text-align: center;"> 
                                                          <h:outputText value="#{planDoc.asignacionCompleta?'Completo':'Incompleto'}" style="color: #{!planDoc.asignacionCompleta?'red':'black'}"/>
                                                      </p:column>
                                                      <p:column style="text-align: center;"> 
-                                                         <h:outputText value="#{planDoc.unidadesConfiguradas eq planDoc.unidadesValidadas?'Completo':'Incompleto'}" style="color: #{!planDoc.asignacionCompleta?'red':'black'}"/>
+                                                         <h:outputText value="#{planDoc.unidadesConfiguradas eq planDoc.unidadesValidadas?'Completo':'Incompleto'}" style="color: #{planDoc.unidadesConfiguradas eq planDoc.unidadesValidadas?'black':'red'}"/>
                                                      </p:column>
                                                 </p:dataTable>
                                             </center>
