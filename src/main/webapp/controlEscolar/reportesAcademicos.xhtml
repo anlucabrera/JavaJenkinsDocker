@@ -24,7 +24,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Reportes de estadía
+        Reportes académicos
     </ui:define>
 
     <ui:define name="body">
@@ -111,6 +111,59 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <c:if test="#{reportesAcademicos.rol.reporte eq 'Aprovechamiento escolar'}">
+                                            <center>
+                                                 <p:remoteCommand name="actualizar" update="@form:tbAprovechamientoEscolar" />
+                                                 <p:dataTable id="tbAprovechamientoEscolar" var="aprovEsc" value="#{reportesAcademicos.rol.aprovechamientoEscolar}" emptyMessage="No hay reporte de aprovechamiento escolar del programa educativo en el periodo seleccionado"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="100" rowsPerPageTemplate="100,200,300,400,500,600,700,800,900,1000" 
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <f:facet name="header">
+                                                        Aprovechamiento escolar 
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Matricula" style="width: 100px;" sortBy="#{aprovEsc.estudiante.matricula}" filterBy="#{aprovEsc.estudiante.matricula}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Nombre" style="width: 350px;" sortBy="#{aprovEsc.estudiante.aspirante.idPersona.apellidoPaterno} #{aprovEsc.estudiante.aspirante.idPersona.apellidoMaterno} #{aprovEsc.estudiante.aspirante.idPersona.nombre}" filterBy="#{matricula.estudiante.aspirante.idPersona.apellidoPaterno} #{matricula.estudiante.aspirante.idPersona.apellidoMaterno} #{matricula.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Género" style="width: 100px;" sortBy="#{aprovEsc.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" filterBy="#{aprovEsc.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Programa educativo" style="width: 300px;"/>
+                                                            <p:column headerText="Situación académica" style="width: 200px;" sortBy="#{aprovEsc.estudiante.tipoEstudiante.descripcion}" filterBy="#{aprovEsc.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Tipo de registro" style="width: 200px;" sortBy="#{aprovEsc.estudiante.tipoRegistro}" filterBy="#{aprovEsc.estudiante.tipoRegistro}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Discapacidad" style="width: 200px;" sortBy="#{aprovEsc.datosMedicos.cveDiscapacidad.nombre}" filterBy="#{aprovEsc.datosMedicos.cveDiscapacidad.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Lengua indígena" style="width: 200px;" sortBy="#{aprovEsc.lenguaIndigena}" filterBy="#{aprovEsc.lenguaIndigena}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Promedio cuatrimestral" style="width: 200px;" sortBy="#{aprovEsc.promedio}" filterBy="#{aprovEsc.promedio}" filterMatchMode="contains"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{aprovEsc.estudiante.matricula}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{aprovEsc.estudiante.aspirante.idPersona.apellidoPaterno} #{aprovEsc.estudiante.aspirante.idPersona.apellidoMaterno} #{aprovEsc.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{aprovEsc.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" />
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{aprovEsc.programa.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{aprovEsc.estudiante.tipoEstudiante.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{aprovEsc.estudiante.tipoRegistro}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{aprovEsc.datosMedicos.cveDiscapacidad.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{aprovEsc.lenguaIndigena}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{aprovEsc.promedio}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </center>
+                                        </c:if>
                                         <c:if test="#{reportesAcademicos.rol.reporte eq 'Planeación docente'}">
                                             <center>
                                                  <p:remoteCommand name="actualizar" update="@form:tbPlaneacionDocente" />

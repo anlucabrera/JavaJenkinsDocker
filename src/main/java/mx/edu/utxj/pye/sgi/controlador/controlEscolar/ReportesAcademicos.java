@@ -24,6 +24,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAprovechamientoEscolar;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePlaneacionDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ReportesAcademicosRolMultiple;
@@ -187,7 +188,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         }else if("Planeación docente".equals(rol.getReporte())){
            generarPlaneacionDocente();
         }else if("Aprovechamiento escolar".equals(rol.getReporte())){
-//           generarAprovechamientoEscolar();
+           generarAprovechamientoEscolar();
         }else if("Asignaturas reprobadas".equals(rol.getReporte())){
 //           generarAsignaturasReprobadas();
         }else if("Matricula".equals(rol.getReporte())){
@@ -344,6 +345,17 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(res.getCorrecto()){
             rol.setPlaneacionDocente(res.getValor());
             Ajax.update("tbPlaneacionDocente");
+         }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite generar aprovechamiento escolar por estudiante del periodo y programa educativo seleccionado
+     */
+    public void generarAprovechamientoEscolar(){
+        ResultadoEJB<List<DtoAprovechamientoEscolar>> res = ejb.getAprovechamientoEscolar(rol.getPeriodo(), rol.getPrograma());
+        if(res.getCorrecto()){
+            rol.setAprovechamientoEscolar(res.getValor());
+            Ajax.update("tbAprovechamientoEscolar");
          }else mostrarMensajeResultadoEJB(res);
     }
    

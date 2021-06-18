@@ -16,13 +16,18 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAprovechamientoEscolar;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePlaneacionDocente;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosMedicos;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
@@ -270,6 +275,92 @@ public class EjbReportesAcademicos {
             return ResultadoEJB.crearCorrecto(listaPlaneaciones.stream().sorted(DtoReportePlaneacionDocente::compareTo).collect(Collectors.toList()), "Lista de planeaciones docente del periodo y programa seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de planeaciones docente del periodo y programa seleccionado. (EjbReportesAcademicos.getPlaneacionDocente)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de aprovechamiento escolar del periodo y programa educativo seleccionado
+     * @param periodo
+     * @param programa
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoAprovechamientoEscolar>> getAprovechamientoEscolar(PeriodosEscolares periodo, AreasUniversidad programa){
+        try{
+            List<DtoAprovechamientoEscolar> listaAprovechamiento = new ArrayList<>();
+            
+            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e WHERE e.periodo=:periodo AND e.carrera=:programa", Estudiante.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programa", programa.getArea())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            estudiantes.forEach(estudiante -> {
+                DatosMedicos datosMedicos = em.find(DatosMedicos.class, estudiante.getAspirante().getIdPersona().getIdpersona());
+                EncuestaAspirante encuestaAspirante = em.find(EncuestaAspirante.class, estudiante.getAspirante().getIdAspirante());
+                
+                String lenguaIndigena ="No aplica";
+                
+                if(encuestaAspirante.getR1Lenguaindigena().equals("Sí")){
+                    lenguaIndigena = encuestaAspirante.getR2tipoLenguaIndigena().getNombre();
+                }
+                
+                Double promedio = getObtenerPromedioEstudiante(estudiante).getValor();
+                
+                DtoAprovechamientoEscolar dtoAprovechamientoEscolar = new DtoAprovechamientoEscolar(estudiante,programa,datosMedicos,lenguaIndigena, promedio);
+                listaAprovechamiento.add(dtoAprovechamientoEscolar);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaAprovechamiento.stream().sorted(DtoAprovechamientoEscolar::compareTo).collect(Collectors.toList()), "Lista de aprovechamiento escolar del periodo y programa educativo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de aprovechamiento escolar del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getAprovechamientoEscolar)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Double> getObtenerPromedioEstudiante(Estudiante estudiante){
+        try{
+            Double promedio=0.0;
+            
+            List<Double> listaCalificaciones = new ArrayList<>();
+            
+            List<CargaAcademica> cargasAcademicas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.cveGrupo.idGrupo=:grupo ", CargaAcademica.class)
+                    .setParameter("grupo", estudiante.getGrupo().getIdGrupo())
+                    .getResultStream()
+                    .collect(Collectors.toList()); 
+            
+            cargasAcademicas.forEach(carga -> {                
+                Double calificacion = 0.0;
+                
+                CalificacionPromedio calificacionPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionPromedio.class)
+                    .setParameter("carga", carga.getCarga())
+                    .setParameter("estudiante", estudiante.getIdEstudiante())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null); 
+                
+                if(calificacionPromedio!=null){
+                    calificacion = calificacionPromedio.getValor();
+                    if(calificacion<8){
+                        CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
+                            .setParameter("carga", carga.getCarga())
+                            .setParameter("estudiante", estudiante.getIdEstudiante())
+                            .getResultStream()
+                            .findFirst()
+                            .orElse(null); 
+                        if(calificacionNivelacion!=null){ calificacion = calificacionNivelacion.getValor(); }
+                    }
+                }
+                listaCalificaciones.add(calificacion);
+            });
+            
+            if(cargasAcademicas.size() == listaCalificaciones.size())
+            {
+               promedio = listaCalificaciones.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
+            }
+            
+            
+            return ResultadoEJB.crearCorrecto(promedio, "Promedio del estudiante en el periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el promedio del estudiante en el periodo seleccionado. (EjbReportesAcademicos.getObtenerPromedioEstudiante)", e, null);
         }
     }
     

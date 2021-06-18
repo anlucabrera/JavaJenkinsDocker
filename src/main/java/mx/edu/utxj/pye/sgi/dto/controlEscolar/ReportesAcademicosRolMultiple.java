@@ -80,11 +80,11 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
      * Reporte de planeación docente
      */
     @Getter @NonNull private List<DtoReportePlaneacionDocente> planeacionDocente;
-//    
-//      /**
-//     * Reporte de aprovechamiento escolar
-//     */
-//    @Getter @NonNull private List<DtoReporteAprovechamientoEscolar> aprovechamientoEscolar;
+    
+      /**
+     * Reporte de aprovechamiento escolar
+     */
+    @Getter @NonNull private List<DtoAprovechamientoEscolar> aprovechamientoEscolar;
 //    
 //      /**
 //     * Reporte de asignaturas reprobadas
@@ -159,10 +159,10 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
     public void setPlaneacionDocente(List<DtoReportePlaneacionDocente> planeacionDocente) {
         this.planeacionDocente = planeacionDocente;
     }
-//
-//    public void setAprovechamientoEscolar(List<DtoReporteAprovechamientoEscolar> aprovechamientoEscolar) {
-//        this.aprovechamientoEscolar = aprovechamientoEscolar;
-//    }
+
+    public void setAprovechamientoEscolar(List<DtoAprovechamientoEscolar> aprovechamientoEscolar) {
+        this.aprovechamientoEscolar = aprovechamientoEscolar;
+    }
 //
 //    public void setAsignaturasReprobadas(List<DtoReporteAsignaturasReprobadas> asignaturasReprobadas) {
 //        this.asignaturasReprobadas = asignaturasReprobadas;
