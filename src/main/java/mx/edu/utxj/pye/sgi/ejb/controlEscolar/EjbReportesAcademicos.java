@@ -288,25 +288,28 @@ public class EjbReportesAcademicos {
         try{
             List<DtoAprovechamientoEscolar> listaAprovechamiento = new ArrayList<>();
             
-            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e WHERE e.periodo=:periodo AND e.carrera=:programa", Estudiante.class)
+            List<String> tiposRegistro = new ArrayList<>(); tiposRegistro.add("Regularización de calificaciones por reincoporación");
+            
+            List<Integer> tiposEstudiante = new ArrayList<>(); tiposEstudiante.add(2); tiposEstudiante.add(3); tiposEstudiante.add(4);
+            
+            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);;
+            
+            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e WHERE e.periodo=:periodo AND e.carrera=:programa AND e.grupo.grado NOT IN :grados AND e.tipoEstudiante.idTipoEstudiante NOT IN :tiposEstudiante AND e.tipoRegistro NOT IN :tiposRegistro", Estudiante.class)
                     .setParameter("periodo", periodo.getPeriodo())
                     .setParameter("programa", programa.getArea())
+                    .setParameter("grados", grados)
+                    .setParameter("tiposEstudiante", tiposEstudiante)
+                    .setParameter("tiposRegistro", tiposRegistro)
                     .getResultStream()
                     .collect(Collectors.toList());
             
             estudiantes.forEach(estudiante -> {
-                DatosMedicos datosMedicos = em.find(DatosMedicos.class, estudiante.getAspirante().getIdPersona().getIdpersona());
-                EncuestaAspirante encuestaAspirante = em.find(EncuestaAspirante.class, estudiante.getAspirante().getIdAspirante());
+                String discapacidad = getTipoDiscapacidad(estudiante).getValor();
+                String lenguaIndigena = getLenguaIndigena(estudiante).getValor();
                 
-                String lenguaIndigena ="No aplica";
+                String promedio = String.format("%.3f",getObtenerPromedioEstudiante(estudiante).getValor());
                 
-                if(encuestaAspirante.getR1Lenguaindigena().equals("Sí")){
-                    lenguaIndigena = encuestaAspirante.getR2tipoLenguaIndigena().getNombre();
-                }
-                
-                Double promedio = getObtenerPromedioEstudiante(estudiante).getValor();
-                
-                DtoAprovechamientoEscolar dtoAprovechamientoEscolar = new DtoAprovechamientoEscolar(estudiante,programa,datosMedicos,lenguaIndigena, promedio);
+                DtoAprovechamientoEscolar dtoAprovechamientoEscolar = new DtoAprovechamientoEscolar(estudiante,programa,discapacidad,lenguaIndigena, promedio);
                 listaAprovechamiento.add(dtoAprovechamientoEscolar);
             });
             
@@ -316,9 +319,15 @@ public class EjbReportesAcademicos {
         }
     }
     
-    public ResultadoEJB<Double> getObtenerPromedioEstudiante(Estudiante estudiante){
+     /**
+     * Permite obtener el promedio del cuatrimestre del estudiante seleccionado
+     * @param estudiante
+     * @return Resultado del proceso
+     */
+     public ResultadoEJB<Double> getObtenerPromedioEstudiante(Estudiante estudiante){
         try{
-            Double promedio=0.0;
+            
+           Double promedio=0.0;
             
             List<Double> listaCalificaciones = new ArrayList<>();
             
@@ -327,7 +336,7 @@ public class EjbReportesAcademicos {
                     .getResultStream()
                     .collect(Collectors.toList()); 
             
-            cargasAcademicas.forEach(carga -> {                
+            cargasAcademicas.forEach(carga -> { 
                 Double calificacion = 0.0;
                 
                 CalificacionPromedio calificacionPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionPromedio.class)
@@ -338,8 +347,7 @@ public class EjbReportesAcademicos {
                     .orElse(null); 
                 
                 if(calificacionPromedio!=null){
-                    calificacion = calificacionPromedio.getValor();
-                    if(calificacion<8){
+                    if(calificacionPromedio.getValor()<8.0){
                         CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
                             .setParameter("carga", carga.getCarga())
                             .setParameter("estudiante", estudiante.getIdEstudiante())
@@ -347,9 +355,11 @@ public class EjbReportesAcademicos {
                             .findFirst()
                             .orElse(null); 
                         if(calificacionNivelacion!=null){ calificacion = calificacionNivelacion.getValor(); }
+                    }else{
+                        calificacion = calificacionPromedio.getValor();
                     }
                 }
-                listaCalificaciones.add(calificacion);
+               listaCalificaciones.add(calificacion);
             });
             
             if(cargasAcademicas.size() == listaCalificaciones.size())
@@ -357,10 +367,63 @@ public class EjbReportesAcademicos {
                promedio = listaCalificaciones.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
             }
             
-            
             return ResultadoEJB.crearCorrecto(promedio, "Promedio del estudiante en el periodo seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener el promedio del estudiante en el periodo seleccionado. (EjbReportesAcademicos.getObtenerPromedioEstudiante)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener tipo de discapacidad registrada en datos médicos por el estudiante
+     * @param estudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<String> getTipoDiscapacidad(Estudiante estudiante){
+        try{
+            String discapacidad = "No aplica";
+            
+            DatosMedicos datosMedicos = em.createQuery("SELECT d FROM DatosMedicos d WHERE d.persona.idpersona=:persona", DatosMedicos.class)
+                    .setParameter("persona",estudiante.getAspirante().getIdPersona().getIdpersona())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            
+            if(datosMedicos!=null){
+                discapacidad = datosMedicos.getCveDiscapacidad().getNombre();
+            }
+            
+            return ResultadoEJB.crearCorrecto(discapacidad, "Tipo de discapacidad registrada del estudiante.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener tipo de discapacidad registrada por el estudiante. (EjbReportesAcademicos.getTipoDiscapacidad)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener tipo de lengua indígena registrada por el estudiante
+     * @param estudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<String> getLenguaIndigena(Estudiante estudiante){
+        try{
+            String lenguaIndigena = "No aplica";
+            
+            EncuestaAspirante encuestaAspirante = em.createQuery("SELECT e FROM EncuestaAspirante e WHERE e.aspirante.idAspirante=:aspirante", EncuestaAspirante.class)
+                    .setParameter("aspirante", estudiante.getAspirante().getIdAspirante())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            
+            if(encuestaAspirante!=null){
+                if (encuestaAspirante.getR1Lenguaindigena().equals("Sí") && encuestaAspirante.getR2tipoLenguaIndigena() != null) {
+                    lenguaIndigena = encuestaAspirante.getR2tipoLenguaIndigena().getNombre();
+                } else if (encuestaAspirante.getR1Lenguaindigena().equals("Sí") && encuestaAspirante.getR2tipoLenguaIndigena() == null) {
+                    lenguaIndigena = "No indicó lengua que habla";
+                }
+            }
+            
+            return ResultadoEJB.crearCorrecto(lenguaIndigena, "Lengua indígena registrada por el estudiante.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lengua indígena registrada por el estudiante. (EjbReportesAcademicos.getLenguaIndigena)", e, null);
         }
     }
     

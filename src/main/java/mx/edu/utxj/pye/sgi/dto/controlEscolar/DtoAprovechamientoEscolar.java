@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosMedicos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 /**
@@ -23,9 +22,9 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 public class DtoAprovechamientoEscolar implements Serializable, Comparable<DtoAprovechamientoEscolar> {
     @Getter @Setter @NonNull Estudiante estudiante;
     @Getter @Setter @NonNull AreasUniversidad programa;
-    @Getter @Setter @NonNull DatosMedicos datosMedicos;
+    @Getter @Setter @NonNull String discapacidad;
     @Getter @Setter @NonNull String lenguaIndigena;
-    @Getter @Setter @NonNull Double promedio;
+    @Getter @Setter @NonNull String promedio;
     
     @Override
     public int compareTo(DtoAprovechamientoEscolar o) {
