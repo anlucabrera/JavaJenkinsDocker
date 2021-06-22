@@ -18,6 +18,7 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAprovechamientoEscolar;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteIrregular;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePlaneacionDocente;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -427,4 +428,70 @@ public class EjbReportesAcademicos {
         }
     }
     
+     /**
+     * Permite obtener la lista de aprovechamiento escolar del periodo y programa educativo seleccionado
+     * @param periodo
+     * @param programa
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoEstudianteIrregular>> getEstudiantesIrregulares(PeriodosEscolares periodo, AreasUniversidad programa){
+        try{
+            
+            List<DtoEstudianteIrregular> listaEstudiantesIrregulares = new ArrayList<>();
+             
+            List<CalificacionPromedio> calificacionesPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.estudiante.periodo=:periodo AND c.estudiante.carrera=:programa AND c.valor<:valor", CalificacionPromedio.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programa", programa.getArea())
+                    .setParameter("valor", (double)8)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+
+            calificacionesPromedio.forEach(promedio -> {
+                if(promedio.getCargaAcademica().getCveGrupo().getIdGrupo().equals(promedio.getEstudiante().getGrupo().getIdGrupo())){
+                Double calificacion = 0.0;
+                
+                CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
+                        .setParameter("carga", promedio.getCargaAcademica().getCarga())
+                        .setParameter("estudiante", promedio.getEstudiante().getIdEstudiante())
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
+                
+                if (calificacionNivelacion != null && calificacionNivelacion.getValor()<8.0) {
+                    if(calificacionNivelacion.getValor()>=calificacion){
+                        calificacion = calificacionNivelacion.getValor();
+                    }else{
+                        calificacion = promedio.getValor();
+                    }
+                    
+                    if (promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante() == 1 || promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==5) {
+
+                        PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, promedio.getCargaAcademica().getIdPlanMateria().getIdPlanMateria());
+                        Personal docente = em.find(Personal.class, promedio.getCargaAcademica().getDocente());
+                        Personal tutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
+                        DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, planEstudioMateria, docente, String.format("%.3f", calificacion), tutor);
+                        listaEstudiantesIrregulares.add(dtoEstudianteIrregular);
+                    }
+                }else if (calificacionNivelacion == null){
+                    calificacion = promedio.getValor();
+                    if (promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante() == 1 || promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==5) {
+
+                        PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, promedio.getCargaAcademica().getIdPlanMateria().getIdPlanMateria());
+                        Personal docente = em.find(Personal.class, promedio.getCargaAcademica().getDocente());
+                        Personal tutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
+                        DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, planEstudioMateria, docente, String.format("%.3f", calificacion), tutor);
+                        listaEstudiantesIrregulares.add(dtoEstudianteIrregular);
+                    }
+                }
+                }
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaEstudiantesIrregulares.stream().sorted(DtoEstudianteIrregular::compareTo).collect(Collectors.toList()), "Lista de estudiantes irregulares del periodo y programa educativo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes irregulares del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getEstudiantesIrregulares)", e, null);
+        }
+    }
+    
+    
+      
 }

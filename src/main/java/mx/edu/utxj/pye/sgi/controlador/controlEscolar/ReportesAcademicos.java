@@ -26,6 +26,7 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAprovechamientoEscolar;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteIrregular;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePlaneacionDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ReportesAcademicosRolMultiple;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
@@ -43,6 +44,7 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -184,7 +186,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
      */
     public void generarReportes(){
         if("Estudiantes irregulares".equals(rol.getReporte())){
-//           generarEstudiantesIrregulares();
+           generarEstudiantesIrregulares();
         }else if("Planeación docente".equals(rol.getReporte())){
            generarPlaneacionDocente();
         }else if("Aprovechamiento escolar".equals(rol.getReporte())){
@@ -357,6 +359,20 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             rol.setAprovechamientoEscolar(res.getValor());
             Ajax.update("tbAprovechamientoEscolar");
          }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite generar listado de estudiantes irregulares del periodo y programa educativo seleccionado
+     */
+    public void generarEstudiantesIrregulares(){
+        ResultadoEJB<List<DtoEstudianteIrregular>> res = ejb.getEstudiantesIrregulares(rol.getPeriodo(), rol.getPrograma());
+        if(res.getCorrecto()){
+            rol.setEstudiantesIrregulares(res.getValor());
+            Ajax.update("tbEstudiantesIrregulares");
+            if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
+                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte no es el definitivo, deberá de esperar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
+            }
+        }else mostrarMensajeResultadoEJB(res);
     }
    
 }

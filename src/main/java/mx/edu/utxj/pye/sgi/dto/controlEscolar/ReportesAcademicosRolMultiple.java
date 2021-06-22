@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -74,7 +73,7 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
      /**
      * Reporte de estudiantes irregulares
      */
-    @Getter @NonNull private List<Estudiante> estudiantesIrregulares;
+    @Getter @NonNull private List<DtoEstudianteIrregular> estudiantesIrregulares;
     
     /**
      * Reporte de planeación docente
@@ -152,7 +151,7 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
         this.reporte = reporte;
     }
 
-    public void setEstudiantesIrregulares(List<Estudiante> estudiantesIrregulares) {
+    public void setEstudiantesIrregulares(List<DtoEstudianteIrregular> estudiantesIrregulares) {
         this.estudiantesIrregulares = estudiantesIrregulares;
     }
 

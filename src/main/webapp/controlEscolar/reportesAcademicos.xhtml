@@ -111,6 +111,64 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                         <c:if test="#{reportesAcademicos.rol.reporte eq 'Estudiantes irregulares'}">
+                                            <center>
+                                                 <p:remoteCommand name="actualizar" update="@form:tbEstudiantesIrregulares" />
+                                                 <p:dataTable id="tbEstudiantesIrregulares" var="estIrreg" value="#{reportesAcademicos.rol.estudiantesIrregulares}" emptyMessage="No hay estudiantes irregulares del programa educativo en el periodo seleccionado"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="100" rowsPerPageTemplate="100,200,300,400,500,600,700,800,900,1000" 
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <f:facet name="header">
+                                                        Estudiantes irregulares #{reportesAcademicos.rol.programa.nombre} <br/>
+                                                        #{fn:length(reportesAcademicos.rol.estudiantesIrregulares)} resultados obtenidos.
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Matricula" style="width: 100px;" sortBy="#{estIrreg.estudiante.matricula}" filterBy="#{estIrreg.estudiante.matricula}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Nombre" style="width: 200px;" sortBy="#{estIrreg.estudiante.aspirante.idPersona.apellidoPaterno} #{estIrreg.estudiante.aspirante.idPersona.apellidoMaterno} #{estIrreg.estudiante.aspirante.idPersona.nombre}" filterBy="#{estIrreg.estudiante.aspirante.idPersona.apellidoPaterno} #{estIrreg.estudiante.aspirante.idPersona.apellidoMaterno} #{estIrreg.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Grupo" style="width: 150px;" sortBy="#{estIrreg.estudiante.grupo.grado}° #{estIrreg.estudiante.grupo.literal} #{estIrreg.estudiante.grupo.idSistema.nombre}" filterBy="#{estIrreg.estudiante.grupo.grado}° #{estIrreg.estudiante.grupo.literal} #{estIrreg.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Situación académica" style="width: 180px;" sortBy="#{estIrreg.estudiante.tipoEstudiante.descripcion}" filterBy="#{estIrreg.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Tipo de registro" style="width: 200px;" sortBy="#{estIrreg.estudiante.tipoRegistro}" filterBy="#{aprovEsc.estudiante.tipoRegistro}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Clave materia" style="width: 200px;" sortBy="#{estIrreg.planEstudioMateria.claveMateria}" filterBy="#{estIrreg.planEstudioMateria.claveMateria}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Materia" style="width: 200px;" sortBy="#{estIrreg.planEstudioMateria.idMateria.nombre}" filterBy="#{estIrreg.planEstudioMateria.idMateria.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Pesonal docente" style="width: 200px;" sortBy="#{estIrreg.docente.nombre}" filterBy="#{estIrreg.docente.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Calificación" style="width: 100px;" sortBy="#{estIrreg.calificacion}" filterBy="#{estIrreg.calificacion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Tutor" style="width: 200px;" sortBy="#{estIrreg.tutor.nombre}" filterBy="#{estIrreg.tutor.nombre}" filterMatchMode="contains"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                     <p:column style="text-align: center;" groupRow="true">
+                                                        <h:outputText value="#{estIrreg.estudiante.matricula}"/>
+                                                    </p:column>
+                                                    <p:column groupRow="true">
+                                                        <h:outputText value="#{estIrreg.estudiante.aspirante.idPersona.apellidoPaterno} #{estIrreg.estudiante.aspirante.idPersona.apellidoMaterno} #{estIrreg.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{estIrreg.estudiante.grupo.grado}° #{estIrreg.estudiante.grupo.literal} #{estIrreg.estudiante.grupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{estIrreg.estudiante.tipoEstudiante.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{estIrreg.estudiante.tipoRegistro}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{estIrreg.planEstudioMateria.claveMateria}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{estIrreg.planEstudioMateria.idMateria.nombre}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{estIrreg.docente.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{estIrreg.calificacion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{estIrreg.tutor.nombre}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </center>
+                                        </c:if>
                                         <c:if test="#{reportesAcademicos.rol.reporte eq 'Aprovechamiento escolar'}">
                                             <center>
                                                  <p:remoteCommand name="actualizar" update="@form:tbAprovechamientoEscolar" />

@@ -122,7 +122,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
-        String valor = "registro evidencias e instrumetnos evaluacion materia";
+        String valor = "registro evidencias e instrumentos evaluacion materia";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
     }
