@@ -216,7 +216,7 @@ public class ServicioCarga implements EjbCarga {
      public static String genCarpetaRelativa(String alineacionMaterias){
         return carpetaRaiz + alineacionMaterias + File.separator ;
     }
-        
+            
     @Override
     public String subirExcelRegistro(String ejercicio, String area, String eje, String registro, Part file) {
         try {
@@ -554,7 +554,7 @@ public class ServicioCarga implements EjbCarga {
     
     @Override
     public String subirPlantillaAlineacionMaterias(String plan, String programa, Part file) {
-        try {
+       try {
             byte[] content = Utils.toByteArray(file.getInputStream());
             String rutaRelativa = genCarpetaRelativa(alineacionMaterias, programa, plan);
             addCarpetaRelativa(rutaRelativa);
@@ -577,5 +577,12 @@ public class ServicioCarga implements EjbCarga {
             Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);
             return "Error: No se pudo leer el archivo";
         }
+    }
+    
+    @Override
+    public String crearDirectorioReporteAlineacionMaterias(String plan, String programa) {
+        String rutaRelativa = genCarpetaRelativa(alineacionMaterias, reportes,  programa, plan);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
     }
 }

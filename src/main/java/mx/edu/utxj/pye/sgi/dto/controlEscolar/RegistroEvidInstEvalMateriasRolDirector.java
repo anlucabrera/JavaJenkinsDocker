@@ -12,6 +12,7 @@ import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionSugerida;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvidenciaEvaluacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.InstrumentoEvaluacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
@@ -31,6 +32,11 @@ public class RegistroEvidInstEvalMateriasRolDirector extends AbstractRol{
     */
     @Getter @NonNull private PersonalActivo director;
     
+     /**
+     * Periodo escolar seleccionado para registro
+     */
+    @Getter @NonNull private PeriodosEscolares periodoActivo;
+    
     /**
      * Programa educativo seleccionado para registro
      */
@@ -40,26 +46,51 @@ public class RegistroEvidInstEvalMateriasRolDirector extends AbstractRol{
      * Programas educativos para seleccionar
      */
     @Getter @NonNull private List<AreasUniversidad> programasEducativos;
+    
+    /**
+     * Plan de estudio seleccionado
+     */
+    @Getter @NonNull private PlanEstudio planEstudio;
 
     /**
-     * Periodo escolar seleccionado para registro
+     * Planes de estudio para seleccionar
      */
-    @Getter @NonNull private PeriodosEscolares periodoEscolar;
-
-    /**
-     * Periodos escolares para seleccionar
-     */
-    @Getter @NonNull private List<PeriodosEscolares> periodosEscolares;
+    @Getter @NonNull private List<PlanEstudio> planesEstudio;
     
      /**
-     * Plan de estudio al que corresponde las materias registradas 
+     * Cuatrimestre seleccionado
      */
-    @Getter private PlanEstudio planEstudioRegistrado;
+    @Getter @NonNull private Integer cuatrimestre ;
 
+    /**
+     * Cuatrimestre para filtrar búsqueda
+     */
+    @Getter @NonNull private List<Integer> cuatrimestres;
+    
+    /**
+     * Tipo de búsqueda_ general o por grado
+     */
+    @Getter @NonNull private String tipoBusqueda ;
+    
      /**
      * Lista de evidencias e instrumentos de evaluación sugeridos
      */
     @Getter private List<DtoRegistroEvidInstEvaluacionMateria> listaEvidenciasInstrumentos;
+    
+    /**
+     * Lista previa de evidencias e instrumentos de evaluación por registrar
+     */
+     @Getter private List<DtoRegistroPrevioEvidInstEval> listaPreviaEvidenciasInstrumentos;
+     
+      /**
+     * Representa la ruta del archivo que se cargará a sistema
+     */
+    @Getter @NonNull private String rutaArchivo;
+    
+     /**
+     * Lista registro guardados de evidencias e instrumentos de evaluación
+     */
+     @Getter private List<EvaluacionSugerida> listaEvaluacioneGuardadas;
     
      /**
      * Representa si se desea agregar más evidencias e instrumentos de evaluación
@@ -144,23 +175,12 @@ public class RegistroEvidInstEvalMateriasRolDirector extends AbstractRol{
         this.director = director;
     }
 
+    public void setPeriodoActivo(PeriodosEscolares periodoActivo) {
+        this.periodoActivo = periodoActivo;
+    }
+    
     public void setDirector(PersonalActivo director) {
         this.director = director;
-    }
-
-    public void setPeriodoEscolar(PeriodosEscolares periodoEscolar) {
-        this.periodoEscolar = periodoEscolar;
-    }
-
-    /**
-     * Sincroniza el periodo seleccionado al primer periodo en la lista
-     * @param periodosEscolares
-     */
-    public void setPeriodosEscolares(List<PeriodosEscolares> periodosEscolares) {
-        this.periodosEscolares = periodosEscolares;
-        if(periodosEscolares != null && !periodosEscolares.isEmpty()){
-            this.setPeriodoEscolar(periodosEscolares.get(0));
-        }
     }
 
     public void setProgramaEducativo(AreasUniversidad programaEducativo) {
@@ -171,14 +191,45 @@ public class RegistroEvidInstEvalMateriasRolDirector extends AbstractRol{
         this.programasEducativos = programasEducativos;
     }
 
-    public void setPlanEstudioRegistrado(PlanEstudio planEstudioRegistrado) {
-        this.planEstudioRegistrado = planEstudioRegistrado;
+    public void setPlanEstudio(PlanEstudio planEstudio) {
+        this.planEstudio = planEstudio;
+    }
+
+    public void setPlanesEstudio(List<PlanEstudio> planesEstudio) {
+        this.planesEstudio = planesEstudio;
+        if(planesEstudio != null && !planesEstudio.isEmpty()){
+            this.setPlanEstudio(planesEstudio.get(0));
+        }
+    }
+
+    public void setCuatrimestre(Integer cuatrimestre) {
+        this.cuatrimestre = cuatrimestre;
+    }
+
+    public void setCuatrimestres(List<Integer> cuatrimestres) {
+        this.cuatrimestres = cuatrimestres;
+    }
+
+    public void setTipoBusqueda(String tipoBusqueda) {
+        this.tipoBusqueda = tipoBusqueda;
     }
     
     public void setListaEvidenciasInstrumentos(List<DtoRegistroEvidInstEvaluacionMateria> listaEvidenciasInstrumentos) {
         this.listaEvidenciasInstrumentos = listaEvidenciasInstrumentos;
     }
 
+    public void setListaPreviaEvidenciasInstrumentos(List<DtoRegistroPrevioEvidInstEval> listaPreviaEvidenciasInstrumentos) {
+        this.listaPreviaEvidenciasInstrumentos = listaPreviaEvidenciasInstrumentos;
+    }
+
+    public void setRutaArchivo(String rutaArchivo) {
+        this.rutaArchivo = rutaArchivo;
+    }
+
+    public void setListaEvaluacioneGuardadas(List<EvaluacionSugerida> listaEvaluacioneGuardadas) {
+        this.listaEvaluacioneGuardadas = listaEvaluacioneGuardadas;
+    }
+        
     public void setAgregarEvidencia(Boolean agregarEvidencia) {
         this.agregarEvidencia = agregarEvidencia;
     }

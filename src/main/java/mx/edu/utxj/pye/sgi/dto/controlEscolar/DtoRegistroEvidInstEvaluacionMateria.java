@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 /**
  *
@@ -21,6 +22,8 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 public class DtoRegistroEvidInstEvaluacionMateria implements Serializable, Comparable<DtoRegistroEvidInstEvaluacionMateria>{
     @Getter @Setter @NonNull EvaluacionSugerida evaluacionSugerida;
     @Getter @Setter @NonNull PlanEstudioMateria planEstudioMateria;
+    @Getter @Setter @NonNull String periodoEscolar;
+    @Getter @Setter @NonNull AreasUniversidad programaEducativo;
     
     @Override
     public int compareTo(DtoRegistroEvidInstEvaluacionMateria o) {

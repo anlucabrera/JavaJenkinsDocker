@@ -7,9 +7,6 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -22,12 +19,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa;
-import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
-import mx.edu.utxj.pye.siip.controller.ca.ControladorActFormacionIntegral;
-import mx.edu.utxj.pye.siip.controller.ca.ControladorPartActFormInt;
-import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
@@ -40,12 +32,16 @@ import org.omnifaces.util.Messages;
 @ManagedBean
 @ViewScoped
 public class ControladorArchivoRegistroEvidInst implements Serializable{
+
+    private static final long serialVersionUID = 2050407053726343860L;
     
     //    Variables de Lectura
     @Getter private RegistroSiipEtapa etapa;
     
     //    Variables de Lectura y Escritura
     @Getter @Setter private String rutaArchivo;
+    @Getter @Setter private String plan;
+    @Getter @Setter private String programa;
     @Getter @Setter private Part file; 
     
     @Inject ControladorEmpleado controladorEmpleado;
@@ -54,16 +50,13 @@ public class ControladorArchivoRegistroEvidInst implements Serializable{
     
     @EJB EjbCarga ejbCarga;
     @EJB EjbModulos ejbModulos;
-//    
-//    @PostConstruct
-//    public void init(){
-//        try{
-//            
-//        }catch (Throwable ex) {
-//            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-//            Logger.getLogger(ControladorArchivoRegistroEvidInst.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
+
+    @PostConstruct
+    public void init(){
+        setEtapa(RegistroSiipEtapa.MOSTRAR);
+        plan = String.valueOf(registroEvidInstEvalMateriasDireccion.getRol().getPlanEstudio().getAnio());
+        programa = registroEvidInstEvalMateriasDireccion.getRol().getProgramaEducativo().getSiglas();
+    }
     
      public void recibirArchivo(ValueChangeEvent e){
         file = (Part)e.getNewValue();
@@ -75,12 +68,11 @@ public class ControladorArchivoRegistroEvidInst implements Serializable{
 
     //ActionListener
     public void subirExcelEvidInstMateria() throws IOException {
-         
         if (file != null) {
-            rutaArchivo = ejbCarga.subirPlantillaAlineacionMaterias(String.valueOf(registroEvidInstEvalMateriasDireccion.rol.getPlanEstudioRegistrado().getAnio()), registroEvidInstEvalMateriasDireccion.rol.getProgramaEducativo().getSiglas(),file);
+            rutaArchivo = ejbCarga.subirPlantillaAlineacionMaterias(plan, programa, file);
             if (!"Error: No se pudo leer el archivo".equals(rutaArchivo)) {
                 setEtapa(RegistroSiipEtapa.CARGAR);
-//                registroEvidInstEvalMateriasDireccion.rol.listaEvidInsMateriaPrevia(rutaArchivo);
+                registroEvidInstEvalMateriasDireccion.listaPreviaEvidenciasInstrumentos(rutaArchivo);
                 rutaArchivo = null;
                 file.delete();
             } else {
@@ -89,6 +81,7 @@ public class ControladorArchivoRegistroEvidInst implements Serializable{
                 Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente");
             }
         } else {
+            System.err.println("subirExcelEvidInstMateria - file es null ");
              Messages.addGlobalWarn("Es necesario seleccionar un archivo");
         }
     }

@@ -202,4 +202,12 @@ public interface EjbCarga extends Serializable {
      * @return Devuelve la ruta completa del archivo
      */
     public String subirPlantillaAlineacionMaterias(String plan, String programa, Part file);
+    
+     /**
+     * Método que crea o comprueba si el directorio de los reportes de alineacion materias en control escolar
+     * @param plan Es ocupado para crear o comprobar de que plan de estudio es el reporte que se está generando
+     * @param programa Es ocupado para crear o comprobar de que programa de estudio es el reporte que se está generando
+     * @return Retorna la ruta del directorio
+     */
+    public String crearDirectorioReporteAlineacionMaterias(String plan, String programa);
 }
