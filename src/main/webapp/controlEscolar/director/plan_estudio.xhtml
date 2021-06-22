@@ -128,7 +128,7 @@
                                         </div>
                                     </h:form>
                                 </p:tab>
-                                <p:tab title="Programa Educativo">
+                                <p:tab title="Materias">
                                     <h:form id="planEstudioMateriaFrm">
                                         <div id="main-buttons-asignatura" class="hidden-sm hidden-xs">
                                             <p:toolbar id="tb-asignatura">
@@ -582,7 +582,7 @@
                                                     <p:selectOneMenu id="planEstudioC" value="#{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetencias1.planEstudio}" converter="entityConverter">
                                                         <f:selectItem itemValue="#{null}"/>
                                                         <f:selectItems value="#{administracionPlanEstudioDirector.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
-                                                        <p:ajax listener="#{administracionPlanEstudioDirector.listaCompetenciasPorMateria()}" update="progEduFrm" process="@this"/>
+                                                        <p:ajax listener="#{administracionPlanEstudioDirector.materiasPorPlanEstudioConsulta()}" update="progEduFrm" process="@this"/>
                                                     </p:selectOneMenu>
                                                     <p:outputLabel for="planEstudioC" value="Plan de estudios"/>
                                                     <p:message for="planEstudioC"/>
