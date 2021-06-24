@@ -25,6 +25,7 @@ import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAprovechamientoEscolar;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAprovechamientoEscolarEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteIrregular;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePlaneacionDocente;
@@ -172,8 +173,10 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             listaReportes.add("Estudiantes irregulares");
             listaReportes.add("Planeación docente");
             listaReportes.add("Aprovechamiento escolar");
+            listaReportes.add("Aprovechamiento escolar - Lista");
             listaReportes.add("Asignaturas reprobadas");
             listaReportes.add("Matricula");
+            listaReportes.add("Distribución de matricula");
             listaReportes.add("Deserción académica");
             rol.setReportes(listaReportes);
             rol.setReporte(rol.getReportes().get(0));
@@ -191,6 +194,8 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
            generarPlaneacionDocente();
         }else if("Aprovechamiento escolar".equals(rol.getReporte())){
            generarAprovechamientoEscolar();
+        }else if("Aprovechamiento escolar - Lista".equals(rol.getReporte())){
+           generarListaAprovechamientoEscolar();
         }else if("Asignaturas reprobadas".equals(rol.getReporte())){
 //           generarAsignaturasReprobadas();
         }else if("Matricula".equals(rol.getReporte())){
@@ -314,6 +319,9 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             if(res1.getCorrecto()){
                 rol.setDesercionAcademica(res2.getValor().stream().filter(p->p.getDtoRegistroBaja().getRegistroBaja().getValidada()==1).collect(Collectors.toList()));
                 Ajax.update("tbDesercionAcademica");
+                if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
+                    Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
+                }
              }else mostrarMensajeResultadoEJB(res2);
          }else mostrarMensajeResultadoEJB(res1);
     }
@@ -336,6 +344,9 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(res.getCorrecto()){
             rol.setMatricula(res.getValor());
             Ajax.update("tbMatricula");
+            if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
+                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
+            }
          }else mostrarMensajeResultadoEJB(res);
     }
     
@@ -350,14 +361,31 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
          }else mostrarMensajeResultadoEJB(res);
     }
     
-    /**
-     * Permite generar aprovechamiento escolar por estudiante del periodo y programa educativo seleccionado
+     /**
+     * Permite generar aprovechamiento escolar del periodo y programa educativo seleccionado
      */
     public void generarAprovechamientoEscolar(){
         ResultadoEJB<List<DtoAprovechamientoEscolar>> res = ejb.getAprovechamientoEscolar(rol.getPeriodo(), rol.getPrograma());
         if(res.getCorrecto()){
             rol.setAprovechamientoEscolar(res.getValor());
             Ajax.update("tbAprovechamientoEscolar");
+            if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
+                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
+            }
+         }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite generar aprovechamiento escolar por estudiante del periodo y programa educativo seleccionado
+     */
+    public void generarListaAprovechamientoEscolar(){
+        ResultadoEJB<List<DtoAprovechamientoEscolarEstudiante>> res = ejb.getListaAprovechamientoEscolar(rol.getPeriodo(), rol.getPrograma());
+        if(res.getCorrecto()){
+            rol.setListaAprovechamientoEscolar(res.getValor());
+            Ajax.update("tbListaAprovechamientoEscolar");
+            if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
+                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
+            }
          }else mostrarMensajeResultadoEJB(res);
     }
     
@@ -370,7 +398,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             rol.setEstudiantesIrregulares(res.getValor());
             Ajax.update("tbEstudiantesIrregulares");
             if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
-                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte no es el definitivo, deberá de esperar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
+                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
             }
         }else mostrarMensajeResultadoEJB(res);
     }

@@ -33,6 +33,10 @@ public class DtoReportePlaneacionDocente implements Serializable, Comparable<Dto
     @Getter @Setter @NonNull Integer evidenciasSaber;
     @Getter @Setter @NonNull Integer evidenciasSaberHacer;
     @Getter @Setter @NonNull Boolean asignacionCompleta;
+    @Getter @Setter @NonNull String porcentajeConfiguracion;
+    @Getter @Setter @NonNull String porcentajeAsignacion;
+    @Getter @Setter @NonNull String porcentajeValidacion;
+    @Getter @Setter @NonNull String porcentajePlaneacion;
     
     @Override
     public int compareTo(DtoReportePlaneacionDocente o) {
