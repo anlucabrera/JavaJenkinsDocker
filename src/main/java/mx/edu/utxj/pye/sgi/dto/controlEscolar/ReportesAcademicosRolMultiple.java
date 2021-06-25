@@ -101,6 +101,11 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
     @Getter @NonNull private List<DtoDatosEstudiante> matricula;
     
      /**
+     * Reporte distribución de matricula por programa educativo y grado 
+     */
+    @Getter @NonNull private List<DtoDistribucionMatricula> distribucionMatricula;
+    
+     /**
      * Reporte de deserción académica 
      */
     @Getter @NonNull private List<DtoTramitarBajas> desercionAcademica;
@@ -181,6 +186,10 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
         this.matricula = matricula;
     }
 
+    public void setDistribucionMatricula(List<DtoDistribucionMatricula> distribucionMatricula) {
+        this.distribucionMatricula = distribucionMatricula;
+    }
+    
     public void setDesercionAcademica(List<DtoTramitarBajas> desercionAcademica) {
         this.desercionAcademica = desercionAcademica;
     }

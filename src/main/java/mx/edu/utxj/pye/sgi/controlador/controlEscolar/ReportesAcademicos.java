@@ -27,6 +27,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAprovechamientoEscolar;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAprovechamientoEscolarEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDistribucionMatricula;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteIrregular;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePlaneacionDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ReportesAcademicosRolMultiple;
@@ -200,6 +201,8 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
 //           generarAsignaturasReprobadas();
         }else if("Matricula".equals(rol.getReporte())){
            generarMatricula();
+        }else if("Distribución de matricula".equals(rol.getReporte())){
+           generarDistribucionMatricula();  
         }else if("Deserción académica".equals(rol.getReporte())){
            generarDesercionAcademica();
         }
@@ -344,6 +347,20 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(res.getCorrecto()){
             rol.setMatricula(res.getValor());
             Ajax.update("tbMatricula");
+            if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
+                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
+            }
+         }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite generar distribución de matricula del periodo y programa educativo seleccionado
+     */
+    public void generarDistribucionMatricula(){
+        ResultadoEJB<List<DtoDistribucionMatricula>> res = ejb.getDistribucionMatricula(rol.getPeriodo(), rol.getPrograma());
+        if(res.getCorrecto()){
+            rol.setDistribucionMatricula(res.getValor());
+            Ajax.update("tbDistribucionMatricula");
             if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
                 Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
             }

@@ -19,8 +19,10 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAprovechamientoEscolar;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAprovechamientoEscolarEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDistribucionMatricula;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteIrregular;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePlaneacionDocente;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
@@ -53,6 +55,7 @@ public class EjbReportesAcademicos {
     @EJB EjbPersonalBean ejbPersonalBean;
     @EJB EjbPropiedades ep;
     @EJB EjbPacker ejbPacker;
+    @EJB EjbRegistroBajas ejbRegistroBajas;
     @EJB Facade f;
     private EntityManager em;
     
@@ -208,6 +211,58 @@ public class EjbReportesAcademicos {
             return ResultadoEJB.crearCorrecto(listaEstudiantes.stream().sorted(DtoDatosEstudiante::compareTo).collect(Collectors.toList()), "Lista de estudiantes del periodo y programa educativo seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getMatricula)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de estudiantes del periodo y programa educativo seleccionado
+     * @param periodo
+     * @param programa
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoDistribucionMatricula>> getDistribucionMatricula(PeriodosEscolares periodo, AreasUniversidad programa){
+        try{
+            List<DtoDistribucionMatricula> listaDistribucionMatricula = new ArrayList<>();
+            
+            List<DtoDatosEstudiante> estudiantesPE = getMatricula(periodo, programa).getValor();
+            
+            List<DtoTramitarBajas> bajas = ejbRegistroBajas.obtenerListaBajasPeriodo(periodo).getValor();
+            
+            List<DtoTramitarBajas> bajasPE = ejbRegistroBajas.obtenerListaBajasProgramaEducativo(bajas, programa).getValor();
+            
+            List<Integer> listaGrados = em.createQuery("SELECT g FROM Grupo g WHERE g.periodo=:periodo AND g.idPe=:programa", Grupo.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programa", programa.getArea())
+                    .getResultStream()
+                    .map(p->p.getGrado())
+                    .distinct()
+                    .collect(Collectors.toList()); 
+            
+            
+            listaGrados.forEach(grado -> {
+                
+                List<String> tiposRegistro = new ArrayList<>(); tiposRegistro.add("Regularización de calificaciones por reincoporación");
+            
+                Integer matriculaInicial = (int) em.createQuery("SELECT e FROM Estudiante e WHERE e.periodo=:periodo AND e.carrera=:programa AND e.grupo.grado=:grado AND e.tipoRegistro NOT IN :tiposRegistro", Estudiante.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programa", programa.getArea())
+                    .setParameter("grado", grado)
+                    .setParameter("tiposRegistro", tiposRegistro)
+                    .getResultStream()
+                    .count();
+                
+                Integer desercion = (int) bajasPE.stream().filter(p->p.getDtoEstudiante().getEstudiante().getGrupo().getGrado()==grado).count();
+                Integer matriculaFinal = (int) estudiantesPE.stream().filter(p->p.getEstudiante().getGrupo().getGrado()==grado).count();
+                
+                Double porcentajeDesercion = (double)desercion/matriculaInicial*100;
+                
+                DtoDistribucionMatricula dtoDistribucionMatricula = new DtoDistribucionMatricula(programa, grado, matriculaInicial, desercion, matriculaFinal,porcentajeDesercion);
+                listaDistribucionMatricula.add(dtoDistribucionMatricula);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaDistribucionMatricula.stream().sorted(DtoDistribucionMatricula::compareTo).collect(Collectors.toList()), "Distribución de matricula del periodo y programa educativo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la distrbución de matricula del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getDistribucionMatricula)", e, null);
         }
     }
     

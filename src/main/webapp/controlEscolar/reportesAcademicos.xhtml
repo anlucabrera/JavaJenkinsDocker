@@ -389,6 +389,46 @@
                                                 </p:dataTable>
                                             </center>
                                         </c:if>
+                                        <c:if test="#{reportesAcademicos.rol.reporte eq 'Distribución de matricula'}">
+                                            <center>
+                                                 <p:remoteCommand name="actualizar" update="@form:tbDistribucionMatricula" />
+                                                 <p:dataTable id="tbDistribucionMatricula" var="distMat" value="#{reportesAcademicos.rol.distribucionMatricula}" emptyMessage="No hay distribución de matricula del programa educativo en el periodo seleccionado"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;">
+                                                    <f:facet name="header">
+                                                        Distrbución de matricula #{reportesAcademicos.rol.programa.nombre}
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Programa educativo" style="width: 250px;"/> 
+                                                            <p:column headerText="Grado" style="width: 150px;"/>
+                                                            <p:column headerText="Matricula inicial" style="width: 150px;"/>
+                                                            <p:column headerText="Deserción" style="width: 150px;"/>
+                                                            <p:column headerText="Matricula final" style="width: 150px;"/>
+                                                            <p:column headerText="% Deserción" style="width: 150px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column>
+                                                        <h:outputText value="#{distMat.programa.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{distMat.grado}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{distMat.matriculaInicial}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{distMat.desercion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{distMat.matriculaFinal}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{distMat.porcentajeDesercion}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </center>
+                                        </c:if>
                                         <c:if test="#{reportesAcademicos.rol.reporte eq 'Deserción académica'}">
                                             <center>
                                                  <p:remoteCommand name="actualizar" update="@form:tbDesercionAcademica" />
