@@ -313,18 +313,20 @@ public class EjbReportesAcademicos {
            
            List<DtoDatosEstudiante> estudiantes = getMatricula(periodo, programa).getValor();
             
-           List<CargaAcademica> cargas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.evento.periodo=:periodo AND c.cveGrupo.idPe=:programa", CargaAcademica.class)
+           List<PlanEstudioMateria> planEstudiosMaterias = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.evento.periodo=:periodo AND c.cveGrupo.idPe=:programa", CargaAcademica.class)
                     .setParameter("periodo", periodo.getPeriodo())
                     .setParameter("programa", programa.getArea())
                     .getResultStream()
+                    .map(p->p.getIdPlanMateria())
+                    .distinct()
                     .collect(Collectors.toList());
            
-            cargas.forEach(carga -> {
-                PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, carga.getIdPlanMateria().getIdPlanMateria());
+            planEstudiosMaterias.forEach(planEstudioMat -> {
+                PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, planEstudioMat.getIdPlanMateria());
                 
-                List<DtoDatosEstudiante> estudiantesCargaGrupo = estudiantes.stream().filter(p->p.getEstudiante().getGrupo().getIdGrupo().equals(carga.getCveGrupo().getIdGrupo())).collect(Collectors.toList());
+                List<DtoDatosEstudiante> estudiantesGrado = estudiantes.stream().filter(p->p.getEstudiante().getGrupo().getGrado()==planEstudioMateria.getGrado()).collect(Collectors.toList());
                 
-                Double promedio = getObtenerPromedioAsignatura(carga, estudiantesCargaGrupo).getValor();
+                Double promedio = getObtenerPromedioAsignatura(planEstudioMateria, estudiantesGrado).getValor();
                 
                 DtoAprovechamientoEscolar dtoAprovechamientoEscolar = new DtoAprovechamientoEscolar(programa, planEstudioMateria, promedio);
                 listaAprovechamiento.add(dtoAprovechamientoEscolar);
@@ -338,11 +340,11 @@ public class EjbReportesAcademicos {
     
      /**
      * Permite obtener el promedio del cuatrimestre del estudiante seleccionado
-     * @param carga
+     * @param planEstudioMateria
      * @param estudiantes
      * @return Resultado del proceso
      */
-     public ResultadoEJB<Double> getObtenerPromedioAsignatura(CargaAcademica carga, List<DtoDatosEstudiante> estudiantes){
+     public ResultadoEJB<Double> getObtenerPromedioAsignatura(PlanEstudioMateria planEstudioMateria, List<DtoDatosEstudiante> estudiantes){
         try{
             System.out.println("getObtenerPromedioAsignatura1 - estudiantes " + estudiantes.size());
             
@@ -351,12 +353,12 @@ public class EjbReportesAcademicos {
             List<Double> listaCalificaciones = new ArrayList<>();
             
             estudiantes.forEach(estudiante -> { 
-                System.out.println("getObtenerPromedioAsignatura2 - carga " + carga.getCarga());
+                System.out.println("getObtenerPromedioAsignatura2 - planEstMat " + planEstudioMateria.getClaveMateria());
                 System.out.println("getObtenerPromedioAsignatura2 - estudiante " + estudiante.getEstudiante().getIdEstudiante());
                 Double calificacion = 0.0;
                 
-                CalificacionPromedio calificacionPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionPromedio.class)
-                    .setParameter("carga", carga.getCarga())
+                CalificacionPromedio calificacionPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.cargaAcademica.idPlanMateria.idPlanMateria=:planMateria AND c.estudiante.idEstudiante=:estudiante", CalificacionPromedio.class)
+                    .setParameter("planMateria", planEstudioMateria.getIdPlanMateria())
                     .setParameter("estudiante", estudiante.getEstudiante().getIdEstudiante())
                     .getResultStream()
                     .findFirst()
@@ -368,8 +370,8 @@ public class EjbReportesAcademicos {
                     System.out.println("getObtenerPromedioAsignatura4 - calificacionPromedio " + calificacionPromedio.getValor());
                     if(calificacionPromedio.getValor()<8.0){
                         System.out.println("getObtenerPromedioAsignatura5 - menor a 8 ");
-                        CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
-                            .setParameter("carga", carga.getCarga())
+                        CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.idPlanMateria.idPlanMateria=:planMateria AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
+                            .setParameter("planMateria", planEstudioMateria.getIdPlanMateria())
                             .setParameter("estudiante", estudiante.getEstudiante().getIdEstudiante())
                             .getResultStream()
                             .findFirst()

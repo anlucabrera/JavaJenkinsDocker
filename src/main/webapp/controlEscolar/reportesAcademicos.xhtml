@@ -188,17 +188,17 @@
                                                             <p:column headerText="Promedio" style="width: 150px;" sortBy="#{aprovEsc.promedio}" filterBy="#{aprovEsc.promedio}" filterMatchMode="contains"/>
                                                         </p:row>
                                                     </p:columnGroup>
-                                                     <p:column style="text-align: center;" groupRow="true">
+                                                    <p:column style="text-align: center;">
                                                         <h:outputText value="#{aprovEsc.planEstudioMateria.claveMateria}"/>
                                                     </p:column>
-                                                    <p:column groupRow="true">
+                                                    <p:column>
                                                         <h:outputText value="#{aprovEsc.planEstudioMateria.idMateria.nombre}"/>
                                                     </p:column>
-                                                    <p:column style="text-align: center;" groupRow="true"> 
+                                                    <p:column style="text-align: center;"> 
                                                         <h:outputText value="#{aprovEsc.planEstudioMateria.grado}"/>
                                                     </p:column>
-                                                    <p:column style="text-align: center;" groupRow="true">
-                                                        <h:outputText value="#{aprovEsc.promedio}"/>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{aprovEsc.promedio}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
                                                     </p:column>
                                                 </p:dataTable>
                                             </center>
