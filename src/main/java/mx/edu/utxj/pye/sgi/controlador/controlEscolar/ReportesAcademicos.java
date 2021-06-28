@@ -30,6 +30,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDistribucionMatricula;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteIrregular;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePlaneacionDocente;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReprobacionAsignatura;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ReportesAcademicosRolMultiple;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoValidacionesBaja;
@@ -175,7 +176,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             listaReportes.add("Planeación docente");
             listaReportes.add("Aprovechamiento escolar");
             listaReportes.add("Aprovechamiento escolar - Lista");
-            listaReportes.add("Asignaturas reprobadas");
+            listaReportes.add("Reprobación por asignatura");
             listaReportes.add("Matricula");
             listaReportes.add("Distribución de matricula");
             listaReportes.add("Deserción académica");
@@ -197,8 +198,8 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
            generarAprovechamientoEscolar();
         }else if("Aprovechamiento escolar - Lista".equals(rol.getReporte())){
            generarListaAprovechamientoEscolar();
-        }else if("Asignaturas reprobadas".equals(rol.getReporte())){
-//           generarAsignaturasReprobadas();
+        }else if("Reprobación por asignatura".equals(rol.getReporte())){
+           generarReprobacionAsignatura();
         }else if("Matricula".equals(rol.getReporte())){
            generarMatricula();
         }else if("Distribución de matricula".equals(rol.getReporte())){
@@ -400,6 +401,20 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(res.getCorrecto()){
             rol.setListaAprovechamientoEscolar(res.getValor());
             Ajax.update("tbListaAprovechamientoEscolar");
+            if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
+                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
+            }
+         }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite generar reprobación por asignatura del periodo y programa educativo seleccionado
+     */
+    public void generarReprobacionAsignatura(){
+        ResultadoEJB<List<DtoReprobacionAsignatura>> res = ejb.getReprobacionAsignatura(rol.getPeriodo(), rol.getPrograma());
+        if(res.getCorrecto()){
+            rol.setReprobacionAsignatura(res.getValor());
+            Ajax.update("tbReprobacionAsignatura");
             if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
                 Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
             }

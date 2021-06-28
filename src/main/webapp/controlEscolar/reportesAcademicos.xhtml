@@ -171,6 +171,7 @@
                                         </c:if>
                                         <c:if test="#{reportesAcademicos.rol.reporte eq 'Aprovechamiento escolar'}">
                                             <center>
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;">
                                                  <p:remoteCommand name="actualizar" update="@form:tbAprovechamientoEscolar" />
                                                  <p:dataTable id="tbAprovechamientoEscolar" var="aprovEsc" value="#{reportesAcademicos.rol.aprovechamientoEscolar}" emptyMessage="No hay reporte de aprovechamiento escolar del programa educativo en el periodo seleccionado"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
@@ -182,10 +183,10 @@
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column headerText="Clave materia" style="width: 100px;" sortBy="#{aprovEsc.planEstudioMateria.claveMateria}" filterBy="#{aprovEsc.planEstudioMateria.claveMateria}" filterMatchMode="contains"/> 
-                                                            <p:column headerText="Materia" style="width: 350px;" sortBy="#{aprovEsc.planEstudioMateria.idMateria.nombre}" filterBy="#{aprovEsc.planEstudioMateria.idMateria.nombre}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Grado" style="width: 100px;" sortBy="#{aprovEsc.planEstudioMateria.grado}" filterBy="#{aprovEsc.planEstudioMateria.grado}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Promedio" style="width: 150px;" sortBy="#{aprovEsc.promedio}" filterBy="#{aprovEsc.promedio}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Clave materia" style="width: 100px;"/> 
+                                                            <p:column headerText="Materia" style="width: 350px;"/>
+                                                            <p:column headerText="Grado" style="width: 100px;"/>
+                                                            <p:column headerText="Promedio" style="width: 150px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column style="text-align: center;">
@@ -201,6 +202,7 @@
                                                         <h:outputText value="#{aprovEsc.promedio}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
                                                     </p:column>
                                                 </p:dataTable>
+                                                </div>
                                             </center>
                                         </c:if>
                                         <c:if test="#{reportesAcademicos.rol.reporte eq 'Aprovechamiento escolar - Lista'}">
@@ -253,6 +255,60 @@
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{aprovEscEst.promedio}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </center>
+                                        </c:if>
+                                        <c:if test="#{reportesAcademicos.rol.reporte eq 'Reprobación por asignatura'}">
+                                            <center>
+                                                 <p:remoteCommand name="actualizar" update="@form:tbReprobacionAsignatura" />
+                                                 <p:dataTable id="tbReprobacionAsignatura" var="repAsig" value="#{reportesAcademicos.rol.reprobacionAsignatura}" emptyMessage="No hay reporte de aprovechamiento escolar del programa educativo en el periodo seleccionado"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="100" rowsPerPageTemplate="100,200,300,400,500,600,700,800,900,1000" 
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <f:facet name="header">
+                                                        Reprobación por asignatura de #{reportesAcademicos.rol.programa.nombre} <br/>
+                                                        #{fn:length(reportesAcademicos.rol.aprovechamientoEscolar)} resultados obtenidos.
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Clave materia" style="width: 100px;"/> 
+                                                            <p:column headerText="Materia" style="width: 350px;"/>
+                                                            <p:column headerText="Grado" style="width: 100px;"/>
+                                                            <p:column headerText="No. Alumnos Reprobados en periodo ordinario y que se fueron a nivelación" style="width: 150px;"/>
+                                                            <p:column headerText="No. Alumnos Aprobados en Nivelación" style="width: 150px;"/>
+                                                            <p:column headerText="Estudiantes que NO aprobaron en Nivelación o que no se presentaron (Reprobados)" style="width: 150px;"/>
+                                                            <p:column headerText="Total de Alumnos Inscritos a inicio del cuatrimestre" style="width: 150px;"/>
+                                                            <p:column headerText="Porcentaje de Reprobación por asignatura (1)" style="width: 150px;"/>
+                                                            <p:column headerText="Porcentaje de Reprobación por asignatura (2)" style="width: 150px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{repAsig.planEstudioMateria.claveMateria}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{repAsig.planEstudioMateria.idMateria.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{repAsig.planEstudioMateria.grado}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{repAsig.reprobadosOrdinario}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{repAsig.aprobadosNivelacion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{repAsig.reprobadosNivelacion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{repAsig.matriculaInicial}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{repAsig.porcentajeRepOrdinario}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{repAsig.porcentajeRepNivelacion}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
                                                     </p:column>
                                                 </p:dataTable>
                                             </center>
@@ -391,16 +447,16 @@
                                         </c:if>
                                         <c:if test="#{reportesAcademicos.rol.reporte eq 'Distribución de matricula'}">
                                             <center>
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;">
                                                  <p:remoteCommand name="actualizar" update="@form:tbDistribucionMatricula" />
                                                  <p:dataTable id="tbDistribucionMatricula" var="distMat" value="#{reportesAcademicos.rol.distribucionMatricula}" emptyMessage="No hay distribución de matricula del programa educativo en el periodo seleccionado"
-                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                              tableStyle="vertical-align: middle;">
                                                     <f:facet name="header">
-                                                        Distrbución de matricula #{reportesAcademicos.rol.programa.nombre}
+                                                        Distribución de matricula de #{reportesAcademicos.rol.programa.nombre}
                                                     </f:facet>
                                                     <p:columnGroup type="header">
-                                                        <p:row class="success">
-                                                            <p:column headerText="Programa educativo" style="width: 250px;"/> 
+                                                        <p:row class="success"> 
                                                             <p:column headerText="Grado" style="width: 150px;"/>
                                                             <p:column headerText="Matricula inicial" style="width: 150px;"/>
                                                             <p:column headerText="Deserción" style="width: 150px;"/>
@@ -408,9 +464,6 @@
                                                             <p:column headerText="% Deserción" style="width: 150px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
-                                                    <p:column>
-                                                        <h:outputText value="#{distMat.programa.nombre}"/>
-                                                    </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{distMat.grado}"/>
                                                     </p:column>
@@ -427,6 +480,7 @@
                                                         <h:outputText value="#{distMat.porcentajeDesercion}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
                                                     </p:column>
                                                 </p:dataTable>
+                                                 </div>
                                             </center>
                                         </c:if>
                                         <c:if test="#{reportesAcademicos.rol.reporte eq 'Deserción académica'}">

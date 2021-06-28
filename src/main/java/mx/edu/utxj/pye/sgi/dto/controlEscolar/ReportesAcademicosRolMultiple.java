@@ -89,11 +89,11 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
      * Reporte de aprovechamiento escolar estudiantes activos
      */
     @Getter @NonNull private List<DtoAprovechamientoEscolarEstudiante> listaAprovechamientoEscolar;
-//    
-//      /**
-//     * Reporte de asignaturas reprobadas
-//     */
-//    @Getter @NonNull private List<DtoReporteAsignaturasReprobadas> asignaturasReprobadas;
+    
+     /**
+     * Reporte de reprobación por asignatura
+     */
+    @Getter @NonNull private List<DtoReprobacionAsignatura> reprobacionAsignatura;
     
       /**
      * Reporte de matricula activa
@@ -177,10 +177,9 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
         this.listaAprovechamientoEscolar = listaAprovechamientoEscolar;
     }
 
-//
-//    public void setAsignaturasReprobadas(List<DtoReporteAsignaturasReprobadas> asignaturasReprobadas) {
-//        this.asignaturasReprobadas = asignaturasReprobadas;
-//    }
+    public void setReprobacionAsignatura(List<DtoReprobacionAsignatura> reprobacionAsignatura) {
+        this.reprobacionAsignatura = reprobacionAsignatura;
+    }
 
     public void setMatricula(List<DtoDatosEstudiante> matricula) {
         this.matricula = matricula;

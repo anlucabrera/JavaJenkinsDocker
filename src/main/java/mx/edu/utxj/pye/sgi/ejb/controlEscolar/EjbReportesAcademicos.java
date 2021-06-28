@@ -22,6 +22,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDistribucionMatricula;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteIrregular;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePlaneacionDocente;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReprobacionAsignatura;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -240,16 +241,7 @@ public class EjbReportesAcademicos {
             
             
             listaGrados.forEach(grado -> {
-                
-                List<String> tiposRegistro = new ArrayList<>(); tiposRegistro.add("Regularización de calificaciones por reincoporación");
-            
-                Integer matriculaInicial = (int) em.createQuery("SELECT e FROM Estudiante e WHERE e.periodo=:periodo AND e.carrera=:programa AND e.grupo.grado=:grado AND e.tipoRegistro NOT IN :tiposRegistro", Estudiante.class)
-                    .setParameter("periodo", periodo.getPeriodo())
-                    .setParameter("programa", programa.getArea())
-                    .setParameter("grado", grado)
-                    .setParameter("tiposRegistro", tiposRegistro)
-                    .getResultStream()
-                    .count();
+                Integer matriculaInicial = getMatriculaInicial(periodo, programa, grado).getValor().size();
                 
                 Integer desercion = (int) bajasPE.stream().filter(p->p.getDtoEstudiante().getEstudiante().getGrupo().getGrado()==grado).count();
                 Integer matriculaFinal = (int) estudiantesPE.stream().filter(p->p.getEstudiante().getGrupo().getGrado()==grado).count();
@@ -394,6 +386,56 @@ public class EjbReportesAcademicos {
     }
     
      /**
+     * Permite obtener reprobación por asignatura del periodo seleccionado
+     * @param periodo
+     * @param programa
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoReprobacionAsignatura>> getReprobacionAsignatura(PeriodosEscolares periodo, AreasUniversidad programa){
+        try{
+           List<DtoReprobacionAsignatura> listaReprobacionAsignatura = new ArrayList<>();
+           
+           List<PlanEstudioMateria> planEstudiosMaterias = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.evento.periodo=:periodo AND c.cveGrupo.idPe=:programa", CargaAcademica.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programa", programa.getArea())
+                    .getResultStream()
+                    .map(p->p.getIdPlanMateria())
+                    .distinct()
+                    .collect(Collectors.toList());
+           
+            planEstudiosMaterias.forEach(planEstudioMat -> {
+                PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, planEstudioMat.getIdPlanMateria());
+                
+                List<Estudiante> estudiantesGrado = getMatriculaInicial(periodo, programa, planEstudioMateria.getGrado()).getValor();
+                
+                List<CalificacionNivelacion> calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.idPlanMateria.idPlanMateria=:planMateria AND c.estudiante.idEstudiante IN :estudiantes ", CalificacionNivelacion.class)
+                    .setParameter("planMateria", planEstudioMateria.getIdPlanMateria())
+                    .setParameter("estudiantes", estudiantesGrado.stream().map(p->p.getIdEstudiante()).collect(Collectors.toList()))
+                    .getResultStream()
+                    .collect(Collectors.toList());
+                
+                Integer aprobadosNivelacion = (int)calificacionNivelacion.stream().filter(p->p.getValor()>=8).count();
+                
+                Integer reprobadosNivelacion = (int)calificacionNivelacion.stream().filter(p->p.getValor()<8).count();
+                
+                Double porcentajeRepOrdinario=0.0, porcentajeRepNivelacion=0.0;
+                
+                if(!calificacionNivelacion.isEmpty() || calificacionNivelacion.size()!=0){
+                    porcentajeRepOrdinario =  (double) calificacionNivelacion.size()/estudiantesGrado.size() * 100;
+                    porcentajeRepNivelacion =  (double) reprobadosNivelacion/estudiantesGrado.size() * 100;
+                }
+                
+                DtoReprobacionAsignatura dtoReprobacionAsignatura = new DtoReprobacionAsignatura(programa, planEstudioMateria, calificacionNivelacion.size(), aprobadosNivelacion, reprobadosNivelacion, estudiantesGrado.size(), porcentajeRepOrdinario, porcentajeRepNivelacion);
+                listaReprobacionAsignatura.add(dtoReprobacionAsignatura);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaReprobacionAsignatura.stream().sorted(DtoReprobacionAsignatura::compareTo).collect(Collectors.toList()), "Aprovechamiento escolar del periodo y programa educativo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener aprovechamiento escolar del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getAprovechamientoEscolar)", e, null);
+        }
+    }
+    
+     /**
      * Permite obtener el promedio del cuatrimestre del estudiante seleccionado
      * @param planEstudioMateria
      * @param estudiantes
@@ -401,15 +443,11 @@ public class EjbReportesAcademicos {
      */
      public ResultadoEJB<Double> getObtenerPromedioAsignatura(PlanEstudioMateria planEstudioMateria, List<DtoDatosEstudiante> estudiantes){
         try{
-            System.out.println("getObtenerPromedioAsignatura1 - estudiantes " + estudiantes.size());
-            
             Double promedio=0.0;
             
             List<Double> listaCalificaciones = new ArrayList<>();
             
             estudiantes.forEach(estudiante -> { 
-                System.out.println("getObtenerPromedioAsignatura2 - planEstMat " + planEstudioMateria.getClaveMateria());
-                System.out.println("getObtenerPromedioAsignatura2 - estudiante " + estudiante.getEstudiante().getIdEstudiante());
                 Double calificacion = 0.0;
                 
                 CalificacionPromedio calificacionPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.cargaAcademica.idPlanMateria.idPlanMateria=:planMateria AND c.estudiante.idEstudiante=:estudiante", CalificacionPromedio.class)
@@ -419,31 +457,23 @@ public class EjbReportesAcademicos {
                     .findFirst()
                     .orElse(null); 
                 
-                System.out.println("getObtenerPromedioAsignatura3 - calificacionPromedio " + calificacionPromedio);
-                
                 if(calificacionPromedio!=null){
-                    System.out.println("getObtenerPromedioAsignatura4 - calificacionPromedio " + calificacionPromedio.getValor());
                     if(calificacionPromedio.getValor()<8.0){
-                        System.out.println("getObtenerPromedioAsignatura5 - menor a 8 ");
                         CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.idPlanMateria.idPlanMateria=:planMateria AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
                             .setParameter("planMateria", planEstudioMateria.getIdPlanMateria())
                             .setParameter("estudiante", estudiante.getEstudiante().getIdEstudiante())
                             .getResultStream()
                             .findFirst()
                             .orElse(null); 
-                        System.out.println("getObtenerPromedioAsignatura6 - calificacionNivelacion " + calificacionNivelacion);
                         if(calificacionNivelacion!=null){ 
-                            System.out.println("getObtenerPromedioAsignatura7 - calificacionNivelacion " + calificacionNivelacion.getValor());
                             calificacion = calificacionNivelacion.getValor(); 
                         }
                     }else{
                         calificacion = calificacionPromedio.getValor();
                     }
                 }
-               System.out.println("getObtenerPromedioAsignatura8 - calificacion " + calificacion);
                listaCalificaciones.add(calificacion);
             });
-            System.out.println("getObtenerPromedioAsignatura9 - listaCalificaciones " + listaCalificaciones.size());
             if(estudiantes.size() == listaCalificaciones.size())
             {
                promedio = listaCalificaciones.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
@@ -665,6 +695,30 @@ public class EjbReportesAcademicos {
             return ResultadoEJB.crearCorrecto(listaEstudiantesIrregulares.stream().sorted(DtoEstudianteIrregular::compareTo).collect(Collectors.toList()), "Lista de estudiantes irregulares del periodo y programa educativo seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes irregulares del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getEstudiantesIrregulares)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de estudiantes del periodo y programa educativo seleccionado
+     * @param periodo
+     * @param programa
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Estudiante>> getMatriculaInicial(PeriodosEscolares periodo, AreasUniversidad programa, Integer grado){
+        try{
+            List<String> tiposRegistro = new ArrayList<>(); tiposRegistro.add("Regularización de calificaciones por reincoporación");
+            
+            List<Estudiante> matriculaInicial = em.createQuery("SELECT e FROM Estudiante e WHERE e.periodo=:periodo AND e.carrera=:programa AND e.grupo.grado=:grado AND e.tipoRegistro NOT IN :tiposRegistro", Estudiante.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programa", programa.getArea())
+                    .setParameter("grado", grado)
+                    .setParameter("tiposRegistro", tiposRegistro)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(matriculaInicial, "Distribución de matricula del periodo y programa educativo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la distrbución de matricula del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getDistribucionMatricula)", e, null);
         }
     }
     
