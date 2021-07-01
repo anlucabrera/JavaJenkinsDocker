@@ -52,9 +52,9 @@
                                                 title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
                                                 class="fa fa-question"/>
                                         </p:commandLink>
-<!--                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="# {reportesAcademicos.descargarReportesAcademicos()}" 
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesAcademicos.descargarReportesAcademicos()}" 
                                                        target="_blank" title="Descargar Reporte en Excel"><i class="fa fa-file-excel-o" />
-                                        </p:commandLink>-->
+                                        </p:commandLink>
                                     </f:facet>
                                 </p:toolbar>
                             </div>
@@ -131,7 +131,7 @@
                                                             <p:column headerText="Tipo de registro" style="width: 200px;" sortBy="#{estIrreg.estudiante.tipoRegistro}" filterBy="#{aprovEscEst.estudiante.tipoRegistro}" filterMatchMode="contains"/>
                                                             <p:column headerText="Clave materia" style="width: 200px;" sortBy="#{estIrreg.planEstudioMateria.claveMateria}" filterBy="#{estIrreg.planEstudioMateria.claveMateria}" filterMatchMode="contains"/>
                                                             <p:column headerText="Materia" style="width: 200px;" sortBy="#{estIrreg.planEstudioMateria.idMateria.nombre}" filterBy="#{estIrreg.planEstudioMateria.idMateria.nombre}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Pesonal docente" style="width: 200px;" sortBy="#{estIrreg.docente.nombre}" filterBy="#{estIrreg.docente.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Personal docente" style="width: 200px;" sortBy="#{estIrreg.docente.nombre}" filterBy="#{estIrreg.docente.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Calificación" style="width: 100px;" sortBy="#{estIrreg.calificacion}" filterBy="#{estIrreg.calificacion}" filterMatchMode="contains"/>
                                                             <p:column headerText="Tutor" style="width: 200px;" sortBy="#{estIrreg.tutor.nombre}" filterBy="#{estIrreg.tutor.nombre}" filterMatchMode="contains"/>
                                                         </p:row>
@@ -192,7 +192,7 @@
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{aprovEsc.planEstudioMateria.claveMateria}"/>
                                                     </p:column>
-                                                    <p:column>
+                                                    <p:column style="text-align: justify;">
                                                         <h:outputText value="#{aprovEsc.planEstudioMateria.idMateria.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;"> 
@@ -220,7 +220,7 @@
                                                         <p:row class="success">
                                                             <p:column headerText="Matricula" style="width: 100px;" sortBy="#{aprovEscEst.estudiante.matricula}" filterBy="#{aprovEscEst.estudiante.matricula}" filterMatchMode="contains"/> 
                                                             <p:column headerText="Nombre" style="width: 350px;" sortBy="#{aprovEscEst.estudiante.aspirante.idPersona.apellidoPaterno} #{aprovEscEst.estudiante.aspirante.idPersona.apellidoMaterno} #{aprovEscEst.estudiante.aspirante.idPersona.nombre}" filterBy="#{matricula.estudiante.aspirante.idPersona.apellidoPaterno} #{matricula.estudiante.aspirante.idPersona.apellidoMaterno} #{matricula.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Género" style="width: 100px;" sortBy="#{aprovEscEst.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" filterBy="#{aprovEscEst.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Género" style="width: 100px;" sortBy="#{aprovEscEst.genero.nombre}" filterBy="#{aprovEscEst.genero.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Grupo" style="width: 150px;" sortBy="#{aprovEscEst.estudiante.grupo.grado}° #{aprovEscEst.estudiante.grupo.literal} #{aprovEscEst.estudiante.grupo.idSistema.nombre}" filterBy="#{aprovEscEst.estudiante.grupo.grado}° #{aprovEscEst.estudiante.grupo.literal} #{aprovEscEst.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Situación académica" style="width: 200px;" sortBy="#{aprovEscEst.estudiante.tipoEstudiante.descripcion}" filterBy="#{aprovEscEst.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
                                                             <p:column headerText="Tipo de registro" style="width: 200px;" sortBy="#{aprovEscEst.estudiante.tipoRegistro}" filterBy="#{aprovEscEst.estudiante.tipoRegistro}" filterMatchMode="contains"/>
@@ -236,7 +236,7 @@
                                                         <h:outputText value="#{aprovEscEst.estudiante.aspirante.idPersona.apellidoPaterno} #{aprovEscEst.estudiante.aspirante.idPersona.apellidoMaterno} #{aprovEscEst.estudiante.aspirante.idPersona.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;"> 
-                                                        <h:outputText value="#{aprovEscEst.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" />
+                                                        <h:outputText value="#{aprovEscEst.genero.nombre}" />
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{aprovEscEst.estudiante.grupo.grado}° #{aprovEscEst.estudiante.grupo.literal} #{aprovEscEst.estudiante.grupo.idSistema.nombre}"/>
@@ -394,7 +394,7 @@
                                         <c:if test="#{reportesAcademicos.rol.reporte eq 'Matricula'}">
                                             <center>
                                                  <p:remoteCommand name="actualizar" update="@form:tbMatricula" />
-                                                 <p:dataTable id="tbMatricula" var="matricula" value="#{reportesAcademicos.rol.matricula}" emptyMessage="No hay matricula registrada del programa educativo en el periodo seleccionado"
+                                                 <p:dataTable id="tbMatricula" var="matAct" value="#{reportesAcademicos.rol.matricula}" emptyMessage="No hay matricula registrada del programa educativo en el periodo seleccionado"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
                                                              tableStyle="vertical-align: middle;" paginator="true" rows="100" rowsPerPageTemplate="100,200,300,400,500,600,700,800,900,1000" 
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
@@ -404,43 +404,43 @@
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column headerText="Grupo" style="width: 100px;" sortBy="#{matricula.estudiante.grupo.grado}° #{matricula.estudiante.grupo.literal} #{matricula.estudiante.grupo.idSistema.nombre}" filterBy="#{matricula.estudiante.grupo.grado}° #{matricula.estudiante.grupo.literal} #{matricula.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Matricula" style="width: 100px;" sortBy="#{matricula.estudiante.matricula}" filterBy="#{matricula.estudiante.matricula}" filterMatchMode="contains"/> 
-                                                            <p:column headerText="Nombre" style="width: 280px;" sortBy="#{matricula.estudiante.aspirante.idPersona.apellidoPaterno} #{matricula.estudiante.aspirante.idPersona.apellidoMaterno} #{matricula.estudiante.aspirante.idPersona.nombre}" filterBy="#{matricula.estudiante.aspirante.idPersona.apellidoPaterno} #{matricula.estudiante.aspirante.idPersona.apellidoMaterno} #{matricula.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Género" style="width: 100px;" sortBy="#{matricula.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" filterBy="#{matricula.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" filterMatchMode="contains"/>
-                                                            <p:column headerText="CURP" style="width: 200px;" sortBy="#{matricula.estudiante.aspirante.idPersona.curp}" filterBy="#{matricula.estudiante.aspirante.idPersona.curp}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Fecha de nacimiento" style="width: 150px;" sortBy="#{matricula.estudiante.aspirante.idPersona.fechaNacimiento}" filterBy="#{matricula.estudiante.aspirante.idPersona.fechaNacimiento}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Estado civil" style="width: 100px;" sortBy="#{matricula.estudiante.aspirante.idPersona.estadoCivil}" filterBy="#{mmatricula.estudiante.aspirante.idPersona.estadoCivil}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Situación académica" style="width: 150px;" sortBy="#{matricula.estudiante.tipoEstudiante.descripcion}" filterBy="#{matricula.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Tipo de registro" style="width: 200px;" sortBy="#{matricula.estudiante.tipoRegistro}" filterBy="#{matricula.estudiante.tipoRegistro}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Grupo" style="width: 100px;" sortBy="#{matAct.estudiante.grupo.grado}° #{matAct.estudiante.grupo.literal} #{matAct.estudiante.grupo.idSistema.nombre}" filterBy="#{matAct.estudiante.grupo.grado}° #{matAct.estudiante.grupo.literal} #{matAct.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Matricula" style="width: 100px;" sortBy="#{matAct.estudiante.matricula}" filterBy="#{matAct.estudiante.matricula}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Nombre" style="width: 280px;" sortBy="#{matAct.estudiante.aspirante.idPersona.apellidoPaterno} #{matAct.estudiante.aspirante.idPersona.apellidoMaterno} #{matAct.estudiante.aspirante.idPersona.nombre}" filterBy="#{matAct.estudiante.aspirante.idPersona.apellidoPaterno} #{matAct.estudiante.aspirante.idPersona.apellidoMaterno} #{matAct.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Género" style="width: 100px;" sortBy="#{matAct.genero.nombre}" filterBy="#{matAct.genero.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="CURP" style="width: 200px;" sortBy="#{matAct.estudiante.aspirante.idPersona.curp}" filterBy="#{matAct.estudiante.aspirante.idPersona.curp}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Fecha de nacimiento" style="width: 150px;" sortBy="#{matAct.estudiante.aspirante.idPersona.fechaNacimiento}" filterBy="#{matAct.estudiante.aspirante.idPersona.fechaNacimiento}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Estado civil" style="width: 100px;" sortBy="#{matAct.estudiante.aspirante.idPersona.estadoCivil}" filterBy="#{matAct.estudiante.aspirante.idPersona.estadoCivil}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Situación académica" style="width: 150px;" sortBy="#{matAct.estudiante.tipoEstudiante.descripcion}" filterBy="#{matAct.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Tipo de registro" style="width: 200px;" sortBy="#{matAct.estudiante.tipoRegistro}" filterBy="#{matAct.estudiante.tipoRegistro}" filterMatchMode="contains"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{matricula.estudiante.grupo.grado}° #{matricula.estudiante.grupo.literal} #{matricula.estudiante.grupo.idSistema.nombre}"/>
+                                                        <h:outputText value="#{matAct.estudiante.grupo.grado}° #{matAct.estudiante.grupo.literal} #{matAct.estudiante.grupo.idSistema.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{matricula.estudiante.matricula}"/>
+                                                        <h:outputText value="#{matAct.estudiante.matricula}"/>
                                                     </p:column>
                                                     <p:column>
-                                                        <h:outputText value="#{matricula.estudiante.aspirante.idPersona.apellidoPaterno} #{matricula.estudiante.aspirante.idPersona.apellidoMaterno} #{matricula.estudiante.aspirante.idPersona.nombre}"/>
+                                                        <h:outputText value="#{matAct.estudiante.aspirante.idPersona.apellidoPaterno} #{matAct.estudiante.aspirante.idPersona.apellidoMaterno} #{matAct.estudiante.aspirante.idPersona.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;"> 
-                                                        <h:outputText value="#{matricula.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" />
+                                                        <h:outputText value="#{matAct.genero.nombre}" />
                                                     </p:column>
                                                     <p:column style="text-align: center;"> 
-                                                        <h:outputText value="#{matricula.estudiante.aspirante.idPersona.curp}" />
+                                                        <h:outputText value="#{matAct.estudiante.aspirante.idPersona.curp}" />
                                                     </p:column>
                                                     <p:column style="text-align: center;"> 
-                                                        <h:outputText value="#{matricula.estudiante.aspirante.idPersona.fechaNacimiento}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        <h:outputText value="#{matAct.estudiante.aspirante.idPersona.fechaNacimiento}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                                     </p:column>
                                                     <p:column style="text-align: center;"> 
-                                                        <h:outputText value="#{matricula.estudiante.aspirante.idPersona.estadoCivil}" />
+                                                        <h:outputText value="#{matAct.estudiante.aspirante.idPersona.estadoCivil}" />
                                                     </p:column>
                                                     <p:column>
-                                                        <h:outputText value="#{matricula.estudiante.tipoEstudiante.descripcion}"/>
+                                                        <h:outputText value="#{matAct.estudiante.tipoEstudiante.descripcion}"/>
                                                     </p:column>
                                                     <p:column>
-                                                        <h:outputText value="#{matricula.estudiante.tipoRegistro}"/>
+                                                        <h:outputText value="#{matAct.estudiante.tipoRegistro}"/>
                                                     </p:column>
                                                 </p:dataTable>
                                             </center>
@@ -500,7 +500,7 @@
                                                             <p:column headerText="Fecha de Baja" style="width: 150px;" sortBy="#{desAcad.dtoRegistroBaja.registroBaja.fechaBaja}" filterBy="#{desAcad.dtoRegistroBaja.registroBaja.fechaBaja}" filterMatchMode="contains"/>
                                                             <p:column headerText="Matricula" style="width: 100px;" sortBy="#{desAcad.dtoEstudiante.estudiante.matricula}" filterBy="#{desAcad.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains"/> 
                                                             <p:column headerText="Nombre" style="width: 300px;" sortBy="#{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Género" style="width: 100px;" sortBy="#{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" filterBy="#{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Género" style="width: 100px;" sortBy="#{desAcad.genero.nombre}" filterBy="#{desAcad.genero.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Grupo" style="width: 150px;" sortBy="#{desAcad.dtoEstudiante.estudiante.grupo.grado}° #{desAcad.dtoEstudiante.estudiante.grupo.literal} #{desAcad.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterBy="#{desAcad.dtoEstudiante.estudiante.grupo.grado}° #{desAcad.dtoEstudiante.estudiante.grupo.literal} #{desAcad.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Tipo de Baja" style="width: 150px;" sortBy="#{desAcad.dtoRegistroBaja.tipoBaja.descripcion}" filterBy="#{desAcad.dtoRegistroBaja.tipoBaja.descripcion}" filterMatchMode="contains"/>
                                                             <p:column headerText="Causa Baja" style="width: 200px;" sortBy="#{desAcad.dtoRegistroBaja.causaBaja.causa}" filterBy="#{desAcad.dtoRegistroBaja.causaBaja.causa}" filterMatchMode="contains"/>
@@ -522,7 +522,7 @@
                                                         <h:outputText value="#{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;"> 
-                                                        <h:outputText value="#{desAcad.dtoEstudiante.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" />
+                                                        <h:outputText value="#{desAcad.genero.nombre}" />
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{desAcad.dtoEstudiante.estudiante.grupo.grado}° #{desAcad.dtoEstudiante.estudiante.grupo.literal} #{desAcad.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>

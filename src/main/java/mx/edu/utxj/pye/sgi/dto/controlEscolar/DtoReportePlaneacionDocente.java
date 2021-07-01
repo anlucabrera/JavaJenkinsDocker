@@ -15,6 +15,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
  *
@@ -23,6 +24,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 @RequiredArgsConstructor @ToString
 public class DtoReportePlaneacionDocente implements Serializable, Comparable<DtoReportePlaneacionDocente> {
     @Getter @Setter @NonNull CargaAcademica cargaAcademica;
+    @Getter @Setter @NonNull PeriodosEscolares periodoEscolar;
     @Getter @Setter @NonNull PlanEstudioMateria planEstudioMateria;
     @Getter @Setter @NonNull AreasUniversidad programa;
     @Getter @Setter @NonNull Personal docente;

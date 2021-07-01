@@ -98,7 +98,7 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
       /**
      * Reporte de matricula activa
      */
-    @Getter @NonNull private List<DtoDatosEstudiante> matricula;
+    @Getter @NonNull private List<DtoMatricula> matricula;
     
      /**
      * Reporte distribución de matricula por programa educativo y grado 
@@ -181,7 +181,7 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
         this.reprobacionAsignatura = reprobacionAsignatura;
     }
 
-    public void setMatricula(List<DtoDatosEstudiante> matricula) {
+    public void setMatricula(List<DtoMatricula> matricula) {
         this.matricula = matricula;
     }
 

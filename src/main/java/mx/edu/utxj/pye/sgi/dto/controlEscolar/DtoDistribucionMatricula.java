@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
  *
@@ -20,6 +21,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 @RequiredArgsConstructor @ToString
 public class DtoDistribucionMatricula implements Serializable, Comparable<DtoDistribucionMatricula> {
     @Getter @Setter @NonNull AreasUniversidad programa;
+    @Getter @Setter @NonNull PeriodosEscolares periodoEscolar;
     @Getter @Setter @NonNull Integer grado;
     @Getter @Setter @NonNull Integer matriculaInicial;
     @Getter @Setter @NonNull Integer desercion;

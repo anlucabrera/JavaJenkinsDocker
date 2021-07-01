@@ -15,6 +15,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
  *
@@ -24,6 +25,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 public class DtoEstudianteIrregular implements Serializable, Comparable<DtoEstudianteIrregular> {
     @Getter @Setter @NonNull Estudiante estudiante;
     @Getter @Setter @NonNull AreasUniversidad programa;
+    @Getter @Setter @NonNull PeriodosEscolares periodoEscolar;
     @Getter @Setter @NonNull PlanEstudioMateria planEstudioMateria;
     @Getter @Setter @NonNull Personal docente;
     @Getter @Setter @NonNull String calificacion;

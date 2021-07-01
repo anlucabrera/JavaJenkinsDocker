@@ -11,6 +11,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 
 /**
  *
@@ -19,6 +20,7 @@ import lombok.ToString;
 @RequiredArgsConstructor @ToString
 public class DtoTramitarBajas implements Serializable, Comparable<DtoTramitarBajas>{
     @Getter @Setter @NonNull DtoDatosEstudiante dtoEstudiante;
+    @Getter @Setter Generos genero;
     @Getter @Setter DtoRegistroBajaEstudiante dtoRegistroBaja;
 
     public DtoTramitarBajas() {

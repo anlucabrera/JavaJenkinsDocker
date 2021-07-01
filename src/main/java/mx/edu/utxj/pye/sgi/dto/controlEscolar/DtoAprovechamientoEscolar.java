@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
  *
@@ -21,6 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 @RequiredArgsConstructor @ToString
 public class DtoAprovechamientoEscolar implements Serializable, Comparable<DtoAprovechamientoEscolar> {
     @Getter @Setter @NonNull AreasUniversidad programa;
+    @Getter @Setter @NonNull PeriodosEscolares periodoEscolar;
     @Getter @Setter @NonNull PlanEstudioMateria planEstudioMateria;
     @Getter @Setter @NonNull Double promedio;
     

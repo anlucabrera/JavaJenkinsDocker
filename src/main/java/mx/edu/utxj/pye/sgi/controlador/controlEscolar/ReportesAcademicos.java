@@ -26,9 +26,9 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAprovechamientoEscolar;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAprovechamientoEscolarEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDistribucionMatricula;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteIrregular;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMatricula;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePlaneacionDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReprobacionAsignatura;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ReportesAcademicosRolMultiple;
@@ -47,6 +47,7 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 
 /**
@@ -98,7 +99,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             rol.setNivelRol(NivelRol.OPERATIVO);
 //            rol.setSoloLectura(true);
             
-            rol.getInstrucciones().add("Seleccione generación y nivel educativo.");
+            rol.getInstrucciones().add("Seleccione periodo, nivel y programa educativo.");
             rol.getInstrucciones().add("Seleccione el reporte que desea consultar.");
             rol.getInstrucciones().add("Se visualizará el reporte correspondiente.");
             rol.getInstrucciones().add("Dar clic en el botón de Descargar Reporte en Excel, para generar un archivo que contiene la información de los reportes disponibles.");
@@ -151,11 +152,14 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(rol.getNivel()== null) return;
         ResultadoEJB<List<AreasUniversidad>> res = ejb.getProgramasEducativosNivel(rol.getPeriodo(), rol.getNivel());
         if(res.getCorrecto()){
-            rol.setProgramas(res.getValor());
+            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
+                rol.setProgramas(res.getValor().stream().filter(p->p.getAreaSuperior().equals(rol.getUsuario().getAreaOperativa().getArea())).collect(Collectors.toList()));
+            }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){
+                rol.setProgramas(res.getValor());
+            }
             rol.setPrograma(rol.getProgramas().get(0));
             listaReportes();
         }else mostrarMensajeResultadoEJB(res);
-    
     }
     
     /**
@@ -167,9 +171,6 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
             listaReportes.add("Estudiantes irregulares");
             listaReportes.add("Planeación docente");
-            rol.setReportes(listaReportes);
-            rol.setReporte(rol.getReportes().get(0));
-            generarReportesDireccionAcademica();
         }
         else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){
             listaReportes.add("Estudiantes irregulares");
@@ -180,10 +181,11 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             listaReportes.add("Matricula");
             listaReportes.add("Distribución de matricula");
             listaReportes.add("Deserción académica");
-            rol.setReportes(listaReportes);
-            rol.setReporte(rol.getReportes().get(0));
-            generarReportes();
         }
+        
+        rol.setReportes(listaReportes);
+        rol.setReporte(rol.getReportes().get(0));
+        generarReportes();
     }
     
     /**
@@ -209,17 +211,6 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         }
     }
     
-     /**
-     * Permite generar el reporte seleccionado dependiendo la opción seleccionada
-     */
-    public void generarReportesDireccionAcademica(){
-        if("Estudiantes irregulares".equals(rol.getReporte())){
-//           generarEstudiantesIrregularesAreaAcademica();
-        }else if("Planeación docente".equals(rol.getReporte())){
-//           generarPlaneacionDocenteAreaAcademica();
-        }
-    }
-    
     /**
      * Permite que al cambiar o seleccionar un periodo se pueda actualizar la lista de ´niveles educativos
      * @param e Evento del cambio de valor
@@ -229,11 +220,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             PeriodosEscolares periodo = (PeriodosEscolares)e.getNewValue();
             rol.setPeriodo(periodo);
             listaNivelesPeriodo();
-            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
-                generarReportesDireccionAcademica();
-            }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){
-                generarReportes();
-            }
+            generarReportes();
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
@@ -246,11 +233,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(e.getNewValue() instanceof  ProgramasEducativosNiveles){
             ProgramasEducativosNiveles nivel = (ProgramasEducativosNiveles)e.getNewValue();
             rol.setNivel(nivel);
-            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
-                generarReportesDireccionAcademica();
-            }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){
-                generarReportes();
-            }
+            generarReportes();
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
@@ -263,11 +246,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(e.getNewValue() instanceof  AreasUniversidad){
             AreasUniversidad programa = (AreasUniversidad)e.getNewValue();
             rol.setPrograma(programa);
-            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
-                generarReportesDireccionAcademica();
-            }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){
-                generarReportes();
-            }
+            generarReportes();
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
@@ -280,37 +259,24 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(e.getNewValue() instanceof  String){
             String reporte = (String)e.getNewValue();
             rol.setReporte(reporte);
-            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
-                generarReportesDireccionAcademica();
-            }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){
-                generarReportes();
-            }
+            generarReportes();
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
     
-//    /**
-//     * Método que permite descargar en excel los reportes de la generación y nivel educativo seleccionado
-//     * @throws java.io.IOException
-//     */
-//     public void descargarReportesEstadia() throws IOException, Throwable{
-//        if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
-//            generarEficienciaEstadiaAreaAcademica();
-//            generarListadoEstudiantesPromediosAreaAcademica();
-//            File f = new File(ejb.getReportesEstadiaAreaAcademica(rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getGeneracion(), rol.getNivelEducativo()));
-//            Faces.sendFile(f, true);
-//        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){     
-//            generarSeguimientoActEstadia();
-//            generarAsigProgramaAsesor();
-//            generarCumpDocumentoPrograma();
-//            generarEficienciaEstadia();
-//            generarListadoEstudiantesPromedios();
-//            generarZonaInfluenciaIns();
-//            generarZonaInfluenciaPrograma();
-//            File f = new File(ejb.getReportesEstadia(rol.getListaSegActEstadia(), rol.getListaAsigAsesorAcad(), rol.getListaCumplimientoEstudiante(), rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getListaZonaInfluenciaIns(), rol.getListaZonaInfluenciaPrograma(), rol.getGeneracion(), rol.getNivelEducativo()));
-//            Faces.sendFile(f, true);
-//        }
-//    }
+    /**
+     * Método que permite descargar en excel los reportes del periodo, nivel y programa educativo seleccionado
+     * @throws java.io.IOException
+     */
+     public void descargarReportesAcademicos() throws IOException, Throwable{
+        if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
+            File f = new File(ejb.getReportesDireccion(rol.getPeriodo(), rol.getPrograma()));
+            Faces.sendFile(f, true);
+        }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){     
+            File f = new File(ejb.getReportesEscolares(rol.getPeriodo(), rol.getPrograma()));
+            Faces.sendFile(f, true);
+        }
+    }
     
     
     /**
@@ -344,7 +310,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
      * Permite generar el listado de estudiantes del periodo y programa educativo seleccionado
      */
     public void generarMatricula(){
-        ResultadoEJB<List<DtoDatosEstudiante>> res = ejb.getMatricula(rol.getPeriodo(), rol.getPrograma());
+        ResultadoEJB<List<DtoMatricula>> res = ejb.getMatricula(rol.getPeriodo(), rol.getPrograma());
         if(res.getCorrecto()){
             rol.setMatricula(res.getValor());
             Ajax.update("tbMatricula");

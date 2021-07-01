@@ -578,4 +578,11 @@ public class ServicioCarga implements EjbCarga {
             return "Error: No se pudo leer el archivo";
         }
     }
+    
+    @Override
+    public String crearDirectorioReportesAcademicos(String periodoEscolar, String programa, String areaGeneraReporte) {
+        String rutaRelativa = genCarpetaRelativa(formatosEscolares, reportes, periodoEscolar, areaGeneraReporte, programa);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
 }
