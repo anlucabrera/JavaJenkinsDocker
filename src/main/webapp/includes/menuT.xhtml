@@ -20,15 +20,46 @@
                 </p:link>
             </li>
             <li>
-                <p:link href="http://siip.utxj.edu.mx/RD-MA2020/" target="_blank">
+                <p:link href="http://siip.utxj.edu.mx/http://siip.utxj.edu.mx/RevisionPorDireccion/" target="_blank">
                     <i class="fa fa-desktop"></i>
-                    <span>Revisión por la dirección<br/>mayo - agosto 2020</span>
+                    <span>Revisión por la dirección</span>
                     <span class="pull-right-container">
                         <small class="label pull-right bg-green">Nuevo</small>
                     </span>
                 </p:link>
             </li>
             <c:if test="#{logonMB.usuarioTipo eq usuarioTipo.TRABAJADOR}">
+
+                <c:if test="#{logonMB.personal.clave eq 57 or logonMB.personal.clave eq 70 or logonMB.personal.clave eq 467 or logonMB.personal.clave eq 503 or logonMB.personal.clave eq 183 or logonMB.personal.clave eq 339 or logonMB.personal.clave eq 30 or logonMB.personal.clave eq 364 or logonMB.personal.clave eq 203 or logonMB.personal.clave eq 148}">
+                    <li>
+                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/retencion050621.pdf#toolbar=0" target="_blank">
+                            <i class="fa fa-folder-open"></i>
+                            <span>Retención</span>
+                            <span class="pull-right-container">
+                                <small class="label pull-right bg-green">Nuevo</small>
+                            </span>
+                        </p:link>
+                    </li>
+                    <li>
+                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/reprobacion_con_cohorte_generacional.pdf#toolbar=0" target="_blank">
+                            <i class="fa fa-folder-open"></i>
+                            <span>Reprobación</span>
+                            <span class="pull-right-container">
+                                <small class="label pull-right bg-green">Nuevo</small>
+                            </span>
+                        </p:link>
+                    </li>
+                    <li>
+                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/desercion_con_cohorte_generacional.pdf#toolbar=0" target="_blank">
+                            <i class="fa fa-folder-open"></i>
+                            <span>Deserción</span>
+                            <span class="pull-right-container">
+                                <small class="label pull-right bg-green">Nuevo</small>
+                            </span>
+                        </p:link>
+                    </li>
+                </c:if>
+
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Perfil del personal</li>
                 <li>
                     <p:link href="#{request.contextPath}/capitalHumano/perfilEmpleado.xhtml">
@@ -122,7 +153,7 @@
                     <c:if test="#{validacionPlanAccionTutorialPsicopedagogia.mostrarEnDesarrollo(request) and validacionPlanAccionTutorialPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/seguimiento_tutorias_asesorias.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento Tutorías y Asesorías</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{plantillaPlanAccionTutorialPsicopedagogia.mostrarEnDesarrollo(request) and plantillaPlanAccionTutorialPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/plantilla_plan_accion_tutorial.xhtml"><i class="fa fa-slideshare"></i><span>Plantilla Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{seguimientoTestAprendizajePsicopedagogia.mostrarEnDesarrollo(request) and seguimientoTestAprendizajePsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/seguimientoTestAprendizaje.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento Test Aprendizaje</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                    
+
                     <!-- Especialista -->
                     <c:if test="#{seguimientoCasoCriticoEspecialista.mostrarEnDesarrollo(request) and seguimientoCasoCriticoEspecialista.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento Caso Crítico Especialista</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <!-- Registro multiple -->
@@ -134,7 +165,7 @@
                     <c:if test="#{resultadosPlaneacionesConsulta.mostrarEnDesarrollo(request) and resultadosPlaneacionesConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesMu/resultadosPlaneaciones.xhtml"><i class="fa fa-list-ol"></i><span>Resultado de Planeaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{registroDeEstudianteConsulta.mostrarEnDesarrollo(request) and registroDeEstudianteConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesMu/registroEstudianteConsulta.xhtml"><i class="fa fa-list-ol"></i><span>Resultado Registro del <br/> estudiante</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{segimientoAcademicoConsulta.mostrarEnDesarrollo(request) and segimientoAcademicoConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesMu/segimientoAcademico.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                    
+
                     <!-- Estadía - Secretaría Académica -->
                     <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and concentradoCalificacionesSecAca.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Estadía</li>
@@ -249,7 +280,7 @@
                     <c:if test="#{registroTutoriaIndividual.mostrarEnDesarrollo(request) and registroTutoriaIndividual.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/registro_tutoria_individual.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Tutorías Individuales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{consultaPlanesAccionTutoralCoordinadorTutores.mostrarEnDesarrollo(request) and consultaPlanesAccionTutoralCoordinadorTutores.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/consulta_plan_accion_tutorial_tutores.xhtml"><i class="fa fa-slideshare"></i><span>Planes de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{(seguimientoTestAprendizajeTutor.mostrarEnDesarrollo(request) and seguimientoTestAprendizajeTutor.tieneAcceso) or (seguimientoTestAprendizajeTutorSaiiut.mostrarEnDesarrollo(request) and seguimientoTestAprendizajeTutorSaiiut.tieneAcceso)}"><li><p:link href="#{request.contextPath}/controlEscolar/seguimientoTestAprendizaje.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento de Test</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                    
+
                     <!-- Asesor de estadía -->
                     <c:if test="#{seguimientoEstadiaAsesor.mostrarEnDesarrollo(request) and seguimientoEstadiaAsesor.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Asesor estadía</li>

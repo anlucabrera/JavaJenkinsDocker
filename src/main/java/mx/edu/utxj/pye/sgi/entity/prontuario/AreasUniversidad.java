@@ -77,6 +77,8 @@ public class AreasUniversidad implements Serializable {
     @Size(max = 255)
     @Column(name = "correoInstitucional")
     private String correoInstitucional;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "programaTSU")
+    private List<ProgramasEducativosContinuidad> programasEducativosContinuidadList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "areasUniversidad", fetch = FetchType.LAZY)
     private List<SatisfaccionHistorico> satisfaccionHistoricoList;
     @JoinColumn(name = "categoria", referencedColumnName = "categoria")
@@ -213,6 +215,15 @@ public class AreasUniversidad implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad[ area=" + area + " ]";
+    }
+
+    @XmlTransient
+    public List<ProgramasEducativosContinuidad> getProgramasEducativosContinuidadList() {
+        return programasEducativosContinuidadList;
+    }
+
+    public void setProgramasEducativosContinuidadList(List<ProgramasEducativosContinuidad> programasEducativosContinuidadList) {
+        this.programasEducativosContinuidadList = programasEducativosContinuidadList;
     }
     
 }

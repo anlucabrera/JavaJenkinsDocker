@@ -11,6 +11,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosContinuidad;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import org.omnifaces.util.Messages;
 
@@ -110,6 +111,12 @@ public class ServiciosAreasLogeo implements EjbAreasLogeo {
     @Override
     public List<AreasUniversidad> listaProgramasEducativos() {
         return facade.getEntityManager().createQuery("SELECT au FROM AreasUniversidad au WHERE au.categoria.categoria = 9 AND au.vigente = 1 ORDER BY au.nombre", AreasUniversidad.class)
+                .getResultList();
+    }
+    
+    @Override
+    public List<ProgramasEducativosContinuidad> listaProgramasEducativosContinuidad(Short clave){
+        return facade.getEntityManager().createQuery("SELECT au FROM ProgramasEducativosContinuidad au WHERE au.programaContinuidad =:clave AND au.activo = 1", ProgramasEducativosContinuidad.class).setParameter("clave", clave)
                 .getResultList();
     }
 }

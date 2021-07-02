@@ -37,6 +37,13 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
 // Variables Basicas   
     //Representa la referencia hacia personal director
     @Getter    @Setter    @NonNull    private Boolean newCompetencia;
+    @Getter    @Setter    private Boolean newRegiistroOe;
+    @Getter    @Setter    private Boolean newRegiistroIn;
+    @Getter    @Setter    private String tipoReg;
+    @Getter    @Setter    private String clve;
+    @Getter    @Setter    private String descripcion;
+    @Getter    @Setter    private String nivelA;
+    @Getter    @Setter    private Integer meta;
     
 // Objetos de BD    
     //Representa la referencia hacia personal director
@@ -55,6 +62,8 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     @Getter    @Setter    @NonNull    private Materia materia; 
     // Representa la referencia de la unidad de materia seleccionado
     @Getter    @NonNull    private UnidadMateria unidadMateria;
+    
+    @Getter    @Setter    @NonNull private String rutaArchivo;
   
 // Variables de tipo de DTO
     // Representa la referencia entre un Plan de Estudio(control escolar) y un Área Universida(Prontuario)
@@ -69,6 +78,8 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     @Getter    @Setter    private DtoMateriaPlanEstudio materiaPlanEstudio1;
     // Representa la referencia entre una Competencia(control escolar) con una Plan de EstudioMateria(control escolar) y un Plan Estudio(control escolar)
     @Getter    @Setter    private DtoPlanEstudioMateriaCompetencias planEstudioMateriaCompetencias1;
+    
+    @Getter    @Setter    private DtoAlineacionAcedemica alineacionAcedemica;
     
 // Variables de tipo de List
     // Representa el listado de programas educativos vigentes
@@ -88,9 +99,13 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     // Representa el listado de Metas de una materia
     @Getter    @NonNull    private List<MetasPropuestas> metasPropuestases;
     // Representa el listado de Plan Estudio Materia de un Plan de Estudio
-    @Getter    @NonNull    private List<PlanEstudioMateria> planEstudioMaterias;
+    @Getter    @NonNull    private List<PlanEstudioMateria> planEstudioMaterias;    
+    @Getter    @Setter    private List<PlanEstudioMateria> planestudioMateriasSelect;
 // Variables de tipo de List DTO's
     @Getter    @Setter    private List<DtoPlanEstudioMateriaCompetencias> planEstudioMateriaCompetenciasesList;
+    @Getter    @Setter    private List<DtoAlineacionAcedemica> acedemicas;
+    @Getter    @Setter    private List<DtoAlineacionAcedemica> alineacionesDescripociones;
+    @Setter    @Getter private List<DtoRegistroPrevioAlineacionEducativa> listaPreviaAlineacionEducativa;
 // Variables de tipo de Map
     // Mapeo de materias con sus unidades de acuerdo al plan de estudios seleccionado
     @Getter    @NonNull    private Map<Materia, List<UnidadMateria>> materiasUnidadesMap;

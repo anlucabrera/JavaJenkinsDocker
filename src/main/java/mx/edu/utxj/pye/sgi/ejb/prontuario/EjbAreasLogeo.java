@@ -4,6 +4,7 @@ import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosContinuidad;
 
 @Local
 public interface EjbAreasLogeo {
@@ -28,4 +29,7 @@ public interface EjbAreasLogeo {
     public List<AreasUniversidad> mostrarAreasUniversidad() throws Throwable;
 
     public List<AreasUniversidad> listaProgramasEducativos();
+    
+    public List<ProgramasEducativosContinuidad> listaProgramasEducativosContinuidad(Short clave);
+    
 }
