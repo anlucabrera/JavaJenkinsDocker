@@ -66,8 +66,13 @@ public class ServiciosConsultaDto extends AbstractRol {
     }
 
     public void setAreasAcademicas(List<DtoAreaAcademica> areasAcademicas) {
+        /*areasAcademicas
+                .forEach(dtoAreaAcademica -> {
+                    System.out.println("dtoAreaAcademica.getAreaAcademica().getNombre() = " + dtoAreaAcademica.getAreaAcademica().getNombre());
+                    dtoAreaAcademica.getProgramas().stream().map(AreasUniversidad::getNombre).forEach(System.out::println);
+                });*/
         this.areasAcademicas = areasAcademicas.stream().sorted(Comparator.comparing(dtoAreaAcademica -> dtoAreaAcademica.getAreaAcademica().getNombre())).collect(Collectors.toList());
-        if(programasEducativos == null && areasAcademicas != null){
+//        if(programasEducativos == null && areasAcademicas != null){
             programasEducativos = new Vector<>();
             programasEducativos.add(new SelectItem(new AreasUniversidad((short)0), "INSTITUCIONAL"));
             areasAcademicas.forEach(dtoAreaAcademica -> {
@@ -77,6 +82,6 @@ public class ServiciosConsultaDto extends AbstractRol {
                 programasEducativos.add(group);
             });
             programaSeleccionado = (AreasUniversidad) programasEducativos.get(0).getValue();
-        }
+//        }
     }
 }

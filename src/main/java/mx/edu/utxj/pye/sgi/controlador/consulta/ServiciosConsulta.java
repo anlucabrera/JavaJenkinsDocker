@@ -110,6 +110,7 @@ public class ServiciosConsulta extends ViewScopedRol implements Desarrollable {
 //        System.out.println("evaluacion en concentrado calcularConcentrado = " + calcularConcentrado.getValor().getEvaluacion());
         if(!calcularConcentrado.getCorrecto()){mostrarMensajeResultadoEJB(calcularConcentrado); return null;}
         dto.getContenedores().put(evaluacion, calcularConcentrado.getValor());
+//        calcularConcentrado.getValor().get
         Faces.setApplicationAttribute(identificadorEnSesion, calcularConcentrado.getValor());
 //        System.out.println("dto.getContenedores().size() = " + dto.getContenedores().size());
 //        System.out.println("Evaluaciones como claves");
@@ -144,6 +145,7 @@ public class ServiciosConsulta extends ViewScopedRol implements Desarrollable {
             if(getProgramasEvaluacion.getCorrecto()) dto.setAreasAcademicas(getProgramasEvaluacion.getValor());
             else mostrarMensajeResultadoEJB(getProgramasEvaluacion);
         }
+//        dto.getProgramasEducativos().stream().forEach(System.out::println);
     }
 
     public List<BigDecimal> getRespuestas(){

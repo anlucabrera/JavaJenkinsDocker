@@ -144,8 +144,11 @@ public class EjbSatisfaccionServiciosConsulta {
         try{
             final Integer serviciosConsultaSatisfaccionServiciosSerializacion = ep.leerPropiedadEntera("serviciosConsultaSatisfaccionServiciosSerializacion").orElse(0);
 
-            ResultadoEJB<List<DtoAreaAcademica>> leerDtoAreaAcademicaSerializadas = leerDtoAreaAcademicaSerializadas(evaluacion.getPeriodo());
-            if(leerDtoAreaAcademicaSerializadas.getCorrecto()) return ResultadoEJB.crearCorrecto(leerDtoAreaAcademicaSerializadas.getValor(), "Objetos ya serializados");
+            if(serviciosConsultaSatisfaccionServiciosSerializacion != 0){
+                ResultadoEJB<List<DtoAreaAcademica>> leerDtoAreaAcademicaSerializadas = leerDtoAreaAcademicaSerializadas(evaluacion.getPeriodo());
+                if(leerDtoAreaAcademicaSerializadas.getCorrecto()) return ResultadoEJB.crearCorrecto(leerDtoAreaAcademicaSerializadas.getValor(), "Objetos ya serializados");
+            }
+
             List<AreasUniversidad> areas = em.createQuery("select a from AreasUniversidad a inner join a.categoria c where c.categoria=:categoria order by a.nombre", AreasUniversidad.class).setParameter("categoria", (short) 8).getResultList();
             List<AreasUniversidad> programas = encuesta.getSatisfaccionServiciosEstudiantes()
                     .stream()
@@ -154,6 +157,7 @@ public class EjbSatisfaccionServiciosConsulta {
                     .distinct()
                     .sorted(DtoSatisfaccionServiciosEncuesta.areasUniversidadComparator)
                     .collect(Collectors.toList());
+//            programas.stream().map(AreasUniversidad::getNombre).forEach(System.out::println);
             //em.createQuery("select a from AreasUniversidad a inner join a.categoria c inner join a.nivelEducativo n where c.categoria=:categoria and a.vigente = '1' order by n.nivel desc, a.vigente desc, a.nombre asc", AreasUniversidad.class).setParameter("categoria", (short) 9).getResultList();
             List<DtoAreaAcademica> dtoAreaAcademicas = new Vector<>();
             areas.parallelStream().forEachOrdered(area -> {
@@ -675,7 +679,7 @@ public class EjbSatisfaccionServiciosConsulta {
     public ResultadoEJB<DtoSatisfaccionServiciosEncuesta.GraficaSerieAreaHistorico> calcularSerie(DtoSatisfaccionServiciosEncuesta encuesta, AreasUniversidad area, SatisfaccionServiciosApartado satisfaccionServiciosApartado){
         try {
 //            System.out.println("EjbSatisfaccionServiciosConsulta.calcularSerie");
-            System.out.println("encuesta = " + encuesta + ", area = " + area.getArea() + ", satisfaccionServiciosApartado = " + satisfaccionServiciosApartado);
+//            System.out.println("encuesta = " + encuesta + ", area = " + area.getArea() + ", satisfaccionServiciosApartado = " + satisfaccionServiciosApartado);
 
             List<DtoSatisfaccionServiciosEncuesta.DtoSatisfaccionHistorico> dtoSatisfaccionHistoricos = em.createQuery("select s from SatisfaccionHistorico s inner join s.areasUniversidad a inner join s.ciclosEscolares c where a.area=:area order by s.satisfaccionHistoricoPK.ciclo, s.satisfaccionHistoricoPK.apartado", SatisfaccionHistorico.class)
                     .setParameter("area", area.getArea())
