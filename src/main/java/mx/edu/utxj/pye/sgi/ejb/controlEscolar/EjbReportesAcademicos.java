@@ -364,10 +364,13 @@ public class EjbReportesAcademicos {
            List<DtoAprovechamientoEscolar> listaAprovechamiento = new ArrayList<>();
            
            List<DtoMatricula> estudiantes = getMatricula(periodo, programa).getValor();
+           
+           List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
             
-           List<PlanEstudioMateria> planEstudiosMaterias = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.evento.periodo=:periodo AND c.cveGrupo.idPe=:programa", CargaAcademica.class)
+           List<PlanEstudioMateria> planEstudiosMaterias = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.evento.periodo=:periodo AND c.cveGrupo.idPe=:programa AND c.cveGrupo.grado NOT IN :grados", CargaAcademica.class)
                     .setParameter("periodo", periodo.getPeriodo())
                     .setParameter("programa", programa.getArea())
+                    .setParameter("grados", grados)
                     .getResultStream()
                     .map(p->p.getIdPlanMateria())
                     .distinct()
@@ -400,9 +403,12 @@ public class EjbReportesAcademicos {
         try{
            List<DtoReprobacionAsignatura> listaReprobacionAsignatura = new ArrayList<>();
            
-           List<PlanEstudioMateria> planEstudiosMaterias = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.evento.periodo=:periodo AND c.cveGrupo.idPe=:programa", CargaAcademica.class)
+           List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
+           
+           List<PlanEstudioMateria> planEstudiosMaterias = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.evento.periodo=:periodo AND c.cveGrupo.idPe=:programa AND c.cveGrupo.grado NOT IN :grados", CargaAcademica.class)
                     .setParameter("periodo", periodo.getPeriodo())
                     .setParameter("programa", programa.getArea())
+                    .setParameter("grados", grados)
                     .getResultStream()
                     .map(p->p.getIdPlanMateria())
                     .distinct()
@@ -506,7 +512,7 @@ public class EjbReportesAcademicos {
             
             List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);;
             
-            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e WHERE e.periodo=:periodo AND e.carrera=:programa AND e.grupo.grado NOT IN :grados AND e.tipoEstudiante.idTipoEstudiante NOT IN :tiposEstudiante AND e.tipoRegistro NOT IN :tiposRegistro", Estudiante.class)
+            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE e.periodo=:periodo AND e.carrera=:programa AND g.idPe=:programa AND g.grado NOT IN :grados AND e.tipoEstudiante.idTipoEstudiante NOT IN :tiposEstudiante AND e.tipoRegistro NOT IN :tiposRegistro", Estudiante.class)
                     .setParameter("periodo", periodo.getPeriodo())
                     .setParameter("programa", programa.getArea())
                     .setParameter("grados", grados)
@@ -514,7 +520,7 @@ public class EjbReportesAcademicos {
                     .setParameter("tiposRegistro", tiposRegistro)
                     .getResultStream()
                     .collect(Collectors.toList());
-            
+           
             estudiantes.forEach(estudiante -> {
                 Generos genero = em.find(Generos.class, estudiante.getAspirante().getIdPersona().getGenero());
                 String discapacidad = getTipoDiscapacidad(estudiante).getValor();
@@ -525,7 +531,6 @@ public class EjbReportesAcademicos {
                 DtoAprovechamientoEscolarEstudiante dtoAprovechamientoEscolar = new DtoAprovechamientoEscolarEstudiante(estudiante,programa,periodo,genero,discapacidad,lenguaIndigena, promedio);
                 listaAprovechamiento.add(dtoAprovechamientoEscolar);
             });
-            
             return ResultadoEJB.crearCorrecto(listaAprovechamiento.stream().sorted(DtoAprovechamientoEscolarEstudiante::compareTo).collect(Collectors.toList()), "Lista de aprovechamiento escolar del periodo y programa educativo seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de aprovechamiento escolar del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getListaAprovechamientoEscolar)", e, null);
@@ -604,7 +609,6 @@ public class EjbReportesAcademicos {
             if(datosMedicos!=null){
                 discapacidad = datosMedicos.getCveDiscapacidad().getNombre();
             }
-            
             return ResultadoEJB.crearCorrecto(discapacidad, "Tipo de discapacidad registrada del estudiante.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener tipo de discapacidad registrada por el estudiante. (EjbReportesAcademicos.getTipoDiscapacidad)", e, null);
@@ -627,13 +631,20 @@ public class EjbReportesAcademicos {
                     .orElse(null);
             
             if(encuestaAspirante!=null){
-                if (encuestaAspirante.getR1Lenguaindigena().equals("Sí") && encuestaAspirante.getR2tipoLenguaIndigena() != null) {
+                if (encuestaAspirante.getR1Lenguaindigena() == null) {
+                    lenguaIndigena = "Sin información";
+                } else if (encuestaAspirante.getR1Lenguaindigena().equals("Si") && encuestaAspirante.getR2tipoLenguaIndigena() != null) {
                     lenguaIndigena = encuestaAspirante.getR2tipoLenguaIndigena().getNombre();
-                } else if (encuestaAspirante.getR1Lenguaindigena().equals("Sí") && encuestaAspirante.getR2tipoLenguaIndigena() == null) {
+                } else if (encuestaAspirante.getR1Lenguaindigena().equals("Si") && encuestaAspirante.getR2tipoLenguaIndigena() == null) {
                     lenguaIndigena = "No indicó lengua que habla";
-                }
+                } else if (encuestaAspirante.getR1Lenguaindigena().equals("No") && encuestaAspirante.getR2tipoLenguaIndigena() != null) {
+                    lenguaIndigena = encuestaAspirante.getR2tipoLenguaIndigena().getNombre();
+                } else if (encuestaAspirante.getR1Lenguaindigena().equals("No") && encuestaAspirante.getR2tipoLenguaIndigena() == null) {
+                    lenguaIndigena = "No aplica";
+                } 
+            }else{
+                 lenguaIndigena = "No aplica";
             }
-            
             return ResultadoEJB.crearCorrecto(lenguaIndigena, "Lengua indígena registrada por el estudiante.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lengua indígena registrada por el estudiante. (EjbReportesAcademicos.getLenguaIndigena)", e, null);

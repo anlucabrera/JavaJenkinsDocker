@@ -175,8 +175,7 @@
                                                  <p:remoteCommand name="actualizar" update="@form:tbAprovechamientoEscolar" />
                                                  <p:dataTable id="tbAprovechamientoEscolar" var="aprovEsc" value="#{reportesAcademicos.rol.aprovechamientoEscolar}" emptyMessage="No hay reporte de aprovechamiento escolar del programa educativo en el periodo seleccionado"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
-                                                             tableStyle="vertical-align: middle;" paginator="true" rows="100" rowsPerPageTemplate="100,200,300,400,500,600,700,800,900,1000" 
-                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                             tableStyle="vertical-align: middle;">
                                                     <f:facet name="header">
                                                         Aprovechamiento escolar #{reportesAcademicos.rol.programa.nombre} <br/>
                                                         #{fn:length(reportesAcademicos.rol.aprovechamientoEscolar)} resultados obtenidos.
@@ -208,7 +207,7 @@
                                         <c:if test="#{reportesAcademicos.rol.reporte eq 'Aprovechamiento escolar - Lista'}">
                                             <center>
                                                  <p:remoteCommand name="actualizar" update="@form:tbListaAprovechamientoEscolar" />
-                                                 <p:dataTable id="tbListaAprovechamientoEscolar" var="aprovEscEst" value="#{reportesAcademicos.rol.listaAprovechamientoEscolar}" emptyMessage="No hay reporte de aprovechamiento escolar del programa educativo en el periodo seleccionado"
+                                                 <p:dataTable id="tbListaAprovechamientoEscolar" var="aprovEscEst" value="#{reportesAcademicos.rol.listaAprovechamientoEscolar}" emptyMessage="No hay reporte de aprovechamiento escolar por estudiante del programa educativo en el periodo seleccionado"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
                                                              tableStyle="vertical-align: middle;" paginator="true" rows="100" rowsPerPageTemplate="100,200,300,400,500,600,700,800,900,1000" 
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
@@ -262,10 +261,9 @@
                                         <c:if test="#{reportesAcademicos.rol.reporte eq 'Reprobación por asignatura'}">
                                             <center>
                                                  <p:remoteCommand name="actualizar" update="@form:tbReprobacionAsignatura" />
-                                                 <p:dataTable id="tbReprobacionAsignatura" var="repAsig" value="#{reportesAcademicos.rol.reprobacionAsignatura}" emptyMessage="No hay reporte de aprovechamiento escolar del programa educativo en el periodo seleccionado"
+                                                 <p:dataTable id="tbReprobacionAsignatura" var="repAsig" value="#{reportesAcademicos.rol.reprobacionAsignatura}" emptyMessage="No hay reporte de reprobación por asignatura del programa educativo en el periodo seleccionado"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
-                                                             tableStyle="vertical-align: middle;" paginator="true" rows="100" rowsPerPageTemplate="100,200,300,400,500,600,700,800,900,1000" 
-                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                             tableStyle="vertical-align: middle;">
                                                     <f:facet name="header">
                                                         Reprobación por asignatura de #{reportesAcademicos.rol.programa.nombre} <br/>
                                                         #{fn:length(reportesAcademicos.rol.aprovechamientoEscolar)} resultados obtenidos.
@@ -318,7 +316,7 @@
                                                  <p:remoteCommand name="actualizar" update="@form:tbPlaneacionDocente" />
                                                  <p:dataTable id="tbPlaneacionDocente" var="planDoc" value="#{reportesAcademicos.rol.planeacionDocente}" emptyMessage="No hay planeaciones docente registradas del programa educativo en el periodo seleccionado"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
-                                                             tableStyle="vertical-align: middle;" paginator="true" rows="100" rowsPerPageTemplate="50,200,300,400,500,600,700,800,900,1000" 
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="100" rowsPerPageTemplate="100,200,300,400,500,600,700,800,900,1000" 
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                                     <f:facet name="header">
                                                         Planeación Docente de #{reportesAcademicos.rol.programa.nombre} <br/>
@@ -488,7 +486,7 @@
                                                  <p:remoteCommand name="actualizar" update="@form:tbDesercionAcademica" />
                                                  <p:dataTable id="tbDesercionAcademica" var="desAcad" value="#{reportesAcademicos.rol.desercionAcademica}" emptyMessage="No hay bajas registradas del programa educativo en el periodo seleccionado"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
-                                                             tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" 
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="50" rowsPerPageTemplate="50,100,150,200,250" 
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                                     <f:facet name="header">
                                                         Deserción académica de #{reportesAcademicos.rol.programa.nombre} <br/>
