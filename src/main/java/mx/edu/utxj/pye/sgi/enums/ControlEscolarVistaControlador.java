@@ -18,6 +18,7 @@ public enum ControlEscolarVistaControlador {
     REPORTE_APERTURA_EXTEMPORANEA("/controlEscolar/pye/reporteAperturaExtemporanea.xhtml", ReporteAperturaExtemporaneaAdministrador.class),
     CALENDARIO_EVENTOS_ESTADIA("/calendarioEventos.xhtml", CalendarioEventosEstadia.class),
     REPORTES_ESTADIA("/reportesEstadia.xhtml", ReportesEstadia.class),
+    REPORTES_ACADEMICOS("/reportesAcademicos.xhtml", ReportesAcademicos.class),
     
     CONCENTRADO_CALIFICACIONES_SECACA("/controlEscolar/secAcademica/concentradoCal.xhtml",  ConcentradoCalificacionesSecAca.class),
     AVANCE_PROGRAMATICO_SECACA("/controlEscolar/secAcademica/avanceP.xhtml",  AvanceProgramaticoSecAca.class),

@@ -44,6 +44,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroBajaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoValidacionesBaja;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
+import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausaCategoria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausaCategoriaPK;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
@@ -910,10 +911,12 @@ public class EjbRegistroBajas {
                 AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, baja.getEstudiante().getCarrera());
                 PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, baja.getPeriodoEscolar());
                 DtoDatosEstudiante dtoDatosEstudiante = new DtoDatosEstudiante(baja.getEstudiante(), programaEducativo, periodoEscolar);
+                Generos genero = em.find(Generos.class, baja.getEstudiante().getAspirante().getIdPersona().getGenero());
                 DtoRegistroBajaEstudiante dtoRegistroBajaEstudiante = buscarRegistroBajaEstudiante(baja.getEstudiante().getIdEstudiante()).getValor();
                
                 DtoTramitarBajas dtoTramitarBajas = new DtoTramitarBajas();
                 dtoTramitarBajas.setDtoEstudiante(dtoDatosEstudiante);
+                dtoTramitarBajas.setGenero(genero);
                 dtoTramitarBajas.setDtoRegistroBaja(dtoRegistroBajaEstudiante);
                 listaDtoTramitarBajas.add(dtoTramitarBajas);
             });
