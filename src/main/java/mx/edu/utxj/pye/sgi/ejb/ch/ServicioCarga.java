@@ -580,6 +580,12 @@ public class ServicioCarga implements EjbCarga {
     }
     
     @Override
+    public String crearDirectorioReporteAlineacionMaterias(String plan, String programa) {
+        String rutaRelativa = genCarpetaRelativa(alineacionMaterias, reportes,  programa, plan);addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+    
+    @Override
     public String crearDirectorioReportesAcademicos(String periodoEscolar, String programa, String areaGeneraReporte) {
         String rutaRelativa = genCarpetaRelativa(formatosEscolares, reportes, periodoEscolar, areaGeneraReporte, programa);
         addCarpetaRelativa(rutaRelativa);
