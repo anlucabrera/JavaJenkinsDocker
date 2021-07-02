@@ -433,7 +433,7 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             BarcodePDF417 pdfcodigo = new BarcodePDF417();
             pdfcodigo.setText(String.valueOf(estudiante.getMatricula()));
             Image img = pdfcodigo.getImage();
-            img.setAbsolutePosition(300f, 77f);
+            img.setAbsolutePosition(280f, 57f);
             img.scalePercent(200, 100 * pdfcodigo.getYHeight());
             PdfContentByte  content = pdfStamper.getOverContent(pdfReader.getNumberOfPages());
             content.addImage(img);
