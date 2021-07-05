@@ -23,6 +23,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAprovechamientoEscolarEstudiant
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDistribucionMatricula;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteIrregular;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMatricula;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPromedioMateriaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReportePlaneacionDocente;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReprobacionAsignatura;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoTramitarBajas;
@@ -66,6 +67,7 @@ public class EjbReportesAcademicos {
     
     @EJB EjbCarga ejbCarga;
     public static final String ACTUALIZADO_ACADEMICO = "reportesAcademicosEscolares.xlsx";
+    public static final String ACTUALIZADO_PROMEDIOS = "promediosEstudiante.xlsx";
     public static final String ACTUALIZADO_ACADEMICO_DIRECCION = "reportesAcademicosDireccion.xlsx";
     
     @PostConstruct
@@ -792,6 +794,119 @@ public class EjbReportesAcademicos {
         Map beans = new HashMap();
         beans.put("estIrreg", getEstudiantesIrregulares(periodo, programa).getValor());
         beans.put("planDoc", getPlaneacionesDocente(periodo, programa).getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+     /**
+     * Permite obtener la lista de promedios por materia de cada estudiante del periodo y programa educativo seleccionado
+     * @param periodo
+     * @param programa
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoPromedioMateriaEstudiante>> getListaPromedioMateriaEstudiante(PeriodosEscolares periodo, AreasUniversidad programa){
+        try{
+            List<DtoPromedioMateriaEstudiante> listaPromedioMateriaEstudiante = new ArrayList<>();
+            
+            List<String> tiposRegistro = new ArrayList<>(); tiposRegistro.add("Regularización de calificaciones por reincoporación");
+            
+            List<Integer> tiposEstudiante = new ArrayList<>(); tiposEstudiante.add(2); tiposEstudiante.add(3); tiposEstudiante.add(4);
+            
+            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);;
+            
+            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE e.periodo=:periodo AND e.carrera=:programa AND g.idPe=:programa AND g.grado NOT IN :grados AND e.tipoEstudiante.idTipoEstudiante NOT IN :tiposEstudiante AND e.tipoRegistro NOT IN :tiposRegistro", Estudiante.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programa", programa.getArea())
+                    .setParameter("grados", grados)
+                    .setParameter("tiposEstudiante", tiposEstudiante)
+                    .setParameter("tiposRegistro", tiposRegistro)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+           
+            estudiantes.forEach(estudiante -> {
+                List<CargaAcademica> cargasAcademicas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.cveGrupo.idGrupo=:grupo ", CargaAcademica.class)
+                    .setParameter("grupo", estudiante.getGrupo().getIdGrupo())
+                    .getResultStream()
+                    .collect(Collectors.toList()); 
+            
+                cargasAcademicas.forEach(carga -> {
+                    DtoPromedioMateriaEstudiante dtoPromedioMateriaEstudiante = getObtenerPromedioMateriaEstudiante(estudiante, carga, periodo, programa).getValor();
+                    listaPromedioMateriaEstudiante.add(dtoPromedioMateriaEstudiante);
+                });
+            });
+            return ResultadoEJB.crearCorrecto(listaPromedioMateriaEstudiante.stream().sorted(DtoPromedioMateriaEstudiante::compareTo).collect(Collectors.toList()), "Lista de promedios por materia de cada estudiante del periodo y programa educativo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de promedios por materia de cada estudiante del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getListaPromedioMateriaEstudiante)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener el promedio por materia del estudiante seleccionado
+     * @param estudiante
+     * @param carga
+     * @param periodo
+     * @param programa
+     * @return Resultado del proceso
+     */
+     public ResultadoEJB<DtoPromedioMateriaEstudiante> getObtenerPromedioMateriaEstudiante(Estudiante estudiante, CargaAcademica carga, PeriodosEscolares periodo, AreasUniversidad programa){
+        try{
+            Generos genero = em.find(Generos.class, estudiante.getAspirante().getIdPersona().getGenero());
+            String discapacidad = getTipoDiscapacidad(estudiante).getValor();
+            String lenguaIndigena = getLenguaIndigena(estudiante).getValor(); 
+
+            String promedioOrdinario = "0.0", promedioNivelacion = "0.0";
+            
+                PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, carga.getIdPlanMateria().getIdPlanMateria());
+                
+                CalificacionPromedio calificacionPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionPromedio.class)
+                    .setParameter("carga", carga.getCarga())
+                    .setParameter("estudiante", estudiante.getIdEstudiante())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null); 
+                
+                if(calificacionPromedio!=null){
+                    if(calificacionPromedio.getValor()<8.0){
+                        CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
+                            .setParameter("carga", carga.getCarga())
+                            .setParameter("estudiante", estudiante.getIdEstudiante())
+                            .getResultStream()
+                            .findFirst()
+                            .orElse(null); 
+                        if(calificacionNivelacion!=null){ promedioNivelacion =  String.format("%.3f",calificacionNivelacion.getValor()); }
+                    }else{
+                        promedioOrdinario = String.format("%.3f",calificacionPromedio.getValor());
+                    }
+                }
+            
+            DtoPromedioMateriaEstudiante dtoPromedioMateriaEstudiante = new DtoPromedioMateriaEstudiante(estudiante, programa, periodo, genero, discapacidad, lenguaIndigena, planEstudioMateria, promedioOrdinario, promedioNivelacion);
+            
+            return ResultadoEJB.crearCorrecto(dtoPromedioMateriaEstudiante, "Promedio por materia del estudiante en el periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el promedio por materia del estudiante en el periodo seleccionado. (EjbReportesAcademicos.getObtenerPromedioMateriaEstudiante)", e, null);
+        }
+    }
+     
+      /**
+     * Permite generar reportes académicos para servicios escolares del periodo escolar y programa educativo seleccionado
+     * @param periodo Periodo Escolar
+     * @param programa Programa educativo
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
+    
+    public String getReportePromediosMateriaEstudiante(PeriodosEscolares periodo, AreasUniversidad programa) throws Throwable {
+        String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
+        String areaGeneraReporte = "SE";
+        String rutaPlantilla = "C:\\archivos\\formatosEscolares\\baseDatosPromediosEstudiante.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, programa.getSiglas(), areaGeneraReporte);
+
+        String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_PROMEDIOS);
+        
+        Map beans = new HashMap();
+        beans.put("promMatEst", getListaPromedioMateriaEstudiante(periodo, programa).getValor());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 
