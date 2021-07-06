@@ -858,30 +858,33 @@ public class EjbReportesAcademicos {
 
             String promedioOrdinario = "0.0", promedioNivelacion = "0.0";
             
-                PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, carga.getIdPlanMateria().getIdPlanMateria());
-                
-                CalificacionPromedio calificacionPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionPromedio.class)
+            PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, carga.getIdPlanMateria().getIdPlanMateria());
+            
+            Personal docente = em.find(Personal.class, carga.getDocente());
+
+            CalificacionPromedio calificacionPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionPromedio.class)
                     .setParameter("carga", carga.getCarga())
                     .setParameter("estudiante", estudiante.getIdEstudiante())
                     .getResultStream()
                     .findFirst()
-                    .orElse(null); 
-                
-                if(calificacionPromedio!=null){
-                    if(calificacionPromedio.getValor()<8.0){
-                        CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
-                            .setParameter("carga", carga.getCarga())
-                            .setParameter("estudiante", estudiante.getIdEstudiante())
-                            .getResultStream()
-                            .findFirst()
-                            .orElse(null); 
-                        if(calificacionNivelacion!=null){ promedioNivelacion =  String.format("%.3f",calificacionNivelacion.getValor()); }
-                    }else{
-                        promedioOrdinario = String.format("%.3f",calificacionPromedio.getValor());
-                    }
-                }
+                    .orElse(null);
+
+            if (calificacionPromedio != null) {
+                promedioOrdinario = String.format("%.3f", calificacionPromedio.getValor());
+            }
+
+            CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
+                    .setParameter("carga", carga.getCarga())
+                    .setParameter("estudiante", estudiante.getIdEstudiante())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+
+            if (calificacionNivelacion != null) {
+                promedioNivelacion = String.format("%.3f", calificacionNivelacion.getValor());
+            }
             
-            DtoPromedioMateriaEstudiante dtoPromedioMateriaEstudiante = new DtoPromedioMateriaEstudiante(estudiante, programa, periodo, genero, discapacidad, lenguaIndigena, planEstudioMateria, promedioOrdinario, promedioNivelacion);
+            DtoPromedioMateriaEstudiante dtoPromedioMateriaEstudiante = new DtoPromedioMateriaEstudiante(estudiante, programa, periodo, genero, discapacidad, lenguaIndigena, planEstudioMateria, docente, promedioOrdinario, promedioNivelacion);
             
             return ResultadoEJB.crearCorrecto(dtoPromedioMateriaEstudiante, "Promedio por materia del estudiante en el periodo seleccionado.");
         }catch (Exception e){

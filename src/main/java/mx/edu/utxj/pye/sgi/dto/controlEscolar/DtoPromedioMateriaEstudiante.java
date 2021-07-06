@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -30,6 +31,7 @@ public class DtoPromedioMateriaEstudiante implements Serializable, Comparable<Dt
     @Getter @Setter @NonNull String discapacidad;
     @Getter @Setter @NonNull String lenguaIndigena;
     @Getter @Setter @NonNull PlanEstudioMateria planEstudioMateria;
+    @Getter @Setter @NonNull Personal docente;
     @Getter @Setter @NonNull String promedioOrdinario;
     @Getter @Setter @NonNull String promedioNivelacion;
     
