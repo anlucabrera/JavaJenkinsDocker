@@ -307,7 +307,7 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
             Double mP = new Double(dtoReporteFichaAdmision.getProyeccionMatricula());
             Double mR= new Double(dtoReporteFichaAdmision.getTotalInscritos());
             Double porcentajeMatricula = new Double(0);
-            porcentajeFichas= (mR*100)/mP;
+            porcentajeMatricula= (mR*100)/mP;
             dtoReporteFichaAdmision.setPorcentajeAlcanceMatricula(porcentajeMatricula);
 
             return dtoReporteFichaAdmision;
