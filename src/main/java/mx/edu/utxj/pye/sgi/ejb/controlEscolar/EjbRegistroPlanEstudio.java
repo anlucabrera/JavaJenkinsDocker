@@ -134,6 +134,19 @@ public class EjbRegistroPlanEstudio {
         }
     }
 
+public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst) {
+        try {
+            final List<MetasPropuestas> metasplane = em.createQuery("SELECT m FROM MetasPropuestas m WHERE m.idPlanMateria.idPlan.idPlanEstudio = :idPlanEstudio", MetasPropuestas.class)
+                    .setParameter("idPlanEstudio", planEst.getIdPlanEstudio())
+                    .getResultList();
+
+            return ResultadoEJB.crearCorrecto(metasplane, "Lista de Metas propuestas activas por plan de estudio");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "Imposible obtener el listado de Metas Propuestas del plan de estudio", e, null);
+        }
+    }
+
+
     public ResultadoEJB<List<DtoPlanEstudioMateriaCompetencias>> obtenerDtoPEMC(PlanEstudio plan) {
         try {
             final List<DtoPlanEstudioMateriaCompetencias> l = new ArrayList<>();
@@ -381,12 +394,13 @@ public class EjbRegistroPlanEstudio {
         }
     }
     
-    public ResultadoEJB<MetasPropuestas> registrarMetaMateria(DtoMateriaMetasPropuestas dmu,PlanEstudioMateria estudioMateria, Operacion operacion) {
+    public ResultadoEJB<MetasPropuestas> registrarMetaMateria(DtoMateriaMetasPropuestas dmu, Operacion operacion) {
         try {
             f.setEntityClass(MetasPropuestas.class);
             switch (operacion) {
                 case PERSISTIR:
-                    dmu.getMetasPropuestas().setIdPlanMateria(estudioMateria);
+                    dmu.getMetasPropuestas().setIdPlanMateria(new PlanEstudioMateria());
+                    dmu.getMetasPropuestas().setIdPlanMateria(dmu.getMateria());
                     em.persist(dmu.getMetasPropuestas());
                     f.flush();
                     return ResultadoEJB.crearCorrecto(dmu.getMetasPropuestas(), "Se registró correctamente La Unidad Materia");
@@ -907,6 +921,7 @@ public class EjbRegistroPlanEstudio {
             return new ArrayList<>();
         }
     }
+    
     public List<DtoAlineacionAcedemica> generarCatalogoAtributosEgreso(PlanEstudio estudio) {
         List<DtoAlineacionAcedemica> daas = new ArrayList<>();
         List<AtributoEgreso> oes = em.createQuery("SELECT pem FROM AtributoEgreso pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", AtributoEgreso.class)

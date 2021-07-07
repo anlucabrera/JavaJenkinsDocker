@@ -1,13 +1,16 @@
 package mx.edu.utxj.pye.sgi.ejb.poa;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
+import mx.edu.utxj.pye.sgi.entity.pye2.CapitulosTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.Partidas;
 import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
@@ -106,6 +109,46 @@ public class ServiciosPresupuestacion implements EjbPresupuestacion {
             return pr.get(0);
         }
     }
+    
+    @Override
+    public List<ProductosAreas> mostrarProductosAreasPartidas(Short ejercicioFiscal, Partidas partidas, Short area) {
+        TypedQuery<ProductosAreas> q = em.createQuery("SELECT p FROM ProductosAreas p WHERE p.productos.productosPK.ejercicioFiscal=:ejercicioFiscal AND p.partida=:partida AND p.area=:area", ProductosAreas.class);
+        q.setParameter("area", area);
+        q.setParameter("ejercicioFiscal", ejercicioFiscal);
+        q.setParameter("partida", partidas);
+        List<ProductosAreas> pr = q.getResultList();
+        if (pr.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return pr;
+        }
+    }
+    @Override
+    public void agregarProductosAreas(List<ProductosAreas> productos) throws SQLException{
+         final EntityTransaction transaction = em.getTransaction();
+        try {            
+            final int listSize = productos.size();
+            transaction.begin();
+
+            for (int i = 0; i<listSize; i++) { //Object object : list) {
+                final ProductosAreas object = productos.get(i);
+                em.persist(object);
+
+                if ( i % 500 == 0 ) { //500, same as the JDBC batch size defined in the persistence.xml
+                    //flush a batch of inserts and release memory:
+                    em.flush();
+                    em.clear();
+                }
+            }
+            transaction.commit();
+        }
+        catch(Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new SQLException(e.getMessage());
+        } 
+    }
 
 //  ---------------------------------------------------------------------- Pretecho Financiero --------------------------------------------------
     @Override
@@ -175,6 +218,15 @@ public class ServiciosPresupuestacion implements EjbPresupuestacion {
         List<Productos> pr = q.getResultList();
         return pr;
     }
+    
+    @Override
+    public List<Productos> mostrarProductoseTotales(Short ejercicio, Short area) {
+        TypedQuery<Productos> q = em.createQuery("SELECT p FROM ProductosAreas pa INNER JOIN pa.productos p INNER JOIN pa.partida pr WHERE pa.area = :area AND pa.productos.productosPK.ejercicioFiscal=:ejercicioFiscal GROUP BY p.productosPK", Productos.class);
+        q.setParameter("area", area);
+        q.setParameter("ejercicioFiscal", ejercicio);
+        List<Productos> pr = q.getResultList();
+        return pr;
+    }
 
     @Override
     public Productos mostrarProductos(ProductosPK ppk) {
@@ -182,5 +234,40 @@ public class ServiciosPresupuestacion implements EjbPresupuestacion {
         Productos nuevoProductos = (Productos) facadePoa.find(ppk);
         return nuevoProductos;
     }
+    
+    @Override
+    public void agregarProductos(List<Productos> productos)throws SQLException{
+         final EntityTransaction transaction = em.getTransaction();
+        try {            
+            final int listSize = productos.size();
+            transaction.begin();
+
+            for (int i = 0; i<listSize; i++) { //Object object : list) {
+                final Productos object = productos.get(i);
+                em.persist(object);
+
+                if ( i % 500 == 0 ) { //500, same as the JDBC batch size defined in the persistence.xml
+                    //flush a batch of inserts and release memory:
+                    em.flush();
+                    em.clear();
+                }
+            }
+            transaction.commit();
+        }
+        catch(Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new SQLException(e.getMessage());
+        } 
+    }
+
+//  ------------------------------------------------------------------------ Capitulo --------------------------------------------------
+    public List<CapitulosTipos> mostrarCapitulosTiposes(){
+        facadePoa.setEntityClass(CapitulosTipos.class);
+        List<CapitulosTipos> nuevoProductos = facadePoa.findAll();
+        return nuevoProductos;
+    }
+
 
 }

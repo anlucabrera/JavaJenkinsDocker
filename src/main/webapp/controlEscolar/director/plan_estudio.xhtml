@@ -742,6 +742,140 @@
                                             </div>
                                         </h:form>
                                     </p:tab>
+                                    <p:tab title="Nivel de Desempeño">
+                                        <h:form id="desempeniosFrm">
+                                            <div id="main-buttons-asignatura" class="hidden-sm hidden-xs">
+                                                <p:toolbar id="tb-asignatura">
+                                                    <f:facet name="left">
+
+                                                        <p:spacer width="5" />
+
+                                                    </f:facet>
+                                                    <f:facet name="right">
+                                                        <p:commandButton title="Guardar Materias" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarMetas()}"/>
+                                                    </f:facet>
+                                                </p:toolbar>
+                                            </div>
+                                            <div class="ui-g ui-fluid" style="margin-top: 20px;">                                            
+                                                <div class="ui-g-6 ui-sm-12">
+                                                    <div class="ui-material">
+                                                        <p:selectOneMenu id="planEstudioC" value="#{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.planEstudio}" converter="entityConverter">
+                                                            <f:selectItem itemValue="#{null}"/>
+                                                            <f:selectItems value="#{administracionPlanEstudioDirector.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                            <p:ajax listener="#{administracionPlanEstudioDirector.nivelesDesempenioPlanEstudioMateriaConsulta()}" update="@form" process="@this"/>
+                                                        </p:selectOneMenu>
+                                                        <p:outputLabel for="planEstudioC" value="Plan de estudios"/>
+                                                        <p:message for="planEstudioC"/>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+                                                <div class="ui-g-6 ui-sm-12">
+                                                    <div class="ui-material">
+                                                        <p:selectOneMenu id="materiaRegistradaC" value="#{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.materia}" converter="entityConverter">
+                                                            <f:selectItem itemValue="#{null}"/>
+                                                            <f:selectItems value="#{administracionPlanEstudioDirector.rol.planEstudioMaterias}" var="meteriasR" itemValue="#{meteriasR}" itemLabel="#{meteriasR.grado}-#{meteriasR.claveMateria}-#{meteriasR.idMateria.nombre}" />
+                                                        </p:selectOneMenu>
+                                                        <p:outputLabel for="materiaRegistradaC" value="Materia"/>
+                                                        <p:message for="materiaRegistradaC"/>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ui-g-6 ui-sm-12">
+                                                    <div class="ui-material">
+                                                        <p:inputTextarea id="autonomo" placeholder="Mayor que 9 y menor que 10 (Autónomo)" value="#{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.metasPropuestas.autonomo}"/>
+                                                        <p:outputLabel for="autonomo" value="Mayor que 9 y menor que 10 (Autónomo)"/>
+                                                        <p:message for="autonomo"/>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ui-g-6 ui-sm-12">
+                                                    <div class="ui-material">
+                                                        <p:inputTextarea id="destacado" placeholder="Mayor que 8.5 y menor que 9 (Destacado)" value="#{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.metasPropuestas.destacado}"/>
+                                                        <p:outputLabel for="destacado" value="Mayor que 8.5 y menor que 9 (Destacado)"/>
+                                                        <p:message for="destacado"/>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ui-g-6 ui-sm-12">
+                                                    <div class="ui-material">
+                                                        <p:inputTextarea id="satisfactorio" placeholder="Mayor que 8 y menor que 8.5 (Satisfactorio)" value="#{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.metasPropuestas.satisfactorio}"/>
+                                                        <p:outputLabel for="satisfactorio" value="Mayor que 8 y menor que 8.5 (Satisfactorio)"/>
+                                                        <p:message for="satisfactorio"/>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ui-g-6 ui-sm-12">
+                                                    <div class="ui-material">
+                                                        <p:inputTextarea id="noacreditado" placeholder="Menor que 8 (No Acreditado)" value="#{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.metasPropuestas.noAcreditado}"/>
+                                                        <p:outputLabel for="noacreditado" value="Menor que 8 (No Acreditado)"/>
+                                                        <p:message for="noacreditado"/>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ui-g-12 ui-sm-12">
+                                                    <div class="ui-material">
+
+                                                        <p:dataTable id="unidadesResultados" var="com" value="#{administracionPlanEstudioDirector.rol.propuestases}" sortBy="#{com.idPlanMateria.idPlanMateria}"
+                                                                     editable="true" editMode="row">
+                                                            <f:facet name="header">
+                                                                #{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.materia.idPlan.descripcion}
+                                                            </f:facet>
+                                                            <p:columnGroup type="header">
+                                                                <p:row class="success">
+                                                                    <p:column rowspan="2" headerText="Materia" style="width: 20%;"/> 
+                                                                    <p:column rowspan="2" headerText="Autónomo" style="width: 20%;"/> 
+                                                                    <p:column rowspan="2" headerText="Destacado" style="width: 20%;"/> 
+                                                                    <p:column rowspan="2" headerText="Satisfactorio" style="width: 20%;"/> 
+                                                                    <p:column rowspan="2" headerText="No Acreditado" style="width: 20%;"/>
+                                                                    <p:column rowspan="2" headerText="" style="width: 32px;"/> 
+                                                                </p:row>
+                                                            </p:columnGroup>
+
+                                                            <p:ajax event="rowEdit" listener="#{administracionPlanEstudioDirector.onRowEditMetasPrupuestas}" update="unidadesResultados" />
+                                                            <p:ajax event="rowEditCancel" listener="#{administracionPlanEstudioDirector.onRowCancel}" update="unidadesResultados" />
+
+                                                            <p:column groupRow="true">
+                                                                <h:outputText value="#{com.idPlanMateria.claveMateria}-#{com.idPlanMateria.idMateria.nombre}" />
+                                                            </p:column>
+                                                            <p:column>
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output"><h:outputText value="#{com.autonomo}" /></f:facet>
+                                                                    <f:facet name="input"><p:inputTextarea value="#{com.autonomo}" /></f:facet>
+                                                                </p:cellEditor>   
+                                                            </p:column>
+                                                            <p:column>
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output"><h:outputText value="#{com.destacado}" /></f:facet>
+                                                                    <f:facet name="input"><p:inputTextarea value="#{com.destacado}" /></f:facet>
+                                                                </p:cellEditor>   
+                                                            </p:column>
+                                                            <p:column>
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output"><h:outputText value="#{com.satisfactorio}" /></f:facet>
+                                                                    <f:facet name="input"><p:inputTextarea value="#{com.satisfactorio}" /></f:facet>
+                                                                </p:cellEditor>   
+                                                            </p:column>
+                                                            <p:column>
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output"><h:outputText value="#{com.noAcreditado}" /></f:facet>
+                                                                    <f:facet name="input"><p:inputTextarea value="#{com.noAcreditado}" /></f:facet>
+                                                                </p:cellEditor>   
+                                                            </p:column>
+                                                            <p:column>
+                                                                <p:rowEditor />
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </h:form>
+                                    </p:tab>
                                     <p:tab title="Programas eduativos">
                                         <h:form id="progEduFrm">
                                             <div id="main-buttons-asignatura" class="hidden-sm hidden-xs">

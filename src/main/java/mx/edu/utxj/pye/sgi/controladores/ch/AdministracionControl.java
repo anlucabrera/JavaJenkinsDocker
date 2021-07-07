@@ -36,7 +36,11 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
 import mx.edu.utxj.pye.sgi.entity.pye2.CapitulosTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
+import mx.edu.utxj.pye.sgi.entity.pye2.Partidas;
 import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
+import mx.edu.utxj.pye.sgi.entity.pye2.Productos;
+import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAreas;
+import mx.edu.utxj.pye.sgi.entity.pye2.ProductosPK;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
@@ -64,14 +68,22 @@ public class AdministracionControl implements Serializable {
     @Getter    @Setter    private List<PresupuestoPOA> presupuestoPOAs = new ArrayList<>();
     @Getter    @Setter    private List<PretechoFinanciero> p=new ArrayList<>();
     @Getter    @Setter    private List<PretechoFinanciero> pfs = new ArrayList<>();
+    @Getter    @Setter    private List<ProductosAreas> productoses = new ArrayList<>();
+    @Getter    @Setter    private List<Partidas> partidases = new ArrayList<>();
+    @Getter    @Setter    private List<ProductosAreasAsigados> asigadoses = new ArrayList<>();
+    @Getter    @Setter    private List<CapitulosTipos> capitulosTiposes = new ArrayList<>();
+    
     
     @Getter    @Setter    private Calendarioevaluacionpoa c = new Calendarioevaluacionpoa();
     @Getter    @Setter    private Eventos eventos = new Eventos();
+    @Getter    @Setter    private Productos productos = new Productos();
+    @Getter    @Setter    private ProductosAreas productosAreas = new ProductosAreas();
     @Getter    @Setter    private PretechoFinanciero financiero= new PretechoFinanciero();
     @Getter    @Setter    private Integer eventoC = 0;
-    @Getter    @Setter    private Double cp2=0D,cp3=0D,cp4=0D,cpd=0D,cp2T=0D,cp3T=0D,cp4T=0D,cpdT=0D;
-    @Getter    @Setter    private Short areaC = 0,ejeFiscal = 0;
+    @Getter    @Setter    private Double cp2 = 0D, cp3 = 0D, cp4 = 0D, cpd = 0D, cp2T = 0D, cp3T = 0D, cp4T = 0D, cpdT = 0D;
+    @Getter    @Setter    private Short areaC = 0, ejeFiscal = 0, partida = 0;
     @Getter    @Setter    private Date fehDate = new Date();
+    @Getter    @Setter    private Boolean nuevoPeriodo = Boolean.FALSE;
 
     @Getter    @Setter    private EventosAreas editEventosAreas = new EventosAreas();
 
@@ -104,6 +116,8 @@ public class AdministracionControl implements Serializable {
         mostrarIncidencias();
         mostrarModulos();
         mostrarConfiguracionProp();
+        mostrarPartidas();
+        mostrarProductos(Short.parseShort("0"), 1);
     }
 
 
@@ -179,7 +193,9 @@ public class AdministracionControl implements Serializable {
                         }
                     });
                 }
-            }                                               
+            }  
+            
+            capitulosTiposes=ejbPresupuestacion.mostrarCapitulosTiposes();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
@@ -210,7 +226,7 @@ public class AdministracionControl implements Serializable {
             }
         }
     }
-
+    
     public String buscarPersonal(Integer clave) {
         try {
             Personal p = new Personal();
@@ -238,6 +254,39 @@ public class AdministracionControl implements Serializable {
 
             cps = administrador.buscarConfiguracionPropiedadeses();
 
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void mostrarPartidas() {
+        try {
+            partidases = new ArrayList<>();
+            partidases.add(new Partidas(Short.parseShort("0"), "Todos los produstos"));
+            partidases.addAll(ejbPresupuestacion.mostrarPartidases(ejeFiscal, Short.parseShort("1")));
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void mostrarProductos(Short partida, Integer tipo) {
+        try {
+            productoses = new ArrayList<>();
+            if (tipo.equals(1)) {
+                productoses = ejbPresupuestacion.mostrarProductosAreases(Short.parseShort("1"), ejeFiscal);
+            } else {
+                productoses = ejbPresupuestacion.mostrarProductosAreasPartidas(ejeFiscal, new Partidas(partida, ""), Short.parseShort("1"));
+            }
+            asigadoses= new ArrayList<>();
+            if(!productoses.isEmpty()){
+                productoses.forEach((t) -> {
+                    asigadoses.add(new ProductosAreasAsigados(t.getProductos(), t.getProductos().getEjerciciosFiscales(), t.getPartida(), t.getCapitulo().getCapituloTipo(),t.getCapitulo()));
+                });
+            }
+            
+            
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
@@ -387,6 +436,56 @@ public class AdministracionControl implements Serializable {
             AreasUniversidad au = areasLogeo.mostrarAreasUniversidad(areaC);
             utilidadesPOA.enviarCorreo("P", "As", Boolean.FALSE, "", au);
             Ajax.update("frmEventosAreas");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void agreggarProductos() {
+        try {
+            Integer ef = ejeFiscal.intValue() - 1;
+            ejeFiscal = Short.parseShort(ef.toString());
+            mostrarPartidas();
+            mostrarProductos(Short.parseShort("0"), 1);
+            List<Productos> p=new ArrayList<>();
+            List<ProductosAreas> pa=new ArrayList<>();
+            if(asigadoses.isEmpty()){
+                asigadoses.forEach((t) -> {
+                    productos= new Productos();
+                    ProductosPK pK= new ProductosPK();
+                    EjerciciosFiscales ejerciciosFiscales =new EjerciciosFiscales();
+                    
+                    pK.setProducto(t.getProducto().getProductosPK().getProducto());
+                    pK.setEjercicioFiscal(ejeFiscal);
+                    
+                    ejerciciosFiscales.setEjercicioFiscal(ejeFiscal);
+                    ejerciciosFiscales.setAnio(ejeFiscal);
+                    
+                    productos.setProductosPK(new ProductosPK());
+                    productos.setProductosPK(pK);
+                    productos.setDescripcion(t.getProducto().getDescripcion());
+                    productos.setEjerciciosFiscales(new EjerciciosFiscales());
+                    productos.setEjerciciosFiscales(ejerciciosFiscales);
+                    productos.setUnidadMedida(t.getProducto().getUnidadMedida());
+                    p.add(productos);
+                    procesopoas.forEach((pros) -> {
+                        productosAreas = new ProductosAreas();
+                        productosAreas.setArea(pros.getArea());
+                        productosAreas.setCapitulo(new CapitulosTipos());
+                        productosAreas.setCapitulo(t.getTipos());
+                        productosAreas.setPartida(new Partidas());
+                        productosAreas.setPartida(t.getPartidas());
+                        productosAreas.setProductos(new Productos());
+                        productosAreas.setProductos(productos);
+                        pa.add(productosAreas);
+                    });
+                });
+            }
+            
+            ejbPresupuestacion.agregarProductos(p);
+            ejbPresupuestacion.agregarProductosAreas(pa);
+
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
@@ -559,6 +658,19 @@ public class AdministracionControl implements Serializable {
         mostrarPresupuestos();
         Ajax.update("frmEventosAreas");
     }
+    
+    public void numeroProcesoAsiganado(ValueChangeEvent event) {
+        ejeFiscal = Short.parseShort(event.getNewValue().toString());
+        mostrarPartidas();
+        mostrarProductos(Short.parseShort("0"),1);
+        if(asigadoses.isEmpty()){
+            nuevoPeriodo=Boolean.TRUE;
+        }
+    }
+    public void numeroProductosPorPartida(ValueChangeEvent event) {        
+        partida = Short.parseShort(event.getNewValue().toString());
+        mostrarProductos(partida,2);
+    }
 
     public static class EventosAreaPOA {
 
@@ -600,5 +712,22 @@ public class AdministracionControl implements Serializable {
             this.cap4000 = cap4000;
             this.capdder = capdder;
         }        
+    }
+    
+    public static class ProductosAreasAsigados {
+        
+        @Getter        @Setter        private Productos producto;
+        @Getter        @Setter        private EjerciciosFiscales fiscales;
+        @Getter        @Setter        private Partidas partidas;
+        @Getter        @Setter        private Short ct;
+        @Getter        @Setter        private CapitulosTipos tipos;
+
+        public ProductosAreasAsigados(Productos producto, EjerciciosFiscales fiscales, Partidas partidas, Short ct, CapitulosTipos tipos) {
+            this.producto = producto;
+            this.fiscales = fiscales;
+            this.partidas = partidas;
+            this.ct = ct;
+            this.tipos = tipos;
+        }
     }
 }

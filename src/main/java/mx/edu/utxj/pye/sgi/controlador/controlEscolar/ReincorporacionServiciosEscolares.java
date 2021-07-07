@@ -60,9 +60,9 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     @EJB EjbPropiedades ep;
     
     @Inject LogonMB logonMB;
-
     
 
+    
 
 
 @PostConstruct
@@ -333,7 +333,6 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         List<Grupo> gs = new ArrayList<>();
         if (!rol.getEstudianteR().isEmpty()) {
             DtoReincorporacion.EstudianteR er = rol.getEstudianteR().get(rol.getEstudianteR().size() - 1);
-            rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera()).getValor());
             primeraOp = er.getEstudiante().getOpcionIncripcion();
             matr = er.getEstudiante().getMatricula();
             if (er.getEstudiante().getTipoRegistro().equals("Equivalencia")) {
@@ -345,7 +344,6 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             });
             gs = gs2;
         } else {
-            rol.setGrupos(ejb.getGrupos(rol.getDacademicos().getAcademicos().getPrimeraOpcion()).getValor());
             primeraOp = Boolean.TRUE;
             matr = 0;
             gs = new ArrayList<>();
@@ -372,24 +370,39 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
 
     public void opcionInscripcion() {
         Short carrera = 0;
-        rol.getRein().setGrupos(new ArrayList<>());
         if (rol.getRein().getOpcionIncripcion()) {
             carrera = rol.getDacademicos().getAcademicos().getPrimeraOpcion();
         } else {
             carrera = rol.getDacademicos().getAcademicos().getSegundaOpcion();
         }
+        
         if (!rol.getEstudianteR().isEmpty()) {
             rol.getEstudianteR().forEach((t) -> {
-                if (Objects.equals(rol.getRein().getOpcionIncripcion(), t.getPrimeraOpcion())) {
-                    if (t.getTipoEstudiante().getIdTipoEstudiante() != 2 && t.getTipoEstudiante().getIdTipoEstudiante() != 3) {
-                        rol.setUltimoGrupoActivo(t.getGrupo());
-                    }
+                if (t.getTipoEstudiante().getIdTipoEstudiante() != 2 && t.getTipoEstudiante().getIdTipoEstudiante() != 3) {
+                    rol.setUltimoGrupoActivo(t.getGrupo());
                 }
             });
         }
-        rol.setGrupos(ejb.getGrupos(carrera).getValor());
+        
+        if (rol.getUltimoGrupoActivo().getIdPe() == carrera) {
+            optenerGrupos(carrera, rol.getUltimoGrupoActivo().getGrado());
+        } else {
+            optenerGrupos(carrera, 0);
+        }
     }
     
+    public void optenerGrupos(Short carrera, Integer gradp) {
+        rol.getRein().setGrupos(new ArrayList<>());
+        rol.setGrupos(new ArrayList<>());
+        List<Grupo> gs=ejb.getGrupos(carrera).getValor();
+        gs.forEach((t) -> {
+            System.out.println("Grado Grupo "+t.getGrado()+" Gado Filtro "+gradp+" valida "+(t.getGrado()>gradp));
+            if(t.getGrado()>gradp){
+                rol.getGrupos().add(t);
+            }
+        });
+//        rol.setGrupos(ejb.getGrupos(carrera).getValor());
+    }
 
 // Busquedas registros
     public void buscarReincorporacionPorDirector() {

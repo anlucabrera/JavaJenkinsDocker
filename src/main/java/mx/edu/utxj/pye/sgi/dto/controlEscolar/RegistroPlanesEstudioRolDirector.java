@@ -63,6 +63,8 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     // Representa la referencia de la unidad de materia seleccionado
     @Getter    @NonNull    private UnidadMateria unidadMateria;
     
+    @Getter    @NonNull    private MetasPropuestas metasPropuestas;
+    
     @Getter    @Setter    @NonNull private String rutaArchivo;
   
 // Variables de tipo de DTO
@@ -98,6 +100,7 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     @Getter    @NonNull    private List<UnidadMateria> unidadesMateria;
     // Representa el listado de Metas de una materia
     @Getter    @NonNull    private List<MetasPropuestas> metasPropuestases;
+    @Getter    @Setter    private List<MetasPropuestas> propuestases;
     // Representa el listado de Plan Estudio Materia de un Plan de Estudio
     @Getter    @NonNull    private List<PlanEstudioMateria> planEstudioMaterias;    
     @Getter    @Setter    private List<PlanEstudioMateria> planestudioMateriasSelect;

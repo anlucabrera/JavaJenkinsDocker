@@ -1,8 +1,10 @@
 package mx.edu.utxj.pye.sgi.ejb.poa;
 
+import java.sql.SQLException;
 import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
+import mx.edu.utxj.pye.sgi.entity.pye2.CapitulosTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.Partidas;
 import mx.edu.utxj.pye.sgi.entity.pye2.PretechoFinanciero;
@@ -32,6 +34,10 @@ public interface EjbPresupuestacion {
     public List<ProductosAreas> mostrarProductosAreases(Short clavearea, Short ejercicioFiscal);
 
     public ProductosAreas mostrarProductosAreas(Productos productos, Partidas partidas, Short area);
+    
+    public List<ProductosAreas> mostrarProductosAreasPartidas(Short ejercicioFiscal, Partidas partidas, Short area);
+    
+    public void agregarProductosAreas(List<ProductosAreas> productos)throws SQLException;
 
 //  ---------------------------------------------------------------------- Pretecho Financiero --------------------------------------------------
     public PretechoFinanciero agregarPretechoFinanciero(PretechoFinanciero financiero);
@@ -51,7 +57,13 @@ public interface EjbPresupuestacion {
 
 //  ------------------------------------------------------------------------ Productos --------------------------------------------------
     public List<Productos> mostrarProductoses(Short ejercicio, Short area, Partidas partida);
-
-    public Productos mostrarProductos(ProductosPK ppk);
+    
+    public List<Productos> mostrarProductoseTotales(Short ejercicio, Short area);
+    
+     public Productos mostrarProductos(ProductosPK ppk);
+    
+    public void agregarProductos(List<Productos> productos)throws SQLException;
+//  ------------------------------------------------------------------------ Capitulo --------------------------------------------------
+    public List<CapitulosTipos> mostrarCapitulosTiposes();
 
 }

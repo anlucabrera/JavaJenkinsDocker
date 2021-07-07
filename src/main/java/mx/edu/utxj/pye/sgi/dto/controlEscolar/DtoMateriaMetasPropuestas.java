@@ -11,8 +11,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MetasPropuestas;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 
 /**
  *
@@ -23,11 +24,13 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.MetasPropuestas;
 public class DtoMateriaMetasPropuestas implements Serializable {
 
    @Getter @Setter @NonNull private MetasPropuestas metasPropuestas;
-    @Getter @Setter private Materia materia;
+    @Getter @Setter private PlanEstudioMateria materia; 
+    @Getter    @Setter    private PlanEstudio planEstudio;
 
-    public DtoMateriaMetasPropuestas(MetasPropuestas metasPropuestas, Materia materia) {
+    public DtoMateriaMetasPropuestas(MetasPropuestas metasPropuestas, PlanEstudioMateria materia, PlanEstudio planEstudio) {
         this.metasPropuestas = metasPropuestas;
         this.materia = materia;
+        this.planEstudio = planEstudio;
     }
 
 }
