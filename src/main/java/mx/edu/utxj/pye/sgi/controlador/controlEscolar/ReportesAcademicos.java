@@ -277,6 +277,17 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             Faces.sendFile(f, true);
         }
     }
+     
+    /**
+     * Método que permite descargar en excel los reportes del periodo, nivel y programa educativo seleccionado
+     * @throws java.io.IOException
+     */
+     public void descargarPromediosMateriaEstudiante() throws IOException, Throwable{
+        if(rol.getUsuario().getPersonal().getAreaOperativa()==10){     
+            File f = new File(ejb.getReportePromediosMateriaEstudiante(rol.getPeriodo(), rol.getPrograma()));
+            Faces.sendFile(f, true);
+        }
+    }
     
     
     /**

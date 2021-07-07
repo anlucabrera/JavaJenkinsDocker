@@ -41,7 +41,9 @@ import org.omnifaces.util.Ajax;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Messages;
 
 
 /**
@@ -54,6 +56,7 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
     @Getter @Setter TramitarBajaRolTutor rol;
     
     @EJB EjbRegistroBajas ejb;
+    @EJB EjbCapturaCalificaciones ejbCapturaCalificaciones;
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
     @Getter Boolean tieneAcceso = false;
@@ -246,25 +249,32 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
      * Permite guardar o actualizar el registro de la baja
      */
     public void guardarTramitarBaja(){
-        if(rol.getExisteRegistroBaja() == null)
-        {  
-            ResultadoEJB<Baja> res = ejb.guardarTramitarBaja(rol.getEstudiante().getDtoEstudiante().getPeriodoEscolar().getPeriodo(), rol.getEstudiante().getDtoEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getAccionesTutor(), rol.getTutor(), rol.getFechaBaja());
-            if(res.getCorrecto()){
-                rol.setBajaRegistrada(res.getValor());
-                mostrarMensajeResultadoEJB(res);
-            }else mostrarMensajeResultadoEJB(res);
-             
-        }else{
-            ResultadoEJB<Baja> res = ejb.actualizarTramitarBaja(rol.getEstudiante().getDtoEstudiante().getPeriodoEscolar().getPeriodo(), rol.getRegistroBajaEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getAccionesTutor(), rol.getTutor(), rol.getFechaBaja());
-            if(res.getCorrecto()){
-                rol.setBajaRegistrada(res.getValor());
-                mostrarMensajeResultadoEJB(res);
-                
-            }else mostrarMensajeResultadoEJB(res);
-        }
-        rol.setForzarAperturaDialogo(Boolean.FALSE);
-        Ajax.update("frmModalTramitarBaja");
-        listaEstudiantes();
+        ResultadoEJB<Boolean> resReinscripcion = ejbCapturaCalificaciones.existeReinscripcion(rol.getEstudiante().getDtoEstudiante().getPeriodoEscolar().getPeriodo(), rol.getEstudiante().getDtoEstudiante().getEstudiante().getMatricula());
+        if(resReinscripcion.getCorrecto() && !resReinscripcion.getValor()){
+            if (rol.getExisteRegistroBaja() == null) {
+                ResultadoEJB<Baja> res = ejb.guardarTramitarBaja(rol.getEstudiante().getDtoEstudiante().getPeriodoEscolar().getPeriodo(), rol.getEstudiante().getDtoEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getAccionesTutor(), rol.getTutor(), rol.getFechaBaja());
+                if (res.getCorrecto()) {
+                    rol.setBajaRegistrada(res.getValor());
+                    mostrarMensajeResultadoEJB(res);
+                } else {
+                    mostrarMensajeResultadoEJB(res);
+                }
+
+            } else {
+                ResultadoEJB<Baja> res = ejb.actualizarTramitarBaja(rol.getEstudiante().getDtoEstudiante().getPeriodoEscolar().getPeriodo(), rol.getRegistroBajaEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getAccionesTutor(), rol.getTutor(), rol.getFechaBaja());
+                if (res.getCorrecto()) {
+                    rol.setBajaRegistrada(res.getValor());
+                    mostrarMensajeResultadoEJB(res);
+
+                } else {
+                    mostrarMensajeResultadoEJB(res);
+                }
+            }
+            rol.setForzarAperturaDialogo(Boolean.FALSE);
+            Ajax.update("frmModalTramitarBaja");
+            listaEstudiantes();
+        }else Messages.addGlobalWarn("El estudiante ya se encuentra reinscrito al siguiente cuatrimestre");
+        
     }
     
      /**

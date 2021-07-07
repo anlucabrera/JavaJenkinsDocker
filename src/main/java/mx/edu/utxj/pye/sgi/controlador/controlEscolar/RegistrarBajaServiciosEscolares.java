@@ -43,7 +43,9 @@ import org.primefaces.event.CellEditEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Messages;
 
 
 /**
@@ -56,6 +58,7 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
     @Getter @Setter RegistrarBajaRolServiciosEscolares rol;
 
     @EJB EjbRegistroBajas ejb;
+    @EJB EjbCapturaCalificaciones ejbCapturaCalificaciones;
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
     @Getter Boolean tieneAcceso = false;
@@ -226,15 +229,17 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
      * en tipo de evaluacion "Ordinaria"
      */
     public void guardarRegistroBaja(){
-        ResultadoEJB<Baja> res = ejb.guardarRegistroBaja(rol.getDatosEstudiante().getPeriodoEscolar().getPeriodo(), rol.getDatosEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getPersonal(), rol.getFechaBaja());
-        if(res.getCorrecto()){
-            rol.setBajaRegistrada(res.getValor());
-            mostrarMensajeResultadoEJB(res);
-            buscarDatosEstudiante(rol.getBajaRegistrada().getEstudiante().getIdEstudiante());
-            Ajax.update("frm");
-            Ajax.update("tbRegBaja");
-        }else mostrarMensajeResultadoEJB(res);
-        
+        ResultadoEJB<Boolean> resReinscripcion = ejbCapturaCalificaciones.existeReinscripcion(rol.getDatosEstudiante().getPeriodoEscolar().getPeriodo(), rol.getDatosEstudiante().getEstudiante().getMatricula());
+        if(resReinscripcion.getCorrecto() && !resReinscripcion.getValor()){
+            ResultadoEJB<Baja> res = ejb.guardarRegistroBaja(rol.getDatosEstudiante().getPeriodoEscolar().getPeriodo(), rol.getDatosEstudiante(), rol.getTipoBaja(), rol.getCausaBaja(), rol.getPersonal(), rol.getFechaBaja());
+            if(res.getCorrecto()){
+                rol.setBajaRegistrada(res.getValor());
+                mostrarMensajeResultadoEJB(res);
+                buscarDatosEstudiante(rol.getBajaRegistrada().getEstudiante().getIdEstudiante());
+                Ajax.update("frm");
+                Ajax.update("tbRegBaja");
+            }else mostrarMensajeResultadoEJB(res);
+         }else Messages.addGlobalWarn("El estudiante ya se encuentra reinscrito al siguiente cuatrimestre");
     }
     
      /**

@@ -44,6 +44,12 @@
                                         <p:spacer width="5" />
                                     </f:facet>
                                     <f:facet name="right">
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesAcademicos.descargarReportesAcademicos()}" 
+                                                       target="_blank" title="Descargar reportes en excel"><i class="fa fa-file-excel-o" />
+                                        </p:commandLink>
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesAcademicos.descargarPromediosMateriaEstudiante()}" disabled="#{reportesAcademicos.rol.usuario.personal.areaOperativa ne 10}"
+                                                       target="_blank" title="Descargar base de promedios estudiantes por materia"><i class="fa fa-list-ol" />
+                                        </p:commandLink>
                                         <p:commandLink
                                                 class="btn btn-info"
                                                 rendered="#{true}"
@@ -51,9 +57,6 @@
                                                 onclick="PF('modalAyuda').show();"
                                                 title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
                                                 class="fa fa-question"/>
-                                        </p:commandLink>
-                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesAcademicos.descargarReportesAcademicos()}" 
-                                                       target="_blank" title="Descargar Reporte en Excel"><i class="fa fa-file-excel-o" />
                                         </p:commandLink>
                                     </f:facet>
                                 </p:toolbar>

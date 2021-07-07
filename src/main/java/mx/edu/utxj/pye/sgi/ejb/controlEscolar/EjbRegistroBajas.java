@@ -659,9 +659,12 @@ public class EjbRegistroBajas {
      */
     public ResultadoEJB<List<DtoTramitarBajas>> obtenerListaEstudiantes(Grupo grupo){
         try{
+            List<String> tiposRegistro = new ArrayList<>(); tiposRegistro.add("Regularización de calificaciones por reincoporación");
+            
              //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
-            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e where e.grupo.idGrupo =:grupo", Estudiante.class)
+            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e where e.grupo.idGrupo =:grupo AND e.tipoRegistro NOT IN :tiposRegistro", Estudiante.class)
                     .setParameter("grupo", grupo.getIdGrupo())
+                    .setParameter("tiposRegistro", tiposRegistro)
                     .getResultList();
            
             List<DtoTramitarBajas> listaDtoTramitarBajas = new ArrayList<>();
