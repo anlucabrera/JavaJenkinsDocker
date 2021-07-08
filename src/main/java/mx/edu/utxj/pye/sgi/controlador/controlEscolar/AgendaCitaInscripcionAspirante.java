@@ -93,6 +93,7 @@ public class AgendaCitaInscripcionAspirante extends ViewScopedRol implements Des
             Date today = new Date();
             rol.setInvalidDays(new ArrayList<>());
             rol.getInvalidDays().add(0);
+            rol.getInvalidDays().add(6);//Se desabilitan los días sábados
             long oneDay = 24 * 60 * 60 * 1000;
             Date newDate= new Date(today.getTime() - (1 *oneDay));
             rol.setMinDay(newDate);
