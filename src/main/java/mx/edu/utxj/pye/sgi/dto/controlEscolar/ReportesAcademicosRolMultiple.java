@@ -115,6 +115,11 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
      */
     @Getter @NonNull private DtoValidacionesBaja dtoValidacionesBaja;
     
+    /**
+     * Tipo de búsqueda general o por programa educativo
+     */
+    @Getter @NonNull private String tipoBusqueda ;
+    
     
     public ReportesAcademicosRolMultiple(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
@@ -196,5 +201,8 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
     public void setDtoValidacionesBaja(DtoValidacionesBaja dtoValidacionesBaja) {
         this.dtoValidacionesBaja = dtoValidacionesBaja;
     }
-    
+
+    public void setTipoBusqueda(String tipoBusqueda) {
+        this.tipoBusqueda = tipoBusqueda;
+    }
 }

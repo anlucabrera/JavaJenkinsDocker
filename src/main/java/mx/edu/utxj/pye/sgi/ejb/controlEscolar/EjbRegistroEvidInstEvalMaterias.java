@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -35,7 +34,6 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -181,29 +179,21 @@ public class EjbRegistroEvidInstEvalMaterias {
     }
     
     /**
-     * Permite obtener la lista de planes de estudio que tienen información registrada del programa educativo seleccionado
+     * Permite obtener la lista de planes de estudio vigentes del programa educativo seleccionado
      * @param programaEducativo
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<PlanEstudio>> getPlanesEstudio(AreasUniversidad programaEducativo){
         try{
-            List<Materia> listaMaterias = em.createQuery("SELECT e FROM EvaluacionSugerida e", EvaluacionSugerida.class)
-                .getResultStream()
-                .map(p->p.getUnidadMateria().getIdMateria())
-                .distinct()
-                .collect(Collectors.toList());
-        
-            List<PlanEstudio> listaPlanesEstudio = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPe=:programa AND p.idMateria IN :lista ORDER BY p.idPlan.anio DESC", PlanEstudioMateria.class)
+            List<PlanEstudio> listaPlanesEstudio = em.createQuery("SELECT p FROM PlanEstudio p WHERE p.idPe=:programa AND p.estatus=:valor ORDER BY p.anio DESC", PlanEstudio.class)
                     .setParameter("programa", programaEducativo.getArea())
-                    .setParameter("lista", listaMaterias)
+                    .setParameter("valor", true)
                     .getResultStream()
-                    .map(p->p.getIdPlan())
-                    .distinct()
                     .collect(Collectors.toList());
              
-            return ResultadoEJB.crearCorrecto(listaPlanesEstudio, "Planes de estudio con información registrada.");
+            return ResultadoEJB.crearCorrecto(listaPlanesEstudio, "Planes de estudio vigentes del programa educativo seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de planes de estudio con información registrada. (EjbRegistroEvidInstEvalMaterias.getPlanesEstudio)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de planes de estudio viegntes del programa educativo seleccionado. (EjbRegistroEvidInstEvalMaterias.getPlanesEstudio)", e, null);
         }
     }
     
@@ -537,6 +527,7 @@ public class EjbRegistroEvidInstEvalMaterias {
         String plantilla = rutaPlantilla.concat(EVIDINSTMAT_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(EVIDINSTMAT_ACTUALIZADO);
         Map beans = new HashMap();
+        beans.put("planEstudio", plan);
         beans.put("grados", getGrados(plan).getValor());
         beans.put("materiasGrados", getMateriasGradosPlanEstudio(plan).getValor());
         beans.put("unidadesMateria", getUnidadesMateriasPlanEstudio(getMateriasGradosPlanEstudio(plan).getValor()).getValor());
@@ -564,6 +555,7 @@ public class EjbRegistroEvidInstEvalMaterias {
         String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_REGEVIDINSTMAT);
         
         Map beans = new HashMap();
+        beans.put("planEstudio", plan);
         beans.put("regEvidInstPlan", buscarEvaluacionSugerida(programa, plan).getValor());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);

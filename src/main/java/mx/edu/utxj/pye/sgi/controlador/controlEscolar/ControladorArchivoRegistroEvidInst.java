@@ -54,8 +54,6 @@ public class ControladorArchivoRegistroEvidInst implements Serializable{
     @PostConstruct
     public void init(){
         setEtapa(RegistroSiipEtapa.MOSTRAR);
-        plan = String.valueOf(registroEvidInstEvalMateriasDireccion.getRol().getPlanEstudio().getAnio());
-        programa = registroEvidInstEvalMateriasDireccion.getRol().getProgramaEducativo().getSiglas();
     }
     
      public void recibirArchivo(ValueChangeEvent e){
@@ -68,6 +66,8 @@ public class ControladorArchivoRegistroEvidInst implements Serializable{
 
     //ActionListener
     public void subirExcelEvidInstMateria() throws IOException {
+        plan = String.valueOf(registroEvidInstEvalMateriasDireccion.getRol().getPlanEstudio().getAnio());
+        programa = registroEvidInstEvalMateriasDireccion.getRol().getProgramaEducativo().getSiglas();
         if (file != null) {
             rutaArchivo = ejbCarga.subirPlantillaAlineacionMaterias(plan, programa, file);
             if (!"Error: No se pudo leer el archivo".equals(rutaArchivo)) {
