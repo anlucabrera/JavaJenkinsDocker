@@ -942,7 +942,6 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
             case PERSISTIR: 
                 switch(tipo){
                     case "Ob":
-                        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.accionesAlineacion()");
                         f.setEntityClass(ObjetivoEducacional.class);
                         educacional= new ObjetivoEducacional();
                         if(daa.getIde()==0){
@@ -1044,7 +1043,68 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
                         break;
                 } 
                 break;
-            case ACTUALIZAR: break;
+            case ACTUALIZAR: 
+                switch(tipo){
+                    case "Ob":
+                        f.setEntityClass(ObjetivoEducacional.class);
+                        educacional = new ObjetivoEducacional();
+                        educacional = em.find(ObjetivoEducacional.class, daa.getIde());
+                        educacional.setDescripcion(daa.getDescripcion());
+                        em.merge(educacional);
+
+                        f.flush();
+
+                        f.setEntityClass(ObjetivoEducacionalPlanMateria.class);
+                      
+                        ObjetivoEducacionalPlanMateriaPK materiaPK = new ObjetivoEducacionalPlanMateriaPK();
+                        materiaPK.setIdPlanMateria(daa.getPlanEstudioMateria().getIdPlanMateria());
+                        materiaPK.setObjetivoEducacional(educacional.getObjetivoEducacional());
+                        ObjetivoEducacionalPlanMateria oepm = new ObjetivoEducacionalPlanMateria();
+                        
+                        oepm=em.find(ObjetivoEducacionalPlanMateria.class, materiaPK);
+                        oepm.setNivelAportacion(daa.getNivelA());
+                        
+                        em.merge(oepm);
+                        f.flush();
+
+                        break;
+                    case "Ae":
+                        f.setEntityClass(AtributoEgreso.class);
+                        egreso = new AtributoEgreso();
+                        egreso = em.find(AtributoEgreso.class, daa.getIde());
+                        egreso.setDescripcion(daa.getDescripcion());
+                        em.merge(egreso);
+                        f.flush();
+                        break;
+                    case "In":
+                        f.setEntityClass(IndicadorAlineacion.class);
+                        indicadorAlineacion = new IndicadorAlineacion();
+                        indicadorAlineacion = em.find(IndicadorAlineacion.class, daa.getIde());
+                        egreso.setDescripcion(daa.getDescripcion());
+                        em.persist(indicadorAlineacion);
+                        f.flush();
+                        f.setEntityClass(IndicadorAlineacion.class);
+                        IndicadorAlineacionPlanMateriaPK iapmpk = new IndicadorAlineacionPlanMateriaPK();
+                        iapmpk.setIdPlanMateria(daa.getPlanEstudioMateria().getIdPlanMateria());
+                        iapmpk.setIndicador(indicadorAlineacion.getIndicadorPem());
+
+                        IndicadorAlineacionPlanMateria iapm = new IndicadorAlineacionPlanMateria();
+                        iapm = em.find(IndicadorAlineacionPlanMateria.class, iapmpk);
+                        iapm.setMetaIndicador(daa.getMeta());
+                        em.merge(iapm);
+                        f.flush();
+                        break;
+                    case "Cr":
+                        f.setEntityClass(CriterioDesempenio.class);
+                        desempenio = new CriterioDesempenio();
+                        desempenio = em.find(CriterioDesempenio.class, daa.getIde());
+                        egreso.setDescripcion(daa.getDescripcion());
+                        em.persist(desempenio);
+                        f.flush();
+                        break;
+                }
+                break;
+            
             case ELIMINAR: break;
         }
     }

@@ -350,6 +350,16 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
             Logger.getLogger(AdministracionPlanEstudioDirector.class.getName()).log(Level.SEVERE, null, ex);
         }
   }
+    public void onRowEditAlineacion(RowEditEvent event) {
+        try {
+            DtoAlineacionAcedemica dtoAlineacionAcademica=(DtoAlineacionAcedemica) event.getObject();
+            ejb.accionesAlineacion(new ArrayList<>(), dtoAlineacionAcademica, rol.getTipoReg(), Operacion.ACTUALIZAR);
+            comprobarTipoRegistro();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionPlanEstudioDirector.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
 // eventos de Eliminacion    
     public void eliminarPlanEstudio(PlanEstudio pe) {

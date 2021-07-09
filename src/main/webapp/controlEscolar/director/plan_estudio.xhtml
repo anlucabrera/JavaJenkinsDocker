@@ -598,7 +598,7 @@
                                                         <p:selectOneMenu id="planEstudioC" value="#{administracionPlanEstudioDirector.rol.alineacionAcedemica.planEstudio}" converter="entityConverter">
                                                             <f:selectItem itemValue="#{null}"/>
                                                             <f:selectItems value="#{administracionPlanEstudioDirector.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
-                                                            <p:ajax listener="#{administracionPlanEstudioDirector.comprobarTipoRegistro()}" update="@form" process="@this"/>
+                                                            <p:ajax listener="#{administracionPlanEstudioDirector.comprobarTipoRegistro()}" update="@form unidadesResultados" process="@this"/>
                                                         </p:selectOneMenu>
                                                         <p:outputLabel for="planEstudioC" value="Plan de estudios"/>
                                                         <p:message for="planEstudioC"/>
@@ -706,12 +706,13 @@
                                                                     <p:column rowspan="2" headerText="Clave" style="width: 10%;"/>
                                                                     <p:column rowspan="2" headerText="Nivel" style="width: 10%;" rendered="#{administracionPlanEstudioDirector.rol.newRegiistroOe}"/>
                                                                     <p:column rowspan="2" headerText="Meta" style="width: 10%;" rendered="#{administracionPlanEstudioDirector.rol.newRegiistroIn}"/>
+                                                                    <p:column rowspan="2" headerText="Grado" style="width: 10%;"/>
                                                                     <p:column rowspan="2" headerText="Meteria" style="width: 30%;" />
                                                                     <p:column rowspan="2" headerText="" style="width: 32px;"/> 
                                                                 </p:row>
                                                             </p:columnGroup>
 
-                                                            <p:ajax event="rowEdit" listener="#{administracionPlanEstudioDirector.onRowEditPlanEstudioMateriaCompetencia}" update="unidadesResultados" />
+                                                            <p:ajax event="rowEdit" listener="#{administracionPlanEstudioDirector.onRowEditAlineacion}" update="unidadesResultados" />
                                                             <p:ajax event="rowEditCancel" listener="#{administracionPlanEstudioDirector.onRowCancel}" update="unidadesResultados" />
 
                                                             <p:column groupRow="true">
@@ -724,13 +725,29 @@
                                                                 <h:outputText value="#{com.clave}" />
                                                             </p:column>
                                                             <p:column rendered="#{administracionPlanEstudioDirector.rol.newRegiistroOe}">
-                                                                <h:outputText value="#{com.nivelA}" />
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output"><h:outputText value="#{com.nivelA}"/></f:facet>
+                                                                    <f:facet name="input">
+                                                                        <p:selectOneMenu value="#{com.nivelA}" style="width:100%">
+                                                                            <f:selectItem itemValue="" itemLabel="No Aplica"/>
+                                                                            <f:selectItem itemValue="Avanzado" itemLabel="Avanzado"/>
+                                                                            <f:selectItem itemValue="Medio" itemLabel="Medio"/>
+                                                                            <f:selectItem itemValue="Introductorio" itemLabel="Introductorio"/>
+                                                                        </p:selectOneMenu>
+                                                                    </f:facet>
+                                                                </p:cellEditor>  
                                                             </p:column>
                                                             <p:column rendered="#{administracionPlanEstudioDirector.rol.newRegiistroIn}">
-                                                                <h:outputText value="#{com.meta}"/>
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output"><h:outputText value="#{com.meta}"/></f:facet>
+                                                                    <f:facet name="input"><p:inputTextarea value="#{com.meta}" /></f:facet>
+                                                                </p:cellEditor>  
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{com.planEstudioMateria.grado}--#{com.planEstudioMateria.claveMateria}--#{com.planEstudioMateria.idMateria.nombre}" />
+                                                                <h:outputText value="#{com.planEstudioMateria.grado}° Cuatrimestre" />
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:outputText value="#{com.planEstudioMateria.claveMateria}--#{com.planEstudioMateria.idMateria.nombre}" />
                                                             </p:column>
                                                             <p:column>
                                                                 <p:rowEditor />
@@ -762,7 +779,7 @@
                                                         <p:selectOneMenu id="planEstudioC" value="#{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.planEstudio}" converter="entityConverter">
                                                             <f:selectItem itemValue="#{null}"/>
                                                             <f:selectItems value="#{administracionPlanEstudioDirector.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
-                                                            <p:ajax listener="#{administracionPlanEstudioDirector.nivelesDesempenioPlanEstudioMateriaConsulta()}" update="@form" process="@this"/>
+                                                            <p:ajax listener="#{administracionPlanEstudioDirector.nivelesDesempenioPlanEstudioMateriaConsulta()}" update="@form unidadesResultados" process="@this"/>
                                                         </p:selectOneMenu>
                                                         <p:outputLabel for="planEstudioC" value="Plan de estudios"/>
                                                         <p:message for="planEstudioC"/>
