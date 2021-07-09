@@ -33,7 +33,9 @@ public class DtoTramitarBajas implements Serializable, Comparable<DtoTramitarBaj
     }
 
     public static String toLabel(DtoTramitarBajas dtoTramitarBajas){
-         return dtoTramitarBajas.getDtoEstudiante().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno().concat(" ")
+         return dtoTramitarBajas.getDtoRegistroBaja().getProgramaEducativo().getNivelEducativo().getNivel().concat(" ")
+                 .concat(dtoTramitarBajas.getDtoRegistroBaja().getProgramaEducativo().getNombre().concat(" "))
+                 .concat(dtoTramitarBajas.getDtoEstudiante().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno().concat(" "))
                  .concat(dtoTramitarBajas.getDtoEstudiante().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno().concat(" "))
                  .concat(dtoTramitarBajas.getDtoEstudiante().getEstudiante().getAspirante().getIdPersona().getNombre());
     }

@@ -66,9 +66,7 @@ public class EjbReportesAcademicos {
     private EntityManager em;
     
     @EJB EjbCarga ejbCarga;
-    public static final String ACTUALIZADO_ACADEMICO = "reportesAcademicosEscolares.xlsx";
     public static final String ACTUALIZADO_PROMEDIOS = "promediosEstudiante.xlsx";
-    public static final String ACTUALIZADO_ACADEMICO_DIRECCION = "reportesAcademicosDireccion.xlsx";
     
     @PostConstruct
     public  void init(){
@@ -186,13 +184,49 @@ public class EjbReportesAcademicos {
         }
     }
     
+    /**
+     * Permite obtener la lista de programas educativos en que existen eventos escolares registrados del periodo seleccionado
+     * @param periodo
+     * @param personal
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativos(PeriodosEscolares periodo, Personal personal){
+        try{
+            List<AreasUniversidad> listaProgramasEducativos = new ArrayList<>();
+            
+            List<AreasUniversidad> listaProgramasEducativosFinal = new ArrayList<>();
+            
+            List<Short> listaProgramasGrupo = em.createQuery("SELECT g FROM Grupo g WHERE g.periodo=:periodo",  Grupo.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .getResultStream()
+                    .map(p->p.getIdPe())
+                    .distinct()
+                    .collect(Collectors.toList());
+          
+            listaProgramasGrupo.forEach(programa -> {
+                AreasUniversidad programaPK = em.find(AreasUniversidad.class, programa);
+                listaProgramasEducativos.add(programaPK);
+            });
+            
+            if(personal.getAreaOperativa()!=10){
+                listaProgramasEducativosFinal = listaProgramasEducativos.stream().filter(p->p.getAreaSuperior().equals(personal.getAreaOperativa())).collect(Collectors.toList());
+            }else{
+                listaProgramasEducativosFinal = listaProgramasEducativos;
+            }
+            
+            return ResultadoEJB.crearCorrecto(listaProgramasEducativosFinal, "Lista de programas educativos del periodo seleccionado en que existen eventos escolares registrados.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de programas educativos del periodo seleccionado en los que existen eventos escolares registrados. (EjbReportesAcademicos.getProgramasEducativos)", e, null);
+        }
+    }
+    
      /**
      * Permite obtener la lista de estudiantes del periodo y programa educativo seleccionado
      * @param periodo
      * @param programa
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoMatricula>> getMatricula(PeriodosEscolares periodo, AreasUniversidad programa){
+    public ResultadoEJB<List<DtoMatricula>> getMatriculaPrograma(PeriodosEscolares periodo, AreasUniversidad programa){
         try{
             List<DtoMatricula> listaEstudiantes = new ArrayList<>();
             
@@ -218,7 +252,45 @@ public class EjbReportesAcademicos {
             
             return ResultadoEJB.crearCorrecto(listaEstudiantes.stream().sorted(DtoMatricula::compareTo).collect(Collectors.toList()), "Lista de estudiantes del periodo y programa educativo seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getMatricula)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getMatriculaPrograma)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de estudiantes del periodo seleccionado
+     * @param periodo
+     * @param personal
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoMatricula>> getMatricula(PeriodosEscolares periodo, Personal personal){
+        try{
+            List<Short> programasEducativos = getProgramasEducativos(periodo, personal).getValor().stream().map(p->p.getArea()).collect(Collectors.toList());
+            
+            List<DtoMatricula> listaEstudiantes = new ArrayList<>();
+            
+            List<Integer> tiposEstudiante = new ArrayList<>(); tiposEstudiante.add(2); tiposEstudiante.add(3); tiposEstudiante.add(4);
+            
+            List<String> tiposRegistro = new ArrayList<>(); tiposRegistro.add("Regularización de calificaciones por reincoporación");
+            
+            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e WHERE e.periodo=:periodo AND e.carrera IN :programas AND e.tipoEstudiante.idTipoEstudiante NOT IN :tiposEstudiante AND e.tipoRegistro NOT IN :tiposRegistro", Estudiante.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programas", programasEducativos)
+                    .setParameter("tiposEstudiante", tiposEstudiante)
+                    .setParameter("tiposRegistro", tiposRegistro)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            estudiantes.forEach(estudiante -> {
+                Generos genero = em.find(Generos.class, estudiante.getAspirante().getIdPersona().getGenero());
+                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
+                PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
+                DtoMatricula dtoMatricula = new DtoMatricula(estudiante, genero, programaEducativo, periodo);
+                listaEstudiantes.add(dtoMatricula);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaEstudiantes.stream().sorted(DtoMatricula::compareTo).collect(Collectors.toList()), "Lista de estudiantes del periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes del periodo seleccionado. (EjbReportesAcademicos.getMatricula)", e, null);
         }
     }
     
@@ -228,11 +300,11 @@ public class EjbReportesAcademicos {
      * @param programa
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoDistribucionMatricula>> getDistribucionMatricula(PeriodosEscolares periodo, AreasUniversidad programa){
+    public ResultadoEJB<List<DtoDistribucionMatricula>> getDistribucionMatriculaPrograma(PeriodosEscolares periodo, AreasUniversidad programa){
         try{
             List<DtoDistribucionMatricula> listaDistribucionMatricula = new ArrayList<>();
             
-            List<DtoMatricula> estudiantesPE = getMatricula(periodo, programa).getValor();
+            List<DtoMatricula> estudiantesPE = getMatriculaPrograma(periodo, programa).getValor();
             
             List<DtoTramitarBajas> bajas = ejbRegistroBajas.obtenerListaBajasPeriodo(periodo).getValor();
             
@@ -261,7 +333,54 @@ public class EjbReportesAcademicos {
             
             return ResultadoEJB.crearCorrecto(listaDistribucionMatricula.stream().sorted(DtoDistribucionMatricula::compareTo).collect(Collectors.toList()), "Distribución de matricula del periodo y programa educativo seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la distrbución de matricula del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getDistribucionMatricula)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la distrbución de matricula del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getDistribucionMatriculaPrograma)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de estudiantes del periodo y programa educativo seleccionado
+     * @param periodo
+     * @param personal
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoDistribucionMatricula>> getDistribucionMatricula(PeriodosEscolares periodo, Personal personal){
+        try{
+            List<DtoDistribucionMatricula> listaDistribucionMatricula = new ArrayList<>();
+            
+            List<AreasUniversidad> programasEducativos = getProgramasEducativos(periodo, personal).getValor();
+           
+            programasEducativos.forEach(programa -> {
+                List<DtoMatricula> estudiantesPE = getMatriculaPrograma(periodo, programa).getValor();
+            
+                List<DtoTramitarBajas> bajas = ejbRegistroBajas.obtenerListaBajasPeriodo(periodo).getValor();
+            
+                List<DtoTramitarBajas> bajasPE = ejbRegistroBajas.obtenerListaBajasProgramaEducativo(bajas, programa).getValor();
+            
+                List<Integer> listaGrados = em.createQuery("SELECT g FROM Grupo g WHERE g.periodo=:periodo AND g.idPe=:programa", Grupo.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programa", programa.getArea())
+                    .getResultStream()
+                    .map(p->p.getGrado())
+                    .distinct()
+                    .collect(Collectors.toList()); 
+            
+            
+                listaGrados.forEach(grado -> {
+                    Integer matriculaInicial = getMatriculaInicial(periodo, programa, grado).getValor().size();
+                
+                    Integer desercion = (int) bajasPE.stream().filter(p->p.getDtoEstudiante().getEstudiante().getGrupo().getGrado()==grado && p.getDtoEstudiante().getEstudiante().getCarrera()==programa.getArea()).count();
+                    Integer matriculaFinal = (int) estudiantesPE.stream().filter(p->p.getEstudiante().getGrupo().getGrado()==grado).count();
+                
+                    Double porcentajeDesercion = (double)desercion/matriculaInicial*100;
+                
+                    DtoDistribucionMatricula dtoDistribucionMatricula = new DtoDistribucionMatricula(programa, periodo, grado, matriculaInicial, desercion, matriculaFinal,porcentajeDesercion);
+                    listaDistribucionMatricula.add(dtoDistribucionMatricula);
+                });
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaDistribucionMatricula.stream().sorted(DtoDistribucionMatricula::compareTo).collect(Collectors.toList()), "Distribución de matricula del periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la distrbución de matricula del periodo seleccionado. (EjbReportesAcademicos.getDistribucionMatricula)", e, null);
         }
     }
     
@@ -271,7 +390,7 @@ public class EjbReportesAcademicos {
      * @param programa
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoReportePlaneacionDocente>> getPlaneacionesDocente(PeriodosEscolares periodo, AreasUniversidad programa){
+    public ResultadoEJB<List<DtoReportePlaneacionDocente>> getPlaneacionesDocentePrograma(PeriodosEscolares periodo, AreasUniversidad programa){
         try{
             List<DtoReportePlaneacionDocente> listaPlaneaciones = new ArrayList<>();
             
@@ -351,7 +470,100 @@ public class EjbReportesAcademicos {
             
             return ResultadoEJB.crearCorrecto(listaPlaneaciones.stream().sorted(DtoReportePlaneacionDocente::compareTo).collect(Collectors.toList()), "Lista de planeaciones docente del periodo y programa seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de planeaciones docente del periodo y programa seleccionado. (EjbReportesAcademicos.getPlaneacionDocente)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de planeaciones docente del periodo y programa seleccionado. (EjbReportesAcademicos.getPlaneacionDocentePrograma)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de planeacion docente del periodo seleccionado
+     * @param periodo
+     * @param personal
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoReportePlaneacionDocente>> getPlaneacionesDocente(PeriodosEscolares periodo, Personal personal){
+        try{
+            List<DtoReportePlaneacionDocente> listaPlaneaciones = new ArrayList<>();
+            
+            List<Short> programasEducativos = getProgramasEducativos(periodo, personal).getValor().stream().map(p->p.getArea()).collect(Collectors.toList());
+            
+            List<Integer> grados = new ArrayList<>();
+            grados.add(6);
+            grados.add(11);
+            
+            List<CargaAcademica> cargasAcademicas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.cveGrupo.periodo=:periodo AND c.cveGrupo.idPe IN :programas AND c.cveGrupo.grado NOT IN :grados", CargaAcademica.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programas", programasEducativos)
+                    .setParameter("grados", grados)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            cargasAcademicas.forEach(carga -> {
+                AreasUniversidad programa = em.find(AreasUniversidad.class, carga.getCveGrupo().getIdPe());
+                PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, carga.getIdPlanMateria().getIdPlanMateria());
+                Personal docente = em.find(Personal.class, carga.getDocente());
+                
+                List<UnidadMateria> unidadesMaterias = em.createQuery("SELECT u FROM UnidadMateria u WHERE u.idMateria.idMateria=:materia", UnidadMateria.class)
+                    .setParameter("materia", carga.getIdPlanMateria().getIdMateria().getIdMateria())
+                    .getResultStream()
+                    .collect(Collectors.toList()); 
+                
+                List<UnidadMateriaConfiguracion> unidadesConfiguradas = em.createQuery("SELECT u FROM UnidadMateriaConfiguracion u WHERE u.carga.carga=:carga", UnidadMateriaConfiguracion.class)
+                    .setParameter("carga", carga.getCarga())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+                
+                Integer unidadesValidadas = (int) unidadesConfiguradas.stream().filter(p->p.getDirector()!=null).count();
+                
+                Integer evidenciasSer = 0, evidenciasSaber = 0, evidenciasSaberHacer = 0;
+                Boolean asignacionCompleta = true;
+                       
+                if(periodo.getPeriodo()<57){
+                    List<UnidadMateriaConfiguracionDetalle> indicadoresRegistrados = em.createQuery("SELECT u FROM UnidadMateriaConfiguracionDetalle u WHERE u.configuracion.carga.carga=:carga", UnidadMateriaConfiguracionDetalle.class)
+                            .setParameter("carga", carga.getCarga())
+                            .getResultStream()
+                            .collect(Collectors.toList());
+            
+                    evidenciasSer = (int)indicadoresRegistrados.stream().filter(p->p.getCriterio().getTipo().equals("Ser")).count();
+                    evidenciasSaber = (int)indicadoresRegistrados.stream().filter(p->p.getCriterio().getTipo().equals("Saber")).count();
+                    evidenciasSaberHacer = (int)indicadoresRegistrados.stream().filter(p->p.getCriterio().getTipo().equals("Saber hacer")).count();
+                    
+                }
+                else{
+                    List<UnidadMateriaConfiguracionEvidenciaInstrumento> evidenciasRegistradas = em.createQuery("SELECT u FROM UnidadMateriaConfiguracionEvidenciaInstrumento u WHERE u.configuracion.carga.carga=:carga", UnidadMateriaConfiguracionEvidenciaInstrumento.class)
+                            .setParameter("carga", carga.getCarga())
+                            .getResultStream()
+                            .collect(Collectors.toList());
+                    
+                    evidenciasSer = (int)evidenciasRegistradas.stream().filter(p->p.getEvidencia().getCriterio().getTipo().equals("Ser")).count();
+                    evidenciasSaber = (int)evidenciasRegistradas.stream().filter(p->p.getEvidencia().getCriterio().getTipo().equals("Saber")).count();
+                    evidenciasSaberHacer = (int)evidenciasRegistradas.stream().filter(p->p.getEvidencia().getCriterio().getTipo().equals("Saber hacer")).count();
+                }
+                
+                
+                Double porcentajeAsignacion = 0.0;
+                List<Integer> listaEvidencias = new ArrayList<>(); listaEvidencias.add(evidenciasSer); listaEvidencias.add(evidenciasSaber); listaEvidencias.add(evidenciasSaberHacer);
+                Long cantidadCeros = listaEvidencias.stream().filter(p->p==0).count();
+                
+                if(cantidadCeros==0){
+                    porcentajeAsignacion= 100.0;
+                    asignacionCompleta = false;
+                }else if(cantidadCeros==1){
+                    porcentajeAsignacion= 33.3;
+                }else if(cantidadCeros==2){
+                    porcentajeAsignacion= 66.6;
+                }
+                
+                Double porcentajeConfiguracion = (double)(unidadesConfiguradas.size()/unidadesMaterias.size())*100;
+                Double porcentajeValidacion = (double)(unidadesValidadas/unidadesConfiguradas.size())*100;
+                Double porcentajePlaneacion = (double)((porcentajeConfiguracion + porcentajeAsignacion + porcentajeValidacion)/3);
+                
+                DtoReportePlaneacionDocente dtoReportePlaneacionDocente = new DtoReportePlaneacionDocente(carga, periodo, planEstudioMateria, programa, docente, unidadesMaterias.size(), unidadesConfiguradas.size(), unidadesValidadas, evidenciasSer, evidenciasSaber, evidenciasSaberHacer, asignacionCompleta, String.format("%.2f",porcentajeConfiguracion), String.format("%.2f",porcentajeAsignacion), String.format("%.2f",porcentajeValidacion), String.format("%.2f",porcentajePlaneacion));
+                listaPlaneaciones.add(dtoReportePlaneacionDocente);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaPlaneaciones.stream().sorted(DtoReportePlaneacionDocente::compareTo).collect(Collectors.toList()), "Lista de planeaciones docente del periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de planeaciones docente del periodo. (EjbReportesAcademicos.getPlaneacionDocente)", e, null);
         }
     }
     
@@ -361,11 +573,11 @@ public class EjbReportesAcademicos {
      * @param programa
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoAprovechamientoEscolar>> getAprovechamientoEscolar(PeriodosEscolares periodo, AreasUniversidad programa){
+    public ResultadoEJB<List<DtoAprovechamientoEscolar>> getAprovechamientoEscolarPrograma(PeriodosEscolares periodo, AreasUniversidad programa){
         try{
            List<DtoAprovechamientoEscolar> listaAprovechamiento = new ArrayList<>();
            
-           List<DtoMatricula> estudiantes = getMatricula(periodo, programa).getValor();
+           List<DtoMatricula> estudiantes = getMatriculaPrograma(periodo, programa).getValor();
            
            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
             
@@ -391,17 +603,63 @@ public class EjbReportesAcademicos {
             
             return ResultadoEJB.crearCorrecto(listaAprovechamiento.stream().sorted(DtoAprovechamientoEscolar::compareTo).collect(Collectors.toList()), "Aprovechamiento escolar del periodo y programa educativo seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener aprovechamiento escolar del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getAprovechamientoEscolar)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener aprovechamiento escolar del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getAprovechamientoEscolarPrograma)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener aprovechamiento escolar del periodo seleccionado
+     * @param periodo
+     * @param personal
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoAprovechamientoEscolar>> getAprovechamientoEscolar(PeriodosEscolares periodo, Personal personal){
+        try{
+           List<DtoAprovechamientoEscolar> listaAprovechamiento = new ArrayList<>();
+           
+           List<AreasUniversidad> programasEducativos = getProgramasEducativos(periodo, personal).getValor();
+           
+           programasEducativos.forEach(programa -> {
+               
+            List<DtoMatricula> estudiantes = getMatriculaPrograma(periodo, programa).getValor();
+           
+            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
+            
+            List<PlanEstudioMateria> planEstudiosMaterias = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.evento.periodo=:periodo AND c.cveGrupo.idPe=:programa AND c.cveGrupo.grado NOT IN :grados", CargaAcademica.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programa", programa.getArea())
+                    .setParameter("grados", grados)
+                    .getResultStream()
+                    .map(p->p.getIdPlanMateria())
+                    .distinct()
+                    .collect(Collectors.toList());
+           
+                planEstudiosMaterias.forEach(planEstudioMat -> {
+                    PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, planEstudioMat.getIdPlanMateria());
+                
+                    List<DtoMatricula> estudiantesGrado = estudiantes.stream().filter(p->p.getEstudiante().getGrupo().getGrado()==planEstudioMateria.getGrado()).collect(Collectors.toList());
+                
+                    Double promedio = getObtenerPromedioAsignatura(planEstudioMateria, estudiantesGrado).getValor();
+                
+                    DtoAprovechamientoEscolar dtoAprovechamientoEscolar = new DtoAprovechamientoEscolar(programa, periodo, planEstudioMateria, promedio);
+                    listaAprovechamiento.add(dtoAprovechamientoEscolar);
+                });
+            
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaAprovechamiento.stream().sorted(DtoAprovechamientoEscolar::compareTo).collect(Collectors.toList()), "Aprovechamiento escolar del periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener aprovechamiento escolar del periodo seleccionado. (EjbReportesAcademicos.getAprovechamientoEscolar)", e, null);
         }
     }
     
      /**
-     * Permite obtener reprobación por asignatura del periodo seleccionado
+     * Permite obtener reprobación por asignatura del periodo y programa educativo seleccionado
      * @param periodo
      * @param programa
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoReprobacionAsignatura>> getReprobacionAsignatura(PeriodosEscolares periodo, AreasUniversidad programa){
+    public ResultadoEJB<List<DtoReprobacionAsignatura>> getReprobacionAsignaturaPrograma(PeriodosEscolares periodo, AreasUniversidad programa){
         try{
            List<DtoReprobacionAsignatura> listaReprobacionAsignatura = new ArrayList<>();
            
@@ -442,9 +700,64 @@ public class EjbReportesAcademicos {
                 listaReprobacionAsignatura.add(dtoReprobacionAsignatura);
             });
             
-            return ResultadoEJB.crearCorrecto(listaReprobacionAsignatura.stream().sorted(DtoReprobacionAsignatura::compareTo).collect(Collectors.toList()), "Aprovechamiento escolar del periodo y programa educativo seleccionado.");
+            return ResultadoEJB.crearCorrecto(listaReprobacionAsignatura.stream().sorted(DtoReprobacionAsignatura::compareTo).collect(Collectors.toList()), "Reprobación por asignatura del periodo y programa educativo seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener aprovechamiento escolar del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getAprovechamientoEscolar)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener reprobación por asignatura del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getReprobacionAsignaturaPrograma)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener reprobación por asignatura del periodo seleccionado
+     * @param periodo
+     * @param personal
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoReprobacionAsignatura>> getReprobacionAsignatura(PeriodosEscolares periodo, Personal personal){
+        try{
+           List<DtoReprobacionAsignatura> listaReprobacionAsignatura = new ArrayList<>();
+           
+           List<Short> programasEducativos = getProgramasEducativos(periodo, personal).getValor().stream().map(p->p.getArea()).collect(Collectors.toList());
+           
+           List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
+           
+           List<PlanEstudioMateria> planEstudiosMaterias = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.evento.periodo=:periodo AND c.cveGrupo.idPe IN :programas AND c.cveGrupo.grado NOT IN :grados", CargaAcademica.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programas", programasEducativos)
+                    .setParameter("grados", grados)
+                    .getResultStream()
+                    .map(p->p.getIdPlanMateria())
+                    .distinct()
+                    .collect(Collectors.toList());
+           
+            planEstudiosMaterias.forEach(planEstudioMat -> {
+                PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, planEstudioMat.getIdPlanMateria());
+                AreasUniversidad programa = em.find(AreasUniversidad.class, planEstudioMateria.getIdPlan().getIdPe());
+                List<Estudiante> estudiantesGrado = getMatriculaInicial(periodo, programa, planEstudioMateria.getGrado()).getValor();
+                
+                List<CalificacionNivelacion> calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.idPlanMateria.idPlanMateria=:planMateria AND c.estudiante.idEstudiante IN :estudiantes ", CalificacionNivelacion.class)
+                    .setParameter("planMateria", planEstudioMateria.getIdPlanMateria())
+                    .setParameter("estudiantes", estudiantesGrado.stream().map(p->p.getIdEstudiante()).collect(Collectors.toList()))
+                    .getResultStream()
+                    .collect(Collectors.toList());
+                
+                Integer aprobadosNivelacion = (int)calificacionNivelacion.stream().filter(p->p.getValor()>=8).count();
+                
+                Integer reprobadosNivelacion = (int)calificacionNivelacion.stream().filter(p->p.getValor()<8).count();
+                
+                Double porcentajeRepOrdinario=0.0, porcentajeRepNivelacion=0.0;
+                
+                if(!calificacionNivelacion.isEmpty() || calificacionNivelacion.size()!=0){
+                    porcentajeRepOrdinario =  (double) calificacionNivelacion.size()/estudiantesGrado.size() * 100;
+                    porcentajeRepNivelacion =  (double) reprobadosNivelacion/estudiantesGrado.size() * 100;
+                }
+                
+                DtoReprobacionAsignatura dtoReprobacionAsignatura = new DtoReprobacionAsignatura(programa, periodo, planEstudioMateria, calificacionNivelacion.size(), aprobadosNivelacion, reprobadosNivelacion, estudiantesGrado.size(), porcentajeRepOrdinario, porcentajeRepNivelacion);
+                listaReprobacionAsignatura.add(dtoReprobacionAsignatura);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaReprobacionAsignatura.stream().sorted(DtoReprobacionAsignatura::compareTo).collect(Collectors.toList()), "Reprobación por asignatura del periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener reprobación por asignatura escolar del periodo seleccionado. (EjbReportesAcademicos.getReprobacionAsignatura)", e, null);
         }
     }
     
@@ -504,7 +817,7 @@ public class EjbReportesAcademicos {
      * @param programa
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoAprovechamientoEscolarEstudiante>> getListaAprovechamientoEscolar(PeriodosEscolares periodo, AreasUniversidad programa){
+    public ResultadoEJB<List<DtoAprovechamientoEscolarEstudiante>> getListaAprovechamientoEscolarPrograma(PeriodosEscolares periodo, AreasUniversidad programa){
         try{
             List<DtoAprovechamientoEscolarEstudiante> listaAprovechamiento = new ArrayList<>();
             
@@ -512,7 +825,7 @@ public class EjbReportesAcademicos {
             
             List<Integer> tiposEstudiante = new ArrayList<>(); tiposEstudiante.add(2); tiposEstudiante.add(3); tiposEstudiante.add(4);
             
-            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);;
+            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
             
             List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE e.periodo=:periodo AND e.carrera=:programa AND g.idPe=:programa AND g.grado NOT IN :grados AND e.tipoEstudiante.idTipoEstudiante NOT IN :tiposEstudiante AND e.tipoRegistro NOT IN :tiposRegistro", Estudiante.class)
                     .setParameter("periodo", periodo.getPeriodo())
@@ -535,7 +848,51 @@ public class EjbReportesAcademicos {
             });
             return ResultadoEJB.crearCorrecto(listaAprovechamiento.stream().sorted(DtoAprovechamientoEscolarEstudiante::compareTo).collect(Collectors.toList()), "Lista de aprovechamiento escolar del periodo y programa educativo seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de aprovechamiento escolar del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getListaAprovechamientoEscolar)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de aprovechamiento escolar del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getListaAprovechamientoEscolarPrograma)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de aprovechamiento escolar del periodo seleccionado
+     * @param periodo
+     * @param personal
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoAprovechamientoEscolarEstudiante>> getListaAprovechamientoEscolar(PeriodosEscolares periodo, Personal personal){
+        try{
+            List<DtoAprovechamientoEscolarEstudiante> listaAprovechamiento = new ArrayList<>();
+            
+            List<Short> programasEducativos = getProgramasEducativos(periodo, personal).getValor().stream().map(p->p.getArea()).collect(Collectors.toList());
+            
+            List<String> tiposRegistro = new ArrayList<>(); tiposRegistro.add("Regularización de calificaciones por reincoporación");
+            
+            List<Integer> tiposEstudiante = new ArrayList<>(); tiposEstudiante.add(2); tiposEstudiante.add(3); tiposEstudiante.add(4);
+            
+            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
+            
+            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE e.periodo=:periodo AND e.carrera IN :programas AND g.idPe IN :programas AND g.grado NOT IN :grados AND e.tipoEstudiante.idTipoEstudiante NOT IN :tiposEstudiante AND e.tipoRegistro NOT IN :tiposRegistro", Estudiante.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programas", programasEducativos)
+                    .setParameter("grados", grados)
+                    .setParameter("tiposEstudiante", tiposEstudiante)
+                    .setParameter("tiposRegistro", tiposRegistro)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+           
+            estudiantes.forEach(estudiante -> {
+                AreasUniversidad programa = em.find(AreasUniversidad.class, estudiante.getCarrera());
+                Generos genero = em.find(Generos.class, estudiante.getAspirante().getIdPersona().getGenero());
+                String discapacidad = getTipoDiscapacidad(estudiante).getValor();
+                String lenguaIndigena = getLenguaIndigena(estudiante).getValor();
+                
+                String promedio = String.format("%.3f",getObtenerPromedioEstudiante(estudiante).getValor());
+                
+                DtoAprovechamientoEscolarEstudiante dtoAprovechamientoEscolar = new DtoAprovechamientoEscolarEstudiante(estudiante,programa,periodo,genero,discapacidad,lenguaIndigena, promedio);
+                listaAprovechamiento.add(dtoAprovechamientoEscolar);
+            });
+            return ResultadoEJB.crearCorrecto(listaAprovechamiento.stream().sorted(DtoAprovechamientoEscolarEstudiante::compareTo).collect(Collectors.toList()), "Lista de aprovechamiento escolar del periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de aprovechamiento escolar del periodo seleccionado. (EjbReportesAcademicos.getListaAprovechamientoEscolar)", e, null);
         }
     }
     
@@ -659,7 +1016,7 @@ public class EjbReportesAcademicos {
      * @param programa
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoEstudianteIrregular>> getEstudiantesIrregulares(PeriodosEscolares periodo, AreasUniversidad programa){
+    public ResultadoEJB<List<DtoEstudianteIrregular>> getEstudiantesIrregularesPrograma(PeriodosEscolares periodo, AreasUniversidad programa){
         try{
             
             List<DtoEstudianteIrregular> listaEstudiantesIrregulares = new ArrayList<>();
@@ -713,7 +1070,73 @@ public class EjbReportesAcademicos {
             
             return ResultadoEJB.crearCorrecto(listaEstudiantesIrregulares.stream().sorted(DtoEstudianteIrregular::compareTo).collect(Collectors.toList()), "Lista de estudiantes irregulares del periodo y programa educativo seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes irregulares del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getEstudiantesIrregulares)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes irregulares del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getEstudiantesIrregularesPrograma)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de aprovechamiento escolar del periodo seleccionado
+     * @param periodo
+     * @param personal
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoEstudianteIrregular>> getEstudiantesIrregulares(PeriodosEscolares periodo, Personal personal){
+        try{
+            List<Short> programasEducativos = getProgramasEducativos(periodo, personal).getValor().stream().map(p->p.getArea()).collect(Collectors.toList());
+            
+            List<DtoEstudianteIrregular> listaEstudiantesIrregulares = new ArrayList<>();
+             
+            List<CalificacionPromedio> calificacionesPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.estudiante.periodo=:periodo AND c.estudiante.carrera IN :programas AND c.valor<:valor", CalificacionPromedio.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programas", programasEducativos)
+                    .setParameter("valor", (double)8)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+
+            calificacionesPromedio.forEach(promedio -> {
+                AreasUniversidad programa = em.find(AreasUniversidad.class, promedio.getCargaAcademica().getCveGrupo().getIdPe());
+                if(promedio.getCargaAcademica().getCveGrupo().getIdGrupo().equals(promedio.getEstudiante().getGrupo().getIdGrupo())){
+                Double calificacion = 0.0;
+                
+                CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
+                        .setParameter("carga", promedio.getCargaAcademica().getCarga())
+                        .setParameter("estudiante", promedio.getEstudiante().getIdEstudiante())
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
+                
+                if (calificacionNivelacion != null && calificacionNivelacion.getValor()<8.0) {
+                    if(calificacionNivelacion.getValor()>=calificacion){
+                        calificacion = calificacionNivelacion.getValor();
+                    }else{
+                        calificacion = promedio.getValor();
+                    }
+                    
+                    if (promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante() == 1 || promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==5) {
+
+                        PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, promedio.getCargaAcademica().getIdPlanMateria().getIdPlanMateria());
+                        Personal docente = em.find(Personal.class, promedio.getCargaAcademica().getDocente());
+                        Personal tutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
+                        DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.3f", calificacion), tutor);
+                        listaEstudiantesIrregulares.add(dtoEstudianteIrregular);
+                    }
+                }else if (calificacionNivelacion == null){
+                    calificacion = promedio.getValor();
+                    if (promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante() == 1 || promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==5) {
+
+                        PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, promedio.getCargaAcademica().getIdPlanMateria().getIdPlanMateria());
+                        Personal docente = em.find(Personal.class, promedio.getCargaAcademica().getDocente());
+                        Personal tutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
+                        DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.3f", calificacion), tutor);
+                        listaEstudiantesIrregulares.add(dtoEstudianteIrregular);
+                    }
+                }
+                }
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaEstudiantesIrregulares.stream().sorted(DtoEstudianteIrregular::compareTo).collect(Collectors.toList()), "Lista de estudiantes irregulares del periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes irregulares del periodo seleccionado. (EjbReportesAcademicos.getEstudiantesIrregulares)", e, null);
         }
     }
     
@@ -743,32 +1166,25 @@ public class EjbReportesAcademicos {
     }
     
       /**
-     * Permite generar reportes académicos para servicios escolares del periodo escolar y programa educativo seleccionado
+     * Permite generar reporte de estudiantes irregulares para servicios escolares o dirección de carrera del periodo escolar seleccionado
      * @param periodo Periodo Escolar
-     * @param programa Programa educativo
+     * @param personal Personal
      * @return Resultado del proceso
      * @throws java.lang.Throwable
      */
     
-    public String getReportesEscolares(PeriodosEscolares periodo, AreasUniversidad programa) throws Throwable {
+    public String getReporteEstIrregulares(PeriodosEscolares periodo, PersonalActivo personal) throws Throwable {
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
-        String areaGeneraReporte = "SE";
-        String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reportesAcademicosSE.xlsx";
-        String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, programa.getSiglas(), areaGeneraReporte);
-
-        String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_ACADEMICO);
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, personal.getAreaOperativa().getSiglas());
+        if(personal.getPersonal().getAreaOperativa()==10){
+            rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, "ServEsc");
+        }
+        String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reporteEstIrreg.xlsx";
         
-        List<DtoTramitarBajas> bajasPeriodo = ejbRegistroBajas.obtenerListaBajasPeriodo(periodo).getValor();
+        String plantillaC = rutaPlantillaC.concat("reporteEstudiantesIrregulares.xlsx");
         
         Map beans = new HashMap();
-        beans.put("estIrreg", getEstudiantesIrregulares(periodo, programa).getValor());
-        beans.put("aprovEsc", getAprovechamientoEscolar(periodo, programa).getValor());
-        beans.put("aprovEscEst", getListaAprovechamientoEscolar(periodo, programa).getValor());
-        beans.put("repAsig", getReprobacionAsignatura(periodo, programa).getValor());
-        beans.put("planDoc", getPlaneacionesDocente(periodo, programa).getValor());
-        beans.put("matAct", getMatricula(periodo, programa).getValor());
-        beans.put("distMat", getDistribucionMatricula(periodo, programa).getValor());
-        beans.put("desAcad", ejbRegistroBajas.obtenerListaBajasProgramaEducativo(bajasPeriodo, programa).getValor());
+        beans.put("estIrreg", getEstudiantesIrregulares(periodo, personal.getPersonal()).getValor());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 
@@ -776,24 +1192,170 @@ public class EjbReportesAcademicos {
     }
     
       /**
-     * Permite generar reportes académicos para dirección de carrera del periodo escolar y programa educativo seleccionado
+     * Permite generar reporte de aprovechamiento escolar para servicios escolares o dirección de carrera del periodo escolar seleccionado
      * @param periodo Periodo Escolar
-     * @param programa Programa educativo
+     * @param personal Personal
      * @return Resultado del proceso
      * @throws java.lang.Throwable
      */
     
-    public String getReportesDireccion(PeriodosEscolares periodo, AreasUniversidad programa) throws Throwable {
+    public String getReporteAprovEscolar(PeriodosEscolares periodo, Personal personal) throws Throwable {
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
-        String areaGeneraReporte = "DIR";
-        String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reportesAcademicosDIR.xlsx";
-        String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, programa.getSiglas(), areaGeneraReporte);
+        String areaGeneraReporte = "ServEsc";
+        
+        String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reporteAprovEscolar.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
 
-        String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_ACADEMICO);
+        String plantillaC = rutaPlantillaC.concat("reporteAprovechamientoEscolar.xlsx");
         
         Map beans = new HashMap();
-        beans.put("estIrreg", getEstudiantesIrregulares(periodo, programa).getValor());
-        beans.put("planDoc", getPlaneacionesDocente(periodo, programa).getValor());
+        beans.put("aprovEsc", getAprovechamientoEscolar(periodo, personal).getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+      /**
+     * Permite generar reporte de aprovechamiento escolar por estudiante para servicios escolares del periodo escolar seleccionado
+     * @param periodo Periodo Escolar
+     * @param personal Personal
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
+    
+    public String getReporteAprovEstudiantes(PeriodosEscolares periodo, Personal personal) throws Throwable {
+        String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
+        String areaGeneraReporte = "ServEsc";
+        String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reportesAprovEst.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
+
+        String plantillaC = rutaPlantillaC.concat("reporteAprovEscolarEstudiantes.xlsx");
+        
+        Map beans = new HashMap();
+        beans.put("aprovEscEst", getListaAprovechamientoEscolar(periodo, personal).getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+      /**
+     * Permite generar reporte de reprobación por asignatura para servicios escolares del periodo escolar seleccionado
+     * @param periodo Periodo Escolar
+     * @param personal Personal
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
+    
+    public String getReporteRepAsignatura(PeriodosEscolares periodo, Personal personal) throws Throwable {
+        String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
+        String areaGeneraReporte = "ServEsc";
+        String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reportesRepAsig.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
+
+        String plantillaC = rutaPlantillaC.concat("reporteReprobacionAsignatura.xlsx");
+        
+        Map beans = new HashMap();
+        beans.put("repAsig", getReprobacionAsignatura(periodo, personal).getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+      /**
+     * Permite generar reporte de planeación docente para servicios escolares del periodo escolar seleccionado
+     * @param periodo Periodo Escolar
+     * @param personal Personal
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
+    
+    public String getReportePlaneacionDoc(PeriodosEscolares periodo, PersonalActivo personal) throws Throwable {
+        String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, personal.getAreaOperativa().getSiglas());
+        if(personal.getPersonal().getAreaOperativa()==10){
+            rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, "ServEsc");
+        }
+        String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reportePlanDoc.xlsx";
+
+        String plantillaC = rutaPlantillaC.concat("reportePlaneacionDocente.xlsx");
+        
+        Map beans = new HashMap();
+        beans.put("planDoc", getPlaneacionesDocente(periodo, personal.getPersonal()).getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+      /**
+     * Permite generar reporte de matricula para servicios escolares del periodo escolar seleccionado
+     * @param periodo Periodo Escolar
+     * @param personal Personal
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
+    
+    public String getReporteMatricula(PeriodosEscolares periodo, Personal personal) throws Throwable {
+        String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
+        String areaGeneraReporte = "ServEsc";
+        String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reporteMatricula.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
+
+        String plantillaC = rutaPlantillaC.concat("reporteMatricula.xlsx");
+        
+        Map beans = new HashMap();
+        beans.put("matAct", getMatricula(periodo, personal).getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+      /**
+     * Permite generar reporte de distribución de matricula para servicios escolares del periodo escolar seleccionado
+     * @param periodo Periodo Escolar
+     * @param personal Personal
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
+    
+    public String getReporteDistMatricula(PeriodosEscolares periodo, Personal personal) throws Throwable {
+        String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
+        String areaGeneraReporte = "ServEsc";
+        String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reporteDisMat.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
+
+        String plantillaC = rutaPlantillaC.concat("reporteDistribucionMatricula.xlsx");
+        
+        Map beans = new HashMap();
+        beans.put("distMat", getDistribucionMatricula(periodo, personal).getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+      /**
+     * Permite generar reporte de deserción académica servicios escolares del periodo escolar seleccionado
+     * @param periodo Periodo Escolar
+     * @param personal Personal
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
+    
+    public String getReporteDesercionAcad(PeriodosEscolares periodo, Personal personal) throws Throwable {
+        String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
+        String areaGeneraReporte = "ServEsc";
+        String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reporteDesercionAcad.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
+
+        String plantillaC = rutaPlantillaC.concat("reporteDesercionAcademica.xlsx");
+        
+        Map beans = new HashMap();
+        beans.put("desAcad", ejbRegistroBajas.obtenerListaBajasPeriodo(periodo).getValor().stream().filter(p->p.getDtoRegistroBaja().getRegistroBaja().getValidada()==1).collect(Collectors.toList()));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 
@@ -801,13 +1363,15 @@ public class EjbReportesAcademicos {
     }
     
      /**
-     * Permite obtener la lista de promedios por materia de cada estudiante del periodo y programa educativo seleccionado
+     * Permite obtener la lista de promedios por materia de cada estudiante del periodo seleccionado
      * @param periodo
-     * @param programa
+     * @param personal
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoPromedioMateriaEstudiante>> getListaPromedioMateriaEstudiante(PeriodosEscolares periodo, AreasUniversidad programa){
+    public ResultadoEJB<List<DtoPromedioMateriaEstudiante>> getListaPromedioMateriaEstudiante(PeriodosEscolares periodo, Personal personal){
         try{
+            List<Short> programasEducativos = getProgramasEducativos(periodo, personal).getValor().stream().map(p->p.getArea()).collect(Collectors.toList());
+            
             List<DtoPromedioMateriaEstudiante> listaPromedioMateriaEstudiante = new ArrayList<>();
             
             List<String> tiposRegistro = new ArrayList<>(); tiposRegistro.add("Regularización de calificaciones por reincoporación");
@@ -816,9 +1380,9 @@ public class EjbReportesAcademicos {
             
             List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);;
             
-            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE e.periodo=:periodo AND e.carrera=:programa AND g.idPe=:programa AND g.grado NOT IN :grados AND e.tipoEstudiante.idTipoEstudiante NOT IN :tiposEstudiante AND e.tipoRegistro NOT IN :tiposRegistro", Estudiante.class)
+            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE e.periodo=:periodo AND e.carrera IN :programas AND g.idPe IN :programas AND g.grado NOT IN :grados AND e.tipoEstudiante.idTipoEstudiante NOT IN :tiposEstudiante AND e.tipoRegistro NOT IN :tiposRegistro", Estudiante.class)
                     .setParameter("periodo", periodo.getPeriodo())
-                    .setParameter("programa", programa.getArea())
+                    .setParameter("programas", programasEducativos)
                     .setParameter("grados", grados)
                     .setParameter("tiposEstudiante", tiposEstudiante)
                     .setParameter("tiposRegistro", tiposRegistro)
@@ -826,6 +1390,7 @@ public class EjbReportesAcademicos {
                     .collect(Collectors.toList());
            
             estudiantes.forEach(estudiante -> {
+                AreasUniversidad programa = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
                 List<CargaAcademica> cargasAcademicas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.cveGrupo.idGrupo=:grupo ", CargaAcademica.class)
                     .setParameter("grupo", estudiante.getGrupo().getIdGrupo())
                     .getResultStream()
@@ -838,7 +1403,7 @@ public class EjbReportesAcademicos {
             });
             return ResultadoEJB.crearCorrecto(listaPromedioMateriaEstudiante.stream().sorted(DtoPromedioMateriaEstudiante::compareTo).collect(Collectors.toList()), "Lista de promedios por materia de cada estudiante del periodo y programa educativo seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de promedios por materia de cada estudiante del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getListaPromedioMateriaEstudiante)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de promedios por materia de cada estudiante del periodo seleccionado. (EjbReportesAcademicos.getListaPromedioMateriaEstudiante)", e, null);
         }
     }
     
@@ -893,23 +1458,23 @@ public class EjbReportesAcademicos {
     }
      
       /**
-     * Permite generar reportes académicos para servicios escolares del periodo escolar y programa educativo seleccionado
+     * Permite generar reportes académicos para servicios escolares del periodo escolar seleccionado
      * @param periodo Periodo Escolar
-     * @param programa Programa educativo
+     * @param personal Personal
      * @return Resultado del proceso
      * @throws java.lang.Throwable
      */
     
-    public String getReportePromediosMateriaEstudiante(PeriodosEscolares periodo, AreasUniversidad programa) throws Throwable {
+    public String getReportePromediosMateriaEstudiante(PeriodosEscolares periodo, Personal personal) throws Throwable {
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
-        String areaGeneraReporte = "SE";
+        String areaGeneraReporte = "ServEsc";
         String rutaPlantilla = "C:\\archivos\\formatosEscolares\\baseDatosPromediosEstudiante.xlsx";
-        String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, programa.getSiglas(), areaGeneraReporte);
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
 
         String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_PROMEDIOS);
         
         Map beans = new HashMap();
-        beans.put("promMatEst", getListaPromedioMateriaEstudiante(periodo, programa).getValor());
+        beans.put("promMatEst", getListaPromedioMateriaEstudiante(periodo, personal).getValor());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 

@@ -105,6 +105,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             rol.getInstrucciones().add("Dar clic en el botón de Descargar Reporte en Excel, para generar un archivo que contiene la información de los reportes disponibles.");
            
             rol.setPeriodoActivo(ejbEventoEscolar.getPeriodoActual().getPeriodo());
+            rol.setTipoBusqueda("busquedaPrograma");
             listaPeriodosEscolares();
             
         }catch (Exception e){mostrarExcepcion(e); }
@@ -176,7 +177,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             listaReportes.add("Estudiantes irregulares");
             listaReportes.add("Planeación docente");
             listaReportes.add("Aprovechamiento escolar");
-            listaReportes.add("Aprovechamiento escolar - Lista");
+            listaReportes.add("Aprovechamiento escolar por estudiante");
             listaReportes.add("Reprobación por asignatura");
             listaReportes.add("Matricula");
             listaReportes.add("Distribución de matricula");
@@ -198,7 +199,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
            generarPlaneacionDocente();
         }else if("Aprovechamiento escolar".equals(rol.getReporte())){
            generarAprovechamientoEscolar();
-        }else if("Aprovechamiento escolar - Lista".equals(rol.getReporte())){
+        }else if("Aprovechamiento escolar por estudiante".equals(rol.getReporte())){
            generarListaAprovechamientoEscolar();
         }else if("Reprobación por asignatura".equals(rol.getReporte())){
            generarReprobacionAsignatura();
@@ -265,46 +266,79 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
     }
     
     /**
-     * Método que permite descargar en excel los reportes del periodo, nivel y programa educativo seleccionado
+     * Permite seleccionar y cambiar valor del tipo de búsqueda
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarTipoBusqueda(ValueChangeEvent e){
+        rol.setTipoBusqueda((String)e.getNewValue());
+        generarReportes();
+        Ajax.update("frm");
+    }
+    
+    /**
+     * Método que permite descargar en excel el reporte correspondiente del periodo seleccionado
      * @throws java.io.IOException
      */
-     public void descargarReportesAcademicos() throws IOException, Throwable{
-        if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
-            File f = new File(ejb.getReportesDireccion(rol.getPeriodo(), rol.getPrograma()));
-            Faces.sendFile(f, true);
-        }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){     
-            File f = new File(ejb.getReportesEscolares(rol.getPeriodo(), rol.getPrograma()));
-            Faces.sendFile(f, true);
-        }
+     public void descargarReporteAcademico() throws IOException, Throwable{
+         if ("Estudiantes irregulares".equals(rol.getReporte())) {
+             File f = new File(ejb.getReporteEstIrregulares(rol.getPeriodo(), rol.getUsuario()));
+             Faces.sendFile(f, true);
+         } else if ("Planeación docente".equals(rol.getReporte())) {
+             File f = new File(ejb.getReportePlaneacionDoc(rol.getPeriodo(), rol.getUsuario()));
+             Faces.sendFile(f, true);
+         } else if ("Aprovechamiento escolar".equals(rol.getReporte())) {
+             File f = new File(ejb.getReporteAprovEscolar(rol.getPeriodo(), rol.getUsuario().getPersonal()));
+             Faces.sendFile(f, true);
+         } else if ("Aprovechamiento escolar por estudiante".equals(rol.getReporte())) {
+             File f = new File(ejb.getReporteAprovEstudiantes(rol.getPeriodo(), rol.getUsuario().getPersonal()));
+             Faces.sendFile(f, true);
+         } else if ("Reprobación por asignatura".equals(rol.getReporte())) {
+             File f = new File(ejb.getReporteRepAsignatura(rol.getPeriodo(), rol.getUsuario().getPersonal()));
+             Faces.sendFile(f, true);
+         } else if ("Matricula".equals(rol.getReporte())) {
+             File f = new File(ejb.getReporteMatricula(rol.getPeriodo(), rol.getUsuario().getPersonal()));
+             Faces.sendFile(f, true);
+         } else if ("Distribución de matricula".equals(rol.getReporte())) {
+             File f = new File(ejb.getReporteDistMatricula(rol.getPeriodo(), rol.getUsuario().getPersonal()));
+             Faces.sendFile(f, true);
+         } else if ("Deserción académica".equals(rol.getReporte())) {
+             File f = new File(ejb.getReporteDesercionAcad(rol.getPeriodo(), rol.getUsuario().getPersonal()));
+             Faces.sendFile(f, true);
+         }
     }
      
     /**
-     * Método que permite descargar en excel los reportes del periodo, nivel y programa educativo seleccionado
+     * Método que permite descargar en excel los reportes del periodo seleccionado
      * @throws java.io.IOException
      */
      public void descargarPromediosMateriaEstudiante() throws IOException, Throwable{
         if(rol.getUsuario().getPersonal().getAreaOperativa()==10){     
-            File f = new File(ejb.getReportePromediosMateriaEstudiante(rol.getPeriodo(), rol.getPrograma()));
+            File f = new File(ejb.getReportePromediosMateriaEstudiante(rol.getPeriodo(), rol.getUsuario().getPersonal()));
             Faces.sendFile(f, true);
         }
     }
     
     
     /**
-     * Permite generar el listado de estudiantes con registro de baja del periodo y programa educativo seleccionado
+     * Permite generar el listado de estudiantes con registro de baja
      */
     public void generarDesercionAcademica(){
-        ResultadoEJB<List<DtoTramitarBajas>> res1 = ejbRegistroBajas.obtenerListaBajasPeriodo(rol.getPeriodo());
-        if(res1.getCorrecto()){
-            ResultadoEJB<List<DtoTramitarBajas>> res2 = ejbRegistroBajas.obtenerListaBajasProgramaEducativo(res1.getValor(), rol.getPrograma());
+        if(rol.getTipoBusqueda().equals("busquedaPrograma")){
+            ResultadoEJB<List<DtoTramitarBajas>> res1 = ejbRegistroBajas.obtenerListaBajasPeriodo(rol.getPeriodo());
             if(res1.getCorrecto()){
-                rol.setDesercionAcademica(res2.getValor().stream().filter(p->p.getDtoRegistroBaja().getRegistroBaja().getValidada()==1).collect(Collectors.toList()));
+                ResultadoEJB<List<DtoTramitarBajas>> res2 = ejbRegistroBajas.obtenerListaBajasProgramaEducativo(res1.getValor(), rol.getPrograma());
+                if(res1.getCorrecto()){
+                    rol.setDesercionAcademica(res2.getValor().stream().filter(p->p.getDtoRegistroBaja().getRegistroBaja().getValidada()==1).collect(Collectors.toList()));
+                    Ajax.update("tbDesercionAcademica");
+                }else mostrarMensajeResultadoEJB(res2);
+            }else mostrarMensajeResultadoEJB(res1);
+        }else{
+            ResultadoEJB<List<DtoTramitarBajas>> res = ejbRegistroBajas.obtenerListaBajasPeriodo(rol.getPeriodo());
+            if(res.getCorrecto()){
+                rol.setDesercionAcademica(res.getValor().stream().filter(p->p.getDtoRegistroBaja().getRegistroBaja().getValidada()==1).collect(Collectors.toList()));
                 Ajax.update("tbDesercionAcademica");
-                if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
-                    Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
-                }
-             }else mostrarMensajeResultadoEJB(res2);
-         }else mostrarMensajeResultadoEJB(res1);
+            }else mostrarMensajeResultadoEJB(res);
+        }
     }
     
      /**
@@ -318,98 +352,136 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
     }
     
     /**
-     * Permite generar el listado de estudiantes del periodo y programa educativo seleccionado
+     * Permite generar el listado de matricula activa (situación académica regular)
      */
     public void generarMatricula(){
-        ResultadoEJB<List<DtoMatricula>> res = ejb.getMatricula(rol.getPeriodo(), rol.getPrograma());
-        if(res.getCorrecto()){
-            rol.setMatricula(res.getValor());
-            Ajax.update("tbMatricula");
-            if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
-                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
-            }
-         }else mostrarMensajeResultadoEJB(res);
+        if(rol.getTipoBusqueda().equals("busquedaPrograma")){
+            ResultadoEJB<List<DtoMatricula>> res = ejb.getMatriculaPrograma(rol.getPeriodo(), rol.getPrograma());
+            if(res.getCorrecto()){
+             rol.setMatricula(res.getValor());
+             Ajax.update("tbMatricula");
+            }else mostrarMensajeResultadoEJB(res);
+        }else{
+            ResultadoEJB<List<DtoMatricula>> res = ejb.getMatricula(rol.getPeriodo(), rol.getUsuario().getPersonal());
+            if(res.getCorrecto()){
+             rol.setMatricula(res.getValor());
+             Ajax.update("tbMatricula");
+            }else mostrarMensajeResultadoEJB(res);
+        }
     }
     
     /**
-     * Permite generar distribución de matricula del periodo y programa educativo seleccionado
+     * Permite generar distribución de matricula por grado
      */
     public void generarDistribucionMatricula(){
-        ResultadoEJB<List<DtoDistribucionMatricula>> res = ejb.getDistribucionMatricula(rol.getPeriodo(), rol.getPrograma());
-        if(res.getCorrecto()){
-            rol.setDistribucionMatricula(res.getValor());
-            Ajax.update("tbDistribucionMatricula");
-            if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
-                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
-            }
-         }else mostrarMensajeResultadoEJB(res);
+        if(rol.getTipoBusqueda().equals("busquedaPrograma")){
+            ResultadoEJB<List<DtoDistribucionMatricula>> res = ejb.getDistribucionMatriculaPrograma(rol.getPeriodo(), rol.getPrograma());
+            if(res.getCorrecto()){
+                rol.setDistribucionMatricula(res.getValor());
+                Ajax.update("tbDistribucionMatricula");
+            }else mostrarMensajeResultadoEJB(res);
+       }else{
+           ResultadoEJB<List<DtoDistribucionMatricula>> res = ejb.getDistribucionMatricula(rol.getPeriodo(), rol.getUsuario().getPersonal());
+            if(res.getCorrecto()){
+                rol.setDistribucionMatricula(res.getValor());
+                Ajax.update("tbDistribucionMatricula");
+            }else mostrarMensajeResultadoEJB(res);
+        }
     }
     
     /**
-     * Permite generar reporte de planeación docente del periodo y programa educativo seleccionado
+     * Permite generar reporte de planeación cuatrimestral docente 
      */
     public void generarPlaneacionDocente(){
-        ResultadoEJB<List<DtoReportePlaneacionDocente>> res = ejb.getPlaneacionesDocente(rol.getPeriodo(), rol.getPrograma());
-        if(res.getCorrecto()){
-            rol.setPlaneacionDocente(res.getValor());
-            Ajax.update("tbPlaneacionDocente");
-         }else mostrarMensajeResultadoEJB(res);
+        if(rol.getTipoBusqueda().equals("busquedaPrograma")){
+            ResultadoEJB<List<DtoReportePlaneacionDocente>> res = ejb.getPlaneacionesDocentePrograma(rol.getPeriodo(), rol.getPrograma());
+            if(res.getCorrecto()){
+                rol.setPlaneacionDocente(res.getValor());
+                Ajax.update("tbPlaneacionDocente");
+            }else mostrarMensajeResultadoEJB(res);
+        }else{
+            ResultadoEJB<List<DtoReportePlaneacionDocente>> res = ejb.getPlaneacionesDocente(rol.getPeriodo(), rol.getUsuario().getPersonal());
+            if(res.getCorrecto()){
+                rol.setPlaneacionDocente(res.getValor());
+                Ajax.update("tbPlaneacionDocente");
+            }else mostrarMensajeResultadoEJB(res);
+        }
     }
     
      /**
-     * Permite generar aprovechamiento escolar del periodo y programa educativo seleccionado
+     * Permite generar aprovechamiento escolar por asignatura
      */
     public void generarAprovechamientoEscolar(){
-        ResultadoEJB<List<DtoAprovechamientoEscolar>> res = ejb.getAprovechamientoEscolar(rol.getPeriodo(), rol.getPrograma());
-        if(res.getCorrecto()){
-            rol.setAprovechamientoEscolar(res.getValor());
-            Ajax.update("tbAprovechamientoEscolar");
-            if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
-                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
-            }
-         }else mostrarMensajeResultadoEJB(res);
+        if(rol.getTipoBusqueda().equals("busquedaPrograma")){
+            ResultadoEJB<List<DtoAprovechamientoEscolar>> res = ejb.getAprovechamientoEscolarPrograma(rol.getPeriodo(), rol.getPrograma());
+            if(res.getCorrecto()){
+                rol.setAprovechamientoEscolar(res.getValor());
+                Ajax.update("tbAprovechamientoEscolar");
+            }else mostrarMensajeResultadoEJB(res);
+        }else{
+            ResultadoEJB<List<DtoAprovechamientoEscolar>> res = ejb.getAprovechamientoEscolar(rol.getPeriodo(), rol.getUsuario().getPersonal());
+            if(res.getCorrecto()){
+                rol.setAprovechamientoEscolar(res.getValor());
+                Ajax.update("tbAprovechamientoEscolar");
+            }else mostrarMensajeResultadoEJB(res);
+        }
     }
     
     /**
-     * Permite generar aprovechamiento escolar por estudiante del periodo y programa educativo seleccionado
+     * Permite generar lista de matricula activa con promedio cuatrimestral
      */
     public void generarListaAprovechamientoEscolar(){
-        ResultadoEJB<List<DtoAprovechamientoEscolarEstudiante>> res = ejb.getListaAprovechamientoEscolar(rol.getPeriodo(), rol.getPrograma());
-        if(res.getCorrecto()){
-            rol.setListaAprovechamientoEscolar(res.getValor());
-            Ajax.update("tbListaAprovechamientoEscolar");
-            if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
-                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
-            }
-         }else mostrarMensajeResultadoEJB(res);
+        if(rol.getTipoBusqueda().equals("busquedaPrograma")){
+            ResultadoEJB<List<DtoAprovechamientoEscolarEstudiante>> res = ejb.getListaAprovechamientoEscolarPrograma(rol.getPeriodo(), rol.getPrograma());
+            if(res.getCorrecto()){
+                rol.setListaAprovechamientoEscolar(res.getValor());
+                Ajax.update("tbListaAprovechamientoEscolar");
+            }else mostrarMensajeResultadoEJB(res);
+        }else{
+            ResultadoEJB<List<DtoAprovechamientoEscolarEstudiante>> res = ejb.getListaAprovechamientoEscolar(rol.getPeriodo(), rol.getUsuario().getPersonal());
+            if(res.getCorrecto()){
+                rol.setListaAprovechamientoEscolar(res.getValor());
+                Ajax.update("tbListaAprovechamientoEscolar");
+            }else mostrarMensajeResultadoEJB(res);
+        }
     }
     
     /**
-     * Permite generar reprobación por asignatura del periodo y programa educativo seleccionado
+     * Permite generar reprobación por asignatura
      */
     public void generarReprobacionAsignatura(){
-        ResultadoEJB<List<DtoReprobacionAsignatura>> res = ejb.getReprobacionAsignatura(rol.getPeriodo(), rol.getPrograma());
-        if(res.getCorrecto()){
-            rol.setReprobacionAsignatura(res.getValor());
-            Ajax.update("tbReprobacionAsignatura");
-            if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
-                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
-            }
-         }else mostrarMensajeResultadoEJB(res);
+        if(rol.getTipoBusqueda().equals("busquedaPrograma")){
+            ResultadoEJB<List<DtoReprobacionAsignatura>> res = ejb.getReprobacionAsignaturaPrograma(rol.getPeriodo(), rol.getPrograma());
+            if(res.getCorrecto()){
+                rol.setReprobacionAsignatura(res.getValor());
+                Ajax.update("tbReprobacionAsignatura");
+            }else mostrarMensajeResultadoEJB(res);
+        }else{
+            ResultadoEJB<List<DtoReprobacionAsignatura>> res = ejb.getReprobacionAsignatura(rol.getPeriodo(), rol.getUsuario().getPersonal());
+            if(res.getCorrecto()){
+                rol.setReprobacionAsignatura(res.getValor());
+                Ajax.update("tbReprobacionAsignatura");
+            }else mostrarMensajeResultadoEJB(res);
+        }
     }
     
     /**
-     * Permite generar listado de estudiantes irregulares del periodo y programa educativo seleccionado
+     * Permite generar listado de estudiantes irregulares
      */
     public void generarEstudiantesIrregulares(){
-        ResultadoEJB<List<DtoEstudianteIrregular>> res = ejb.getEstudiantesIrregulares(rol.getPeriodo(), rol.getPrograma());
-        if(res.getCorrecto()){
-            rol.setEstudiantesIrregulares(res.getValor());
-            Ajax.update("tbEstudiantesIrregulares");
-            if(rol.getPeriodoActivo().equals(rol.getPeriodo().getPeriodo())){
-                Messages.addGlobalWarn("El periodo de consulta es el mismo que se encuentra activo, razón por la cual el reporte puede no ser el definitivo, se recomienda consultar una vez que concluya el registro de calificaciones ordinarias y nivelación.");
-            }
-        }else mostrarMensajeResultadoEJB(res);
+        if(rol.getTipoBusqueda().equals("busquedaPrograma")){
+            ResultadoEJB<List<DtoEstudianteIrregular>> res = ejb.getEstudiantesIrregularesPrograma(rol.getPeriodo(), rol.getPrograma());
+            if(res.getCorrecto()){
+                rol.setEstudiantesIrregulares(res.getValor());
+                Ajax.update("tbEstudiantesIrregulares");
+            }else mostrarMensajeResultadoEJB(res);
+        }else{
+            ResultadoEJB<List<DtoEstudianteIrregular>> res = ejb.getEstudiantesIrregulares(rol.getPeriodo(), rol.getUsuario().getPersonal());
+            if(res.getCorrecto()){
+                rol.setEstudiantesIrregulares(res.getValor());
+                Ajax.update("tbEstudiantesIrregulares");
+            }else mostrarMensajeResultadoEJB(res);
+        }
     }
    
 }

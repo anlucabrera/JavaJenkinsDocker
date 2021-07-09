@@ -39,8 +39,7 @@ public class DtoRegistroPrevioEvidInstEval implements Serializable, Comparable<D
          return String.valueOf(dtoRegistroPrevioEvidInstEval.getGrado()).concat("")
                  .concat(dtoRegistroPrevioEvidInstEval.getMateria().getNombre().concat(" "))
                  .concat(String.valueOf(dtoRegistroPrevioEvidInstEval.getNoUnidad()).concat(" "))
-                 .concat(dtoRegistroPrevioEvidInstEval.getUnidadMateria().getNombre().concat(" "))
-                 .concat(String.valueOf(dtoRegistroPrevioEvidInstEval.getCriterio().getTipo()).concat(" "))
+                 .concat(String.valueOf(dtoRegistroPrevioEvidInstEval.getCriterio().getCriterio()).concat(" "))
                  .concat(dtoRegistroPrevioEvidInstEval.getEvidenciaEvaluacion().getDescripcion().concat(" "))
                  .concat(dtoRegistroPrevioEvidInstEval.getInstrumentoEvaluacion().getDescripcion());
     }

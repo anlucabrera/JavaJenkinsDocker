@@ -6,9 +6,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Year;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
@@ -18,7 +16,6 @@ import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.EstudiantesPye;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BajasTipo;
@@ -46,7 +43,6 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoValidacionesBaja;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausaCategoria;
-import mx.edu.utxj.pye.sgi.entity.prontuario.BajasCausaCategoriaPK;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
 import net.sf.jxls.transformer.XLSTransformer;
@@ -924,7 +920,7 @@ public class EjbRegistroBajas {
                 listaDtoTramitarBajas.add(dtoTramitarBajas);
             });
             
-            return ResultadoEJB.crearCorrecto(listaDtoTramitarBajas, "Lista de bajas registradas en el periodo escolar seleccionado");
+            return ResultadoEJB.crearCorrecto(listaDtoTramitarBajas.stream().sorted(DtoTramitarBajas::compareTo).collect(Collectors.toList()), "Lista de bajas registradas en el periodo escolar seleccionado");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de bajas registradas. (EjbRegistroBajas.getBajasPeriodo)", e, null);
         }
@@ -1073,7 +1069,7 @@ public class EjbRegistroBajas {
                 }
             });
             
-            return ResultadoEJB.crearCorrecto(listaDtoTramitarBajas, "Lista de bajas registradas en el periodo escolar y programa educativo seleccionado");
+            return ResultadoEJB.crearCorrecto(listaDtoTramitarBajas.stream().sorted(DtoTramitarBajas::compareTo).collect(Collectors.toList()), "Lista de bajas registradas en el periodo escolar y programa educativo seleccionado");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de bajas registradas en el periodo escolar y programa educativo seleccionado. (EjbRegistroBajas.obtenerListaBajasProgramaEducativo)", e, null);
         }
