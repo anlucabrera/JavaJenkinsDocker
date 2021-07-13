@@ -37,7 +37,11 @@ public interface EjbPresupuestacion {
     
     public List<ProductosAreas> mostrarProductosAreasPartidas(Short ejercicioFiscal, Partidas partidas, Short area);
     
-    public void agregarProductosAreas(List<ProductosAreas> productos)throws SQLException;
+    public ProductosAreas agregarProductosAreas(ProductosAreas productos);
+    
+    public ProductosAreas actualizarProductosAreas(ProductosAreas productos);
+    
+    public ProductosAreas eliminarProductosAreas(ProductosAreas productos);
 
 //  ---------------------------------------------------------------------- Pretecho Financiero --------------------------------------------------
     public PretechoFinanciero agregarPretechoFinanciero(PretechoFinanciero financiero);
@@ -62,7 +66,11 @@ public interface EjbPresupuestacion {
     
      public Productos mostrarProductos(ProductosPK ppk);
     
-    public void agregarProductos(List<Productos> productos)throws SQLException;
+    public Productos agregarProductos(Productos productos);
+    
+    public Productos actualizarProductos(Productos productos);
+    
+    public Productos eliminarProductos(Productos productos);
 //  ------------------------------------------------------------------------ Capitulo --------------------------------------------------
     public List<CapitulosTipos> mostrarCapitulosTiposes();
 

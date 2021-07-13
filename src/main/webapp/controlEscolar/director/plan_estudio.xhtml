@@ -149,7 +149,7 @@
                                                         <p:selectOneMenu id="planEstudio" value="#{administracionPlanEstudioDirector.rol.materiaPlanEstudio1.planEstudio}" converter="entityConverter">
                                                             <f:selectItem itemValue="#{null}"/>
                                                             <f:selectItems value="#{administracionPlanEstudioDirector.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
-                                                            <p:ajax listener="#{administracionPlanEstudioDirector.materiasPorPlanEstudioConsulta()}" update="planEstudioMateriaFrm" process="@this"/>
+                                                            <p:ajax listener="#{administracionPlanEstudioDirector.materiasPorPlanEstudioConsultaUnica()}" update="planEstudioMateriaFrm" process="@this"/>
                                                         </p:selectOneMenu>
                                                         <p:outputLabel for="planEstudio" value="Plan de estudios"/>
                                                         <p:message for="planEstudio"/>
@@ -286,7 +286,7 @@
                                                         <p:selectOneMenu id="planEstudioC" value="#{administracionPlanEstudioDirector.rol.planEstudioMateriaCompetencias1.planEstudio}" converter="entityConverter">
                                                             <f:selectItem itemValue="#{null}"/>
                                                             <f:selectItems value="#{administracionPlanEstudioDirector.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
-                                                            <p:ajax listener="#{administracionPlanEstudioDirector.materiasPorPlanEstudioConsulta()}" update="materiaR" process="@this"/>
+                                                            <p:ajax listener="#{administracionPlanEstudioDirector.materiasPorPlanEstudioConsultaUnica()}" update="materiaR" process="@this"/>
                                                         </p:selectOneMenu>
                                                         <p:outputLabel for="planEstudioC" value="Plan de estudios"/>
                                                         <p:message for="planEstudioC"/>

@@ -5,8 +5,8 @@
         <property name="serverName" value="localhost"/>
         <property name="portNumber" value="3306"/>
         <property name="databaseName" value="capital_humano"/>
-        <property name="User" value="sgi"/>
-        <property name="Password" value="sgi_pass"/>
+        <property name="User" value="sgi_2021"/>
+        <property name="Password" value="sistemas_pass_8432"/>
         <property name="URL" value="jdbc:mysql://150.140.1.26:3306/capital_humano?zeroDateTimeBehavior=convertToNull"/>
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>
@@ -15,8 +15,8 @@
         <property name="serverName" value="150.140.1.26"/>
         <property name="portNumber" value="3306"/>
         <property name="databaseName" value="prontuario"/>
-        <property name="User" value="sgi"/>
-        <property name="Password" value="sgi_pass"/>
+        <property name="User" value="sgi_2021"/>
+        <property name="Password" value="sistemas_pass_8432"/>
         <property name="URL" value="jdbc:mysql://150.140.1.26:3306/prontuario?zeroDateTimeBehavior=convertToNull"/>
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>
@@ -36,8 +36,8 @@
         <property name="serverName" value="150.140.1.26"/>
         <property name="portNumber" value="3306"/>
         <property name="databaseName" value="sescolares"/>
-        <property name="User" value="sgi"/>
-        <property name="Password" value="sgi_pass"/>
+        <property name="User" value="sgi_2021"/>
+        <property name="Password" value="sistemas_pass_8432"/>
         <property name="URL" value="jdbc:mysql://150.140.1.26:3306/sescolares?zeroDateTimeBehavior=convertToNull"/>
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>
@@ -47,8 +47,8 @@
         <property name="serverName" value="150.140.1.26"/>
         <property name="portNumber" value="3306"/>
         <property name="databaseName" value="pye2"/>
-        <property name="User" value="sgi"/>
-        <property name="Password" value="sgi_pass"/>
+        <property name="User" value="sgi_2021"/>
+        <property name="Password" value="sistemas_pass_8432"/>
         <property name="URL" value="jdbc:mysql://150.140.1.26:3306/pye2?zeroDateTimeBehavior=convertToNull"/>
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>
@@ -67,8 +67,8 @@
         <property name="serverName" value="150.140.1.26"/>
         <property name="portNumber" value="3306"/>
         <property name="databaseName" value="shiro"/>
-        <property name="User" value="sgi"/>
-        <property name="Password" value="sgi_pass"/>
+        <property name="User" value="sgi_2021"/>
+        <property name="Password" value="sistemas_pass_8432"/>
         <property name="URL" value="jdbc:mysql://150.140.1.26:3306/shiro?zeroDateTimeBehavior=convertToNull"/>
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>
@@ -77,8 +77,8 @@
         <property name="serverName" value="150.140.1.26"/>
         <property name="portNumber" value="3306"/>
         <property name="databaseName" value="control_escolar"/>
-        <property name="User" value="sgi"/>
-        <property name="Password" value="sgi_pass"/>
+        <property name="User" value="sgi_2021"/>
+        <property name="Password" value="sistemas_pass_8432"/>
         <property name="URL" value="jdbc:mysql://150.140.1.26:3306/control_escolar?zeroDateTimeBehavior=convertToNull"/>
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>

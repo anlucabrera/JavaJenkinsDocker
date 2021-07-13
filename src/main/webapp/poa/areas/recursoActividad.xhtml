@@ -339,6 +339,13 @@
                                                                                      process="@this" update="delRegistroProdustos" icon="fa fa-usd" 
                                                                                      styleClass="#{actividad.actividadesPoa1.recursosActividadList.size() eq 0?'btn-primary':'btn-success'}" title="Agregar recurso" onsuccess="actualizarTabla()"/> 
                                                                 </p:column>
+                                                                <p:column styleClass="#{actividad.actividadesPoa1.numeroS eq 0?'actividad':''}" style="text-align: center; width: 3%;"> 
+                                                                    <p:commandButton id="btnJustificacion" actionListener="#{areaPoaPresupuestacion.asignarJustificaionActividad(actividad.actividadesPoa1)}"
+                                                                                     process="@this" update="delRegistroJustificacion" icon="fa fa-comment" 
+                                                                                     styleClass="#{actividad.actividadesPoa1.descripcion.length() eq 0?'btn-primary':'btn-success'}"
+                                                                                     rendered="#{actividad.actividadesPoa1.recursosActividadList.size() eq 0?false:true}" title="Agregar Justificacion" onsuccess="actualizarTabla()"/> 
+
+                                                                </p:column>
 
                                                                 <p:rowExpansion>
 
@@ -373,10 +380,10 @@
                                                                         </p:columnGroup>
 
                                                                         <p:headerRow>
-                                                                            <p:column colspan="2" style="background: #2796cb; color: #FFFFFF;">
+                                                                            <p:column colspan="1" style="background: #2796cb; color: #FFFFFF;">
                                                                                 <h:outputText value="Partida: #{recurso.productoArea.partida.partida}" />
                                                                             </p:column>
-                                                                            <p:column colspan="14" style="background: #2796cb; color: #FFFFFF;">
+                                                                            <p:column colspan="16" style="background: #2796cb; color: #FFFFFF;">
                                                                                 <h:outputText value="#{recurso.productoArea.partida.denominacion}" />
                                                                             </p:column>
                                                                         </p:headerRow>
@@ -506,6 +513,32 @@
 
                 </h:form>
 
+
+                <p:dialog id="delRegistroJustificacion" header="Asignar Justificacion " widgetVar="delRegistroJustificacion" modal="true" 
+                          showEffect="fade" hideEffect="fade" resizable="false" width="600" closeOnEscape="true">
+                    <h:form id="frmComentario">
+                        <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
+                            <p:outputPanel>
+                                <p:autoUpdate/>
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <p:outputLabel value="#{areaPoaPresupuestacion.actividadesPoa.denominacion}" style="height:100%; width: 100%;"/>
+                                </div>
+                            </p:outputPanel>
+                            <p:inputTextarea id="txtComentario" value="#{areaPoaPresupuestacion.actividadesPoa.descripcion}" 
+                                             rows="5" cols="95" counter="display" maxlength="500" counterTemplate="{0} caracteres restantes." 
+                                             styleClass="form-control" autoResize="true" />
+                            <p:message for="txtComentario" />
+                            <h:outputText id="display" />
+
+
+                            <p:commandButton value="Aceptar" id="btnAceptarComentario" actionListener="#{areaPoaPresupuestacion.actualizarNuavActividad()}"
+                                             title="Guardar Justificacion"
+                                             icon="fa fa-chek" styleClass="btn-primary"  update=":frm" process=":frmComentario"
+                                             onsuccess="actualizarTabla()" oncomplete="PF('delRegistroJustificacion').hide()"/>       
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
                 <p:dialog id="delRegistroProdustos" header="Asignar recurso para: #{areaPoaPresupuestacion.actividadesPoa.denominacion}" widgetVar="delRegistroProdustos" modal="true" 
                           showEffect="fade" hideEffect="fade" resizable="false" width="800" closeOnEscape="true">
                     <h:form id="frmAsignaRecurso">
@@ -535,7 +568,7 @@
                             <div class="col-sm-12 col-md-12 col-lg-12">
                                 <p:outputLabel for="cant"  value="Cantidad" />
                                 <p:inputNumber id="cant" value="#{areaPoaPresupuestacion.recursosActividad.cantidad}" required="true" requiredMessage="Total a utilizar" style="height:100%; width: 100%;" placeholder="Total a utilizar" />
-                                    <p:message for="cant" display="tooltip"/>    
+                                <p:message for="cant" display="tooltip"/>    
                             </div>
                             <p:outputPanel>
                                 <p:autoUpdate/>

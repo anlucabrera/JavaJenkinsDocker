@@ -123,33 +123,30 @@ public class ServiciosPresupuestacion implements EjbPresupuestacion {
             return pr;
         }
     }
+    
     @Override
-    public void agregarProductosAreas(List<ProductosAreas> productos) throws SQLException{
-         final EntityTransaction transaction = em.getTransaction();
-        try {            
-            final int listSize = productos.size();
-            transaction.begin();
-
-            for (int i = 0; i<listSize; i++) { //Object object : list) {
-                final ProductosAreas object = productos.get(i);
-                em.persist(object);
-
-                if ( i % 500 == 0 ) { //500, same as the JDBC batch size defined in the persistence.xml
-                    //flush a batch of inserts and release memory:
-                    em.flush();
-                    em.clear();
-                }
-            }
-            transaction.commit();
-        }
-        catch(Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new SQLException(e.getMessage());
-        } 
+    public ProductosAreas agregarProductosAreas(ProductosAreas productos) {
+        facadePoa.setEntityClass(ProductosAreas.class);
+        em.persist(productos);
+        facadePoa.flush();
+        return productos;
+    }
+    
+    @Override
+    public ProductosAreas actualizarProductosAreas(ProductosAreas productos) {
+        facadePoa.setEntityClass(ProductosAreas.class);
+        em.merge(productos);
+        facadePoa.flush();
+        return productos;
     }
 
+    @Override
+    public ProductosAreas eliminarProductosAreas(ProductosAreas productos) {
+        facadePoa.setEntityClass(ProductosAreas.class);
+        em.remove(productos);
+        facadePoa.flush();
+        return productos;
+    }
 //  ---------------------------------------------------------------------- Pretecho Financiero --------------------------------------------------
     @Override
     public PretechoFinanciero agregarPretechoFinanciero(PretechoFinanciero financiero) {
@@ -236,32 +233,28 @@ public class ServiciosPresupuestacion implements EjbPresupuestacion {
     }
     
     @Override
-    public void agregarProductos(List<Productos> productos)throws SQLException{
-         final EntityTransaction transaction = em.getTransaction();
-        try {            
-            final int listSize = productos.size();
-            transaction.begin();
-
-            for (int i = 0; i<listSize; i++) { //Object object : list) {
-                final Productos object = productos.get(i);
-                em.persist(object);
-
-                if ( i % 500 == 0 ) { //500, same as the JDBC batch size defined in the persistence.xml
-                    //flush a batch of inserts and release memory:
-                    em.flush();
-                    em.clear();
-                }
-            }
-            transaction.commit();
-        }
-        catch(Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new SQLException(e.getMessage());
-        } 
+    public Productos agregarProductos(Productos productos){
+        facadePoa.setEntityClass(Productos.class);
+        em.persist(productos);
+        facadePoa.flush();
+        return productos;
     }
-
+   
+    @Override
+    public Productos actualizarProductos(Productos productos) {
+        facadePoa.setEntityClass(Productos.class);
+        em.merge(productos);
+        facadePoa.flush();
+        return productos;
+    }
+    
+    @Override
+    public Productos eliminarProductos(Productos productos) {
+        facadePoa.setEntityClass(Productos.class);
+        em.remove(productos);
+        facadePoa.flush();
+        return productos;
+    }
 //  ------------------------------------------------------------------------ Capitulo --------------------------------------------------
     public List<CapitulosTipos> mostrarCapitulosTiposes(){
         facadePoa.setEntityClass(CapitulosTipos.class);

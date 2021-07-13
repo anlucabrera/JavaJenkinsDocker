@@ -33,6 +33,7 @@ import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.ejb.poa.EjbRegistroActividades;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 @Named
@@ -71,6 +72,7 @@ public class AreaPoaPresupuestacion implements Serializable {
 
     @EJB    EjbCatalogosPoa catalogos;
     @EJB    EjbPresupuestacion presupuestacion;
+    @EJB    EjbRegistroActividades ejbRegistroActividades;
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA pOAUtilidades;
 
@@ -237,6 +239,21 @@ public class AreaPoaPresupuestacion implements Serializable {
             consultarCatalogos();
         }
     }   
+    
+//////////////////////////////////////////////////////////////////////////////// Agregar Justificacion    
+    public void asignarJustificaionActividad(ActividadesPoa actividadesPoaRecurso) {
+        actividadesPoa = new ActividadesPoa();
+        actividadesPoa = actividadesPoaRecurso;
+        Ajax.oncomplete("PF('delRegistroJustificacion').show()");
+    }
+    public void actualizarNuavActividad() {
+        actividadesPoa = ejbRegistroActividades.actualizaActividadesPoa(actividadesPoa);
+        if (alineacionSeleccionada == false) {
+            consultarCatalogos();
+        } else {
+            consultarListas();
+        }
+    }
 //////////////////////////////////////////////////////////////////////////////// Agregar recurso
     public void asignarRecursoActividad(ActividadesPoa actividadesPoaRecurso) {
         actividadesPoa = new ActividadesPoa();

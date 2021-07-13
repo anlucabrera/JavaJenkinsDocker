@@ -473,6 +473,29 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
         }
     }
 
+    public void materiasPorPlanEstudioConsultaUnica() {
+        rol.setPlanEstudioMaterias(new ArrayList<>());
+        rol.getMateriaUnidades1().setMateria(new Materia());
+        List<PlanEstudioMateria> pems = new ArrayList<>();
+        PlanEstudio plan = new PlanEstudio();
+
+        if (rol.getMateriaPlanEstudio1().getPlanEstudio() != null) {
+            plan = rol.getMateriaPlanEstudio1().getPlanEstudio();
+        } else {
+            plan = rol.getPlanEstudioMateriaCompetencias1().getPlanEstudio();
+        }
+        pems = ejb.generarPlanEstuidoMaterias(plan);
+        if (!pems.isEmpty()) {
+            rol.setPlanEstudioMaterias(pems);
+
+            ResultadoEJB<List<Materia>> resMaterias = ejb.getListadoMaterias(plan);
+            if (!resMaterias.getCorrecto()) {
+                mostrarMensajeResultadoEJB(resMaterias);
+            }
+            rol.setMaterias(resMaterias.getValor());
+        }
+    }
+    
     public void competenciasPorPlanEstudioMateriaConsulta() {
         rol.setCompetencias(new ArrayList<>());
         ResultadoEJB<List<Competencia>> resCompetencia = ejb.getCompetenciasPlan(rol.getPlanEstudioMateriaCompetencias1().getPlanEstudio());

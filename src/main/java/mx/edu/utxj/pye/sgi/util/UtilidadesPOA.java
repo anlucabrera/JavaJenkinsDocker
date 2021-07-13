@@ -16,6 +16,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
+import mx.edu.utxj.pye.sgi.ejb.administrador.EjbAdministrador;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import org.omnifaces.cdi.ViewScoped;
@@ -40,9 +41,13 @@ import org.omnifaces.util.Faces;
 public class UtilidadesPOA implements Serializable {
 
     @Getter    @Setter    private Short ef = 0;
+    @Getter    @Setter    private String tpRactividad = "In";
+    @Getter    @Setter    private String tpRrecursoJu = "In";
     @Getter    @Setter    private Integer mes=0,diasExtra=0;
     @Getter    @Setter    private LocalDateTime fechaActualHora = LocalDateTime.now();
     @Getter    @Setter    private Eventos ea= new Eventos();
+    @Getter    @Setter    private Permisosevaluacionpoaex permisoRegAct= new Permisosevaluacionpoaex();
+    @Getter    @Setter    private Permisosevaluacionpoaex permisoRegRec= new Permisosevaluacionpoaex();
     @Getter    @Setter    private Procesopoa procesopoa = new Procesopoa();
     @Getter    @Setter    private Comentariosprocesopoa cpoaArea = new Comentariosprocesopoa();
     @Getter    @Setter    private Comentariosprocesopoa cpoaApye = new Comentariosprocesopoa();
@@ -53,6 +58,7 @@ public class UtilidadesPOA implements Serializable {
     @EJB    EjbCatalogosPoa ecp;    
     @EJB    EjbRegistroActividades era;
     @EJB    EjbAreasLogeo eal;
+    @EJB    EjbAdministrador administrador;
     @EJB    private EjbUtilidadesCH euch;
     @Inject ControladorEmpleado ce;
     @Inject UtilidadesCorreosElectronicos correosElectronicos;
@@ -252,216 +258,206 @@ public class UtilidadesPOA implements Serializable {
     }
 
     public void enviarCorreo(String tipo, String rol, Boolean aceptado, String observaciones, AreasUniversidad areaDestino) {
-        diasExtra = 0;
-        String asunto = "";
-        Boolean refi = false;
-        Boolean pye = false;
         try {
+            String asunto = ""; 
             procesopoa = euch.mostrarEtapaPOAArea(areaDestino.getArea());
-            if (aceptado && rol.equals("Ad")) {
-                switch (tipo) {
-                    case "A":                        ea = euch.mostrarEventosRegistro("POA", "Recurso").get(0);                        break;
-                    case "R":                        ea = euch.mostrarEventosRegistro("POA", "Justificacion").get(0);                        break;
-                }
-                LocalDateTime fechaf = uch.castearDaLDT(ea.getFechaFin());
-                LocalDateTime fechai = uch.castearDaLDT(ea.getFechaInicio());
-                if ((fechaActualHora.isAfter(fechai) || fechaActualHora.equals(fechai))) {
-                    EventosAreas e = new EventosAreas();
-                    EventosAreasPK epk = new EventosAreasPK();
-                    epk = new EventosAreasPK(ea.getEvento(), procesopoa.getArea());
-                    e.setEventosAreasPK(new EventosAreasPK());
-                    e.setEventosAreasPK(epk);
-                    Integer dias = (int) ((uch.castearLDTaD(fechaf).getTime() - uch.castearLDTaD(fechaActualHora).getTime()) / 86400000);
-                    if (dias < 0) {
-                        diasExtra = Math.abs((int) ((uch.castearLDTaD(fechaActualHora).getTime() - uch.castearLDTaD(fechaf).getTime()) / 86400000));
+            EjerciciosFiscales ef =obtenerAnioRegistro(procesopoa.getEjercicioFiscalEtapa1());
+            
+            Boolean refi = false;
+            Boolean pye = false;
+
+            cpoaArea = new Comentariosprocesopoa();
+            cpoaApye = new Comentariosprocesopoa();
+            cpoaAFin = new Comentariosprocesopoa();
+
+            cpoaArea.setArea(areaDestino.getArea());
+            cpoaApye.setArea(Short.parseShort("6"));
+            cpoaAFin.setArea(Short.parseShort("7"));
+
+            cpoaArea.setStatus(Boolean.FALSE);
+            cpoaApye.setStatus(Boolean.FALSE);
+            cpoaAFin.setStatus(Boolean.FALSE);
+
+            cpoaArea.setComentarios(observaciones);
+            cpoaApye.setComentarios(observaciones);
+            cpoaAFin.setComentarios(observaciones);
+
+            cpoaArea.setFecha(new Date());
+            cpoaApye.setFecha(new Date());
+            cpoaAFin.setFecha(new Date());
+            switch (tipo) {
+                case "A":
+                    switch (rol) {
+                        case "Us":
+                            asunto = "Confirmación de finalización de Registro de actividades";
+                            cpoaApye.setComentarios("El área " + areaDestino.getNombre() + " concluyó satisfactoriamente la etapa de Registro de Actividades.");
+                            cpoaArea.setComentarios("Ha enviado a revisión su Registro de Actividades, espere las observaciones o la apertura de la etapa de Asignación de Recurso");
+                            procesopoa.setRegistroAFinalizado(Boolean.TRUE);
+                            refi = false;
+                            break;
+                        case "Ad":
+                            if (aceptado) {
+                                asunto = "Confirmación de Validación de Registro de actividades";
+                                cpoaArea.setComentarios("Su área concluyó satisfactoriamente la etapa de Registro de Actividades, ya puede continuar con la etapa de Presupuestación");
+                                cpoaApye.setComentarios("Ha aceptado el Registro de Actividades del área " + areaDestino.getNombre());
+                                cpoaAFin.setComentarios("El área " + areaDestino.getNombre() + " ha iniciado con la etapa de Asignación de Recurso");
+                                procesopoa.setValidacionRegistroA(Boolean.TRUE);
+                                refi = true;
+                                actualizarAgregarPermisosExtPOA("Registro");
+                            } else {
+                                asunto = "Denegacion de Registro de actividades";
+                                cpoaArea.setComentarios("Se han echo las siguintes observaciones a su Registro de actividades" + observaciones);
+                                cpoaApye.setComentarios("Ha denegado el Registro de Actividades del área " + areaDestino.getNombre() + " con las siguintes observaciones -- "+ observaciones
+                                        + "--. Por lo cual se le ha re-aperturado la etapa de Registro de actividades");
+                                procesopoa.setRegistroAFinalizado(Boolean.FALSE);
+                                refi = false;
+                                actualizarAgregarPermisosExtPOA("Registro");
+                                actualizarAgregarPermisosExtPOA("Recurso");
+                            }
+                            break;
                     }
-                    if (dias <= 4) {
-                        switch (fechaActualHora.getDayOfWeek()) {
-                            case MONDAY:                                diasExtra =diasExtra+ 4;                                break;
-                            case TUESDAY:                                diasExtra = diasExtra+6;                                break;
-                            case WEDNESDAY:                                diasExtra = diasExtra+6;                                break;
-                            case THURSDAY:                                diasExtra =diasExtra+ 6;                                break;
-                            case FRIDAY:                                diasExtra = diasExtra+6;                                break;
-                            case SATURDAY:                                diasExtra = diasExtra+5;                                break;
-                            case SUNDAY:                                diasExtra =diasExtra+ 4;                                break;
-                        }
+                    pye = true;
+                    break;
+                case "R":
+                    switch (rol) {
+                        case "Us":
+                            asunto = "Confirmación de finalización de Asignación de Recurso y Registro de Justificaciones";
+                            cpoaAFin.setComentarios("El área " + areaDestino.getNombre() + " concluyó satisfactoriamente la etapa de Presupuestación.");
+                            cpoaArea.setComentarios("Ha enviado a revisión su Asignación de Recurso y Registro de Justificaciones, espere las observaciones o la confirmación de finalización del proceso POA fase 1(Programación, presupuestación, Justificación)");
+                            procesopoa.setAsiganacionRFinalizado(Boolean.TRUE);
+                            procesopoa.setRegistroJustificacionFinalizado(Boolean.TRUE);
+                            pye = false;
+                            break;
+                        case "Ad":
+                            if (aceptado) {
+                                asunto = "Confirmación de finalización del proceso POA";
+                                cpoaArea.setComentarios("Se le informa que su área concluyó satisfactoriamente la etapa de la programacion de actividades para del ejercicio " + ef.getAnio() + " Gracias por su colaboración.");
+                                cpoaAFin.setComentarios("El área." + areaDestino.getNombre() + " ha concluido satisfactoriamente el proceso POA fase 1(Programación, presupuestación, Justificación)");
+                                cpoaApye.setComentarios("El área." + areaDestino.getNombre() + " ha concluido satisfactoriamente el proceso POA fase 1(Programación, presupuestación, Justificación)");
+                                procesopoa.setAsiganacionRFinalizado(Boolean.TRUE);
+                                procesopoa.setRegistroJustificacionFinalizado(Boolean.TRUE);
+                                pye = true;
+                            } else {
+                                asunto = "Denegacion de Asignación de Recurso";
+                                cpoaArea.setComentarios("Se han echo las siguintes observaciones a su Asignación de Recurso y Registro de Justificaciones: -- "
+                                        + observaciones);
+                                cpoaAFin.setComentarios("Ha denegado la signación de Recurso y Registro de Justificaciones del área." + areaDestino.getNombre() + " con las siguintes observaciones: --"
+                                        + observaciones
+                                        + " -- Por lo cual se le ha re-aperturado la etapa de Asignación de Recurso");
+                                procesopoa.setAsiganacionRFinalizado(Boolean.FALSE);
+                                procesopoa.setRegistroJustificacionFinalizado(Boolean.FALSE);
+                                actualizarAgregarPermisosExtPOA("Recurso");
+                                pye = false;
+                            }
+                            break;
                     }
-                    e.setDiasExtra(diasExtra);
-                    euch.agregarEventosesAreases(e);
-                }
+                    refi = true;
+                    break;                    
+                case "P":
+                    asunto = "Presupuesto";
+                    switch (rol) {
+                        case "As":
+                            cpoaArea.setComentarios("Por medio del presente le informo que su área ya cuenta con presupuesto asignado para realizar la presupuestación correspondiente la cual estará habilitada a partir de que le llegue el correo de 'Confirmación de Validación de Registro de actividades' por parte de la Dirección de Planeación y Evaluación");
+                            cpoaAFin.setComentarios("Por medio del presente le informo que ha asigando presupuesto al área de " + areaDestino.getNombre() + "el cual estara desponible para realizar la presupuestación correspondiente que estará habilitada a partir de que le llegue el correo de 'Confirmación de Validación de Registro de actividades' por parte de la Dirección de Planeación y Evaluación");
+                            cpoaApye.setComentarios("Por medio del presente se le informa que el área." + areaDestino.getNombre() + " ya cuenta con presupuesto asignado para realizar la presupuestación correspondiente");
+                            pye = true;
+                            break;
+                        case "Ac":
+                            cpoaArea.setComentarios("Por medio del presente le informo que se le ha realizado un reajuste al presupuesto de su área, para más información solicitarla al correo de recursos.financieros@utxicotepec.edu.mx");
+                            cpoaAFin.setComentarios("Por medio del presente le informo que ha realizado un reajuste al presupuesto del área de " + areaDestino.getNombre());
+                            break;
+                        case "El":
+                            cpoaArea.setComentarios("Por medio del presente le informo que se le ha retirado el presupuesto de su área, para más información solicitarla al correo de recursos.financieros@utxicotepec.edu.mx");
+                            cpoaAFin.setComentarios("Por medio del presente le informo que ha le ha retirado el presupuesto al área de " + areaDestino.getNombre());
+                            cpoaApye.setComentarios("Por medio del presente se le informa que el área." + areaDestino.getNombre() + " ya NO cuenta con presupuesto asignado para realizar la presupuestación correspondiente");
+                            pye = true;
+                            break;
+                    }
+                    refi = true;
             }
+          
+            cpoaArea.setProceso(asunto);
+            cpoaApye.setProceso(asunto);
+            cpoaAFin.setProceso(asunto);
+
+            cpoaArea.setEjercicioFiscal(new EjerciciosFiscales());
+            cpoaApye.setEjercicioFiscal(new EjerciciosFiscales());
+            cpoaAFin.setEjercicioFiscal(new EjerciciosFiscales());
+            
+            cpoaArea.setEjercicioFiscal(ef);
+            cpoaApye.setEjercicioFiscal(ef);
+            cpoaAFin.setEjercicioFiscal(ef);
+            
+            cpoaArea = era.agregarComentariosprocesopoa(cpoaArea);
+            if (refi) {
+                cpoaAFin = era.agregarComentariosprocesopoa(cpoaAFin);
+            }
+            if (pye) {
+                cpoaApye = era.agregarComentariosprocesopoa(cpoaApye);
+            }
+            actualizarProcesopoa();
+            recargarPag();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
-        cpoaArea = new Comentariosprocesopoa();
-        cpoaApye = new Comentariosprocesopoa();
-        cpoaAFin = new Comentariosprocesopoa();
+       
 
-        cpoaArea.setArea(areaDestino.getArea());
-        cpoaApye.setArea(Short.parseShort("6"));
-        cpoaAFin.setArea(Short.parseShort("7"));
-
-        cpoaArea.setStatus(Boolean.FALSE);
-        cpoaApye.setStatus(Boolean.FALSE);
-        cpoaAFin.setStatus(Boolean.FALSE);
-
-        cpoaArea.setComentarios(observaciones);
-        cpoaApye.setComentarios(observaciones);
-        cpoaAFin.setComentarios(observaciones);
-
-        cpoaArea.setFecha(new Date());
-        cpoaApye.setFecha(new Date());
-        cpoaAFin.setFecha(new Date());
-
-        switch (tipo) {
-            case "A":
-                switch (rol) {
-                    case "Us":
-                        asunto = "Confirmación de finalización de Registro de actividades";
-                        cpoaApye.setComentarios("El área " + areaDestino.getNombre() + " concluyó satisfactoriamente la etapa de Registro de Actividades.");
-                        cpoaArea.setComentarios("Por medio del presente se le informa que se ha enviado a revisión su Registro de Actividades. \n"
-                                + "Espere las observaciones o la apertura de la etapa de Asignación de Recurso");
-                        procesopoa.setRegistroAFinalizado(true);
-                        refi = false;
-                        break;
-                    case "Ad":
-                        if (aceptado) {
-                            asunto = "Confirmación de Validación de Registro de actividades";
-                            cpoaArea.setComentarios("Su área concluyó satisfactoriamente la etapa de Registro de Actividades, ya puede continuar con la etapa de Presupuestación");
-                            cpoaApye.setComentarios("Ha aceptado el Registro de Actividades del área." + areaDestino.getNombre());
-                            cpoaAFin.setComentarios("El área." + areaDestino.getNombre() + " ha iniciado con la etapa de Asignación de Recurso");
-                            procesopoa.setValidacionRegistroA(true);
-                            refi = true;
-                        } else {
-                            asunto = "Denegacion de Registro de actividades";
-                            cpoaArea.setComentarios("Se han echo las siguintes observaciones a su Registro de actividades\n"
-                                    + observaciones );
-                            cpoaApye.setComentarios("Ha denegado el Registro de Actividades del área" + areaDestino.getNombre() + " con las siguintes observaciones \n"
-                                    + observaciones
-                                    + "Por lo cual se le ha re-aperturado la etapa de Registro de actividades");
-                            procesopoa.setRegistroAFinalizado(false);
-                            refi = false;
-                        }
-                        break;
-                }
-                pye = true;
-                break;
-            case "R":
-                switch (rol) {
-                    case "Us":
-                        asunto = "Confirmación de finalización de Asignación de Recurso";
-                        cpoaAFin.setComentarios("El área " + areaDestino.getNombre() + " concluyó satisfactoriamente la etapa de Presupuestación.");
-                        cpoaArea.setComentarios("Por medio del presente se le informa que se ha enviado a revisión su Asignación de Recurso. \n"
-                                + "Espere las observaciones o la apertura de la etapa de Registro de Justificaciones");
-                        procesopoa.setAsiganacionRFinalizado(true);
-                        pye = false;
-                        break;
-                    case "Ad":
-                        if (aceptado) {
-                            asunto = "Confirmación de Validación de Asignación de Recurso";
-                            cpoaArea.setComentarios("Su área concluyó satisfactoriamente la etapa de Presupuestación, puede continuar con la etapa de Justificacione");
-                            cpoaAFin.setComentarios("Ha aceptado la Asignación de Recurso del área." + areaDestino.getNombre());
-                            cpoaApye.setComentarios("El área." + areaDestino.getNombre() + " ha iniciado con la etapa de Registro de Justificaciones");
-                            procesopoa.setValidacionRFFinalizado(true);
-                            pye = true;
-                        } else {
-                            asunto = "Denegacion de Asignación de Recurso";
-                            cpoaArea.setComentarios("Se han echo las siguintes observaciones a su Asignación de Recurso\n"
-                                    + observaciones);
-                            cpoaAFin.setComentarios("Ha denegado la Asignación de Recurso del área." + areaDestino.getNombre() + " con las siguintes observaciones \n"
-                                    + observaciones
-                                    + "Por lo cual se le ha re-aperturado la etapa de Asignación de Recurso");
-                            procesopoa.setAsiganacionRFinalizado(false);
-                            pye = false;
-                        }
-                        break;
-                }
-                refi = true;
-                break;
-            case "J":
-                switch (rol) {
-                    case "Us":
-                        asunto = "Confirmación de Finalización de Registro de Justificaciones";
-                        cpoaAFin.setComentarios("El área " + areaDestino.getNombre() + " concluyó satisfactoriamente la etapa de Registro de Justificaciones.");
-                        cpoaArea.setComentarios("Por medio del presente se le informa que se ha enviado a revisión su Registro de Justificaciones. \n"
-                                + "Espere las observaciones o la confirmación de finalización del proceso POA fase 1(Programación, presupuestación, Justificación)");
-                        procesopoa.setRegistroJustificacionFinalizado(true);
-                        pye = false;
-                        break;
-                    case "Ad":
-                        if (aceptado) {
-                            asunto = "Confirmación de finalización del proceso POA";
-                            cpoaArea.setComentarios("Por medio del presente le informo que su área concluyó satisfactoriamente la etapa de Registro de Justificaciones. \n"
-                                    + "Felicidades ha finalizado la primera fase del Plan Anual de Trabajo. \n"
-                                    + "Quedamos a la espera de inicio del periodo de evaluación en el mes de enero. \n"
-                                    + "Gracias por su colaboración.");
-                            cpoaAFin.setComentarios("Ha aceptado el Registro de Justificaciones del área." + areaDestino.getNombre() + "\n"
-                                    + "Por lo cual ha concluido satisfactoriamente el proceso POA fase 1(Programación, presupuestación, Justificación)");
-                            cpoaApye.setComentarios("El área." + areaDestino.getNombre() + " ha concluido satisfactoriamente el proceso POA fase 1(Programación, presupuestación, Justificación)");
-                            procesopoa.setValidacionJustificacion(true);
-                            pye = true;
-                        } else {
-                            asunto = "Denegacion de Registro de Justificaciones";
-                            cpoaArea.setComentarios("Se han echo las siguintes observaciones a su Registro de Justificaciones \n"
-                                    + observaciones);
-                            cpoaAFin.setComentarios("Ha denegado el Registro de Justificaciones del área." + areaDestino.getNombre() + " con las siguintes observaciones \n"
-                                    + observaciones
-                                    + "Por lo cual se le ha re-aperturado la etapa de Registro de Justificaciones");
-                            procesopoa.setValidacionJustificacion(true);
-                            pye = false;
-                        }
-                        break;
-                }
-                refi = true;
-                break;
-            case "P":
-                asunto = "Presupuesto";
-                switch (rol) {
-                    case "As":
-                        cpoaArea.setComentarios("Por medio del presente le informo que su área ya cuenta con presupuesto asignado para realizar la presupuestación correspondiente la cual estará habilitada a partir de que le llegue el correo de 'Confirmación de Validación de Registro de actividades' por parte de la Dirección de Planeación y Evaluación");
-                        cpoaAFin.setComentarios("Por medio del presente le informo que ha asigando presupuesto al área de " + areaDestino.getNombre() + "el cual estara desponible para realizar la presupuestación correspondiente que estará habilitada a partir de que le llegue el correo de 'Confirmación de Validación de Registro de actividades' por parte de la Dirección de Planeación y Evaluación");
-                        cpoaApye.setComentarios("Por medio del presente se le informa que el área." + areaDestino.getNombre() + " ya cuenta con presupuesto asignado para realizar la presupuestación correspondiente");
-
-                        pye = true;
-                        break;
-                    case "Ac":
-                        cpoaArea.setComentarios("Por medio del presente le informo que se le ha realizado un reajuste al presupuesto de su área, para más información. \n Enviar comentarios y solicitar más al correo de recursos.financieros@utxicotepec.edu.mx");
-                        cpoaAFin.setComentarios("Por medio del presente le informo que ha realizado un reajuste al presupuesto del área de " + areaDestino.getNombre());
-                        break;
-                    case "El":
-                        cpoaArea.setComentarios("Por medio del presente le informo que se le ha retirado el presupuesto de su área, para más información. \n Enviar comentarios al correo de recursos.financieros@utxicotepec.edu.mx");
-                        cpoaAFin.setComentarios("Por medio del presente le informo que ha le ha retirado el presupuesto al área de " + areaDestino.getNombre());
-                        cpoaApye.setComentarios("Por medio del presente se le informa que el área." + areaDestino.getNombre() + " ya NO cuenta con presupuesto asignado para realizar la presupuestación correspondiente");
-                        pye = true;
-                        break;
-                }
-                refi = true;
-                break;
-        }
-
-        cpoaArea.setProceso(asunto);
-        cpoaApye.setProceso(asunto);
-        cpoaAFin.setProceso(asunto);
-
-        cpoaArea.setEjercicioFiscal(new EjerciciosFiscales(procesopoa.getEjercicioFiscalEtapa1()));
-        cpoaApye.setEjercicioFiscal(new EjerciciosFiscales(procesopoa.getEjercicioFiscalEtapa1()));
-        cpoaAFin.setEjercicioFiscal(new EjerciciosFiscales(procesopoa.getEjercicioFiscalEtapa1()));
-
-        cpoaArea = era.agregarComentariosprocesopoa(cpoaArea);
-        if (refi) {
-            cpoaAFin = era.agregarComentariosprocesopoa(cpoaAFin);
-        }
-        if (pye) {
-            cpoaApye = era.agregarComentariosprocesopoa(cpoaApye);
-        }
-        actualizarProcesopoa();
-        recargarPag();
+        
     }
 
     public void actualizarProcesopoa() {
         try {
             euch.actualizarEtapaPOA(procesopoa);
+            ce.areaPoa();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void actualizarAgregarPermisosExtPOA(String tpR) {
+        try {
+            Boolean newReg = Boolean.FALSE;
+            List<Calendarioevaluacionpoa> calendarioevaluacionpoas = euch.mostrarCalendarioevaluacionpoas().stream().filter(t -> (t.getEjercicioFiscal() == procesopoa.getEjercicioFiscalEtapa1()) && (t.getEstapa().equals("Registro")) && (t.getMesEvaluacion().equals(tpR))).collect(Collectors.toList());
+            List<Permisosevaluacionpoaex> permisosevaluacionpoaexs = procesopoa.getPermisosevaluacionpoaexList().stream().filter(t -> (t.getEvaluacionPOA().getEjercicioFiscal() == procesopoa.getEjercicioFiscalEtapa1()) && (t.getEvaluacionPOA().getEstapa().equals("Registro")) && (t.getEvaluacionPOA().getMesEvaluacion().equals(tpR))).collect(Collectors.toList());
+            
+            Calendarioevaluacionpoa calendarioRegistro= new Calendarioevaluacionpoa();
+            Permisosevaluacionpoaex permisosevaluacionpoaex= new Permisosevaluacionpoaex();
+            
+            if(!calendarioevaluacionpoas.isEmpty()){
+                calendarioRegistro=calendarioevaluacionpoas.get(0);
+            }
+            if(!permisosevaluacionpoaexs.isEmpty()){
+                permisosevaluacionpoaex=permisosevaluacionpoaexs.get(0);
+            }else{
+                permisosevaluacionpoaex.setFechaApertura(new Date());
+                permisosevaluacionpoaex.setFechaCierre(calendarioRegistro.getFechaFin());
+                permisosevaluacionpoaex.setEvaluacionPOA(new Calendarioevaluacionpoa());
+                permisosevaluacionpoaex.setProcesoPOA(new Procesopoa());
+                permisosevaluacionpoaex.setEvaluacionPOA(calendarioRegistro);
+                permisosevaluacionpoaex.setProcesoPOA(procesopoa);
+                newReg = Boolean.TRUE;
+            }
+            LocalDateTime fechafCalendario = uch.castearDaLDT(permisosevaluacionpoaex.getFechaCierre());
+            Integer dias = (int) ((uch.castearLDTaD(fechafCalendario).getTime() - uch.castearLDTaD(fechaActualHora).getTime()) / 86400000);
+            if (dias <= 4) {
+                switch (fechaActualHora.getDayOfWeek()) {
+                    case MONDAY:    fechaActualHora = fechaActualHora.plusDays(4);                          break;
+                    case TUESDAY:   fechaActualHora = fechaActualHora.plusDays(6);                            break;
+                    case WEDNESDAY: fechaActualHora = fechaActualHora.plusDays(6);                            break;
+                    case THURSDAY:  fechaActualHora = fechaActualHora.plusDays(6);                            break;
+                    case FRIDAY:    fechaActualHora = fechaActualHora.plusDays(6);                            break;
+                    case SATURDAY:  fechaActualHora = fechaActualHora.plusDays(5);                            break;
+                    case SUNDAY:    fechaActualHora = fechaActualHora.plusDays(4);                            break;
+                }
+                permisosevaluacionpoaex.setFechaCierre(uch.castearLDTaD(fechaActualHora));
+                if (newReg) {
+                    administrador.crearPermisosevaluacionpoaex(permisosevaluacionpoaex);
+                } else {
+                    administrador.actualizarPermisosevaluacionpoaex(permisosevaluacionpoaex);
+                }
+            }
             ce.areaPoa();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());

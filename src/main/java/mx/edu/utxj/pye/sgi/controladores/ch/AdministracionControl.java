@@ -75,15 +75,19 @@ public class AdministracionControl implements Serializable {
     
     
     @Getter    @Setter    private Calendarioevaluacionpoa c = new Calendarioevaluacionpoa();
+    @Getter    @Setter    private CapitulosTipos capitulosTipos = new CapitulosTipos();
     @Getter    @Setter    private Eventos eventos = new Eventos();
     @Getter    @Setter    private Productos productos = new Productos();
     @Getter    @Setter    private ProductosAreas productosAreas = new ProductosAreas();
     @Getter    @Setter    private PretechoFinanciero financiero= new PretechoFinanciero();
     @Getter    @Setter    private Integer eventoC = 0;
+    @Getter    @Setter    private Integer totalProductosR = 0;
+    @Getter    @Setter    private Integer i = 0;
     @Getter    @Setter    private Double cp2 = 0D, cp3 = 0D, cp4 = 0D, cpd = 0D, cp2T = 0D, cp3T = 0D, cp4T = 0D, cpdT = 0D;
-    @Getter    @Setter    private Short areaC = 0, ejeFiscal = 0, partida = 0;
+    @Getter    @Setter    private Short areaC = 0, ejeFiscal = 0, ejeFiscalReferencia = 0,partida = 0;
     @Getter    @Setter    private Date fehDate = new Date();
     @Getter    @Setter    private Boolean nuevoPeriodo = Boolean.FALSE;
+    @Getter    @Setter    private Boolean nuevoproducto = Boolean.FALSE;
 
     @Getter    @Setter    private EventosAreas editEventosAreas = new EventosAreas();
 
@@ -263,7 +267,7 @@ public class AdministracionControl implements Serializable {
     public void mostrarPartidas() {
         try {
             partidases = new ArrayList<>();
-            partidases.add(new Partidas(Short.parseShort("0"), "Todos los produstos"));
+            partidases.add(new Partidas(Short.parseShort("0"), "Todos los productos"));
             partidases.addAll(ejbPresupuestacion.mostrarPartidases(ejeFiscal, Short.parseShort("1")));
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -276,8 +280,11 @@ public class AdministracionControl implements Serializable {
             productoses = new ArrayList<>();
             if (tipo.equals(1)) {
                 productoses = ejbPresupuestacion.mostrarProductosAreases(Short.parseShort("1"), ejeFiscal);
+                totalProductosR=productoses.size();
+                nuevoproducto=Boolean.FALSE;
             } else {
                 productoses = ejbPresupuestacion.mostrarProductosAreasPartidas(ejeFiscal, new Partidas(partida, ""), Short.parseShort("1"));
+                nuevoproducto=Boolean.TRUE;
             }
             asigadoses= new ArrayList<>();
             if(!productoses.isEmpty()){
@@ -285,6 +292,35 @@ public class AdministracionControl implements Serializable {
                     asigadoses.add(new ProductosAreasAsigados(t.getProductos(), t.getProductos().getEjerciciosFiscales(), t.getPartida(), t.getCapitulo().getCapituloTipo(),t.getCapitulo()));
                 });
             }
+            
+            if (nuevoproducto) {
+                ProductosPK pK = new ProductosPK();
+                EjerciciosFiscales ejerciciosFiscales = new EjerciciosFiscales();
+                pK.setEjercicioFiscal(ejeFiscal);
+                String claveP="";
+                if(totalProductosR<=8){
+                    claveP=partida+"-000"+(totalProductosR+1);
+                }else if(totalProductosR>=9 && totalProductosR<99){
+                    claveP=partida+"-00"+(totalProductosR+1);
+                }else if(totalProductosR>=99 && totalProductosR<999){
+                    claveP=partida+"-0"+(totalProductosR+1);
+                }else{
+                    claveP=partida+"-"+(totalProductosR+1);
+                }
+                pK.setProducto(claveP);
+                ejerciciosFiscales.setEjercicioFiscal(ejeFiscal);
+                ejerciciosFiscales.setAnio(ejeFiscal);
+
+                productos.setProductosPK(new ProductosPK());
+                productos.setProductosPK(pK);
+                productos.setEjerciciosFiscales(new EjerciciosFiscales());
+                productos.setEjerciciosFiscales(ejerciciosFiscales);
+                productos = new Productos();
+                productos.setProductosPK(pK);
+                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl.mostrarProductos(claveP)"+claveP);
+
+            }
+            
             
             
         } catch (Throwable ex) {
@@ -444,23 +480,25 @@ public class AdministracionControl implements Serializable {
     
     public void agreggarProductos() {
         try {
+            ejeFiscalReferencia=ejeFiscal;
             Integer ef = ejeFiscal.intValue() - 1;
             ejeFiscal = Short.parseShort(ef.toString());
+//            ejeFiscal= new Short("20");
             mostrarPartidas();
             mostrarProductos(Short.parseShort("0"), 1);
             List<Productos> p=new ArrayList<>();
             List<ProductosAreas> pa=new ArrayList<>();
-            if(asigadoses.isEmpty()){
+            if(!asigadoses.isEmpty()){
                 asigadoses.forEach((t) -> {
                     productos= new Productos();
                     ProductosPK pK= new ProductosPK();
                     EjerciciosFiscales ejerciciosFiscales =new EjerciciosFiscales();
                     
                     pK.setProducto(t.getProducto().getProductosPK().getProducto());
-                    pK.setEjercicioFiscal(ejeFiscal);
+                    pK.setEjercicioFiscal(ejeFiscalReferencia);
                     
-                    ejerciciosFiscales.setEjercicioFiscal(ejeFiscal);
-                    ejerciciosFiscales.setAnio(ejeFiscal);
+                    ejerciciosFiscales.setEjercicioFiscal(ejeFiscalReferencia);
+                    ejerciciosFiscales.setAnio(ejeFiscalReferencia);
                     
                     productos.setProductosPK(new ProductosPK());
                     productos.setProductosPK(pK);
@@ -468,7 +506,7 @@ public class AdministracionControl implements Serializable {
                     productos.setEjerciciosFiscales(new EjerciciosFiscales());
                     productos.setEjerciciosFiscales(ejerciciosFiscales);
                     productos.setUnidadMedida(t.getProducto().getUnidadMedida());
-                    p.add(productos);
+                    productos=ejbPresupuestacion.agregarProductos(productos);
                     procesopoas.forEach((pros) -> {
                         productosAreas = new ProductosAreas();
                         productosAreas.setArea(pros.getArea());
@@ -478,14 +516,39 @@ public class AdministracionControl implements Serializable {
                         productosAreas.setPartida(t.getPartidas());
                         productosAreas.setProductos(new Productos());
                         productosAreas.setProductos(productos);
-                        pa.add(productosAreas);
+                        productosAreas= ejbPresupuestacion.agregarProductosAreas(productosAreas);
                     });
                 });
             }
+            System.out.println("Productos()" + p.size());
+            System.out.println("Productos Areas()" + pa.size());
             
-            ejbPresupuestacion.agregarProductos(p);
-            ejbPresupuestacion.agregarProductosAreas(pa);
-
+            
+            ejeFiscal = ejeFiscalReferencia;
+            nuevoPeriodo=Boolean.FALSE;
+            nuevoproducto=Boolean.FALSE;
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void agreggarProductoUnitario() {
+        try {
+            productos = ejbPresupuestacion.agregarProductos(productos);
+            procesopoas.forEach((pros) -> {
+                productosAreas = new ProductosAreas();
+                productosAreas.setArea(pros.getArea());
+                productosAreas.setCapitulo(new CapitulosTipos());
+                productosAreas.setCapitulo(capitulosTipos);
+                productosAreas.setPartida(new Partidas());
+                productosAreas.setPartida(new Partidas(partida, ""));
+                productosAreas.setProductos(new Productos());
+                productosAreas.setProductos(productos);
+                productosAreas = ejbPresupuestacion.agregarProductosAreas(productosAreas);
+            });
+            productos= new Productos();
+            mostrarProductos(partida,2);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
@@ -604,6 +667,26 @@ public class AdministracionControl implements Serializable {
         }
     }
     
+     public void onRowEditProductos(RowEditEvent event) {
+        try {
+            ProductosAreasAsigados cp = (ProductosAreasAsigados) event.getObject();
+            Productos p=cp.getProducto();
+            p= ejbPresupuestacion.actualizarProductos(p);
+            p.getProductosAreasList().forEach((pros) -> {
+                ProductosAreas pa = new ProductosAreas();
+                pa=pros;
+                pa.setCapitulo(new CapitulosTipos());
+                pa.setCapitulo(new CapitulosTipos(cp.getCt(),"",""));
+                pa = ejbPresupuestacion.actualizarProductosAreas(pa);
+            });
+            productos= new Productos();
+            mostrarProductos(partida,2);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalInfo("¡Operación cancelada!");
     }
@@ -642,6 +725,25 @@ public class AdministracionControl implements Serializable {
             areaU = areasLogeo.mostrarAreasUniversidad(cp.getAreaID());
             utilidadesPOA.enviarCorreo("P", "El", Boolean.FALSE, "", areaU);
             Ajax.update("frmEventosAreas");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void eliminarProductos(ProductosAreasAsigados cp) {
+        try {
+            Productos p = cp.getProducto();
+            List<ProductosAreas> pas = p.getProductosAreasList();
+            i = 0;
+            p.getProductosAreasList().forEach((pros) -> {
+                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl.eliminarProductos()"+pas.size());
+                ProductosAreas pa = pas.get(i);
+                i++;
+            });
+            ejbPresupuestacion.eliminarProductos(p);
+            productos= new Productos();
+            mostrarProductos(partida,2);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);

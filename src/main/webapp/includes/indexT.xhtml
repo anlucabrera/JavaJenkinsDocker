@@ -304,7 +304,7 @@
                                 </div>
                             </c:if>
                             <div class="#{claseResumen}" style="max-height: 154px;">
-                                <div class="small-box bg-red">
+                                <div class="small-box #{censoCovid.comprobarCensoTrabajador(logonMB.personal.clave)?'bg-green':'bg-red'}">
                                     <div class="inner" style="cursor: pointer;" onclick="cuestionario();">
                                         <h3>
                                             <h:outputLabel value="#{censoCovid.comprobarCensoTrabajador(logonMB.personal.clave)?'Terminada':'Pendiente'}" style="cursor: pointer; color: #ffffff"/>
