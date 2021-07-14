@@ -59,6 +59,7 @@ public enum ControlEscolarVistaControlador {
     ENTREGA_FOTOGRAFIAS_ESTADIA("/controlEscolar/se/entregaFotografiasEstadia.xhtml",  EntregaFotografiasEscolares.class),
     APERTURA_EXTEMPORANEA_ESTADIA("/controlEscolar/se/aperturaExtemporaneaEstadia.xhtml",  AperturaExtemporaneaEstadia.class),
     GESTOR_EVALUACION_ESTADIA("/controlEscolar/se/gestorEvaluacionesEstadia.xhtml",  GestorEvaluacionesEstadiaEscolares.class),
+    REGISTRO_DOCUMENTOS_OFICIALES("/controlEscolar/se/registroDocumentosOficiales.xhtml",  RegistroDocumentosOficialesEscolares.class),
     
     SEGUIMIENTO_ESTADIA_VINCULACION("/controlEscolar/vinculacion/seguimientoEstadiaVinculacion.xhtml", SeguimientoEstadiaVinculacion.class),
 
@@ -131,6 +132,7 @@ public enum ControlEscolarVistaControlador {
     TEST_DIAGNOSTICO_APRENDIZAJE("/controlEscolar/estudiante/testAprendizaje.xhtml", TestDiagnosticoAprendizajeEstudiante.class),
     TEST_DIAGNOSTICO_APRENDIZAJE_SAIIUT("/encuestas/Estudiantes/testAprendizaje.xhtml", TestDiagnosticoAprendizaje.class),
     ENCUESTA_SATISFACCION_TSU("/controlEscolar/estudiante/satisfaccionEgresadosTsu.xhtml", EncuestaSatisfaccionEgresadosTsu.class),
+    CONSULTA_DOCUMENTOS_OFICIALES("/controlEscolar/estudiante/consultaDocumentosOficiales.xhtml", ConsultaDocumentosOficialesEstudiante.class),
 
     REGISTRO_FICHA_ASPIRANTE("/controlEscolar/aspirante/registroFichaAspirante.xhtml", RegistroFichaAdmisionAspirante.class),
     CARGA_DOCUMENTOS_ASPIRANTE("/controlEscolar/aspirante/cargaDocumentos.xhtml", CargaDocumentosAspirante.class),

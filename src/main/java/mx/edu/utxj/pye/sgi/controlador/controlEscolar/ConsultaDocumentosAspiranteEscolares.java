@@ -24,6 +24,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCargaDocumentosAspirante;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroDocumentosOficiales;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
@@ -50,7 +51,9 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
     @Getter @Setter private Aspirante aspiranteB;
     @Getter private DtoDocumentoAspirante dtoDocumentoAspirante;
     @Getter @Setter private List<DtoDocumentoAspirante> listaDocumentoAspirantes;
+    @Getter @Setter private List<DtoDocumentoAspirante> listaDocumentosInscripcion;
     @EJB private EjbCargaDocumentosAspirante ejbCargaDocumentosAspirante;
+    @EJB private EjbRegistroDocumentosOficiales ejbRegistroDocumentosOficiales;
     @Getter @Setter @NonNull private Boolean forzarAperturaDialogo;
     @Getter @Setter private String observaciones;
     
@@ -60,6 +63,7 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
     public void mostrarDocumentos(Aspirante aspirante){
        aspiranteB = aspirante;
        listaDocumentoAspirantes = ejbCargaDocumentosAspirante.getConsultaDocumentoAspirante(aspirante).getValor();
+       listaDocumentosInscripcion = ejbRegistroDocumentosOficiales.getConsultaDocumentosInscripcion(aspirante).getValor();
        setForzarAperturaDialogo(Boolean.FALSE); 
        Ajax.update("frmDocsAsp");
         
