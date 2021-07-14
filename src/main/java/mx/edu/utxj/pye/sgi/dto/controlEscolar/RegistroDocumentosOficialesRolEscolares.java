@@ -36,10 +36,10 @@ public class RegistroDocumentosOficialesRolEscolares extends AbstractRol{
      */
     @Getter @NonNull private DtoEstudianteComplete estudianteSeleccionado;
     
-    /**
-     * Representa valor de habilitación de apartados de información del estudiante
+     /**
+     * Generación del estudiante
      */
-    @Getter @NonNull private Boolean habilitarApartados;
+    @Getter @NonNull private String generacion;
     
     public RegistroDocumentosOficialesRolEscolares(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
@@ -62,7 +62,8 @@ public class RegistroDocumentosOficialesRolEscolares extends AbstractRol{
         this.estudianteSeleccionado = estudianteSeleccionado;
     }
 
-    public void setHabilitarApartados(Boolean habilitarApartados) {
-        this.habilitarApartados = habilitarApartados;
+    public void setGeneracion(String generacion) {
+        this.generacion = generacion;
     }
+    
 }

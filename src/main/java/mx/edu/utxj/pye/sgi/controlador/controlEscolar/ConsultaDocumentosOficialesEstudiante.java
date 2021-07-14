@@ -70,12 +70,6 @@ public class ConsultaDocumentosOficialesEstudiante extends ViewScopedRol impleme
             obtenerInformacionEstudiante();
             
             rol.setPeriodoActivo(ejbIntegracionExpedienteTitulacion.getPeriodoActual().getPeriodo());
-            
-            rol.getInstrucciones().add("Es importante que sigas con las instrucciones que te irá mostrando el sistema.");
-            rol.getInstrucciones().add("Verifica que tu información sea correcta.");
-            rol.getInstrucciones().add("Ten a la tu certificado de bachillerato (copia, imagen, etc) para consultar la fecha de emisión.");
-            
-            
            
         }catch (Exception e){
             mostrarExcepcion(e);
@@ -97,6 +91,18 @@ public class ConsultaDocumentosOficialesEstudiante extends ViewScopedRol impleme
         if(res.getCorrecto()){
             rol.setInformacionEstudiante(res.getValor());
             consultaDocumentosAspiranteEscolares.mostrarDocumentos(rol.getEstudiante().getAspirante());
+            obtenerGeneracionEstudiante();
+            Ajax.update("frmDatosEst");
+        }else mostrarMensajeResultadoEJB(res);
+    }
+    
+     /**
+     * Permite obtener generación del estudiante
+     */
+    public void obtenerGeneracionEstudiante(){
+        ResultadoEJB<String> res = ejbRegistroDocumentosOficiales.getGeneracionEstudiante(rol.getEstudiante());
+        if(res.getCorrecto()){
+            rol.setGeneracion(res.getValor());
             Ajax.update("frmDatosEst");
         }else mostrarMensajeResultadoEJB(res);
     }

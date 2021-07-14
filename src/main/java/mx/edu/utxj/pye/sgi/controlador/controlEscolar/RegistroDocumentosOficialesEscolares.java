@@ -54,7 +54,7 @@ public class RegistroDocumentosOficialesEscolares extends ViewScopedRol implemen
 
     /**
      * Inicializa:<br/>
-     *      El filtro de rol por dirección de carrera<br/>
+     *      El filtro de rol por personal de servicios escolares<br/>
      *      El DTO del rol<br/>
      *      El periodo activo<br/>
      *      Las instrucciones de operación de la herramienta<br/>
@@ -71,7 +71,7 @@ public class RegistroDocumentosOficialesEscolares extends ViewScopedRol implemen
         cargado = true;
         try{
             setVistaControlador(ControlEscolarVistaControlador.REGISTRO_DOCUMENTOS_OFICIALES);
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejbEstadiasServiciosEscolares.validarServiciosEscolares(logon.getPersonal().getClave());//validar si es director
+            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejbEstadiasServiciosEscolares.validarServiciosEscolares(logon.getPersonal().getClave());//validar si es personal de servicios escolares
 
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return; }//cortar el flujo si no se pudo validar
 
@@ -110,7 +110,7 @@ public class RegistroDocumentosOficialesEscolares extends ViewScopedRol implemen
     }
     
     /**
-     * Método para proporcionar lista de docentes sugeridos en un autocomplete donde se puede ingresar el número de nómina, nombre o área del docente
+     * Método para proporcionar lista de estudiantes sugeridos en un autocomplete donde se puede ingresar matricula o nombre del estudiante
      * @param pista
      * @return Lista de sugerencias
      */
@@ -134,6 +134,18 @@ public class RegistroDocumentosOficialesEscolares extends ViewScopedRol implemen
             rol.setEstudianteSeleccionado(estudiante);
             Ajax.update("frmDatosEst");
             consultaDocumentosAspiranteEscolares.mostrarDocumentos(rol.getEstudianteSeleccionado().getEstudiantes().getAspirante());
+            obtenerGeneracionEstudiante();
         }else mostrarMensaje("El valor seleccionado como estudiante no es del tipo necesario.");
+    }
+    
+     /**
+     * Permite obtener la generación del estudiante
+     */
+    public void obtenerGeneracionEstudiante(){
+        ResultadoEJB<String> res = ejb.getGeneracionEstudiante(rol.getEstudianteSeleccionado().getEstudiantes());
+        if(res.getCorrecto()){
+            rol.setGeneracion(res.getValor());
+            Ajax.update("frmDatosEst");
+        }else mostrarMensajeResultadoEJB(res);
     }
 }

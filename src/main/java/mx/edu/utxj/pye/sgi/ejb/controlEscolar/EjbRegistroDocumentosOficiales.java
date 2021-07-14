@@ -11,23 +11,19 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionRolesEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 
 /**
  *
@@ -71,7 +67,7 @@ public class EjbRegistroDocumentosOficiales {
                 
                 String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+ estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+ estudiante.getAspirante().getIdPersona().getNombre()+ " - " + estudiante.getMatricula();
                 PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
-                String periodoEscolar = periodo.getMesInicio().getAbreviacion()+" - "+periodo.getMesFin().getAbreviacion()+" "+periodo.getAnio();
+                String periodoEscolar = periodo.getMesInicio().getMes()+" - "+periodo.getMesFin().getMes()+" "+periodo.getAnio();
                 AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
                 DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar, programaEducativo);
                 listaDtoEstudiantes.add(dtoEstudianteComplete);
@@ -142,7 +138,7 @@ public class EjbRegistroDocumentosOficiales {
     }
     
     /**
-     * Valida que el usuario logueado sea un estudiante activo
+     * Valida que el usuario logueado sea un estudiante
      * @param matricula
      * @return
      */
@@ -163,17 +159,32 @@ public class EjbRegistroDocumentosOficiales {
      */
     public ResultadoEJB<DtoEstudianteComplete> getInformacionEstudiante(Estudiante estudiante){
         try{
-            System.err.println("getInformacionEstudiante - estudiante " + estudiante.getMatricula());
-            
-                String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+ estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+ estudiante.getAspirante().getIdPersona().getNombre()+ " - " + estudiante.getMatricula();
-                PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
-                String periodoEscolar = periodo.getMesInicio().getAbreviacion()+" - "+periodo.getMesFin().getAbreviacion()+" "+periodo.getAnio();
-                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
-                DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar, programaEducativo);
+            String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno() + " " + estudiante.getAspirante().getIdPersona().getApellidoMaterno() + " " + estudiante.getAspirante().getIdPersona().getNombre() + " - " + estudiante.getMatricula();
+            PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
+            String periodoEscolar = periodo.getMesInicio().getMes()+ " - " + periodo.getMesFin().getMes()+ " " + periodo.getAnio();
+            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
+            DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar, programaEducativo);
            
             return ResultadoEJB.crearCorrecto(dtoEstudianteComplete, "Información del estudiante");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la información del estudiantes. (EjbRegistroDocumentosOficiales.getInformacionEstudiante)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la generación del estudiante
+     * @param estudiante 
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<String> getGeneracionEstudiante(Estudiante estudiante){
+        try{
+            Generaciones generacionBD = em.find(Generaciones.class, estudiante.getGrupo().getGeneracion());
+            
+            String generacion = generacionBD.getInicio()+" - "+generacionBD.getFin();
+           
+            return ResultadoEJB.crearCorrecto(generacion, "Generación del estudiante");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la generación del estudiantes. (EjbRegistroDocumentosOficiales.getGeneracionEstudiante)", e, null);
         }
     }
     

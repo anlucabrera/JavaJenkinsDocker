@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -31,16 +30,16 @@ public class ConsultaDocumentosOficialesRolEstudiante {
      * Clave del periodo activo
      */
     @Getter private Integer  periodoActivo;
-    
-    /**
-     * Lista de instrucciones para utilizar el módulo
-     */
-    @Getter private List<String> instrucciones;
-    
+   
     /**
      * Representa la referencia al estudiante logueado
      */
     @Getter @NonNull private DtoEstudianteComplete informacionEstudiante;
+    
+     /**
+     * Generación del estudiante
+     */
+    @Getter @NonNull private String generacion;
     
     public Boolean tieneAccesoEs(Estudiante estudiante, UsuarioTipo usuarioTipo){
         if(estudiante == null) return false;
@@ -61,7 +60,7 @@ public class ConsultaDocumentosOficialesRolEstudiante {
         this.periodoActivo = periodoActivo;
     }
 
-    public void setInstrucciones(List<String> instrucciones) {
-        this.instrucciones = instrucciones;
+    public void setGeneracion(String generacion) {
+        this.generacion = generacion;
     }
 }

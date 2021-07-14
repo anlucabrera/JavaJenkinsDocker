@@ -76,16 +76,16 @@
                                                                     <hr/>
                                                                 </div>
                                                                 <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <strong>Programa Educativo</strong>
+                                                                    <strong>Generación</strong>      
                                                                     <p class="text-muted">
-                                                                        #{consultaDocumentosOficialesEstudiante.rol.informacionEstudiante.programaEducativo.nombre}
+                                                                        #{consultaDocumentosOficialesEstudiante.rol.generacion}
                                                                     </p>
                                                                     <hr/>
                                                                 </div>
                                                                 <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <strong>Folio aspirante</strong>
+                                                                    <strong>Programa Educativo</strong>
                                                                     <p class="text-muted">
-                                                                        #{consultaDocumentosOficialesEstudiante.rol.informacionEstudiante.estudiantes.aspirante.folioAspirante}
+                                                                        #{consultaDocumentosOficialesEstudiante.rol.informacionEstudiante.programaEducativo.nombre}
                                                                     </p>
                                                                     <hr/>
                                                                 </div>
@@ -112,31 +112,24 @@
                                                                     <hr/>
                                                                 </div>
                                                                 <br/><br/><br/><br/>
-                                                                <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <strong>Folio aspirante</strong>
+                                                                    <p class="text-muted">
+                                                                        #{consultaDocumentosOficialesEstudiante.rol.informacionEstudiante.estudiantes.aspirante.folioAspirante}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
                                                                     <strong>Matricula</strong> 
                                                                     <p class="text-muted">
                                                                         #{consultaDocumentosOficialesEstudiante.rol.informacionEstudiante.estudiantes.matricula}
                                                                     </p>
                                                                     <hr/>
                                                                 </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
                                                                     <strong>Nombre</strong>               
                                                                     <p class="text-muted">
-                                                                        #{consultaDocumentosOficialesEstudiante.rol.informacionEstudiante.estudiantes.aspirante.idPersona.nombre}
-                                                                    </p>
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                    <strong>Apellido paterno</strong>               
-                                                                    <p class="text-muted">
-                                                                        #{consultaDocumentosOficialesEstudiante.rol.informacionEstudiante.estudiantes.aspirante.idPersona.apellidoPaterno}
-                                                                    </p>
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                    <strong>Apellido materno</strong>               
-                                                                    <p class="text-muted">
-                                                                       #{consultaDocumentosOficialesEstudiante.rol.informacionEstudiante.estudiantes.aspirante.idPersona.apellidoMaterno}
+                                                                        #{consultaDocumentosOficialesEstudiante.rol.informacionEstudiante.estudiantes.aspirante.idPersona.nombre} #{consultaDocumentosOficialesEstudiante.rol.informacionEstudiante.estudiantes.aspirante.idPersona.apellidoPaterno} #{consultaDocumentosOficialesEstudiante.rol.informacionEstudiante.estudiantes.aspirante.idPersona.apellidoMaterno}
                                                                     </p>
                                                                     <hr/>
                                                                 </div>
@@ -154,8 +147,7 @@
                                                     <p:remoteCommand name="actualizarListaDocs" update="@form:tblDocsExp" />
                                                     <p:dataTable id="tblDocsExp" emptyMessage="No hay documentos en el expediente de inscripción del estudiante." value="#{consultaDocumentosAspiranteEscolares.listaDocumentosInscripcion}" var="docsExp"
                                                                  resizeMode="expand" tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" 
-                                                                 tableStyle="vertical-align: middle;" paginator="true" rows="15" rowsPerPageTemplate="15,30,45,60,75" 
-                                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                                 tableStyle="vertical-align: middle;">
                                                         <p:columnGroup type="header">
                                                             <p:row>
                                                                 <p:column headerText="Proceso" width="100"/>
@@ -210,9 +202,9 @@
                         <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para consulta de documentos oficiales</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
-                                <c:forEach items="#{consultaDocumentosOficialesEstudiante.rol.instrucciones}" var="instruccion">
-                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
-                                </c:forEach>
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> Al dar clic en el icono ubicado en la columna DESCARGA que corresponda a la fila del documento, el archivo se abrirá en una ventana nueva.</span></li>
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> Si das clic izquierdo sobre el archivo podrás guardarlo en tu equipo de cómputo.</span></li>
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> Nota: Los documentos fueron cargados por el departamento de Servicios Escolares, para que cumplieran con los requisitos de calidad necesarios.</span></li>
                             </ul>
                         </div>
                         <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
@@ -222,7 +214,7 @@
             <c:if test="#{!consultaDocumentosOficialesEstudiante.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                     <h:panelGrid columns="2" cellpadding="10">
-                        <h:outputText value="El acceso solo está autorizado para personal de Servicios Escolares."/>
+                        <h:outputText value="El acceso solo está autorizado para estudiantes."/>
                     </h:panelGrid>
                     <f:facet name="footer"></f:facet>
                 </p:panel>

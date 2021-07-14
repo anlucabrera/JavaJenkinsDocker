@@ -95,16 +95,16 @@
                                                                     <hr/>
                                                                 </div>
                                                                 <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <strong>Programa Educativo</strong>
+                                                                    <strong>Generación</strong>      
                                                                     <p class="text-muted">
-                                                                        #{registroDocumentosOficialesEscolares.rol.estudianteSeleccionado.programaEducativo.nombre}
+                                                                        #{registroDocumentosOficialesEscolares.rol.generacion}
                                                                     </p>
                                                                     <hr/>
                                                                 </div>
                                                                 <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <strong>Folio aspirante</strong>
+                                                                    <strong>Programa Educativo</strong>
                                                                     <p class="text-muted">
-                                                                        #{registroDocumentosOficialesEscolares.rol.estudianteSeleccionado.estudiantes.aspirante.folioAspirante}
+                                                                        #{registroDocumentosOficialesEscolares.rol.estudianteSeleccionado.programaEducativo.nombre}
                                                                     </p>
                                                                     <hr/>
                                                                 </div>
@@ -131,31 +131,24 @@
                                                                     <hr/>
                                                                 </div>
                                                                 <br/><br/><br/><br/>
-                                                                <div class="col-sm-12 col-md-12 col-lg-2">
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                    <strong>Folio aspirante</strong>
+                                                                    <p class="text-muted">
+                                                                        #{registroDocumentosOficialesEscolares.rol.estudianteSeleccionado.estudiantes.aspirante.folioAspirante}
+                                                                    </p>
+                                                                    <hr/>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-3">
                                                                     <strong>Matricula</strong> 
                                                                     <p class="text-muted">
                                                                         #{registroDocumentosOficialesEscolares.rol.estudianteSeleccionado.estudiantes.matricula}
                                                                     </p>
                                                                     <hr/>
                                                                 </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <strong>Nombre</strong>               
+                                                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                    <strong>Nombre del estudiante</strong>               
                                                                     <p class="text-muted">
-                                                                        #{registroDocumentosOficialesEscolares.rol.estudianteSeleccionado.estudiantes.aspirante.idPersona.nombre}
-                                                                    </p>
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                    <strong>Nombre</strong>               
-                                                                    <p class="text-muted">
-                                                                        #{registroDocumentosOficialesEscolares.rol.estudianteSeleccionado.estudiantes.aspirante.idPersona.apellidoPaterno}
-                                                                    </p>
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                    <strong>Nombre</strong>               
-                                                                    <p class="text-muted">
-                                                                        #{registroDocumentosOficialesEscolares.rol.estudianteSeleccionado.estudiantes.aspirante.idPersona.apellidoMaterno}
+                                                                        #{registroDocumentosOficialesEscolares.rol.estudianteSeleccionado.estudiantes.aspirante.idPersona.nombre} #{registroDocumentosOficialesEscolares.rol.estudianteSeleccionado.estudiantes.aspirante.idPersona.apellidoPaterno} #{registroDocumentosOficialesEscolares.rol.estudianteSeleccionado.estudiantes.aspirante.idPersona.apellidoMaterno}
                                                                     </p>
                                                                     <hr/>
                                                                 </div>
@@ -174,8 +167,7 @@
                                                     <p:dataTable id="tblDocsExp" emptyMessage="No hay documentos en el expediente de inscripción del estudiante." value="#{consultaDocumentosAspiranteEscolares.listaDocumentosInscripcion}" var="docsExp"
                                                                  rendered="#{consultaDocumentosAspiranteEscolares.listaDocumentosInscripcion.size() ne 0}"
                                                                  resizeMode="expand" tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" 
-                                                                 tableStyle="vertical-align: middle;" paginator="true" rows="15" rowsPerPageTemplate="15,30,45,60,75" 
-                                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                                 tableStyle="vertical-align: middle;">
                                                         <p:columnGroup type="header">
                                                             <p:row>
                                                                 <p:column headerText="Proceso" width="100"/>
