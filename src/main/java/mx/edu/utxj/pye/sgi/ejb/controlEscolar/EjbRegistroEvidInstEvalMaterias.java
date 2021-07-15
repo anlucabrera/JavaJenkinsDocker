@@ -450,9 +450,11 @@ public class EjbRegistroEvidInstEvalMaterias {
     
     /**
      * Permite agregar la evidencia a la lista registrada
+     * @param listaUnidadesMateria
      * @param evidencia
      * @param instrumento
      * @param metaInstrumento
+     * @param periodoEscolar
      * @return Verdadero o Falso según sea el caso
      */
     public ResultadoEJB<List<EvaluacionSugerida>> agregarEvidenciaListaEvidenciasInstrumentos(List<UnidadMateria> listaUnidadesMateria, EvidenciaEvaluacion evidencia, InstrumentoEvaluacion instrumento, Integer metaInstrumento, PeriodosEscolares periodoEscolar){
@@ -532,7 +534,7 @@ public class EjbRegistroEvidInstEvalMaterias {
         beans.put("materiasGrados", getMateriasGradosPlanEstudio(plan).getValor());
         beans.put("unidadesMateria", getUnidadesMateriasPlanEstudio(getMateriasGradosPlanEstudio(plan).getValor()).getValor());
         beans.put("categoriasEvaluacion",getCategoriasNivel(programa).getValor());
-        beans.put("evidenciasCategoria", getEvidenciasCategorias().getValor());
+        beans.put("evidenciasCategoria", getEvidenciasCategorias(programa).getValor());
         beans.put("instrumentosEvaluacion", ejbAsignacionIndicadoresCriterios.getInstrumentosEvaluacion().getValor());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
@@ -627,12 +629,14 @@ public class EjbRegistroEvidInstEvalMaterias {
     
     /**
      * Permite obtener la lista de evidencias de evaluación activas en la base de datos
+     * @param programaEducativo
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<EvidenciaEvaluacion>> getEvidenciasCategorias(){
+    public ResultadoEJB<List<EvidenciaEvaluacion>> getEvidenciasCategorias(AreasUniversidad programaEducativo){
         try {
             
-            List<EvidenciaEvaluacion> listaEvidenciasCategoria = em.createQuery("SELECT e FROM EvidenciaEvaluacion e WHERE e.activo=:valor ORDER BY e.criterio.criterio, e.descripcion ASC", EvidenciaEvaluacion.class)
+            List<EvidenciaEvaluacion> listaEvidenciasCategoria = em.createQuery("SELECT e FROM EvidenciaEvaluacion e WHERE e.criterio.nivel=:nivel AND e.activo=:valor ORDER BY e.criterio.criterio, e.descripcion, e.descripcion ASC", EvidenciaEvaluacion.class)
+                    .setParameter("nivel", programaEducativo.getNivelEducativo().getNivel())
                     .setParameter("valor", Boolean.TRUE)
                     .getResultStream()
                     .collect(Collectors.toList());
