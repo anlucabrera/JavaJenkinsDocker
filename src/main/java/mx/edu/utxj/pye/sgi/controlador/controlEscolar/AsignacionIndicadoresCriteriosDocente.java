@@ -595,6 +595,27 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
     }
     
     public void guardarEvidenciasInstrumentos(){
+        Boolean evidenciasValor = Boolean.FALSE;
+        
+        Integer cerosSer = (int)(long) rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Ser") && p.getValorPorcentual()==0).count();
+        if(cerosSer > 0){
+            Messages.addGlobalWarn("Criterios SER: El valor porcentual de una o más evidencias es 0, verificar.");
+        }
+        
+        Integer cerosSaber = (int)(long) rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Saber") && p.getValorPorcentual()==0).count();
+        if(cerosSaber > 0){
+            Messages.addGlobalWarn("Criterios SABER: El valor porcentual de una o más evidencias es 0, verificar.");
+        }
+        
+        Integer cerosSaberHacer = (int)(long) rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Saber hacer") && p.getValorPorcentual()==0).count();
+        if(cerosSaberHacer > 0){
+            Messages.addGlobalWarn("Criterios SABER - HACER: El valor porcentual de una o más evidencias es 0, verificar.");
+        }
+        
+        if(cerosSer==0 && cerosSaber==0 && cerosSaberHacer==0){
+            evidenciasValor= Boolean.TRUE;
+        }
+        
         Integer totalUnidades = (int) (long) rol.getListaEvidenciasSugeridas().stream().mapToInt(p->p.getUnidadMateriaConfiguracion().getIdUnidadMateria().getIdUnidadMateria()).distinct().count();
         
         Integer sumaTotalUnidades = totalUnidades * 100;
@@ -625,7 +646,7 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         
         Integer sumaTotalCat = sumaSer + sumaSaber + sumaSaberHacer;
         
-        if(sumaTotalCat.equals(comparador))
+        if(sumaTotalCat.equals(comparador) && evidenciasValor)
         {
             ResultadoEJB<List<UnidadMateriaConfiguracionEvidenciaInstrumento>> resGuardar = ejb.guardarListaEvidenciasInstrumentos(rol.getListaEvidenciasSugeridas());
             if (resGuardar.getCorrecto()) {

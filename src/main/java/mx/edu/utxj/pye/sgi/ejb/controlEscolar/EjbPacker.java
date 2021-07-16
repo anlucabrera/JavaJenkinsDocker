@@ -902,8 +902,9 @@ public class EjbPacker {
     public ResultadoEJB<List<DtoEstudiante>> packDtoEstudiantesHistoricoGrupo(DtoCargaAcademica dtoCargaAcademica){
         try{
             Grupo grupo = em.find(Grupo.class, dtoCargaAcademica.getGrupo().getIdGrupo());
-            List<DtoEstudiante> dtoEstudiantes = em.createQuery("select e from Estudiante e where e.grupo=:grupo order by e.aspirante.idPersona.apellidoPaterno, e.aspirante.idPersona.apellidoMaterno, e.aspirante.idPersona.nombre", Estudiante.class)
+            List<DtoEstudiante> dtoEstudiantes = em.createQuery("select e from Estudiante e where e.grupo=:grupo and e.tipoEstudiante.idTipoEstudiante=:tipoEst order by e.aspirante.idPersona.apellidoPaterno, e.aspirante.idPersona.apellidoMaterno, e.aspirante.idPersona.nombre", Estudiante.class)
                     .setParameter("grupo", grupo)
+                    .setParameter("tipoEst", (int)1)
                     .getResultStream()
                     .distinct()
                     .map(estudiante -> packEstudiante(estudiante))
