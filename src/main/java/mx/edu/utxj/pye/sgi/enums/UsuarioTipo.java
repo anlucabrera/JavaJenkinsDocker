@@ -17,7 +17,9 @@ public enum UsuarioTipo {
     DOCENTE("DOCENTE"),
     TRABAJADOR("TRABAJADOR"),
     INVITADO("INVITADO"),
-    ASPIRANTE("ASPIRANTE");
+    ASPIRANTE("ASPIRANTE"),
+    ASPIRANTE_ING("ASPIRANTEING")
+    ;
     
     @Getter @NonNull private final String label;
 }

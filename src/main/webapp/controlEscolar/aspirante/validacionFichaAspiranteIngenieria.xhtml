@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+        <style type="text/css">
+            .custom-search-form{
+                margin-top:5px;
+            }
+            OL.conromanos { list-style-type: lower-roman }
+
+        </style>
+
+    </ui:define>
+    <ui:define name="title">
+       Validación de ficha de admisión
+    </ui:define>
+    <ui:define name="description">
+       Licenciatura | Ingeniería
+    </ui:define>
+    <ui:define name="body">
+        <c:if test="#{validacionFichaIngenieria.cargado}">
+            <adm:breadcrumb title="Validacion de ficha"/>
+            <adm:sidebar collapsed="true"/>
+            <div class="contenedor">
+                <c:if test="#{validacionFichaIngenieria.tieneAcceso}">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <h:form id="frmAviso">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="right">
+                                            <p:commandLink
+                                                    class="btn btn-info"
+                                                    disabled="#{false}"
+                                                    onclick="PF('modalAyuda').show();"
+                                                    title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                    class="fa fa-question"/>
+                                            </p:commandLink>
+                                        </f:facet>
+                                    </p:toolbar>
+
+                                </h:form>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <c:set var="panel" value="#{'col-sm-12 col-md-6'}"/>
+                                <c:set var="casilla" value="#{'col-sm-12 col-md-6 col-lg-2'}" />
+                                <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                <c:set var="casilla4" value="#{'col-sm-3 col-md-3 col-lg-3'}"/>
+                                <c:set var="casilla5" value="#{'col-sm-4 col-md-4 col-lg-4'}"/>
+                                <c:set var="casilla6" value="#{'col-sm-8 col-md-8 col-lg-8'}"/>
+                                <c:set var="casilla7" value="#{'col-sm-6 col-md-6 col-lg-6'}"/>
+                                <c:set var="casilla8" value="#{'col-sm-12 col-md-12 col-lg-12'}"/>
+                            <h:form id="frmStep">
+                                        <!--Stepes -->
+                                    <div class="#{casilla2}">
+                                      <h3 style="margin-top:0">Valida tu ficha de admisión</h3>
+                                    </div>
+                                    <br/>
+                            </h:form>
+                                <br/>
+                                <div class="'col-sm-12 col-md-12 col-lg-12">
+                                    <h:form id="frmDG">
+                                        <div class="row">
+                                            <div class="#{panel}">
+                                                <div class="box box-success">
+                                                    <div class="box-header panel-heading with-border">
+                                                        <div class="pull-left"><i class="fa fa-user-plus"></i></div>
+                                                        <h3 class="box-title">Datos generales</h3>
+                                                        <div class="box-tools pull-right">
+                                                            <button class="btn btn-box-tool" data-widget="collapse">
+                                                                <i class="fa fa-minus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        <div class="row">
+                                                            <br/><br/>
+                                                            <div class="#{casilla5}">
+                                                                <div class="ui-material">
+                                                                    <p:inputText id="nombre" class="form-control" value="#{validacionFichaIngenieria.rol.personaD.persona.nombre}"
+                                                                                 required="true" requiredMessage="Nombre requerido" readonly="true"/>
+                                                                    <p:outputLabel for="nombre" value="Nombre*"/>
+                                                                    <p:message for="nombre"><p:autoUpdate/></p:message>
+                                                                </div>
+                                                            </div>
+                                                            <div class="#{casilla5}">
+                                                                <div class="ui-material">
+                                                                    <p:inputText id="apP" class="form-control"  value="#{validacionFichaIngenieria.rol.personaD.persona.apellidoPaterno}"
+                                                                                 required="true" requiredMessage="Apellido paterno requerido" readonly="true"/>
+                                                                    <p:outputLabel for="apP" value="Apellido paterno*"/>
+                                                                    <p:message for="apP"><p:autoUpdate/></p:message>
+                                                                </div>
+                                                            </div>
+                                                            <div class="#{casilla5}">
+                                                                <div class="ui-material">
+                                                                    <p:inputText id="apM" class="form-control"  value="#{validacionFichaIngenieria.rol.personaD.persona.apellidoMaterno}"
+                                                                                 required="true" requiredMessage="Apellido materno requerido" readonly="true"/>
+                                                                    <p:outputLabel for="apM" value="Apellido materno*"/>
+                                                                    <p:message for="apM"><p:autoUpdate/></p:message>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br/><br/>
+                                                        <div class="row">
+                                                            <div class="#{casilla5}">
+                                                                <div class="ui-material">
+                                                                    <p:inputText id="curp1" class="form-control"  value="#{validacionFichaIngenieria.rol.personaD.persona.curp}"
+                                                                                 required="true" requiredMessage="CURP requerido" readonly="true"/>
+                                                                    <p:outputLabel for="curp1" value="CURP*"/>
+                                                                    <p:message for="curp1"><p:autoUpdate/></p:message>
+                                                                </div>
+                                                            </div>
+                                                            <div class="#{casilla5}">
+                                                                <div class="ui-material">
+                                                                    <p:inputText id="matricula" class="form-control"  value="#{validacionFichaIngenieria.rol.esTipo.estudianteCE.matricula}"
+                                                                                 required="true" requiredMessage="Matricula" readonly="true"/>
+                                                                    <p:outputLabel for="matricula" value="Matricula*"/>
+                                                                    <p:message for="matricula"><p:autoUpdate/></p:message>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <br/><br/>
+                                                        <div class="row">
+                                                            <div class="#{casilla5}">
+                                                                <div class="ui-material">
+                                                                    <p:inputText id="fechaR" class="form-control" placeholder="Fecha de registro" value="#{validacionFichaIngenieria.rol.aspirante.aspirante.fechaRegistro}" readonly="true">
+                                                                        <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                                                    </p:inputText>
+                                                                    <p:outputLabel for="fechaR" value="Fecha de registro*"/>
+                                                                    <p:message for="fechaR"><p:autoUpdate/></p:message>
+                                                                </div>
+                                                            </div>
+                                                            <div class="#{casilla5}">
+                                                                <div class="ui-material">
+                                                                    <p:inputText id="folio" class="form-control"  value="#{validacionFichaIngenieria.rol.aspirante.aspirante.folioAspirante}"
+                                                                                 required="true" requiredMessage="Folio" readonly="true"/>
+                                                                    <p:outputLabel for="folio" value="Folio*"/>
+                                                                    <p:message for="folio"><p:autoUpdate/></p:message>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="#{panel}">
+                                                <div class="box box-primary">
+                                                    <div class="box-header panel-heading with-border">
+                                                        <div class="pull-left"><i class="fa fa-graduation-cap"></i></div>
+                                                        <h3 class="box-title">Datos académicos</h3>
+                                                        <div class="box-tools pull-right">
+                                                            <button class="btn btn-box-tool" data-widget="collapse">
+                                                                <i class="fa fa-minus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        <div class="row">
+                                                            <br/><br/>
+                                                            <div class="#{casilla2}">
+                                                                <div class="ui-material">
+                                                                    <p:inputText id="areaaA" class="form-control" value="#{validacionFichaIngenieria.rol.dacademicos.universidad1.nombre}"
+                                                                                 required="true" requiredMessage="Área acad+emica" readonly="true"/>
+                                                                    <p:outputLabel for="areaaA" value="Área académica"/>
+                                                                    <p:message for="areaaA"><p:autoUpdate/></p:message>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br/><br/>
+                                                        <div class="row">
+                                                            <div class="#{casilla5}">
+                                                                <div class="ui-material">
+                                                                    <p:selectOneMenu id="pePo" value="#{validacionFichaIngenieria.rol.dacademicos.academicos.primeraOpcion}"
+                                                                                     filter="true" filterMatchMode="startsWith" required="true"
+                                                                                     requiredMessage="Programa educativo requerido"
+                                                                                     disabled="true"
+                                                                    >
+                                                                        <f:selectItem itemValue="#{null}"/>
+                                                                        <f:selectItems value="#{validacionFichaIngenieria.rol.programasEducativosPo}" var="pe" itemValue="#{pe.area}" itemLabel="#{pe.nombre}"/>
+                                                                        <p:ajax update="sistemaPo"/>
+                                                                    </p:selectOneMenu>
+                                                                    <p:outputLabel for="pePo" value="Programa educativo*"/>
+                                                                    <p:message for="pePo"><p:autoUpdate/></p:message>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <br/><br/>
+                                                        <div class="row">
+                                                            <div class="#{casilla5}">
+                                                                <div class="ui-material">
+                                                                    <p:inputText id="sistemaPo" class="form-control"  value="#{validacionFichaIngenieria.rol.dacademicos.academicos.sistemaPrimeraOpcion.nombre}"
+                                                                                 required="true" requiredMessage="Sistema" readonly="true"/>
+                                                                    <p:outputLabel for="sistemaPo" value="Sistema*"/>
+                                                                    <p:message for="sistemaPo"><p:autoUpdate/></p:message>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br/><br/>
+                                                        <div class="row">
+                                                            <div class="#{casilla8}">
+                                                                <div class="ui-material">
+                                                                    <p:inputText id="uni" class="form-control"  value="#{validacionFichaIngenieria.rol.universidadEgreso.nombre}"
+                                                                                 required="true" requiredMessage="Universidad" readonly="true"/>
+                                                                    <p:outputLabel for="uni" value="Universidad egreso T.S.U."/>
+                                                                    <p:message for="uni"><p:autoUpdate/></p:message>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <br/>
+                                        <div class="row">
+                                            <div class="col-sm-5 col-md-5 col-lg-5">
+                                            </div>
+                                            <div class="#{casilla4}">
+                                                <p:commandButton value="Validar ficha"  styleClass="btn-primary" actionListener="#{validacionFichaIngenieria.validarFicha}"
+                                                                 update="@form"
+                                                >
+                                                </p:commandButton>
+                                            </div>
+                                            <div class="#{casilla6}">
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+
+            </div>
+
+        </c:if>
+    </ui:define>
+
+
+</ui:composition>

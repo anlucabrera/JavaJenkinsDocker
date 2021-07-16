@@ -9,6 +9,7 @@ import lombok.Setter;
 public enum TipoPersonaTramite {
     ASPIRANTE("Aspirante"),
     ESTUDIANTE("Estudiante"),
-    EGRESADO("Egresado");
+    EGRESADO("Egresado"),
+    ASPIRANTE_ING("Aspirante ingeniería");
     @Getter @Setter @NonNull private String label;
 }

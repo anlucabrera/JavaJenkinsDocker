@@ -137,6 +137,8 @@ public class Estudiante implements Serializable {
     private List<SeguimientoEstadiaEstudiante> seguimientoEstadiaEstudianteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante", fetch = FetchType.LAZY)
     private List<CalificacionEvidenciaInstrumento> calificacionEvidenciaInstrumentoList;
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "estudiante", fetch = FetchType.LAZY)
+    private List<DocumentoEstudianteProceso> documentoEstudianteProcesoList;
 
     public Estudiante() {
     }
@@ -441,6 +443,16 @@ public class Estudiante implements Serializable {
     public List<CalificacionEvidenciaInstrumento> getCalificacionEvidenciaInstrumentoList() {
         return calificacionEvidenciaInstrumentoList;
     }
+
+    @XmlTransient
+    public List<DocumentoEstudianteProceso> getDocumentoEstudianteProcesoList() {
+        return documentoEstudianteProcesoList;
+    }
+
+    public void setDocumentoEstudianteProcesoList(List<DocumentoEstudianteProceso> documentoEstudianteProcesoList) {
+        this.documentoEstudianteProcesoList = documentoEstudianteProcesoList;
+    }
+
 
     public void setCalificacionEvidenciaInstrumentoList(List<CalificacionEvidenciaInstrumento> calificacionEvidenciaInstrumentoList) {
         this.calificacionEvidenciaInstrumentoList = calificacionEvidenciaInstrumentoList;
