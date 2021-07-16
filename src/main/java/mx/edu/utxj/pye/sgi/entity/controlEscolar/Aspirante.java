@@ -103,6 +103,8 @@ public class Aspirante implements Serializable {
     private List<CitasAspirantes> citasAspirantesList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "aspirante1", fetch = FetchType.LAZY)
     private DatosAcademicosComplementarios datosAcademicosComplementarios;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "aspirante1",fetch = FetchType.LAZY)
+    private List<UniversidadEgresoAspirante> universidadEgresoAspiranteList;
 
     public Aspirante() {
     }
@@ -296,6 +298,15 @@ public class Aspirante implements Serializable {
 
     public void setDatosAcademicosComplementarios(DatosAcademicosComplementarios datosAcademicosComplementarios) {
         this.datosAcademicosComplementarios = datosAcademicosComplementarios;
+    }
+
+    @XmlTransient
+    public List<UniversidadEgresoAspirante> getUniversidadEgresoAspiranteList() {
+        return universidadEgresoAspiranteList;
+    }
+
+    public void setUniversidadEgresoAspiranteList(List<UniversidadEgresoAspirante> universidadEgresoAspiranteList) {
+        this.universidadEgresoAspiranteList = universidadEgresoAspiranteList;
     }
 
     @Override

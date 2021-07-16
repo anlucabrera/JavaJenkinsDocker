@@ -57,6 +57,12 @@
                 <li><p:link href="# {request.contextPath}/expedienteTitulacion/egresadoTitulado/descargarTitulo.xhtml"><i class="fa fa-id-badge"></i><span>Descargar Archivo</span></p:link></li>
                 </li>
             </c:if>-->
+            <c:if test="#{registroFichaAdmisionAspiranteIngSaiiut.tieneAcceso}">
+                <li>
+                    <li class="header" style="color: #040404;background: #ffffff">Registro ficha</li>
+                    <c:if test="#{registroFichaAdmisionAspiranteIngSaiiut.mostrarEnDesarrollo(request) and registroFichaAdmisionAspiranteIngSaiiut.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/aspirante/registroFichaAspiranteIngSaiiut.xhtml"><i class="fa fa-calendar-check-o"></i><span>Registro de ficha de aspirante</span><span class="pull-right-container"></span></p:link></li></c:if>
+                </li>
+            </c:if>
         </c:if>
         <li>
             <p:link href="#{request.contextPath}/soporteTecnico.xhtml">

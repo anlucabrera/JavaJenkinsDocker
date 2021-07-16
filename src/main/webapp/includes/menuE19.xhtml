@@ -71,6 +71,12 @@
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Titulación</li>
             <c:if test="#{integracionExpedienteTitulacionEstudiante.mostrarEnDesarrollo(request) and integracionExpedienteTitulacionEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/expedienteTitulacion.xhtml"><i class="fa fa-file-text-o"></i><span>Integración de Expediente</span></p:link></li></c:if>
             </c:if>
+            <!-- Registro de ficha Ing/Lic-->
+            <c:if test="#{registroFichaAdmisionAspiranteIng.tieneAcceso or validacionFichaIngeniria.tieneAcceso}">
+                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Registro Lic | Ing </li>
+                <c:if test="#{registroFichaAdmisionAspiranteIng.mostrarEnDesarrollo(request) and registroFichaAdmisionAspiranteIng.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/aspirante/registroFichaAspiranteIngenieria.xhtml"><i class="fa fa-file-text-o"></i><span>Registro de ficha de admisión</span></p:link></li></c:if>
+                <c:if test="#{validacionFichaIngenieria.mostrarEnDesarrollo(request) and validacionFichaIngenieria.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/aspirante/validacionFichaAspiranteIngenieria.xhtml"><i class="fa fa-check"></i><span>Validación de ficha de admisión</span></p:link></li></c:if>
+            </c:if>
         </c:if>
         <li>
             <p:link href="#{request.contextPath}/soporteTecnico.xhtml">

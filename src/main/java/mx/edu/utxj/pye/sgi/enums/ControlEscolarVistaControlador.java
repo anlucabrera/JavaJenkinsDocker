@@ -135,6 +135,9 @@ public enum ControlEscolarVistaControlador {
     REGISTRO_FICHA_ASPIRANTE("/controlEscolar/aspirante/registroFichaAspirante.xhtml", RegistroFichaAdmisionAspirante.class),
     CARGA_DOCUMENTOS_ASPIRANTE("/controlEscolar/aspirante/cargaDocumentos.xhtml", CargaDocumentosAspirante.class),
     AGENDA_CITA_ASPIRANTE("/controlEscolar/aspirante/agendaCita.xhtml", AgendaCitaInscripcionAspirante.class),
+    REGISTRO_FICHA_ASPIRANTE_ING("/controlEscolar/aspirante/registroFichaAspiranteIngenieria.xhtml", RegistroFichaAdmisionAspiranteIng.class),
+    VALIDACION_FICHA_ASPIRANTE_ING("/controlEscolar/aspirante/validacionFichaAspiranteIngenieria.xhtml", ValidacionFichaIngenieria.class),
+    REGISTRO_FICHA_ASPIRANTE_ING_SAIIUT("/controlEscolar/aspirante/registroFichaAspiranteIngSaiiut.xhtml", RegistroFichaAdmisionAspiranteIngSaiiut.class),
 
     SEGUIMIENTO_CASO_CRITICO_ESPECIALISTA("/controlEscolar/especialista/seguimiento_caso_critico_especialista.xhtml", SeguimientoCasoCriticoEspecialista.class),
 

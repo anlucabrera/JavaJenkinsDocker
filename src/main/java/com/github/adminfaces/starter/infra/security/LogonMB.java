@@ -110,6 +110,13 @@ per=0;
             addDetailMessage("Bienvenido y bienvenida <b>" + "Aspirante" + "</b>");
             Faces.getExternalContext().getFlash().setKeepMessages(true);
             Faces.redirect("controlEscolar/aspirante/registroFichaAspirante.xhtml");
+        }else if(email.equals("aspiranteing") && password.equals("aspirantei")){
+            System.out.println("LogonMB.login Aspirante Ing" + email + "  "+ password);
+            currentUser = email;
+            usuarioTipo = UsuarioTipo.ASPIRANTE_ING;
+            addDetailMessage("Bienvenido y bienvenida <b>" + "Aspirante" + "</b>");
+            Faces.getExternalContext().getFlash().setKeepMessages(true);
+            Faces.redirect("controlEscolar/aspirante/registroFichaAspiranteIngSaiiut.xhtml");
         }else if(estudiante19 != null){
             currentUser = email;
             usuarioTipo = UsuarioTipo.ESTUDIANTE19;// ejbLogin.getTipoUsuario(email);

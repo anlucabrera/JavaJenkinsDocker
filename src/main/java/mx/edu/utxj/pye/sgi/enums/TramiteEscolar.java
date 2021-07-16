@@ -7,6 +7,7 @@ import lombok.Setter;
 
 @RequiredArgsConstructor
 public enum TramiteEscolar {
-    INSCRIPCION("Inscripción");
+    INSCRIPCION("Inscripción"),
+    INSCRIPCION_ING("Inscripción ingeniería");
     @Getter @Setter @NonNull private String label;
 }
