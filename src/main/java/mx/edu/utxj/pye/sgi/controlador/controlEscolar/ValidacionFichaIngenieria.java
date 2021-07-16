@@ -54,7 +54,6 @@ public class ValidacionFichaIngenieria extends ViewScopedRol implements Desarrol
         cargado = true;
         setVistaControlador(ControlEscolarVistaControlador.VALIDACION_FICHA_ASPIRANTE_ING);
         ResultadoEJB<DtoAspiranteIng> resAcceso = ejbRegistroIng.verificarAcceso(logonMB.getEmail());
-        System.out.println("RegistroFichaAdmisionAspiranteIng.init3");
         if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
         ResultadoEJB<DtoAspiranteIng> resValidacion = ejbRegistroIng.verificarAcceso(logonMB.getEmail());
         if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
@@ -67,7 +66,6 @@ public class ValidacionFichaIngenieria extends ViewScopedRol implements Desarrol
         mostrarMensajeResultadoEJB(resAcceso);
         if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
         rol.setEventoValidacion(resEvento.getValor());
-        System.out.println("RegistroFichaAdmisionAspiranteIng.init 4");
 
         // ----------------------------------------------------------------------------------------------------------------------------------------------------------
         //if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
@@ -132,7 +130,6 @@ public class ValidacionFichaIngenieria extends ViewScopedRol implements Desarrol
      */
     public void  getPEsObyAreaA(){
         try{
-            System.out.println("RegistroFichaAdmisionAspiranteIng.getPEsObyAreaA");
             ResultadoEJB<List<AreasUniversidad>> resPEsO = ejbRegistroIng.getPEIng();
             if(resPEsO.getCorrecto()==true){rol.setProgramasEducativosPo(resPEsO.getValor());
                 rol.setProgramasEducativosPo(resPEsO.getValor().stream().filter(t -> Objects.equals(t.getAreaSuperior(), rol.getDacademicos().getUniversidad1().getArea())).collect(Collectors.toList()));

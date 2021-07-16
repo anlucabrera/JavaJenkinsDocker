@@ -56,13 +56,10 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
 
     @PostConstruct
     public void init(){
-        System.out.println("RegistroFichaAdmisionAspiranteIng.init 1");
        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19)) return;
         cargado = true;
-        System.out.println("RegistroFichaAdmisionAspiranteIng.init2");
         setVistaControlador(ControlEscolarVistaControlador.REGISTRO_FICHA_ASPIRANTE_ING);
         ResultadoEJB<DtoAspiranteIng> resAcceso = ejbRegistroIng.verificarAcceso(logonMB.getEmail());
-        System.out.println("RegistroFichaAdmisionAspiranteIng.init3");
         if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
         ResultadoEJB<DtoAspiranteIng> resValidacion = ejbRegistroIng.verificarAcceso(logonMB.getEmail());
         if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
@@ -75,7 +72,6 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
         mostrarMensajeResultadoEJB(resAcceso);
         if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
         rol.setEventoEscolar(resEvento.getValor());
-        System.out.println("RegistroFichaAdmisionAspiranteIng.init 4");
         // Se busca un proceso de inscripción activo
         ResultadoEJB<ProcesosInscripcion> resProcesoI = ejbRegistroIng.getProcesosInscripcionActivo();
         if(resProcesoI.getCorrecto()==true){rol.setProcesosInscripcion(resProcesoI.getValor());}
@@ -96,13 +92,9 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
 
         rol.setDialogEn(Boolean.FALSE);
         rol.setEsTipo(resAcceso.getValor());
-        System.out.println("RegistroFichaAdmisionAspiranteIng.init 5");
         cargaDatos();
-        System.out.println("RegistroFichaAdmisionAspiranteIng.init 6");
         getPersona();
-        System.out.println("RegistroFichaAdmisionAspiranteIng.init 7");
         getRegistro();
-        System.out.println("RegistroFichaAdmisionAspiranteIng.init 8");
         getAspirante();
         ResultadoEJB<EventoEscolar> resEventoValidacion= ejbRegistroIng.getEventoValidacionFicha();
         if(resEventoValidacion.getCorrecto()){rol.setEventoValidacion(resEventoValidacion.getValor());}
@@ -115,10 +107,8 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
     public void getPersona(){
         try{
             ResultadoEJB<DtoAspirante.PersonaR> resPer = ejbRegistroFicha.getPersonaR(rol.getEsTipo().getEstudianteCE().getAspirante().getIdPersona());
-            System.out.println("RegistroFichaAdmisionAspiranteIng.getPersona" + resPer.getValor());
             if(resPer.getCorrecto()){
                 rol.setPersonaD(resPer.getValor());
-                System.out.println("RegistroFichaAdmisionAspiranteIng.getPersona" + resPer.getValor().getPersona()  .getCurp());
                // getRegistro();
             }else mostrarMensajeResultadoEJB(resPer);
         }catch (Exception e){mostrarExcepcion(e);}
@@ -172,22 +162,16 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
             rol.setStep(0);
             if(rol.getPersonaD().getEcontrado()==true){
                 ResultadoEJB<List<Estado>> resEstadosO = ejbRegistroFicha.getEstadosbyPais(rol.getPersonaD().getPaisOr());
-                System.out.println("RegistroFichaAdmisionAspiranteIng.getRegistro 1");
                 rol.setEstadosOr(resEstadosO.getValor());
                 ResultadoEJB<List<Municipio>> resMunicipiosO = ejbRegistroFicha.getMunicipiosbyClaveEstado(rol.getPersonaD().getPersona().getEstado());
-                System.out.println("RegistroFichaAdmisionAspiranteIng.getRegistro 2");
                 rol.setMunicipiosOr(resMunicipiosO.getValor());
                 rol.getPersonaD().getPersona().setMunicipio(rol.getPersonaD().getPersona().getMunicipio());
                 ResultadoEJB<List<Localidad>> resLocalidades = ejbRegistroFicha.getLocalidadByMunicipio(rol.getPersonaD().getPersona().getEstado(),rol.getPersonaD().getPersona().getMunicipio());
-                System.out.println("RegistroFichaAdmisionAspiranteIng.getRegistro 3");
                 if(resLocalidades.getCorrecto()==true){rol.setLocalidadsOr(resLocalidades.getValor());}
                 //Se busca datos medicos y medio de comunicación
                 ResultadoEJB<DtoAspirante.MedicosR> resDM = ejbRegistroFicha.getDatosMedicosbyPersona(rol.getPersonaD());
-                System.out.println("RegistroFichaAdmisionAspiranteIng.getRegistro 4");
                 ResultadoEJB<MedioComunicacion> resMedC = ejbRegistroFicha.getMedioCbyPersona(rol.getPersonaD().getPersona());
-                System.out.println("RegistroFichaAdmisionAspiranteIng.getRegistro 5");
                 if(resDM.getValor().getEcontrado() ==true & resMedC.getCorrecto()==true){
-                    System.out.println("RegistroFichaAdmisionAspiranteIng.getRegistro 6");
                     rol.setDmedico(resDM.getValor());
                     rol.getPersonaD().setMedioComunicacion(resMedC.getValor());
                         }
@@ -299,7 +283,6 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
      */
     public void  saveDatosMedicosyComunicacion(){
         try {
-            System.out.println("Medios comunicacion " + rol.getPersonaD().getMedioComunicacion().getEmail());
             ResultadoEJB<DtoAspirante.PersonaR> resMC = ejbRegistroFicha.operacionesMedioC(rol.getPersonaD());
             //Datos medicos
             ResultadoEJB<DtoAspirante.MedicosR> resSaveDm = ejbRegistroFicha.operacionesDatosMedicos(rol.getDmedico(),rol.getPersonaD());
@@ -474,7 +457,6 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
             if(resDAcademicos.getCorrecto()){
                 rol.setDacademicos(resDAcademicos.getValor());
                 rol.getDacademicos().setOperacion(Operacion.ACTUALIZAR);
-                System.out.println("RegistroFichaAdmisionAspiranteIng.getDatosAcademicos PE"+ rol.getDacademicos().getAcademicos().getPrimeraOpcion());
                 getMunicipiosIems();
                 getLocalidadIems();
                 getIemesByLocalidad();
@@ -845,7 +827,6 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
         try{
             ResultadoEJB<List<Asentamiento>> resAentamiento= ejbRegistroFicha.getAsentamientosbyMunicipio(rol.getTutor().getTutorFamiliar().getEstado(),rol.getTutor().getTutorFamiliar().getMunicipio());
             if(resAentamiento.getCorrecto()==true){rol.setAsentamientosTt(resAentamiento.getValor());
-                System.out.println("RegistroFichaAdmisionAspiranteIng.getAsentamientoTutor " + rol.getAsentamientosTt().size());
             }
             else {mostrarMensajeResultadoEJB(resAentamiento);}
         }catch (Exception e){mostrarExcepcion(e);}
@@ -875,7 +856,6 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
      */
     public void  getPEpObyAreaA(){
         try{
-            System.out.println("Area seleccionada ->" + rol.getDacademicos().getUniversidad1());
             ResultadoEJB<List<AreasUniversidad>> resPEpO = ejbRegistroIng.getPEIng();
             if(resPEpO.getCorrecto()==true){
                 rol.setProgramasEducativosPo(resPEpO.getValor().stream().filter(t -> Objects.equals(t.getAreaSuperior(), rol.getDacademicos().getUniversidad1().getArea())).collect(Collectors.toList()));
@@ -888,7 +868,6 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
      */
     public void  getPEsObyAreaA(){
         try{
-            System.out.println("RegistroFichaAdmisionAspiranteIng.getPEsObyAreaA");
             ResultadoEJB<List<AreasUniversidad>> resPEsO = ejbRegistroIng.getPEIng();
             if(resPEsO.getCorrecto()==true){rol.setProgramasEducativosSo(resPEsO.getValor());
                 rol.setProgramasEducativosSo(resPEsO.getValor().stream().filter(t -> Objects.equals(t.getAreaSuperior(), rol.getDacademicos().getUniversidad2().getArea())).collect(Collectors.toList()));

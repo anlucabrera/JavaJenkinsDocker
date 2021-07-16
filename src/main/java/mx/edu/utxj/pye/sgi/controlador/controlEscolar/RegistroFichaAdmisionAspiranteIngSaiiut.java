@@ -53,27 +53,21 @@ public class RegistroFichaAdmisionAspiranteIngSaiiut extends ViewScopedRol imple
 
     @PostConstruct
     public void init(){
-        System.out.println("RegistroFichaAdmisionAspiranteIngSaiiut.init 1");
         if(logonMB.getUsuarioTipo().equals(UsuarioTipo.ASPIRANTE_ING) || logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE)) {cargado =true;}
         else {cargado= false;return;}
-        System.out.println("RegistroFichaAdmisionAspiranteIngSaiiut.init 2");
         setVistaControlador(ControlEscolarVistaControlador.REGISTRO_FICHA_ASPIRANTE_ING_SAIIUT);
-        System.out.println("RegistroFichaAdmisionAspiranteIngSaiiut.init 3" );
         ResultadoEJB<DtoAspiranteIng> resAcceso = ejbRegistroIng.verificarAcceso2(logonMB.getEmail(),logonMB.getUsuarioTipo());
-        System.out.println("RegistroFichaAdmisionAspiranteIngSaiiut.init "+ resAcceso.getValor());
         if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
         ResultadoEJB<DtoAspiranteIng> resValidacion = ejbRegistroIng.verificarAcceso2(logonMB.getEmail(),logonMB.getUsuarioTipo());
         if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
         rol = new RegistroFichaAdmisionRolAspiranteIngSaiiut();
         if(resAcceso.getCorrecto()){tieneAcceso = true;rol.setAspiranteIng(resAcceso.getValor());}
         rol.setTieneAcceso(tieneAcceso);
-        System.out.println("RegistroFichaAdmisionAspiranteIngSaiiut.init 4");
         if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
         ResultadoEJB<EventoEscolar> resEvento = ejbRegistroIng.verficarEventoRegistro();
         mostrarMensajeResultadoEJB(resAcceso);
         if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
         rol.setEventoEscolar(resEvento.getValor());
-        System.out.println("RegistroFichaAdmisionAspiranteIngSaiiut.init 5");
         // Se busca un proceso de inscripción activo
         ResultadoEJB<ProcesosInscripcion> resProcesoI = ejbRegistroIng.getProcesosInscripcionActivo();
         if(resProcesoI.getCorrecto()==true){rol.setProcesosInscripcion(resProcesoI.getValor());}
@@ -81,7 +75,6 @@ public class RegistroFichaAdmisionAspiranteIngSaiiut extends ViewScopedRol imple
         // ----------------------------------------------------------------------------------------------------------------------------------------------------------
         if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
         if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
-        System.out.println("RegistroFichaAdmisionAspiranteIngSaiiut.init 6");
         rol.setNivelRol(NivelRol.OPERATIVO);
         rol.setComunicacion(new MedioComunicacion());
         rol.setPersonaD(new DtoAspirante.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE));
@@ -238,7 +231,6 @@ public class RegistroFichaAdmisionAspiranteIngSaiiut extends ViewScopedRol imple
                                         if(rol.getAspiranteIng().getTipoAspirante().equals(AspiranteTipoIng.ASPPIRANTE_ING_OTRA_GENERACION)){ getUtxj(); }
                                         if(resUni.getCorrecto()){
                                             rol.setUniversidadEgresoAspirante(resUni.getValor());
-                                            System.out.println("RegistroFichaAdmisionAspiranteIngSaiiut.getRegistro "+ rol.getUniversidadEgresoAspirante());
                                             getUniversidadbyAspirante();}
                                         if(resDAcademicos.getCorrecto()){
                                             rol.setDacademicos(resDAcademicos.getValor());
@@ -429,7 +421,6 @@ public class RegistroFichaAdmisionAspiranteIngSaiiut extends ViewScopedRol imple
      */
     public void  saveDatosMedicosyComunicacion(){
         try {
-            System.out.println("Medios comunicacion " + rol.getPersonaD().getMedioComunicacion().getEmail());
             ResultadoEJB<DtoAspirante.PersonaR> resMC = ejbRegistroFicha.operacionesMedioC(rol.getPersonaD());
             //Datos medicos
             ResultadoEJB<DtoAspirante.MedicosR> resSaveDm = ejbRegistroFicha.operacionesDatosMedicos(rol.getDmedico(),rol.getPersonaD());
@@ -602,9 +593,7 @@ public class RegistroFichaAdmisionAspiranteIngSaiiut extends ViewScopedRol imple
     public void getUniversidadbyAspirante(){
         try{
             ResultadoEJB<UniversidadesUT> resUni = ejbRegistroIng.getUniversidadbyAspirante(rol.getUniversidadEgresoAspirante());
-            System.out.println("RegistroFichaAdmisionAspiranteIngSaiiut.getUniversidadbyAspirante "+ resUni.getValor());
             if(resUni.getCorrecto()){
-                System.out.println("RegistroFichaAdmisionAspiranteIngSaiiut.getUniversidadbyAspirante C");
                 rol.setUniversidad(resUni.getValor());
             }else {mostrarMensajeResultadoEJB(resUni);}
         }catch (Exception e){mostrarExcepcion(e);}

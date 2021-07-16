@@ -69,7 +69,6 @@ public class EjbRegistroFichaIngenieria {
             if(matricula==null){return ResultadoEJB.crearErroneo(2,new DtoAspiranteIng(),"La matricula no debe ser nula");}
             //Verifica estudiante en CE
             ResultadoEJB<Estudiante> resEstudianteCE = verificaEstudianteCE(matricula);
-            System.out.println("EjbRegistroFichaIngenieria.verificarAcceso" + resEstudianteCE.getValor());
             if(resEstudianteCE.getCorrecto()){
                 //Es estudiante registrado en CE
                 dto.setEstudianteCE(resEstudianteCE.getValor());
@@ -107,7 +106,6 @@ public class EjbRegistroFichaIngenieria {
         try{
             DtoAspiranteIng dto = new DtoAspiranteIng();
             if(tipo.equals(UsuarioTipo.ESTUDIANTE)){
-                System.out.println("EjbRegistroFichaIngenieria.verificarAcceso2");
                 //validación SAIIUT
                 ResultadoEJB<Alumnos> resSAIIUT = getEstudianteSaiiut(matricula);
                 if(resSAIIUT.getCorrecto()){
@@ -147,19 +145,13 @@ public class EjbRegistroFichaIngenieria {
             .findFirst()
             .orElse(null)
             ;
-            System.out.println("EjbRegistroFichaIngenieria.getEstudianteSaiiut Carrera "+ alumno.getGrupos().getGruposPK().getCveCarrera());
-            System.out.println("EjbRegistroFichaIngenieria.getEstudianteSaiiut " + alumno.getExMatricula() + "Grado "+ alumno.getGradoActual());
             if(alumno==null){
-                System.out.println("EjbRegistroFichaIngenieria.getEstudianteSaiiut NULO");
                 return ResultadoEJB.crearErroneo(4,new Alumnos(),"No se encontró al estudiante");}
             else if(alumno.getGradoActual()==11){
-                System.out.println("EjbRegistroFichaIngenieria.getEstudianteSaiiut 11vo");
                 return ResultadoEJB.crearErroneo(3,new Alumnos(),"El estudiante es egresado de Lic / Ing");}
             else if(alumno.getGradoActual()==6){
-                System.out.println("EjbRegistroFichaIngenieria.getEstudianteSaiiut EGRESADO");
                 return ResultadoEJB.crearCorrecto(alumno,"Estudiante egresado TSU");}
             else {
-                System.out.println("EjbRegistroFichaIngenieria.getEstudianteSaiiut NINGUNO");
                 return ResultadoEJB.crearErroneo(5,alumno,"El estudiante no es egresado de TSU");}
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo verificar el estudiante en SAIIUT (EjbResgitroFichaIngenieria.getEstudianteSaiiut)", e, null);
@@ -448,7 +440,6 @@ public class EjbRegistroFichaIngenieria {
             .setParameter("nivel2","5B")
             .getResultList()
             ;
-            System.out.println("EjbRegistroFichaIngenieria.getPEIngbyArea Areas" + pe);
             if(pe.isEmpty()||pe ==null ){return ResultadoEJB.crearErroneo(3,pe,"No exiten ingenirías");}
             else {return ResultadoEJB.crearCorrecto(pe,"Programas educativos nivel ingeniería");}
         }catch (Exception e){
@@ -500,17 +491,14 @@ public class EjbRegistroFichaIngenieria {
         try {
             DtoAspirante.AcademicosR dtoDa = new DtoAspirante.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE);
             if(a==null){return ResultadoEJB.crearErroneo(2,dtoDa,"El aspirante no debe ser nulo");}
-            System.out.println("EjbRegistroFichaAdmision.getAcademicos 1");
             DatosAcademicos da = new DatosAcademicos();
             da = em.createQuery("select d from DatosAcademicos d where d.aspirante=:idAspirante", DatosAcademicos.class)
                     .setParameter("idAspirante", a.getIdAspirante())
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
-            System.out.println("EjbRegistroFichaAdmision.getAcademicos 2");
 
             if (da!=null) {
-                System.out.println("EjbRegistroFichaAdmision.getAcademicos 3");
                 dtoDa.setAcademicos(da);
                 dtoDa.setEspecialidad(da.getEspecialidadIems());
                 dtoDa.setSistemaPo(da.getSistemaPrimeraOpcion());
@@ -518,13 +506,9 @@ public class EjbRegistroFichaIngenieria {
                 //Obtiene el programa educativo se seguimiento (Lic/Ing)
                 ResultadoEJB<AreasUniversidad> resPe = getCarreraSeguimiento(estudiante.getCarrera());
                 if(resPe.getCorrecto()){
-                    System.out.println("EjbRegistroFichaIngenieria.getAcademicos Area seguimiento "+ resPe.getValor().getArea());
                     dtoDa.setUniversidad1(getOpcionAreaSup(resPe.getValor()).getValor());
-                    System.out.println("EjbRegistroFichaAdmision.getAcademicos 4");
                     dtoDa.setUniversidad2(getOpcionAreaSup(resPe.getValor()).getValor());
-                    System.out.println("EjbRegistroFichaAdmision.getAcademicos 5" + dtoDa.getUniversidad1().getArea()+ dtoDa.getUniversidad2());
                     ResultadoEJB<Iems> rejb = ejbRegistroFichaAdmision.getIemsSeleccionada(da.getInstitucionAcademica());
-                    System.out.println("EjbRegistroFichaAdmision.getAcademicos 6");
                     if (rejb.getCorrecto()) {
                         Iems i = rejb.getValor();
                         dtoDa.setIems(i);
@@ -532,10 +516,8 @@ public class EjbRegistroFichaIngenieria {
                         dtoDa.setMunicipio(i.getLocalidad().getMunicipio());
                         dtoDa.setLocalidad(i.getLocalidad());
                     }
-                    System.out.println("EjbRegistroFichaAdmision.getAcademicos 7");
                     dtoDa.setOperacion(Operacion.ACTUALIZAR);
                     dtoDa.setEcontrado(Boolean.FALSE);
-                    System.out.println("EjbRegistroFichaAdmision.getAcademicos 8");
                     return ResultadoEJB.crearCorrecto(dtoDa, "DTOPersona Encontrados");
                 }else {
                     return ResultadoEJB.crearErroneo(6,dtoDa,"Error al obtener el PE de seguimiento");}
@@ -564,21 +546,16 @@ public class EjbRegistroFichaIngenieria {
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
-            System.out.println("EjbRegistroFichaAdmision.getAcademicos 2");
 
             if (da!=null) {
-                System.out.println("EjbRegistroFichaAdmision.getAcademicos 3");
                 dtoDa.setAcademicos(da);
                 dtoDa.setEspecialidad(da.getEspecialidadIems());
                 dtoDa.setSistemaPo(da.getSistemaPrimeraOpcion());
                 dtoDa.setSistemaSo(da.getSistemaPrimeraOpcion());
                 //Obtiene el programa educativo se seguimiento (Lic/Ing)
                 dtoDa.setUniversidad1(getAreaSupbyPE(a.getDatosAcademicos().getPrimeraOpcion()).getValor());
-                System.out.println("EjbRegistroFichaAdmision.getAcademicos 4");
                 dtoDa.setUniversidad2(getAreaSupbyPE(a.getDatosAcademicos().getSegundaOpcion()).getValor());
-                System.out.println("EjbRegistroFichaAdmision.getAcademicos 5" + dtoDa.getUniversidad1().getArea()+ dtoDa.getUniversidad2());
                 ResultadoEJB<Iems> rejb = ejbRegistroFichaAdmision.getIemsSeleccionada(da.getInstitucionAcademica());
-                System.out.println("EjbRegistroFichaAdmision.getAcademicos 6");
                 if (rejb.getCorrecto()) {
                     Iems i = rejb.getValor();
                     dtoDa.setIems(i);
@@ -586,10 +563,8 @@ public class EjbRegistroFichaIngenieria {
                     dtoDa.setMunicipio(i.getLocalidad().getMunicipio());
                     dtoDa.setLocalidad(i.getLocalidad());
                 }
-                System.out.println("EjbRegistroFichaAdmision.getAcademicos 7");
                 dtoDa.setOperacion(Operacion.ACTUALIZAR);
                 dtoDa.setEcontrado(Boolean.FALSE);
-                System.out.println("EjbRegistroFichaAdmision.getAcademicos 8");
                 return ResultadoEJB.crearCorrecto(dtoDa, "DTOPersona Encontrados");
             }
             else {
@@ -810,7 +785,6 @@ public class EjbRegistroFichaIngenieria {
      */
     public ResultadoEJB<UniversidadesUT> getUniversidadbyAspirante(@NonNull UniversidadEgresoAspirante aspirante){
         try{
-            System.out.println("EjbRegistroFichaIngenieria.getUniversidadbyAspirante "+aspirante);
             if(aspirante==null){return ResultadoEJB.crearErroneo(2,new UniversidadesUT(),"La universidad de egreso del aspirante no deben ser nulos");}
             UniversidadesUT universidadesUT = new UniversidadesUT();
             universidadesUT = em.createQuery("select  u from UniversidadesUT u where u.cveUniversidad=:clave", UniversidadesUT.class)
@@ -819,7 +793,6 @@ public class EjbRegistroFichaIngenieria {
             .findFirst()
             .orElse(null)
             ;
-            System.out.println("EjbRegistroFichaIngenieria.getUniversidadbyAspirante "+universidadesUT);
             if(universidadesUT!=null){return ResultadoEJB.crearCorrecto(universidadesUT,"Universidad de egreso");}
             else {return ResultadoEJB.crearErroneo(3,universidadesUT,"No se encontro la universidad");}
         }catch (Exception e){
@@ -862,7 +835,6 @@ public class EjbRegistroFichaIngenieria {
             .findFirst()
             .orElse(null)
             ;
-            System.out.println("EjbRegistroFichaIngenieria.getUniversidadbyAspirante " + ue);
             if(ue ==null){return ResultadoEJB.crearErroneo(3,new UniversidadEgresoAspirante(),"No se encontró registro");}
             else {return ResultadoEJB.crearCorrecto(ue,"Universidad de egreso");}
         }catch (Exception e){
