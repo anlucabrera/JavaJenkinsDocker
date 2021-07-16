@@ -219,4 +219,8 @@ public interface EjbCarga extends Serializable {
      * @return Retorna la ruta del directorio
      */
     public String crearDirectorioReportesAcademicos(String periodoEscolar, String areaGeneraReporte);
+    
+   //////////////////////////
+    
+    public String crearDirectorioPlantillaAlineacionEducativaCompleto(String area);
 }

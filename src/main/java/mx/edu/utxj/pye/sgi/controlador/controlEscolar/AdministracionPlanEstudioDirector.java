@@ -46,6 +46,7 @@ import org.primefaces.event.RowEditEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import javax.faces.event.ValueChangeEvent;
@@ -62,6 +63,7 @@ import mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
+import org.omnifaces.util.Faces;
 
 /**
  *
@@ -153,7 +155,7 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
             rol.setNewCompetencia(false);
             rol.setPlanestudioMateriasSelect(new ArrayList<>());
             rol.setAcedemicas(new ArrayList<>());
-            rol.setAlineacionAcedemica(new DtoAlineacionAcedemica(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria()));
+            rol.setAlineacionAcedemica(new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(),new AreasUniversidad(),""));
             rol.setAlineacionesDescripociones(new ArrayList<>());
             rol.setTipoReg("Ob");
 
@@ -174,6 +176,20 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
     }
 // eventos de registro
 
+    public void descargarPlantillaCatalogos() throws IOException, Throwable{
+        File f = new File(ejb.getPlantillaAlineacionAcademica(rol.getAreaPlanEstudioMap()));
+        Faces.sendFile(f, true);
+    }
+     
+    public void descargarPlantillaCatalogosAlineacion() throws IOException, Throwable{
+        File f = new File(ejb.getPlantillaAlineacionAcademicaFinal(rol.getAreaPlanEstudioMap()));
+        Faces.sendFile(f, true);
+    }
+     public void descargarPlantillaNivelesDesempenios() throws IOException, Throwable{
+        File f = new File(ejb.getPlantillaNivelesDesempenioFinal(rol.getAreaPlanEstudioMap()));
+        Faces.sendFile(f, true);
+    }
+     
     public void recibirArchivo(ValueChangeEvent e){
         file = (Part)e.getNewValue();
     }
@@ -352,7 +368,7 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
   }
     public void onRowEditAlineacion(RowEditEvent event) {
         try {
-            DtoAlineacionAcedemica dtoAlineacionAcademica=(DtoAlineacionAcedemica) event.getObject();
+            DtoAlineacionAcedemica.Presentacion dtoAlineacionAcademica=(DtoAlineacionAcedemica.Presentacion) event.getObject();
             ejb.accionesAlineacion(new ArrayList<>(), dtoAlineacionAcademica, rol.getTipoReg(), Operacion.ACTUALIZAR);
             comprobarTipoRegistro();
         } catch (Throwable ex) {
@@ -566,7 +582,7 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
         }
         List<PlanEstudio> pes=continuidades(rol.getAlineacionAcedemica().getPlanEstudio());
        
-        rol.getAlineacionesDescripociones().add(new DtoAlineacionAcedemica(0, "", "Nuevo Registro", "", 0D, rol.getAlineacionAcedemica().getPlanEstudio(), new PlanEstudioMateria()));
+       rol.getAlineacionesDescripociones().add(new DtoAlineacionAcedemica.Presentacion(0, "", "Nuevo Registro", "", 0D, rol.getAlineacionAcedemica().getPlanEstudio(), new PlanEstudioMateria(),au,""));
        rol.getAcedemicas().addAll(ejb.generarDtoAlineacionAcedemica(rol.getAlineacionAcedemica().getPlanEstudio(),rol.getTipoReg()));
         switch (rol.getTipoReg()) {
             case "Ob":

@@ -115,7 +115,7 @@
                                                                                 <h4><strong>Universidad Tecnológica De</strong></h4>
                                                                                 <h4><strong>Xicotepec de Juárez</strong></h4>
                                                                                 <h6>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h6>       
-                                                                                <h5><strong>Análisis de Logro de Atributos</strong></h5>
+                                                                                <h5><strong>Planeación Cuatrimestral</strong></h5>
                                                                             </p:column>
                                                                             <p:column colspan="2" style="border-style: hidden !important;">   
                                                                                 <img src="../../resources/img/utxj.png" alt="" height="100px"/>
@@ -156,12 +156,12 @@
                                                                             <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">TUTOR</p:column>
                                                                             <p:column style="border-style: hidden !important;" colspan="5"># {planeacionCuatrimestralImpresion.buscarPersonal(planeacionCuatrimestralImpresion.rol.carga.cargaAcademica.cveGrupo.tutor)} </p:column>
                                                                         </p:row-->  
-                                                                        <p:row ><p:column colspan="6"/></p:row>
+                                                                        <p:row rendered="#{planeacionCuatrimestralImpresion.rol.render}"><p:column colspan="6"/></p:row>
 
-                                                                        <p:row >
+                                                                        <p:row rendered="#{planeacionCuatrimestralImpresion.rol.render}">
                                                                             <p:column colspan="6" styleClass="actividad" style="font-weight: bold; text-align: center;">Atributos de Egreso</p:column>     
                                                                         </p:row>
-                                                                        <p:row >
+                                                                        <p:row rendered="#{planeacionCuatrimestralImpresion.rol.render}">
                                                                             <p:column style="border-style: hidden !important;" colspan="6">
                                                                                 <p:dataTable id="atr" var="ae" value="#{planeacionCuatrimestralImpresion.rol.estudioMateria.atributoEgresoList}" styleClass="saltoDePagina">
                                                                                     <p:column >
@@ -171,11 +171,11 @@
                                                                             </p:column>     
                                                                         </p:row>
 
-                                                                        <p:row >
+                                                                        <p:row rendered="#{planeacionCuatrimestralImpresion.rol.render}">
                                                                             <p:column colspan="3" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Criterios de desempeño</p:column>                                                                                    
                                                                             <p:column colspan="3" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Indicadores</p:column>
                                                                         </p:row>
-                                                                        <p:row >
+                                                                        <p:row rendered="#{planeacionCuatrimestralImpresion.rol.render}">
                                                                             <p:column style="border-style: hidden !important;" colspan="3">
                                                                                 <p:dataTable id="cri" var="cd" value="#{planeacionCuatrimestralImpresion.rol.estudioMateria.criterioDesempenioList}" styleClass="saltoDePagina">
                                                                                     <p:column >
@@ -193,10 +193,10 @@
                                                                                 </p:dataTable>  
                                                                             </p:column>
                                                                         </p:row>
-                                                                        <p:row >
+                                                                        <p:row rendered="#{planeacionCuatrimestralImpresion.rol.render}">
                                                                             <p:column colspan="6" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Objetivos Educacionales</p:column>     
                                                                         </p:row>
-                                                                        <p:row >
+                                                                        <p:row rendered="#{planeacionCuatrimestralImpresion.rol.render}">
                                                                             <p:column style="border-style: hidden !important;" colspan="6">
                                                                                 <p:dataTable id="obj" var="oe" value="#{planeacionCuatrimestralImpresion.rol.estudioMateria.objetivoEducacionalPlanMateriaList}" styleClass="saltoDePagina">
                                                                                     <p:column >
@@ -225,7 +225,7 @@
                                                                                 <p:column headerText="% Eval." style="width: 10%;font-size: small;"/>
                                                                                 <p:column headerText="Categoría de evaluacion" style="width: 10%;font-size: small;"/>
                                                                                 <p:column headerText="% Cat" style="width: 10%;font-size: small;"/>
-                                                                                <p:column headerText="Evidencia" style="width: 30%;font-size: small;" /> 
+                                                                                <p:column headerText="Evidencia" style="width: 30%;font-size: small;" rendered="#{planeacionCuatrimestralImpresion.rol.render}"/> 
                                                                                 <p:column headerText="Instrumentos de evaluación" style="width: 30%;font-size: small;"/> 
                                                                                 <p:column headerText="% Ins." style="width: 10%;font-size: small;"/> 
                                                                             </p:row>
@@ -234,7 +234,7 @@
                                                                             <p:column colspan="3" style="border: #000000  !important;font-size: small;" >
                                                                                 <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'Tarea Integradora: ':asignacionIndCA.unidad} #{asignacionIndCA.nombreUnidad eq 'T.I.'?'':'-'} #{asignacionIndCA.nombreUnidad eq 'T.I.'?asignacionIndCA.objetivo:asignacionIndCA.nombreUnidad}" style="text-align: center;"/>
                                                                             </p:column>
-                                                                            <p:column colspan="4" style="border: #000000  !important;font-size: small;">
+                                                                            <p:column colspan="#{planeacionCuatrimestralImpresion.rol.render eq true?4:3}" style="border: #000000  !important;font-size: small;">
                                                                                 <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':asignacionIndCA.objetivo}" />
                                                                             </p:column>
                                                                         </p:headerRow>                                                                        
@@ -253,7 +253,7 @@
                                                                         <p:column groupRow="true" style="border: #000000  !important;text-align: center;font-size: small; #{asignacionIndCA.nombreUnidad eq 'T.I.'?'background: #000000':''}">
                                                                             <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':asignacionIndCA.porCriterio}" style="text-align: center;"/>
                                                                         </p:column>
-                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;#{asignacionIndCA.nombreUnidad eq 'T.I.'?'background: #000000':''}" >
+                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;#{asignacionIndCA.nombreUnidad eq 'T.I.'?'background: #000000':''}" rendered="#{planeacionCuatrimestralImpresion.rol.render}">
                                                                             <h:outputText value="#{asignacionIndCA.nombreUnidad eq 'T.I.'?'':asignacionIndCA.evidencia}" style="text-align: center;"><f:convertNumber pattern="¤#,##0.00" currencySymbol="%" /></h:outputText>
                                                                         </p:column>
                                                                         <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.nombreUnidad eq 'T.I.'?'background: #000000':''}">

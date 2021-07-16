@@ -572,22 +572,23 @@
                                                         <p:spacer width="5" />
                                                     </f:facet>
                                                     <f:facet name="right">
-                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                        <!--div class="btn-group">
+                                                        <!--span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                        <div class="btn-group">
                                                             <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
                                                         </div>
                                                         <c:if test="# {controladorArchivoRegistroEvidInst.etapa eq etapa.CARGAR}">
                                                             <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                             <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="registroEvidInstEvalMateria?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
-                                                        </c:if>
+                                                        </c:if-->
                                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                        <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="# {registroEvidInstEvalMateriasDireccion.descargarPlantilla()}" title="Descargar Plantilla" rendered="# {registroEvidInstEvalMateriasDireccion.rol.planEstudio.estatus}"><i class="fa fa-download" /></p:commandLink>
-                                                        <p:commandLink class="btn btn-success" ajax="false" action="# {registroEvidInstEvalMateriasDireccion.descargarRegistrosPlan()}" target="_blank" title="Descargar Registros"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                                        <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{administracionPlanEstudioDirector.descargarPlantillaCatalogos()}" title="Descargar Plantilla Para Catalogos"><i class="fa fa-download" /></p:commandLink>
                                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                        <p:commandButton actionListener="# {registroEvidInstEvalMateriasDireccion.eliminarEvaluacionSugerida()}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar registros." rendered="# {registroEvidInstEvalMateriasDireccion.rol.planEstudio.estatus}">
-                                                            <p:confirm header="Eliminar registros" message="¿Está seguro de eliminar todos los registros del plan de estudio seleccionado?" icon="ui-icon-alert" />
-                                                        </p:commandButton>
-                                                        <p:commandLink class="btn btn-info" rendered="# {true}" disabled="# {false}" onclick="PF('modalAyuda').show();" title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question"/></p:commandLink-->
+                                                        <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{administracionPlanEstudioDirector.descargarPlantillaCatalogosAlineacion()}" title="Descargar Plantilla Para Alineacion"><i class="fa fa-download" /></p:commandLink>
+                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                        <!--p:commandLink class="btn btn-success" ajax="false" action="# {registroEvidInstEvalMateriasDireccion.descargarRegistrosPlan()}" target="_blank" title="Descargar Registros"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span-->
+                                                        
+                                                        <p:commandLink class="btn btn-info" rendered="# {true}" disabled="# {false}" onclick="PF('modalAyuda').show();" title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question"/></p:commandLink>
                                                         <p:commandButton title="Guardar Alineacion" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarAlineacion()}"/>
                                                     </f:facet>
                                                 </p:toolbar>
@@ -769,6 +770,8 @@
 
                                                     </f:facet>
                                                     <f:facet name="right">
+                                                        <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{administracionPlanEstudioDirector.descargarPlantillaNivelesDesempenios()}" title="Descargar Plantilla"><i class="fa fa-download" /></p:commandLink>
+                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                         <p:commandButton title="Guardar Materias" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarMetas()}"/>
                                                     </f:facet>
                                                 </p:toolbar>

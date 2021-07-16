@@ -591,4 +591,11 @@ public class ServicioCarga implements EjbCarga {
         addCarpetaRelativa(rutaRelativa);
         return rutaRelativa;
     }
+    
+    @Override
+    public String crearDirectorioPlantillaAlineacionEducativaCompleto(String area) {
+        String rutaRelativa = genCarpetaRelativa(alineacionMaterias, plantillas, area, completo);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
 }

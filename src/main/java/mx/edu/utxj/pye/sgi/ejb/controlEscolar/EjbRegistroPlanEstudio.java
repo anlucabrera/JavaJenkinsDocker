@@ -7,9 +7,11 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -23,11 +25,11 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaMetasPropuestas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaRegistro;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoMateriaUnidades;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPlanEstudioMateriaCompetencias;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AreaConocimiento;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AtributoEgreso;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Competencia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CriterioDesempenio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
@@ -48,6 +50,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import net.sf.jxls.transformer.XLSTransformer;
 
 /**
  *
@@ -56,20 +59,40 @@ import mx.edu.utxj.pye.sgi.facade.Facade;
 @Stateless(name = "EjbRegistroPlanEstudio")
 public class EjbRegistroPlanEstudio {
 
-    @EJB
-    EjbAsignacionAcademica ejbAsignacionAcademica;
+    @EJB EjbAsignacionAcademica ejbAsignacionAcademica;
     @EJB EjbEventoEscolar ejbEventoEscolar;
-    @EJB
-    EjbPropiedades ep;
-    @EJB
-    Facade f;
+    @EJB EjbPropiedades ep;
+    @EJB Facade f;
+    @EJB EjbCarga ejbCarga;
+    @EJB EjbAreasLogeo ejbAreasLogeo;
     private EntityManager em;
+    
+    List<PlanEstudio> programas;
+    List<AreasUniversidad> areasUniversidads;
+    List<DtoAlineacionAcedemica.PlanesEstudioDto> planesEstudioDto;
+//    DtoAlineacionAcedemica.CatalosAlineacion catalosAlineacion;
+
+    List<PlanEstudioMateria> pemsDTO;
+    List<CriterioDesempenio> cdsDTO;
+    List<AtributoEgreso> aesDTO;
+    List<IndicadorAlineacion> iasDTO;
+    List<ObjetivoEducacional> oesDTO;
+
+    
     
     ObjetivoEducacional educacional;
     CriterioDesempenio desempenio;
     AtributoEgreso egreso;
     IndicadorAlineacion indicadorAlineacion;
 
+    public static final String ALINEACION_CATALOGOS_PLANTILLA = "alineacionEducativaCatalogos.xlsx";
+    public static final String ALINEACION_CATALOGOS_ACTUALIZADO = "alineacionEducativaCatalogos.xlsx";
+    public static final String ALINEACION_PLANTILLA = "alineacionEducativa.xlsx";
+    public static final String ALINEACION_ACTUALIZADO = "alineacionEducativa.xlsx";
+    public static final String DESEMPENIOS_PLANTILLA = "nivelesDesempenio.xlsx";
+    public static final String DESEMPENIOS_ACTUALIZADO = "nivelesDesempenio.xlsx";
+    
+    
     @PostConstruct
     public void init() {
         em = f.getEntityManager();
@@ -767,11 +790,14 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
         }
     }
     
-    public List<DtoAlineacionAcedemica> generarDtoAlineacionAcedemica(PlanEstudio estudio,String tipo) {
-        List<DtoAlineacionAcedemica> daas = new ArrayList<>();
+    public List<DtoAlineacionAcedemica.Presentacion> generarDtoAlineacionAcedemica(PlanEstudio estudio,String tipo) {
+        List<DtoAlineacionAcedemica.Presentacion> daas = new ArrayList<>();
         List<PlanEstudioMateria> pems = em.createQuery("SELECT pem FROM PlanEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio = :idPlanEstudio", PlanEstudioMateria.class)
                 .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                 .getResultList();
+        AreasUniversidad auv = em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.area = :area", AreasUniversidad.class)
+                .setParameter("area", estudio.getIdPe())
+                .getSingleResult();
         
         if (!pems.isEmpty()) {
             pems.forEach((t) -> {
@@ -780,21 +806,21 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
                         if (!t.getObjetivoEducacionalPlanMateriaList().isEmpty()) {
                             t.getObjetivoEducacionalPlanMateriaList().forEach((ob) -> {
                                 ObjetivoEducacional oe = ob.getObjetivoEducacional1();
-                                daas.add(new DtoAlineacionAcedemica(oe.getObjetivoEducacional(), oe.getClave(), oe.getDescripcion(), ob.getNivelAportacion(), 0D, oe.getPlanEstudio(), t));
+                                daas.add(new DtoAlineacionAcedemica.Presentacion(oe.getObjetivoEducacional(), oe.getClave(), oe.getDescripcion(), ob.getNivelAportacion(), 0D, oe.getPlanEstudio(), t,auv,tipo));
                             });
                         }
                         break;
                     case "Ae":
                         if (!t.getAtributoEgresoList().isEmpty()) {
                             t.getAtributoEgresoList().forEach((ob) -> {
-                                daas.add(new DtoAlineacionAcedemica(ob.getAtributoEgreso(), ob.getClave(), ob.getDescripcion(), "", 0D, ob.getPlanEstudio(), t));
+                                daas.add(new DtoAlineacionAcedemica.Presentacion(ob.getAtributoEgreso(), ob.getClave(), ob.getDescripcion(), "", 0D, ob.getPlanEstudio(), t,auv,tipo));
                             });
                         }
                         break;
                     case "Cd":
                         if (!t.getCriterioDesempenioList().isEmpty()) {
                             t.getCriterioDesempenioList().forEach((ob) -> {
-                                daas.add(new DtoAlineacionAcedemica(ob.getCriteriDesempenio(), ob.getClave(), ob.getDescripcion(), "", 0D, ob.getPlanEstudio(), t));
+                                daas.add(new DtoAlineacionAcedemica.Presentacion(ob.getCriteriDesempenio(), ob.getClave(), ob.getDescripcion(), "", 0D, ob.getPlanEstudio(), t,auv,tipo));
                             });
                         }
                         break;
@@ -802,7 +828,7 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
                         if (!t.getIndicadorAlineacionPlanMateriaList().isEmpty()) {
                             t.getIndicadorAlineacionPlanMateriaList().forEach((ob) -> {
                                 IndicadorAlineacion oe = ob.getIndicadorAlineacion();
-                                daas.add(new DtoAlineacionAcedemica(oe.getIndicadorPem(), oe.getClave(), oe.getDescripcion(), "", ob.getMetaIndicador(), oe.getPlanEstudio(), t));
+                                daas.add(new DtoAlineacionAcedemica.Presentacion(oe.getIndicadorPem(), oe.getClave(), oe.getDescripcion(), "", ob.getMetaIndicador(), oe.getPlanEstudio(), t,auv,tipo));
                             });
                         }
                         break;
@@ -814,34 +840,161 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
         }
     }
     
-    public List<DtoAlineacionAcedemica> generarCatalogoObjetivosEducacionales(PlanEstudio estudio) {
-        List<DtoAlineacionAcedemica> daas = new ArrayList<>();
+    public List<DtoAlineacionAcedemica.Presentacion> generarCatalogoObjetivosEducacionales(PlanEstudio estudio) {
+        List<DtoAlineacionAcedemica.Presentacion> daas = new ArrayList<>();
         List<ObjetivoEducacional> oes = em.createQuery("SELECT pem FROM ObjetivoEducacional pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", ObjetivoEducacional.class)
                 .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                 .getResultList();
+        AreasUniversidad auv = em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.area = :area", AreasUniversidad.class)
+                .setParameter("area", estudio.getIdPe())
+                .getSingleResult();
         if (!oes.isEmpty()) {
             oes.forEach((t) -> {
-                daas.add(new DtoAlineacionAcedemica(t.getObjetivoEducacional(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria()));
+                daas.add(new DtoAlineacionAcedemica.Presentacion(t.getObjetivoEducacional(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria(),auv,"Ob"));
             });
             return daas;
         } else {
             return new ArrayList<>();
         }
     }
+    
+    public List<DtoAlineacionAcedemica.PlanesEstudioMateriaCatalogo> generarCatalogogeneralPEM(Map<AreasUniversidad, List<PlanEstudio>> map) {
+        final List<DtoAlineacionAcedemica.PlanesEstudioMateriaCatalogo> daas = new ArrayList<>();
+        programas = new ArrayList<>();
+        map.forEach((t, u) -> {
+            programas.addAll(u);
+        });
+        if (!programas.isEmpty()) {
+            programas.forEach((t) -> {
+                List<PlanEstudioMateria> pems = em.createQuery("SELECT pem FROM PlanEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio = :idPlanEstudio", PlanEstudioMateria.class)
+                        .setParameter("idPlanEstudio", t.getIdPlanEstudio())
+                        .getResultList();
+                pems.forEach((ob) -> {
+                    String fil=ob.getIdPlan().getIdPlanEstudio()+"-"+ob.getGrado();
+                    daas.add(new DtoAlineacionAcedemica.PlanesEstudioMateriaCatalogo(t, ob,fil));
+                });
+            });
+        }
+        return daas;
+    }
+    
+    public String generaClave(String nivel, String tipoR) {
+        String cvN="";
+        if (nivel.equals("TSU")) {
+            cvN = tipoR+"0-T";
+        } else if (nivel.equals("5B")) {
+            cvN = tipoR+"0-L";
+        } else {
+            cvN = tipoR+"0-I";
+        }
+        return cvN;
+    }
+    
+    public List<DtoAlineacionAcedemica.PlanesEstudioObjtivo> generarCatalogogeneralOb(Map<AreasUniversidad, List<PlanEstudio>> map) {
+        final List<DtoAlineacionAcedemica.PlanesEstudioObjtivo> daas = new ArrayList<>();
+        map.forEach((t, u) -> {
+            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
+            if (!u.isEmpty()) {
+                PlanEstudio estudio = u.get(0);
+                ObjetivoEducacional oe = new ObjetivoEducacional();
+                oe.setObjetivoEducacional(0);
+                oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "OE"));
+                oe.setDescripcion("No aplica");
+                daas.add(new DtoAlineacionAcedemica.PlanesEstudioObjtivo(estudio, oe));
+                List<ObjetivoEducacional> oes = em.createQuery("SELECT pem FROM ObjetivoEducacional pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", ObjetivoEducacional.class)
+                        .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
+                        .getResultList();
+                oes.forEach((ob) -> {
+                    daas.add(new DtoAlineacionAcedemica.PlanesEstudioObjtivo(estudio, ob));
+                });
+            }
+        });
 
-    public List<DtoAlineacionAcedemica> generarIndicadoresAlineacion(PlanEstudio estudio) {
-        List<DtoAlineacionAcedemica> daas = new ArrayList<>();
+        return daas;
+    }
+    
+    public List<DtoAlineacionAcedemica.PlanesEstudioCriterio> generarCatalogogeneralCr(Map<AreasUniversidad, List<PlanEstudio>> map) {
+        final List<DtoAlineacionAcedemica.PlanesEstudioCriterio> daas = new ArrayList<>();
+         map.forEach((t, u) -> {
+            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
+            if (!u.isEmpty()) {
+                PlanEstudio estudio = u.get(0);
+                CriterioDesempenio oe = new CriterioDesempenio();
+                oe.setCriteriDesempenio(0);
+                oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "OE"));
+                oe.setDescripcion("No aplica");
+                daas.add(new DtoAlineacionAcedemica.PlanesEstudioCriterio(estudio, oe));
+                List<CriterioDesempenio> cds = em.createQuery("SELECT pem FROM CriterioDesempenio pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", CriterioDesempenio.class)
+                        .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
+                        .getResultList();
+                cds.forEach((ob) -> {
+                    daas.add(new DtoAlineacionAcedemica.PlanesEstudioCriterio(estudio, ob));
+                });
+            }
+        });
+        return daas;
+    }
+    
+    public List<DtoAlineacionAcedemica.PlanesEstudioAtributo> generarCatalogogeneralAt(Map<AreasUniversidad, List<PlanEstudio>> map) {
+        final List<DtoAlineacionAcedemica.PlanesEstudioAtributo> daas = new ArrayList<>();
+        map.forEach((t, u) -> {
+            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
+            if (!u.isEmpty()) {
+                PlanEstudio estudio = u.get(0);
+                AtributoEgreso oe = new AtributoEgreso();
+                oe.setAtributoEgreso(0);
+                oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "OE"));
+                oe.setDescripcion("No aplica");
+                daas.add(new DtoAlineacionAcedemica.PlanesEstudioAtributo(estudio, oe));
+                List<AtributoEgreso> aes = em.createQuery("SELECT pem FROM AtributoEgreso pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", AtributoEgreso.class)
+                        .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
+                        .getResultList();
+                aes.forEach((ob) -> {
+                    daas.add(new DtoAlineacionAcedemica.PlanesEstudioAtributo(estudio, ob));
+                });
+            }
+        });
+        return daas;
+    }
+    
+    public List<DtoAlineacionAcedemica.PlanesEstudioIndicador> generarCatalogogeneralIn(Map<AreasUniversidad, List<PlanEstudio>> map) {
+        final List<DtoAlineacionAcedemica.PlanesEstudioIndicador> daas = new ArrayList<>();
+         map.forEach((t, u) -> {
+            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
+            if (!u.isEmpty()) {
+                PlanEstudio estudio = u.get(0);
+                IndicadorAlineacion oe = new IndicadorAlineacion();
+                oe.setIndicadorPem(0);
+                oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "OE"));
+                oe.setDescripcion("No aplica");
+                daas.add(new DtoAlineacionAcedemica.PlanesEstudioIndicador(estudio, oe));
+                List<IndicadorAlineacion> ias = em.createQuery("SELECT pem FROM IndicadorAlineacion pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", IndicadorAlineacion.class)
+                        .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
+                        .getResultList();
+                ias.forEach((ob) -> {
+                    daas.add(new DtoAlineacionAcedemica.PlanesEstudioIndicador(estudio, ob));
+                });
+            }
+        });
+        return daas;
+    }
+
+    public List<DtoAlineacionAcedemica.Presentacion> generarIndicadoresAlineacion(PlanEstudio estudio) {
+        List<DtoAlineacionAcedemica.Presentacion> daas = new ArrayList<>();
         List<IndicadorAlineacion> oes = em.createQuery("SELECT pem FROM IndicadorAlineacion pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", IndicadorAlineacion.class)
                 .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                 .getResultList();
+        AreasUniversidad auv = em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.area = :area", AreasUniversidad.class)
+                .setParameter("area", estudio.getIdPe())
+                .getSingleResult();
         if (!oes.isEmpty()) {
             oes.forEach((t) -> {
                 if (!t.getIndicadorAlineacionPlanMateriaList().isEmpty()) {
                     t.getIndicadorAlineacionPlanMateriaList().forEach((o) -> {
-                        daas.add(new DtoAlineacionAcedemica(t.getIndicadorPem(), t.getClave(), t.getDescripcion(), "", o.getMetaIndicador(), t.getPlanEstudio(), o.getPlanEstudioMateria()));
+                        daas.add(new DtoAlineacionAcedemica.Presentacion(t.getIndicadorPem(), t.getClave(), t.getDescripcion(), "", o.getMetaIndicador(), t.getPlanEstudio(), o.getPlanEstudioMateria(),auv,"In"));
                     });
                 }else {
-                    daas.add(new DtoAlineacionAcedemica(t.getIndicadorPem(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria()));
+                    daas.add(new DtoAlineacionAcedemica.Presentacion(t.getIndicadorPem(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria(),new AreasUniversidad(),"In"));
                 }
             });
             return daas;
@@ -850,14 +1003,17 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
         }
     }
     
-   public List<DtoAlineacionAcedemica> generarCatalogoIndicadoresAlineacion(PlanEstudio estudio) {
-        List<DtoAlineacionAcedemica> daas = new ArrayList<>();
+   public List<DtoAlineacionAcedemica.Presentacion> generarCatalogoIndicadoresAlineacion(PlanEstudio estudio) {
+        List<DtoAlineacionAcedemica.Presentacion> daas = new ArrayList<>();
         List<IndicadorAlineacion> oes = em.createQuery("SELECT pem FROM IndicadorAlineacion pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", IndicadorAlineacion.class)
                 .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                .getResultList();
+       AreasUniversidad auv = em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.area = :area", AreasUniversidad.class)
+                .setParameter("area", estudio.getIdPe())
+                .getSingleResult();
        if (!oes.isEmpty()) {
            oes.forEach((t) -> {
-               daas.add(new DtoAlineacionAcedemica(t.getIndicadorPem(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria()));
+               daas.add(new DtoAlineacionAcedemica.Presentacion(t.getIndicadorPem(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria(),auv,"In"));
            });
            return daas;
        } else {
@@ -865,19 +1021,22 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
        }
     }
    
-    public List<DtoAlineacionAcedemica> generarCriteriosDesempenio(PlanEstudio estudio) {
-        List<DtoAlineacionAcedemica> daas = new ArrayList<>();
+    public List<DtoAlineacionAcedemica.Presentacion> generarCriteriosDesempenio(PlanEstudio estudio) {
+        List<DtoAlineacionAcedemica.Presentacion> daas = new ArrayList<>();
         List<CriterioDesempenio> oes = em.createQuery("SELECT pem FROM CriterioDesempenio pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", CriterioDesempenio.class)
                 .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                 .getResultList();
+        AreasUniversidad auv = em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.area = :area", AreasUniversidad.class)
+                .setParameter("area", estudio.getIdPe())
+                .getSingleResult();
         if (!oes.isEmpty()) {
             oes.forEach((t) -> {
                 if (!t.getPlanEstudioMateriaList().isEmpty()) {
                     t.getPlanEstudioMateriaList().forEach((o) -> {
-                        daas.add(new DtoAlineacionAcedemica(t.getCriteriDesempenio(), t.getClave(), t.getDescripcion(),"", 0D, t.getPlanEstudio(), o));
+                        daas.add(new DtoAlineacionAcedemica.Presentacion(t.getCriteriDesempenio(), t.getClave(), t.getDescripcion(),"", 0D, t.getPlanEstudio(), o,auv,"Cr"));
                     });
                 } else {
-                    daas.add(new DtoAlineacionAcedemica(t.getCriteriDesempenio(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria()));
+                    daas.add(new DtoAlineacionAcedemica.Presentacion(t.getCriteriDesempenio(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria(),new AreasUniversidad(),"Cr"));
                 }
         });
             return daas;
@@ -886,14 +1045,17 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
         }
     }
 
-    public List<DtoAlineacionAcedemica> generarCatalogoCriteriosDesempenio(PlanEstudio estudio) {
-        List<DtoAlineacionAcedemica> daas = new ArrayList<>();
+    public List<DtoAlineacionAcedemica.Presentacion> generarCatalogoCriteriosDesempenio(PlanEstudio estudio) {
+        List<DtoAlineacionAcedemica.Presentacion> daas = new ArrayList<>();
         List<CriterioDesempenio> oes = em.createQuery("SELECT pem FROM CriterioDesempenio pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", CriterioDesempenio.class)
                 .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                 .getResultList();
+        AreasUniversidad auv = em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.area = :area", AreasUniversidad.class)
+                .setParameter("area", estudio.getIdPe())
+                .getSingleResult();
         if (!oes.isEmpty()) {
             oes.forEach((t) -> {
-                daas.add(new DtoAlineacionAcedemica(t.getCriteriDesempenio(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria()));
+                daas.add(new DtoAlineacionAcedemica.Presentacion(t.getCriteriDesempenio(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria(),auv,"Cr"));
             });
             return daas;
         } else {
@@ -901,19 +1063,22 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
         }
     }
     
-    public List<DtoAlineacionAcedemica> generarAtributosEgreso(PlanEstudio estudio) {
-        List<DtoAlineacionAcedemica> daas = new ArrayList<>();
+    public List<DtoAlineacionAcedemica.Presentacion> generarAtributosEgreso(PlanEstudio estudio) {
+        List<DtoAlineacionAcedemica.Presentacion> daas = new ArrayList<>();
         List<AtributoEgreso> oes = em.createQuery("SELECT pem FROM AtributoEgreso pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", AtributoEgreso.class)
                 .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                 .getResultList();
+        AreasUniversidad auv = em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.area = :area", AreasUniversidad.class)
+                .setParameter("area", estudio.getIdPe())
+                .getSingleResult();
         if (!oes.isEmpty()) {
             oes.forEach((t) -> {
                 if (!t.getPlanEstudioMateriaList().isEmpty()) {
                     t.getPlanEstudioMateriaList().forEach((o) -> {
-                        daas.add(new DtoAlineacionAcedemica(t.getAtributoEgreso(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), o));
+                        daas.add(new DtoAlineacionAcedemica.Presentacion(t.getAtributoEgreso(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), o,auv,"Ae"));
                     });
                 } else {
-                    daas.add(new DtoAlineacionAcedemica(t.getAtributoEgreso(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria()));
+                    daas.add(new DtoAlineacionAcedemica.Presentacion(t.getAtributoEgreso(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria(),new AreasUniversidad(),"Ae"));
                 }
             });
             return daas;
@@ -922,14 +1087,17 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
         }
     }
     
-    public List<DtoAlineacionAcedemica> generarCatalogoAtributosEgreso(PlanEstudio estudio) {
-        List<DtoAlineacionAcedemica> daas = new ArrayList<>();
+    public List<DtoAlineacionAcedemica.Presentacion> generarCatalogoAtributosEgreso(PlanEstudio estudio) {
+        List<DtoAlineacionAcedemica.Presentacion> daas = new ArrayList<>();
         List<AtributoEgreso> oes = em.createQuery("SELECT pem FROM AtributoEgreso pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", AtributoEgreso.class)
                 .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                 .getResultList();
+        AreasUniversidad auv = em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.area = :area", AreasUniversidad.class)
+                .setParameter("area", estudio.getIdPe())
+                .getSingleResult();
         if (!oes.isEmpty()) {
             oes.forEach((t) -> {
-                daas.add(new DtoAlineacionAcedemica(t.getAtributoEgreso(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria()));
+                daas.add(new DtoAlineacionAcedemica.Presentacion(t.getAtributoEgreso(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria(),auv,"Ae"));
             });
             return daas;
         } else {
@@ -937,7 +1105,7 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
         }
     }
     
-    public void accionesAlineacion(List<PlanEstudioMateria> pem, DtoAlineacionAcedemica daa,String tipo,Operacion operacion) {
+    public void accionesAlineacion(List<PlanEstudioMateria> pem, DtoAlineacionAcedemica.Presentacion daa,String tipo,Operacion operacion) {
         switch(operacion){
             case PERSISTIR: 
                 switch(tipo){
@@ -1107,6 +1275,103 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
             
             case ELIMINAR: break;
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    public String getPlantillaAlineacionAcademica(Map<AreasUniversidad, List<PlanEstudio>> mapaAreaPe) throws Throwable {
+        areasUniversidads = new ArrayList<>();
+        programas = new ArrayList<>();
+        mapaAreaPe.forEach((t, u) -> {
+            areasUniversidads.add(t);
+            programas.addAll(u);
+        });
+        AreasUniversidad au = areasUniversidads.get(0);
+        AreasUniversidad auPeSu = ejbAreasLogeo.mostrarAreasUniversidad(au.getAreaSuperior());
+        planesEstudioDto = new ArrayList<>();
+        programas.forEach((t) -> {
+            try {
+                AreasUniversidad auPe = ejbAreasLogeo.mostrarAreasUniversidad(t.getIdPe());
+                planesEstudioDto.add(new DtoAlineacionAcedemica.PlanesEstudioDto(t,auPe));
+            } catch (Throwable ex) {
+                Logger.getLogger(EjbRegistroPlanEstudio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        String rutaPlantilla = ejbCarga.crearDirectorioPlantillaAlineacionMaterias();
+        String rutaPlantillaC = ejbCarga.crearDirectorioPlantillaAlineacionEducativaCompleto(auPeSu.getSiglas());
+        String plantilla = rutaPlantilla.concat(ALINEACION_CATALOGOS_PLANTILLA);
+        String plantillaC = rutaPlantillaC.concat(ALINEACION_CATALOGOS_ACTUALIZADO);
+        Map beans = new HashMap();
+        beans.put("alineacionAcedemica", planesEstudioDto);
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(plantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+    public String getPlantillaAlineacionAcademicaFinal(Map<AreasUniversidad, List<PlanEstudio>> mapaAreaPe) throws Throwable {
+        areasUniversidads = new ArrayList<>();
+        programas = new ArrayList<>();
+        mapaAreaPe.forEach((t, u) -> {
+            areasUniversidads.add(t);
+            programas.addAll(u);
+        });
+        AreasUniversidad au = areasUniversidads.get(0);
+        AreasUniversidad auPeSu = ejbAreasLogeo.mostrarAreasUniversidad(au.getAreaSuperior());
+        planesEstudioDto = new ArrayList<>();
+        programas.forEach((t) -> {
+            try {
+                AreasUniversidad auPe = ejbAreasLogeo.mostrarAreasUniversidad(t.getIdPe());
+                planesEstudioDto.add(new DtoAlineacionAcedemica.PlanesEstudioDto(t,auPe));
+            } catch (Throwable ex) {
+                Logger.getLogger(EjbRegistroPlanEstudio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        String rutaPlantilla = ejbCarga.crearDirectorioPlantillaAlineacionMaterias();
+        String rutaPlantillaC = ejbCarga.crearDirectorioPlantillaAlineacionEducativaCompleto(auPeSu.getSiglas());
+        String plantilla = rutaPlantilla.concat(ALINEACION_PLANTILLA);
+        String plantillaC = rutaPlantillaC.concat(ALINEACION_ACTUALIZADO);
+        Map beans = new HashMap();
+        beans.put("alineacionAcedemica", planesEstudioDto);
+        beans.put("materias", generarCatalogogeneralPEM(mapaAreaPe));
+        beans.put("objetivos", generarCatalogogeneralOb(mapaAreaPe));
+        beans.put("indicador", generarCatalogogeneralIn(mapaAreaPe));
+        beans.put("criterio",generarCatalogogeneralCr(mapaAreaPe));
+        beans.put("atributoAl", generarCatalogogeneralAt(mapaAreaPe));
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(plantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+    public String getPlantillaNivelesDesempenioFinal(Map<AreasUniversidad, List<PlanEstudio>> mapaAreaPe) throws Throwable {
+        areasUniversidads = new ArrayList<>();
+        programas = new ArrayList<>();
+        mapaAreaPe.forEach((t, u) -> {
+            areasUniversidads.add(t);
+            programas.addAll(u);
+        });
+        AreasUniversidad au = areasUniversidads.get(0);
+        AreasUniversidad auPeSu = ejbAreasLogeo.mostrarAreasUniversidad(au.getAreaSuperior());
+        planesEstudioDto = new ArrayList<>();
+        programas.forEach((t) -> {
+            try {
+                AreasUniversidad auPe = ejbAreasLogeo.mostrarAreasUniversidad(t.getIdPe());
+                planesEstudioDto.add(new DtoAlineacionAcedemica.PlanesEstudioDto(t,auPe));
+            } catch (Throwable ex) {
+                Logger.getLogger(EjbRegistroPlanEstudio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        String rutaPlantilla = ejbCarga.crearDirectorioPlantillaAlineacionMaterias();
+        String rutaPlantillaC = ejbCarga.crearDirectorioPlantillaAlineacionEducativaCompleto(auPeSu.getSiglas());
+        String plantilla = rutaPlantilla.concat(DESEMPENIOS_PLANTILLA);
+        String plantillaC = rutaPlantillaC.concat(DESEMPENIOS_ACTUALIZADO);
+        Map beans = new HashMap();
+        beans.put("alineacionAcedemica", planesEstudioDto);
+        beans.put("materias", generarCatalogogeneralPEM(mapaAreaPe));
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(plantilla, beans, plantillaC);
+
+        return plantillaC;
     }
 }
 

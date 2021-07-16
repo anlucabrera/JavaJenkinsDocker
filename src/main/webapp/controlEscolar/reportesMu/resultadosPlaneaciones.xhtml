@@ -204,7 +204,7 @@
                                                                                 <p:column style="border-style: hidden !important;" colspan="5">#{resultadosPlaneacionesConsulta.buscarPersonal(resultadosPlaneacionesConsulta.rol.grupoSelec.tutor)} </p:column>
                                                                             </p:row>  
                                                                             <p:row><p:column colspan="6" style="border-style: groove !important;"/></p:row>
-                                                                            <p:row >
+                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                                 <p:column colspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">TOTAL DE ESTUDIANTES INSCRITOS</p:column>
                                                                                 <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">#{resultadosPlaneacionesConsulta.rol.esInsc}</p:column>
                                                                                 <p:column colspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">NIVEL MINIMO DE LOGRO</p:column>
@@ -225,10 +225,10 @@
                                                                                 <p:column style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esBajD}</p:column>                                                                          
                                                                             </p:row>
 
-                                                                            <p:row >
+                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                                 <p:column colspan="6" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">Atributos de Egreso</p:column>     
                                                                             </p:row>
-                                                                            <p:row >
+                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                                 <p:column style="border-style: hidden !important;" colspan="6">
                                                                                     <p:dataTable id="atr" var="ae" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.atributoEgresoList}" styleClass="saltoDePagina">
                                                                                         <p:column >
@@ -238,11 +238,11 @@
                                                                                 </p:column>     
                                                                             </p:row>
 
-                                                                            <p:row >
+                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                                 <p:column colspan="3" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Criterios de desempeño</p:column>                                                                                    
                                                                                 <p:column colspan="3" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Indicadores</p:column>
                                                                             </p:row>
-                                                                            <p:row >
+                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                                 <p:column style="border-style: hidden !important;" colspan="3">
                                                                                     <p:dataTable id="cri" var="cd" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.criterioDesempenioList}" styleClass="saltoDePagina">
                                                                                         <p:column >
@@ -260,10 +260,10 @@
                                                                                     </p:dataTable>  
                                                                                 </p:column>
                                                                             </p:row>
-                                                                            <p:row >
+                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                                 <p:column colspan="6" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Objetivos Educacionales</p:column>     
                                                                             </p:row>
-                                                                            <p:row >
+                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                                 <p:column style="border-style: hidden !important;" colspan="6">
                                                                                     <p:dataTable id="obj" var="oe" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.objetivoEducacionalPlanMateriaList}" styleClass="saltoDePagina">
                                                                                         <p:column >
@@ -291,32 +291,32 @@
                                                                         </f:facet>
                                                                         <p:columnGroup type="header">
                                                                             <p:row class="success">         
-                                                                                <p:column headerText="Categoría de evaluacion" style="width: 10%;font-size: small;"/>
-                                                                                <p:column headerText="% Cat" style="width: 10%;font-size: small;"/>
-                                                                                <p:column headerText="Evidencia" style="width: 20%;font-size: small;" /> 
+                                                                                <p:column headerText="Criterio de evaluacion" style="width: 10%;font-size: small;"/>
+                                                                                <p:column headerText="% Crit" style="width: 10%;font-size: small;"/>
                                                                                 <p:column headerText="Instrumentos de evaluación" style="width: 20%;font-size: small;"/> 
                                                                                 <p:column headerText="% Inst" style="width: 10%;font-size: small;"/>
-                                                                                <p:column headerText="Meta" style="width: 10%;font-size: small;" />                           
-                                                                                <p:column headerText="Estudiantes alcanzan meta" style="width: 10%;font-size: small;" /> 
-                                                                                <p:column headerText="Promedio" style="width: 10%;font-size: small;" /> 
-                                                                                <p:column headerText="% meta alcanzada" style="width: 10%;font-size: small;" />                                                                             
-                                                                                <p:column headerText="Semaforizacion" style="width: 10%;font-size: small;" />                                                                     
-                                                                                <p:column headerText="Acciones de mejora" style="width: 20%;font-size: small;" />                                                                           
+                                                                                <p:column headerText="Evidencia" style="width: 20%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/> 
+                                                                                <p:column headerText="Meta" style="width: 10%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/>                           
+                                                                                <p:column headerText="Estudiantes alcanzan meta" style="width: 10%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/> 
+                                                                                <p:column headerText="Promedio" style="width: 10%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/> 
+                                                                                <p:column headerText="% meta alcanzada" style="width: 10%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/>                                                                             
+                                                                                <p:column headerText="Semaforizacion" style="width: 10%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/>                                                                     
+                                                                                <p:column headerText="Acciones de mejora" style="width: 20%;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}"/>                                                                           
                                                                             </p:row>
                                                                         </p:columnGroup>
                                                                         <p:headerRow >
-                                                                            <p:column colspan="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?6:3}" style="border: #000000  !important;font-size: small;" >
+                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?(asignacionIndCA.informe.nombreUnidad eq 'T.I.'?6:3):1}" style="border: #000000  !important;font-size: small;" >
                                                                                 <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'Tarea Integradora: ':asignacionIndCA.informe.unidad} #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':'-'} #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?asignacionIndCA.informe.objetivo:asignacionIndCA.informe.nombreUnidad}" style="text-align: center;"/>
                                                                             </p:column>
-                                                                            <p:column colspan="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:1}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
+                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?(asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:1):1}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
                                                                                 <h:outputText value="#{asignacionIndCA.informe.fechaInicio}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
                                                                                 <h:outputText value=" al " style="text-align: center;" />
                                                                                 <h:outputText value="#{asignacionIndCA.informe.fechaFin}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
                                                                             </p:column>
-                                                                            <p:column colspan="6" style="border: #000000  !important;font-size: small; text-align: justify">
+                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?6:1}" style="border: #000000  !important;font-size: small; text-align: justify">
                                                                                 <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':asignacionIndCA.informe.objetivo}" style="text-align: justify" />
                                                                             </p:column>
-                                                                            <p:column colspan="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:2}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
+                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?(asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:2):1}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
                                                                                 <h:outputText value="#{asignacionIndCA.informe.porUnidad}%" style="text-align: center; "/>
                                                                             </p:column> 
                                                                         </p:headerRow> 
@@ -329,9 +329,7 @@
                                                                         <p:column groupRow="true" style="border: #000000  !important;text-align: center;font-size: small; #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" >
                                                                             <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.porCriterio}" style="text-align: center;"/>
                                                                         </p:column>
-                                                                        <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}"  >
-                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.evidencia}" />
-                                                                        </p:column>
+
                                                                         <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" >
                                                                             <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.indicador}" />
                                                                         </p:column>
@@ -340,30 +338,31 @@
                                                                             <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.porcentaje}" />
                                                                         </p:column> 
                                                                         <!-- Reservado para la parde de evidencias que e agregara -->
-
-                                                                        <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}"  >
+                                                                        <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}"  rendered="#{resultadosPlaneacionesConsulta.rol.render}">
+                                                                            <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.evidencia}" />
+                                                                        </p:column>
+                                                                        <p:column style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}"  rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                             <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'N/A':asignacionIndCA.informe.meta}" />
                                                                         </p:column>  
                                                                         <!-- Fin del reservado para la parde de evidencias que e agregara -->
-                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;" >
+                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                             <h:outputText value="#{asignacionIndCA.estudiantesAlcazanMeta}" style="text-align: center;"/>
                                                                         </p:column>
-                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;" >
+                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                             <h:outputText value="#{asignacionIndCA.metaAlacanzadaIndicador}" style="text-align: center;"><f:convertNumber pattern="#,##0.00"/></h:outputText>
                                                                         </p:column>
-                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;" >
+                                                                        <p:column style="border: #000000  !important;text-align: center;font-size: small;" rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                             <h:outputText value="#{asignacionIndCA.metaAlacanzadaunidad}" style="text-align: center;"><f:convertNumber pattern="#,##0.00" currencySymbol="%" /></h:outputText>
                                                                         </p:column>  
-                                                                        <p:column >
+                                                                        <p:column rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                             <img src="../../resources/img/#{asignacionIndCA.semaforo}.png" alt="#{asignacionIndCA.semaforo}"/>
                                                                         </p:column>  
-                                                                        <p:column groupRow="true" style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" >
+                                                                        <p:column groupRow="true" style="border: #000000  !important;font-size: small;#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'background: #cccccc':''}" rendered="#{resultadosPlaneacionesConsulta.rol.render}">
 
                                                                             <h:outputText value="#{asignacionIndCA.accionesMejora}" style="text-align: center;" rendered="#{asignacionIndCA.accionesMejora ne ''}"/>
 
-                                                                            <!--p:commandButton icon="fa fa-comment" styleClass="btn-primary" rendered="# {asignacionIndCA.accionesMejora eq ''?(resultadosPlaneacionesConsulta.rol.tipoUser eq 3?true:false):false}"-->
-                                                                            <p:commandButton icon="fa fa-comment" styleClass="btn-primary" rendered="#{asignacionIndCA.accionesMejora eq ''?true:false}"
-                                                                                             oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario" class="noprint">
+                                                                            <p:commandButton icon="fa fa-comment" styleClass="btn-primary" rendered="#{asignacionIndCA.accionesMejora eq ''?(resultadosPlaneacionesConsulta.rol.tipoUser eq 3?true:false):false}"
+                                                                                             oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
                                                                                 <f:setPropertyActionListener target="#{resultadosPlaneacionesConsulta.rol.configuracion}" value="#{asignacionIndCA.informe.configuracion}" />
                                                                             </p:commandButton>
                                                                         </p:column> 
@@ -375,7 +374,7 @@
                                                         <div class="row">
                                                             <div class="col-sm-12">
                                                                 <div class="description-block">
-                                                                    <p:panelGrid styleClass="saltoDePagina" >
+                                                                    <p:panelGrid styleClass="saltoDePagina" rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                         <p:row>
                                                                             <p:column colspan="6" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">Niveles de desempeño</p:column>                                                                                    
                                                                         </p:row>
@@ -409,8 +408,7 @@
                                                         <div class="row">
                                                             <div class="col-sm-12">
                                                                 <div class="description-block">
-                                                                    <p:barChart model="#{resultadosPlaneacionesConsulta.barModel2}" styleClass="yesprint" style="width: 100%; height: 500px;" transient="true"  />
-
+                                                                    <p:barChart model="#{resultadosPlaneacionesConsulta.barModel2}" style="width: 100%; height: 500px;"  rendered="#{resultadosPlaneacionesConsulta.rol.render}"/>
                                                                 </div>
                                                             </div>
                                                         </div>

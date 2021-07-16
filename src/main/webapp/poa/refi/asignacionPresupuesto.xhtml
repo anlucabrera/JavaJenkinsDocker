@@ -294,11 +294,11 @@
                                                              rowsPerPageTemplate="50,100,150,200,250,300">
                                                     <p:columnGroup type="header" class="hederTablesTitle">
                                                         <p:row class="success">
-                                                            <p:column headerText="" style="width: 50px;" styleClass="hederTablesTitle" />
+                                                            <!--p:column headerText="" style="width: 50px;" styleClass="hederTablesTitle" /-->
                                                             <p:column headerText="Clave" style="width: 10%;" styleClass="hederTablesTitle" sortBy="#{pres.producto.productosPK.producto}" 
-                                                                      filterBy="#{pres.productosPK.producto}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Descripcion" style="width: 50%;" styleClass="hederTablesTitle" sortBy="#{pres.descripcion}" 
-                                                                      filterBy="#{pres.descripcion}" filterMatchMode="contains"/>
+                                                                      filterBy="#{pres.producto.productosPK.producto}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Descripcion" style="width: 50%;" styleClass="hederTablesTitle" sortBy="#{pres.producto.descripcion}" 
+                                                                      filterBy="#{pres.producto.descripcion}" filterMatchMode="contains"/>
                                                             <p:column headerText="Unidad de medida" style="width: 15%;" styleClass="hederTablesTitle"/>
                                                             <p:column headerText="Descuento de" style="width: 25%;" styleClass="hederTablesTitle"/>
                                                             <p:column headerText="" style="width: 50px;" styleClass="hederTablesTitle"/>
@@ -306,12 +306,12 @@
                                                     </p:columnGroup>
                                                     <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditProductos}" update="tblEvenAre" process="@this"/>
                                                     <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblEvenAre" />
-                                                    <p:column>
-                                                        <p:commandButton actionListener="#{administracionControl.eliminarPresuPuesto(pres)}" update="tblEvenAre" process="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
+                                                    <!--p:column>
+                                                        <p:commandButton actionListener="# {administracionControl.eliminarPresuPuesto(pres)}" update="tblEvenAre" process="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
                                                                          styleClass="btn-primary" title="Eliminar evento área">
-                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación del Producto #{pres.producto.descripcion}?" icon="ui-icon-alert" />
+                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación del Producto # {pres.producto.descripcion}?" icon="ui-icon-alert" />
                                                         </p:commandButton>
-                                                    </p:column>
+                                                    </p:column-->
                                                     <p:column >
                                                         <p:cellEditor>
                                                             <f:facet name="output"><h:outputText value="#{pres.producto.productosPK.producto}"/></f:facet>

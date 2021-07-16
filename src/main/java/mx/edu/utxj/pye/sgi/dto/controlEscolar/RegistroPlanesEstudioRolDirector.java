@@ -81,7 +81,7 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     // Representa la referencia entre una Competencia(control escolar) con una Plan de EstudioMateria(control escolar) y un Plan Estudio(control escolar)
     @Getter    @Setter    private DtoPlanEstudioMateriaCompetencias planEstudioMateriaCompetencias1;
     
-    @Getter    @Setter    private DtoAlineacionAcedemica alineacionAcedemica;
+    @Getter    @Setter    private DtoAlineacionAcedemica.Presentacion alineacionAcedemica;
     
 // Variables de tipo de List
     // Representa el listado de programas educativos vigentes
@@ -106,8 +106,8 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     @Getter    @Setter    private List<PlanEstudioMateria> planestudioMateriasSelect;
 // Variables de tipo de List DTO's
     @Getter    @Setter    private List<DtoPlanEstudioMateriaCompetencias> planEstudioMateriaCompetenciasesList;
-    @Getter    @Setter    private List<DtoAlineacionAcedemica> acedemicas;
-    @Getter    @Setter    private List<DtoAlineacionAcedemica> alineacionesDescripociones;
+    @Getter    @Setter    private List<DtoAlineacionAcedemica.Presentacion> acedemicas;
+    @Getter    @Setter    private List<DtoAlineacionAcedemica.Presentacion> alineacionesDescripociones;
     @Setter    @Getter private List<DtoRegistroPrevioAlineacionEducativa> listaPreviaAlineacionEducativa;
 // Variables de tipo de Map
     // Mapeo de materias con sus unidades de acuerdo al plan de estudios seleccionado
