@@ -53,7 +53,7 @@ public class RegistroFichaAdmisionAspiranteIngSaiiut extends ViewScopedRol imple
 
     @PostConstruct
     public void init(){
-        if(logonMB.getUsuarioTipo().equals(UsuarioTipo.ASPIRANTE_ING) || logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE)) {cargado =true;}
+        if(logonMB.getUsuarioTipo().equals(UsuarioTipo.ASPIRANTEING) || logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE)) {cargado =true;}
         else {cargado= false;return;}
         setVistaControlador(ControlEscolarVistaControlador.REGISTRO_FICHA_ASPIRANTE_ING_SAIIUT);
         ResultadoEJB<DtoAspiranteIng> resAcceso = ejbRegistroIng.verificarAcceso2(logonMB.getEmail(),logonMB.getUsuarioTipo());

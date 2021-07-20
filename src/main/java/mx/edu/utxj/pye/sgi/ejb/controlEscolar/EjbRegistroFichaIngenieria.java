@@ -114,7 +114,7 @@ public class EjbRegistroFichaIngenieria {
                     dto.setTipoAspirante(AspiranteTipoIng.ASPPIRANTE_ING_OTRA_GENERACION);
                     return ResultadoEJB.crearCorrecto(dto,"");
                 }else {return ResultadoEJB.crearErroneo(3,dto,"Error al verificar estudiante en SAIIUT");}
-            }else if(tipo.equals(UsuarioTipo.ASPIRANTE_ING)){
+            }else if(tipo.equals(UsuarioTipo.ASPIRANTEING)){
                 dto.setMatricula("Por definir");
                 dto.setTipoAspirante(AspiranteTipoIng.ASPPIRANTE_ING_OTRA_UT);
                 return ResultadoEJB.crearCorrecto(dto,"Aspirante de otra UT");

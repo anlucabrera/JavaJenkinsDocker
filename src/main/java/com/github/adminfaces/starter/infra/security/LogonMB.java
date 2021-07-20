@@ -113,7 +113,7 @@ per=0;
         }else if(email.equals("aspiranteing") && password.equals("aspirantei")){
             System.out.println("LogonMB.login Aspirante Ing" + email + "  "+ password);
             currentUser = email;
-            usuarioTipo = UsuarioTipo.ASPIRANTE_ING;
+            usuarioTipo = UsuarioTipo.ASPIRANTEING;
             addDetailMessage("Bienvenido y bienvenida <b>" + "Aspirante" + "</b>");
             Faces.getExternalContext().getFlash().setKeepMessages(true);
             Faces.redirect("controlEscolar/aspirante/registroFichaAspiranteIngSaiiut.xhtml");
