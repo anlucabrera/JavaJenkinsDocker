@@ -684,7 +684,7 @@ public class EjbRegistroBajas {
             });
             
              List<DtoTramitarBajas> listaDtoTramitarBajasOrdenada = listaDtoTramitarBajas.stream()
-                    .sorted(DtoTramitarBajas::compareTo)
+                    .sorted(DtoTramitarBajas::compareToTramiteBaja)
                     .collect(Collectors.toList());
            
             return ResultadoEJB.crearCorrecto(listaDtoTramitarBajasOrdenada, "Lista de estudiantes del grupo seleccionado.");
