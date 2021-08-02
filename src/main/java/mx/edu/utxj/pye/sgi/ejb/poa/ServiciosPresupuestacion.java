@@ -197,12 +197,35 @@ public class ServiciosPresupuestacion implements EjbPresupuestacion {
         List<Partidas> pr = q.getResultList();
         return pr;
     }
+    
+    @Override
+    public List<Partidas> mostrarPartidasesTotales() {
+        facadePoa.setEntityClass(Partidas.class);
+        List<Partidas> nuevoProductos = facadePoa.findAll();
+        return nuevoProductos;
+    }
 
     @Override
     public Partidas mostrarPartidas(Short partida) {
         facadePoa.setEntityClass(Partidas.class);
         Partidas nuevoProductos = (Partidas) facadePoa.find(partida);
         return nuevoProductos;
+    }
+    
+     @Override
+    public Partidas agregarPartidas(Partidas partida){
+        facadePoa.setEntityClass(Partidas.class);
+        em.persist(partida);
+        facadePoa.flush();
+        return partida;
+    }
+   
+    @Override
+    public Partidas actualizarPartidas(Partidas partida) {
+        facadePoa.setEntityClass(Partidas.class);
+        em.merge(partida);
+        facadePoa.flush();
+        return partida;
     }
 
 //  ------------------------------------------------------------------------ Productos --------------------------------------------------

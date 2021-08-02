@@ -56,8 +56,14 @@ public interface EjbPresupuestacion {
 
 //  ------------------------------------------------------------------------ Partidas --------------------------------------------------
     public List<Partidas> mostrarPartidases(Short ejercicio, Short area);
+    
+    public List<Partidas> mostrarPartidasesTotales();
 
     public Partidas mostrarPartidas(Short partida);
+    
+    public Partidas agregarPartidas(Partidas partida);
+    
+    public Partidas actualizarPartidas(Partidas partida);
 
 //  ------------------------------------------------------------------------ Productos --------------------------------------------------
     public List<Productos> mostrarProductoses(Short ejercicio, Short area, Partidas partida);

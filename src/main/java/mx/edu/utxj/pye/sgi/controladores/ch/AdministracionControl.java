@@ -70,6 +70,7 @@ public class AdministracionControl implements Serializable {
     @Getter    @Setter    private List<PretechoFinanciero> pfs = new ArrayList<>();
     @Getter    @Setter    private List<ProductosAreas> productoses = new ArrayList<>();
     @Getter    @Setter    private List<Partidas> partidases = new ArrayList<>();
+    @Getter    @Setter    private List<Partidas> partidasesTotales = new ArrayList<>();
     @Getter    @Setter    private List<ProductosAreasAsigados> asigadoses = new ArrayList<>();
     @Getter    @Setter    private List<CapitulosTipos> capitulosTiposes = new ArrayList<>();
     
@@ -78,6 +79,7 @@ public class AdministracionControl implements Serializable {
     @Getter    @Setter    private CapitulosTipos capitulosTipos = new CapitulosTipos();
     @Getter    @Setter    private Eventos eventos = new Eventos();
     @Getter    @Setter    private Productos productos = new Productos();
+    @Getter    @Setter    private Partidas partidas = new Partidas();
     @Getter    @Setter    private ProductosAreas productosAreas = new ProductosAreas();
     @Getter    @Setter    private PretechoFinanciero financiero= new PretechoFinanciero();
     @Getter    @Setter    private Integer eventoC = 0;
@@ -267,8 +269,19 @@ public class AdministracionControl implements Serializable {
     public void mostrarPartidas() {
         try {
             partidases = new ArrayList<>();
+            partidasesTotales = new ArrayList<>();
+            partidasesTotales = ejbPresupuestacion.mostrarPartidasesTotales();
             partidases.add(new Partidas(Short.parseShort("0"), "Todos los productos"));
-            partidases.addAll(ejbPresupuestacion.mostrarPartidases(ejeFiscal, Short.parseShort("1")));
+            partidasesTotales.forEach((t) -> {
+                if (t.getProductosAreasList().isEmpty()) {
+                    partidases.add(t);
+                } else {
+                    List<ProductosAreas> p = t.getProductosAreasList().stream().filter(pr -> Objects.equals(pr.getProductos().getEjerciciosFiscales().getEjercicioFiscal(), ejeFiscal)).collect(Collectors.toList());
+                    if (!p.isEmpty()) {
+                        partidases.add(t);
+                    }
+                }
+            });
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
@@ -555,6 +568,16 @@ public class AdministracionControl implements Serializable {
         }
     }
     
+    public void agregarPartidas() {
+        try {
+            partidas = ejbPresupuestacion.agregarPartidas(partidas);
+            mostrarPartidas();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasGeneral.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
 // -----------------------------------------------------------------------------Edicion    
     public void onRowEditEventos(RowEditEvent event) {
         try {
@@ -666,21 +689,32 @@ public class AdministracionControl implements Serializable {
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-     public void onRowEditProductos(RowEditEvent event) {
+
+    public void onRowEditProductos(RowEditEvent event) {
         try {
             ProductosAreasAsigados cp = (ProductosAreasAsigados) event.getObject();
-            Productos p=cp.getProducto();
-            p= ejbPresupuestacion.actualizarProductos(p);
+            Productos p = cp.getProducto();
+            p = ejbPresupuestacion.actualizarProductos(p);
             p.getProductosAreasList().forEach((pros) -> {
                 ProductosAreas pa = new ProductosAreas();
-                pa=pros;
+                pa = pros;
                 pa.setCapitulo(new CapitulosTipos());
-                pa.setCapitulo(new CapitulosTipos(cp.getCt(),"",""));
+                pa.setCapitulo(new CapitulosTipos(cp.getCt(), "", ""));
                 pa = ejbPresupuestacion.actualizarProductosAreas(pa);
             });
-            productos= new Productos();
-            mostrarProductos(partida,2);
+            productos = new Productos();
+            mostrarProductos(partida, 2);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void onRowEditPartidas(RowEditEvent event) {
+        try {
+            Partidas cp = (Partidas) event.getObject();
+            cp = ejbPresupuestacion.actualizarPartidas(cp);
+            mostrarPartidas();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);

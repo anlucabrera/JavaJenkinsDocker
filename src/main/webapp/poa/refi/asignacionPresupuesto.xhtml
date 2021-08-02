@@ -206,7 +206,89 @@
                                             </p:confirmDialog>   
                                         </h:form>
                                     </p:tab>
-
+                                    <p:tab title="Partidas">
+                                        <h:form id="frmPartidas"> 
+                                            <p:outputPanel >            
+                                                <p:autoUpdate/>
+                                                <p:panel header="Registro de Productos" class="box box-primary">
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-4 col-md-2 col-lg-2">
+                                                                            <p:outputLabel for="cvProducto" value="Clave de Partida" style="height:100%; width: 100%;font-size: large"/>
+                                                                            <p:inputText id="cvProducto"  style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{administracionControl.partidas.partida}"/>
+                                                                            <hr/>
+                                                                        </div>
+                                                                        <div class="col-sm-8 col-md-10 col-lg-10">
+                                                                            <p:outputLabel for="cp2" value="Descripcion" style="height:100%; width: 100%;font-size: large"/>
+                                                                            <p:inputTextarea id="cp2"  placeholder="Descripcion de porductso a agregar" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{administracionControl.partidas.denominacion}"/>
+                                                                            <hr/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                            <p:commandButton id="btnAgregaActividaUnitaria" value="Guardar Partida" actionListener="#{administracionControl.agregarPartidas()}" 
+                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form"/> 
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </p:panel>
+                                            </p:outputPanel>
+                                            <p:outputPanel id="incidenciasReporte">
+                                                <p:remoteCommand name="actualizarTabla" actionListener="#{administracionControl.imprimirValores()}" update="tblEvenAre" />
+                                                <p:dataTable id="tblEvenAre"  value="#{administracionControl.partidasesTotales}"  var="parti" editable="true"
+                                                             style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true" paginator="true" rows="20"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="10,20,30,40,50,100">
+                                                    <p:columnGroup type="header" class="hederTablesTitle">
+                                                        <p:row class="success">
+                                                            <!--p:column headerText="" style="width: 50px;" styleClass="hederTablesTitle" /-->
+                                                            <p:column headerText="Clave" style="width: 15%;" styleClass="hederTablesTitle" sortBy="#{parti.partida}" 
+                                                                      filterBy="#{parti.partida}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Descripcion" style="width: 80%;" styleClass="hederTablesTitle" sortBy="#{parti.denominacion}" 
+                                                                      filterBy="#{parti.denominacion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="" style="width: 5%;" styleClass="hederTablesTitle"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditPartidas}" update="tblEvenAre" process="@this"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblEvenAre" />
+                                                    <!--p:column>
+                                                        <p:commandButton actionListener="# {administracionControl.eliminarPresuPuesto(pres)}" update="tblEvenAre" process="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
+                                                                         styleClass="btn-primary" title="Eliminar evento área">
+                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación del Producto # {pres.producto.descripcion}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column-->
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{parti.partida}"/></f:facet>
+                                                            <f:facet name="input"><h:inputText value="#{parti.partida}"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>   
+                                                    <p:column >
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{parti.denominacion}"/></f:facet>
+                                                            <f:facet name="input"><p:inputTextarea value="#{parti.denominacion}"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>                                                       
+                                                    <p:column class="noprint">
+                                                        <p:rowEditor rendered="#{parti.productosAreasList.size() eq 0}" />
+                                                    </p:column>
+                                                </p:dataTable>     
+                                            </p:outputPanel> 
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
+                                        </h:form>
+                                    </p:tab>
                                     <p:tab title="Productos">
                                         <h:form id="frmProductos"> 
                                             <p:outputPanel >            
@@ -227,7 +309,7 @@
                                                                         </div>
                                                                         <div class="col-sm-12 col-md-8 col-lg-10">
                                                                             <p:outputLabel for="partida" value="Partida" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
-                                                                            <p:selectOneMenu  id="partida" value="#{administracionControl.partida}" valueChangeListener="#{administracionControl.numeroProductosPorPartida}">
+                                                                            <p:selectOneMenu  id="partida" value="#{administracionControl.partida}" valueChangeListener="#{administracionControl.numeroProductosPorPartida}" filter="true" filterMatchMode="contains">
                                                                                 <f:selectItems value="#{administracionControl.partidases}" var="par" itemValue="#{par.partida}" itemLabel="#{par.partida} -- #{par.denominacion}" />
                                                                                 <p:ajax update="@form" listener="#{administracionControl.imprimirValores()}"/>
                                                                             </p:selectOneMenu >
@@ -250,9 +332,9 @@
                                                                             <div class="col-sm-12 col-md-2 col-lg-2">
                                                                                 <p:outputLabel for="cvProducto" value="Clave de Producto" style="height:100%; width: 100%;font-size: large"/>
                                                                                 <p:inputText id="cvProducto"  style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{administracionControl.productos.productosPK.producto}"/>
-                                                                             <hr/>
+                                                                                <hr/>
                                                                             </div>
-                                                                             <div class="col-sm-12 col-md-5 col-lg-5">
+                                                                            <div class="col-sm-12 col-md-5 col-lg-5">
                                                                                 <p:outputLabel for="cp3" value="Unidad de medida" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
                                                                                 <p:inputText id="cp3" placeholder="Unidad de medida utilizada para su adquisición" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{administracionControl.productos.unidadMedida}"/>
                                                                                 <hr/>
@@ -267,7 +349,7 @@
                                                                             <div class="col-sm-12 col-md-12 col-lg-12">
                                                                                 <p:outputLabel for="cp2" value="Descripcion" style="height:100%; width: 100%;font-size: large"/>
                                                                                 <p:inputTextarea id="cp2"  placeholder="Descripcion de porductso a agregar" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{administracionControl.productos.descripcion}"/>
-                                                                             <hr/>
+                                                                                <hr/>
                                                                             </div>
                                                                         </div>
                                                                     </div>
