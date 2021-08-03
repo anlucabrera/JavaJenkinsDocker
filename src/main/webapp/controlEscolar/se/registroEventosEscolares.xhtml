@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Registro de eventos de estadía
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{registroEventosEscolares.cargado}">
+        <adm:breadcrumb title="Registro de eventos de estadía"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{registroEventosEscolares.tieneAcceso}">
+                <c:if test="#{registroEventosEscolares.rol.periodoEscolar ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-4'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{registroEventosEscolares.rol.periodoEscolar}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{registroEventosEscolares.cambiarPeriodo}">
+                                                    <f:selectItems value="#{registroEventosEscolares.rol.periodosEscolares}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo Escolar" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <c:if test="#{registroEventosEscolares.rol.existeRegistro}">
+                                            <center>
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                    <p:dataTable id="tbListaEventosEscolaresRegistrados" var="evenEscR" value="#{registroEventosEscolares.rol.listaEventosRegistrados}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                             tableStyle="vertical-align: middle;" editable="true" editMode="cell" expandableRowGroups="true">
+                                                    <f:facet name="header">
+                                                           <center>Lista de Eventos Escolares Registrados</center>
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column rowspan="2" headerText="Actividad" style="width: 400px;"/>
+                                                            <p:column rowspan="2" headerText="Fecha inicio" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Fecha fin" style="width: 150px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:ajax event="cellEdit" listener="#{registroEventosEscolares.onCellEdit}"/>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{evenEscR.eventoEscolar.tipo}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{evenEscR.eventoEscolar.inicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText></f:facet>
+                                                            <f:facet name="input"><p:calendar id="fechaInicio" locale="es" value="#{evenEscR.eventoEscolar.inicio}" pattern="dd-MM-yyyy HH:mm:ss" mask="true"/></f:facet>
+                                                         </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{evenEscR.eventoEscolar.fin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText></f:facet>
+                                                            <f:facet name="input"><p:calendar id="fechaFin" locale="es" value="#{evenEscR.eventoEscolar.fin}" pattern="dd-MM-yyyy HH:mm:ss" mask="true"/></f:facet>
+                                                         </p:cellEditor>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                </div>
+                                            </center>
+                                            <div class="row margin-bottom" style="margin-top: 30px;">
+                                                 <div class="col-sm-12 col-md-12 col-lg-5"/>
+                                                 <div class="col-sm-12 col-md-12 col-lg-2">
+                                                     <center>
+                                                         <p:commandButton id="btnEliminarRegistro" value="Eliminar" actionListener="#{registroEventosEscolares.eliminarEventosEscolares()}" 
+                                                                 icon="fa fa-trash" class="btn-primary btn-block col-md-3" update="@form"  process="@form">
+                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar los eventos registrados? Es probable que tenga información relacionada y podría perder información." icon="ui-icon-alert" />
+                                                         </p:commandButton>
+                                                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                             <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                         </p:confirmDialog> 
+                                                     </center> 
+                                                 </div>
+                                                 <div class="col-sm-12 col-md-12 col-lg-5"/>
+                                             </div>
+                                        </c:if>
+                                         <c:if test="#{!registroEventosEscolares.rol.existeRegistro}">
+                                            <center>
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                    <p:dataTable id="tbListaEventosEscolares" var="evenEsc" value="#{registroEventosEscolares.rol.listaEventos}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                             tableStyle="vertical-align: middle;">
+                                                    <f:facet name="header">
+                                                           <center>Lista de Eventos Escolares por Registrar</center>
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column rowspan="2" headerText="Actividad" style="width: 400px;"/>
+                                                            <p:column rowspan="2" headerText="Fecha inicio" style="width: 150px;"/>
+                                                            <p:column rowspan="2" headerText="Fecha fin" style="width: 150px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{evenEsc.actividad}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                       <p:calendar id="inicio" locale="es" value="#{evenEsc.inicio}" pattern="dd-MM-yyyy" mask="true"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                       <p:calendar id="fin" locale="es" value="#{evenEsc.fin}" pattern="dd-MM-yyyy" mask="true"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                </div>
+                                            </center>
+                                             <div class="row margin-bottom" style="margin-top: 30px;">
+                                                 <div class="col-sm-12 col-md-12 col-lg-5"/>
+                                                 <div class="col-sm-12 col-md-12 col-lg-2">
+                                                     <center>
+                                                         <p:commandButton id="btnGuardarRegistro" value="Guardar" actionListener="#{registroEventosEscolares.guardarEventosEscolares()}" 
+                                                                 icon="fa fa-save" class="btn-primary btn-block col-md-3" update="@form"  process="@form" />
+                                                     </center> 
+                                                 </div>
+                                                 <div class="col-sm-12 col-md-12 col-lg-5"/>
+                                             </div> 
+                                        </c:if>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty registroEventosEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{registroEventosEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para registrar eventos escolares.</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{registroEventosEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{registroEventosEscolares.rol.periodosEscolares eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay eventos registrados."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!registroEventosEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para personal de servicios escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

@@ -86,6 +86,7 @@
                     <c:if test="#{fichaAdmisionReporte.mostrarEnDesarrollo(request) and fichaAdmisionReporte.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reporteFichaAdmision.xhtml"><i class="fa fa-clipboard"></i><span>Reporte de Aspirantes <small class="label pull-right bg-green">Actualizado</small></span></p:link></li></c:if>
 
                     <!-- Administrador -->
+                    <c:if test="#{registroEventosEscolares.mostrarEnDesarrollo(request) and registroEventosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registroEventosEscolares.xhtml"><i class="fa fa-calendar-check-o"></i><span>Eventos escolares<small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{permisoAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaAdministrador.tieneAcceso}">
 
                         <li class="treeview">
