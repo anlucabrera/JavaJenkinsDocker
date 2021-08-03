@@ -689,8 +689,11 @@ public class EjbRegistroFichaIngenieria {
             String anyo2 = new SimpleDateFormat("yy").format(new Date());
             folio = anyo2.concat(String.valueOf(procesosInscripcion.getIdPeriodo())).concat("0000");
 
-            TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(p.folioAspirante) FROM Aspirante AS p WHERE p.idProcesoInscripcion.idProcesosInscripcion =:idPE")
-                    .setParameter("idPE", procesosInscripcion.getIdProcesosInscripcion());
+            TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(p.folioAspirante) FROM Aspirante AS p WHERE p.idProcesoInscripcion.idProcesosInscripcion =:idPE and (p.tipoAspirante.idTipoAspirante=:tipo or p.tipoAspirante.idTipoAspirante=:tipo2) ")
+                    .setParameter("idPE", procesosInscripcion.getIdProcesosInscripcion())
+                    .setParameter("tipo", 1)
+                    .setParameter("tipo2",3)
+                    ;
             if(v.getSingleResult() == null){
                 folioUlizable = Integer.valueOf(folio);
             }else{
