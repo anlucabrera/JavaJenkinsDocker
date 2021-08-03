@@ -22,6 +22,11 @@ public class RegistroEventosEscolaresRolEscolares extends AbstractRol{
      * Representa la referencia hacia al usuario
      */
     @Getter @NonNull private PersonalActivo usuario;
+    
+     /**
+     * Representa el periodo escolar activo
+     */
+    @Getter @NonNull private PeriodosEscolares periodoActivo;
   
     /**
      * Lista periodos escolares
@@ -57,6 +62,10 @@ public class RegistroEventosEscolaresRolEscolares extends AbstractRol{
         this.usuario = usuario;
     }
 
+    public void setPeriodoActivo(PeriodosEscolares periodoActivo) {
+        this.periodoActivo = periodoActivo;
+    }
+    
     public void setPeriodosEscolares(List<PeriodosEscolares> periodosEscolares) {
         this.periodosEscolares = periodosEscolares;
     }

@@ -33,6 +33,7 @@ import org.omnifaces.util.Ajax;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPermisoAperturaExtemporanea;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.primefaces.component.datatable.DataTable;
@@ -49,6 +50,7 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
     
     @EJB EjbRegistroEventosEscolares ejb;
     @EJB EjbEstadiasServiciosEscolares ejbEstadiasServiciosEscolares;
+    @EJB EjbPermisoAperturaExtemporanea ejbPermisoAperturaExtemporanea;
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
     @Getter Boolean tieneAcceso = false;
@@ -85,6 +87,7 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
            
             rol.setNivelRol(NivelRol.OPERATIVO);
+            rol.setPeriodoActivo(ejbPermisoAperturaExtemporanea.getPeriodoActual());
             rol.setExisteRegistro(Boolean.FALSE);
 //            rol.setSoloLectura(true);
             
@@ -115,6 +118,7 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
             if (res.getValor().size() != 0) {
                 rol.setPeriodosEscolares(res.getValor());
                 rol.setPeriodoEscolar(ejb.getUltimoPeriodoRegistrado().getValor());
+                existeRegistro();
             }
         }else mostrarMensajeResultadoEJB(res);
     }
@@ -188,7 +192,7 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
      * Permite guardar la lista de eventos de estadía de la generación y nivel educativo seleccionado
      */
     public void guardarEventosEscolares(){
-        ResultadoEJB<List<DtoCalendarioEventosEscolares>> res = ejb.guardarEventosEscolares(rol.getPeriodoEscolar(), rol.getListaEventos());
+        ResultadoEJB<List<DtoCalendarioEventosEscolares>> res = ejb.guardarEventosEscolares(rol.getPeriodoEscolar(), rol.getListaEventos(), rol.getUsuario().getPersonal());
         if(res.getCorrecto()){
             mostrarMensajeResultadoEJB(res);
             existeRegistro();

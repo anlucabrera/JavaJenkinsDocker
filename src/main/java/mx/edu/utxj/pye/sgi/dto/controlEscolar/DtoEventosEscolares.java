@@ -20,6 +20,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
  */
 @RequiredArgsConstructor @ToString
 public class DtoEventosEscolares implements Serializable{
+    @Getter @Setter @NonNull Integer numero;
     @Getter @Setter @NonNull String actividad;
     @Getter @Setter @NonNull Personal personal;
     @Getter @Setter @NonNull Date fechaInicio;

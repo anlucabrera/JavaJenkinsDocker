@@ -7,7 +7,9 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -112,7 +114,7 @@ public class EjbRegistroEventosEscolares {
      */
     public ResultadoEJB<List<DtoCalendarioEventosEscolares>> getCalendarioEventosEscolares(PeriodosEscolares periodo){
         try{
-            List<DtoCalendarioEventosEscolares> listaEventosRegistrados = em.createQuery("SELECT e FROM EventoEscolar e WHERE e.periodo=:periodo ORDER BY e.tipo ASC", EventoEscolar.class)
+            List<DtoCalendarioEventosEscolares> listaEventosRegistrados = em.createQuery("SELECT e FROM EventoEscolar e WHERE e.periodo=:periodo ORDER BY e.evento ASC", EventoEscolar.class)
                     .setParameter("periodo", periodo.getPeriodo())
                     .getResultStream()
                     .map(evento -> packEventoRegistrado(evento).getValor())
@@ -181,36 +183,27 @@ public class EjbRegistroEventosEscolares {
     public ResultadoEJB<List<DtoEventosEscolares>> getEventosEscolares(PeriodosEscolares periodo, Personal personal){
         try{
             
-            List<String> listaActividades = new ArrayList<>();
+            Map<Integer, String> listaActividadesPeriodo = new HashMap<Integer, String>();
             
             switch (periodo.getMesInicio().getNumero()) {
                 case 9:
-                    listaActividades.add("Registro_fichas_admision_ingeniería"); listaActividades.add("Validacion_ficha_ingeniería"); listaActividades.add("Generacion_de_grupos");
-                    listaActividades.add("Inscripciones"); listaActividades.add("Inscripción_ingeniería"); listaActividades.add("Reincorporaciones"); listaActividades.add("Reinscripción_autonóma");
-                    listaActividades.add("Asignación_de_tutores"); listaActividades.add("Carga_académica"); listaActividades.add("Configuración_de_materia"); listaActividades.add("Asignación_indicadores_criterios");
-                    listaActividades.add("Validacion_Asignación_indicadores_criterios"); listaActividades.add("Fusión_de_grupos"); listaActividades.add("Captura_de_calificaciones");
-                    listaActividades.add("Captura_tarea_integradora"); listaActividades.add("Bajas_causas_no_academicas");
+                    listaActividadesPeriodo = getListaActividadesSepDic().getValor();
                     break;
                 case 1:
-                    listaActividades.add("Registro_fichas_admision"); listaActividades.add("Registro_citas"); listaActividades.add("Generacion_de_grupos");
-                    listaActividades.add("Reincorporaciones"); listaActividades.add("Reinscripción_autonóma"); listaActividades.add("Asignación_de_tutores");
-                    listaActividades.add("Carga_académica"); listaActividades.add("Configuración_de_materia"); listaActividades.add("Asignación_indicadores_criterios");
-                    listaActividades.add("Validacion_Asignación_indicadores_criterios"); listaActividades.add("Fusión_de_grupos"); listaActividades.add("Captura_de_calificaciones");
-                    listaActividades.add("Captura_tarea_integradora"); listaActividades.add("Bajas_causas_no_academicas");
+                    listaActividadesPeriodo = getListaActividadesEneAbr().getValor();
                     break;
                 case 5:
-                    listaActividades.add("Registro_citas"); listaActividades.add("Generacion_de_grupos"); listaActividades.add("Reincorporaciones"); listaActividades.add("Reinscripción_autonóma");
-                    listaActividades.add("Asignación_de_tutores"); listaActividades.add("Carga_académica"); listaActividades.add("Configuración_de_materia"); listaActividades.add("Asignación_indicadores_criterios");
-                    listaActividades.add("Validacion_Asignación_indicadores_criterios"); listaActividades.add("Fusión_de_grupos"); listaActividades.add("Captura_de_calificaciones");
-                    listaActividades.add("Captura_tarea_integradora"); listaActividades.add("Bajas_causas_no_academicas");
+                    listaActividadesPeriodo = getListaActividadesMayAgo().getValor();
                     break;
                 default:
                     break;
             }
             
-            List<DtoEventosEscolares> listaEventosEscolares = listaActividades.stream().map(actividad -> packEventoEscolar(actividad, personal).getValor())
-                    .filter(dto -> dto != null)
-                    .collect(Collectors.toList());
+//            List<DtoEventosEscolares> listaEventosEscolares = listaActividades.stream().map(actividad -> packEventoEscolar(actividad, personal).getValor())
+//                    .filter(dto -> dto != null)
+//                    .collect(Collectors.toList());
+             List<DtoEventosEscolares> listaEventosEscolares = getDtoEventosEscolares(listaActividadesPeriodo, personal).getValor();
+            
             
             return ResultadoEJB.crearCorrecto(listaEventosEscolares, "Lista de eventos escolares para registrar.");
         }catch (Exception e){
@@ -219,17 +212,112 @@ public class EjbRegistroEventosEscolares {
     }
     
     /**
+     * Permite obtener la lista de eventos escolares para periodo septiembre - diciembre
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Map<Integer, String>> getListaActividadesSepDic(){
+        try{
+            
+            Map<Integer, String> listaActividadesPeriodo = new HashMap<Integer, String>();
+            listaActividadesPeriodo.put(1, "Registro_fichas_admision_ingeniería");
+            listaActividadesPeriodo.put(2, "Validacion_ficha_ingeniería");
+            listaActividadesPeriodo.put(3, "Generacion_de_grupos");
+            listaActividadesPeriodo.put(4, "Inscripciones");
+            listaActividadesPeriodo.put(5, "Inscripción_ingeniería");
+            listaActividadesPeriodo.put(6, "Reincorporaciones");
+            listaActividadesPeriodo.put(7, "Reinscripción_autonóma");
+            listaActividadesPeriodo.put(8, "Asignación_de_tutores");
+            listaActividadesPeriodo.put(9, "Carga_académica");
+            listaActividadesPeriodo.put(10, "Configuración_de_materia");
+            listaActividadesPeriodo.put(11, "Asignación_indicadores_criterios");
+            listaActividadesPeriodo.put(12, "Validacion_Asignación_indicadores_criterios");
+            listaActividadesPeriodo.put(13, "Fusión_de_grupos");
+            listaActividadesPeriodo.put(14, "Captura_de_calificaciones");
+            listaActividadesPeriodo.put(15, "Captura_tarea_integradora");
+            listaActividadesPeriodo.put(16, "Bajas_causas_no_academicas");
+
+            return ResultadoEJB.crearCorrecto(listaActividadesPeriodo, "Lista de eventos escolares del periodo sep-dic.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de eventos escolares del periodo sep-dic. (EjbRegistroEventosEscolares.getListaActividadesSepDic)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de eventos escolares para periodo enero - abril
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Map<Integer, String>> getListaActividadesEneAbr(){
+        try{
+            
+            Map<Integer, String> listaActividadesPeriodo = new HashMap<Integer, String>();
+            listaActividadesPeriodo.put(1, "Registro_fichas_admision");
+            listaActividadesPeriodo.put(2, "Registro_citas");
+            listaActividadesPeriodo.put(3, "Generacion_de_grupos");
+            listaActividadesPeriodo.put(4, "Reincorporaciones");
+            listaActividadesPeriodo.put(5, "Reinscripción_autonóma");
+            listaActividadesPeriodo.put(6, "Asignación_de_tutores");
+            listaActividadesPeriodo.put(7, "Carga_académica");
+            listaActividadesPeriodo.put(8, "Configuración_de_materia");
+            listaActividadesPeriodo.put(9, "Asignación_indicadores_criterios");
+            listaActividadesPeriodo.put(10, "Validacion_Asignación_indicadores_criterios");
+            listaActividadesPeriodo.put(11, "Fusión_de_grupos");
+            listaActividadesPeriodo.put(12, "Captura_de_calificaciones");
+            listaActividadesPeriodo.put(13, "Captura_tarea_integradora");
+            listaActividadesPeriodo.put(14, "Bajas_causas_no_academicas");
+
+
+            return ResultadoEJB.crearCorrecto(listaActividadesPeriodo, "Lista de eventos escolares del periodo ene-abr.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de eventos escolares del periodo ene-abr. (EjbRegistroEventosEscolares.getListaActividadesEneAbr)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de eventos escolares para periodo mayo - agosto
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Map<Integer, String>> getListaActividadesMayAgo(){
+        try{
+            
+            Map<Integer, String> listaActividadesPeriodo = new HashMap<Integer, String>();
+            listaActividadesPeriodo.put(1, "Registro_citas");
+            listaActividadesPeriodo.put(2, "Generacion_de_grupos");
+            listaActividadesPeriodo.put(3, "Reincorporaciones");
+            listaActividadesPeriodo.put(4, "Reinscripción_autonóma");
+            listaActividadesPeriodo.put(5, "Asignación_de_tutores");
+            listaActividadesPeriodo.put(6, "Carga_académica");
+            listaActividadesPeriodo.put(7, "Configuración_de_materia");
+            listaActividadesPeriodo.put(8, "Asignación_indicadores_criterios");
+            listaActividadesPeriodo.put(9, "Validacion_Asignación_indicadores_criterios");
+            listaActividadesPeriodo.put(10, "Fusión_de_grupos");
+            listaActividadesPeriodo.put(11, "Captura_de_calificaciones");
+            listaActividadesPeriodo.put(12, "Captura_tarea_integradora");
+            listaActividadesPeriodo.put(13, "Bajas_causas_no_academicas");
+
+
+            return ResultadoEJB.crearCorrecto(listaActividadesPeriodo, "Lista de eventos escolares del periodo may-ago.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de eventos escolares del periodo may-ago. (EjbRegistroEventosEscolares.getListaActividadesMayAgo)", e, null);
+        }
+    }
+    
+    /**
      * Empaqueta un evento de estadía del proceso en su DTO Wrapper
-     * @param actividad
+     * @param listaActividaes
      * @param personal
      * @return Dto del documento empaquetado
      */
-    public ResultadoEJB<DtoEventosEscolares> packEventoEscolar(String actividad, Personal personal){
+    public ResultadoEJB<List<DtoEventosEscolares>> getDtoEventosEscolares(Map<Integer, String> listaActividaes, Personal personal){
         try{
-            DtoEventosEscolares dto = new DtoEventosEscolares(actividad, personal, new Date(), new Date());
-            return ResultadoEJB.crearCorrecto(dto, "Evento empaquetado.");
+            List<DtoEventosEscolares> listaEventosEscolares = new ArrayList<>();
+            
+            for (Map.Entry<Integer, String> entry : listaActividaes.entrySet()) {
+             DtoEventosEscolares dto = new DtoEventosEscolares(entry.getKey(), entry.getValue(), personal, new Date(), new Date());
+             listaEventosEscolares.add(dto);
+            }
+            return ResultadoEJB.crearCorrecto(listaEventosEscolares, "Evento empaquetado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el evento (EjbRegistroEventosEscolares.packEventoEscolar).", e, DtoEventosEscolares.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el evento (EjbRegistroEventosEscolares.packEventoEscolar).", e, null);
         }
     }
     
@@ -258,7 +346,7 @@ public class EjbRegistroEventosEscolares {
      * @param listaEventosEscolares
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoCalendarioEventosEscolares>> guardarEventosEscolares(PeriodosEscolares periodo, List<DtoEventosEscolares> listaEventosEscolares){
+    public ResultadoEJB<List<DtoCalendarioEventosEscolares>> guardarEventosEscolares(PeriodosEscolares periodo, List<DtoEventosEscolares> listaEventosEscolares, Personal personal){
         try{
             
             listaEventosEscolares.forEach(evento -> {
@@ -268,6 +356,7 @@ public class EjbRegistroEventosEscolares {
                 eventoEscolar.setTipo(evento.getActividad());
                 eventoEscolar.setInicio(evento.getFechaInicio());
                 eventoEscolar.setFin(fechaFinCompleta);
+                eventoEscolar.setCreador(personal.getClave());
                 em.persist(eventoEscolar);
                 em.flush();
             });

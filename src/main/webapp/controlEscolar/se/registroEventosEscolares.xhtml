@@ -29,11 +29,10 @@
 
     <ui:define name="body">
         <c:if test="#{registroEventosEscolares.cargado}">
-        <adm:breadcrumb title="Registro de eventos de estadía"/>
-        <adm:sidebar collapsed="true"/>
+        <adm:breadcrumb title="Registro de eventos escolares"/>
         <div class="contenedor">
             <c:if test="#{registroEventosEscolares.tieneAcceso}">
-                <c:if test="#{registroEventosEscolares.rol.periodoEscolar ne null}">
+                <c:if test="#{registroEventosEscolares.rol.periodosEscolares ne null}">
                 <!-- zona de importación de enums -->
                 <h:form id="frm" prependId="false" class="form-inline">
                     <div class="box box-primary">
@@ -41,8 +40,8 @@
                             <div id="main-buttons" class="hidden-sm hidden-xs">
                                 <p:toolbar id="tb">
                                     <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo: #{caster.clavePeriodoToString(registroEventosEscolares.rol.periodoActivo)}" />
                                         <p:spacer width="5" />
-
                                     </f:facet>
                                     <f:facet name="right">
                                         <p:commandLink
@@ -58,7 +57,7 @@
                             </div>
                             <div class="box box-solid">
                                 <div class="box-body">
-                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-4'}" />
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-3'}" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
                                             <div class="ui-material">
@@ -84,12 +83,16 @@
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column rowspan="2" headerText="Actividad" style="width: 400px;"/>
-                                                            <p:column rowspan="2" headerText="Fecha inicio" style="width: 150px;"/>
-                                                            <p:column rowspan="2" headerText="Fecha fin" style="width: 150px;"/>
+                                                            <p:column headerText="Clave evento" style="width: 100px;"/>
+                                                            <p:column headerText="Actividad" style="width: 400px;"/>
+                                                            <p:column headerText="Fecha inicio" style="width: 150px;"/>
+                                                            <p:column headerText="Fecha fin" style="width: 150px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:ajax event="cellEdit" listener="#{registroEventosEscolares.onCellEdit}"/>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{evenEscR.eventoEscolar.evento}"/>
+                                                    </p:column>
                                                     <p:column style="text-align: justify;">
                                                         <h:outputText value="#{evenEscR.eventoEscolar.tipo}"/>
                                                     </p:column>
@@ -136,19 +139,23 @@
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column rowspan="2" headerText="Actividad" style="width: 400px;"/>
-                                                            <p:column rowspan="2" headerText="Fecha inicio" style="width: 150px;"/>
-                                                            <p:column rowspan="2" headerText="Fecha fin" style="width: 150px;"/>
+                                                            <p:column headerText="No." style="width: 100px;"/>
+                                                            <p:column headerText="Actividad" style="width: 400px;"/>
+                                                            <p:column headerText="Fecha inicio" style="width: 150px;"/>
+                                                            <p:column headerText="Fecha fin" style="width: 150px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{evenEsc.numero}"/>
+                                                    </p:column>
                                                     <p:column style="text-align: justify;">
                                                         <h:outputText value="#{evenEsc.actividad}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                       <p:calendar id="inicio" locale="es" value="#{evenEsc.inicio}" pattern="dd-MM-yyyy" mask="true"/>
+                                                       <p:calendar id="inicio" locale="es" value="#{evenEsc.fechaInicio}" pattern="dd-MM-yyyy" mask="true"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                       <p:calendar id="fin" locale="es" value="#{evenEsc.fin}" pattern="dd-MM-yyyy" mask="true"/>
+                                                       <p:calendar id="fin" locale="es" value="#{evenEsc.fechaFin}" pattern="dd-MM-yyyy" mask="true"/>
                                                     </p:column>
                                                 </p:dataTable>
                                                 </div>
