@@ -199,15 +199,72 @@ public class EjbRegistroEventosEscolares {
                     break;
             }
             
-//            List<DtoEventosEscolares> listaEventosEscolares = listaActividades.stream().map(actividad -> packEventoEscolar(actividad, personal).getValor())
-//                    .filter(dto -> dto != null)
-//                    .collect(Collectors.toList());
-             List<DtoEventosEscolares> listaEventosEscolares = getDtoEventosEscolares(listaActividadesPeriodo, personal).getValor();
-            
+            List<DtoEventosEscolares> listaEventosEscolares = getDtoEventosEscolares(listaActividadesPeriodo, personal).getValor();
             
             return ResultadoEJB.crearCorrecto(listaEventosEscolares, "Lista de eventos escolares para registrar.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de eventos escolares para registrar. (EjbRegistroEventosEscolares.getEventosEscolares)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de opciones de eventos escolares que se pueden agregar
+     * @param listaEventosRegistrados
+     * @param personal
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<String>> getListaOpcionesEventosEscolares(List<DtoCalendarioEventosEscolares> listaEventosRegistrados){
+        try{
+            List<String> listaEventos = listaEventosRegistrados.stream().map(p->p.getEventoEscolar().getTipo()).collect(Collectors.toList());
+            
+            Map<Integer, String> listaActividadesGeneral = getListaActividadesGeneral().getValor();
+            
+            List<String> listaOpcionesEventos = new ArrayList<>();
+            
+            for (Map.Entry<Integer, String> entry : listaActividadesGeneral.entrySet()) {
+             
+             Long coincidencia = listaEventos.stream().filter(p->p.equals(entry.getValue())).count();
+             if(coincidencia == 0){
+                listaOpcionesEventos.add(entry.getValue());
+             }
+            }
+            
+            return ResultadoEJB.crearCorrecto(listaOpcionesEventos, "Lista de eventos escolares para registrar.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de eventos escolares para registrar. (EjbRegistroEventosEscolares.getEventosEscolares)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de eventos escolares para periodo septiembre - diciembre
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Map<Integer, String>> getListaActividadesGeneral(){
+        try{
+            
+            Map<Integer, String> listaActividadesPeriodo = new HashMap<Integer, String>();
+            listaActividadesPeriodo.put(1, "Registro_citas");
+            listaActividadesPeriodo.put(2, "Registro_fichas_admision");
+            listaActividadesPeriodo.put(3, "Registro_fichas_admision_ingeniería");
+            listaActividadesPeriodo.put(4, "Validacion_ficha_ingeniería");
+            listaActividadesPeriodo.put(5, "Generacion_de_grupos");
+            listaActividadesPeriodo.put(6, "Inscripciones");
+            listaActividadesPeriodo.put(7, "Inscripción_ingeniería");
+            listaActividadesPeriodo.put(8, "Reincorporaciones");
+            listaActividadesPeriodo.put(9, "Reinscripción_autonóma");
+            listaActividadesPeriodo.put(10, "Asignación_de_tutores");
+            listaActividadesPeriodo.put(11, "Carga_académica");
+            listaActividadesPeriodo.put(12, "Configuración_de_materia");
+            listaActividadesPeriodo.put(13, "Asignación_indicadores_criterios");
+            listaActividadesPeriodo.put(14, "Validacion_Asignación_indicadores_criterios");
+            listaActividadesPeriodo.put(15, "Fusión_de_grupos");
+            listaActividadesPeriodo.put(16, "Captura_de_calificaciones");
+            listaActividadesPeriodo.put(17, "Captura_tarea_integradora");
+            listaActividadesPeriodo.put(18, "Bajas_causas_no_academicas");
+
+            return ResultadoEJB.crearCorrecto(listaActividadesPeriodo, "Lista de eventos escolares general.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de eventos escolares general. (EjbRegistroEventosEscolares.getListaActividadesGeneral)", e, null);
         }
     }
     
@@ -312,7 +369,7 @@ public class EjbRegistroEventosEscolares {
             List<DtoEventosEscolares> listaEventosEscolares = new ArrayList<>();
             
             for (Map.Entry<Integer, String> entry : listaActividaes.entrySet()) {
-             DtoEventosEscolares dto = new DtoEventosEscolares(entry.getKey(), entry.getValue(), personal, new Date(), new Date());
+             DtoEventosEscolares dto = new DtoEventosEscolares(entry.getKey(), entry.getValue(), personal, new Date(), new Date(), true);
              listaEventosEscolares.add(dto);
             }
             return ResultadoEJB.crearCorrecto(listaEventosEscolares, "Evento empaquetado.");
@@ -382,7 +439,50 @@ public class EjbRegistroEventosEscolares {
             
             return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente la lista de eventos escolares del periodo seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar la lista de eventos escolares del evento seleccionado. (EjbRegistroEventosEscolares.eliminarEventosEscolares)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar la lista de eventos escolares del periodo seleccionado. (EjbRegistroEventosEscolares.eliminarEventosEscolares)", e, null);
+        }
+    }
+    
+     /**
+     * Permite registrar el evento escolar en el periodo escolar seleccionado
+     * @param periodo
+     * @param evento
+     * @param fechaInicio
+     * @param fechaFin
+     * @param personal
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<EventoEscolar> agregarEventoEscolar(PeriodosEscolares periodo, String evento, Date fechaInicio, Date fechaFin, Personal personal){
+        try{
+            
+            EventoEscolar eventoEscolar = new EventoEscolar();
+            eventoEscolar.setPeriodo(periodo.getPeriodo());
+            eventoEscolar.setTipo(evento);
+            eventoEscolar.setInicio(fechaInicio);
+            eventoEscolar.setFin(fechaFin);
+            eventoEscolar.setCreador(personal.getClave());
+            em.persist(eventoEscolar);
+             
+            return ResultadoEJB.crearCorrecto(eventoEscolar, "Evento escolar registrado en el periodo seleccionado.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar el evento escolar en el periodo seleccionado. (EjbRegistroEventosEscolares.agregarEventoEscolar)", e, null);
+        }
+    }
+    
+    /**
+     * Permite eliminar el evento escolar del periodo seleccionado
+     * @param eventoEscolar
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> eliminarEventoEscolar(EventoEscolar eventoEscolar){
+        try{
+            Integer delete = em.createQuery("DELETE FROM EventoEscolar e WHERE e.evento=:evento", EventoEscolar.class)
+                .setParameter("evento", eventoEscolar.getEvento())
+                .executeUpdate();
+            
+            return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente el evento escolar del periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el evento escolar del periodo seleccionado. (EjbRegistroEventosEscolares.eliminarEventoEscolar)", e, null);
         }
     }
     

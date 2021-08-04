@@ -33,6 +33,7 @@ import org.omnifaces.util.Ajax;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Date;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPermisoAperturaExtemporanea;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -87,8 +88,10 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
            
             rol.setNivelRol(NivelRol.OPERATIVO);
-            rol.setPeriodoActivo(ejbPermisoAperturaExtemporanea.getPeriodoActual());
+            rol.setPeriodoActivo(ejbPermisoAperturaExtemporanea.getPeriodoActual().getPeriodo());
             rol.setExisteRegistro(Boolean.FALSE);
+            rol.setAgregarEvento(Boolean.FALSE);
+            rol.setDeshabilitarEliminar(Boolean.TRUE);
 //            rol.setSoloLectura(true);
             
             rol.getInstrucciones().add("Seleccione periodo escolar.");
@@ -118,9 +121,22 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
             if (res.getValor().size() != 0) {
                 rol.setPeriodosEscolares(res.getValor());
                 rol.setPeriodoEscolar(ejb.getUltimoPeriodoRegistrado().getValor());
-                existeRegistro();
+                verificarPermisoEliminar();
             }
         }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite verificar si se habilita o no el permiso para eliminar información
+     */
+    public void verificarPermisoEliminar(){
+        if (rol.getPeriodoEscolar().getPeriodo()>rol.getPeriodoActivo()) {
+            rol.setDeshabilitarEliminar(Boolean.FALSE);
+        }else{ 
+            rol.setDeshabilitarEliminar(Boolean.TRUE);
+        }
+            Ajax.update("frm");
+            existeRegistro();
     }
     
     /**
@@ -146,6 +162,7 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
         ResultadoEJB<List<DtoCalendarioEventosEscolares>> res = ejb.getCalendarioEventosEscolares(rol.getPeriodoEscolar());
         if(res.getCorrecto()){
             rol.setListaEventosRegistrados(res.getValor());
+            listaOpcionesEventos();
             Ajax.update("tbListaEventosEscolaresRegistrados");
         }else mostrarMensajeResultadoEJB(res);
     
@@ -163,6 +180,21 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
     
     }
     
+     /**
+     * Permite obtener la lista de opciones de eventos escolares
+     */
+    public void listaOpcionesEventos(){
+        ResultadoEJB<List<String>> res = ejb.getListaOpcionesEventosEscolares(rol.getListaEventosRegistrados());
+        if(res.getCorrecto()){
+            rol.setListaOpcionesEventos(res.getValor());
+            rol.setOpcionEvento(rol.getListaOpcionesEventos().get(0));
+            rol.setFechaInicio(new Date());
+            rol.setFechaFin(new Date());
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(res);
+    
+    }
+    
     /**
      * Permite que al cambiar o seleccionar un periodo escolar se actualice la información en la tabla que corresponda
      * @param e Evento del cambio de valor
@@ -171,13 +203,38 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
         if(e.getNewValue() instanceof PeriodosEscolares){
             PeriodosEscolares periodo = (PeriodosEscolares)e.getNewValue();
             rol.setPeriodoEscolar(periodo);
-            existeRegistro();
+            verificarPermisoEliminar();
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
     
+    /**
+     * Permite que al cambiar el valor del input para agregar un evento y se muestren los componentes correspondientes
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarAgregarEvento(ValueChangeEvent e){
+        if(e.getNewValue() instanceof Boolean){
+            Boolean valor = (Boolean)e.getNewValue();
+            rol.setAgregarEvento(valor);
+            Ajax.update("frm");
+        }else mostrarMensaje("");
+    }
+    
+    /**
+     * Permite que al cambiar o seleccionar un evento escolar se actualice el valor de la variable
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarEvento(ValueChangeEvent e){
+        if(e.getNewValue() instanceof String){
+            String evento = (String)e.getNewValue();
+            rol.setOpcionEvento(evento);
+            Ajax.update("frm");
+        }else mostrarMensaje("");
+    }
+    
+    
      /**
-     * Permite editar las fechas de inicio y fin de los eventos de estadía registrados previamente
+     * Permite editar la fechas de inicio y fin de un evento escolar que ya se encuentra registrado
      * @param event Evento de edición de la celda
      */
     public void onCellEdit(CellEditEvent event) {
@@ -189,25 +246,52 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
     }
     
      /**
-     * Permite guardar la lista de eventos de estadía de la generación y nivel educativo seleccionado
+     * Permite guardar la lista de eventos escolares para el periodo escolar seleccionado
      */
     public void guardarEventosEscolares(){
         ResultadoEJB<List<DtoCalendarioEventosEscolares>> res = ejb.guardarEventosEscolares(rol.getPeriodoEscolar(), rol.getListaEventos(), rol.getUsuario().getPersonal());
         if(res.getCorrecto()){
             mostrarMensajeResultadoEJB(res);
-            existeRegistro();
+            verificarPermisoEliminar();
+            Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
         
     }
     
      /**
-     * Permite guardar la lista de eventos de estadía de la generación y nivel educativo seleccionado
+     * Permite eliminar la lista de eventos escolares del periodo escolar seleccionado
      */
     public void eliminarEventosEscolares(){
         ResultadoEJB<Integer> res = ejb.eliminarEventosEscolares(rol.getPeriodoEscolar());
         if(res.getCorrecto()){
             mostrarMensajeResultadoEJB(res);
-            existeRegistro();
+            verificarPermisoEliminar();
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(res);
+        
+    }
+    
+     /**
+     * Permite registrar un evento escolar en el periodo escolar seleccionado
+     */
+    public void agregarNuevoEvento(){
+        ResultadoEJB<EventoEscolar> agregar = ejb.agregarEventoEscolar(rol.getPeriodoEscolar(), rol.getOpcionEvento(), rol.getFechaInicio(), rol.getFechaFin(), rol.getUsuario().getPersonal());
+        if (agregar.getCorrecto()) {
+            mostrarMensajeResultadoEJB(agregar);
+            listaEventosEscolaresRegistrados();
+            Ajax.update("frm");
+        }
+    }
+    
+    /**
+     * Permite eliminar el evento escolar del periodo seleccionado
+     * @param dtoCalendarioEventosEscolares
+    */
+    public void eliminarEventoEscolar(DtoCalendarioEventosEscolares dtoCalendarioEventosEscolares){
+        ResultadoEJB<Integer> res = ejb.eliminarEventoEscolar(dtoCalendarioEventosEscolares.getEventoEscolar());
+        if(res.getCorrecto()){
+            mostrarMensajeResultadoEJB(res);
+            listaEventosEscolaresRegistrados();
         }else mostrarMensajeResultadoEJB(res);
         
     }

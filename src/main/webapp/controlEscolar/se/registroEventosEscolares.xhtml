@@ -24,7 +24,7 @@
     </ui:define>
 
     <ui:define name="title">
-        Registro de eventos de estadía
+        Registro de eventos escolares
     </ui:define>
 
     <ui:define name="body">
@@ -57,7 +57,7 @@
                             </div>
                             <div class="box box-solid">
                                 <div class="box-body">
-                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-3'}" />
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
                                             <div class="ui-material">
@@ -68,6 +68,46 @@
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Periodo Escolar" for="periodo"/>
                                                 <p:message for="periodo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:inputSwitch id="agregarEvento" styleClass="form-control" value="#{registroEventosEscolares.rol.agregarEvento}" valueChangeListener="#{registroEventosEscolares.cambiarAgregarEvento}"> 
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:inputSwitch>
+                                                <p:outputLabel for="agregarEvento" value="#{registroEventosEscolares.rol.agregarEvento?'Agregar evento':'No agregar evento'}" />
+                                                <p:message for="agregarEvento" display="tooltip" /> 
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="evento" value="#{registroEventosEscolares.rol.opcionEvento}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{registroEventosEscolares.cambiarEvento}" rendered="#{registroEventosEscolares.rol.agregarEvento}">
+                                                    <f:selectItems value="#{registroEventosEscolares.rol.listaOpcionesEventos}" var="evento" itemValue="#{evento}" itemLabel="#{evento}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>  
+                                                <p:outputLabel value="Evento" for="evento" rendered="#{registroEventosEscolares.rol.agregarEvento}"/>
+                                                <p:message for="evento" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:calendar id="fechaInicio" locale="es" value="#{registroEventosEscolares.rol.fechaInicio}" pattern="dd-MM-yyyy HH:mm:ss" mask="true" rendered="#{registroEventosEscolares.rol.agregarEvento}"/>
+                                                <p:outputLabel value="Fecha inicio" for="fechaInicio" rendered="#{registroEventosEscolares.rol.agregarEvento}"/>
+                                                <p:message for="fechaInicio" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                               <p:calendar id="fechaFin" locale="es" value="#{registroEventosEscolares.rol.fechaFin}" pattern="dd-MM-yyyy HH:mm:ss" mask="true" rendered="#{registroEventosEscolares.rol.agregarEvento}"/>
+                                               <p:outputLabel value="Fecha fin" for="fechaFin" rendered="#{registroEventosEscolares.rol.agregarEvento}"/>
+                                               <p:message for="fechaFin" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                               <p:commandButton id="agregar" actionListener="#{registroEventosEscolares.agregarNuevoEvento()}" class="btn btn-sm btn-info" icon="fa fa-save" value="Guardar" rendered="#{registroEventosEscolares.rol.agregarEvento}"/>
                                             </div>
                                         </div>
                                     </div>
@@ -87,6 +127,7 @@
                                                             <p:column headerText="Actividad" style="width: 400px;"/>
                                                             <p:column headerText="Fecha inicio" style="width: 150px;"/>
                                                             <p:column headerText="Fecha fin" style="width: 150px;"/>
+                                                            <p:column headerText="Eliminar" style="width: 100px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:ajax event="cellEdit" listener="#{registroEventosEscolares.onCellEdit}"/>
@@ -108,6 +149,13 @@
                                                             <f:facet name="input"><p:calendar id="fechaFin" locale="es" value="#{evenEscR.eventoEscolar.fin}" pattern="dd-MM-yyyy HH:mm:ss" mask="true"/></f:facet>
                                                          </p:cellEditor>
                                                     </p:column>
+                                                    <p:column>
+                                                            <center>
+                                                                <p:commandButton actionListener="#{registroEventosEscolares.eliminarEventoEscolar(evenEscR)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar evento." disabled="#{registroEventosEscolares.rol.deshabilitarEliminar}">
+                                                                     <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro seleccionado?" icon="ui-icon-alert" />
+                                                                </p:commandButton>
+                                                            </center>
+                                                    </p:column>
                                                 </p:dataTable>
                                                 </div>
                                             </center>
@@ -115,7 +163,7 @@
                                                  <div class="col-sm-12 col-md-12 col-lg-5"/>
                                                  <div class="col-sm-12 col-md-12 col-lg-2">
                                                      <center>
-                                                         <p:commandButton id="btnEliminarRegistro" value="Eliminar" actionListener="#{registroEventosEscolares.eliminarEventosEscolares()}" 
+                                                         <p:commandButton id="btnEliminarRegistro" value="Eliminar" actionListener="#{registroEventosEscolares.eliminarEventosEscolares()}" disabled="#{registroEventosEscolares.rol.deshabilitarEliminar}"
                                                                  icon="fa fa-trash" class="btn-primary btn-block col-md-3" update="@form"  process="@form">
                                                             <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar los eventos registrados? Es probable que tenga información relacionada y podría perder información." icon="ui-icon-alert" />
                                                          </p:commandButton>
@@ -143,6 +191,7 @@
                                                             <p:column headerText="Actividad" style="width: 400px;"/>
                                                             <p:column headerText="Fecha inicio" style="width: 150px;"/>
                                                             <p:column headerText="Fecha fin" style="width: 150px;"/>
+                                                            <p:column headerText="Seleccionar" style="width: 100px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column style="text-align: center;">
@@ -156,6 +205,12 @@
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                        <p:calendar id="fin" locale="es" value="#{evenEsc.fechaFin}" pattern="dd-MM-yyyy" mask="true"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:inputSwitch id="habilitarGuardar" value="#{evenEsc.habilitarGuardar}"> 
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                        </p:inputSwitch>
                                                     </p:column>
                                                 </p:dataTable>
                                                 </div>

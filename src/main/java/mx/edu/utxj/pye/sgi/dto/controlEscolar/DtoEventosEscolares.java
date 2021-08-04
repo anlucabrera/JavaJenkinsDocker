@@ -25,4 +25,5 @@ public class DtoEventosEscolares implements Serializable{
     @Getter @Setter @NonNull Personal personal;
     @Getter @Setter @NonNull Date fechaInicio;
     @Getter @Setter @NonNull Date fechaFin;
+    @Getter @Setter @NonNull Boolean habilitarGuardar;
 }

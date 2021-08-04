@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.util.Date;
 import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
@@ -26,7 +27,7 @@ public class RegistroEventosEscolaresRolEscolares extends AbstractRol{
      /**
      * Representa el periodo escolar activo
      */
-    @Getter @NonNull private PeriodosEscolares periodoActivo;
+    @Getter @NonNull private Integer periodoActivo;
   
     /**
      * Lista periodos escolares
@@ -44,14 +45,44 @@ public class RegistroEventosEscolaresRolEscolares extends AbstractRol{
     @Getter @NonNull private Boolean existeRegistro;
     
     /**
-     * Lista de eventos de estadía
+     * Lista de eventos escolares registrados
      */
     @Getter @NonNull private List<DtoCalendarioEventosEscolares> listaEventosRegistrados;
     
-     /**
-     * Lista de eventos de estadía
+    /**
+     * Lista de eventos escolares para registrar
      */
     @Getter @NonNull private List<DtoEventosEscolares> listaEventos;
+    
+    /**
+     * Agregar evento
+     */
+    @Getter @NonNull private Boolean agregarEvento;
+    
+    /**
+     * Lista de opciones de eventos escolares para agregar
+     */
+    @Getter @NonNull private List<String> listaOpcionesEventos;
+    
+    /**
+     * Evento escolar que se agregará
+     */
+    @Getter @NonNull private String opcionEvento;
+    
+    /**
+     * Fecha de inicio del evento escolar
+     */
+    @Getter @NonNull private Date fechaInicio;
+    
+    /**
+     * Fecha de fin del evento escolar
+     */
+    @Getter @NonNull private Date fechaFin;
+    
+    /**
+     * Representa si se deshabilita o no la acción de eliminar
+     */
+    @Getter @NonNull private Boolean deshabilitarEliminar;
     
     public RegistroEventosEscolaresRolEscolares(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
@@ -62,7 +93,7 @@ public class RegistroEventosEscolaresRolEscolares extends AbstractRol{
         this.usuario = usuario;
     }
 
-    public void setPeriodoActivo(PeriodosEscolares periodoActivo) {
+    public void setPeriodoActivo(Integer periodoActivo) {
         this.periodoActivo = periodoActivo;
     }
     
@@ -85,4 +116,29 @@ public class RegistroEventosEscolaresRolEscolares extends AbstractRol{
     public void setListaEventos(List<DtoEventosEscolares> listaEventos) {
         this.listaEventos = listaEventos;
     }
+
+    public void setAgregarEvento(Boolean agregarEvento) {
+        this.agregarEvento = agregarEvento;
+    }
+
+    public void setListaOpcionesEventos(List<String> listaOpcionesEventos) {
+        this.listaOpcionesEventos = listaOpcionesEventos;
+    }
+
+    public void setOpcionEvento(String opcionEvento) {
+        this.opcionEvento = opcionEvento;
+    }
+
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public void setFechaFin(Date fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public void setDeshabilitarEliminar(Boolean deshabilitarEliminar) {
+        this.deshabilitarEliminar = deshabilitarEliminar;
+    }
+    
 }
