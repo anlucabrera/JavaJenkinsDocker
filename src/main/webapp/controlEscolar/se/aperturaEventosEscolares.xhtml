@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Apertura eventos escolares
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{aperturaEventosEscolares.cargado}">
+        <adm:breadcrumb title="Apertura eventos escolares"/>
+
+        <div class="contenedor">
+            <c:if test="#{aperturaEventosEscolares.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(aperturaEventosEscolares.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <div class="row margin-bottom" style="margin-top: 30px;">
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{aperturaEventosEscolares.rol.periodoEscolar}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{aperturaEventosEscolares.cambiarPeriodo}">
+                                                    <f:selectItems value="#{aperturaEventosEscolares.rol.periodosEscolares}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="ui-material">
+                                                <p:selectOneRadio id="tipoBusqueda" value="#{aperturaEventosEscolares.rol.tipoBusqueda}" valueChangeListener="#{aperturaEventosEscolares.cambiarTipoBusqueda}">
+                                                        <f:selectItem itemLabel="Área o Departamento" itemValue="busquedaGeneral" />
+                                                        <f:selectItem itemLabel="Personal" itemValue="busquedaPersonal" />
+                                                        <p:ajax update="@this" process="@this"/>
+                                                        <p:autoUpdate />
+                                                </p:selectOneRadio>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="area" value="#{aperturaEventosEscolares.rol.area}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{aperturaEventosEscolares.cambiarArea}" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaGeneral'}">
+                                                    <f:selectItems value="#{aperturaEventosEscolares.rol.areas}" var="area" itemValue="#{area}" itemLabel="#{area.nombre}"/>
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Área o Departamento" for="area" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaGeneral'}"/>
+                                                <p:message for="area" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaGeneral'}"/>
+                                                
+                                                <p:autoComplete id="personal" value="#{aperturaEventosEscolares.rol.personal}" completeMethod="#{aperturaEventosEscolares.completePersonal}" queryDelay="800"
+                                                                valueChangeListener="#{aperturaEventosEscolares.cambiarPersonal}" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaPersonal'}"
+                                                                var="personal" itemValue="#{personal}" itemLabel="#{personal.personal.nombre}" converter="entityConverter" forceSelection="true" size="35">
+                                                    <p:column>#{personal.personal.clave}</p:column>
+                                                    <p:column>#{personal.personal.nombre}</p:column>
+                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                </p:autoComplete>
+                                                <p:outputLabel value="Personal" for="personal" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaPersonal'}"/>
+                                                <p:message for="personal" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaPersonal'}"/>
+                                            </div>
+                                        </div>
+                                         <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="evento" value="#{aperturaEventosEscolares.rol.evento}" converter="entityConverter" valueChangeListener="#{aperturaEventosEscolares.cambiarEvento}">
+                                                    <f:selectItems value="#{aperturaEventosEscolares.rol.eventos}" var="evento"
+                                                                   itemValue="#{evento}" itemLabel="#{evento.tipo}"/>
+                                                    <p:ajax update="@this" process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Evento" for="evento"/>
+                                                <p:message for="evento" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="ui-material">
+                                                <p:calendar id="fechaInicio" locale="es" value="#{aperturaEventosEscolares.rol.fechaInicio}" mindate="#{aperturaEventosEscolares.rol.rangoFechaInicial}" pattern="dd-MM-yyyy" mask="true"/>
+                                                <p:outputLabel value="Fecha Inicio" for="fechaInicio"/>
+                                                <p:message for="fechaInicio" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                            <div class="ui-material">
+                                                <p:calendar id="fechaFin" locale="es" value="#{aperturaEventosEscolares.rol.fechaFin}" pattern="dd-MM-yyyy" mask="true"/>
+                                                <p:outputLabel value="Fecha Fin" for="fechaFin"/>
+                                                <p:message for="fechaFin" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p></p>
+                                    <p></p>
+                                    <p></p>
+                                    <div class="row margin-bottom" style="margin-top: 30px;">
+                                    <center>
+<!--                                        <p:commandButton id="btnGuardar" value="Guardar" actionListener="# {aperturaEventosEscolares.guardarAperturaEvento()}" icon="fa fa-pencil-square-o" class="btn-primary"/>-->
+                                    </center>   
+                                    </div>
+                                    <c:if test="#{aperturaEventosEscolares.rol.listaAperturasEventosEscolares ne null}">
+                                    <div class="row margin-bottom" style="margin-top: 60px;">
+                                            <center>
+                                                <p:dataTable id="tbAperturaEventos" var="aperturaEvento" value="#{aperturaEventosEscolares.rol.listaAperturasEventosEscolares}" 
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive" editable="true" editMode="cell" expandableRowGroups="true" emptyMessage="No hay registros de permisos de aperturas extemporáneas">
+                                                    <f:facet name="header">
+                                                        <center>Aperturas de eventos escolares registradas</center>
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Eliminar" />
+                                                            <p:column headerText="Tipo de apertura" /> 
+                                                            <p:column headerText="Nombre" /> 
+                                                            <p:column headerText="Evento" /> 
+                                                            <p:column headerText="Fecha Inicio" />
+                                                            <p:column headerText="Fecha Fin" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+<!--                                                    <p:ajax event="cellEdit" listener="# {aperturaEventosEscolares.onCellEdit}"/>-->
+                                                    <p:column>
+                                                        <center>
+                                                        <div class="btn-group">
+<!--                                                            <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="# {aperturaEventosEscolares.eliminarPermiso(aperturaEvento)}" title="Eliminar registro.">
+                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la apertura?" icon="ui-icon-alert" />
+                                                            </p:commandButton>-->
+                                                        </div>
+                                                        </center>
+                                                    </p:column>
+                                                    <p:column groupRow="true">
+                                                        <h:outputText value="#{aperturaEvento.tipoApertura}"/>
+                                                    </p:column>
+                                                    <p:column groupRow="true">
+                                                        <h:outputText value="#{aperturaEvento.areaPersonal}"/>
+                                                    </p:column>
+                                                    <p:column groupRow="true">
+                                                        <h:outputText value="#{aperturaEvento.eventoEscolarDetalle.evento.tipo}" style="text-align: center;"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{aperturaEvento.eventoEscolarDetalle.inicio}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></f:facet>
+                                                             <f:facet name="input"><p:calendar id="fechaInicio" locale="es" value="#{aperturaEvento.eventoEscolarDetalle.inicio}" pattern="dd-MM-yyyy" mask="true"/></f:facet>
+                                                         </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{aperturaEvento.eventoEscolarDetalle.fin}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText></f:facet>
+                                                             <f:facet name="input"><p:calendar id="fechaFin" locale="es" value="#{aperturaEvento.eventoEscolarDetalle.fin}" pattern="dd-MM-yyyy HH:mm:ss" mask="true"/></f:facet>
+                                                         </p:cellEditor>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p></p>
+                                                <p></p>
+                                                <p></p>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog> 
+                                            </center>
+                                    </div>
+                                    </c:if>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty aperturaEventosEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{aperturaEventosEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para registrar aperturas de eventos escolares</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{aperturaEventosEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!aperturaEventosEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal de servicios escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

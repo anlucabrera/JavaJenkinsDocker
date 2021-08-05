@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,11 +19,14 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAperturaEventosEscolares;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalendarioEventosEscolares;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEventosEscolares;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolarDetalle;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -490,7 +494,7 @@ public class EjbRegistroEventosEscolares {
     }
     
       /**
-     * Permite validar si el usuario autenticado es personal adscrito al departamento de servicios escolares
+     * Permite validar si el usuario autenticado es personal con permiso para visualizar el calendario de eventos escolares
      * @param clave Número de nómina del usuario autenticado
      * @return Resultado del proceso
      */
@@ -523,6 +527,121 @@ public class EjbRegistroEventosEscolares {
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal con permiso para consultar el calendario de eventos escolares.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbRegistroEventosEscolares.validarUsuariosCalendarioEscolar)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de aperturas de eventos escolares registrados en el periodo escolar seleccionado
+     * @param periodo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoAperturaEventosEscolares>> getAperturasEventosEscolares(PeriodosEscolares periodo){
+        try{
+            List<DtoAperturaEventosEscolares> listaAperturasEventosRegistrados = em.createQuery("SELECT e FROM EventoEscolarDetalle e WHERE e.evento.periodo=:periodo ORDER BY e.evento.evento ASC", EventoEscolarDetalle.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .getResultStream()
+                    .map(evento -> packAperturaEvento(evento).getValor())
+                    .filter(dto -> dto != null)
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(listaAperturasEventosRegistrados, "Lista de aperturas de eventos escolares.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de apertruas de eventos escolares. (EjbRegistroEventosEscolares.getAperturasEventosEscolares)", e, null);
+        }
+    }
+    
+     /**
+     * Empaqueta una apertura de un evento escolar del proceso en su DTO Wrapper
+     * @param eventoEscolarDetalle
+     * @return Dto del documento empaquetado
+     */
+    public ResultadoEJB<DtoAperturaEventosEscolares> packAperturaEvento(EventoEscolarDetalle eventoEscolarDetalle){
+        try{
+            if(eventoEscolarDetalle == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar un evento nulo.", DtoAperturaEventosEscolares.class);
+            if(eventoEscolarDetalle.getEvento()== null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar un evento con clave nula.", DtoAperturaEventosEscolares.class);
+
+            EventoEscolarDetalle eventoEscolarDetalleBD = em.find(EventoEscolarDetalle.class, eventoEscolarDetalle.getEventoDetalle());
+            if(eventoEscolarDetalleBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar un evento no registrado previamente en base de datos.", DtoAperturaEventosEscolares.class);
+            
+            Boolean eventoActivo = buscarAperturaEventoActiva(eventoEscolarDetalleBD).getValor();
+            
+            String tipoApertura ="", areaPersonal = "", situacion = "";
+            if (eventoActivo) {
+                situacion = "circuloVerde";
+            }else{
+                situacion = "circuloRojo";
+            }
+            
+            if(eventoEscolarDetalleBD.getPersona() != null && eventoEscolarDetalleBD.getArea() == null){
+                tipoApertura = "Personal";
+                Personal personal = em.find(Personal.class, eventoEscolarDetalleBD.getPersona());
+                areaPersonal = personal.getNombre().concat(" ").concat(String.valueOf(personal.getClave()));
+            }else{
+                tipoApertura = "Área o departamento";
+                AreasUniversidad area = em.find(AreasUniversidad.class, f);
+                areaPersonal = area.getNombre();
+            }
+                    
+            DtoAperturaEventosEscolares dto = new DtoAperturaEventosEscolares(eventoEscolarDetalleBD, tipoApertura, areaPersonal,situacion);
+            return ResultadoEJB.crearCorrecto(dto, "Evento empaquetado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el evento (EjbRegistroEventosEscolares.packAperturaEvento).", e, DtoAperturaEventosEscolares.class);
+        }
+    }
+    
+    /**
+     * Permite verificar si existe apertura del evento escolar activa
+     * @param eventoEscolarDetalle
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<Boolean> buscarAperturaEventoActiva(EventoEscolarDetalle eventoEscolarDetalle){
+        try{
+            EventoEscolarDetalle aperturaEventoReg = em.createQuery("SELECT e FROM EventoEscolarDetalle e WHERE e.eventoDetalle=:eventoDetalle AND current_date between e.inicio and e.fin", EventoEscolarDetalle.class)
+                    .setParameter("eventoDetalle", eventoEscolarDetalle.getEventoDetalle())
+                    .getResultStream().findFirst().orElse(null);
+           return ResultadoEJB.crearCorrecto(aperturaEventoReg != null, "Resuñtado de apertura del evento escolar activa");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
+    
+    /**
+     * Permite obtener la fecha minima para registrar la apertura
+     * @param eventoEscolar
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<Date> getFechaMinimaApertura(EventoEscolar eventoEscolar){
+        try{
+            EventoEscolar eventoEscolarReg = em.createQuery("SELECT e FROM EventoEscolar e WHERE e.evento=:eventoEscolar", EventoEscolar.class)
+                    .setParameter("eventoEscolar", eventoEscolar.getEvento())
+                    .getResultStream().findFirst().orElse(null);
+            
+            Calendar fechaFin = Calendar.getInstance();
+            fechaFin.setTime(eventoEscolarReg.getFin());
+            fechaFin.add(Calendar.DAY_OF_YEAR, 1);
+            Date fechaMinimoApertura =fechaFin.getTime();
+            
+           return ResultadoEJB.crearCorrecto(fechaMinimoApertura, "Fecha mínima para registrar la apertura.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la fecha mínima para registrar la apertura. (EjbRegistroEventosEscolares.getFechaMinimaApertura)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de áreas y departamento disponibles para realizar aperturas de eventos escolares
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<AreasUniversidad>> getAreasDepartamentos(){
+        try{
+            List<AreasUniversidad> listaAreasCoordinacionesDepartamentos = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.area=:area OR a.categoria.categoria=:categoria ORDER BY a.nombre DESC", AreasUniversidad.class)
+                    .setParameter("area", (int)10)
+                    .setParameter("categoria", (int)8)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(listaAreasCoordinacionesDepartamentos, "Lista de áreas y departamentos disponibles para realizar aperturas de eventos escolares.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de de áreas y departamentos disponibles para realizar aperturas de eventos escolares. (EjbRegistroEventosEscolares.getAreasDepartamentos)", e, null);
         }
     }
     

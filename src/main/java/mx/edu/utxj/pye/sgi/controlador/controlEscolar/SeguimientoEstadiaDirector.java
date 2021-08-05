@@ -372,4 +372,24 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
         }else mostrarMensajeResultadoEJB(res);
         return permiso;
     }
+    
+    /**
+     * Método para verificar si el estudiante tiene toda la documentación validada por parte del asesor académico para que se pueda habilitar el botón de validación
+     * @param dtoSeguimientoEstadia
+     * @return Verdadero o Falso, según sea el caso
+     */
+    public Boolean deshabilitarValidacionEstadia(@NonNull DtoSeguimientoEstadia dtoSeguimientoEstadia){
+        Boolean permiso = Boolean.TRUE;
+        
+        Boolean primerInforme = ejb.buscarValidacionDocumento(35, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+        Boolean segundoInforme = ejb.buscarValidacionDocumento(36, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+        Boolean tercerInforme = ejb.buscarValidacionDocumento(37, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+        Boolean informeFinal = ejb.buscarValidacionDocumento(38, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+        Boolean aproboEstadia = aproboEstadia(dtoSeguimientoEstadia);
+        
+        if(primerInforme && segundoInforme && tercerInforme && informeFinal && aproboEstadia){
+            permiso = Boolean.FALSE;
+        }
+        return permiso;
+    }
 }
