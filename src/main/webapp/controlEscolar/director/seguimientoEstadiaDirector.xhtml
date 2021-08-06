@@ -193,6 +193,7 @@
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <p:commandLink actionListener="#{seguimientoEstadiaDirector.validarEstadiaDirector(segEst)}" 
+                                                                        disabled="#{seguimientoEstadiaDirector.deshabilitarValidacionEstadia(segEst)}"
                                                                         class="btn btn-sm #{segEst.seguimientoEstadiaEstudiante.validacionDirector?'btn-danger':'btn-success'}"
                                                                         title="#{segEst.seguimientoEstadiaEstudiante.validacionDirector?'De clic para no validar.':'De clic para validar.'}"
                                                                         onsuccess="actualizar();"><i class="#{segEst.seguimientoEstadiaEstudiante.validacionDirector?'fa fa-close':'fa fa-check'}"/>

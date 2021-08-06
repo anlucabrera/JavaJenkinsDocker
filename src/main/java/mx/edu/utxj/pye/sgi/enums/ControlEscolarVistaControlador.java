@@ -16,9 +16,10 @@ import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados2;
 public enum ControlEscolarVistaControlador {
     PERMISO_APERTURA_EXTEMPORANEA("/controlEscolar/se/permisoAperturaExtemporanea.xhtml", PermisoAperturaExtemporaneaAdministrador.class),
     REPORTE_APERTURA_EXTEMPORANEA("/controlEscolar/pye/reporteAperturaExtemporanea.xhtml", ReporteAperturaExtemporaneaAdministrador.class),
-    CALENDARIO_EVENTOS_ESTADIA("/calendarioEventos.xhtml", CalendarioEventosEstadia.class),
-    REPORTES_ESTADIA("/reportesEstadia.xhtml", ReportesEstadia.class),
-    REPORTES_ACADEMICOS("/reportesAcademicos.xhtml", ReportesAcademicos.class),
+    CALENDARIO_EVENTOS_ESTADIA("/controlEscolar/calendarioEventosEstadia.xhtml", CalendarioEventosEstadia.class),
+    REPORTES_ESTADIA("/controlEscolar/reportesEstadia.xhtml", ReportesEstadia.class),
+    REPORTES_ACADEMICOS("/controlEscolar/reportesAcademicos.xhtml", ReportesAcademicos.class),
+    CALENDARIO_EVENTOS_ESCOLARES("/controlEscolar/calendarioEventosEscolares.xhtml", CalendarioEventosEscolares.class),
     
     CONCENTRADO_CALIFICACIONES_SECACA("/controlEscolar/secAcademica/concentradoCal.xhtml",  ConcentradoCalificacionesSecAca.class),
     AVANCE_PROGRAMATICO_SECACA("/controlEscolar/secAcademica/avanceP.xhtml",  AvanceProgramaticoSecAca.class),
@@ -60,6 +61,8 @@ public enum ControlEscolarVistaControlador {
     APERTURA_EXTEMPORANEA_ESTADIA("/controlEscolar/se/aperturaExtemporaneaEstadia.xhtml",  AperturaExtemporaneaEstadia.class),
     GESTOR_EVALUACION_ESTADIA("/controlEscolar/se/gestorEvaluacionesEstadia.xhtml",  GestorEvaluacionesEstadiaEscolares.class),
     REGISTRO_DOCUMENTOS_OFICIALES("/controlEscolar/se/registroDocumentosOficiales.xhtml",  RegistroDocumentosOficialesEscolares.class),
+    REGISTRO_EVENTOS_ESCOLARES("/controlEscolar/se/registroEventosEscolares.xhtml",  RegistroEventosEscolares.class),
+    APERTURA_EVENTOS_ESCOLARES("/controlEscolar/se/aperturaEventosEscolares.xhtml",  AperturaEventosEscolares.class),
     
     SEGUIMIENTO_ESTADIA_VINCULACION("/controlEscolar/vinculacion/seguimientoEstadiaVinculacion.xhtml", SeguimientoEstadiaVinculacion.class),
 

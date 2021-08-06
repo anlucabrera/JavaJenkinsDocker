@@ -24,7 +24,7 @@ public enum EventoEscolarTipo {
     REGISTRO_CITAS("Registro_citas"),
     REGISTRO_FICHAS_ADMISION_ING("Registro_fichas_admision_ingeniería"),
     VALIDACION_FICHA_INGENIERIA("Validacion_ficha_ingeniería"),
-    INSCRIPCION_INGENIERIA("Inscripción_ingeniería")
-    ;
+    INSCRIPCION_INGENIERIA("Inscripción_ingeniería"),
+    BAJAS_CAUSAS_NO_ACADEMICAS("Bajas_causas_no_academicas");
     @Getter @NonNull private final String label;
 }
