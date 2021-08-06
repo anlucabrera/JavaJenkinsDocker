@@ -29,7 +29,7 @@
     <ui:define name="body">
         <c:if test="#{aperturaEventosEscolares.cargado}">
         <adm:breadcrumb title="Apertura eventos escolares"/>
-
+        <adm:sidebar collapsed="true"/>
         <div class="contenedor">
             <c:if test="#{aperturaEventosEscolares.tieneAcceso}">
                 <!-- zona de importación de enums -->
@@ -40,7 +40,7 @@
                             <div id="main-buttons" class="hidden-sm hidden-xs">
                                 <p:toolbar id="tb">
                                     <f:facet name="left">
-                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(aperturaEventosEscolares.rol.periodoActivo)}" />
+                                        <p:outputLabel value="Periodo activo: #{caster.clavePeriodoToString(aperturaEventosEscolares.rol.periodoActivo)}" />
                                         <p:spacer width="5" />
 
                                     </f:facet>
@@ -66,7 +66,7 @@
                                                     <p:ajax process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
-                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:outputLabel value="Periodo escolar" for="periodo"/>
                                                 <p:message for="periodo" />
                                             </div>
                                         </div>
@@ -133,7 +133,12 @@
                                     <p></p>
                                     <div class="row margin-bottom" style="margin-top: 30px;">
                                     <center>
-<!--                                        <p:commandButton id="btnGuardar" value="Guardar" actionListener="# {aperturaEventosEscolares.guardarAperturaEvento()}" icon="fa fa-pencil-square-o" class="btn-primary"/>-->
+                                        <c:if test="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaGeneral'}">
+                                        <p:commandButton id="btnGuardar1" value="Guardar" actionListener="#{aperturaEventosEscolares.guardarAperturaArea()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                        </c:if>
+                                        <c:if test="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaPersonal'}">
+                                        <p:commandButton id="btnGuardar2" value="Guardar" actionListener="#{aperturaEventosEscolares.guardarAperturaPersonal()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
+                                        </c:if>
                                     </center>   
                                     </div>
                                     <c:if test="#{aperturaEventosEscolares.rol.listaAperturasEventosEscolares ne null}">
@@ -146,42 +151,46 @@
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column headerText="Eliminar" />
-                                                            <p:column headerText="Tipo de apertura" /> 
-                                                            <p:column headerText="Nombre" /> 
-                                                            <p:column headerText="Evento" /> 
-                                                            <p:column headerText="Fecha Inicio" />
-                                                            <p:column headerText="Fecha Fin" />
+                                                            <p:column headerText="Eliminar" style="width: 100px;"/>
+                                                            <p:column headerText="Situación" style="width: 100px;" sortBy="#{aperturaEvento.situacion eq 'circuloVerde'?'Activo':'Inactivo'}" filterBy="#{aperturaEvento.situacion eq 'circuloVerde'?'Activo':'Inactivo'}" filterMatchMode="contains" />
+                                                            <p:column headerText="Tipo de apertura" style="width: 200px;" sortBy="#{aperturaEvento.tipoApertura}" filterBy="#{aperturaEvento.tipoApertura}" filterMatchMode="contains" /> 
+                                                            <p:column headerText="Nombre" style="width: 200px;" sortBy="#{aperturaEvento.areaPersonal}" filterBy="#{aperturaEvento.areaPersonal}" filterMatchMode="contains" /> 
+                                                            <p:column headerText="Evento" style="width: 150px;" sortBy="#{aperturaEvento.eventoEscolarDetalle.evento.tipo}" filterBy="#{aperturaEvento.eventoEscolarDetalle.evento.tipo}" filterMatchMode="contains" /> 
+                                                            <p:column headerText="Fecha Inicio" style="width: 150px;" sortBy="#{aperturaEvento.eventoEscolarDetalle.inicio}" filterBy="#{aperturaEvento.eventoEscolarDetalle.inicio}" filterMatchMode="contains" />
+                                                            <p:column headerText="Fecha Fin" style="width: 150px;" sortBy="#{aperturaEvento.eventoEscolarDetalle.fin}" filterBy="#{aperturaEvento.eventoEscolarDetalle.fin}" filterMatchMode="contains" />
                                                         </p:row>
                                                     </p:columnGroup>
-<!--                                                    <p:ajax event="cellEdit" listener="# {aperturaEventosEscolares.onCellEdit}"/>-->
+                                                    <p:ajax event="cellEdit" listener="#{aperturaEventosEscolares.onCellEdit}"/>
                                                     <p:column>
                                                         <center>
                                                         <div class="btn-group">
-<!--                                                            <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="# {aperturaEventosEscolares.eliminarPermiso(aperturaEvento)}" title="Eliminar registro.">
-                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la apertura?" icon="ui-icon-alert" />
-                                                            </p:commandButton>-->
+                                                            <p:commandButton class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{aperturaEventosEscolares.eliminarAperturaEventoEscolar}" title="Eliminar registro.">
+                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
                                                         </div>
                                                         </center>
                                                     </p:column>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{aperturaEvento.tipoApertura}"/>
-                                                    </p:column>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{aperturaEvento.areaPersonal}"/>
-                                                    </p:column>
-                                                    <p:column groupRow="true">
-                                                        <h:outputText value="#{aperturaEvento.eventoEscolarDetalle.evento.tipo}" style="text-align: center;"/>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{aperturaEvento.situacion eq 'circuloVerde'?'Activo':'Inactivo'}" style="color: #{aperturaEvento.situacion eq 'circuloVerde'?'green':'red'}"/>
                                                     </p:column>
                                                     <p:column>
+                                                        <h:outputText value="#{aperturaEvento.tipoApertura}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{aperturaEvento.areaPersonal}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{aperturaEvento.eventoEscolarDetalle.evento.tipo}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
                                                         <p:cellEditor>
-                                                             <f:facet name="output"><h:outputText value="#{aperturaEvento.eventoEscolarDetalle.inicio}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></f:facet>
+                                                             <f:facet name="output"><h:outputText value="#{aperturaEvento.eventoEscolarDetalle.inicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></f:facet>
                                                              <f:facet name="input"><p:calendar id="fechaInicio" locale="es" value="#{aperturaEvento.eventoEscolarDetalle.inicio}" pattern="dd-MM-yyyy" mask="true"/></f:facet>
                                                          </p:cellEditor>
                                                     </p:column>
-                                                    <p:column>
+                                                    <p:column style="text-align: center;">
                                                         <p:cellEditor>
-                                                            <f:facet name="output"><h:outputText value="#{aperturaEvento.eventoEscolarDetalle.fin}" style="text-align: center;"><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText></f:facet>
+                                                            <f:facet name="output"><h:outputText value="#{aperturaEvento.eventoEscolarDetalle.fin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText></f:facet>
                                                              <f:facet name="input"><p:calendar id="fechaFin" locale="es" value="#{aperturaEvento.eventoEscolarDetalle.fin}" pattern="dd-MM-yyyy HH:mm:ss" mask="true"/></f:facet>
                                                          </p:cellEditor>
                                                     </p:column>

@@ -31,6 +31,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPermisoAperturaExtemporanea;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroEventosEscolares;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolarDetalle;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -39,6 +40,8 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 
 /**
  *
@@ -236,6 +239,7 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
         if(e.getNewValue() instanceof EventoEscolar){
             EventoEscolar evento = (EventoEscolar)e.getNewValue();
             rol.setEvento(evento);
+            fechaMinimaApertura();
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
@@ -248,6 +252,62 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
         if(e.getNewValue() instanceof PersonalActivo){
             PersonalActivo docente = (PersonalActivo)e.getNewValue();
             rol.setPersonal(docente);
-        }else mostrarMensaje("El valor seleccionado como docente no es del tipo necesario.");
+        }else mostrarMensaje("El valor seleccionado como personal no es del tipo necesario.");
+    }
+    
+     /**
+     * Permite guardar una apertura extemporánea por área o departamento
+     */
+    public void guardarAperturaArea(){
+        ResultadoEJB<EventoEscolarDetalle> agregar = ejb.guardarAperturaArea(rol.getEvento(), rol.getArea(), rol.getFechaInicio(), rol.getFechaFin());
+        if (agregar.getCorrecto()) {
+            mostrarMensajeResultadoEJB(agregar);
+            listaAperturasEventosEscolaresRegistrados();
+            Ajax.update("frm");
+        }
+    }
+    
+     /**
+     * Permite guardar una apertura extemporánea por personal
+     */
+    public void guardarAperturaPersonal(){
+        ResultadoEJB<EventoEscolarDetalle> agregar = ejb.guardarAperturaPersonal(rol.getEvento(), rol.getPersonal().getPersonal(), rol.getFechaInicio(), rol.getFechaFin());
+        if (agregar.getCorrecto()) {
+            mostrarMensajeResultadoEJB(agregar);
+            listaAperturasEventosEscolaresRegistrados();
+            Ajax.update("tbAperturaEventos");
+        }
+    }
+    
+    /**
+     * Permite eliminar la apertura extemporánea seleccionada
+     * @param dtoAperturaEventosEscolares
+    */
+//    public void eliminarAperturaEventoEscolar(DtoAperturaEventosEscolares dtoAperturaEventosEscolares){
+//        System.err.println("eliminarAperturaEventoEscolar");
+//        System.err.println("eliminarAperturaEventoEscolar - dtoAperturaEventosEscolares " + claveEvento);
+//        ResultadoEJB<Integer> res = ejb.eliminarAperturaEventoEscolar(claveEvento);
+//        if(res.getCorrecto()){
+//            mostrarMensajeResultadoEJB(res);
+//            listaAperturasEventosEscolaresRegistrados();
+//        }else mostrarMensajeResultadoEJB(res);
+//        
+//    }
+    
+    public void eliminarAperturaEventoEscolar(){
+        System.err.println("eliminarAperturaEventoEscolar");
+        
+    }
+    
+     /**
+     * Permite editar la fechas de inicio y fin de la apertura extemporánea seleccionada
+     * @param event Evento de edición de la celda
+     */
+    public void onCellEdit(CellEditEvent event) {
+        DataTable dataTable = (DataTable) event.getSource();
+        DtoAperturaEventosEscolares evento = (DtoAperturaEventosEscolares) dataTable.getRowData();
+        ResultadoEJB<EventoEscolarDetalle> resAct = ejb.actualizarAperturaEventoRegistrada(evento);
+        mostrarMensajeResultadoEJB(resAct);
+        listaAperturasEventosEscolaresRegistrados();
     }
 }

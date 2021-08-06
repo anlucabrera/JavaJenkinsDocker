@@ -531,17 +531,18 @@ public class EjbRegistroEventosEscolares {
     }
     
      /**
-     * Permite obtener la lista de aperturas de eventos escolares registrados en el periodo escolar seleccionado
+     * Permite obtener la lista de aperturas extemporáneas de eventos escolares registrados en el periodo escolar seleccionado
      * @param periodo
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<DtoAperturaEventosEscolares>> getAperturasEventosEscolares(PeriodosEscolares periodo){
         try{
-            List<DtoAperturaEventosEscolares> listaAperturasEventosRegistrados = em.createQuery("SELECT e FROM EventoEscolarDetalle e WHERE e.evento.periodo=:periodo ORDER BY e.evento.evento ASC", EventoEscolarDetalle.class)
+            List<DtoAperturaEventosEscolares> listaAperturasEventosRegistrados = em.createQuery("SELECT e FROM EventoEscolarDetalle e WHERE e.evento.periodo=:periodo ORDER BY e.inicio DESC", EventoEscolarDetalle.class)
                     .setParameter("periodo", periodo.getPeriodo())
                     .getResultStream()
                     .map(evento -> packAperturaEvento(evento).getValor())
                     .filter(dto -> dto != null)
+                    .sorted(DtoAperturaEventosEscolares::compareTo)
                     .collect(Collectors.toList());
             
             return ResultadoEJB.crearCorrecto(listaAperturasEventosRegistrados, "Lista de aperturas de eventos escolares.");
@@ -551,7 +552,7 @@ public class EjbRegistroEventosEscolares {
     }
     
      /**
-     * Empaqueta una apertura de un evento escolar del proceso en su DTO Wrapper
+     * Empaqueta una apertura extemporánea de un evento escolar del proceso en su DTO Wrapper
      * @param eventoEscolarDetalle
      * @return Dto del documento empaquetado
      */
@@ -572,13 +573,13 @@ public class EjbRegistroEventosEscolares {
                 situacion = "circuloRojo";
             }
             
-            if(eventoEscolarDetalleBD.getPersona() != null && eventoEscolarDetalleBD.getArea() == null){
+            if(eventoEscolarDetalleBD.getArea()== null && eventoEscolarDetalleBD.getPersona() != null){
                 tipoApertura = "Personal";
                 Personal personal = em.find(Personal.class, eventoEscolarDetalleBD.getPersona());
                 areaPersonal = personal.getNombre().concat(" ").concat(String.valueOf(personal.getClave()));
-            }else{
+            }else if(eventoEscolarDetalleBD.getPersona()== null && eventoEscolarDetalleBD.getArea() != null){
                 tipoApertura = "Área o departamento";
-                AreasUniversidad area = em.find(AreasUniversidad.class, f);
+                AreasUniversidad area = em.find(AreasUniversidad.class, eventoEscolarDetalleBD.getArea().shortValue());
                 areaPersonal = area.getNombre();
             }
                     
@@ -590,7 +591,7 @@ public class EjbRegistroEventosEscolares {
     }
     
     /**
-     * Permite verificar si existe apertura del evento escolar activa
+     * Permite verificar si existe apertura extemporánea del evento escolar activa
      * @param eventoEscolarDetalle
      * @return Verdadero o Falso según sea el caso
      */
@@ -606,7 +607,7 @@ public class EjbRegistroEventosEscolares {
     }
     
     /**
-     * Permite obtener la fecha minima para registrar la apertura
+     * Permite obtener la fecha minima para registrar la apertura extemporánea
      * @param eventoEscolar
      * @return Verdadero o Falso según sea el caso
      */
@@ -628,12 +629,12 @@ public class EjbRegistroEventosEscolares {
     }
     
     /**
-     * Permite obtener la lista de áreas y departamento disponibles para realizar aperturas de eventos escolares
+     * Permite obtener la lista de áreas y departamento disponibles para realizar aperturas extemporáneas de eventos escolares
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<AreasUniversidad>> getAreasDepartamentos(){
         try{
-            List<AreasUniversidad> listaAreasCoordinacionesDepartamentos = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.area=:area OR a.categoria.categoria=:categoria ORDER BY a.nombre DESC", AreasUniversidad.class)
+            List<AreasUniversidad> listaAreasCoordinacionesDepartamentos = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.area=:area OR a.categoria.categoria=:categoria ORDER BY a.nombre ASC", AreasUniversidad.class)
                     .setParameter("area", (int)10)
                     .setParameter("categoria", (int)8)
                     .getResultStream()
@@ -644,5 +645,99 @@ public class EjbRegistroEventosEscolares {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de de áreas y departamentos disponibles para realizar aperturas de eventos escolares. (EjbRegistroEventosEscolares.getAreasDepartamentos)", e, null);
         }
     }
+    
+    /**
+     * Permite guardar la apertura extemporánea del evento escolar seleccionado
+     * @param eventoEscolar
+     * @param areasUniversidad
+     * @param fechaInicio
+     * @param fechaFin
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<EventoEscolarDetalle> guardarAperturaArea(EventoEscolar eventoEscolar, AreasUniversidad areasUniversidad, Date fechaInicio, Date fechaFin){
+        try{
+            
+            Date fechaFinCompleta = ejbPermisoAperturaExtemporanea.obtenerFechaFin(fechaFin);
+            EventoEscolarDetalle eventoEscolarDetalle = new EventoEscolarDetalle();
+            eventoEscolarDetalle.setEvento(eventoEscolar);
+
+            eventoEscolarDetalle.setArea((int) areasUniversidad.getArea());
+            eventoEscolarDetalle.setPersona(null);
+            eventoEscolarDetalle.setInicio(fechaInicio);
+            eventoEscolarDetalle.setFin(fechaFinCompleta);
+            em.persist(eventoEscolarDetalle);
+            em.flush();
+           
+            return ResultadoEJB.crearCorrecto(eventoEscolarDetalle, "Se registró correctamente la apertura extemporánea del evento escolar seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente la apertura extemporánea del evento escolar seleccionado. (EjbRegistroEventosEscolares.guardarAperturaArea)", e, null);
+        }
+    }
+    
+    /**
+     * Permite guardar la apertura extemporánea del evento escolar seleccionado
+     * @param eventoEscolar
+     * @param personal
+     * @param fechaInicio
+     * @param fechaFin
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<EventoEscolarDetalle> guardarAperturaPersonal(EventoEscolar eventoEscolar, Personal personal, Date fechaInicio, Date fechaFin){
+        try{
+            
+            Date fechaFinCompleta = ejbPermisoAperturaExtemporanea.obtenerFechaFin(fechaFin);
+            EventoEscolarDetalle eventoEscolarDetalle = new EventoEscolarDetalle();
+            eventoEscolarDetalle.setEvento(eventoEscolar);
+            eventoEscolarDetalle.setArea(null); 
+            eventoEscolarDetalle.setPersona(personal.getClave());
+            eventoEscolarDetalle.setInicio(fechaInicio);
+            eventoEscolarDetalle.setFin(fechaFinCompleta);
+            em.persist(eventoEscolarDetalle);
+            em.flush();
+           
+            return ResultadoEJB.crearCorrecto(eventoEscolarDetalle, "Se registró correctamente la apertura extemporánea del evento escolar seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente la apertura extemporánea del evento escolar seleccionado. (EjbRegistroEventosEscolares.guardarAperturaPersonal)", e, null);
+        }
+    }
+    
+     /**
+     * Permite eliminar la apertura extemporánea seleccionada
+     * @param claveEvento
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> eliminarAperturaEventoEscolar(Integer claveEvento){
+        System.err.println("eliminarAperturaEventoEscolar - eventoDetalle " + claveEvento);
+        try{
+            Integer delete = em.createQuery("DELETE FROM EventoEscolarDetalle e WHERE e.eventoDetalle=:evento", EventoEscolarDetalle.class)
+                .setParameter("evento", claveEvento)
+                .executeUpdate();
+            
+            return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente la apertura extemporánea seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar la apertura extemporánea seleccionada. (EjbRegistroEventosEscolares.eliminarAperturaEventoEscolar)", e, null);
+        }
+    }
+    
+     /**
+     * Permite actualizar las fechas de inicio y fin de una apertura extemporánea de un evento escolar registrado previamente
+     * @param dtoAperturaEventosEscolares
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<EventoEscolarDetalle> actualizarAperturaEventoRegistrada(DtoAperturaEventosEscolares dtoAperturaEventosEscolares){
+        try{
+            EventoEscolarDetalle evenEscDetBD  = em.find(EventoEscolarDetalle.class, dtoAperturaEventosEscolares.getEventoEscolarDetalle().getEventoDetalle());
+                evenEscDetBD.setInicio(dtoAperturaEventosEscolares.getEventoEscolarDetalle().getInicio());
+                evenEscDetBD.setFin(dtoAperturaEventosEscolares.getEventoEscolarDetalle().getFin());
+                em.merge(evenEscDetBD);
+                em.flush();
+                
+            return ResultadoEJB.crearCorrecto(evenEscDetBD, "Se actualizó correctamente la apertura extemporánea seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar la apertura extemporánea seleccionada. (EjbRegistroEventosEscolares.actualizarAperturaEventoRegistrada)", e, null);
+        }
+    }
+    
+    
     
 }
