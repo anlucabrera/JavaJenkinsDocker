@@ -893,7 +893,7 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
     public List<DtoAlineacionAcedemica.PlanesEstudioObjtivo> generarCatalogogeneralOb(Map<AreasUniversidad, List<PlanEstudio>> map) {
         final List<DtoAlineacionAcedemica.PlanesEstudioObjtivo> daas = new ArrayList<>();
         map.forEach((t, u) -> {
-            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
+//            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
             if (!u.isEmpty()) {
                 PlanEstudio estudio = u.get(0);
                 ObjetivoEducacional oe = new ObjetivoEducacional();
@@ -916,12 +916,12 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
     public List<DtoAlineacionAcedemica.PlanesEstudioCriterio> generarCatalogogeneralCr(Map<AreasUniversidad, List<PlanEstudio>> map) {
         final List<DtoAlineacionAcedemica.PlanesEstudioCriterio> daas = new ArrayList<>();
          map.forEach((t, u) -> {
-            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
+//            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
             if (!u.isEmpty()) {
                 PlanEstudio estudio = u.get(0);
                 CriterioDesempenio oe = new CriterioDesempenio();
                 oe.setCriteriDesempenio(0);
-                oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "OE"));
+                oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "CD"));
                 oe.setDescripcion("No aplica");
                 daas.add(new DtoAlineacionAcedemica.PlanesEstudioCriterio(estudio, oe));
                 List<CriterioDesempenio> cds = em.createQuery("SELECT pem FROM CriterioDesempenio pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", CriterioDesempenio.class)
@@ -938,12 +938,12 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
     public List<DtoAlineacionAcedemica.PlanesEstudioAtributo> generarCatalogogeneralAt(Map<AreasUniversidad, List<PlanEstudio>> map) {
         final List<DtoAlineacionAcedemica.PlanesEstudioAtributo> daas = new ArrayList<>();
         map.forEach((t, u) -> {
-            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
+//            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
             if (!u.isEmpty()) {
                 PlanEstudio estudio = u.get(0);
                 AtributoEgreso oe = new AtributoEgreso();
                 oe.setAtributoEgreso(0);
-                oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "OE"));
+                oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "AE"));
                 oe.setDescripcion("No aplica");
                 daas.add(new DtoAlineacionAcedemica.PlanesEstudioAtributo(estudio, oe));
                 List<AtributoEgreso> aes = em.createQuery("SELECT pem FROM AtributoEgreso pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", AtributoEgreso.class)
@@ -960,12 +960,12 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
     public List<DtoAlineacionAcedemica.PlanesEstudioIndicador> generarCatalogogeneralIn(Map<AreasUniversidad, List<PlanEstudio>> map) {
         final List<DtoAlineacionAcedemica.PlanesEstudioIndicador> daas = new ArrayList<>();
          map.forEach((t, u) -> {
-            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
+//            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
             if (!u.isEmpty()) {
                 PlanEstudio estudio = u.get(0);
                 IndicadorAlineacion oe = new IndicadorAlineacion();
                 oe.setIndicadorPem(0);
-                oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "OE"));
+                oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "I"));
                 oe.setDescripcion("No aplica");
                 daas.add(new DtoAlineacionAcedemica.PlanesEstudioIndicador(estudio, oe));
                 List<IndicadorAlineacion> ias = em.createQuery("SELECT pem FROM IndicadorAlineacion pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", IndicadorAlineacion.class)
@@ -1122,23 +1122,24 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
                             educacional=em.find(ObjetivoEducacional.class, daa.getIde());
                         }
                         f.flush();
-                        
-                        pem.forEach((t) -> {
-                            f.setEntityClass(ObjetivoEducacionalPlanMateria.class);
-                            ObjetivoEducacionalPlanMateriaPK materiaPK= new ObjetivoEducacionalPlanMateriaPK();
-                            materiaPK.setIdPlanMateria(t.getIdPlanMateria());
-                            materiaPK.setObjetivoEducacional(educacional.getObjetivoEducacional());
-                            ObjetivoEducacionalPlanMateria oepm= new ObjetivoEducacionalPlanMateria();
-                            oepm.setNivelAportacion(daa.getNivelA());
-                            oepm.setObjetivoEducacional1(new ObjetivoEducacional());
-                            oepm.setObjetivoEducacional1(educacional);
-                            oepm.setPlanEstudioMateria(new PlanEstudioMateria());
-                            oepm.setPlanEstudioMateria(t);
-                            oepm.setObjetivoEducacionalPlanMateriaPK(new ObjetivoEducacionalPlanMateriaPK());
-                            oepm.setObjetivoEducacionalPlanMateriaPK(materiaPK);
-                            em.persist(oepm);
-                            f.flush();
-                        });
+                        if (!pem.isEmpty()) {
+                            pem.forEach((t) -> {
+                                f.setEntityClass(ObjetivoEducacionalPlanMateria.class);
+                                ObjetivoEducacionalPlanMateriaPK materiaPK = new ObjetivoEducacionalPlanMateriaPK();
+                                materiaPK.setIdPlanMateria(t.getIdPlanMateria());
+                                materiaPK.setObjetivoEducacional(educacional.getObjetivoEducacional());
+                                ObjetivoEducacionalPlanMateria oepm = new ObjetivoEducacionalPlanMateria();
+                                oepm.setNivelAportacion(daa.getNivelA());
+                                oepm.setObjetivoEducacional1(new ObjetivoEducacional());
+                                oepm.setObjetivoEducacional1(educacional);
+                                oepm.setPlanEstudioMateria(new PlanEstudioMateria());
+                                oepm.setPlanEstudioMateria(t);
+                                oepm.setObjetivoEducacionalPlanMateriaPK(new ObjetivoEducacionalPlanMateriaPK());
+                                oepm.setObjetivoEducacionalPlanMateriaPK(materiaPK);
+                                em.persist(oepm);
+                                f.flush();
+                            });
+                        }
                         break;
                     case "Ae":
                         f.setEntityClass(AtributoEgreso.class);
@@ -1153,11 +1154,13 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
                             egreso=em.find(AtributoEgreso.class, daa.getIde());
                         }
                         f.flush();
-                        pem.forEach((t) -> {
-                            egreso.getPlanEstudioMateriaList().add(t);
-                            em.merge(egreso);
-                            f.flush();
-                        });
+                        if (!pem.isEmpty()) {
+                            pem.forEach((t) -> {
+                                egreso.getPlanEstudioMateriaList().add(t);
+                                em.merge(egreso);
+                                f.flush();
+                            });
+                        }
                         break;
                     case "In":
                         f.setEntityClass(IndicadorAlineacion.class);
@@ -1172,23 +1175,25 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
                             indicadorAlineacion=em.find(IndicadorAlineacion.class, daa.getIde());
                         }
                         f.flush();
-                        
-                        pem.forEach((t) -> {
-                            f.setEntityClass(IndicadorAlineacion.class);
-                            IndicadorAlineacionPlanMateriaPK materiaPK= new IndicadorAlineacionPlanMateriaPK();
-                            materiaPK.setIdPlanMateria(t.getIdPlanMateria());
-                            materiaPK.setIndicador(indicadorAlineacion.getIndicadorPem());
-                            IndicadorAlineacionPlanMateria oepm= new IndicadorAlineacionPlanMateria();
-                            oepm.setMetaIndicador(daa.getMeta());
-                            oepm.setIndicadorAlineacion(new IndicadorAlineacion());
-                            oepm.setIndicadorAlineacion(indicadorAlineacion);
-                            oepm.setPlanEstudioMateria(new PlanEstudioMateria());
-                            oepm.setPlanEstudioMateria(t);
-                            oepm.setIndicadorAlineacionPlanMateriaPK(new IndicadorAlineacionPlanMateriaPK());
-                            oepm.setIndicadorAlineacionPlanMateriaPK(materiaPK);
-                            em.persist(oepm);
-                            f.flush();
-                        });
+
+                        if (!pem.isEmpty()) {
+                            pem.forEach((t) -> {
+                                f.setEntityClass(IndicadorAlineacion.class);
+                                IndicadorAlineacionPlanMateriaPK materiaPK = new IndicadorAlineacionPlanMateriaPK();
+                                materiaPK.setIdPlanMateria(t.getIdPlanMateria());
+                                materiaPK.setIndicador(indicadorAlineacion.getIndicadorPem());
+                                IndicadorAlineacionPlanMateria oepm = new IndicadorAlineacionPlanMateria();
+                                oepm.setMetaIndicador(daa.getMeta());
+                                oepm.setIndicadorAlineacion(new IndicadorAlineacion());
+                                oepm.setIndicadorAlineacion(indicadorAlineacion);
+                                oepm.setPlanEstudioMateria(new PlanEstudioMateria());
+                                oepm.setPlanEstudioMateria(t);
+                                oepm.setIndicadorAlineacionPlanMateriaPK(new IndicadorAlineacionPlanMateriaPK());
+                                oepm.setIndicadorAlineacionPlanMateriaPK(materiaPK);
+                                em.persist(oepm);
+                                f.flush();
+                            });
+                        }
                         break;
                     case "Cr":
                         f.setEntityClass(CriterioDesempenio.class);
@@ -1203,11 +1208,13 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
                             desempenio=em.find(CriterioDesempenio.class, daa.getIde());
                         }
                         f.flush();
-                        pem.forEach((t) -> {
-                            desempenio.getPlanEstudioMateriaList().add(t);
-                            em.merge(desempenio);
-                            f.flush();
-                        });
+                        if (!pem.isEmpty()) {
+                            pem.forEach((t) -> {
+                                desempenio.getPlanEstudioMateriaList().add(t);
+                                em.merge(desempenio);
+                                f.flush();
+                            });
+                        }
                         break;
                 } 
                 break;
@@ -1334,7 +1341,7 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
         beans.put("alineacionAcedemica", planesEstudioDto);
         beans.put("materias", generarCatalogogeneralPEM(mapaAreaPe));
         beans.put("objetivos", generarCatalogogeneralOb(mapaAreaPe));
-        beans.put("indicador", generarCatalogogeneralIn(mapaAreaPe));
+        beans.put("indiAL", generarCatalogogeneralIn(mapaAreaPe));
         beans.put("criterio",generarCatalogogeneralCr(mapaAreaPe));
         beans.put("atributoAl", generarCatalogogeneralAt(mapaAreaPe));
         XLSTransformer transformer = new XLSTransformer();

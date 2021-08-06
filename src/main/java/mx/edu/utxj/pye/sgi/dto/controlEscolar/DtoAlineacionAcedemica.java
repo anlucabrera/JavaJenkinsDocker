@@ -6,16 +6,12 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import java.io.Serializable;
-import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AtributoEgreso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CriterioDesempenio;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Indicador;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.IndicadorAlineacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ObjetivoEducacional;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
@@ -52,6 +48,27 @@ public class DtoAlineacionAcedemica implements Serializable {
             this.planEstudioMateria = planEstudioMateria;
             this.universidadPe = universidadPe;
             this.tipoR = tipoR;
+        }
+
+        public int compareTo(Presentacion o) {
+            return toLabel(this).compareTo(toLabel(o));
+        }
+
+        public static String toLabel(Presentacion p) {
+            return String.valueOf(p.getPlanEstudio().getIdPlanEstudio()).concat(" ")
+                    .concat(p.getTipoR().concat(" "))
+                    .concat(p.getClave());
+        }
+        
+        public int compareToALC(Presentacion o) {
+            return toLabelALC(this).compareTo(toLabelALC(o));
+        }
+
+        public static String toLabelALC(Presentacion p) {
+            return String.valueOf(p.getPlanEstudio().getIdPlanEstudio()).concat(" ")
+                    .concat(p.getPlanEstudioMateria().getClaveMateria().concat(" "))
+                    .concat(p.getTipoR().concat(" "))
+                    .concat(p.getClave());
         }
     }
     

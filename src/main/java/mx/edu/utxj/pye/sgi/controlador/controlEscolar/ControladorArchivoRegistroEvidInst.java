@@ -22,6 +22,7 @@ import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
 import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 
 /**
@@ -42,10 +43,15 @@ public class ControladorArchivoRegistroEvidInst implements Serializable{
     @Getter @Setter private String rutaArchivo;
     @Getter @Setter private String plan;
     @Getter @Setter private String programa;
+    @Getter @Setter private String areaSup;
     @Getter @Setter private Part file; 
+    @Getter @Setter private Part fileCatalogos; 
+    @Getter @Setter private Part fileAlineacion; 
+    @Getter @Setter private Part fileNivelesD; 
     
     @Inject ControladorEmpleado controladorEmpleado;
     @Inject RegistroEvidInstEvalMateriasDireccion registroEvidInstEvalMateriasDireccion;
+    @Inject AdministracionPlanEstudioDirector planEstudioDirector;
     @Inject Caster caster;
     
     @EJB EjbCarga ejbCarga;
@@ -56,8 +62,20 @@ public class ControladorArchivoRegistroEvidInst implements Serializable{
         setEtapa(RegistroSiipEtapa.MOSTRAR);
     }
     
-     public void recibirArchivo(ValueChangeEvent e){
+    public void recibirArchivo(ValueChangeEvent e){
         file = (Part)e.getNewValue();
+    }
+    
+    public void recibirArchivoCatalogo(ValueChangeEvent e){
+        fileCatalogos = (Part)e.getNewValue();
+    }
+    
+    public void recibirArchivoAlineacion(ValueChangeEvent e){
+        fileAlineacion = (Part)e.getNewValue();
+    }
+    
+    public void recibirArchivoNivelesD(ValueChangeEvent e){
+        fileNivelesD = (Part)e.getNewValue();
     }
 
     public void setEtapa(RegistroSiipEtapa etapa) {
@@ -86,4 +104,63 @@ public class ControladorArchivoRegistroEvidInst implements Serializable{
         }
     }
     
+    public void subirExcelCatalogos() throws IOException {
+        areaSup = planEstudioDirector.getRol().getDirector().getAreaOperativa().getSiglas();
+        if (fileCatalogos != null) {
+            rutaArchivo = ejbCarga.subirPlantillaAlineacion(areaSup, fileCatalogos);
+            if (!"Error: No se pudo leer el archivo".equals(rutaArchivo)) {
+                setEtapa(RegistroSiipEtapa.CARGAR);
+                planEstudioDirector.listaPreviaCatalogos(rutaArchivo);
+                rutaArchivo = null;
+                fileCatalogos.delete();
+            } else {
+                rutaArchivo = null;
+                fileCatalogos.delete();
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente");
+            }
+        } else {
+            System.err.println("subirExcelEvidInstMateria - file es null ");
+             Messages.addGlobalWarn("Es necesario seleccionar un archivo");
+        }
+    }
+    
+    public void subirExcelAlineacion() throws IOException {
+        areaSup = planEstudioDirector.getRol().getDirector().getAreaOperativa().getSiglas();
+        if (fileAlineacion != null) {
+            rutaArchivo = ejbCarga.subirPlantillaAlineacion(areaSup, fileAlineacion);
+            if (!"Error: No se pudo leer el archivo".equals(rutaArchivo)) {
+                setEtapa(RegistroSiipEtapa.CARGAR);
+                planEstudioDirector.listaPreviaAlineacion(rutaArchivo);
+                rutaArchivo = null;
+                fileAlineacion.delete();
+            } else {
+                rutaArchivo = null;
+                fileAlineacion.delete();
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente");
+            }
+        } else {
+            System.err.println("subirExcelEvidInstMateria - file es null ");
+             Messages.addGlobalWarn("Es necesario seleccionar un archivo");
+        }
+    }
+    
+    public void subirExcelNiveles() throws IOException {
+        areaSup = planEstudioDirector.getRol().getDirector().getAreaOperativa().getSiglas();
+        if (fileNivelesD != null) {
+            rutaArchivo = ejbCarga.subirPlantillaAlineacion(areaSup, fileNivelesD);
+            if (!"Error: No se pudo leer el archivo".equals(rutaArchivo)) {
+                setEtapa(RegistroSiipEtapa.CARGAR);
+                planEstudioDirector.listaPreviaNiveles(rutaArchivo);
+                rutaArchivo = null;
+                fileNivelesD.delete();
+            } else {
+                rutaArchivo = null;
+                fileNivelesD.delete();
+                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente");
+            }
+        } else {
+            System.err.println("subirExcelEvidInstMateria - file es null ");
+             Messages.addGlobalWarn("Es necesario seleccionar un archivo");
+        }
+    }
 }

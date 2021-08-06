@@ -535,11 +535,11 @@ public class UtilidadesPOA implements Serializable {
             List<Permisosevaluacionpoaex> ps = euch.mostrarPermisosEvaluacionExtemporaneaPOA(new Date(), p).stream().filter(t -> t.getEvaluacionPOA().getMesEvaluacion().equals(evento)).collect(Collectors.toList());
             
             if(ps.isEmpty()){                
-                calendarioevaluacionpoa=calendarioevaluacionpoas.get(0);
+                calendarioevaluacionpoa=calendarioevaluacionpoas.get(calendarioevaluacionpoas.size()-1);
             } else {
                 Permisosevaluacionpoaex p1=new Permisosevaluacionpoaex();
                 p1=ps.get(0);
-                calendarioevaluacionpoa = calendarioevaluacionpoas.get(0);
+                calendarioevaluacionpoa = calendarioevaluacionpoas.get(calendarioevaluacionpoas.size()-1);
                 calendarioevaluacionpoa.setFechaInicio(p1.getFechaApertura());
                 calendarioevaluacionpoa.setFechaFin(p1.getFechaCierre());
             }

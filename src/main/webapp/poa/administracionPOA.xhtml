@@ -73,14 +73,14 @@
                                             <div class="row">
                                                 <div class="col-lg-10 col-xs-10">
                                                     <p:outputLabel for="anio" value="Año" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
-                                                    <p:selectOneMenu  id="anio" value="#{administracionPOA.ejerciciosFiscalesBusqueda}" valueChangeListener="#{administracionPOA.numeroAnioAsiganado}">>
+                                                    <p:selectOneMenu  id="anio" value="#{administracionPOA.ejerciciosFiscalesBusqueda}" valueChangeListener="#{administracionPOA.numeroAnioAsiganado}">
                                                         <f:selectItems value="#{utilidadesAcceso.aniosReportes}" var="anio" itemValue="#{anio.ejercicioFiscal}" itemLabel="#{anio.anio}" />
                                                         <p:ajax update="@form" listener="#{administracionPOA.imprimirValores()}"/>
                                                     </p:selectOneMenu >
                                                     <hr/>
                                                 </div>
                                                 <div class="col-lg-2 col-xs-2">
-                                                    <p:commandButton id="btnAgregaCañemdario" value="Agregar nuevo calendario" actionListener="#{administracionPOA.agregarCalendario()}"
+                                                    <p:commandButton id="btnAgregaCañemdario" value="Agregar nuevo calendario" disabled="#{administracionPOA.calendarioevaluacionpoas.size() ne 0}" actionListener="#{administracionPOA.agregarCalendario()}"
                                                                      icon="fa fa-chek" styleClass="btn-primary"  update="@form"/>
                                                 </div>      
                                             </div>

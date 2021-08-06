@@ -95,6 +95,7 @@ public class AdministracionPOA implements Serializable {
             ef = efs.get(efs.size() - 1);
             ejerciciosFiscalesBusqueda = ef.getEjercicioFiscal();
             anioB = ef.getAnio();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.AdministracionPOA.buscarCatalogosGenerales()"+ejerciciosFiscalesBusqueda);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);
@@ -112,12 +113,16 @@ public class AdministracionPOA implements Serializable {
                 calendarioevaluacionpoas = cs.stream().filter(t -> t.getEjercicioFiscal() == ejerciciosFiscalesBusqueda).collect(Collectors.toList());
                 calendarioPoaActivo = new ArrayList<>();
                 calendarioPoaActivo.clear();
+                System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.AdministracionPOA.buscarCalendarioPOA()"+calendarioevaluacionpoas.size());
                 if (!calendarioevaluacionpoas.isEmpty()) {
                     calendarioevaluacionpoas.forEach((t) -> {
                         if (new Date().before(t.getFechaFin()) && new Date().after(t.getFechaInicio())) {
                             calendarioPoaActivo.add(t);
                         }
                     });
+                }else{
+                    calendarioevaluacionpoas = new ArrayList<>();
+                    calendarioevaluacionpoas.clear();
                 }
             }           
         } catch (Throwable ex) {
@@ -148,7 +153,7 @@ public class AdministracionPOA implements Serializable {
                     Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-            calendarioevaluacionpoas = ejbUtilidadesCH.mostrarCalendarioevaluacionpoas();
+            buscarCalendarioPOA();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);
@@ -177,26 +182,36 @@ public class AdministracionPOA implements Serializable {
     public void agregarCalendario() {
         try {
             List<EjerciciosFiscales> efs = ecp.mostrarEjercicioFiscalesesTotales();
-            EjerciciosFiscales ef = efs.get(efs.size() - 1);
+            EjerciciosFiscales ef = efs.get(efs.size() - 2);
             if (ef.getAnio() == LocalDate.now().getYear()) {
                 Integer anio = ef.getAnio() + 1;
-                Integer cvl = ef.getEjercicioFiscal() + 1;
                 fiscales = new EjerciciosFiscales();
-                fiscales.setEjercicioFiscal(Short.parseShort(cvl.toString()));
+                fiscales.setEjercicioFiscal(ejerciciosFiscalesBusqueda);
                 fiscales.setAnio(Short.parseShort(anio.toString()));
-                fiscales = administrador.crearEjerciciosFiscales(fiscales);
+//                fiscales = administrador.crearEjerciciosFiscales(fiscales);
             }
-
-            calendarioevaluacionpoas.forEach((t) -> {
-                Calendarioevaluacionpoa c = new Calendarioevaluacionpoa();
-                c.setFechaInicio(t.getFechaInicio());
-                c.setFechaFin(t.getFechaFin());
-                c.setMesEvaluacion(t.getMesEvaluacion());
-                c.setEstapa(t.getEstapa());
-                c.setJustificacion(t.getJustificacion());
-                c.setEjercicioFiscal(fiscales.getEjercicioFiscal());
-                administrador.agregarCalendarioPoa(c);
-            });
+            
+            List<Calendarioevaluacionpoa> cs = ejbUtilidadesCH.mostrarCalendarioevaluacionpoas();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.AdministracionPOA.agregarCalendario()"+cs);
+            if (!cs.isEmpty()) {
+                calendarioevaluacionpoas= new ArrayList<>();
+                calendarioevaluacionpoas = cs.stream().filter(t -> t.getEjercicioFiscal() == ef.getEjercicioFiscal()).collect(Collectors.toList());
+                System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.AdministracionPOA.agregarCalendario()"+calendarioevaluacionpoas.size());
+                if (!calendarioevaluacionpoas.isEmpty()) {
+                    calendarioevaluacionpoas.forEach((t) -> {
+                        Calendarioevaluacionpoa c = new Calendarioevaluacionpoa();
+                        c.setFechaInicio(t.getFechaInicio());
+                        c.getFechaInicio().setYear(t.getFechaInicio().getYear()+1);
+                        c.setFechaFin(t.getFechaFin());
+                        c.getFechaFin().setYear(t.getFechaFin().getYear()+1);
+                        c.setMesEvaluacion(t.getMesEvaluacion());
+                        c.setEstapa(t.getEstapa());
+                        c.setJustificacion(t.getJustificacion());
+                        c.setEjercicioFiscal(ejerciciosFiscalesBusqueda);
+                        administrador.agregarCalendarioPoa(c);
+                    });
+                }
+            }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);

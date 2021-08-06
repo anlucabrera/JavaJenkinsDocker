@@ -44,7 +44,7 @@
                     <div class="box box-primary">
                         <div class="box-header with-border">
                             <div class="box box-solid">
-                                <p:tabView>
+                                <p:tabView activeIndex="#{administracionPlanEstudioDirector.activaPestania}">
                                     <p:tab title="Plane Estudio">
                                         <h:form id="planEstudioFrm">
                                             <p:growl><p:autoUpdate/></p:growl>
@@ -327,15 +327,15 @@
                                                 <div class="ui-g-6 ui-sm-12">
                                                     <div class="ui-material">
                                                         <p:inputText id="horasT" placeholder="Horas teóricas" value="#{administracionPlanEstudioDirector.rol.materiaUnidades1.unidadMateria.horasTeoricas}"/>
-                                                        <p:outputLabel for="horasT" value="Horas Teoricas"/>
+                                                        <p:outputLabel for="horasT" value="Horas Teóricas"/>
                                                         <p:message for="horasT"/>
                                                         <br/>
                                                     </div>
                                                 </div>
                                                 <div class="ui-g-6 ui-sm-12">
                                                     <div class="ui-material">
-                                                        <p:inputText id="horasP" placeholder="Horas Practicas" value="#{administracionPlanEstudioDirector.rol.materiaUnidades1.unidadMateria.horasPracticas}"/>
-                                                        <p:outputLabel for="horasP" value="Horas Practicas"/>
+                                                        <p:inputText id="horasP" placeholder="Horas Prácticas" value="#{administracionPlanEstudioDirector.rol.materiaUnidades1.unidadMateria.horasPracticas}"/>
+                                                        <p:outputLabel for="horasP" value="Horas Prácticas"/>
                                                         <p:message for="horasP"/>
                                                         <br/>
                                                     </div>
@@ -563,7 +563,7 @@
                                             </div>
                                         </h:form>
                                     </p:tab>
-                                    <p:tab title="Alineacion Educativa">
+                                    <p:tab title="Alineación Educativa">
                                         <h:form id="alineacionFrm">
                                             <div id="main-buttons-asignatura" class="hidden-sm hidden-xs">
                                                 <p:toolbar id="tb">
@@ -572,23 +572,34 @@
                                                         <p:spacer width="5" />
                                                     </f:facet>
                                                     <f:facet name="right">
-                                                        <!--span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                        <div class="btn-group">
-                                                            <p:commandButton value="Cargar Archivo de Excel" icon="fa fa-file-excel-o" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
-                                                        </div>
-                                                        <c:if test="# {controladorArchivoRegistroEvidInst.etapa eq etapa.CARGAR}">
+                                                        <c:if test="#{controladorArchivoRegistroEvidInst.etapa eq etapa.CARGAR}">
                                                             <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                             <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="registroEvidInstEvalMateria?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
-                                                        </c:if-->
+                                                        </c:if>
+
+
+                                                        Catalogos Generales:
                                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                         <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{administracionPlanEstudioDirector.descargarPlantillaCatalogos()}" title="Descargar Plantilla Para Catalogos"><i class="fa fa-download" /></p:commandLink>
+                                                        <span class="ui-separator"/>
+                                                        <p:commandButton title="Cargar Excel" icon="fa fa-upload" onclick="PF('modalCargaArchivo').show()" class="btn btn-primary btn-sm"/>
+                                                        <span class="ui-separator"/>
+                                                        <p:commandButton title="Guardar Alineacion" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarCatalogos()}" rendered="#{administracionPlanEstudioDirector.rol.listalineacionAcedemica.size() ne 0}"/>
+                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
+                                                        Alineaciones:
                                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                         <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{administracionPlanEstudioDirector.descargarPlantillaCatalogosAlineacion()}" title="Descargar Plantilla Para Alineacion"><i class="fa fa-download" /></p:commandLink>
+                                                        <span class="ui-separator"/>
+                                                        <p:commandButton title="Cargar Excel" icon="fa fa-upload" onclick="PF('modalCargaArchivoAlineacion').show()" class="btn btn-primary btn-sm"/>
+                                                        <span class="ui-separator"/>
+                                                        <p:commandButton title="Guardar Alineacion" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarAlineacionPlantilla()}" rendered="#{administracionPlanEstudioDirector.rol.listaAlineacionVistaP.size() ne 0}"/>
                                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                        <!--p:commandLink class="btn btn-success" ajax="false" action="# {registroEvidInstEvalMateriasDireccion.descargarRegistrosPlan()}" target="_blank" title="Descargar Registros"><i class="fa fa-file-excel-o" /></p:commandLink>
-                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span-->
-                                                        
+
+                                                        Botones para formulario:
+                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                         <p:commandLink class="btn btn-info" rendered="# {true}" disabled="# {false}" onclick="PF('modalAyuda').show();" title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question"/></p:commandLink>
+                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                         <p:commandButton title="Guardar Alineacion" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarAlineacion()}"/>
                                                     </f:facet>
                                                 </p:toolbar>
@@ -599,7 +610,7 @@
                                                         <p:selectOneMenu id="planEstudioC" value="#{administracionPlanEstudioDirector.rol.alineacionAcedemica.planEstudio}" converter="entityConverter">
                                                             <f:selectItem itemValue="#{null}"/>
                                                             <f:selectItems value="#{administracionPlanEstudioDirector.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
-                                                            <p:ajax listener="#{administracionPlanEstudioDirector.comprobarTipoRegistro()}" update="@form unidadesResultados" process="@this"/>
+                                                            <p:ajax listener="#{administracionPlanEstudioDirector.comprobarTipoRegistro()}" update="@form" process="@this"/>
                                                         </p:selectOneMenu>
                                                         <p:outputLabel for="planEstudioC" value="Plan de estudios"/>
                                                         <p:message for="planEstudioC"/>
@@ -625,7 +636,7 @@
                                                             <f:selectItem itemValue="Ae" itemLabel="Atributo de Egreso"/>
                                                             <f:selectItem itemValue="In" itemLabel="Indicador" />
                                                             <f:selectItem itemValue="Cr" itemLabel="Criterio de Desempeño"/>
-                                                            <p:ajax listener="#{administracionPlanEstudioDirector.comprobarTipoRegistro()}" update="regstroC unidadesResultados" process="@this"/>
+                                                            <p:ajax listener="#{administracionPlanEstudioDirector.comprobarTipoRegistro()}" update="regstroC" process="@this"/>
                                                         </p:selectOneMenu>
                                                         <p:outputLabel for="tipoRegistro" value="Tipo de Registro"/>
                                                         <p:message for="tipoRegistro"/>
@@ -658,8 +669,8 @@
                                                         </div>
                                                         <div class="ui-g-6 ui-sm-12">
                                                             <div class="ui-material">
-                                                                <p:inputTextarea id="descripcionTr" placeholder="Descripcion" value="#{administracionPlanEstudioDirector.rol.alineacionAcedemica.descripcion}"/>
-                                                                <p:outputLabel for="descripcionTr" value="Descripcion"/>
+                                                                <p:inputTextarea id="descripcionTr" placeholder="Descripción" value="#{administracionPlanEstudioDirector.rol.alineacionAcedemica.descripcion}"/>
+                                                                <p:outputLabel for="descripcionTr" value="Descripción"/>
                                                                 <p:message for="descripcionTr"/>
                                                                 <br/>
                                                             </div>
@@ -674,7 +685,7 @@
                                                                     <f:selectItem itemValue="Medio" itemLabel="Medio"/>
                                                                     <f:selectItem itemValue="Introductorio" itemLabel="Introductorio"/>
                                                                 </p:selectOneMenu>
-                                                                <p:outputLabel for="nivelAp" value="Nivel de Aportacion"/>
+                                                                <p:outputLabel for="nivelAp" value="Nivel de Aportación"/>
                                                                 <p:message for="nivelAp"/>
                                                                 <br/>
                                                             </div>
@@ -695,65 +706,128 @@
 
                                                 <div class="ui-g-12 ui-sm-12">
                                                     <div class="ui-material">
+                                                        <p:tabView>
+                                                            <p:tab title="Catalogs Para Alineacion" rendered="#{administracionPlanEstudioDirector.rol.listalineacionAcedemica.size() ne 0}">
+                                                                <p:dataTable id="ob" var="catalogo" value="#{administracionPlanEstudioDirector.rol.listalineacionAcedemica}" sortBy="#{catalogo.planEstudio.idPlanEstudio}">
+                                                                    <p:columnGroup type="header">
+                                                                        <p:row class="success">
+                                                                            <p:column rowspan="2" headerText="Plan Estudio" style="width: 30%;"/> 
+                                                                            <p:column rowspan="2" headerText="Tipo registro" style="width: 10%;"/> 
+                                                                            <p:column rowspan="2" headerText="Clave" style="width: 10%;"/>
+                                                                            <p:column rowspan="2" headerText="Descripcion" style="width: 50%;"/>
+                                                                        </p:row>
+                                                                    </p:columnGroup>
 
-                                                        <p:dataTable id="unidadesResultados" var="com" value="#{administracionPlanEstudioDirector.rol.acedemicas}" sortBy="#{com.ide}"
-                                                                     editable="true" editMode="row">
-                                                            <f:facet name="header">
-                                                                #{administracionPlanEstudioDirector.rol.alineacionAcedemica.planEstudio.descripcion}
-                                                            </f:facet>
-                                                            <p:columnGroup type="header">
-                                                                <p:row class="success">
-                                                                    <p:column rowspan="2" headerText="Descipsion" style="width: 40%;"/> 
-                                                                    <p:column rowspan="2" headerText="Clave" style="width: 10%;"/>
-                                                                    <p:column rowspan="2" headerText="Nivel" style="width: 10%;" rendered="#{administracionPlanEstudioDirector.rol.newRegiistroOe}"/>
-                                                                    <p:column rowspan="2" headerText="Meta" style="width: 10%;" rendered="#{administracionPlanEstudioDirector.rol.newRegiistroIn}"/>
-                                                                    <p:column rowspan="2" headerText="Grado" style="width: 10%;"/>
-                                                                    <p:column rowspan="2" headerText="Meteria" style="width: 30%;" />
-                                                                    <p:column rowspan="2" headerText="" style="width: 32px;"/> 
-                                                                </p:row>
-                                                            </p:columnGroup>
+                                                                    <p:column groupRow="true">
+                                                                        <h:outputText value="#{catalogo.planEstudio.idPlanEstudio} -- #{catalogo.planEstudio.descripcion}" />                               
+                                                                    </p:column>
+                                                                    <p:column  groupRow="true">
+                                                                        <h:outputText value="#{catalogo.tipoR eq 'Ob'?('Objetivo Educacional'):(catalogo.tipoR eq 'Ae'?('Atributo Egreso'):(catalogo.tipoR eq 'In'?('Indicador'):(catalogo.tipoR eq 'Cr'?('Criterio Desempeño'):'')))}" />                               
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <h:outputText value="#{catalogo.clave}" />
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <h:outputText value="#{catalogo.descripcion}" />
+                                                                    </p:column>
+                                                                </p:dataTable>
+                                                            </p:tab>
+                                                            <p:tab title="Alineacion Plantilla" rendered="#{administracionPlanEstudioDirector.rol.listaAlineacionVistaP.size() ne 0}">
+                                                                <p:dataTable id="alineacionPlan" var="catalogo" value="#{administracionPlanEstudioDirector.rol.listaAlineacionVistaP}" sortBy="#{catalogo.planEstudio.idPlanEstudio}">
+                                                                    <p:columnGroup type="header">
+                                                                        <p:row class="success">
+                                                                            <p:column rowspan="2" headerText="Plan Estudio" style="width: 20%;"/> 
+                                                                            <p:column rowspan="2" headerText="Materia" style="width: 15%;"/> 
+                                                                            <p:column rowspan="2" headerText="Tipo registro" style="width: 10%;"/> 
+                                                                            <p:column rowspan="2" headerText="Clave" style="width: 10%;"/>
+                                                                            <p:column rowspan="2" headerText="Descripcion" style="width: 35%;"/>
+                                                                            <p:column rowspan="2" headerText="Nota" style="width: 10%;"/>
+                                                                        </p:row>
+                                                                    </p:columnGroup>
 
-                                                            <p:ajax event="rowEdit" listener="#{administracionPlanEstudioDirector.onRowEditAlineacion}" update="unidadesResultados" />
-                                                            <p:ajax event="rowEditCancel" listener="#{administracionPlanEstudioDirector.onRowCancel}" update="unidadesResultados" />
-
-                                                            <p:column groupRow="true">
-                                                                <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{com.descripcion}" /></f:facet>
-                                                                    <f:facet name="input"><p:inputTextarea value="#{com.descripcion}" /></f:facet>
-                                                                </p:cellEditor>                                                            
-                                                            </p:column>
-                                                            <p:column>
-                                                                <h:outputText value="#{com.clave}" />
-                                                            </p:column>
-                                                            <p:column rendered="#{administracionPlanEstudioDirector.rol.newRegiistroOe}">
-                                                                <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{com.nivelA}"/></f:facet>
-                                                                    <f:facet name="input">
-                                                                        <p:selectOneMenu value="#{com.nivelA}" style="width:100%">
-                                                                            <f:selectItem itemValue="" itemLabel="No Aplica"/>
-                                                                            <f:selectItem itemValue="Avanzado" itemLabel="Avanzado"/>
-                                                                            <f:selectItem itemValue="Medio" itemLabel="Medio"/>
-                                                                            <f:selectItem itemValue="Introductorio" itemLabel="Introductorio"/>
-                                                                        </p:selectOneMenu>
+                                                                    <p:column groupRow="true">
+                                                                        <h:outputText value="#{catalogo.planEstudio.idPlanEstudio} -- #{catalogo.planEstudio.descripcion}" />                               
+                                                                    </p:column>
+                                                                    <p:column groupRow="true">
+                                                                        <h:outputText value="#{catalogo.planEstudioMateria.claveMateria} -- #{catalogo.planEstudioMateria.idMateria.nombre}" />                               
+                                                                    </p:column>
+                                                                    <p:column groupRow="true">
+                                                                        <h:outputText value="#{catalogo.tipoR eq 'Ob'?('Objetivo Educacional'):(catalogo.tipoR eq 'Ae'?('Atributo Egreso'):(catalogo.tipoR eq 'In'?('Indicador'):(catalogo.tipoR eq 'Cr'?('Criterio Desempeño'):'')))}" />                               
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <h:outputText value="#{catalogo.clave}" />
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <h:outputText value="#{catalogo.descripcion}" />
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <h:outputText value="Nivel de aportacion: #{catalogo.nivelA}" rendered="#{catalogo.tipoR eq 'Ob'}" />  
+                                                                        <h:outputText value="% de Meta Propuesta: #{catalogo.meta} %" rendered="#{catalogo.tipoR eq 'In'}" />  
+                                                                        <h:outputText value="" />  
+                                                                    </p:column>
+                                                                </p:dataTable>
+                                                            </p:tab>
+                                                            <p:tab title="Alineacion">
+                                                                <p:dataTable id="unidadesResultados" var="com" value="#{administracionPlanEstudioDirector.rol.acedemicas}" sortBy="#{com.ide}"
+                                                                             editable="true" editMode="row">
+                                                                    <f:facet name="header">
+                                                                        #{administracionPlanEstudioDirector.rol.alineacionAcedemica.planEstudio.descripcion}
                                                                     </f:facet>
-                                                                </p:cellEditor>  
-                                                            </p:column>
-                                                            <p:column rendered="#{administracionPlanEstudioDirector.rol.newRegiistroIn}">
-                                                                <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{com.meta}"/></f:facet>
-                                                                    <f:facet name="input"><p:inputTextarea value="#{com.meta}" /></f:facet>
-                                                                </p:cellEditor>  
-                                                            </p:column>
-                                                            <p:column>
-                                                                <h:outputText value="#{com.planEstudioMateria.grado}° Cuatrimestre" />
-                                                            </p:column>
-                                                            <p:column>
-                                                                <h:outputText value="#{com.planEstudioMateria.claveMateria}--#{com.planEstudioMateria.idMateria.nombre}" />
-                                                            </p:column>
-                                                            <p:column>
-                                                                <p:rowEditor />
-                                                            </p:column>
-                                                        </p:dataTable>
+                                                                    <p:columnGroup type="header">
+                                                                        <p:row class="success">
+                                                                            <p:column rowspan="2" headerText="Descripción" style="width: 40%;"/> 
+                                                                            <p:column rowspan="2" headerText="Clave" style="width: 10%;"/>
+                                                                            <p:column rowspan="2" headerText="Nivel" style="width: 10%;" rendered="#{administracionPlanEstudioDirector.rol.newRegiistroOe}"/>
+                                                                            <p:column rowspan="2" headerText="Meta" style="width: 10%;" rendered="#{administracionPlanEstudioDirector.rol.newRegiistroIn}"/>
+                                                                            <p:column rowspan="2" headerText="Grado" style="width: 10%;"/>
+                                                                            <p:column rowspan="2" headerText="Meteria" style="width: 30%;" />
+                                                                            <p:column rowspan="2" headerText="" style="width: 32px;"/> 
+                                                                        </p:row>
+                                                                    </p:columnGroup>
+
+                                                                    <p:ajax event="rowEdit" listener="#{administracionPlanEstudioDirector.onRowEditAlineacion}" update="unidadesResultados" />
+                                                                    <p:ajax event="rowEditCancel" listener="#{administracionPlanEstudioDirector.onRowCancel}" update="unidadesResultados" />
+
+                                                                    <p:column groupRow="true">
+                                                                        <p:cellEditor>
+                                                                            <f:facet name="output"><h:outputText value="#{com.descripcion}" /></f:facet>
+                                                                            <f:facet name="input"><p:inputTextarea value="#{com.descripcion}" /></f:facet>
+                                                                        </p:cellEditor>                                                            
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <h:outputText value="#{com.clave}" />
+                                                                    </p:column>
+                                                                    <p:column rendered="#{administracionPlanEstudioDirector.rol.newRegiistroOe}">
+                                                                        <p:cellEditor>
+                                                                            <f:facet name="output"><h:outputText value="#{com.nivelA}"/></f:facet>
+                                                                            <f:facet name="input">
+                                                                                <p:selectOneMenu value="#{com.nivelA}" style="width:100%">
+                                                                                    <f:selectItem itemValue="" itemLabel="No Aplica"/>
+                                                                                    <f:selectItem itemValue="Avanzado" itemLabel="Avanzado"/>
+                                                                                    <f:selectItem itemValue="Medio" itemLabel="Medio"/>
+                                                                                    <f:selectItem itemValue="Introductorio" itemLabel="Introductorio"/>
+                                                                                </p:selectOneMenu>
+                                                                            </f:facet>
+                                                                        </p:cellEditor>  
+                                                                    </p:column>
+                                                                    <p:column rendered="#{administracionPlanEstudioDirector.rol.newRegiistroIn}">
+                                                                        <p:cellEditor>
+                                                                            <f:facet name="output"><h:outputText value="#{com.meta}"/></f:facet>
+                                                                            <f:facet name="input"><p:inputTextarea value="#{com.meta}" /></f:facet>
+                                                                        </p:cellEditor>  
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <h:outputText value="#{com.planEstudioMateria.grado}° Cuatrimestre" />
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <h:outputText value="#{com.planEstudioMateria.claveMateria}--#{com.planEstudioMateria.idMateria.nombre}" />
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <p:rowEditor />
+                                                                    </p:column>
+                                                                </p:dataTable>
+                                                            </p:tab>
+                                                        </p:tabView>
                                                         <br/>
                                                     </div>
                                                 </div>
@@ -771,6 +845,10 @@
                                                     </f:facet>
                                                     <f:facet name="right">
                                                         <p:commandLink class="btn btn-info" ajax="false" target="_blank" action="#{administracionPlanEstudioDirector.descargarPlantillaNivelesDesempenios()}" title="Descargar Plantilla"><i class="fa fa-download" /></p:commandLink>
+                                                        <span class="ui-separator"/>
+                                                        <p:commandButton title="Cargar Excel" icon="fa fa-upload" onclick="PF('modalCargaArchivoNivelD').show()" class="btn btn-primary btn-sm"/>
+                                                        <span class="ui-separator"/>
+                                                        <p:commandButton title="Guardar Alineacion" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarMetasPlantilla()}" rendered="#{administracionPlanEstudioDirector.rol.metasPropuestasesPlantilla.size() ne 0}"/>
                                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                         <p:commandButton title="Guardar Materias" icon="fa fa-save" styleClass="btn-success" update="@form" actionListener="#{administracionPlanEstudioDirector.guardarMetas()}"/>
                                                     </f:facet>
@@ -782,7 +860,7 @@
                                                         <p:selectOneMenu id="planEstudioC" value="#{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.planEstudio}" converter="entityConverter">
                                                             <f:selectItem itemValue="#{null}"/>
                                                             <f:selectItems value="#{administracionPlanEstudioDirector.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
-                                                            <p:ajax listener="#{administracionPlanEstudioDirector.nivelesDesempenioPlanEstudioMateriaConsulta()}" update="@form unidadesResultados" process="@this"/>
+                                                            <p:ajax listener="#{administracionPlanEstudioDirector.nivelesDesempenioPlanEstudioMateriaConsulta()}" update="@form" process="@this"/>
                                                         </p:selectOneMenu>
                                                         <p:outputLabel for="planEstudioC" value="Plan de estudios"/>
                                                         <p:message for="planEstudioC"/>
@@ -839,64 +917,102 @@
 
                                                 <div class="ui-g-12 ui-sm-12">
                                                     <div class="ui-material">
+                                                        <p:tabView>
+                                                            <p:tab title="Niveles de Desempeño Plantilla" rendered="#{administracionPlanEstudioDirector.rol.metasPropuestasesPlantilla.size() ne 0}">
+                                                                <p:dataTable id="nivelesPlantilla" var="com" value="#{administracionPlanEstudioDirector.rol.metasPropuestasesPlantilla}" sortBy="#{com.idPlanMateria.idPlan.idPlanEstudio}">
+                                                                    <f:facet name="header">
+                                                                    </f:facet>
+                                                                    <p:columnGroup type="header">
+                                                                        <p:row class="success">
+                                                                            <p:column rowspan="2" headerText="Plan de Estudios" style="width: 10%;"/> 
+                                                                            <p:column rowspan="2" headerText="Materia" style="width: 10%;"/> 
+                                                                            <p:column rowspan="2" headerText="Autónomo" style="width: 20%;"/> 
+                                                                            <p:column rowspan="2" headerText="Destacado" style="width: 20%;"/> 
+                                                                            <p:column rowspan="2" headerText="Satisfactorio" style="width: 20%;"/> 
+                                                                            <p:column rowspan="2" headerText="No Acreditado" style="width: 20%;"/>
+                                                                        </p:row>
+                                                                    </p:columnGroup>
 
-                                                        <p:dataTable id="unidadesResultados" var="com" value="#{administracionPlanEstudioDirector.rol.propuestases}" sortBy="#{com.idPlanMateria.idPlanMateria}"
-                                                                     editable="true" editMode="row">
-                                                            <f:facet name="header">
-                                                                #{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.materia.idPlan.descripcion}
-                                                            </f:facet>
-                                                            <p:columnGroup type="header">
-                                                                <p:row class="success">
-                                                                    <p:column rowspan="2" headerText="Materia" style="width: 20%;"/> 
-                                                                    <p:column rowspan="2" headerText="Autónomo" style="width: 20%;"/> 
-                                                                    <p:column rowspan="2" headerText="Destacado" style="width: 20%;"/> 
-                                                                    <p:column rowspan="2" headerText="Satisfactorio" style="width: 20%;"/> 
-                                                                    <p:column rowspan="2" headerText="No Acreditado" style="width: 20%;"/>
-                                                                    <p:column rowspan="2" headerText="" style="width: 32px;"/> 
-                                                                </p:row>
-                                                            </p:columnGroup>
+                                                                    <p:column groupRow="true">
+                                                                        <h:outputText value="#{com.idPlanMateria.idPlan.descripcion}" />
+                                                                    </p:column>
+                                                                    <p:column groupRow="true">
+                                                                        <h:outputText value="#{com.idPlanMateria.claveMateria}-#{com.idPlanMateria.idMateria.nombre}" />
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <h:outputText value="#{com.autonomo}" />
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <h:outputText value="#{com.destacado}" />
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <h:outputText value="#{com.satisfactorio}" />
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <h:outputText value="#{com.noAcreditado}" />
+                                                                    </p:column>
+                                                                </p:dataTable>
+                                                            </p:tab>
+                                                            <p:tab title="Niveles de Desempeño">
+                                                                <p:dataTable id="unidadesResultados" var="com" value="#{administracionPlanEstudioDirector.rol.propuestases}" sortBy="#{com.idPlanMateria.idPlanMateria}"
+                                                                             editable="true" editMode="row">
+                                                                    <f:facet name="header">
+                                                                        #{administracionPlanEstudioDirector.rol.materiaMetasPropuestas.materia.idPlan.descripcion}
+                                                                    </f:facet>
+                                                                    <p:columnGroup type="header">
+                                                                        <p:row class="success">
+                                                                            <p:column rowspan="2" headerText="Materia" style="width: 20%;"/> 
+                                                                            <p:column rowspan="2" headerText="Autónomo" style="width: 20%;"/> 
+                                                                            <p:column rowspan="2" headerText="Destacado" style="width: 20%;"/> 
+                                                                            <p:column rowspan="2" headerText="Satisfactorio" style="width: 20%;"/> 
+                                                                            <p:column rowspan="2" headerText="No Acreditado" style="width: 20%;"/>
+                                                                            <p:column rowspan="2" headerText="" style="width: 32px;"/> 
+                                                                        </p:row>
+                                                                    </p:columnGroup>
 
-                                                            <p:ajax event="rowEdit" listener="#{administracionPlanEstudioDirector.onRowEditMetasPrupuestas}" update="unidadesResultados" />
-                                                            <p:ajax event="rowEditCancel" listener="#{administracionPlanEstudioDirector.onRowCancel}" update="unidadesResultados" />
+                                                                    <p:ajax event="rowEdit" listener="#{administracionPlanEstudioDirector.onRowEditMetasPrupuestas}" update="unidadesResultados" />
+                                                                    <p:ajax event="rowEditCancel" listener="#{administracionPlanEstudioDirector.onRowCancel}" update="unidadesResultados" />
 
-                                                            <p:column groupRow="true">
-                                                                <h:outputText value="#{com.idPlanMateria.claveMateria}-#{com.idPlanMateria.idMateria.nombre}" />
-                                                            </p:column>
-                                                            <p:column>
-                                                                <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{com.autonomo}" /></f:facet>
-                                                                    <f:facet name="input"><p:inputTextarea value="#{com.autonomo}" /></f:facet>
-                                                                </p:cellEditor>   
-                                                            </p:column>
-                                                            <p:column>
-                                                                <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{com.destacado}" /></f:facet>
-                                                                    <f:facet name="input"><p:inputTextarea value="#{com.destacado}" /></f:facet>
-                                                                </p:cellEditor>   
-                                                            </p:column>
-                                                            <p:column>
-                                                                <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{com.satisfactorio}" /></f:facet>
-                                                                    <f:facet name="input"><p:inputTextarea value="#{com.satisfactorio}" /></f:facet>
-                                                                </p:cellEditor>   
-                                                            </p:column>
-                                                            <p:column>
-                                                                <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{com.noAcreditado}" /></f:facet>
-                                                                    <f:facet name="input"><p:inputTextarea value="#{com.noAcreditado}" /></f:facet>
-                                                                </p:cellEditor>   
-                                                            </p:column>
-                                                            <p:column>
-                                                                <p:rowEditor />
-                                                            </p:column>
-                                                        </p:dataTable>
+                                                                    <p:column groupRow="true">
+                                                                        <h:outputText value="#{com.idPlanMateria.claveMateria}-#{com.idPlanMateria.idMateria.nombre}" />
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <p:cellEditor>
+                                                                            <f:facet name="output"><h:outputText value="#{com.autonomo}" /></f:facet>
+                                                                            <f:facet name="input"><p:inputTextarea value="#{com.autonomo}" /></f:facet>
+                                                                        </p:cellEditor>   
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <p:cellEditor>
+                                                                            <f:facet name="output"><h:outputText value="#{com.destacado}" /></f:facet>
+                                                                            <f:facet name="input"><p:inputTextarea value="#{com.destacado}" /></f:facet>
+                                                                        </p:cellEditor>   
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <p:cellEditor>
+                                                                            <f:facet name="output"><h:outputText value="#{com.satisfactorio}" /></f:facet>
+                                                                            <f:facet name="input"><p:inputTextarea value="#{com.satisfactorio}" /></f:facet>
+                                                                        </p:cellEditor>   
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <p:cellEditor>
+                                                                            <f:facet name="output"><h:outputText value="#{com.noAcreditado}" /></f:facet>
+                                                                            <f:facet name="input"><p:inputTextarea value="#{com.noAcreditado}" /></f:facet>
+                                                                        </p:cellEditor>   
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <p:rowEditor />
+                                                                    </p:column>
+                                                                </p:dataTable>
+                                                            </p:tab>
+                                                        </p:tabView>
                                                         <br/>
                                                     </div>
                                                 </div>
                                             </div>
                                         </h:form>
                                     </p:tab>
-                                    <p:tab title="Programas eduativos">
+                                    <p:tab title="Programas educativos">
                                         <h:form id="progEduFrm">
                                             <div id="main-buttons-asignatura" class="hidden-sm hidden-xs">
                                                 <p:toolbar id="tb-asignatura">
@@ -992,6 +1108,79 @@
                             </div>
                         </div>
                     </div>
+
+                    <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                        <center>
+                            <h:form id="formularioContenedor" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <o:inputFile id="file" value="#{controladorArchivoRegistroEvidInst.fileCatalogos}" 
+                                                     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" acceptMessage="Solo se permiten archivos XLSX." 
+                                                     maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." 
+                                                     required="true" requiredMessage="Debe elegir un archivo." >
+                                        </o:inputFile>
+                                        <p:messages for="file" ><p:autoUpdate/></p:messages>
+                                    </div>
+                                    <p:separator />
+                                    <div class="col-md-12">
+                                        <h:commandButton id="btnuploadFile" value="Subir archivo" class="btn btn-primary"  action="#{controladorArchivoRegistroEvidInst.subirExcelCatalogos()}"/>
+                                    </div>
+                                </div>
+                            </h:form>
+                            <p:blockUI block="formularioContenedor" widgetVar="bloqueoCargaFile" trigger="formularioContenedor:btnuploadFile">
+                                Cargando archivo espere por favor.<br />
+                            </p:blockUI>
+                        </center>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="modalCargaArchivoAlineacion" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                        <center>
+                            <h:form id="formularioContenedorAlineacion" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <o:inputFile id="file" value="#{controladorArchivoRegistroEvidInst.fileAlineacion}" 
+                                                     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" acceptMessage="Solo se permiten archivos XLSX." 
+                                                     maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." 
+                                                     required="true" requiredMessage="Debe elegir un archivo." >
+                                        </o:inputFile>
+                                        <p:messages for="file" ><p:autoUpdate/></p:messages>
+                                    </div>
+                                    <p:separator />
+                                    <div class="col-md-12">
+                                        <h:commandButton id="btnuploadFile" value="Subir archivo" class="btn btn-primary"  action="#{controladorArchivoRegistroEvidInst.subirExcelAlineacion()}"/>
+                                    </div>
+                                </div>
+                            </h:form>
+                            <p:blockUI block="formularioContenedorAlineacion" widgetVar="bloqueoCargaFile" trigger="formularioContenedorAlineacion:btnuploadFile">
+                                Cargando archivo espere por favor.<br />
+                            </p:blockUI>
+                        </center>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="modalCargaArchivoNivelD" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                        <center>
+                            <h:form id="formularioContenedorNivelD" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <o:inputFile id="file" value="#{controladorArchivoRegistroEvidInst.fileNivelesD}" 
+                                                     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" acceptMessage="Solo se permiten archivos XLSX." 
+                                                     maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." 
+                                                     required="true" requiredMessage="Debe elegir un archivo." >
+                                        </o:inputFile>
+                                        <p:messages for="file" ><p:autoUpdate/></p:messages>
+                                    </div>
+                                    <p:separator />
+                                    <div class="col-md-12">
+                                        <h:commandButton id="btnuploadFile" value="Subir archivo" class="btn btn-primary"  action="#{controladorArchivoRegistroEvidInst.subirExcelNiveles()}"/>
+                                    </div>
+                                </div>
+                            </h:form>
+                            <p:blockUI block="formularioContenedorNivelD" widgetVar="bloqueoCargaFile" trigger="formularioContenedorNivelD:btnuploadFile">
+                                Cargando archivo espere por favor.<br />
+                            </p:blockUI>
+                        </center>
+                    </p:dialog>
+
                 </c:if>
                 <c:if test="#{!administracionPlanEstudioDirector.tieneAcceso}">
                     <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">

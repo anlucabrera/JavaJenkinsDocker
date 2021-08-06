@@ -203,8 +203,9 @@ public interface EjbCarga extends Serializable {
      */
     public String subirPlantillaAlineacionMaterias(String plan, String programa, Part file);
     
+    public String subirPlantillaAlineacion(String siglasAreaSup, Part file);
+    
      /**
-<<<<<<< HEAD
      * Método que crea o comprueba si el directorio de los reportes de alineacion materias en control escolar
      * @param plan Es ocupado para crear o comprobar de que plan de estudio es el reporte que se está generando
      * @param programa Es ocupado para crear o comprobar de que programa de estudio es el reporte que se está generando
@@ -220,7 +221,6 @@ public interface EjbCarga extends Serializable {
      */
     public String crearDirectorioReportesAcademicos(String periodoEscolar, String areaGeneraReporte);
     
-   //////////////////////////
     
     public String crearDirectorioPlantillaAlineacionEducativaCompleto(String area);
 }

@@ -63,6 +63,7 @@ import mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
+import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 
 /**
@@ -82,6 +83,7 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
     @Inject LogonMB logon;
     
     @Getter Boolean tieneAcceso = false;
+    @Getter @Setter Integer activaPestania = 0;
             
     
     //    Variables de Lectura
@@ -158,8 +160,10 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
             rol.setAlineacionAcedemica(new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(),new AreasUniversidad(),""));
             rol.setAlineacionesDescripociones(new ArrayList<>());
             rol.setTipoReg("Ob");
+            rol.setListalineacionAcedemica(new ArrayList<>());
+            rol.setListaAlineacionVistaP(new ArrayList<>());
+            rol.setMetasPropuestasesPlantilla(new ArrayList<>());
 
-            setEtapa(RegistroSiipEtapa.MOSTRAR);
 //            plan = String.valueOf(rol.getPlanEstudio().getAnio());
 //            programa = rol.getPrograma().getSiglas();
 
@@ -189,39 +193,45 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
         File f = new File(ejb.getPlantillaNivelesDesempenioFinal(rol.getAreaPlanEstudioMap()));
         Faces.sendFile(f, true);
     }
-     
-    public void recibirArchivo(ValueChangeEvent e){
-        file = (Part)e.getNewValue();
-    }
-
-    public void setEtapa(RegistroSiipEtapa etapa) {
-        this.etapa = etapa;
-    }
     
-    public void subirExcelEvidInstMateria() throws IOException {
-        if (file != null) {
-            rutaArchivo = ejbCarga.subirPlantillaAlineacionMaterias(plan, programa, file);
-            if (!"Error: No se pudo leer el archivo".equals(rutaArchivo)) {
-                setEtapa(RegistroSiipEtapa.CARGAR);
-                listaPreviaEvidenciasInstrumentos(rutaArchivo);
-                rutaArchivo = null;
-                file.delete();
-            } else {
-                rutaArchivo = null;
-                file.delete();
-                Messages.addGlobalWarn("No fue posible cargar el archivo, Intentelo nuevamente");
+    public void listaPreviaCatalogos(String rutaArchivo) {
+       try {
+            activaPestania=4;
+            if(rutaArchivo != null){
+                rol.setRutaArchivo(rutaArchivo);
+                rol.setListalineacionAcedemica(edu.getListaCatalogos(rutaArchivo));
             }
-        } else {
-            System.err.println("subirExcelEvidInstMateria - file es null ");
-             Messages.addGlobalWarn("Es necesario seleccionar un archivo");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage());
+            Logger.getLogger(RegistroEvidInstEvalMateriasDireccion.class.getName()).log(Level.SEVERE, null, ex);
+            if(rutaArchivo != null){
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+            }
         }
     }
     
-    public void listaPreviaEvidenciasInstrumentos(String rutaArchivo) {
+    public void listaPreviaAlineacion(String rutaArchivo) {
        try {
+            activaPestania=4;
             if(rutaArchivo != null){
                 rol.setRutaArchivo(rutaArchivo);
-                rol.setListaPreviaAlineacionEducativa(edu.getListaRegEvidInstEvaluacion(rutaArchivo));
+                rol.setListaAlineacionVistaP(edu.getListaAlineacionEducativa(rutaArchivo));
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage());
+            Logger.getLogger(RegistroEvidInstEvalMateriasDireccion.class.getName()).log(Level.SEVERE, null, ex);
+            if(rutaArchivo != null){
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+            }
+        }
+    }
+    
+    public void listaPreviaNiveles(String rutaArchivo) {
+       try {
+            activaPestania=5;
+            if(rutaArchivo != null){
+                rol.setRutaArchivo(rutaArchivo);
+                rol.setMetasPropuestasesPlantilla(edu.getListaMetasPlantilla(rutaArchivo));
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage());
@@ -291,6 +301,41 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
         rol.getAlineacionAcedemica().setMeta(0D);
         rol.getAlineacionAcedemica().setNivelA("");
         rol.getAlineacionAcedemica().setPlanEstudioMateria(new PlanEstudioMateria());
+    }
+    
+    public void guardarCatalogos() throws Throwable {
+        if (!rol.getListalineacionAcedemica().isEmpty()) {
+            rol.getListalineacionAcedemica().forEach((t) -> {
+                ejb.accionesAlineacion(new ArrayList<>(), t, t.getTipoR(), Operacion.PERSISTIR);
+            });
+        }
+        rol.setListalineacionAcedemica(new ArrayList<>());
+        Messages.addGlobalInfo("Se han guardado exitosamente los catálogos, ya puede descargar la plantilla actualizada para realizar su alineación");
+    }
+    
+    public void guardarAlineacionPlantilla() throws Throwable {
+        if (!rol.getListaAlineacionVistaP().isEmpty()) {
+            rol.getListaAlineacionVistaP().forEach((t) -> {
+                List<PlanEstudioMateria> pems= new ArrayList<>();
+                pems.add(t.getPlanEstudioMateria());
+                ejb.accionesAlineacion(pems, t, t.getTipoR(), Operacion.PERSISTIR);
+            });
+        }
+        rol.setListalineacionAcedemica(new ArrayList<>());
+        Messages.addGlobalInfo("Se han guardado exitosamente su alineación");
+    }
+    
+    public void guardarMetasPlantilla() {
+        PeriodosEscolares escolares=rol.getPeriodosEscolareses().get(0);
+        if (!rol.getMetasPropuestasesPlantilla().isEmpty()) {
+            rol.getMetasPropuestasesPlantilla().forEach((t) -> {
+                t.setPeriodo(escolares.getPeriodo());
+//                System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.AdministracionPlanEstudioDirector.guardarMetasPlantilla()"+t.getIdPlanMateria());
+                ejb.registrarMetaMateria(new DtoMateriaMetasPropuestas(t, t.getIdPlanMateria(), t.getIdPlanMateria().getIdPlan()), Operacion.PERSISTIR);
+            });
+        }
+        rol.setMetasPropuestasesPlantilla(new ArrayList<>());
+        Messages.addGlobalInfo("Se han guardado exitosamente los niveles de desempeño");
     }
 // eventos de Actualizacion
     

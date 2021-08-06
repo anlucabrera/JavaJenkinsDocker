@@ -18,15 +18,16 @@ import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroPrevioAlineacionEducativa;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAlineacionAcedemica;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoRegistroPrevioEvidInstEval;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvidenciaEvaluacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.InstrumentoEvaluacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionSugerida;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.MetasPropuestas;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import org.apache.poi.ss.usermodel.Row;
@@ -57,222 +58,567 @@ public class ServicioRegAliEdu {
      * @return Resultado del proceso
      * @throws java.lang.Throwable
      */
-    public List<DtoRegistroPrevioAlineacionEducativa> getListaRegEvidInstEvaluacion(String rutaArchivo) throws Throwable {
-        
-        List<Boolean> validarCelda = new ArrayList<>();
-        List<String> datosInvalidos = new ArrayList<>();
-        
-        List<DtoRegistroPrevioEvidInstEval> listaDtoRegEvidInstEvaluacion = new ArrayList<>();
-        Materia materia;
-        UnidadMateria unidadMateria;
-        Criterio criterio;
-        EvidenciaEvaluacion evidenciaEvaluacion;
-        InstrumentoEvaluacion instrumentoEvaluacion;
-        DtoRegistroPrevioEvidInstEval dtoRegEvidInstEvaluacion;
-
+    public List<DtoAlineacionAcedemica.Presentacion> getListaCatalogos(String rutaArchivo) throws Throwable {
+        List<DtoAlineacionAcedemica.Presentacion> listaDtoCatalogoses = new ArrayList<>();
+        DtoAlineacionAcedemica.Presentacion presentacion = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
+        PlanEstudio estudio;
         File excel = new File(rutaArchivo);
         XSSFWorkbook libroRegistro = new XSSFWorkbook();
         libroRegistro = (XSSFWorkbook) WorkbookFactory.create(excel);
         XSSFSheet primeraHoja = libroRegistro.getSheetAt(0);
+        XSSFSheet segundaHoja = libroRegistro.getSheetAt(1);
+        XSSFSheet terceraHoja = libroRegistro.getSheetAt(2);
+        XSSFSheet cuartaHoja = libroRegistro.getSheetAt(3);
         XSSFRow fila;
-        
-        int meta=0;
-        
-        try{
-        if (primeraHoja.getSheetName().equals("Evidencias e instrumentos")) {
-        for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
-            fila = (XSSFRow) (Row) primeraHoja.getRow(i);
-
-                if (fila.getCell(22).getNumericCellValue()>0) {
-                materia = new Materia();
-                unidadMateria = new UnidadMateria();
-                criterio = new Criterio();
-                evidenciaEvaluacion = new EvidenciaEvaluacion();
-                instrumentoEvaluacion = new InstrumentoEvaluacion();
-                dtoRegEvidInstEvaluacion = new  DtoRegistroPrevioEvidInstEval();
-                
-                switch (fila.getCell(0).getCellTypeEnum()) {
-                    case NUMERIC:
-                        int grado= (int)fila.getCell(0).getNumericCellValue();
-                        dtoRegEvidInstEvaluacion.setGrado(grado);
-                        break;
-                    default:
-                        break;
+        try {
+            if (primeraHoja.getSheetName().equals("ObjetivoEducacional")) {
+                for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
+                    fila = (XSSFRow) (Row) primeraHoja.getRow(i);
+                    if ((!"".equals(fila.getCell(4).getStringCellValue()))) {
+                        estudio = new PlanEstudio();
+                        presentacion = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
+                        switch (fila.getCell(1).getCellTypeEnum()) {
+                            case NUMERIC:
+                                estudio.setIdPlanEstudio((int) fila.getCell(1).getNumericCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(2).getCellTypeEnum()) {
+                            case FORMULA:
+                                estudio.setDescripcion(fila.getCell(2).getStringCellValue());
+                                presentacion.setPlanEstudio(estudio);
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(4).getCellTypeEnum()) {
+                            case FORMULA:
+                                presentacion.setClave(fila.getCell(4).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(6).getCellTypeEnum()) {
+                            case STRING:
+                                presentacion.setDescripcion(fila.getCell(6).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        presentacion.setTipoR("Ob");
+                        listaDtoCatalogoses.add(presentacion);
+                    }
+                    libroRegistro.close();
                 }
-                switch (fila.getCell(4).getCellTypeEnum()) {
-                    case STRING: 
-                        materia.setNombre(fila.getCell(4).getStringCellValue());
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(5).getCellTypeEnum()) {
-                    case FORMULA: 
-                        materia.setIdMateria((int)fila.getCell(5).getNumericCellValue());
-                        dtoRegEvidInstEvaluacion.setMateria(materia);
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(10).getCellTypeEnum()) {
-                    case FORMULA:
-                        unidadMateria.setIdUnidadMateria((int)fila.getCell(10).getNumericCellValue());
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(11).getCellTypeEnum()) {
-                    case FORMULA:
-                        unidadMateria.setNombre(fila.getCell(11).getStringCellValue());
-                        dtoRegEvidInstEvaluacion.setUnidadMateria(unidadMateria);
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(12).getCellTypeEnum()) {
-                    case FORMULA:
-                        dtoRegEvidInstEvaluacion.setNoUnidad((int)fila.getCell(12).getNumericCellValue());
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(13).getCellTypeEnum()) {
-                    case STRING: 
-                        criterio.setTipo(fila.getCell(13).getStringCellValue());
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(14).getCellTypeEnum()) {
-                    case FORMULA: 
-                        criterio.setCriterio((int)fila.getCell(14).getNumericCellValue());
-                        dtoRegEvidInstEvaluacion.setCriterio(criterio);
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(18).getCellTypeEnum()) {
-                    case STRING: 
-                        evidenciaEvaluacion.setDescripcion(fila.getCell(18).getStringCellValue());
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(19).getCellTypeEnum()) {
-                    case FORMULA: 
-                        evidenciaEvaluacion.setEvidencia((int)fila.getCell(19).getNumericCellValue());
-                        dtoRegEvidInstEvaluacion.setEvidenciaEvaluacion(evidenciaEvaluacion);
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(20).getCellTypeEnum()) {
-                    case STRING: 
-                        instrumentoEvaluacion.setDescripcion(fila.getCell(20).getStringCellValue());
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(21).getCellTypeEnum()) {
-                    case FORMULA: 
-                        instrumentoEvaluacion.setInstrumento((int)fila.getCell(21).getNumericCellValue());
-                        dtoRegEvidInstEvaluacion.setInstrumentoEvaluacion(instrumentoEvaluacion);
-                        break;
-                    default:
-                        break;
-                }
-                switch (fila.getCell(22).getCellTypeEnum()) {
-                    case NUMERIC: 
-                        dtoRegEvidInstEvaluacion.setMetaInstrumento((int)fila.getCell(22).getNumericCellValue());
-                        meta =  dtoRegEvidInstEvaluacion.getMetaInstrumento();
-                        break;
-                    default:
-                        break;
-                }
-                
-                if (meta <= 0) {
-                        validarCelda.add(false);
-                        datosInvalidos.add("Dato incorrecto: Valor meta instrumento incorrecto: <b>" + (5 + 1) + " y fila: " + (i + 1) + "</b> \n");
-                }
-                    
-                    listaDtoRegEvidInstEvaluacion.add(dtoRegEvidInstEvaluacion);
-                }
+            } else {
+                libroRegistro.close();
+                excel.delete();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
             }
-            libroRegistro.close();
-            if (validarCelda.contains(false)) {
-                    Messages.addGlobalError("<b>La hoja de registros de evidencias e instrumentos de evaluación contiene datos que no son válidos, verifique los datos de la plantilla</b>");
-                    Messages.addGlobalError(datosInvalidos.toString());
-                    return Collections.EMPTY_LIST;
-                } else {
-                    Messages.addGlobalInfo("<b>Hoja de registros de evidencias e instrumentos de evaluación validada favor de verificar sus datos antes de guardar su información</b>");
-//                    return listaDtoRegEvidInstEvaluacion.stream().sorted(DtoRegistroPrevioEvidInstEval::compareTo).collect(Collectors.toList());
-return Collections.EMPTY_LIST;
+
+            if (segundaHoja.getSheetName().equals("AtributoEgreso")) {
+                for (int i = 2; i <= segundaHoja.getLastRowNum(); i++) {
+                    fila = (XSSFRow) (Row) segundaHoja.getRow(i);
+                    if ((!"".equals(fila.getCell(4).getStringCellValue()))) {
+                        estudio = new PlanEstudio();
+                        presentacion = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
+                        switch (fila.getCell(1).getCellTypeEnum()) {
+                            case NUMERIC:
+                                estudio.setIdPlanEstudio((int) fila.getCell(1).getNumericCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(2).getCellTypeEnum()) {
+                            case FORMULA:
+                                estudio.setDescripcion(fila.getCell(2).getStringCellValue());
+                                presentacion.setPlanEstudio(estudio);
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(4).getCellTypeEnum()) {
+                            case FORMULA:
+                                presentacion.setClave(fila.getCell(4).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(6).getCellTypeEnum()) {
+                            case STRING:
+                                presentacion.setDescripcion(fila.getCell(6).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        presentacion.setTipoR("Ae");
+                        listaDtoCatalogoses.add(presentacion);
+                    }
+                    libroRegistro.close();
                 }
-        } else {
-            libroRegistro.close();
-            excel.delete();
-            ServicioArchivos.eliminarArchivo(rutaArchivo);
-            Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
-            return Collections.EMPTY_LIST;
-        }
-    } catch (IOException e) {
+            } else {
+                libroRegistro.close();
+                excel.delete();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
+            }
+
+            if (terceraHoja.getSheetName().equals("CriterioDesempenio")) {
+                for (int i = 2; i <= terceraHoja.getLastRowNum(); i++) {
+                    fila = (XSSFRow) (Row) terceraHoja.getRow(i);
+                    if ((!"".equals(fila.getCell(4).getStringCellValue()))) {
+                        estudio = new PlanEstudio();
+                        presentacion = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
+                        switch (fila.getCell(1).getCellTypeEnum()) {
+                            case NUMERIC:
+                                estudio.setIdPlanEstudio((int) fila.getCell(1).getNumericCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(2).getCellTypeEnum()) {
+                            case FORMULA:
+                                estudio.setDescripcion(fila.getCell(2).getStringCellValue());
+                                presentacion.setPlanEstudio(estudio);
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(4).getCellTypeEnum()) {
+                            case FORMULA:
+                                presentacion.setClave(fila.getCell(4).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(6).getCellTypeEnum()) {
+                            case STRING:
+                                presentacion.setDescripcion(fila.getCell(6).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        presentacion.setTipoR("Cr");
+                        listaDtoCatalogoses.add(presentacion);
+                    }
+                    libroRegistro.close();
+                }
+            } else {
+                libroRegistro.close();
+                excel.delete();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
+            }
+            if (cuartaHoja.getSheetName().equals("Indicador")) {
+                for (int i = 2; i <= cuartaHoja.getLastRowNum(); i++) {
+                    fila = (XSSFRow) (Row) cuartaHoja.getRow(i);
+                    if ((!"".equals(fila.getCell(4).getStringCellValue()))) {
+                        estudio = new PlanEstudio();
+                        presentacion = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
+                        switch (fila.getCell(1).getCellTypeEnum()) {
+                            case NUMERIC:
+                                estudio.setIdPlanEstudio((int) fila.getCell(1).getNumericCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(2).getCellTypeEnum()) {
+                            case FORMULA:
+                                estudio.setDescripcion(fila.getCell(2).getStringCellValue());
+                                presentacion.setPlanEstudio(estudio);
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(4).getCellTypeEnum()) {
+                            case FORMULA:
+                                presentacion.setClave(fila.getCell(4).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(6).getCellTypeEnum()) {
+                            case STRING:
+                                presentacion.setDescripcion(fila.getCell(6).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        presentacion.setTipoR("In");
+                        listaDtoCatalogoses.add(presentacion);
+                    }
+                    libroRegistro.close();
+                }
+                return listaDtoCatalogoses.stream().sorted(DtoAlineacionAcedemica.Presentacion::compareTo).collect(Collectors.toList());
+            } else {
+                libroRegistro.close();
+                excel.delete();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
+            }
+
+        } catch (IOException e) {
             libroRegistro.close();
             ServicioArchivos.eliminarArchivo(rutaArchivo);
             Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
             return Collections.EMPTY_LIST;
-    }
+        }
 
     }
     
-    /**
-     * Permite guardar los registros capturados en la plantilla de excel
-     * @param lista Lista de evidencias e instrumentos de evaluación de cada unidad que se guardarán
-     * @param periodosEscolar Periodo escolar activo
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<List<EvaluacionSugerida>> guardarEvidInstEval(List<DtoRegistroPrevioEvidInstEval> lista, PeriodosEscolares periodosEscolar){
-        try{
-            List<EvaluacionSugerida> li = new ArrayList<>();
-            
-            if(lista == null || lista.isEmpty()) return ResultadoEJB.crearErroneo(2, li, "La lista de evidencias e instrumentos de evaluación no puede ser nula o vacía.");
-          
-            List<EvaluacionSugerida> l = new ArrayList<>();
-           
-            lista.forEach(evidenciaInstrumento -> {
-                try {
-                    if(evidenciaInstrumento.getMetaInstrumento()!= 0){
+    public List<DtoAlineacionAcedemica.Presentacion> getListaAlineacionEducativa(String rutaArchivo) throws Throwable {
+        List<DtoAlineacionAcedemica.Presentacion> listaDtoCatalogoses = new ArrayList<>();
+        DtoAlineacionAcedemica.Presentacion objetivos = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
+        DtoAlineacionAcedemica.Presentacion criterio = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
+        DtoAlineacionAcedemica.Presentacion indicador = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
+        DtoAlineacionAcedemica.Presentacion atributo = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
+        
+        
+        PlanEstudio estudio;
+        PlanEstudioMateria estudioMateria;
+        Materia materia;
+        File excel = new File(rutaArchivo);
+        XSSFWorkbook libroRegistro = new XSSFWorkbook();
+        libroRegistro = (XSSFWorkbook) WorkbookFactory.create(excel);
+        XSSFSheet primeraHoja = libroRegistro.getSheetAt(5);
+        XSSFRow fila;
+        try {
+            if (primeraHoja.getSheetName().equals("Alineacion")) {
+                for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
+                    fila = (XSSFRow) (Row) primeraHoja.getRow(i);
+                    if (fila.getCell(2).getNumericCellValue() != 0d) {
+                        estudio = new PlanEstudio();
+                        estudioMateria = new PlanEstudioMateria();
+                        materia= new Materia();
+                        objetivos = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
+                        criterio = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
+                        atributo = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
+                        indicador = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
+                        switch (fila.getCell(0).getCellTypeEnum()) {
+                            case NUMERIC:
+                                estudio.setIdPlanEstudio((int) fila.getCell(0).getNumericCellValue());
+                                estudioMateria.setGrado((int) fila.getCell(0).getNumericCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(1).getCellTypeEnum()) {
+                            case FORMULA:
+                                estudio.setDescripcion(fila.getCell(1).getStringCellValue());
+                                objetivos.setPlanEstudio(estudio);
+                                criterio.setPlanEstudio(estudio);
+                                atributo.setPlanEstudio(estudio);
+                                indicador.setPlanEstudio(estudio);
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(6).getCellTypeEnum()) {
+                            case NUMERIC:
+                                estudioMateria.setGrado((int) fila.getCell(6).getNumericCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(7).getCellTypeEnum()) {
+                            case STRING:
+                                materia.setNombre(fila.getCell(7).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(8).getCellTypeEnum()) {
+                            case FORMULA:
+                                estudioMateria.setClaveMateria(fila.getCell(8).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(9).getCellTypeEnum()) {
+                            case FORMULA:
+                                estudioMateria.setIdPlanMateria((int) fila.getCell(9).getNumericCellValue());
+                                materia.setIdMateria((int) fila.getCell(9).getNumericCellValue());
+                                estudioMateria.setIdMateria(new Materia());
+                                estudioMateria.setIdMateria(materia);
+                                objetivos.setPlanEstudioMateria(estudioMateria);
+                                criterio.setPlanEstudioMateria(estudioMateria);
+                                atributo.setPlanEstudioMateria(estudioMateria);
+                                indicador.setPlanEstudioMateria(estudioMateria);
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(12).getCellTypeEnum()) {
+                            case STRING:
+                                objetivos.setClave(fila.getCell(12).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(13).getCellTypeEnum()) {
+                            case FORMULA:
+                                objetivos.setDescripcion(fila.getCell(13).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(14).getCellTypeEnum()) {
+                            case STRING:
+                                objetivos.setNivelA(fila.getCell(14).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                       switch (fila.getCell(15).getCellTypeEnum()) {
+                            case FORMULA:
+                                objetivos.setIde((int) fila.getCell(15).getNumericCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                       
+                       switch (fila.getCell(18).getCellTypeEnum()) {
+                            case STRING:
+                                atributo.setClave(fila.getCell(18).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(19).getCellTypeEnum()) {
+                            case FORMULA:
+                                atributo.setDescripcion(fila.getCell(19).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                       switch (fila.getCell(20).getCellTypeEnum()) {
+                            case FORMULA:
+                                atributo.setIde((int) fila.getCell(20).getNumericCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                       
+                       switch (fila.getCell(23).getCellTypeEnum()) {
+                            case STRING:
+                                criterio.setClave(fila.getCell(23).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(24).getCellTypeEnum()) {
+                            case FORMULA:
+                                criterio.setDescripcion(fila.getCell(24).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                       switch (fila.getCell(25).getCellTypeEnum()) {
+                            case FORMULA:
+                                criterio.setIde((int) fila.getCell(25).getNumericCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                       
+                       switch (fila.getCell(28).getCellTypeEnum()) {
+                            case STRING:
+                                indicador.setClave(fila.getCell(28).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(29).getCellTypeEnum()) {
+                            case FORMULA:
+                                indicador.setDescripcion(fila.getCell(29).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(30).getCellTypeEnum()) {
+                            case NUMERIC:
+                                indicador.setMeta((double) fila.getCell(30).getNumericCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                       switch (fila.getCell(31).getCellTypeEnum()) {
+                            case FORMULA:
+                                indicador.setIde((int) fila.getCell(31).getNumericCellValue());
+                                break;
+                            default:
+                                break;
+                       }
                         
-                        EvaluacionSugerida evalReg = getRegistroEvaluacionSugerida(evidenciaInstrumento).getValor();
-                        if(evalReg==null){
-                            EvaluacionSugerida evalSug = new EvaluacionSugerida();
-                            UnidadMateria um = em.find(UnidadMateria.class, evidenciaInstrumento.getUnidadMateria().getIdUnidadMateria());
-                            evalSug.setUnidadMateria(um);
-                            evalSug.setEvidencia(evidenciaInstrumento.getEvidenciaEvaluacion());
-                            evalSug.setInstrumento(evidenciaInstrumento.getInstrumentoEvaluacion());
-                            evalSug.setMetaInstrumento(evidenciaInstrumento.getMetaInstrumento());
-                            evalSug.setPeriodoInicio(periodosEscolar.getPeriodo());
-                            evalSug.setActivo(true);
-                            em.persist(evalSug);
-                            l.add(evalSug);
-                        }else{
-                            evalReg.setInstrumento(evidenciaInstrumento.getInstrumentoEvaluacion());
-                            evalReg.setMetaInstrumento(evidenciaInstrumento.getMetaInstrumento());
-                            evalReg.setPeriodoInicio(periodosEscolar.getPeriodo());
-                            evalReg.setActivo(true);
-                            em.merge(evalReg);
-                            l.add(evalReg);
-                        
+                        objetivos.setTipoR("Ob");
+                        criterio.setTipoR("Cr");
+                        atributo.setTipoR("Ae");
+                        indicador.setTipoR("In");
+
+                        if (!objetivos.getDescripcion().equals("No aplica")) {
+                            listaDtoCatalogoses.add(objetivos);
+                        } 
+                        if (!criterio.getDescripcion().equals("No aplica")) {
+                            listaDtoCatalogoses.add(criterio);
+                        } 
+                        if (!atributo.getDescripcion().equals("No aplica")) {
+                            listaDtoCatalogoses.add(atributo);
+                        }
+                        if (!indicador.getDescripcion().equals("No aplica")) {
+                            listaDtoCatalogoses.add(indicador);
                         }
                     }
-                } catch (Throwable ex) {
-                    Logger.getLogger(ServicioRegAliEdu.class.getName()).log(Level.SEVERE, null, ex);
+                    libroRegistro.close();
                 }
-            });
-            return ResultadoEJB.crearCorrecto(l, "El registro de evidencias e instrumentos de evaluación se ha guardado correctamente.");
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar las evidencias e instrumentos de evaluación. (ServicioRegEvidInsEval.guardarListaEvidenciasInstrumentos)", e, null);
+                return listaDtoCatalogoses.stream().sorted(DtoAlineacionAcedemica.Presentacion::compareToALC).collect(Collectors.toList());
+            } else {
+                libroRegistro.close();
+                excel.delete();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
+            }
+
+        } catch (IOException e) {
+            libroRegistro.close();
+            ServicioArchivos.eliminarArchivo(rutaArchivo);
+            Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
+            return Collections.EMPTY_LIST;
         }
+
     }
+    
+    public List<MetasPropuestas> getListaMetasPlantilla(String rutaArchivo) throws Throwable {
+        List<MetasPropuestas> metasPropuestases = new ArrayList<>();
+       
+        PlanEstudio estudio;
+        PlanEstudioMateria estudioMateria;
+        Materia materia;
+        MetasPropuestas propuestas;
+        
+        File excel = new File(rutaArchivo);
+        XSSFWorkbook libroRegistro = new XSSFWorkbook();
+        libroRegistro = (XSSFWorkbook) WorkbookFactory.create(excel);
+        XSSFSheet primeraHoja = libroRegistro.getSheetAt(1);
+        XSSFRow fila;
+        try {
+            if (primeraHoja.getSheetName().equals("Alineacio")) {
+                for (int i = 2; i <= primeraHoja.getLastRowNum(); i++) {
+                    fila = (XSSFRow) (Row) primeraHoja.getRow(i);
+                    if (fila.getCell(2).getNumericCellValue() != 0d) {
+                        estudio = new PlanEstudio();
+                        estudioMateria = new PlanEstudioMateria();
+                        materia = new Materia();
+                        propuestas = new MetasPropuestas();
+                        switch (fila.getCell(0).getCellTypeEnum()) {
+                            case NUMERIC:
+                                estudio.setIdPlanEstudio((int) fila.getCell(0).getNumericCellValue());
+                                estudioMateria.setGrado((int) fila.getCell(0).getNumericCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(1).getCellTypeEnum()) {
+                            case FORMULA:
+                                estudio.setDescripcion(fila.getCell(1).getStringCellValue());
+                                estudioMateria.setIdPlan(new PlanEstudio());
+                                estudioMateria.setIdPlan(estudio);
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(4).getCellTypeEnum()) {
+                            case NUMERIC:
+                                estudioMateria.setGrado((int) fila.getCell(4).getNumericCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(7).getCellTypeEnum()) {
+                            case STRING:
+                                materia.setNombre(fila.getCell(7).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(8).getCellTypeEnum()) {
+                            case FORMULA:
+                                estudioMateria.setClaveMateria(fila.getCell(8).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(9).getCellTypeEnum()) {
+                            case FORMULA:
+                                estudioMateria.setIdPlanMateria((int) fila.getCell(9).getNumericCellValue());
+                                materia.setIdMateria((int) fila.getCell(9).getNumericCellValue());
+                                estudioMateria.setIdMateria(new Materia());
+                                estudioMateria.setIdMateria(materia);
+                                propuestas.setIdPlanMateria(new PlanEstudioMateria());
+                                propuestas.setIdPlanMateria(estudioMateria);
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(10).getCellTypeEnum()) {
+                            case STRING:
+                                propuestas.setAutonomo(fila.getCell(10).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(11).getCellTypeEnum()) {
+                            case STRING:
+                                propuestas.setDestacado(fila.getCell(11).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(12).getCellTypeEnum()) {
+                            case STRING:
+                                propuestas.setSatisfactorio(fila.getCell(12).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (fila.getCell(13).getCellTypeEnum()) {
+                            case STRING:
+                                propuestas.setNoAcreditado(fila.getCell(13).getStringCellValue());
+                                break;
+                            default:
+                                break;
+                        }
+
+                        metasPropuestases.add(propuestas);
+                    }
+                    libroRegistro.close();
+                }
+                return metasPropuestases;
+            } else {
+                libroRegistro.close();
+                excel.delete();
+                ServicioArchivos.eliminarArchivo(rutaArchivo);
+                Messages.addGlobalWarn("<b>El archivo cargado no corresponde al registro</b>");
+                return Collections.EMPTY_LIST;
+            }
+
+        } catch (IOException e) {
+            libroRegistro.close();
+            ServicioArchivos.eliminarArchivo(rutaArchivo);
+            Messages.addGlobalError("<b>Ocurrió un error durante la lectura del archivo, asegurese de haber registrado correctamente su información</b>");
+            return Collections.EMPTY_LIST;
+        }
+
+    }
+    
+    
+    
     
     /**
      * Permite buscar si existe un registro con la unidad y evidencia de la lista previa

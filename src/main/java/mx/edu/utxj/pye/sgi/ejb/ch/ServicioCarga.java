@@ -216,6 +216,10 @@ public class ServicioCarga implements EjbCarga {
      public static String genCarpetaRelativa(String alineacionMaterias){
         return carpetaRaiz + alineacionMaterias + File.separator ;
     }
+     
+    public static String genCarpetaRelativaAlineaciones(String alineacionMaterias, String areaSup){
+        return carpetaRaiz + alineacionMaterias + File.separator + areaSup + File.separator ;
+    }
             
     @Override
     public String subirExcelRegistro(String ejercicio, String area, String eje, String registro, Part file) {
@@ -557,6 +561,33 @@ public class ServicioCarga implements EjbCarga {
        try {
             byte[] content = Utils.toByteArray(file.getInputStream());
             String rutaRelativa = genCarpetaRelativa(alineacionMaterias, programa, plan);
+            addCarpetaRelativa(rutaRelativa);
+            String nombreArchivo1 = file.getSubmittedFileName().trim().toLowerCase();
+            nombreArchivo1 = prettyURL(nombreArchivo1);
+
+            for (int i = 1; i <= 10; i++) {
+                int numero = (int) Math.round(Math.random() * 35);
+                aleatorio = aleatorio + abecedarioMinusculas[numero];
+            }
+
+            LocalDate localDateOf = LocalDate.now();
+            String name = rutaRelativa.concat(String.valueOf(localDateOf)).concat("_").concat(aleatorio).concat("_").concat(nombreArchivo1);
+            FileOutputStream fos = new FileOutputStream(name);
+            FileCopyUtils.copy(content, fos);
+            aleatorio = "";
+
+            return name;
+        } catch (IOException ex) {
+            Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);
+            return "Error: No se pudo leer el archivo";
+        }
+    }
+    
+    @Override
+    public String subirPlantillaAlineacion(String siglasAreaSup, Part file) {
+       try {
+            byte[] content = Utils.toByteArray(file.getInputStream());
+            String rutaRelativa = genCarpetaRelativaAlineaciones(alineacionMaterias, siglasAreaSup);
             addCarpetaRelativa(rutaRelativa);
             String nombreArchivo1 = file.getSubmittedFileName().trim().toLowerCase();
             nombreArchivo1 = prettyURL(nombreArchivo1);

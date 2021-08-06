@@ -83,6 +83,9 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     
     @Getter    @Setter    private DtoAlineacionAcedemica.Presentacion alineacionAcedemica;
     
+    @Getter    @Setter    private List<DtoAlineacionAcedemica.Presentacion> listalineacionAcedemica;
+    @Getter    @Setter    private List<DtoAlineacionAcedemica.Presentacion> listaAlineacionVistaP;
+    
 // Variables de tipo de List
     // Representa el listado de programas educativos vigentes
     @Getter    @NonNull    private List<AreasUniversidad> programas;
@@ -101,6 +104,7 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     // Representa el listado de Metas de una materia
     @Getter    @NonNull    private List<MetasPropuestas> metasPropuestases;
     @Getter    @Setter    private List<MetasPropuestas> propuestases;
+    @Getter    @Setter    private List<MetasPropuestas> metasPropuestasesPlantilla;
     // Representa el listado de Plan Estudio Materia de un Plan de Estudio
     @Getter    @NonNull    private List<PlanEstudioMateria> planEstudioMaterias;    
     @Getter    @Setter    private List<PlanEstudioMateria> planestudioMateriasSelect;
@@ -108,7 +112,6 @@ public class RegistroPlanesEstudioRolDirector extends AbstractRol{
     @Getter    @Setter    private List<DtoPlanEstudioMateriaCompetencias> planEstudioMateriaCompetenciasesList;
     @Getter    @Setter    private List<DtoAlineacionAcedemica.Presentacion> acedemicas;
     @Getter    @Setter    private List<DtoAlineacionAcedemica.Presentacion> alineacionesDescripociones;
-    @Setter    @Getter private List<DtoRegistroPrevioAlineacionEducativa> listaPreviaAlineacionEducativa;
 // Variables de tipo de Map
     // Mapeo de materias con sus unidades de acuerdo al plan de estudios seleccionado
     @Getter    @NonNull    private Map<Materia, List<UnidadMateria>> materiasUnidadesMap;
