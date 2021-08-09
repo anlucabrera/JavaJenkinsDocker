@@ -63,7 +63,9 @@ public enum ControlEscolarVistaControlador {
     REGISTRO_DOCUMENTOS_OFICIALES("/controlEscolar/se/registroDocumentosOficiales.xhtml",  RegistroDocumentosOficialesEscolares.class),
     REGISTRO_EVENTOS_ESCOLARES("/controlEscolar/se/registroEventosEscolares.xhtml",  RegistroEventosEscolares.class),
     APERTURA_EVENTOS_ESCOLARES("/controlEscolar/se/aperturaEventosEscolares.xhtml",  AperturaEventosEscolares.class),
-    
+    INSCRIPCION_ING("/controlEscolar/se/inscripcionIngenieria.xhtml",  InscripcionIngenieriaSE.class),
+
+
     SEGUIMIENTO_ESTADIA_VINCULACION("/controlEscolar/vinculacion/seguimientoEstadiaVinculacion.xhtml", SeguimientoEstadiaVinculacion.class),
 
     SEGUIMIENTO_EXPEDIENTE_GENERACION("/controlEscolar/titulacion/seguimientoMatricula.xhtml", SeguimientoExpedienteMatriculaTitulacion.class),

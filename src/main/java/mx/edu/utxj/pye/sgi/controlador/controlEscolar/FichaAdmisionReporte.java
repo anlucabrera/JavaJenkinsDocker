@@ -83,8 +83,9 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
             //Obtiene PE activos
             getPE();
             rol.setProcesoSelect(rol.getProcesosInscripcion());
+            rol.setTipoReporte("NI");
             getConcentrado();
-            getReporte();
+            //getReporte();
             getProcesos();
         }catch (Exception e){
             mostrarExcepcion(e);
@@ -121,6 +122,44 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
         }
 
     }
+    /**
+     * Obtiene los planes educativos activos
+     */
+    public void getPEIng(){
+        try{
+            ResultadoEJB<List<AreasUniversidad>> resPE = ejb.getPEIng();
+            if(resPE.getCorrecto()==true){
+                rol.setPeActivas(resPE.getValor());
+                //System.out.println("Areas " + rol.getPeActivas().size());
+            }else {
+                mostrarMensajeResultadoEJB(resPE);
+            }
+        }catch (Exception e){
+            mostrarExcepcion(e);
+        }
+
+    }
+
+    /**
+     * Obtiene el concentrado según el tipo de reporte selccionado
+     * Nuevo ingreso - NI
+     * Ing/Lic - ING
+     */
+    public void getReportebyTipo(){
+        try{
+            if(rol.getTipoReporte()!=null){
+                if(rol.getTipoReporte().equals("NI")){
+                    rol.setProcesosInscripcion(rol.getProcesoSelect());
+                    getPE();
+                    getConcentrado();
+                }else if(rol.getTipoReporte().equals("ING")){
+                    rol.setProcesosInscripcion(rol.getProcesoSelect());
+                    getPEIng();
+                    getConcentradoIng();
+                }
+            }
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
 
     public void getConcentrado(){
         try{
@@ -130,6 +169,27 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
             rol.getPeActivas().forEach(p->{
                 dtoConcentrado = new DtoReporteFichaAdmision();
                 dtoConcentrado = getTotales(p);
+                //System.out.println("dto -------" +dtoConcentrado);
+                concentrado.add(dtoConcentrado);
+            });
+            rol.setConcentradoFichas(concentrado);
+            calculaTotalesIns();
+
+
+            //System.out.println("Total " + rol.getConcentradoFichas().size());
+
+        }catch (Exception e){
+            mostrarExcepcion(e);
+        }
+    }
+    public void getConcentradoIng(){
+        try{
+            //System.out.println("Proceso ->" + rol.getProcesosInscripcion() + "Proceso select" + rol.getProcesoSelect());
+            rol.setProcesosInscripcion(rol.getProcesoSelect());
+            List<DtoReporteFichaAdmision> concentrado = new ArrayList<>();
+            rol.getPeActivas().forEach(p->{
+                dtoConcentrado = new DtoReporteFichaAdmision();
+                dtoConcentrado = getTotalesIng(p);
                 //System.out.println("dto -------" +dtoConcentrado);
                 concentrado.add(dtoConcentrado);
             });
@@ -174,23 +234,23 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
         rol.setPorcentajeInscritosInstitucional(new Double(0));
 
         rol.getConcentradoFichas().stream().forEach(c->{
-            //Total de proyeccion institucional
-            rol.setTotalfichasProyectadasInstitucional(rol.getTotalfichasProyectadasInstitucional()+c.getProyeccionFichasValidadas());
-            rol.setTotalInscritosProyectadasInstitucional(rol.getTotalInscritosProyectadasInstitucional()+c.getProyeccionMatricula());
-            // Total fichas registradas institucional
-            rol.setTotalFichasRegistradasSemanalInstitucional(rol.getTotalFichasRegistradasSemanalInstitucional()+c.getTotalRegistroSemanal());
-            rol.setTotalFichasRegistradasSabatinoInstitucional(rol.getTotalFichasRegistradasSabatinoInstitucional()+c.getTotalRegistroSabatino());
-            rol.setTotalFichasRegistradasInstitucional(rol.getTotalFichasRegistradasInstitucional()+c.getTotalRegistros());
-            //Total fichas validadas institucional
-            rol.setTotalFichasValidadasSemanalInstitucional(rol.getTotalFichasValidadasSemanalInstitucional()+c.getTotalRegistroSemanalValido());
-            rol.setTotalFichasValidadasSabatinoInstitucional(rol.getTotalFichasValidadasSabatinoInstitucional()+c.getTotalRegistroSabatinoValido());
-            rol.setTotalFichasValidadasInstitucional(rol.getTotalFichasValidadasInstitucional()+c.getTotalRegistrosValidados());
-            //Total inscritos validados
-            rol.setTotalInscripcionSemanalInstitucional(rol.getTotalInscripcionSemanalInstitucional()+c.getTotalInscritosSemanal());
-            rol.setTotalInscripcionSabatinoInstitucioanal(rol.getTotalInscripcionSabatinoInstitucioanal()+c.getTotalInscritosSabatino());
-            rol.setTotalInscripcionInstitucional(rol.getTotalInscripcionInstitucional()+c.getTotalInscritos());
+                    //Total de proyeccion institucional
+                    rol.setTotalfichasProyectadasInstitucional(rol.getTotalfichasProyectadasInstitucional()+c.getProyeccionFichasValidadas());
+                    rol.setTotalInscritosProyectadasInstitucional(rol.getTotalInscritosProyectadasInstitucional()+c.getProyeccionMatricula());
+                    // Total fichas registradas institucional
+                    rol.setTotalFichasRegistradasSemanalInstitucional(rol.getTotalFichasRegistradasSemanalInstitucional()+c.getTotalRegistroSemanal());
+                    rol.setTotalFichasRegistradasSabatinoInstitucional(rol.getTotalFichasRegistradasSabatinoInstitucional()+c.getTotalRegistroSabatino());
+                    rol.setTotalFichasRegistradasInstitucional(rol.getTotalFichasRegistradasInstitucional()+c.getTotalRegistros());
+                    //Total fichas validadas institucional
+                    rol.setTotalFichasValidadasSemanalInstitucional(rol.getTotalFichasValidadasSemanalInstitucional()+c.getTotalRegistroSemanalValido());
+                    rol.setTotalFichasValidadasSabatinoInstitucional(rol.getTotalFichasValidadasSabatinoInstitucional()+c.getTotalRegistroSabatinoValido());
+                    rol.setTotalFichasValidadasInstitucional(rol.getTotalFichasValidadasInstitucional()+c.getTotalRegistrosValidados());
+                    //Total inscritos validados
+                    rol.setTotalInscripcionSemanalInstitucional(rol.getTotalInscripcionSemanalInstitucional()+c.getTotalInscritosSemanal());
+                    rol.setTotalInscripcionSabatinoInstitucioanal(rol.getTotalInscripcionSabatinoInstitucioanal()+c.getTotalInscritosSabatino());
+                    rol.setTotalInscripcionInstitucional(rol.getTotalInscripcionInstitucional()+c.getTotalInscritos());
 
-        }
+                }
         );
         if(rol.getTotalFichasValidadasInstitucional()!=0){
             //Porcentaje de fichas institucional
@@ -210,7 +270,7 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
             porcentajeInscritos= (totalInscritos*100)/pInscripcion;
             BigDecimal big2= new BigDecimal(porcentajeInscritos).setScale(2, RoundingMode.UP);
             rol.setPorcentajeInscritosInstitucional(big2.doubleValue());
-           // System.out.println("Porcentaje insc "+ rol.getPorcentajeInscritosInstitucional());
+            // System.out.println("Porcentaje insc "+ rol.getPorcentajeInscritosInstitucional());
         }else {rol.setPorcentajeInscritosInstitucional(new Double(0));}
 
     }
@@ -230,7 +290,7 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
             ProyeccionAreas proyeccionAreas =new ProyeccionAreas();
             //Obtiene la proyeccion de fichas y matricula por programa educativo
             ResultadoEJB<ProyeccionAreas> resProyeccion= ejb.getProyeccionbyArea(rol.getProcesosInscripcion(),pe);
-           // System.out.println(res.getValor().size()+" Estudiantes -> " +resEstudiantes.getValor().size()+ "Proyeccion "+ resProyeccion.getValor());
+            // System.out.println(res.getValor().size()+" Estudiantes -> " +resEstudiantes.getValor().size()+ "Proyeccion "+ resProyeccion.getValor());
             ////////////REGISTROS DE FICHAS
             //System.out.println("Total de Apirantes " +res.getValor().size());
             if(res.getCorrecto()== true){
@@ -266,7 +326,7 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
                 dtoReporteFichaAdmision.setTotalRegistros(dtoReporteFichaAdmision.getTotalRegistroSemanal()+dtoReporteFichaAdmision.getTotalRegistroSabatino());
                 dtoReporteFichaAdmision.setTotalRegistrosValidados(dtoReporteFichaAdmision.getTotalRegistroSemanalValido()+dtoReporteFichaAdmision.getTotalRegistroSabatinoValido());
 
-               // return dtoReporteFichaAdmision;
+                // return dtoReporteFichaAdmision;
             }
             ///// ESTUDIANTES INSCRITOS
             if(resEstudiantes.getCorrecto()==true){
@@ -317,6 +377,110 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
             return new DtoReporteFichaAdmision();
         }
     }
+    /*
+   Calcula el total de aspirantes registrados y validados por programa educativo
+    */
+    public DtoReporteFichaAdmision getTotalesIng(AreasUniversidad pe){
+        try{
+            DtoReporteFichaAdmision dtoReporteFichaAdmision = new DtoReporteFichaAdmision();
+            dtoReporteFichaAdmision.setPe(pe);
+            List<Aspirante> aspirantesbyPe= new ArrayList<>();
+            //Obtienes aspirantes de ingeniería por plan educativo
+            ResultadoEJB<List<Aspirante>> res = ejb.getAspirantesIngbyPE(pe,rol.getProcesosInscripcion());
+            //Obtiene la lista de estuduantes inscritos
+            List<Estudiante> inscritosbyPE= new ArrayList<>();
+            ResultadoEJB<List<Estudiante>> resEstudiantes= ejb.getInscritoIngsbyPE(pe,rol.getProcesosInscripcion());
+            ProyeccionAreas proyeccionAreas =new ProyeccionAreas();
+            //Obtiene la proyeccion de fichas y matricula por programa educativo
+            ResultadoEJB<ProyeccionAreas> resProyeccion= ejb.getProyeccionbyArea(rol.getProcesosInscripcion(),pe);
+            // System.out.println(res.getValor().size()+" Estudiantes -> " +resEstudiantes.getValor().size()+ "Proyeccion "+ resProyeccion.getValor());
+            ////////////REGISTROS DE FICHAS
+            //System.out.println("Total de Apirantes " +res.getValor().size());
+            if(res.getCorrecto()== true){
+                //La carrera tiene registros de fichas
+
+                aspirantesbyPe = res.getValor();
+                dtoReporteFichaAdmision.setTotalRegistroSemanal(aspirantesbyPe.stream()
+                        .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Semanal"))
+                        .count());
+
+                dtoReporteFichaAdmision.setTotalRegistroSabatino(aspirantesbyPe.stream()
+                        .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Sabatino"))
+                        .count());
+
+                dtoReporteFichaAdmision.setTotalRegistroSemanalValido(aspirantesbyPe.stream()
+                        .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Semanal") && x.getEstatus() == true)
+                        .count());
+
+                dtoReporteFichaAdmision.setTotalRegistroSabatinoValido( aspirantesbyPe.stream()
+                        .filter(x -> x.getDatosAcademicos().getSistemaPrimeraOpcion().getNombre().equals("Sabatino") && x.getEstatus() == true)
+                        .count());
+                dtoReporteFichaAdmision.setTotalRegistros(dtoReporteFichaAdmision.getTotalRegistroSemanal()+dtoReporteFichaAdmision.getTotalRegistroSabatino());
+                dtoReporteFichaAdmision.setTotalRegistrosValidados(dtoReporteFichaAdmision.getTotalRegistroSemanalValido() + dtoReporteFichaAdmision.getTotalRegistroSabatinoValido());
+
+            }else {
+                //mostrarMensajeResultadoEJB(resEstudiantes);
+                //La carrera no tiene registros
+                dtoReporteFichaAdmision.setTotalRegistroSemanal(0);
+                dtoReporteFichaAdmision.setTotalRegistroSabatino(0);
+                dtoReporteFichaAdmision.setTotalRegistrosValidados(0);
+                dtoReporteFichaAdmision.setTotalRegistroSabatinoValido(0);
+                dtoReporteFichaAdmision.setTotalRegistros(0);
+                dtoReporteFichaAdmision.setTotalRegistros(dtoReporteFichaAdmision.getTotalRegistroSemanal()+dtoReporteFichaAdmision.getTotalRegistroSabatino());
+                dtoReporteFichaAdmision.setTotalRegistrosValidados(dtoReporteFichaAdmision.getTotalRegistroSemanalValido()+dtoReporteFichaAdmision.getTotalRegistroSabatinoValido());
+
+                // return dtoReporteFichaAdmision;
+            }
+            ///// ESTUDIANTES INSCRITOS
+            if(resEstudiantes.getCorrecto()==true){
+                inscritosbyPE= resEstudiantes.getValor();
+                dtoReporteFichaAdmision.setTotalInscritos(resEstudiantes.getValor().size());
+                dtoReporteFichaAdmision.setTotalInscritosSemanal(inscritosbyPE.stream()
+                        .filter(x -> x.getGrupo().getIdSistema().getNombre().equals("Semanal"))
+                        .count());
+                dtoReporteFichaAdmision.setTotalInscritosSabatino(inscritosbyPE.stream()
+                        .filter(x -> x.getGrupo().getIdSistema().getNombre().equals("Sabatino"))
+                        .count());
+
+            }else {
+                //No tiene estudiantes inscritos
+                dtoReporteFichaAdmision.setTotalInscritos(0);
+                dtoReporteFichaAdmision.setTotalInscritosSabatino(0);
+                dtoReporteFichaAdmision.setTotalInscritosSemanal(0);
+
+            }
+            // PROYECCION
+            if(resProyeccion.getCorrecto()==true){
+                proyeccionAreas= resProyeccion.getValor();
+                dtoReporteFichaAdmision.setProyeccionMatricula(proyeccionAreas.getProyeccionMatricula());
+                dtoReporteFichaAdmision.setProyeccionFichasValidadas(proyeccionAreas.getProyeccionValidadas());
+            }else {
+                //No existe proyeccion registrada para el proceso de inscripcion seleccionada
+                dtoReporteFichaAdmision.setProyeccionMatricula(0);
+                dtoReporteFichaAdmision.setProyeccionFichasValidadas(0);
+
+            }
+            //Porcentaje de fichas
+            Double dte = new Double(dtoReporteFichaAdmision.getProyeccionFichasValidadas());
+            Double dc= new Double(dtoReporteFichaAdmision.getTotalRegistrosValidados());
+            Double porcentajeFichas = new Double(0);
+            porcentajeFichas= (dc*100)/dte;
+            dtoReporteFichaAdmision.setPorcentajeAlcanceFichas(porcentajeFichas);
+            //Porcentaje de matricula
+            Double mP = new Double(dtoReporteFichaAdmision.getProyeccionMatricula());
+            Double mR= new Double(dtoReporteFichaAdmision.getTotalInscritos());
+            Double porcentajeMatricula = new Double(0);
+            porcentajeMatricula= (mR*100)/mP;
+            dtoReporteFichaAdmision.setPorcentajeAlcanceMatricula(porcentajeMatricula);
+
+            return dtoReporteFichaAdmision;
+
+        }catch (Exception e){
+            mostrarExcepcion(e);
+            return new DtoReporteFichaAdmision();
+        }
+    }
+
 
     /*
     Obtiene el total de matricula inscrita por programa educativo

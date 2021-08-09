@@ -101,6 +101,25 @@
                                     </div>
                                 </c:if>
                             </c:if>
+                            <c:if test="#{validacionFichaIngenieria.tieneAcceso}">
+                                <c:if test="#{validacionFichaIngenieria.rol.aspirante.aspirante.estatus==false}">
+                                    <div class="#{claseResumen}" style="max-height: 154px;">
+                                        <div class="small-box bg-aqua-active">
+                                            <div class="inner">
+                                                <h3>Valida tu ficha</h3>
+                                                <p>Licenciatura | Ingeniería</p>
+                                                <p>No haz realizado la validación de tu ficha de admisión</p>
+                                            </div>
+                                            <div class="icon">
+                                                <i class="fa fa-user-check"></i>
+                                            </div>
+                                            <p:link  outcome="controlEscolar/aspirante/validacionFichaAspiranteIngenieria" class="small-box-footer">
+                                                Realizar mi registro <i class="fa fa-arrow-circle-right"></i>
+                                            </p:link>
+                                        </div>
+                                    </div>
+                                </c:if>
+                            </c:if>
                             <div class="#{claseResumen}" style="max-height: 154px;">
                                 <div class="small-box bg-red">
                                     <div class="inner" style="cursor: pointer;" onclick="cuestionario();">

@@ -50,9 +50,22 @@
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <div class="#{casilla}">
                                             <div class="ui-material">
+                                                <p:selectOneMenu id="tipo" value="#{fichaAdmisionReporte.rol.tipoReporte}" styleClass="form-control" >
+                                                    <f:selectItem itemLabel="Nuevo ingreso" itemValue="NI"/>
+                                                    <f:selectItem itemLabel="Ing/Lic" itemValue="ING"/>
+
+                                                    <p:ajax listener="#{fichaAdmisionReporte.getReportebyTipo}" process="@this" update="@form,:frmConcentrado:concentradoFichas" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Tipo" for="tipo"/>
+                                                <p:message for="tipo" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
                                                 <p:selectOneMenu id="proceso" value="#{fichaAdmisionReporte.rol.procesoSelect}" converter="entityConverter" styleClass="form-control" >
                                                     <f:selectItems value="#{fichaAdmisionReporte.rol.listProcesosInsc}" var="p" itemValue="#{p}" itemLabel="#{caster.anioFecha(p.fechaInicio)}" />
-                                                    <p:ajax listener="#{fichaAdmisionReporte.getConcentrado}" process="@this" update="@form,:frmConcentrado:concentradoFichas" />
+                                                    <p:ajax listener="#{fichaAdmisionReporte.getReportebyTipo}" process="@this" update="@form,:frmConcentrado:concentradoFichas" />
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Año" for="proceso"/>

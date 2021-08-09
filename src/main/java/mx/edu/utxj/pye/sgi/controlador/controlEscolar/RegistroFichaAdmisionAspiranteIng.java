@@ -56,7 +56,7 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
 
     @PostConstruct
     public void init(){
-       if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19)) return;
+        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19)) return;
         cargado = true;
         setVistaControlador(ControlEscolarVistaControlador.REGISTRO_FICHA_ASPIRANTE_ING);
         ResultadoEJB<DtoAspiranteIng> resAcceso = ejbRegistroIng.verificarAcceso(logonMB.getEmail());
@@ -96,10 +96,10 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
         getPersona();
         getRegistro();
         getAspirante();
-        ResultadoEJB<EventoEscolar> resEventoValidacion= ejbRegistroIng.getEventoValidacionFicha();
+        ResultadoEJB<EventoEscolar> resEventoValidacion= ejbRegistroIng.getUltimoEventoValidacionFicha(rol.getEventoEscolar());
         if(resEventoValidacion.getCorrecto()){rol.setEventoValidacion(resEventoValidacion.getValor());}
         else {mostrarMensajeResultadoEJB(resEventoValidacion);}
-        ResultadoEJB<EventoEscolar> resEventoInscripcion = ejbRegistroIng.getIncripcionIng();
+        ResultadoEJB<EventoEscolar> resEventoInscripcion = ejbRegistroIng.getIncripcionIng(rol.getEventoEscolar());
         if(resEventoInscripcion.getCorrecto()){rol.setEventoInscripcion(resEventoInscripcion.getValor());}
         else {mostrarMensajeResultadoEJB(resEventoInscripcion);}
     }
@@ -109,7 +109,7 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
             ResultadoEJB<DtoAspirante.PersonaR> resPer = ejbRegistroFicha.getPersonaR(rol.getEsTipo().getEstudianteCE().getAspirante().getIdPersona());
             if(resPer.getCorrecto()){
                 rol.setPersonaD(resPer.getValor());
-               // getRegistro();
+                // getRegistro();
             }else mostrarMensajeResultadoEJB(resPer);
         }catch (Exception e){mostrarExcepcion(e);}
     }
@@ -174,7 +174,7 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
                 if(resDM.getValor().getEcontrado() ==true & resMedC.getCorrecto()==true){
                     rol.setDmedico(resDM.getValor());
                     rol.getPersonaD().setMedioComunicacion(resMedC.getValor());
-                        }
+                }
             }
             else {
                 ResultadoEJB<List<Estado>> resEstadosO = ejbRegistroFicha.getEstadosbyPais(rol.getPersonaD().getPaisOr());
@@ -298,7 +298,7 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
                 getAspirante();
                 getDomicilio();
             }else { mostrarMensajeResultadoEJB(resMC);
-            mostrarMensajeResultadoEJB(resSaveDm);
+                mostrarMensajeResultadoEJB(resSaveDm);
             }
         }catch (Exception e){mostrarExcepcion(e);}
     }
@@ -354,26 +354,26 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
                 getAsentamientoDom();
                 getMunicipioProc();
                 getAsentamientosProc();
+            }
+            else {
+                //Busca los datos del domicilio de su registro anterior
+                ResultadoEJB<DtoAspirante.DomicilioR> resDomicilioA = ejbRegistroFicha.getDomiciliobyAspirante(rol.getAspiranteAnterior().getAspirante());
+                if(resDomicilioA.getCorrecto() & resDomicilioA.getValor().getEcontrado().equals(true)){
+                    //Crea los datos del domicilio
+                    rol.setDdomicilios(resDomicilioA.getValor());
+                    rol.getDdomicilios().setOperacion(Operacion.PERSISTIR);
+                    rol.getDdomicilios().setIgualD(false);
+                    rol.getDdomicilios().setEcontrado(false);
+                    ResultadoEJB<DtoAspirante.DomicilioR> resDom = ejbRegistroFicha.operacionesDomicilioR(rol.getDdomicilios(),rol.getAspirante().getAspirante());
+                    if(resDom.getCorrecto()){
+                        rol.setDdomicilios(resDom.getValor());
+                        getMunicipiosResi();
+                        getAsentamientoDom();
+                        getMunicipioProc();
+                        getAsentamientosProc();
+                    }else {mostrarMensajeResultadoEJB(resDom);}
                 }
-                else {
-                    //Busca los datos del domicilio de su registro anterior
-                    ResultadoEJB<DtoAspirante.DomicilioR> resDomicilioA = ejbRegistroFicha.getDomiciliobyAspirante(rol.getAspiranteAnterior().getAspirante());
-                    if(resDomicilioA.getCorrecto() & resDomicilioA.getValor().getEcontrado().equals(true)){
-                        //Crea los datos del domicilio
-                      rol.setDdomicilios(resDomicilioA.getValor());
-                      rol.getDdomicilios().setOperacion(Operacion.PERSISTIR);
-                      rol.getDdomicilios().setIgualD(false);
-                      rol.getDdomicilios().setEcontrado(false);
-                      ResultadoEJB<DtoAspirante.DomicilioR> resDom = ejbRegistroFicha.operacionesDomicilioR(rol.getDdomicilios(),rol.getAspirante().getAspirante());
-                      if(resDom.getCorrecto()){
-                          rol.setDdomicilios(resDom.getValor());
-                          getMunicipiosResi();
-                          getAsentamientoDom();
-                          getMunicipioProc();
-                          getAsentamientosProc();
-                      }else {mostrarMensajeResultadoEJB(resDom);}
-                    }
-                }
+            }
 
 
         }catch (Exception e){mostrarExcepcion(e);}

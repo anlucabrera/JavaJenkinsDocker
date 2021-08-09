@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if>
+
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+       Inscripción
+    </ui:define>
+
+    <ui:define name="description">
+        Licenciatura | Ingeniería
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{inscripcionIngenieriaSE.cargado}">
+            <adm:breadcrumb title="Inscripcion Ing|Lic"/>
+            <adm:sidebar collapsed="true"/>
+            <div class="contenedor">
+                <c:if test="#{inscripcionIngenieriaSE.tieneAcceso}">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <h:form id="frmAviso">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="right">
+                                            <p:commandLink
+                                                    class="btn btn-info"
+                                                    disabled="#{false}"
+                                                    onclick="PF('modalAyuda').show();"
+                                                    title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                    class="fa fa-question"/>
+                                            </p:commandLink>
+                                        </f:facet>
+                                    </p:toolbar>
+
+                                </h:form>
+                            </div>
+                            <c:set var="panel" value="#{'col-sm-6 col-md-6 col-lg-6'}"/>
+                            <c:set var="casilla" value="#{'col-sm-12 col-md-6 col-lg-2'}" />
+                            <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                            <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                            <c:set var="casilla4" value="#{'col-sm-3 col-md-3 col-lg-3'}"/>
+                            <c:set var="casilla5" value="#{'col-sm-4 col-md-4 col-lg-4'}"/>
+                            <c:set var="casilla6" value="#{'col-sm-8 col-md-8 col-lg-8'}"/>
+                            <c:set var="casilla7" value="#{'col-sm-6 col-md-6 col-lg-6'}"/>
+                            <div class="row">
+                                <div  class="#{casilla7}">
+                                    <p:tabView id="tbv" >
+                                        <p:tab>
+                                            <f:facet name="title"><i class="fa fa-edit"> </i><span> Datos de inscripción</span></f:facet>
+                                            <div class="row">
+                                                <h:form id="frmDatos">
+                                                    <div class="box box-success">
+                                                        <div class="box-body">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                    <div class="ui-material">
+                                                                        <p:outputLabel id="am" value="Tipo Aspirante"/>
+                                                                        <br/>
+                                                                        <p:selectOneButton value="#{inscripcionIngenieriaSE.rol.tipoAspiranteSelect}">
+                                                                            <f:selectItem itemLabel="Todos" itemValue="T"/>
+                                                                            <f:selectItem itemLabel="Recién egresado" itemValue="RE"/>
+                                                                            <f:selectItem itemLabel="Otra generación" itemValue="OG"/>
+                                                                            <f:selectItem itemLabel="Otra UT" itemValue="OUT"/>
+
+                                                                            <p:ajax process="@this" listener="#{inscripcionIngenieriaSE.getAspirantesbyTipo}" update=":tbv:frmDatos, :tbvE:frmAspirantes"/>
+                                                                        </p:selectOneButton>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/>
+                                                            <div class="row">
+                                                                <div class="#{casilla6}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="folio" class="form-control"  value="#{inscripcionIngenieriaSE.rol.aspiranteSelect.aspirante.folioAspirante}"
+                                                                                     required="true" readonly="false" />
+                                                                        <p:outputLabel value="Folio" for="folio"/>
+                                                                        <p:message for="folio" />
+                                                                    </div>
+                                                                </div>
+                                                                <c:if test="#{inscripcionIngenieriaSE.rol.tipoAspiranteSelect.equals('OG')or inscripcionIngenieriaSE.rol.tipoAspiranteSelect.equals('OUT')}">
+                                                                    <div class="#{casilla4}">
+                                                                        <div class="ui-material">
+                                                                            <p:datePicker id="fechaCita" locale="es" value="#{inscripcionIngenieriaSE.rol.aspiranteSelect.datosCita.citasAspirantes.fechaCita}" mindate="#{inscripcionIngenieriaSE.rol.tramitesEscolares.fechaInicio}" maxdate="#{inscripcionIngenieriaSE.rol.tramitesEscolares.fechaFin}"
+                                                                                          required="false" requiredMessage="Es necesario seleccionar la fecha"
+                                                                                          placeholder="Seleccione la fecha"
+
+                                                                            >
+                                                                            </p:datePicker>
+                                                                            <p:outputLabel for="fechaCita" value="Fecha de cita"/>
+                                                                            <p:message for="fechaCita"><p:autoUpdate/></p:message>
+                                                                        </div>
+                                                                    </div>
+                                                                </c:if>
+
+                                                            </div>
+                                                            <br/>
+                                                            <div class="row">
+                                                                <c:set var="per" value="#{inscripcionIngenieriaSE.rol.aspiranteSelect.aspirante.idPersona}"/>
+                                                                <c:set var="med" value="#{inscripcionIngenieriaSE.rol.aspiranteSelect.datosMedicos}"/>
+                                                                <c:set var="academicos" value="#{inscripcionIngenieriaSE.rol.aspiranteSelect.datosAcademicos}"/>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="nombreC" class="form-control"  value="#{per.apellidoPaterno.concat(' ').concat(per.apellidoMaterno).concat(' ').concat(per.nombre)}"
+                                                                                     required="true" readonly="true"/>
+                                                                        <p:outputLabel for="nombreC" value="Nombre "/>
+                                                                        <p:message for="nombreC"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="curp" class="form-control"  value="#{per.curp}"
+                                                                                     required="true" readonly="true"/>
+                                                                        <p:outputLabel for="curp" value="CURP "/>
+                                                                        <p:message for="curp"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="tipoS" value="#{inscripcionIngenieriaSE.rol.aspiranteSelect.datosMedicos.cveTipoSangre}"
+                                                                                         filter="true" filterMatchMode="startsWith" required="true"
+                                                                                         requiredMessage="Tipo de sangre requerido"
+                                                                                         converter="entityConverter"
+                                                                        >
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{inscripcionIngenieriaSE.rol.tipoSangreList}" var="tipoS" itemValue="#{tipoS}" itemLabel="#{tipoS.nombre}"/>
+                                                                            <p:ajax process="@this"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="tipoS" value="Tipo de sangre*"/>
+                                                                        <p:message for="tipoS"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/>
+                                                            <div class="row">
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="prom" class="form-control" placeholder="Promedio" value="#{inscripcionIngenieriaSE.rol.aspiranteSelect.datosAcademicos.promedio}" required="true" requiredMessage="Promedio requerido" validatorMessage="El promedio colocado es incorrecto">
+                                                                            <f:convertNumber pattern="#0.00" />
+                                                                            <f:validateDoubleRange maximum="10.00" minimum="6.00"/>
+                                                                            <p:ajax process="@this"/>
+                                                                        </p:inputText>
+                                                                        <p:outputLabel for="prom" value="Promedio*"/>
+                                                                        <p:message for="prom"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla6}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="universidad" class="form-control"  value="#{inscripcionIngenieriaSE.rol.aspiranteSelect.universidadEgreso.nombre}"
+                                                                                     required="true" readonly="true"/>
+                                                                        <p:outputLabel for="universidad" value="Universidad Egreso "/>
+                                                                        <p:message for="universidad"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                            <br/>
+                                                            <div class="row">
+                                                                <div class="#{casilla6}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="pe" class="form-control"  value="#{inscripcionIngenieriaSE.rol.aspiranteSelect.peElegido.nombre}"
+                                                                                     required="true" readonly="true"/>
+                                                                        <p:outputLabel for="pe" value="Programa Educativo"/>
+                                                                        <p:message for="pe"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:selectOneMenu id="sistema" required="true" class="form-control" value="#{inscripcionIngenieriaSE.rol.sistemaSeleccionado}" style="width:  375px" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción" converter="entityConverter">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{inscripcionIngenieriaSE.rol.sistemas}" var="sis" itemValue="#{sis}" itemLabel="#{sis.nombre}" />
+                                                                            <p:ajax listener="#{inscripcionIngenieriaSE.getGruposPosiblesGrupos()}" update="tablaGrupos"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:outputLabel for="sistema" value="Sistema"/>
+                                                                        <p:message for="sistema"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="box box-primary">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                    <p:dataTable id="tablaGrupos" var="grupo" value="#{inscripcionIngenieriaSE.rol.grupos}" selection="#{inscripcionIngenieriaSE.rol.aspiranteSelect.grupo}" rowKey="#{grupo.grupo.idGrupo}" emptyMessage="No existen grupos creados para está opción">
+                                                                        <f:facet name="header">
+                                                                            Posibles grupos
+                                                                        </f:facet>
+                                                                        <p:column selectionMode="single" style="width:16px;text-align:center"/>
+                                                                        <p:column headerText="Grado" style="width: 30px">
+                                                                            <h:outputText value="#{grupo.grupo.grado}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Grupo" style="width: 30px">
+                                                                            <h:outputText value="#{grupo.grupo.literal}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Cupo Máximo" style="width: 30px">
+                                                                            <h:outputText value="#{grupo.capMax}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Inscritos" style="width: 30px">
+                                                                            <h:outputText value="#{grupo.totalGrupo}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Lugares disponibles" style="width: 40px">
+                                                                            <h:outputText value="#{grupo.capDispo}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Tutor" style="width: 90px">
+                                                                            <h:outputText value="#{grupo.nombreTutor}" />
+                                                                        </p:column>
+                                                                    </p:dataTable>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="box box-success">
+                                                        <div class="box-body">
+                                                            <div class="row">
+                                                                <div class="#{casilla6}">
+                                                                    <div class="ui-material">
+                                                                        <p:outputLabel id="tipoDoc" value="Tipo Estudiante"/>
+                                                                        <br/>
+                                                                        <p:selectOneButton value="#{inscripcionIngenieriaSE.rol.tipoEstudiante}"  >
+                                                                            <f:selectItem itemLabel="Egresado no titulado" itemValue="InscripcionIngENT" />
+                                                                            <f:selectItem itemLabel="Egresado titulado" itemValue="InscripcionIngET" itemDisabled="#{inscripcionIngenieriaSE.rol.tipoAspiranteSelect.equals('RE')}" />
+                                                                            <p:ajax process="@this" listener="#{inscripcionIngenieriaSE.getDocumentacionbyTipoEstudiante}" update="tablaDoc"/>
+                                                                        </p:selectOneButton>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                        <p:dataTable id="tablaDoc" var="doc" value="#{inscripcionIngenieriaSE.rol.documentos}" emptyMessage=""
+                                                                                         selection="#{inscripcionIngenieriaSE.rol.documentosSelect}" rowKey="#{doc.documentoProceso}">
+                                                                                <f:facet name="header">
+                                                                                    Documentos
+                                                                                </f:facet>
+                                                                                <p:column selectionMode="multiple" style="width:8px;text-align:center"/>
+                                                                                <p:column headerText="Documento" style="width: 30px">
+                                                                                    <h:outputText value="#{doc.documento.descripcion}" />
+                                                                                </p:column>
+                                                                            </p:dataTable>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="box box-warning">
+                                                        <div class="box-body">
+                                                            <br/>
+                                                            <div class="row">
+                                                                <div class="#{casilla6}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="peI" class="form-control"  value="#{inscripcionIngenieriaSE.rol.aspiranteSelect.peIncrito.nombre}"
+                                                                                     required="true" readonly="true"/>
+                                                                        <p:outputLabel for="peI" value="Programa Educativo Inscrito"/>
+                                                                        <p:message for="peI"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="sistemaI" class="form-control"  value="#{inscripcionIngenieriaSE.rol.aspiranteSelect.grupo.grupo.idSistema.nombre}"
+                                                                                     required="true" readonly="true"/>
+                                                                        <p:outputLabel for="sistemaI" value="Sistema"/>
+                                                                        <p:message for="sistemaI"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/>
+                                                            <div class="row">
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="matricula" class="form-control"  value="#{inscripcionIngenieriaSE.rol.aspiranteSelect.estudianteIncrito.matricula}"
+                                                                                     required="true" readonly="#{inscripcionIngenieriaSE.rol.aspiranteSelect.tipoAspirante.label.equals('Aspirante Ingeniería')}"/>
+                                                                        <p:outputLabel for="matricula" value="Matricula"/>
+                                                                        <p:message for="matricula"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla4}">
+                                                                    <div class="ui-material">
+                                                                        <p:commandButton id="btnMatricula"  icon="fa fa-search" disabled="#{inscripcionIngenieriaSE.rol.aspiranteSelect.tipoAspirante.label.equals('Aspirante Ingeniería') or inscripcionIngenieriaSE.rol.aspiranteSelect.tipoAspirante.label.equals('Aspirante Ingeniería otra generación')}"
+                                                                                         class="btn-primary btn-block col-md-3" process="@form" update=":tbv:frmDatos, :tbvE:frmAspirantes"  actionListener="#{inscripcionIngenieriaSE.generaMatricula}" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="#{casilla5}">
+                                                                    <div class="ui-material">
+                                                                        <p:inputText id="grupo" class="form-control"  value="#{inscripcionIngenieriaSE.rol.aspiranteSelect.grupo.grupo.grado} -  #{inscripcionIngenieriaSE.rol.aspiranteSelect.grupo.grupo.literal}"
+                                                                                     required="true" readonly="true"/>
+                                                                        <p:outputLabel for="grupo" value="Grupo"/>
+                                                                        <p:message for="grupo"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="box box-danger">
+                                                        <div class="box-body">
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="#{casilla5}"/>
+                                                                <div class="#{casilla7}">
+                                                                    <div class="ui-material">
+                                                                        <p:commandButton id="btnInscribir" value="Inscibir" icon="fa fa-user-plus"
+                                                                                         class="btn-primary btn-block col-md-3" process="@form"  update=":tbv:frmDatos, :tbvE:frmAspirantes,:frmListaEstudiantes " actionListener="#{inscripcionIngenieriaSE.saveEstudiante}" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/>
+                                                            <div class="row">
+                                                                <div class="#{casilla5}"/>
+                                                                <div class="#{casilla7}">
+                                                                    <div class="ui-material">
+                                                                        <p:commandButton id="btn" value="Comprobante" icon="fa fa-download" onclick="target='_blank'" disabled="#{!inscripcionIngenieriaSE.rol.aspiranteSelect.inscrito}"
+                                                                                         class="btn-success btn-block col-md-3"  ajax="false" actionListener="#{inscripcionIngenieriaSE.downloadComprobante(inscripcionIngenieriaSE.rol.estudianteInscrito)}" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br/>
+                                                            <div class="row">
+                                                                <div class="#{casilla5}"/>
+                                                                <div class="#{casilla7}">
+                                                                    <div class="ui-material">
+                                                                        <p:commandButton id="btnClean" value="Limpiar" icon="fa fa-trash"
+                                                                                         class="btn-warning btn-block col-md-3" process="@form" update=":tbv:frmDatos, :tbvE:frmAspirantes,:frmListaEstudiantes" actionListener="#{inscripcionIngenieriaSE.init()}" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+                                                        </div>
+                                                    </div>
+                                                </h:form>
+                                            </div>
+
+                                        </p:tab>
+                                    </p:tabView>
+                                </div>
+                                <div  class="#{casilla7}">
+                                    <p:tabView id="tbvE" >
+                                        <p:tab>
+                                            <f:facet name="title"><i class="fa fa-user-circle-o"> </i><span> Aspirantes </span></f:facet>
+                                            <h:form id="frmAspirantes">
+                                                <p:dataTable id="aspirantes" var="estudiantes" value="#{inscripcionIngenieriaSE.rol.aspiranteIng}" expandableRowGroups="true"
+                                                             paginator="true" rows="30" paginatorPosition="top"
+                                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                                             rowsPerPageTemplate="10,20,30,40,50"
+                                                             emptyMessage="No hay aspirantes registrados para este proceso de inscripción" sortBy="#{inscripcionIngenieriaSE.rol.vacia}">
+
+                                                    <f:facet name="header">
+                                                        <p:commandLink  ajax="false">
+                                                            <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                                            <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="aspirantes"
+                                                                            fileName="aspirantes_ing_lic"/>
+                                                        </p:commandLink>
+                                                    </f:facet>
+                                                    <p:headerRow>
+                                                        <p:column colspan="10" style="background-color: #00b5ad;">
+                                                            <h:outputText value="#{estudiantes.peElegido.nombre}" />
+                                                        </p:column>
+                                                    </p:headerRow>
+                                                    <p:column style="text-align: center; width: 45px" headerText="Inscibir">
+                                                        <p:commandButton id="btnSelect" icon="fa fa-check" alt="Inscribir" styleClass="btn-success" style="width: 10%;"  actionListener="#{inscripcionIngenieriaSE.selectAspirante(estudiantes)}" update=":tbv:frmDatos,:tbv:frmDatos:tablaGrupos" />
+                                                    </p:column>
+                                                    <p:column style="text-align: center; width: 45px" headerText="Ficha">
+                                                        <p:commandButton id="btnFicha" icon="fa fa-download" alt="Descargar ficha" styleClass="btn-primary" style="width: 10%;"  actionListener="#{inscripcionIngenieriaSE.downloadFichaAdmin(estudiantes)}" ajax="false" />
+                                                    </p:column>
+                                                    <p:column headerText="Folio" filterBy="#{estudiantes.aspirante.folioAspirante}" style="width: 80px">
+                                                        <h:outputText value="#{estudiantes.aspirante.folioAspirante}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Matrícula" filterBy="#{estudiantes.matricula}" style="width: 100px">
+                                                        <h:outputText value="#{estudiantes.matricula}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Sistema" style="text-align: center; width: 100px" >
+                                                        <h:outputText value="#{estudiantes.datosAcademicos.sistemaPrimeraOpcion.nombre}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Nombre completo" style="width: 200px">
+                                                        <h:outputText value="#{estudiantes.aspirante.idPersona.nombre.concat(' ').concat(estudiantes.aspirante.idPersona.apellidoPaterno).concat(' ').concat(estudiantes.aspirante.idPersona.apellidoMaterno)}"/>
+                                                    </p:column>
+                                                    <p:column headerText="CURP" style="width: 180px">
+                                                        <h:outputText value="#{estudiantes.aspirante.idPersona.curp}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Tipo" style="width: 180px">
+                                                        <h:outputText value="#{estudiantes.tipoAspirante.label}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Estadía" style="width: 180px">
+                                                        <h:outputText value="#{estudiantes.documentosEstadia}"/>
+                                                    </p:column>
+                                                    <p:column headerText="Fecha cita" style="text-align: center;width: 180px">
+                                                        <h:outputText value="#{caster.fechaToString(estudiantes.datosCita.citasAspirantes.fechaCita)}"/>
+                                                    </p:column>
+
+                                                </p:dataTable>
+
+                                            </h:form>
+                                        </p:tab>
+                                    </p:tabView>
+                                </div>
+                            </div>
+                            <hr/>
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="row">
+                                    <h:form id="frmListaEstudiantes">
+                                        <p:dataTable var="estudiantes" value="#{inscripcionIngenieriaSE.rol.estudiantesIncritos}" expandableRowGroups="true"
+                                                     paginator="true" rows="30" paginatorPosition="top"
+                                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                                     rowsPerPageTemplate="10,20,30,40,50"
+                                                     emptyMessage="No hay estudiantes registrados para este proceso de inscripción" sortBy="#{inscripcionIngenieriaSE.rol.vacia}">
+                                            <p:headerRow>
+                                                <p:column colspan="10" style="background-color: #00b5ad;">
+                                                    <h:outputText value="#{estudiantes.peIncrito.nombre}" />
+                                                </p:column>
+                                            </p:headerRow>
+
+                                            <p:column headerText="Matrícula" filterBy="#{estudiantes.estudianteIncrito.matricula}">
+                                                <h:outputText value="#{estudiantes.estudianteIncrito.matricula}"/>
+                                            </p:column>
+                                            <p:column headerText="Folio Ficha Admisión" filterBy="#{estudiantes.aspirante.folioAspirante}">
+                                                <h:outputText value="#{estudiantes.aspirante.folioAspirante}"/>
+                                            </p:column>
+                                            <p:column headerText="Tipo de registro" style="width: 250px">
+                                                <h:outputText value="#{estudiantes.tipoInscripción.label}"/>
+                                            </p:column>
+                                            <p:column headerText="Apellido Paterno">
+                                                <h:outputText value="#{estudiantes.aspirante.idPersona.apellidoPaterno}"/>
+                                            </p:column>
+                                            <p:column headerText="Apellido Materno">
+                                                <h:outputText value="#{estudiantes.aspirante.idPersona.apellidoMaterno}"/>
+                                            </p:column>
+                                            <p:column headerText="Nombre">
+                                                <h:outputText value="#{estudiantes.aspirante.idPersona.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="Sistema">
+                                                <h:outputText value="#{estudiantes.estudianteIncrito.grupo.idSistema.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="Cuatrimestre" style="text-align: center;">
+                                                <h:outputText value="#{estudiantes.estudianteIncrito.grupo.grado}"/>
+                                            </p:column>
+                                            <p:column headerText="Grupo" style="text-align: center;">
+                                                <h:outputText value="#{estudiantes.estudianteIncrito.grupo.literal}"/>
+                                            </p:column>
+                                            <p:column headerText="Comprobante">
+                                                <p:commandButton id="btnCom" icon="fa fa-download" alt="Descargar ficha" styleClass="btn-primary" style="width: 10%;" onclick="target='_blank'" actionListener="#{inscripcionIngenieriaSE.downloadComprobante(estudiantes)}" ajax="false" />
+
+                                            </p:column>
+                                        </p:dataTable>
+                                    </h:form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+            </div>
+        </c:if>
+    </ui:define>
+</ui:composition>

@@ -22,6 +22,7 @@ public class FichaAdmisionReporteRol {
     @Getter @Setter @NonNull protected NivelRol nivelRol = NivelRol.CONSULTA;
 
     //Ultimo proceso de inscripción
+    @Getter @NonNull private String tipoReporte;
     @Getter @NonNull private ProcesosInscripcion procesosInscripcion;
     @Getter @NonNull private  ProcesosInscripcion procesoSelect;
     @Getter @NonNull private List<AreasUniversidad> peActivas;
@@ -105,4 +106,6 @@ public class FichaAdmisionReporteRol {
     public void setPorcentajeFichasValidadasInstitucional(Double porcentajeFichasValidadasInstitucional) { this.porcentajeFichasValidadasInstitucional = porcentajeFichasValidadasInstitucional; }
 
     public void setPorcentajeInscritosInstitucional(Double porcentajeInscritosInstitucional) { this.porcentajeInscritosInstitucional = porcentajeInscritosInstitucional; }
+
+    public void setTipoReporte(String tipoReporte) { this.tipoReporte = tipoReporte; }
 }

@@ -131,6 +131,12 @@ public class Caster {
             return "Error";
         }
     }
+    public  String fechaToString(Date fecha){
+        SimpleDateFormat dia = new SimpleDateFormat("dd");
+        SimpleDateFormat anio = new SimpleDateFormat("yyyy");
+        if(fecha==null){return "Sin cita";}
+        else{ return dia.format(fecha) +" de "+ convertirMes(fecha) +" del "+ anio.format(fecha);}
+    }
 
     public String periodoToStringAnio(PeriodosEscolares periodo){
         return (new StringBuilder())

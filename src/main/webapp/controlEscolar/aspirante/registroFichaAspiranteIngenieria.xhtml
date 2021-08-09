@@ -955,7 +955,7 @@
                                                                         <div class="row">
                                                                             <div class="#{casilla5}">
                                                                                 <div class="ui-material">
-                                                                                    <p:inputMask mask="(999)999-9999" id="numTelPadre" class="form-control" placeholder="(999)-999-9999" value="#{registroFichaAdmisionAspiranteIng.rol.dfamiliares.datosFamiliares.telefonoPadre}" required="true" requiredMessage="Campo requerido"/>
+                                                                                    <p:inputMask mask="(999)999-9999" id="numTelPadre" class="form-control" placeholder="(999)-999-9999" value="#{registroFichaAdmisionAspiranteIng.rol.dfamiliares.datosFamiliares.telefonoPadre}"  requiredMessage="Campo requerido"/>
                                                                                     <p:outputLabel for="numTelPadre" value="Número de teléfono*"/>
                                                                                     <p:message for="numTelPadre"><p:autoUpdate/></p:message>
                                                                                 </div>
@@ -1027,7 +1027,7 @@
                                                                         <div class="row">
                                                                             <div class="#{casilla5}">
                                                                                 <div class="ui-material">
-                                                                                    <p:inputMask mask="(999)999-9999" id="numTelMadre" class="form-control" placeholder="(999)-999-9999" value="#{registroFichaAdmisionAspiranteIng.rol.dfamiliares.datosFamiliares.telefonoMadre}" required="true" requiredMessage="Campo requerido"/>
+                                                                                    <p:inputMask mask="(999)999-9999" id="numTelMadre" class="form-control" placeholder="(999)-999-9999" value="#{registroFichaAdmisionAspiranteIng.rol.dfamiliares.datosFamiliares.telefonoMadre}" requiredMessage="Campo requerido"/>
                                                                                     <p:outputLabel for="numTelMadre" value="Número de teléfono*"/>
                                                                                     <p:message for="numTelMadre"><p:autoUpdate/></p:message>
                                                                                 </div>
@@ -1635,7 +1635,7 @@
                                                                 <br />
                                                                 <ul style="speak-numeral: inherit">
                                                                     <li style="font-size: medium"><strong>Deberás validar tu registro de aspirante del #{caster.fechaEventoEscolarToString(registroFichaAdmisionAspiranteIng.rol.eventoValidacion.inicio,registroFichaAdmisionAspiranteIng.rol.eventoValidacion.fin)} )</strong></li>
-                                                                    <li style="font-size: medium"><strong>Del #{caster.fechaEventoEscolarToString(registroFichaAdmisionAspiranteIng.rol.eventoInscripcion.inicio,registroFichaAdmisionAspiranteIng.rol.eventoInscripcion)} procederá a realizar la inscripción a nivel Ingeniería y/o licenciatura, de los aspirantes que hayan realizado la validación de su registro.</strong></li>
+                                                                    <li style="font-size: medium"><strong>Del #{caster.fechaEventoEscolarToString(registroFichaAdmisionAspiranteIng.rol.eventoInscripcion.inicio,registroFichaAdmisionAspiranteIng.rol.eventoInscripcion.fin)} procederá a realizar la inscripción a nivel Ingeniería y/o licenciatura, de los aspirantes que hayan realizado la validación de su registro.</strong></li>
                                                                     <li style="font-size: medium"><strong>Recibirás a tu correo electrónico tu comprobante de inscripción.</strong></li>
 
                                                                 </ul>

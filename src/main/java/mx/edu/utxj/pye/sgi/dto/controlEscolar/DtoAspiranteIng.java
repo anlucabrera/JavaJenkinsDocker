@@ -14,33 +14,23 @@ import java.util.List;
 public class DtoAspiranteIng {
 
     @Getter @Setter AspiranteTipoIng tipoAspirante;
-    @Getter @Setter
-    Estudiante estudianteCE;
-    @Getter @Setter
-    Alumnos estudianteSAIIUT;
+    @Getter @Setter Estudiante estudianteCE;
+    @Getter @Setter Alumnos estudianteSAIIUT;
     @Getter @Setter String matricula;
     ///////////////////Datos del aspirante///////////////////////
-    @Getter @Setter
-    Aspirante aspirante;
-    @Getter @Setter
-    UniversidadesUT universidadEgreso;
-    @Getter @Setter
-    DatosAcademicos datosAcademicos;
-    @Getter @Setter
-    MedioComunicacion medioComunicacion;
-    @Getter @Setter
-    DatosMedicos datosMedicos;
-    @Getter @Setter
-    DtoCitaAspirante datosCita;
+    @Getter @Setter Aspirante aspirante;
+    @Getter @Setter UniversidadesUT universidadEgreso;
+    @Getter @Setter DatosAcademicos datosAcademicos;
+    @Getter @Setter MedioComunicacion medioComunicacion;
+    @Getter @Setter DatosMedicos datosMedicos;
+    @Getter @Setter DtoCitaAspirante datosCita;
+    @Getter @Setter String documentosEstadia;
     ///////////////Datos para la inscripción///////////////////
     @Getter @Setter TipoRegistroEstudiante tipoInscripción;
     @Getter @Setter List<DocumentoEstudianteProceso> documentos;
-    @Getter @Setter
-    AreasUniversidad peElegido, peIncrito;
-    @Getter @Setter
-    DtoGrupo grupo;
+    @Getter @Setter AreasUniversidad peElegido, peIncrito;
+    @Getter @Setter DtoGrupo grupo;
     ///////////////////////////////////
-    @Getter @Setter
-    Estudiante estudianteIncrito;
-    @Getter @Setter Boolean inscrito;
+    @Getter @Setter Estudiante estudianteIncrito;
+    @Getter @Setter Boolean inscrito,documentosEstadiaCompletos;
 }

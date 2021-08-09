@@ -447,7 +447,7 @@ public class EjbCitaInscripcionAspirante {
             String  mail= dto.getAspirante().getIdPersona().getMedioComunicacion().getEmail();
             // El correo gmail de envío
             String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-            String claveCorreo = "DServiciosEscolares19";
+            String claveCorreo = "DServiciosEscolares21";
             String mensaje = "Estimado(a)"+ dto.getAspirante().getIdPersona().getNombre() + ", haz realizado tu registro de tu cita con éxito"+
                     "\n\n Para continuar descarga el comprobante de tu cita y leé con atención las indicaciones.\n\n"
                     + "Recuerda que al asistir a tu cita debes tener todas las medidas sanitarias, por lo cual el uso de cobre bocas es obligatorio.\n"

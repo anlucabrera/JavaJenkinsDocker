@@ -40,14 +40,10 @@ import java.util.List;
 
 @Stateless(name = "EjbRegistroFichaIngenieria")
 public class EjbRegistroFichaIngenieria {
-    @EJB
-    Facade f;
-    @EJB
-    Facade2 f2;
-    @EJB
-    EjbEventoEscolar ejbEventoEscolar;
-    @EJB
-    EjbRegistroFichaAdmision ejbRegistroFichaAdmision;
+    @EJB Facade f;
+    @EJB Facade2 f2;
+    @EJB EjbEventoEscolar ejbEventoEscolar;
+    @EJB EjbRegistroFichaAdmision ejbRegistroFichaAdmision;
 
     private EntityManager em;
     private  EntityManager emS;
@@ -140,10 +136,10 @@ public class EjbRegistroFichaIngenieria {
             Alumnos alumno = new Alumnos();
             List<Alumnos> listAlum= new ArrayList<>();
             alumno = emS.createQuery("select a from Alumnos a where a.matricula=:matricula order by a.gradoActual desc", Alumnos.class)
-            .setParameter("matricula",matricula)
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("matricula",matricula)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(alumno==null){
                 return ResultadoEJB.crearErroneo(4,new Alumnos(),"No se encontró al estudiante");}
@@ -169,7 +165,8 @@ public class EjbRegistroFichaIngenieria {
         try{
             //System.out.println("EjbRegistroFichaIngenieria.verificaEstudianteCE" + matricula);
             if(matricula ==null){return ResultadoEJB.crearErroneo(2,new Estudiante(),"La matricula no debe ser nula");}
-            Short tipo =4;
+            Short tipo =1;
+            Integer grado =6;
             Estudiante e = em.createQuery("select e from Estudiante  e where e.matricula=:matricula order by e.periodo desc ", Estudiante.class)
                     .setParameter("matricula",Integer.parseInt( matricula))
                     .getResultStream()
@@ -180,7 +177,7 @@ public class EjbRegistroFichaIngenieria {
 
             //System.out.println("EjbRegistroFichaIngenieria.verificaEstudianteCE" + e);
             if(e !=null){
-                if(e.getTipoEstudiante().getIdTipoEstudiante().equals(tipo)){
+                if(e.getTipoEstudiante().getIdTipoEstudiante().equals(tipo) & e.getGrupo().getGrado()==grado){
                     return ResultadoEJB.crearCorrecto(e,"Estudiante ");
                 }else {return ResultadoEJB.crearErroneo(4,e,"Estudiante no egresado");}
             }
@@ -240,14 +237,44 @@ public class EjbRegistroFichaIngenieria {
             return ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento de valiadación de ficha(EjbResgitroFichaIngenieria.getEventoValidacionFicha).", e, null);
         }
     }
-    public ResultadoEJB<EventoEscolar> getIncripcionIng(){
+
+    public ResultadoEJB<EventoEscolar> getUltimoEventoValidacionFicha (@NonNull EventoEscolar eventoRegistro){
         try{
-            return ejbEventoEscolar.verificarEventoAperturado(EventoEscolarTipo.INSCRIPCION_INGENIERIA);
+            //verificar apertura del evento
+            EventoEscolar eventoEscolar = em.createQuery("select e from EventoEscolar e where e.tipo=:tipo and e.periodo=:periodo", EventoEscolar.class)
+                    .setParameter("tipo", EventoEscolarTipo.VALIDACION_FICHA_INGENIERIA.getLabel())
+                    .setParameter("periodo",eventoRegistro.getPeriodo())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            if(eventoEscolar == null){
+                return ResultadoEJB.crearErroneo(2,eventoEscolar, "No existe evento aperturado del tipo solicitado.");// .crearCorrecto(map.entrySet().iterator().next(), "Evento aperturado.");
+            }else{
+                return ResultadoEJB.crearCorrecto(eventoEscolar, "Evento aperturado.");
+            }
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo verificar el evento para inscripción de ingeniería(EjbResgitroFichaIngenieria.getIncripcionIng).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar la apertura de evento escolar (EjbEventoEscolar.verificarEventoAperturado).", e, EventoEscolar.class);
         }
     }
-   /**
+    public ResultadoEJB<EventoEscolar> getIncripcionIng(EventoEscolar periodoEvento){
+        try{
+            //verificar apertura del evento
+            EventoEscolar eventoEscolar = em.createQuery("select e from EventoEscolar e where e.tipo=:tipo and e.periodo=:periodo", EventoEscolar.class)
+                    .setParameter("tipo", EventoEscolarTipo.INSCRIPCION_INGENIERIA.getLabel())
+                    .setParameter("periodo",periodoEvento.getPeriodo())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            if(eventoEscolar == null){
+                return ResultadoEJB.crearErroneo(2,eventoEscolar, "No existe evento aperturado del tipo solicitado.");// .crearCorrecto(map.entrySet().iterator().next(), "Evento aperturado.");
+            }else{
+                return ResultadoEJB.crearCorrecto(eventoEscolar, "Evento aperturado.");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar la apertura de evento escolar (EjbEventoEscolar.verificarEventoAperturado).", e, EventoEscolar.class);
+        }
+    }
+    /**
      * Busca a un aspirante de ingeniería por id de persona y el proceso de de inscripción activo
      * @param persona Persona registrada
      * @param procesosInscripcion Proceso de inscripción activo
@@ -434,11 +461,11 @@ public class EjbRegistroFichaIngenieria {
             if(peEgreso ==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El programa educativo de egreso no debe ser nulo");}
             List<AreasUniversidad> pe = new ArrayList<>();
             pe = em.createQuery("select a from AreasUniversidad a where a.areaSuperior =:areaSup and a.vigente=:vigente and (a.nivelEducativo.nivel=:nivel or a.nivelEducativo.nivel=:nivel2)", AreasUniversidad.class)
-            .setParameter("areaSup",peEgreso.getAreaSuperior())
-            .setParameter("vigente","1")
-            .setParameter("nivel","5A")
-            .setParameter("nivel2","5B")
-            .getResultList()
+                    .setParameter("areaSup",peEgreso.getAreaSuperior())
+                    .setParameter("vigente","1")
+                    .setParameter("nivel","5A")
+                    .setParameter("nivel2","5B")
+                    .getResultList()
             ;
             if(pe.isEmpty()||pe ==null ){return ResultadoEJB.crearErroneo(3,pe,"No exiten ingenirías");}
             else {return ResultadoEJB.crearCorrecto(pe,"Programas educativos nivel ingeniería");}
@@ -451,9 +478,9 @@ public class EjbRegistroFichaIngenieria {
             if(clave==null){return ResultadoEJB.crearErroneo(2,new AreasUniversidad(),"La clave del área no debe ser nulo");}
             AreasUniversidad a = new AreasUniversidad();
             a= em.createQuery("select a from AreasUniversidad  a where a.area=:clave", AreasUniversidad.class)
-            .setParameter("clave", clave)
-            .getResultStream()
-            .findFirst().orElse(null)
+                    .setParameter("clave", clave)
+                    .getResultStream()
+                    .findFirst().orElse(null)
             ;
             if(a==null){return ResultadoEJB.crearErroneo(3,new AreasUniversidad(),"No se encontró el área");}
             else{return ResultadoEJB.crearCorrecto(a,"área");}
@@ -506,6 +533,8 @@ public class EjbRegistroFichaIngenieria {
                 //Obtiene el programa educativo se seguimiento (Lic/Ing)
                 ResultadoEJB<AreasUniversidad> resPe = getCarreraSeguimiento(estudiante.getCarrera());
                 if(resPe.getCorrecto()){
+                    dtoDa.getAcademicos().setPrimeraOpcion(resPe.getValor().getArea());
+                    dtoDa.getAcademicos().setSegundaOpcion(resPe.getValor().getArea());
                     dtoDa.setUniversidad1(getOpcionAreaSup(resPe.getValor()).getValor());
                     dtoDa.setUniversidad2(getOpcionAreaSup(resPe.getValor()).getValor());
                     ResultadoEJB<Iems> rejb = ejbRegistroFichaAdmision.getIemsSeleccionada(da.getInstitucionAcademica());
@@ -609,8 +638,8 @@ public class EjbRegistroFichaIngenieria {
             }
             AreasUniversidad pe = new AreasUniversidad();
             pe = em.createQuery("select a from AreasUniversidad  a where  a.area=:area", AreasUniversidad.class)
-            .setParameter("area",claveArea)
-            .getResultStream().findFirst().orElse(null)
+                    .setParameter("area",claveArea)
+                    .getResultStream().findFirst().orElse(null)
             ;
             if(pe!=null){ return ResultadoEJB.crearCorrecto(pe,"Licenciatura /Ing");}
             else {return ResultadoEJB.crearErroneo(3,new AreasUniversidad(), "No se encontró carrera de seguimiento");}
@@ -650,18 +679,18 @@ public class EjbRegistroFichaIngenieria {
             if(clavePE==null){return ResultadoEJB.crearErroneo(2,new AreasUniversidad(),"La clave del programa educativo no debe ser nula");}
             AreasUniversidad a = new AreasUniversidad();
             a= em.createQuery("select a from AreasUniversidad  a where a.area=:clave", AreasUniversidad.class)
-            .setParameter("clave",clavePE)
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("clave",clavePE)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(a!=null){
                 AreasUniversidad areAc = new AreasUniversidad();
                 areAc = em.createQuery("select a from AreasUniversidad a where a.area=:area", AreasUniversidad.class)
-                .setParameter("area", a.getAreaSuperior())
-                .getResultStream()
-                .findFirst()
-                .orElse(null)
+                        .setParameter("area", a.getAreaSuperior())
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null)
                 ;
                 if(areAc!=null){return ResultadoEJB.crearCorrecto(areAc,"Área académica");}
                 else {return ResultadoEJB.crearErroneo(4,new AreasUniversidad(),"No se encontró el área académica");}
@@ -791,10 +820,10 @@ public class EjbRegistroFichaIngenieria {
             if(aspirante==null){return ResultadoEJB.crearErroneo(2,new UniversidadesUT(),"La universidad de egreso del aspirante no deben ser nulos");}
             UniversidadesUT universidadesUT = new UniversidadesUT();
             universidadesUT = em.createQuery("select  u from UniversidadesUT u where u.cveUniversidad=:clave", UniversidadesUT.class)
-            .setParameter("clave",aspirante.getUniversidadEgresoAspirantePK().getUniversidadEgreso())
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("clave",aspirante.getUniversidadEgresoAspirantePK().getUniversidadEgreso())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(universidadesUT!=null){return ResultadoEJB.crearCorrecto(universidadesUT,"Universidad de egreso");}
             else {return ResultadoEJB.crearErroneo(3,universidadesUT,"No se encontro la universidad");}
@@ -811,10 +840,10 @@ public class EjbRegistroFichaIngenieria {
         try{
             UniversidadesUT utxj = new UniversidadesUT();
             utxj = em.createQuery("select u from UniversidadesUT u where u.cveUniversidad=:clave", UniversidadesUT.class)
-            .setParameter("clave",50)
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("clave",50)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(utxj!= null){return ResultadoEJB.crearCorrecto(utxj,"");}
             else {return ResultadoEJB.crearErroneo(2,utxj,"Error al obtener la universidad");}
@@ -833,10 +862,10 @@ public class EjbRegistroFichaIngenieria {
             if(aspirante==null){return ResultadoEJB.crearErroneo(2,new UniversidadEgresoAspirante(),"El aspirante no debe ser nulo");}
             UniversidadEgresoAspirante ue = new UniversidadEgresoAspirante();
             ue = em.createQuery("select u from UniversidadEgresoAspirante u where u.universidadEgresoAspirantePK.aspirante=:aspirante", UniversidadEgresoAspirante.class)
-            .setParameter("aspirante", aspirante.getIdAspirante())
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("aspirante", aspirante.getIdAspirante())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             if(ue ==null){return ResultadoEJB.crearErroneo(3,new UniversidadEgresoAspirante(),"No se encontró registro");}
             else {return ResultadoEJB.crearCorrecto(ue,"Universidad de egreso");}
@@ -871,8 +900,8 @@ public class EjbRegistroFichaIngenieria {
                 case ACTUALIZAR:
                     ResultadoEJB<UniversidadEgresoAspirante> resUni = getUniversidadbyAspirante(aspirante);
                     if(resUni.getCorrecto()){
-                       newUniversidadEgresoAspirante = resUni.getValor();
-                       newUniversidadEgresoAspirante.getUniversidadEgresoAspirantePK().setUniversidadEgreso(universidad.getCveUniversidad());
+                        newUniversidadEgresoAspirante = resUni.getValor();
+                        newUniversidadEgresoAspirante.getUniversidadEgresoAspirantePK().setUniversidadEgreso(universidad.getCveUniversidad());
                         em.merge(newUniversidadEgresoAspirante);
                     }
                     break;
@@ -1070,7 +1099,7 @@ public class EjbRegistroFichaIngenieria {
             String  mail= dto.getAspirante().getIdPersona().getMedioComunicacion().getEmail();
             // El correo gmail de envío
             String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-            String claveCorreo = "DServiciosEscolares19";
+            String claveCorreo = "DServiciosEscolares21";
             String mensaje = "Estimado(a)"+ dto.getAspirante().getIdPersona().getNombre() + ", haz realizado tu registro de tu cita con éxito"+
                     "\n\n Para continuar descarga el comprobante de tu cita y leé con atención las indicaciones.\n\n"
                     + "Recuerda que al asistir a tu cita debes tener todas las medidas sanitarias, por lo cual el uso de cobre bocas es obligatorio.\n"
