@@ -70,6 +70,7 @@ public enum ControlEscolarVistaControlador {
     SEGUIMIENTO_EXPEDIENTE_MATRICULA("/controlEscolar/titulacion/seguimientoGeneracion.xhtml", SeguimientoExpedienteGeneracionTitulacion.class),
     REGISTRO_EXPEDIENTE_TITULACION("/controlEscolar/titulacion/registroExpediente.xhtml", RegistroExpedienteTitulacion.class),
     FECHAS_TERMINACION_TITULACION("/controlEscolar/titulacion/fechasTerminacion.xhtml", FechasTerminacionTitulacion.class),
+    REGISTRO_EVENTOS_TITULACION("/controlEscolar/titulacion/registroEventosTitulacion.xhtml",  RegistroEventosTitulacion.class),
 
     DICTAMEN_BAJAS("/controlEscolar/psicopedagogia/dictamenBaja.xhtml",  DictamenBajaPsicopedagogia.class),
     CEDULA_IDENTIFICACION("/controlEscolar/psicopedagogia/cedulaIdentificacion.xhtml",cedulaIdentificacionPsicopedagogia.class),
