@@ -92,6 +92,7 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
            
             rol.setNivelRol(NivelRol.OPERATIVO);
             rol.setPeriodoActivo(ejbPermisoAperturaExtemporanea.getPeriodoActual().getPeriodo());
+            rol.setAgregarApertura(Boolean.FALSE);
             rol.setTipoBusqueda("busquedaGeneral");
 //            rol.setSoloLectura(true);
             
@@ -101,9 +102,6 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
             rol.getInstrucciones().add("Para registrar un evento escolar nuevo deberá seleccionar en el calendario la fecha de inicio y fin de cada actividad, al finalizar dar clic en el botón Guardar ubicado en la parte inferior de la tabla.");
             rol.getInstrucciones().add("Si registró por error eventos de estadía, dará clic en el botón eliminar.");
            
-            rol.setFechaInicio(new Date());
-            rol.setFechaFin(new Date());
-            
             periodosEscolares();
             listaAreas();
         }catch (Exception e){mostrarExcepcion(e); }
@@ -175,6 +173,8 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
         ResultadoEJB<Date> res = ejb.getFechaMinimaApertura(rol.getEvento());
         if(res.getCorrecto()){
             rol.setRangoFechaInicial(res.getValor());
+            rol.setFechaInicio(rol.getRangoFechaInicial());
+            rol.setFechaFin(rol.getRangoFechaInicial());
             Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
     }
@@ -203,6 +203,18 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
             PeriodosEscolares periodo = (PeriodosEscolares)e.getNewValue();
             rol.setPeriodoEscolar(periodo);
             listaAperturasEventosEscolaresRegistrados();
+            Ajax.update("frm");
+        }else mostrarMensaje("");
+    }
+    
+    /**
+     * Permite que al cambiar el valor del input para agregar una apertura y se muestren los componentes correspondientes
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarAgregarApertura(ValueChangeEvent e){
+        if(e.getNewValue() instanceof Boolean){
+            Boolean valor = (Boolean)e.getNewValue();
+            rol.setAgregarApertura(valor);
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
@@ -283,21 +295,16 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
      * Permite eliminar la apertura extemporánea seleccionada
      * @param dtoAperturaEventosEscolares
     */
-//    public void eliminarAperturaEventoEscolar(DtoAperturaEventosEscolares dtoAperturaEventosEscolares){
-//        System.err.println("eliminarAperturaEventoEscolar");
-//        System.err.println("eliminarAperturaEventoEscolar - dtoAperturaEventosEscolares " + claveEvento);
-//        ResultadoEJB<Integer> res = ejb.eliminarAperturaEventoEscolar(claveEvento);
-//        if(res.getCorrecto()){
-//            mostrarMensajeResultadoEJB(res);
-//            listaAperturasEventosEscolaresRegistrados();
-//        }else mostrarMensajeResultadoEJB(res);
-//        
-//    }
-    
-    public void eliminarAperturaEventoEscolar(){
-        System.err.println("eliminarAperturaEventoEscolar");
+    public void eliminarAperturaEventoEscolar(DtoAperturaEventosEscolares dtoAperturaEventosEscolares){
+        ResultadoEJB<Integer> res = ejb.eliminarAperturaEventoEscolar(dtoAperturaEventosEscolares.getEventoEscolarDetalle());
+        if(res.getCorrecto()){
+            mostrarMensajeResultadoEJB(res);
+            listaAperturasEventosEscolaresRegistrados();
+            Ajax.update("tbAperturaEventos");
+        }else mostrarMensajeResultadoEJB(res);
         
     }
+ 
     
      /**
      * Permite editar la fechas de inicio y fin de la apertura extemporánea seleccionada
@@ -309,5 +316,6 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
         ResultadoEJB<EventoEscolarDetalle> resAct = ejb.actualizarAperturaEventoRegistrada(evento);
         mostrarMensajeResultadoEJB(resAct);
         listaAperturasEventosEscolaresRegistrados();
+        Ajax.update("tbAperturaEventos");
     }
 }

@@ -42,6 +42,11 @@ public class AperturaEventosEscolaresRolEscolares extends AbstractRol {
     @Getter @NonNull private PeriodosEscolares periodoEscolar;
     
      /**
+     * Representa valor para habilitar o deshabilitar componetes para agregar apertura
+     */
+    @Getter @NonNull private Boolean agregarApertura;
+    
+     /**
      * Tipo de búsqueda por área/coordinación/departamento o personal
      */
     @Getter @NonNull private String tipoBusqueda;
@@ -121,6 +126,10 @@ public class AperturaEventosEscolaresRolEscolares extends AbstractRol {
         this.tipoBusqueda = tipoBusqueda;
     }
 
+    public void setAgregarApertura(Boolean agregarApertura) {
+        this.agregarApertura = agregarApertura;
+    }
+    
     public void setAreas(List<AreasUniversidad> areas) {
         this.areas = areas;
     }
