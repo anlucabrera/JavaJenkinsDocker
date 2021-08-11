@@ -90,14 +90,16 @@ public class RegistroEventosTitulacion extends ViewScopedRol implements Desarrol
             rol.setPeriodoActivo(ejbPermisoAperturaExtemporanea.getPeriodoActual().getPeriodo());
 //            rol.setSoloLectura(true);
             
-            rol.getInstrucciones().add("Seleccione periodo escolar.");
-            rol.getInstrucciones().add("A continuación visualizará la lista de eventos escolares registrados o por registrar.");
-            rol.getInstrucciones().add("Para modificar las fechas de los eventos registrados deberá dar clic en el campo de fecha de inicio o fin, seleccionar la fecha del calendario y dar enter para guardar cambios.");
-            rol.getInstrucciones().add("Para registrar un evento escolar nuevo deberá seleccionar en el calendario la fecha de inicio y fin de cada actividad, al finalizar dar clic en el botón Guardar ubicado en la parte inferior de la tabla.");
-            rol.getInstrucciones().add("Si registró por error eventos de estadía, dará clic en el botón eliminar.");
-           
+            rol.getInstrucciones().add("AGREGAR NUEVO EVENTO.");
+            rol.getInstrucciones().add("Seleccione la generación y nivel educativo que correspondan, a continuación seleccione la fecha de inicio y fin en la que estará activo el evento de integración de expediente de titulación");
+            rol.getInstrucciones().add("De clic en el botón de GUARDAR para registrar el evento, posteriormente la tabla se actualizará con la nueva información.");
+            rol.getInstrucciones().add("ACTUALIZAR FECHAS - EVENTO YA REGISTRADO");
+            rol.getInstrucciones().add("Ubique la fila del evento que corresponda, de clic en los campos de fecha de iniciop y fin, a continuación podrá seleccionar la nueca fecha.");
+            rol.getInstrucciones().add("De enter, posreriormente la tabla se actualizará con las nuevas fechas.");
+            
             listaEventosRegistradosCE();
             listaEventosRegistradosSAIIUT();
+            listaGeneraciones();
             
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -155,6 +157,104 @@ public class RegistroEventosTitulacion extends ViewScopedRol implements Desarrol
         ResultadoEJB<ProcesosIntexp> resAct = ejb.actualizarEventoRegistradoSAIIUT(evento);
         mostrarMensajeResultadoEJB(resAct);
         listaEventosRegistradosSAIIUT();
+    }
+    
+     /**
+     * Permite obtener la lista de generaciones activas en control escolar
+     */
+    public void listaGeneraciones(){
+        ResultadoEJB<List<Generaciones>> res = ejb.getGeneraciones();
+        if(res.getCorrecto()){
+            rol.setGeneraciones(res.getValor());
+            rol.setGeneracion(rol.getGeneraciones().get(0));
+            listaNiveles();
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(res);
+    
+    }
+    
+    /**
+     * Permite obtener la lista de niveles educativos activos de la generación seleccionada
+     */
+    public void listaNiveles(){
+        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejb.getNivelesGeneracion(rol.getGeneracion());
+        if(res.getCorrecto()){
+            rol.setNiveles(res.getValor());
+            rol.setNivel(rol.getNiveles().get(0));
+            inicializarFechas();
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(res);
+    
+    }
+    
+    /**
+     * Permite inicializar ls fechas de inciio y fin
+     */
+    public void inicializarFechas(){
+       rol.setFechaInicio(new Date());
+       rol.setFechaFin(new Date());
+       Ajax.update("frm");
+    
+    }
+    
+     /**
+     * Permite que al cambiar o seleccionar la generación se actualice el valor de la variable
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarGeneracion(ValueChangeEvent e){
+        if(e.getNewValue() instanceof Generaciones){
+            Generaciones gen = (Generaciones)e.getNewValue();
+            rol.setGeneracion(gen);
+            listaNiveles();
+            Ajax.update("frm");
+        }else mostrarMensaje("");
+    }
+    
+     /**
+     * Permite que al cambiar o seleccionar el nivel educativo se actualice el valor de la variable
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarNivel(ValueChangeEvent e){
+        if(e.getNewValue() instanceof ProgramasEducativosNiveles){
+            ProgramasEducativosNiveles nivel = (ProgramasEducativosNiveles)e.getNewValue();
+            rol.setNivel(nivel);
+            Ajax.update("frm");
+        }else mostrarMensaje("");
+    }
+    
+     /**
+     * Permite registrar un evento escolar en el periodo escolar seleccionado
+     */
+    public void agregarNuevoEvento(){
+        ResultadoEJB<EventoTitulacion> agregar = ejb.agregarEventoTitulacion(rol.getGeneracion(), rol.getNivel(), rol.getFechaInicio(), rol.getFechaFin());
+        if (agregar.getCorrecto()) {
+            mostrarMensajeResultadoEJB(agregar);
+            listaEventosRegistradosCE();
+            Ajax.update("frm");
+        }
+    }
+    
+    /**
+     * Permite eliminar el evento de titulación seleccionado
+     * @param dtoGeneracionesControlEscolar
+    */
+    public void eliminarEventoTitulacion(DtoEventosTitulacion.GeneracionesControlEscolar dtoGeneracionesControlEscolar){
+        ResultadoEJB<Integer> res = ejb.eliminarEventoTitulacion(dtoGeneracionesControlEscolar.getEventoTitulacion());
+        if(res.getCorrecto()){
+            mostrarMensajeResultadoEJB(res);
+            listaEventosRegistradosCE();
+        }else mostrarMensajeResultadoEJB(res);
+        
+    }
+    
+     /**
+     * Permite verificar si se habilita la eliminación el evento de titulación seleccionado
+     * @param dtoGeneracionesControlEscolar
+     * @return Resultado del proceso, true o false
+    */
+    public Boolean deshabilitarEliminacion(DtoEventosTitulacion.GeneracionesControlEscolar dtoGeneracionesControlEscolar){
+        ResultadoEJB<Boolean> res = ejb.getExistenExpedientesEvento(dtoGeneracionesControlEscolar.getEventoTitulacion());
+        return res.getValor();
     }
     
 }

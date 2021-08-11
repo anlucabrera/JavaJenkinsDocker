@@ -56,8 +56,53 @@
                             </div>
                             <div class="box box-solid">
                                 <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" value="#{registroEventosTitulacion.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{registroEventosTitulacion.cambiarGeneracion}">
+                                                    <f:selectItems value="#{registroEventosTitulacion.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generación" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{registroEventosTitulacion.rol.nivel}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{registroEventosTitulacion.cambiarNivel}">
+                                                    <f:selectItems value="#{registroEventosTitulacion.rol.niveles}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>  
+                                                <p:outputLabel value="Nivel educativo" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:calendar id="fechaInicio" locale="es" value="#{registroEventosTitulacion.rol.fechaInicio}" pattern="dd-MM-yyyy HH:mm:ss" mask="true" />
+                                                <p:outputLabel value="Fecha inicio" for="fechaInicio"/>
+                                                <p:message for="fechaInicio" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                               <p:calendar id="fechaFin" locale="es" value="#{registroEventosTitulacion.rol.fechaFin}" pattern="dd-MM-yyyy HH:mm:ss" mask="true" />
+                                               <p:outputLabel value="Fecha fin" for="fechaFin"/>
+                                               <p:message for="fechaFin" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                               <p:commandButton id="agregar" actionListener="#{registroEventosTitulacion.agregarNuevoEvento()}" class="btn btn-sm btn-info" icon="fa fa-save" value="Guardar"/>
+                                            </div>
+                                        </div>
+                                    </div>
                                      <div class="row">
                                             <center>
+                                                <div class="col-lg-10 col-md-12 text-info text-center" style="float: none;"> 
                                                 <p:dataTable id="tbListaEventosTitulacionCE" var="eventoTitCE" value="#{registroEventosTitulacion.rol.listEventosTitulacionCE}"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                              tableStyle="vertical-align: middle;" editable="true" editMode="cell" expandableRowGroups="true">
@@ -72,6 +117,7 @@
                                                             <p:column headerText="Nivel educativo" style="width: 300px;"/>
                                                             <p:column headerText="Fecha inicio" style="width: 200px;"/>
                                                             <p:column headerText="Fecha fin" style="width: 200px;"/>
+                                                            <p:column headerText="Eliminar" style="width: 100px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:ajax event="cellEdit" listener="#{registroEventosTitulacion.onCellEditCE}"/>
@@ -98,6 +144,17 @@
                                                             <f:facet name="output"><h:outputText value="#{eventoTitCE.eventoTitulacion.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText></f:facet>
                                                             <f:facet name="input"><p:calendar id="fechaFin" locale="es" value="#{eventoTitCE.eventoTitulacion.fechaFin}" pattern="dd-MM-yyyy HH:mm:ss" mask="true"/></f:facet>
                                                          </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                            <center>
+                                                                <p:commandButton actionListener="#{registroEventosTitulacion.eliminarEventoTitulacion(eventoTitCE)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="#{registroEventosTitulacion.deshabilitarEliminacion(eventoTitCE)?'No se puede eliminar porque hay expedientes de titulación registrados':'Eliminar evento'}" disabled="#{registroEventosTitulacion.deshabilitarEliminacion(eventoTitCE)}">
+                                                                     <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro seleccionado?" icon="ui-icon-alert" />
+                                                                </p:commandButton>
+                                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                                </p:confirmDialog> 
+                                                            </center>
                                                     </p:column>
                                                 </p:dataTable>
                                                 <p></p>
@@ -128,7 +185,7 @@
                                                         <h:outputText value="#{eventoTitSAIIUT.generacion.inicio} - #{eventoTitSAIIUT.generacion.fin}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{eventoTitSAIIUT.periodo.mesInicio.abreviacion} - #{eventoTitSAIIUT.periodo.mesFin.abreviacion} #{eventoTitSAIIUT.periodo.anio}"/>
+                                                        <h:outputText value="#{eventoTitSAIIUT.periodo.mesInicio.mes} - #{eventoTitSAIIUT.periodo.mesFin.mes} #{eventoTitSAIIUT.periodo.anio}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{eventoTitSAIIUT.eventoTitulacion.procesosGeneracionesPK.grado}"/>
@@ -146,6 +203,7 @@
                                                          </p:cellEditor>
                                                     </p:column>
                                                 </p:dataTable>
+                                                </div>
                                             </center>
                                     </div>
                                 </div>

@@ -6,6 +6,9 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -18,10 +21,13 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEventosTitulacion;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoTitulacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.ExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosGeneracionesPK;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosGeneraciones;
 import mx.edu.utxj.pye.sgi.entity.titulacion.ProcesosIntexp;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoTitulacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
@@ -101,22 +107,6 @@ public class EjbRegistroEventosTitulacion {
             return ResultadoEJB.crearCorrecto(dto, "Evento empaquetado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el evento (EjbRegistroEventosTitulacion.packEventoRegistradoCE).", e, DtoEventosTitulacion.GeneracionesControlEscolar.class);
-        }
-    }
-    
-     /**
-     * Permite verificar si existe evento de titulación activo de la actividad en el periodo escolar seleccionado
-     * @param eventoSeleccionado
-     * @return Verdadero o Falso según sea el caso
-     */
-    public ResultadoEJB<Boolean> buscarEventoActivo(EventoTitulacion eventoSeleccionado){
-        try{
-            EventoTitulacion eventoReg = em.createQuery("SELECT e FROM EventoTitulacion e WHERE e.evento=:evento AND current_date between e.inicio and e.fin", EventoTitulacion.class)
-                    .setParameter("evento", eventoSeleccionado.getEvento())
-                    .getResultStream().findFirst().orElse(null);
-           return ResultadoEJB.crearCorrecto(eventoReg != null, "Evento de titulación activo encontrado");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
         }
     }
     
@@ -203,4 +193,129 @@ public class EjbRegistroEventosTitulacion {
         }
     }
     
+     /**
+     * Permite obtener la lista de generaciones activas en control escolar
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Generaciones>> getGeneraciones(){
+        try{
+            List<Generaciones> listaGeneraciones = new ArrayList<>();
+            
+            List<Short> clavesGeneracion = em.createQuery("SELECT g FROM Grupo g ORDER BY g.generacion DESC", Grupo.class)
+                    .getResultStream()
+                    .map(p -> p.getGeneracion())
+                    .distinct()
+                    .collect(Collectors.toList());
+            
+            clavesGeneracion.forEach(gen -> {
+                Generaciones generacion = em.find(Generaciones.class, gen);
+                listaGeneraciones.add(generacion);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaGeneraciones, "Lista de generaciones activas.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de generaciones activas.(EjbRegistroEventosTitulacion.getGeneraciones)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de niveles educativos activos de la generación seleccionada
+     * @param generacion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<ProgramasEducativosNiveles>> getNivelesGeneracion(Generaciones generacion){
+        try{
+            List<AreasUniversidad> listaProgramas = new ArrayList<>();
+            
+            List<Short> clavesProgramas = em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion", Grupo.class)
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .getResultStream()
+                    .map(p -> p.getIdPe())
+                    .distinct()
+                    .collect(Collectors.toList());
+            
+            clavesProgramas.forEach(programa -> {
+                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, programa);
+                listaProgramas.add(programaEducativo);
+            });
+            
+            List<ProgramasEducativosNiveles> listaNiveles = listaProgramas.stream().map(p->p.getNivelEducativo()).distinct().sorted(Comparator.comparing(ProgramasEducativosNiveles::getNombre)).collect(Collectors.toList());
+            
+            
+            return ResultadoEJB.crearCorrecto(listaNiveles, "Lista de niveles educativos.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de niveles educativos.(EjbRegistroEventosTitulacion.getNivelesGeneracion)", e, null);
+        }
+    }
+    
+     /**
+     * Permite registrar el evento de titulación de la generación y nivel educativo seleccionados
+     * @param generacion
+     * @param nivel
+     * @param fechaInicio
+     * @param fechaFin
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<EventoTitulacion> agregarEventoTitulacion(Generaciones generacion, ProgramasEducativosNiveles nivel, Date fechaInicio, Date fechaFin){
+        try{
+            EventoTitulacion eventoTitulacionPrevio = em.createQuery("SELECT e FROM EventoTitulacion e WHERE e.generacion=:generacion AND e.nivel=:nivel ORDER BY e.numProceso DESC", EventoTitulacion.class)
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .setParameter("nivel", nivel.getNivel())
+                    .getResultStream()
+                    .findAny().orElse(null);
+            
+            Integer numProceso = 1;
+            
+            if(eventoTitulacionPrevio != null){
+                numProceso = eventoTitulacionPrevio.getNumProceso() + 1;
+            }
+            
+            EventoTitulacion eventoTitulacion = new EventoTitulacion();
+            eventoTitulacion.setNumProceso(numProceso);
+            eventoTitulacion.setFechaInicio(fechaInicio);
+            eventoTitulacion.setFechaFin(fechaFin);
+            eventoTitulacion.setGeneracion(generacion.getGeneracion());
+            eventoTitulacion.setNivel(nivel.getNivel());
+            em.persist(eventoTitulacion);
+             
+            return ResultadoEJB.crearCorrecto(eventoTitulacion, "Evento de titulación registrado correctamente.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar el evento de titulación correctamente. (EjbRegistroEventosTitulacion.agregarEventoTitulacion)", e, null);
+        }
+    }
+    
+    /**
+     * Permite eliminar el evento de titulación seleccionado
+     * @param eventoTitulacion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> eliminarEventoTitulacion(EventoTitulacion eventoTitulacion){
+        try{
+            Integer delete = em.createQuery("DELETE FROM EventoTitulacion e WHERE e.evento=:evento", EventoTitulacion.class)
+                .setParameter("evento", eventoTitulacion.getEvento())
+                .executeUpdate();
+            
+            return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente el evento de titulación seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el evento de titulación seleccionado. (EjbRegistroEventosTitulacion.eliminarEventoTitulacion)", e, null);
+        }
+    }
+    
+    
+     /**
+     * Permite verificar si existen expedientes de titulación registrados en el evento seleccionado
+     * @param eventoTitulacion
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<Boolean> getExistenExpedientesEvento(EventoTitulacion eventoTitulacion){
+        try{
+            List<ExpedienteTitulacion> expedientesTitulacion = em.createQuery("SELECT e FROM ExpedienteTitulacion e WHERE e.evento.evento=:evento", ExpedienteTitulacion.class)
+                    .setParameter("evento", eventoTitulacion.getEvento())
+                    .getResultStream().collect(Collectors.toList());
+            
+           return ResultadoEJB.crearCorrecto(!expedientesTitulacion.isEmpty(), "Expedientes de titulación registrados en el evento seleciconado");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
 }
