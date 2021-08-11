@@ -97,10 +97,13 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
 //            rol.setSoloLectura(true);
             
             rol.getInstrucciones().add("Seleccione periodo escolar.");
-            rol.getInstrucciones().add("A continuación visualizará la lista de eventos escolares registrados o por registrar.");
-            rol.getInstrucciones().add("Para modificar las fechas de los eventos registrados deberá dar clic en el campo de fecha de inicio o fin, seleccionar la fecha del calendario y dar enter para guardar cambios.");
-            rol.getInstrucciones().add("Para registrar un evento escolar nuevo deberá seleccionar en el calendario la fecha de inicio y fin de cada actividad, al finalizar dar clic en el botón Guardar ubicado en la parte inferior de la tabla.");
-            rol.getInstrucciones().add("Si registró por error eventos de estadía, dará clic en el botón eliminar.");
+            rol.getInstrucciones().add("A continuación visualizará la lista de aperturas registradas en el periodo seleccionado.");
+            rol.getInstrucciones().add("ACTUALIZACIÓN FECHAS - APERTURA REGISTRADA.");
+            rol.getInstrucciones().add("Para modificar las fechas de la apertura deberá dar clic en el campo de fecha de inicio o fin, seleccionar la fecha del calendario y dar enter para guardar cambios.");
+            rol.getInstrucciones().add("AGREGAR NUEVA APERTURA.");
+            rol.getInstrucciones().add("De clic en el componente AGREGAR APERTURA, a continuación deberá indicar si será una apertura por área o personal, indicar el área o la clave del personal, seleccionar el evento, las fechas de inicio y fin en que estará habilitado, dará clic en GUARDAR para registrar la apertura.");
+            rol.getInstrucciones().add("ELIMINAR APERTURA.");
+            rol.getInstrucciones().add("Ubique la fila que corresponda a la apertura que desea eliminar, dará clic en el icono de la columna ELIMINAR.");
            
             periodosEscolares();
             listaAreas();

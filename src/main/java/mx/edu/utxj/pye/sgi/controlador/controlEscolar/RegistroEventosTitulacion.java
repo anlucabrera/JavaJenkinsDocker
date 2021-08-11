@@ -91,11 +91,14 @@ public class RegistroEventosTitulacion extends ViewScopedRol implements Desarrol
 //            rol.setSoloLectura(true);
             
             rol.getInstrucciones().add("AGREGAR NUEVO EVENTO.");
-            rol.getInstrucciones().add("Seleccione la generación y nivel educativo que correspondan, a continuación seleccione la fecha de inicio y fin en la que estará activo el evento de integración de expediente de titulación");
+            rol.getInstrucciones().add("Seleccione la generación y nivel educativo que correspondan, a continuación seleccione la fecha de inicio y fin en la que estará activo el evento de integración de expediente de titulación.");
             rol.getInstrucciones().add("De clic en el botón de GUARDAR para registrar el evento, posteriormente la tabla se actualizará con la nueva información.");
             rol.getInstrucciones().add("ACTUALIZAR FECHAS - EVENTO YA REGISTRADO");
-            rol.getInstrucciones().add("Ubique la fila del evento que corresponda, de clic en los campos de fecha de iniciop y fin, a continuación podrá seleccionar la nueca fecha.");
-            rol.getInstrucciones().add("De enter, posreriormente la tabla se actualizará con las nuevas fechas.");
+            rol.getInstrucciones().add("Ubique la fila del evento que corresponda, de clic en los campos de fecha de inicio y fin, a continuación podrá seleccionar la nueva fecha.");
+            rol.getInstrucciones().add("De enter, posteriormente la tabla se actualizará con las nuevas fechas.");
+            rol.getInstrucciones().add("ELIMINAR EVENTO.");
+            rol.getInstrucciones().add("Ubique la fila que corresponda al evento que desea eliminar, dará clic en el icono de la columna ELIMINAR.");
+            rol.getInstrucciones().add("NOTA: No se pueden eliminar eventos que tengan expedientes de titulación registrados.");
             
             listaEventosRegistradosCE();
             listaEventosRegistradosSAIIUT();
