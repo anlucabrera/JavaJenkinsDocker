@@ -91,10 +91,10 @@ public class RegistroDocumentosOficialesEscolares extends ViewScopedRol implemen
             rol.setPeriodoActivo(ejbIntegracionExpedienteTitulacion.getPeriodoActual().getPeriodo());
             
             rol.getInstrucciones().add("Ingrese la matricula o el nombre del estudiante del que cargará documentos");
-            rol.getInstrucciones().add("A continuación, se cargará la información del estudiante seleccionado.");
-            rol.getInstrucciones().add("En la parte inferior podrá visualizar una tabla con los documentos solicitados para el proceso de inscripción.");
+            rol.getInstrucciones().add("A continuación, se cargará la información personal y escolar del estudiante seleccionado.");
+            rol.getInstrucciones().add("En la parte inferior podrá visualizar una tabla con los documentos del proceso de inscripción.");
             rol.getInstrucciones().add("En la columna OPCIONES, encontrará los iconos para subir documento, editar observaciones, descargar documento y eliminarlo.");
-            rol.getInstrucciones().add("Solo se puede subir documentos extensión .pdf, .jpg y .png.");
+            rol.getInstrucciones().add("Solo se pueden subir documentos extensión .pdf, .jpg y .png.");
             rol.getInstrucciones().add("Si se equivocó puede eliminar el archivo, dando clic en el icono ELIMINAR.");
             
             consultaDocumentosAspiranteEscolares.setListaDocumentosInscripcion(Collections.emptyList());
