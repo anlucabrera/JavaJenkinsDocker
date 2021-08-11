@@ -92,18 +92,19 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
            
             rol.setNivelRol(NivelRol.OPERATIVO);
             rol.setPeriodoActivo(ejbPermisoAperturaExtemporanea.getPeriodoActual().getPeriodo());
+            rol.setAgregarApertura(Boolean.FALSE);
             rol.setTipoBusqueda("busquedaGeneral");
 //            rol.setSoloLectura(true);
             
             rol.getInstrucciones().add("Seleccione periodo escolar.");
-            rol.getInstrucciones().add("A continuación visualizará la lista de eventos escolares registrados o por registrar.");
-            rol.getInstrucciones().add("Para modificar las fechas de los eventos registrados deberá dar clic en el campo de fecha de inicio o fin, seleccionar la fecha del calendario y dar enter para guardar cambios.");
-            rol.getInstrucciones().add("Para registrar un evento escolar nuevo deberá seleccionar en el calendario la fecha de inicio y fin de cada actividad, al finalizar dar clic en el botón Guardar ubicado en la parte inferior de la tabla.");
-            rol.getInstrucciones().add("Si registró por error eventos de estadía, dará clic en el botón eliminar.");
+            rol.getInstrucciones().add("A continuación visualizará la lista de aperturas registradas en el periodo seleccionado.");
+            rol.getInstrucciones().add("ACTUALIZACIÓN FECHAS - APERTURA REGISTRADA.");
+            rol.getInstrucciones().add("Para modificar las fechas de la apertura deberá dar clic en el campo de fecha de inicio o fin, seleccionar la fecha del calendario y dar enter para guardar cambios.");
+            rol.getInstrucciones().add("AGREGAR NUEVA APERTURA.");
+            rol.getInstrucciones().add("De clic en el componente AGREGAR APERTURA, a continuación deberá indicar si será una apertura por área o personal, indicar el área o la clave del personal, seleccionar el evento, las fechas de inicio y fin en que estará habilitado, dará clic en GUARDAR para registrar la apertura.");
+            rol.getInstrucciones().add("ELIMINAR APERTURA.");
+            rol.getInstrucciones().add("Ubique la fila que corresponda a la apertura que desea eliminar, dará clic en el icono de la columna ELIMINAR.");
            
-            rol.setFechaInicio(new Date());
-            rol.setFechaFin(new Date());
-            
             periodosEscolares();
             listaAreas();
         }catch (Exception e){mostrarExcepcion(e); }
@@ -175,6 +176,8 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
         ResultadoEJB<Date> res = ejb.getFechaMinimaApertura(rol.getEvento());
         if(res.getCorrecto()){
             rol.setRangoFechaInicial(res.getValor());
+            rol.setFechaInicio(rol.getRangoFechaInicial());
+            rol.setFechaFin(rol.getRangoFechaInicial());
             Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
     }
@@ -203,6 +206,18 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
             PeriodosEscolares periodo = (PeriodosEscolares)e.getNewValue();
             rol.setPeriodoEscolar(periodo);
             listaAperturasEventosEscolaresRegistrados();
+            Ajax.update("frm");
+        }else mostrarMensaje("");
+    }
+    
+    /**
+     * Permite que al cambiar el valor del input para agregar una apertura y se muestren los componentes correspondientes
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarAgregarApertura(ValueChangeEvent e){
+        if(e.getNewValue() instanceof Boolean){
+            Boolean valor = (Boolean)e.getNewValue();
+            rol.setAgregarApertura(valor);
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
@@ -283,21 +298,16 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
      * Permite eliminar la apertura extemporánea seleccionada
      * @param dtoAperturaEventosEscolares
     */
-//    public void eliminarAperturaEventoEscolar(DtoAperturaEventosEscolares dtoAperturaEventosEscolares){
-//        System.err.println("eliminarAperturaEventoEscolar");
-//        System.err.println("eliminarAperturaEventoEscolar - dtoAperturaEventosEscolares " + claveEvento);
-//        ResultadoEJB<Integer> res = ejb.eliminarAperturaEventoEscolar(claveEvento);
-//        if(res.getCorrecto()){
-//            mostrarMensajeResultadoEJB(res);
-//            listaAperturasEventosEscolaresRegistrados();
-//        }else mostrarMensajeResultadoEJB(res);
-//        
-//    }
-    
-    public void eliminarAperturaEventoEscolar(){
-        System.err.println("eliminarAperturaEventoEscolar");
+    public void eliminarAperturaEventoEscolar(DtoAperturaEventosEscolares dtoAperturaEventosEscolares){
+        ResultadoEJB<Integer> res = ejb.eliminarAperturaEventoEscolar(dtoAperturaEventosEscolares.getEventoEscolarDetalle());
+        if(res.getCorrecto()){
+            mostrarMensajeResultadoEJB(res);
+            listaAperturasEventosEscolaresRegistrados();
+            Ajax.update("tbAperturaEventos");
+        }else mostrarMensajeResultadoEJB(res);
         
     }
+ 
     
      /**
      * Permite editar la fechas de inicio y fin de la apertura extemporánea seleccionada
@@ -309,5 +319,6 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
         ResultadoEJB<EventoEscolarDetalle> resAct = ejb.actualizarAperturaEventoRegistrada(evento);
         mostrarMensajeResultadoEJB(resAct);
         listaAperturasEventosEscolaresRegistrados();
+        Ajax.update("tbAperturaEventos");
     }
 }

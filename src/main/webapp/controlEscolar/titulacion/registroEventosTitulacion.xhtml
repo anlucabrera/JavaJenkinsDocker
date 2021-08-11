@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Registro de eventos titulación
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{registroEventosTitulacion.cargado}">
+        <adm:breadcrumb title="Registro de eventos titulación"/>
+        <div class="contenedor">
+            <c:if test="#{registroEventosTitulacion.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo: #{caster.clavePeriodoToString(registroEventosTitulacion.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" value="#{registroEventosTitulacion.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{registroEventosTitulacion.cambiarGeneracion}">
+                                                    <f:selectItems value="#{registroEventosTitulacion.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generación" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{registroEventosTitulacion.rol.nivel}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{registroEventosTitulacion.cambiarNivel}">
+                                                    <f:selectItems value="#{registroEventosTitulacion.rol.niveles}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>  
+                                                <p:outputLabel value="Nivel educativo" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:calendar id="fechaInicio" locale="es" value="#{registroEventosTitulacion.rol.fechaInicio}" pattern="dd-MM-yyyy HH:mm:ss" mask="true" />
+                                                <p:outputLabel value="Fecha inicio" for="fechaInicio"/>
+                                                <p:message for="fechaInicio" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                               <p:calendar id="fechaFin" locale="es" value="#{registroEventosTitulacion.rol.fechaFin}" pattern="dd-MM-yyyy HH:mm:ss" mask="true" />
+                                               <p:outputLabel value="Fecha fin" for="fechaFin"/>
+                                               <p:message for="fechaFin" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                               <p:commandButton id="agregar" actionListener="#{registroEventosTitulacion.agregarNuevoEvento()}" class="btn btn-sm btn-info" icon="fa fa-save" value="Guardar"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                     <div class="row">
+                                            <center>
+                                                <div class="col-lg-10 col-md-12 text-info text-center" style="float: none;"> 
+                                                <p:dataTable id="tbListaEventosTitulacionCE" var="eventoTitCE" value="#{registroEventosTitulacion.rol.listEventosTitulacionCE}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                             tableStyle="vertical-align: middle;" editable="true" editMode="cell" expandableRowGroups="true">
+                                                    <f:facet name="header">
+                                                           <center>Lista de eventos generaciones en Control Escolar</center>
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Clave evento" style="width: 100px;"/>
+                                                            <p:column headerText="No. proceso" style="width: 100px;"/>
+                                                            <p:column headerText="Generación" style="width: 200px;"/>
+                                                            <p:column headerText="Nivel educativo" style="width: 300px;"/>
+                                                            <p:column headerText="Fecha inicio" style="width: 200px;"/>
+                                                            <p:column headerText="Fecha fin" style="width: 200px;"/>
+                                                            <p:column headerText="Eliminar" style="width: 100px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:ajax event="cellEdit" listener="#{registroEventosTitulacion.onCellEditCE}"/>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{eventoTitCE.eventoTitulacion.evento}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{eventoTitCE.eventoTitulacion.numProceso}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{eventoTitCE.generacion.inicio} - #{eventoTitCE.generacion.fin}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{eventoTitCE.nivel.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{eventoTitCE.eventoTitulacion.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText></f:facet>
+                                                            <f:facet name="input"><p:calendar id="fechaInicio" locale="es" value="#{eventoTitCE.eventoTitulacion.fechaInicio}" pattern="dd-MM-yyyy HH:mm:ss" mask="true"/></f:facet>
+                                                         </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{eventoTitCE.eventoTitulacion.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText></f:facet>
+                                                            <f:facet name="input"><p:calendar id="fechaFin" locale="es" value="#{eventoTitCE.eventoTitulacion.fechaFin}" pattern="dd-MM-yyyy HH:mm:ss" mask="true"/></f:facet>
+                                                         </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column>
+                                                            <center>
+                                                                <p:commandButton actionListener="#{registroEventosTitulacion.eliminarEventoTitulacion(eventoTitCE)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="#{registroEventosTitulacion.deshabilitarEliminacion(eventoTitCE)?'No se puede eliminar porque hay expedientes de titulación registrados':'Eliminar evento'}" disabled="#{registroEventosTitulacion.deshabilitarEliminacion(eventoTitCE)}">
+                                                                     <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro seleccionado?" icon="ui-icon-alert" />
+                                                                </p:commandButton>
+                                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                                </p:confirmDialog> 
+                                                            </center>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p></p>
+                                                <p></p>
+                                                <p></p>
+                                                <p></p>
+                                                <p:dataTable id="tbListaEventosTitulacionSAIIUT" var="eventoTitSAIIUT" value="#{registroEventosTitulacion.rol.listEventosTitulacionSAIIUT}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                             tableStyle="vertical-align: middle;" editable="true" editMode="cell" expandableRowGroups="true">
+                                                    <f:facet name="header">
+                                                           <center>Lista de eventos generaciones en SAIIUT</center>
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Clave evento" style="width: 100px;"/>
+                                                            <p:column headerText="Generación" style="width: 200px;"/>
+                                                            <p:column headerText="Periodo escolar" style="width: 300px;"/>
+                                                            <p:column headerText="Grado" style="width: 150px;"/>
+                                                            <p:column headerText="Fecha inicio" style="width: 200px;"/>
+                                                            <p:column headerText="Fecha fin" style="width: 200px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:ajax event="cellEdit" listener="#{registroEventosTitulacion.onCellEditSAIIUT}"/>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{eventoTitSAIIUT.eventoTitulacion.procesosGeneracionesPK.proceso}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{eventoTitSAIIUT.generacion.inicio} - #{eventoTitSAIIUT.generacion.fin}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{eventoTitSAIIUT.periodo.mesInicio.mes} - #{eventoTitSAIIUT.periodo.mesFin.mes} #{eventoTitSAIIUT.periodo.anio}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{eventoTitSAIIUT.eventoTitulacion.procesosGeneracionesPK.grado}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{eventoTitSAIIUT.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText></f:facet>
+                                                            <f:facet name="input"><p:calendar id="fechaInicio" locale="es" value="#{eventoTitSAIIUT.fechaInicio}" pattern="dd-MM-yyyy HH:mm:ss" mask="true"/></f:facet>
+                                                         </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{eventoTitSAIIUT.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City"/></h:outputText></f:facet>
+                                                            <f:facet name="input"><p:calendar id="fechaFin" locale="es" value="#{eventoTitSAIIUT.fechaFin}" pattern="dd-MM-yyyy HH:mm:ss" mask="true"/></f:facet>
+                                                         </p:cellEditor>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                </div>
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty registroEventosTitulacion.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{registroEventosTitulacion.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para registrar eventos escolares.</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{registroEventosTitulacion.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!registroEventosTitulacion.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para personal de servicios escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

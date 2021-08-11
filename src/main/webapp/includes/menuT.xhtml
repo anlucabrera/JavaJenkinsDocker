@@ -160,6 +160,7 @@
 
 
                     <!-- Titulación -->
+                    <c:if test="#{registroEventosTitulacion.mostrarEnDesarrollo(request) and registroEventosTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/registroEventosTitulacion.xhtml"><i class="fa fa-calendar-check-o"></i><span>Registro eventos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{seguimientoExpedienteGeneracionTitulacion.mostrarEnDesarrollo(request) and seguimientoExpedienteGeneracionTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/seguimientoGeneracion.xhtml"><i class="fa fa-group"></i><span>Expedientes por Generación</span></p:link></li></c:if>
                     <c:if test="#{seguimientoExpedienteMatriculaTitulacion.mostrarEnDesarrollo(request) and seguimientoExpedienteMatriculaTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/seguimientoMatricula.xhtml"><i class="fa fa-user"></i><span>Expedientes por Matricula</span></p:link></li></c:if>
                     <c:if test="#{registroExpedienteTitulacion.mostrarEnDesarrollo(request) and registroExpedienteTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/registrarExpediente.xhtml"><i class="fa fa-user-plus"></i><span>Registrar Expediente</span></p:link></li></c:if>

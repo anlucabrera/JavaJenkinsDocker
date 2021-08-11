@@ -96,10 +96,14 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
             
             rol.getInstrucciones().add("Seleccione periodo escolar.");
             rol.getInstrucciones().add("A continuación visualizará la lista de eventos escolares registrados o por registrar.");
+            rol.getInstrucciones().add("ACTUALIZACIÓN FECHAS - EVENTO YA REGISTRADO.");
             rol.getInstrucciones().add("Para modificar las fechas de los eventos registrados deberá dar clic en el campo de fecha de inicio o fin, seleccionar la fecha del calendario y dar enter para guardar cambios.");
-            rol.getInstrucciones().add("Para registrar un evento escolar nuevo deberá seleccionar en el calendario la fecha de inicio y fin de cada actividad, al finalizar dar clic en el botón Guardar ubicado en la parte inferior de la tabla.");
-            rol.getInstrucciones().add("Si registró por error eventos de estadía, dará clic en el botón eliminar.");
-           
+            rol.getInstrucciones().add("AGREGAR NUEVO EVENTO.");
+            rol.getInstrucciones().add("De clic en el componente AGREGAR EVENTO, a continuación deberá seleccionar el evento, las fechas de inicio y fin en que estará habilitado, dará clic en GUARDAR para registrar el evento.");
+            rol.getInstrucciones().add("ELIMINAR EVENTO.");
+            rol.getInstrucciones().add("Ubique la fila que corresponda al evento que desea eliminar, dará clic en el icono de la columna ELIMINAR.");
+            rol.getInstrucciones().add("NOTA: No se pueden eliminar eventos del periodo activo o anteriores.");
+            
             periodosEscolaresRegistrados();
             
         }catch (Exception e){mostrarExcepcion(e); }

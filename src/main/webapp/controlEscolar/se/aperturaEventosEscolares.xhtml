@@ -59,7 +59,7 @@
                             <div class="box box-solid">
                                 <div class="box-body">
                                     <div class="row margin-bottom" style="margin-top: 30px;">
-                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="periodo" value="#{aperturaEventosEscolares.rol.periodoEscolar}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{aperturaEventosEscolares.cambiarPeriodo}">
                                                     <f:selectItems value="#{aperturaEventosEscolares.rol.periodosEscolares}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
@@ -70,9 +70,20 @@
                                                 <p:message for="periodo" />
                                             </div>
                                         </div>
-                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
                                             <div class="ui-material">
-                                                <p:selectOneRadio id="tipoBusqueda" value="#{aperturaEventosEscolares.rol.tipoBusqueda}" valueChangeListener="#{aperturaEventosEscolares.cambiarTipoBusqueda}">
+                                                <p:inputSwitch id="agregarApertura" styleClass="form-control" value="#{aperturaEventosEscolares.rol.agregarApertura}" valueChangeListener="#{aperturaEventosEscolares.cambiarAgregarApertura}"> 
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:inputSwitch>
+                                                <p:outputLabel for="agregarApertura" value="#{aperturaEventosEscolares.rol.agregarApertura?'Agregar apertura':'No agregar apertura'}" />
+                                                <p:message for="agregarApertura" display="tooltip" /> 
+                                            </div>
+                                        </div>
+                                        <br/><br/><br/><br/>
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <div class="ui-material">
+                                                <p:selectOneRadio id="tipoBusqueda" value="#{aperturaEventosEscolares.rol.tipoBusqueda}" valueChangeListener="#{aperturaEventosEscolares.cambiarTipoBusqueda}" rendered="#{aperturaEventosEscolares.rol.agregarApertura}">
                                                         <f:selectItem itemLabel="Área o Departamento" itemValue="busquedaGeneral" />
                                                         <f:selectItem itemLabel="Personal" itemValue="busquedaPersonal" />
                                                         <p:ajax update="@this" process="@this"/>
@@ -80,51 +91,51 @@
                                                 </p:selectOneRadio>
                                             </div>
                                         </div>
-                                        <div class="col-sm-12 col-md-12 col-lg-2">
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="area" value="#{aperturaEventosEscolares.rol.area}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{aperturaEventosEscolares.cambiarArea}" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaGeneral'}">
+                                                <p:selectOneMenu id="area" value="#{aperturaEventosEscolares.rol.area}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{aperturaEventosEscolares.cambiarArea}" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaGeneral' and aperturaEventosEscolares.rol.agregarApertura}">
                                                     <f:selectItems value="#{aperturaEventosEscolares.rol.areas}" var="area" itemValue="#{area}" itemLabel="#{area.nombre}"/>
                                                     <p:ajax process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
-                                                <p:outputLabel value="Área o Departamento" for="area" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaGeneral'}"/>
-                                                <p:message for="area" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaGeneral'}"/>
+                                                <p:outputLabel value="Área o Departamento" for="area" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaGeneral' and aperturaEventosEscolares.rol.agregarApertura}"/>
+                                                <p:message for="area" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaGeneral' and aperturaEventosEscolares.rol.agregarApertura}"/>
                                                 
                                                 <p:autoComplete id="personal" value="#{aperturaEventosEscolares.rol.personal}" completeMethod="#{aperturaEventosEscolares.completePersonal}" queryDelay="800"
-                                                                valueChangeListener="#{aperturaEventosEscolares.cambiarPersonal}" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaPersonal'}"
+                                                                valueChangeListener="#{aperturaEventosEscolares.cambiarPersonal}" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaPersonal' and aperturaEventosEscolares.rol.agregarApertura}"
                                                                 var="personal" itemValue="#{personal}" itemLabel="#{personal.personal.nombre}" converter="entityConverter" forceSelection="true" size="35">
                                                     <p:column>#{personal.personal.clave}</p:column>
                                                     <p:column>#{personal.personal.nombre}</p:column>
                                                     <p:ajax event="itemSelect" update="@this" process="@this"/>
                                                 </p:autoComplete>
-                                                <p:outputLabel value="Personal" for="personal" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaPersonal'}"/>
-                                                <p:message for="personal" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaPersonal'}"/>
+                                                <p:outputLabel value="Personal" for="personal" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaPersonal' and aperturaEventosEscolares.rol.agregarApertura}"/>
+                                                <p:message for="personal" rendered="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaPersonal' and aperturaEventosEscolares.rol.agregarApertura}"/>
                                             </div>
                                         </div>
                                          <div class="col-sm-12 col-md-12 col-lg-2">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="evento" value="#{aperturaEventosEscolares.rol.evento}" converter="entityConverter" valueChangeListener="#{aperturaEventosEscolares.cambiarEvento}">
+                                                <p:selectOneMenu id="evento" value="#{aperturaEventosEscolares.rol.evento}" converter="entityConverter" valueChangeListener="#{aperturaEventosEscolares.cambiarEvento}" rendered="#{aperturaEventosEscolares.rol.agregarApertura}">
                                                     <f:selectItems value="#{aperturaEventosEscolares.rol.eventos}" var="evento"
                                                                    itemValue="#{evento}" itemLabel="#{evento.tipo}"/>
                                                     <p:ajax update="@this" process="@this"/>
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
-                                                <p:outputLabel value="Evento" for="evento"/>
-                                                <p:message for="evento" />
+                                                <p:outputLabel value="Evento" for="evento" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
+                                                <p:message for="evento" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
                                             </div>
                                         </div>
                                         <div class="col-sm-12 col-md-12 col-lg-2">
                                             <div class="ui-material">
-                                                <p:calendar id="fechaInicio" locale="es" value="#{aperturaEventosEscolares.rol.fechaInicio}" mindate="#{aperturaEventosEscolares.rol.rangoFechaInicial}" pattern="dd-MM-yyyy" mask="true"/>
-                                                <p:outputLabel value="Fecha Inicio" for="fechaInicio"/>
-                                                <p:message for="fechaInicio" />
+                                                <p:calendar id="fechaInicio" locale="es" value="#{aperturaEventosEscolares.rol.fechaInicio}" mindate="#{aperturaEventosEscolares.rol.rangoFechaInicial}" pattern="dd-MM-yyyy" mask="true" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
+                                                <p:outputLabel value="Fecha Inicio" for="fechaInicio" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
+                                                <p:message for="fechaInicio" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
                                             </div>
                                         </div>
                                         <div class="col-sm-12 col-md-12 col-lg-2">
                                             <div class="ui-material">
-                                                <p:calendar id="fechaFin" locale="es" value="#{aperturaEventosEscolares.rol.fechaFin}" pattern="dd-MM-yyyy" mask="true"/>
-                                                <p:outputLabel value="Fecha Fin" for="fechaFin"/>
-                                                <p:message for="fechaFin" />
+                                                <p:calendar id="fechaFin" locale="es" value="#{aperturaEventosEscolares.rol.fechaFin}" mindate="#{aperturaEventosEscolares.rol.rangoFechaInicial}" pattern="dd-MM-yyyy" mask="true" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
+                                                <p:outputLabel value="Fecha Fin" for="fechaFin" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
+                                                <p:message for="fechaFin" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
                                             </div>
                                         </div>
                                     </div>
@@ -133,10 +144,10 @@
                                     <p></p>
                                     <div class="row margin-bottom" style="margin-top: 30px;">
                                     <center>
-                                        <c:if test="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaGeneral'}">
+                                        <c:if test="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaGeneral' and aperturaEventosEscolares.rol.agregarApertura}">
                                         <p:commandButton id="btnGuardar1" value="Guardar" actionListener="#{aperturaEventosEscolares.guardarAperturaArea()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
                                         </c:if>
-                                        <c:if test="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaPersonal'}">
+                                        <c:if test="#{aperturaEventosEscolares.rol.tipoBusqueda eq 'busquedaPersonal' and aperturaEventosEscolares.rol.agregarApertura}">
                                         <p:commandButton id="btnGuardar2" value="Guardar" actionListener="#{aperturaEventosEscolares.guardarAperturaPersonal()}" icon="fa fa-pencil-square-o" class="btn-primary"/>
                                         </c:if>
                                     </center>   
@@ -152,7 +163,6 @@
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
                                                             <p:column headerText="Eliminar" style="width: 100px;"/>
-                                                            <p:column headerText="Situación" style="width: 100px;" sortBy="#{aperturaEvento.situacion eq 'circuloVerde'?'Activo':'Inactivo'}" filterBy="#{aperturaEvento.situacion eq 'circuloVerde'?'Activo':'Inactivo'}" filterMatchMode="contains" />
                                                             <p:column headerText="Tipo de apertura" style="width: 200px;" sortBy="#{aperturaEvento.tipoApertura}" filterBy="#{aperturaEvento.tipoApertura}" filterMatchMode="contains" /> 
                                                             <p:column headerText="Nombre" style="width: 200px;" sortBy="#{aperturaEvento.areaPersonal}" filterBy="#{aperturaEvento.areaPersonal}" filterMatchMode="contains" /> 
                                                             <p:column headerText="Evento" style="width: 150px;" sortBy="#{aperturaEvento.eventoEscolarDetalle.evento.tipo}" filterBy="#{aperturaEvento.eventoEscolarDetalle.evento.tipo}" filterMatchMode="contains" /> 
@@ -164,14 +174,11 @@
                                                     <p:column>
                                                         <center>
                                                         <div class="btn-group">
-                                                            <p:commandButton class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{aperturaEventosEscolares.eliminarAperturaEventoEscolar}" title="Eliminar registro.">
+                                                            <p:commandButton class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{aperturaEventosEscolares.eliminarAperturaEventoEscolar(aperturaEvento)}" title="Eliminar registro.">
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                         </div>
                                                         </center>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                        <h:outputText value="#{aperturaEvento.situacion eq 'circuloVerde'?'Activo':'Inactivo'}" style="color: #{aperturaEvento.situacion eq 'circuloVerde'?'green':'red'}"/>
                                                     </p:column>
                                                     <p:column>
                                                         <h:outputText value="#{aperturaEvento.tipoApertura}"/>

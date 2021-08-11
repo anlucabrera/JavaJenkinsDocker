@@ -703,14 +703,13 @@ public class EjbRegistroEventosEscolares {
     
      /**
      * Permite eliminar la apertura extemporánea seleccionada
-     * @param claveEvento
+     * @param eventoEscolarDetalle
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Integer> eliminarAperturaEventoEscolar(Integer claveEvento){
-        System.err.println("eliminarAperturaEventoEscolar - eventoDetalle " + claveEvento);
+    public ResultadoEJB<Integer> eliminarAperturaEventoEscolar(EventoEscolarDetalle eventoEscolarDetalle){
         try{
             Integer delete = em.createQuery("DELETE FROM EventoEscolarDetalle e WHERE e.eventoDetalle=:evento", EventoEscolarDetalle.class)
-                .setParameter("evento", claveEvento)
+                .setParameter("evento", eventoEscolarDetalle.getEventoDetalle())
                 .executeUpdate();
             
             return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente la apertura extemporánea seleccionada.");
