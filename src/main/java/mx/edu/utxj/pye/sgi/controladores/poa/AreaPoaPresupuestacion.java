@@ -33,8 +33,15 @@ import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbRegistroActividades;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Faces;
 
 @Named
 @ManagedBean
@@ -46,6 +53,7 @@ public class AreaPoaPresupuestacion implements Serializable {
     @Getter    @Setter    private List<Productos> consltaListaProductos = new ArrayList<>();
     @Getter    @Setter    private List<PretechoFinanciero> consltaListaPretechoFinancieros = new ArrayList<>();
     @Getter    @Setter    private List<EjesRegistro> consultaListaEjesRegistros = new ArrayList<>();   
+    @Getter    @Setter    private List<AreasUniversidad> areasUniversidads=new ArrayList<>();    
 // Listas de entitys
     @Getter    @Setter    private List<ActividadListaRecursoActividades> listaRecursoActividadeses = new ArrayList<>(); 
     
@@ -66,6 +74,7 @@ public class AreaPoaPresupuestacion implements Serializable {
     
 // Objetos primitivos    
     @Getter    @Setter    private Short ejercicioFiscal = 0; 
+    @Getter    @Setter    private Short claveArea = 0;
     @Getter    @Setter    private Double numPm1=0D,numPm2=0D,numPm3=0D,numPm4=0D,numPm5=0D,numPm6=0D,numPm7=0D,numPm8=0D,numPm9=0D,numPm10=0D,numPm11=0D,numPm12=0D;
     @Getter    @Setter    private Double totalRecursoActividad = 0D, total=0D;
     @Getter    @Setter    private Boolean contenido = false, alineacionSeleccionada = false,productoSeleccionado=false;
@@ -73,6 +82,7 @@ public class AreaPoaPresupuestacion implements Serializable {
     @EJB    EjbCatalogosPoa catalogos;
     @EJB    EjbPresupuestacion presupuestacion;
     @EJB    EjbRegistroActividades ejbRegistroActividades;
+    @EJB    EjbAreasLogeo ejbAreasLogeo;
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA pOAUtilidades;
 
@@ -91,14 +101,30 @@ public class AreaPoaPresupuestacion implements Serializable {
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;
         alineacionSeleccionada = false;
         consultarCatalogos();
+        consultrAreasEvaluacion();
     }
     
 //////////////////////////////////////////////////////////////////////////////// consulta de listas
+    public void consultrAreasEvaluacion() {
+        ejercicioFiscal=controladorEmpleado.getEf().getEjercicioFiscal();
+        areasUniversidads = new ArrayList<>();
+        controladorEmpleado.getProcesopoas().forEach((t) -> {
+            try {
+                areasUniversidads.add(ejbAreasLogeo.mostrarAreasUniversidad(t.getArea()));
+            } catch (Throwable ex) {
+                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+                Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+    }
+    
     public void consultarCatalogos() {    
         consultaListaPartidas.clear();
         consultaListaEstrategias.clear();
         consultaListaEjesRegistros.clear();        
         consltaListaProductos.clear();
+        
+        claveArea = controladorEmpleado.getProcesopoa().getArea();
         
         consltaListaProductos.add(new Productos(new ProductosPK("0", ejercicioFiscal), "Seleccione uno"));
         
@@ -239,6 +265,21 @@ public class AreaPoaPresupuestacion implements Serializable {
             consultarCatalogos();
         }
     }   
+    
+    public void asignarAreaEvaluada(ValueChangeEvent event) {
+        switch (event.getComponent().getId()) {
+            case "area":
+                controladorEmpleado.setProcesopoa(new Procesopoa());
+                controladorEmpleado.getProcesopoas().forEach((t) -> {
+                    if (t.getArea() == Short.parseShort(event.getNewValue().toString())) {
+                        controladorEmpleado.setProcesopoa(t);
+                        claveArea=Short.parseShort(event.getNewValue().toString());
+                    }
+                });
+                break;
+        }
+        Faces.refresh();
+    }
     
 //////////////////////////////////////////////////////////////////////////////// Agregar Justificacion    
     public void asignarJustificaionActividad(ActividadesPoa actividadesPoaRecurso) {

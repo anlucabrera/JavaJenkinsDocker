@@ -28,8 +28,16 @@ import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
+import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Messages;
 
 @Named
 @ManagedBean
@@ -43,11 +51,13 @@ public class AreaPoaProgramacion implements Serializable {
     @Getter    @Setter    private List<ActividadesPoa> consultaListaActividadesPoa = new ArrayList<>();
     @Getter    @Setter    private List<CuadroMandoIntegral> consultaListaCuadroMandoIntegrals = new ArrayList<>();
     @Getter    @Setter    private List<ActividadesPoa> listaActividadesPoasPadres = new ArrayList<>();
+    @Getter    @Setter    private List<AreasUniversidad> areasUniversidads=new ArrayList<>();    
 
 // Listas de entities 
 // variables de datos Primitivos
     @Getter    @Setter    private Boolean unidadMedidaNueva = false, esActividadPrincipal = false, permitirRegistro = false, ejeActivo = false;
     @Getter    @Setter    private Short unidadDMedida = 0, ejercicioFiscal = 0, aumentoSubactividades = 1, aumentoActividades = 1;
+    @Getter    @Setter    private Short claveArea = 0;
     @Getter    @Setter    private Short numPm1 = 0, numPm2 = 0, numPm3 = 0, numPm4 = 0, numPm5 = 0, numPm6 = 0, numPm7 = 0, numPm8 = 0, numPm9 = 0, numPm10 = 0, numPm11 = 0, numPm12 = 0;
     @Getter    @Setter    private Short numPEm1 = 0, numPEm2 = 0, numPEm3 = 0, numPEm4 = 0, numPEm5 = 0, numPEm6 = 0, numPEm7 = 0, numPEm8 = 0, numPEm9 = 0, numPEm10 = 0, numPEm11 = 0, numPEm12 = 0;
     @Getter    @Setter    private String tipo = "Actividad", nombreUnidad = "", mensajeValidacion = "";
@@ -67,6 +77,7 @@ public class AreaPoaProgramacion implements Serializable {
 
     @EJB    EjbRegistroActividades registroActividades;
     @EJB    EjbCatalogosPoa catalogos;
+    @EJB    EjbAreasLogeo ejbAreasLogeo;
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesPOA pOAUtilidades;
 
@@ -86,8 +97,22 @@ public class AreaPoaProgramacion implements Serializable {
         numPm7 = null;        numPm8 = null;        numPm9 = null;        numPm10 = null;        numPm11 = null;        numPm12 = null;
         ejeActivo = false;
         consultarListasProcesoRegistro();
+        consultrAreasEvaluacion();
     }
 //////////////////////////////////////////////////////////////////////////////// consultar listas
+     public void consultrAreasEvaluacion() {
+        ejercicioFiscal=controladorEmpleado.getEf().getEjercicioFiscal();
+        areasUniversidads = new ArrayList<>();
+        controladorEmpleado.getProcesopoas().forEach((t) -> {
+            try {
+                areasUniversidads.add(ejbAreasLogeo.mostrarAreasUniversidad(t.getArea()));
+            } catch (Throwable ex) {
+                Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+                Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+    }
+     
     public void consultarListasProcesoRegistro() {
         consultaListaEjesRegistro = new ArrayList<>();
         consultaListaEstrategias = new ArrayList<>();
@@ -118,6 +143,8 @@ public class AreaPoaProgramacion implements Serializable {
 
         consultaListaUnidadMedidas.add(new UnidadMedidas(Short.parseShort("0"), "Nueva unidad de medida"));
         consultaListaUnidadMedidas.addAll(catalogos.mostrarUnidadMedidases());
+
+        claveArea = controladorEmpleado.getProcesopoa().getArea();
 
         if (tipo == 1) {
             consultaListaActividadesPoa = registroActividades.mostrarActividadesPoasTotalArea(controladorEmpleado.getProcesopoa().getArea(), ejercicioFiscal);
@@ -696,6 +723,21 @@ public class AreaPoaProgramacion implements Serializable {
     }
 
     public void recargarPag() {
+        Faces.refresh();
+    }
+    
+     public void asignarAreaEvaluada(ValueChangeEvent event) {
+        switch (event.getComponent().getId()) {
+            case "area":
+                controladorEmpleado.setProcesopoa(new Procesopoa());
+                controladorEmpleado.getProcesopoas().forEach((t) -> {
+                    if (t.getArea() == Short.parseShort(event.getNewValue().toString())) {
+                        controladorEmpleado.setProcesopoa(t);
+                        claveArea=Short.parseShort(event.getNewValue().toString());
+                    }
+                });
+                break;
+        }
         Faces.refresh();
     }
 
