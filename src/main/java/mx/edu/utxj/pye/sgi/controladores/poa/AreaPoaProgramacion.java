@@ -33,7 +33,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
-import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -101,7 +100,6 @@ public class AreaPoaProgramacion implements Serializable {
     }
 //////////////////////////////////////////////////////////////////////////////// consultar listas
      public void consultrAreasEvaluacion() {
-        ejercicioFiscal=controladorEmpleado.getEf().getEjercicioFiscal();
         areasUniversidads = new ArrayList<>();
         controladorEmpleado.getProcesopoas().forEach((t) -> {
             try {

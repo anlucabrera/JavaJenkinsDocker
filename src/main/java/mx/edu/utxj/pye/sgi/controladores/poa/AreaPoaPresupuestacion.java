@@ -106,7 +106,6 @@ public class AreaPoaPresupuestacion implements Serializable {
     
 //////////////////////////////////////////////////////////////////////////////// consulta de listas
     public void consultrAreasEvaluacion() {
-        ejercicioFiscal=controladorEmpleado.getEf().getEjercicioFiscal();
         areasUniversidads = new ArrayList<>();
         controladorEmpleado.getProcesopoas().forEach((t) -> {
             try {
