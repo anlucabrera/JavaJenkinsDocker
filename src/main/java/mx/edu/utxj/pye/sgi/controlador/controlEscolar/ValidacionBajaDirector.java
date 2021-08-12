@@ -107,7 +107,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
             rol.getInstrucciones().add("Para generar el formato de baja de clic en el botón Generar formato.");
             rol.getInstrucciones().add("Dar clic en el botón Eliminar baja, para eliminar el registro en caso de que se haya equivocado al realizar el trámite.");
            
-            rol.setAreaSuperior(ejb.getAreaSuperior(rol.getDirectorCarrera().getPersonal().getClave()).getValor());
+            rol.setAreasAcademicas(ejb.getAreasAcademicas(rol.getDirectorCarrera().getPersonal().getClave()).getValor());
             
             periodosBajasRegistradas();
             
@@ -152,7 +152,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
      * Permite obtener la lista de programas educativos que tienen bajas registradas dependiendo del área de la que es el director
      */
     public void programasEducativosBajasRegistradas(){
-        ResultadoEJB<List<AreasUniversidad>> res = ejb.getProgramasEducativosDirector(rol.getBajasPeriodo(), rol.getAreaSuperior());
+        ResultadoEJB<List<AreasUniversidad>> res = ejb.getProgramasEducativosDirector(rol.getBajasPeriodo(), rol.getAreasAcademicas());
         if(res.getCorrecto()){
             if (res.getValor().size() != 0) {
                 rol.setProgramasEducativos(res.getValor());

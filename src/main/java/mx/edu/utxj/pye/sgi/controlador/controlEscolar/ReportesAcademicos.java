@@ -158,7 +158,11 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){
                 rol.setProgramas(res.getValor());
             }
-            rol.setPrograma(rol.getProgramas().get(0));
+            if(!rol.getProgramas().isEmpty()){
+                rol.setPrograma(rol.getProgramas().get(0));
+            }else{
+                rol.setPrograma(new AreasUniversidad());
+            }
             listaReportes();
         }else mostrarMensajeResultadoEJB(res);
     }
@@ -234,6 +238,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(e.getNewValue() instanceof  ProgramasEducativosNiveles){
             ProgramasEducativosNiveles nivel = (ProgramasEducativosNiveles)e.getNewValue();
             rol.setNivel(nivel);
+            listaProgramasEducativosNivel();
             generarReportes();
             Ajax.update("frm");
         }else mostrarMensaje("");

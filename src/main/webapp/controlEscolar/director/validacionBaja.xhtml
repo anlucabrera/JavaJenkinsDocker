@@ -30,6 +30,7 @@
     <ui:define name="body">
         <c:if test="#{validacionBajaDirector.cargado}">
         <adm:breadcrumb title="Validación Baja"/>
+        <adm:sidebar collapsed="true"/>
         <div class="contenedor">
             <c:if test="#{validacionBajaDirector.tieneAcceso}">
                 <c:if test="#{validacionBajaDirector.rol.periodos ne null}">
@@ -88,7 +89,7 @@
                                             <center>
                                                 <p:remoteCommand name="actualizar" update="@form:tbListaRegistroBajas" />
                                                 <p:dataTable id="tbListaRegistroBajas" var="baja" value="#{validacionBajaDirector.rol.bajasProgramaEducativo}"
-                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No existen registros de bajas en el periodo escolar seleccionado"
                                                              tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" 
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                                     <f:facet name="header">

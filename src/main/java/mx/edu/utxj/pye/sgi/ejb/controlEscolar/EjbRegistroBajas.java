@@ -1010,38 +1010,41 @@ public class EjbRegistroBajas {
      * @param clave Clave del responsable del área
      * @return Resultado del proceso
      */
-    public ResultadoEJB<AreasUniversidad> getAreaSuperior(Integer clave){
+    public ResultadoEJB<List<AreasUniversidad>> getAreasAcademicas(Integer clave){
          try{
              
-            AreasUniversidad areaSuperior = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.responsable =:clave",  AreasUniversidad.class)
+            List<AreasUniversidad> areasAcademicas = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.responsable =:clave",  AreasUniversidad.class)
                     .setParameter("clave", clave)
-                    .getSingleResult();
+                    .getResultStream()
+                    .collect(Collectors.toList());
           
             
-            return ResultadoEJB.crearCorrecto(areaSuperior, "Área Superior de la que es responsable el director.");
+            return ResultadoEJB.crearCorrecto(areasAcademicas, "Áreas académicas de las que es responsable el director.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el área superior de la que es responsable el director. (EjbRegistroBajas.getAreaSuperior)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener las áreas académicas de las que es responsable el director. (EjbRegistroBajas.getAreasAcademicas)", e, null);
         }
     }
     
      /**
      * Permite obtener la lista de programas educativos que tienen registradas bajas dependiendo del área superior seleccionada
      * @param bajas Lista de bajas registradas
-     * @param areaSuperior Clave del área superior
+     * @param areasAcademicas Lista de áreas académicas
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativosDirector(List<DtoTramitarBajas> bajas, AreasUniversidad areaSuperior){
+    public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativosDirector(List<DtoTramitarBajas> bajas, List<AreasUniversidad> areasAcademicas){
          try{
             List<AreasUniversidad> listaProgramasEducativos = new ArrayList<>();
             
-            bajas.forEach(baja -> {
-                AreasUniversidad area = em.find(AreasUniversidad.class, baja.getDtoEstudiante().getProgramaEducativo().getArea());
-                if(area.getAreaSuperior().equals(areaSuperior.getArea())){
-                    listaProgramasEducativos.add(area);
-                }
+            areasAcademicas.forEach(areaAcademica -> {
+                bajas.forEach(baja -> {
+                    AreasUniversidad area = em.find(AreasUniversidad.class, baja.getDtoEstudiante().getProgramaEducativo().getArea());
+                    if(area.getAreaSuperior().equals(areaAcademica.getArea())){
+                        listaProgramasEducativos.add(area);
+                    }
+                });
             });
             
-             List<AreasUniversidad> listaProgramasDistintos = listaProgramasEducativos.stream()
+            List<AreasUniversidad> listaProgramasDistintos = listaProgramasEducativos.stream()
                     .distinct()
                     .sorted(Comparator.comparing(AreasUniversidad::getNombre))
                     .collect(Collectors.toList());

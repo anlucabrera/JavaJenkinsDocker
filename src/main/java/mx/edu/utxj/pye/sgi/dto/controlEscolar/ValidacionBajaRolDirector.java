@@ -41,9 +41,9 @@ public class ValidacionBajaRolDirector extends AbstractRol{
     @Getter @NonNull private PeriodosEscolares periodo;
     
     /**
-     * Área académcia superior
+     * Áreas académicas de la que es responsable
      */
-    @Getter @NonNull private AreasUniversidad areaSuperior;
+    @Getter @NonNull private List<AreasUniversidad> areasAcademicas;
     
     /**
      * Lista de programas educativos
@@ -111,8 +111,8 @@ public class ValidacionBajaRolDirector extends AbstractRol{
         this.periodo = periodo;
     }
 
-    public void setAreaSuperior(AreasUniversidad areaSuperior) {
-        this.areaSuperior = areaSuperior;
+    public void setAreasAcademicas(List<AreasUniversidad> areasAcademicas) {
+        this.areasAcademicas = areasAcademicas;
     }
 
     public void setProgramasEducativos(List<AreasUniversidad> programasEducativos) {
