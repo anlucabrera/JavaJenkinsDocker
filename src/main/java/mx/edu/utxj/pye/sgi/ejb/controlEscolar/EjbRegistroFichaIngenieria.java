@@ -321,9 +321,10 @@ public class EjbRegistroFichaIngenieria {
             DtoAspirante.AspiranteR ar = new DtoAspirante.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE);
             if(persona ==null){return ResultadoEJB.crearErroneo(2,ar,"La persona no debe ser nulo" );}
             Aspirante aspirante1 = new Aspirante();
-            aspirante1 = em.createQuery("select a from Aspirante a where a.idPersona.idpersona=:idPersona and a.tipoAspirante.idTipoAspirante=:tipo", Aspirante.class)
+            aspirante1 = em.createQuery("select a from Aspirante a where a.idPersona.idpersona=:idPersona and (a.tipoAspirante.idTipoAspirante=:tipo or a.tipoAspirante.idTipoAspirante=:tipo2)", Aspirante.class)
                     .setParameter("idPersona",persona.getIdpersona())
                     .setParameter("tipo", 1)
+                    .setParameter("tipo2",2)
                     .getResultStream()
                     .findFirst()
                     .orElse(null)
