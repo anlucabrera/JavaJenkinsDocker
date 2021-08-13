@@ -279,7 +279,7 @@
                 <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
                     <p:outputLabel value="Observaciones" />
                     <p:inputTextarea id="txtComentario" value="#{adminPoaValidacionProgramacion.mss}" 
-                                     rows="5" cols="95" counter="display" maxlength="2000" counterTemplate="{0} caracteres restantes." 
+                                     rows="5" cols="95" counter="display" maxlength="50000" counterTemplate="{0} caracteres restantes." 
                                      styleClass="form-control" autoResize="true" />
                     <p:message for="txtComentario" />
                     <h:outputText id="display" />
