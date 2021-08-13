@@ -1018,8 +1018,7 @@ public class EjbRegistroFichaIngenieria {
             String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
             String claveCorreo = "DeptoEscolares21";
             String mensaje = "Estimado(a) "+persona.getNombre()+"\n\n Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior." +
-                    "\n\n Si eres egresado de generación reciente (2019 -2021), valida tu ficha en la plataforma SII, realiza el pago de colegiatura y de pago de seguro facultativo, asiste a las instalaciones de la universidad y entrega los comprobantes de pago, para que" +
-                    "se realice la inscripción autómatica." +
+                    "\n\n Si eres egresado de generación reciente (2019 -2021), valida tu ficha en la plataforma SII, realiza el pago de colegiatura y de pago de seguro facultativo, envia los comprobantes al correo finanzas@utxicotepec.edu.mx identificándolos con tu matricula y el cuatrimestre de pago, para que se realice la inscripción automática." +
                     ".\n\n"
                     + "Si eres egresado de generaciones anteriores, o egresado de otra UT, asiste a las instalaciones de la universidad el día que agendaste tu cita y sigue las instrucciones que indican en tu comprobante.\n" +
                     "ATENTAMENTE \n" +
