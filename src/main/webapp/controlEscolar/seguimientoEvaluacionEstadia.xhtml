@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:ice="http://www.icefaces.org/icefaces/core"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+
+    <ui:define name="head-end">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .description-block{
+                text-align: justify;
+            }
+
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado {
+                background-color: #00a7d0  !important;
+                text-align: left !important;
+            }
+            .denegado{
+                background-color: #f39c12 !important;
+            }
+            .ui-progressbar{
+                position: relative;
+                height: 2em;
+            }
+
+            .ui-progressbar .ui-progressbar-label {
+                color: #000000;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                display: none;
+                font-weight: bold;
+            }
+        </style>
+
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento:
+    </ui:define>
+
+    <ui:define name="description">
+        Evaluación Estadía
+    </ui:define>
+
+    <ui:define name="body">
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+
+        </script>
+        <section>
+            <c:if test="#{seguimientoEvaluacionEstadiaMultiple.cargado}">
+                <div class="contenedor">
+                    <c:if test="#{seguimientoEvaluacionEstadiaMultiple.tieneAcceso}">
+                        <h:form id="frm" prependId="false" class="form-inline">
+                            <div class="col-md-12">
+                                <div class="box box-primary">
+                                    <div class="box-header with-border">
+                                        <div id="main-buttons" class="hidden-sm hidden-xs">
+                                            <p:toolbar id="tb">
+                                                <f:facet name="left">
+                                                    <p:outputLabel style="font-weight: bold" rendered="#{seguimientoEvaluacionEstadiaMultiple.tieneAcceso}"
+                                                                   value="Periodo activo: #{caster.clavePeriodoToString(seguimientoEvaluacionEstadiaMultiple.rol.periodoActivo)}"/>
+                                                </f:facet>
+                                                <f:facet name="right">
+                                                    <p:commandButton value="Consultar Evaluacion" actionListener="#{seguimientoEvaluacionEstadiaMultiple.consultarEstudiantes()}" 
+                                                                     class="btn btn-primary oculto-impresion" rendered="#{seguimientoEvaluacionEstadiaMultiple.tieneAcceso}"
+                                                                     title="Da clic para visualizar la información de estudiante con evaluación completo e imcompleto" icon="fa fa-check" 
+                                                                     process="@this" styleClass="btn-primary"  update="tabView:tblTestCompleto tabView:tblTestInCompleto"/>
+                                                    <p:commandButton value="Consultar Avance" actionListener="#{seguimientoEvaluacionEstadiaMultiple.consultarAvance()}"
+                                                                     title="Da clic para consultar el porcentaje de avance de la Evaluación de Estadía" icon="fa fa-check-square-o"
+                                                                     process="@this" update="tabView:tblTestAvance" class="btn btn-primary"/>
+                                                    <p:commandButton value="Decargar Base" actionListener="#{seguimientoEvaluacionEstadiaMultiple.generateResultadosTestCompleto}" 
+                                                                     class="btn btn-primary oculto-impresion" rendered="#{seguimientoEvaluacionEstadiaMultiple.tieneAcceso}"
+                                                                     title="Da clic para descargar la base de estudiantes con Evaluación Completo e Incompleto de Control Escolar" icon="fa fa-download" 
+                                                                     process="@this" styleClass="btn-primary"  update="@this"/>
+                                                </f:facet>
+                                            </p:toolbar>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="box box-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p:tabView id="tabView">
+                                                    <!--p:ajax event="tabChange" listener="# {seguimientoTestAprendizajePsicopedagogia.consultarAvance}"
+                                                            update="tabView:tblTestAvance"/-->
+                                                    <p:tab>
+                                                        <f:facet name="title"><i class="fa fa-list"></i><span> Seguimiento</span></f:facet>
+                                                        <div class="col-lg-6">
+                                                            <div class="box box-default direct-chat direct-chat-warning">
+                                                                <div class="box-header with-border">
+                                                                    <h3 class="box-title">Estudiantes con Test Completo</h3>
+
+                                                                    <div class="box-tools pull-right">
+                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.box-header -->
+                                                                <div class="box-body">
+                                                                    <p:dataTable var="estudiante" value="#{seguimientoEvaluacionEstadiaMultiple.rol.listaAlumnosTestCompleto}" paginator="true" rows="10"
+                                                                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                                                 rowsPerPageTemplate="5,10,15" id="tblTestCompleto" paginatorPosition="top" tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                                 tableStyle="vertical-align: middle;"
+                                                                                 filteredValue="#{seguimientoEvaluacionEstadiaMultiple.rol.listaAlumnosTestCompletoF}">
+                                                                        <f:facet name="header">
+                                                                            <span class="p-text-bold">Total estudiantes: #{seguimientoEvaluacionEstadiaDirector.rol.listaAlumnosTestCompleto.size()}.</span>
+                                                                        </f:facet>
+                                                                        <p:column headerText="Matrícula" width="50" style="font-size: small; border: 0" filterBy="#{estudiante.matricula}" filterMatchMode="contains">
+                                                                            <h:outputText value="#{estudiante.matricula}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Nombre completo" width="100" style="font-size: small; border: 0" filterBy="#{estudiante.nombre}" filterMatchMode="contains">
+                                                                            <h:outputText value="#{estudiante.nombre}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Cuatrimestre" width="70" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.grado}° #{estudiante.grupo}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Carrera" width="70" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.siglas}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Tutor" width="70" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.tutor}" />
+                                                                        </p:column>
+                                                                    </p:dataTable>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <div class="box box-default direct-chat direct-chat-warning">
+                                                                <div class="box-header with-border">
+                                                                    <h3 class="box-title">Estudiantes con Test Incompleto</h3>
+                                                                    <div class="box-tools pull-right">
+                                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.box-header -->
+                                                                <div class="box-body">
+                                                                    <p:dataTable var="estudiante" value="#{seguimientoEvaluacionEstadiaMultiple.rol.listaAlumnosTestIncompleto}" paginator="true" rows="10"
+                                                                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                                                 rowsPerPageTemplate="5,10,15" id="tblTestInCompleto" paginatorPosition="top" tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                                 tableStyle="vertical-align: middle;"
+                                                                                 filteredValue="#{seguimientoEvaluacionEstadiaMultiple.rol.listaAlumnosTestIncompletoF}">
+                                                                        <f:facet name="header">
+                                                                            <span class="p-text-bold">Total estudiantes: #{seguimientoEvaluacionEstadiaDirector.rol.listaAlumnosTestIncompleto.size()}.</span>
+                                                                        </f:facet>
+                                                                        <p:column headerText="Matrícula" width="50" style="font-size: small; border: 0" filterBy="#{estudiante.matricula}" filterMatchMode="contains">
+                                                                            <h:outputText value="#{estudiante.matricula}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Nombre completo" width="100" style="font-size: small; border: 0" filterBy="#{estudiante.nombre}" filterMatchMode="contains">
+                                                                            <h:outputText value="#{estudiante.nombre}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Cuatrimestre" width="70" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.grado}° #{estudiante.grupo}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Carrera" width="70" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.siglas}" />
+                                                                        </p:column>
+                                                                        <p:column headerText="Tutor" width="70" style="font-size: small; border: 0">
+                                                                            <h:outputText value="#{estudiante.tutor}" />
+                                                                        </p:column>
+                                                                    </p:dataTable>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:tab>
+                                                    <p:tab>
+                                                        <f:facet name="title"><i class="fa fa-list-ol"></i><span> Avance</span></f:facet>
+                                                        <div class="col-lg-12">
+                                                            <div class="box box-default direct-chat direct-chat-warning">
+                                                                <div class="box-header with-border">
+                                                                    <h3 class="box-title">Porcentaje de Avance por Programa Educativo</h3>
+
+                                                                    <div class="box-tools pull-right">
+
+                                                                    </div>
+                                                                </div>
+                                                                <!-- /.box-header -->
+                                                                <div class="box-body">
+                                                                    <p:dataTable var="pe" value="#{seguimientoEvaluacionEstadiaMultiple.rol.listaAvanceTest}" paginator="true" rows="10"
+                                                                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} {Exporters}"
+                                                                                 rowsPerPageTemplate="5,10,15" id="tblTestAvance" paginatorPosition="top" tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                                 tableStyle="vertical-align: middle;" >
+                                                                        <p:column style="font-size: small; text-align: justify" headerText="Programa Educativo"><h:outputText value="#{pe.programa}" /></p:column>
+                                                                        <p:column style="font-size: small; text-align: center" headerText="Matrícula Total"><h:outputText value="#{pe.totalMatricula}" /></p:column>
+                                                                        <p:column style="font-size: small; text-align: center" headerText="Total Evaluación Completo"><h:outputText value="#{pe.totalCompletos}" /></p:column>
+                                                                        <p:column style="font-size: small; text-align: center" headerText="Total Evaluación Incompleto"><h:outputText value="#{pe.totalIncompleto}" /></p:column>
+                                                                        <p:column style="font-size: small; text-align: center" headerText="Porcentaje de avance: Meta 100%">
+                                                                            <div class="progress">
+                                                                                <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                                                                     aria-valuenow="#{pe.porcentaje}" aria-valuemin="0" aria-valuemax="100"
+                                                                                     style="background-color: #00a65a; width:#{pe.porcentaje}%">
+                                                                                    <span class="progress-completed">
+                                                                                        <h:outputText value="#{pe.porcentaje}" style="color: #0E0000; font-weight: bold">
+                                                                                            <f:convertNumber type="number" pattern="0.00"/>
+                                                                                        </h:outputText>
+                                                                                    </span>
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </p:column>
+                                                                    </p:dataTable>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:tab>
+                                                </p:tabView>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                    </c:if>
+                </div>
+            </c:if>
+        </section>
+    </ui:define>
+
+</ui:composition>

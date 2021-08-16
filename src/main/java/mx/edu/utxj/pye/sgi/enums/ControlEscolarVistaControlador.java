@@ -20,6 +20,7 @@ public enum ControlEscolarVistaControlador {
     REPORTES_ESTADIA("/controlEscolar/reportesEstadia.xhtml", ReportesEstadia.class),
     REPORTES_ACADEMICOS("/controlEscolar/reportesAcademicos.xhtml", ReportesAcademicos.class),
     CALENDARIO_EVENTOS_ESCOLARES("/controlEscolar/calendarioEventosEscolares.xhtml", CalendarioEventosEscolares.class),
+    SEGUIMIENTO_EVALUACION_ESTADIA_MULTIPLE("/controlEscolar/seguimientoEvaluacionEstadia.xhtml", SeguimientoEvaluacionEstadiaMultiple.class),
     
     CONCENTRADO_CALIFICACIONES_SECACA("/controlEscolar/secAcademica/concentradoCal.xhtml",  ConcentradoCalificacionesSecAca.class),
     AVANCE_PROGRAMATICO_SECACA("/controlEscolar/secAcademica/avanceP.xhtml",  AvanceProgramaticoSecAca.class),
@@ -41,6 +42,7 @@ public enum ControlEscolarVistaControlador {
     ASIGNACION_ROLES_ESTADIA("/controlEscolar/director/asignacionesRolesEstadia.xhtml", AsignacionRolesEstadiaDirector.class),
     SEGUIMIENTO_ESTADIA_DIRECTOR("/controlEscolar/director/seguimientoEstadiaDirector.xhtml", SeguimientoEstadiaDirector.class),
     REGISTRO_EVIDINST_EVALUACION("/controlEscolar/director/registroEvidInstEvalMateria.xhtml", RegistroEvidInstEvalMateriasDireccion.class),
+    SEGUIMIENTO_EVALUACION_ESTADIA_DIRECTOR("/controlEscolar/director/seguimientoEvaluacionEstadia.xhtml", SeguimientoEvaluacionEstadiaDirector.class),
     
     REASIGNACION_ACADEMICA("/controlEscolar/se/asignacion_academica.xhtml",  AsignacionAcademicaEscolares.class),
     REINCORPORACION("/controlEscolar/se/reincorporaciones.xhtml", ReincorporacionServiciosEscolares.class),
@@ -99,6 +101,7 @@ public enum ControlEscolarVistaControlador {
     CONSULTA_PLANES_ACCION_TUTORIAL_COORDINADOR_TUTORES("/controlEscolar/tutor/consulta_plan_accion_tutorial_tutores.xhtml", ConsultaPlanesAccionTutoralCoordinadorTutores.class),
     SEGUIMIENTO_CUESTIONARIO_PSICOPEDAGOGICO_TUTOR("/controlEscolar/tutor/seguimientoCuestionarioPsicopedagogicoTutor.xhtml", SeguimientoCuestionariopsiTutor.class),
     SEGUIMIENTO_TEST_DIAGNOSTICO_APRENDIZAJE_TUTOR("/controlEscolar/seguimientoTestAprendizaje.xhtml", SeguimientoTestAprendizajeTutor.class),
+    SEGUIMIENTO_EVALUACION_ESTADIA_TUTOR("/controlEscolar/tutor/seguimientoEvaluacionEstadiaTutor.xhtml", SeguimientoEvaluacionEstadiaTutor.class),
 
 
     CAPTURA_CALIFICACIONES("/controlEscolar/docente/captura_calificaciones.xhtml", CapturaCalificacionesDocente.class),
@@ -139,6 +142,7 @@ public enum ControlEscolarVistaControlador {
     TEST_DIAGNOSTICO_APRENDIZAJE_SAIIUT("/encuestas/Estudiantes/testAprendizaje.xhtml", TestDiagnosticoAprendizaje.class),
     ENCUESTA_SATISFACCION_TSU("/controlEscolar/estudiante/satisfaccionEgresadosTsu.xhtml", EncuestaSatisfaccionEgresadosTsu.class),
     CONSULTA_DOCUMENTOS_OFICIALES("/controlEscolar/estudiante/consultaDocumentosOficiales.xhtml", ConsultaDocumentosOficialesEstudiante.class),
+    EVALUACION_ESTADIA("/controlEscolar/estudiante/evaluacionEstadia.xhtml", EvaluacionEstadiaControlEscolar.class),
 
     REGISTRO_FICHA_ASPIRANTE("/controlEscolar/aspirante/registroFichaAspirante.xhtml", RegistroFichaAdmisionAspirante.class),
     CARGA_DOCUMENTOS_ASPIRANTE("/controlEscolar/aspirante/cargaDocumentos.xhtml", CargaDocumentosAspirante.class),

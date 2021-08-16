@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TestDiagnosticoAprendizaje;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.saiiut.entity.CarrerasCgut;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Personas;
@@ -58,7 +60,7 @@ public class DtoEvaluaciones implements Serializable{
     @Getter @Setter public SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     @Getter @Setter public Boolean mostrarES, completo, testCompleto, cargada, finalizado, estSexto, estOnceavo ,
             esDeIyE,director, tutor, tutorCe,tutor2,esSecretario, planeacion,esPsicopedagogia, ESActiva, ESTsuActiva, ESIngActiva, 
-            ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2, eCEActiva, encuestaTSUCompleto;
+            ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2, eCEActiva, encuestaTSUCompleto, evaluacionEstadiaCompleto;
     @Getter @Setter public Short grado;
     @Getter @Setter public String evaluador, valor, cveDirector, nombreCompletoTutor, fechaAplicacion;
     @Getter @Setter public Integer evaluadorr,cveTrabajador,usuarioNomina, periodo;
@@ -70,11 +72,23 @@ public class DtoEvaluaciones implements Serializable{
     @Getter @Setter public Personas personas;
     @Getter @Setter public CarrerasCgut carrera;
     @Getter @Setter public Estudiante estudianteCE;
+    @Getter @Setter public AreasUniversidad areasUniversidad;
     //////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     ///////////////////////Maps and lists generals\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     @Getter @Setter public Map<String, String> respuestas;
     @Getter @Setter public List<SelectItem> respuestasPosibles;
+    @Getter @Setter public List<SelectItem> respuestasPosibles1;
+    @Getter @Setter public List<SelectItem> respuestasPosibles2;
+    @Getter @Setter public List<SelectItem> respuestasPosibles3;
+    @Getter @Setter public List<SelectItem> respuestasPosibles4;
+    @Getter @Setter public List<SelectItem> respuestasPosibles5;
     @Getter @Setter public List<Apartado> apartados;
+    @Getter @Setter public List<Apartado> apartados1;
+    @Getter @Setter public List<Apartado> apartados2;
+    @Getter @Setter public List<Apartado> apartados3;
+    @Getter @Setter public List<Apartado> apartados4;
+    @Getter @Setter public List<Apartado> apartados5;
+    @Getter @Setter public List<Apartado> apartados6;
     //////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     
     @Getter @Setter public EncuestaServiciosResultados resultado;
@@ -82,6 +96,9 @@ public class DtoEvaluaciones implements Serializable{
     @Getter @Setter public ResultadoEJB<EncuestaServiciosResultados> resultadoEJB;
     @Getter @Setter public ResultadosEncuestaSatisfaccionTsu resultadoREST;
     @Getter @Setter public EncuestaSatisfaccionEgresadosIng resultadoESEI;
+    @Getter @Setter public SeguimientoEstadiaEstudiante seguimiento;
+    @Getter @Setter public Personal persona;
+    @Getter @Setter public EvaluacionEstadiaResultados resultadoEER;
     @Getter @Setter public List<PeriodosEscolares> listaEvaluaciones;
     @Getter @Setter public List<ListadoEvaluacionEgresados> listaEvaCompleta, listaEvaIncompleta, listaEvaNA, listaFiltrado, listaEvaluacionHitorico, listaEvaluacionFilter;
     @Getter @Setter public List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneral> alumnosEncuesta = new ArrayList<>();

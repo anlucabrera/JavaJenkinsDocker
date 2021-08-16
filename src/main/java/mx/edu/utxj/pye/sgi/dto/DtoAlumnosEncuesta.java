@@ -186,6 +186,16 @@ public class DtoAlumnosEncuesta {
     }
     
     @RequiredArgsConstructor @AllArgsConstructor @ToString
+    public static class DtoAlumnosEvaluacion{
+        @Getter @Setter private Integer matricula;
+        @Getter @Setter private String nombre;
+        @Getter @Setter private Short grado;
+        @Getter @Setter private String grupo;
+        @Getter @Setter private String siglas;
+        @Getter @Setter private String tutor;
+    }
+    
+    @RequiredArgsConstructor @AllArgsConstructor @ToString
     public static class DtoGruposTutor{
         @Getter @Setter private Integer idGrupo;
         @Getter @Setter private PeriodosEscolares periodo;

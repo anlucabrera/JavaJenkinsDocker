@@ -29,6 +29,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 
 /**
  *
@@ -66,8 +71,7 @@ public class EjbEvaluacionEstadia {
     }
     
     public Evaluaciones getEvaluacionActiva(){
-        List<Evaluaciones> e = f.getEntityManager()
-                .createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
+        List<Evaluaciones> e = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
                 .setParameter("tipo", "Evaluación Estadía")
                 .setParameter("fecha", new Date())
                 .getResultStream().collect(Collectors.toList());
@@ -76,6 +80,35 @@ public class EjbEvaluacionEstadia {
         }else{
             return e.get(0);
         }
+    }
+    
+    
+    public ResultadoEJB<Boolean> tieneAccesoEvaluacionEstadia(){
+        VariablesProntuario v = em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
+                .setParameter("nombre", "denegarAccesoEvaluacionEstadia")
+                .getResultStream()
+                .findFirst().get();
+        if(v.getValor().equals("1")) return ResultadoEJB.crearErroneo(2, "No hay acceso a la Evaluación de Estadia", Boolean.class);
+        return ResultadoEJB.crearCorrecto(Boolean.TRUE, "El estudiante tiene acceso al Test");
+    }
+    
+    public ResultadoEJB<Estudiante> validarEstudiante(Integer matricula, Integer periodo){
+        Estudiante e = em.createQuery("select e "
+                + "from Estudiante as e "
+                + "where e.matricula = :matricula "
+                + "and (e.tipoEstudiante.idTipoEstudiante = :tipo1 or e.tipoEstudiante.idTipoEstudiante = :tipo2) "
+                + "and e.periodo = :periodo "
+                + "and (e.grupo.grado = :grado1 or e.grupo.grado = :grado2)", Estudiante.class)
+                .setParameter("matricula", matricula)
+                .setParameter("tipo1", Short.parseShort("1"))
+                .setParameter("tipo2", Short.parseShort("4"))
+                .setParameter("periodo", periodo)
+                .setParameter("grado1", 6)
+                .setParameter("grado2", 11)
+                .getResultStream().findFirst().orElse(new Estudiante());
+        if(e.equals(new Estudiante())) return ResultadoEJB.crearErroneo(2, "El estudiante que ingreso no se encuentra", Estudiante.class);
+        return ResultadoEJB.crearCorrecto(e, "Estudiante activo");
+                
     }
     
     public Alumnos obtenerAlumnos(String matricula) {
@@ -276,6 +309,16 @@ public class EjbEvaluacionEstadia {
         }else{
             return null;
         }
+    }
+    
+    public ResultadoEJB<SeguimientoEstadiaEstudiante> obtenerAsesor(Integer matricula){
+         SeguimientoEstadiaEstudiante see = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante as s WHERE s.matricula.matricula = :matricula", SeguimientoEstadiaEstudiante.class)
+                 .setParameter("matricula", matricula)
+                 .getResultStream()
+                 .findFirst()
+                 .orElse(new SeguimientoEstadiaEstudiante());
+        if(see.equals(new SeguimientoEstadiaEstudiante())) return ResultadoEJB.crearErroneo(2, "No hay acceso a la Evaluación de Estadia", SeguimientoEstadiaEstudiante.class);
+        return ResultadoEJB.crearCorrecto(see, "El estudiante tiene acceso al Test");
     }
     
     public boolean actualizarResultado(EvaluacionEstadiaResultados resultado) {
@@ -519,5 +562,42 @@ public class EjbEvaluacionEstadia {
                 .findFirst().orElseThrow(() -> new Exception("No hay variable disponible de acuerdo a lo que especifico"));
         if(!vp.getValor().equals("1")) return Boolean.FALSE;
         return Boolean.TRUE;
+    }
+    
+    public ResultadoEJB<Boolean> verificarEvaluacionCompleta(Evaluaciones evaluacion, Integer matricula){
+        EvaluacionEstadiaResultados eer = em.createQuery("SELECT e from EvaluacionEstadiaResultados as e WHERE e.evaluacionEstadiaResultadosPK.evaluacion = :evaluacion and e.evaluacionEstadiaResultadosPK.evaluador = :matricula", EvaluacionEstadiaResultados.class)
+                .setParameter("evaluacion", evaluacion.getEvaluacion())
+                .setParameter("matricula", matricula.toString())
+                .getResultStream()
+                .findFirst()
+                .orElse(new EvaluacionEstadiaResultados());
+        
+        if(eer == null) return ResultadoEJB.crearErroneo(2, Boolean.FALSE, "");
+        Comparador<EvaluacionEstadiaResultados> comparador = new ComparadorEvaluacionEstadia();
+        if(comparador.isCompleto(eer)){
+            return ResultadoEJB.crearCorrecto(Boolean.TRUE,"La evaluacion esta completa");
+        }else {
+            return ResultadoEJB.crearErroneo(1, Boolean.FALSE,"La encuesta no ha sido finalzada");
+        }
+    }
+    
+    public ResultadoEJB<Personal> obtenerDatosAsesor(Integer clave){
+        Personal p = em.createQuery("select p from Personal as p where p.clave = :clave", Personal.class)
+                .setParameter("clave", clave)
+                .getResultStream()
+                .findFirst()
+                .orElse(new Personal());
+        if(p.equals(new Personal())) return ResultadoEJB.crearErroneo(1, "No se pudo obtener los datos del Asesor Academico", Personal.class);
+        return ResultadoEJB.crearCorrecto(p, "Datos obtenidos");
+    }
+    
+    public ResultadoEJB<AreasUniversidad> obtenerCarrera(Short pe){
+        AreasUniversidad au = em.createQuery("select a from AreasUniversidad as a where a.area = :area", AreasUniversidad.class)
+                .setParameter("area", pe)
+                .getResultStream()
+                .findFirst()
+                .orElse(new AreasUniversidad());
+        if(au.equals(new AreasUniversidad())) return ResultadoEJB.crearErroneo(1, "No se encontro programa educativo", AreasUniversidad.class);
+        return ResultadoEJB.crearCorrecto(au, "Programa Educativo");
     }
 }
