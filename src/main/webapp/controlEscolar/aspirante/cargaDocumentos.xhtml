@@ -26,7 +26,8 @@
         Carga documentos para admisión e inscripción
     </ui:define>
 
-    <ui:define name="body">
+    <ui:define name="body"> 
+        <c:if test="#{cargaDocumentosAspirante.rol.listaDocumentos.size() > 0}">
         <p:panel id="errort" header="Carga de Documentos Móvil" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
             <section class="contentMovil">
                 <h3 style="text-align: justify;">
@@ -67,6 +68,7 @@
                 </div>
             </section>
         </p:panel>
+        </c:if>
         <p:panel id="informacion" class="hidden-xs hidden-sm" styleClass="box box-primary">
             <section class="content">
                  <br/>
