@@ -115,22 +115,22 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
 
     public void validarCurpFolio(){
        try{
-       if(rol.getCurp()== null || rol.getFolioAdmision() == null) return;
+            if(rol.getCurp()== null || rol.getFolioAdmision() == null) return;
             ResultadoEJB<Aspirante> res = ejb.validarCurpFolio(rol.getCurp(), rol.getFolioAdmision(), rol.getProcesosInscripcion());
             if(res.getCorrecto()){
             rol.setAspirante(res.getValor());
                 if(rol.getAspirante()==null){
-                 rol.setValidacionCurpFolio(false);
-                 addDetailMessage("Por favor verifica tus datos");
-                 Faces.getExternalContext().getFlash().setKeepMessages(true);
+                    rol.setValidacionCurpFolio(false);
+                    addDetailMessage("Por favor verifica tus datos");
+                    Faces.getExternalContext().getFlash().setKeepMessages(true);
                 }else{
-                 rol.setValidacionCurpFolio(true);
-                 addDetailMessage("Se han validado los datos correctamente");
-                 Faces.getExternalContext().getFlash().setKeepMessages(true);
-                 Faces.redirect("controlEscolar/aspirante/cargaDocumentos.xhtml");
-                 mostrarDocumentos(rol.getAspirante());
-                 verificarInscripcion(rol.getAspirante());
-             }
+                    rol.setValidacionCurpFolio(true);
+                    addDetailMessage("Se han validado los datos correctamente");
+                    Faces.getExternalContext().getFlash().setKeepMessages(true);
+                    Faces.redirect("controlEscolar/aspirante/cargaDocumentos.xhtml");
+                    mostrarDocumentos(rol.getAspirante());
+                    verificarInscripcion(rol.getAspirante());
+                }
             } else mostrarMensajeResultadoEJB(res); 
               addDetailMessage("Por favor verifica tus datos");
               Faces.getExternalContext().getFlash().setKeepMessages(true);
@@ -170,13 +170,17 @@ public class CargaDocumentosAspirante extends ViewScopedRol implements Desarroll
             rol.setListaDocumentoAspirante(res.getValor());
             Ajax.update("frmDocsAsp");
             rol.setListaDocumentosPendientes(rol.getListaDocumentoAspirante().stream().filter(x-> x.getDocumentoAspiranteProceso().getDocumentoAspirante()==null).collect(Collectors.toList()));
-            listarDocumentosPendientes();
-        }else mostrarMensajeResultadoEJB(res);  
+            System.err.println("mostrarDocumentos3 - listaDocumentosPendientes " + rol.getListaDocumentosPendientes());
+            if(!rol.getListaDocumentosPendientes().isEmpty()){
+                listarDocumentosPendientes();
+            }
+         }else mostrarMensajeResultadoEJB(res);  
        
     }
     
      public void listarDocumentosPendientes(){
         ResultadoEJB<List<Documento>> res = ejb.getDocumentosPendientesAspirante(rol.getListaDocumentosPendientes());
+        System.err.println("listarDocumentosPendientes4 - res " + res.getValor().size());
         if(res.getCorrecto()){
             rol.setListaDocumentos(res.getValor());
             rol.setDocumentoSeleccionado(rol.getListaDocumentos().get(0));
