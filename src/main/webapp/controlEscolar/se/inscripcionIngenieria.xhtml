@@ -362,9 +362,9 @@
                                             <f:facet name="title"><i class="fa fa-user-circle-o"> </i><span> Aspirantes </span></f:facet>
                                             <h:form id="frmAspirantes">
                                                 <p:dataTable id="aspirantes" var="estudiantes" value="#{inscripcionIngenieriaSE.rol.aspiranteIng}" expandableRowGroups="true"
-                                                             paginator="true" rows="30" paginatorPosition="top"
+                                                             paginator="true" rows="15" paginatorPosition="top"
                                                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
-                                                             rowsPerPageTemplate="10,20,30,40,50"
+                                                             rowsPerPageTemplate="15,30,45,65"
                                                              emptyMessage="No hay aspirantes registrados para este proceso de inscripción" sortBy="#{inscripcionIngenieriaSE.rol.vacia}">
 
                                                     <f:facet name="header">

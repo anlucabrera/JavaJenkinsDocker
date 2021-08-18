@@ -224,6 +224,7 @@ public class InscripcionIngenieriaSE extends ViewScopedRol implements Desarrolla
            // rol.setFechaSeleccionada(rol.getAspiranteSelect().getDatosCita().getCitasAspirantes().getFechaCita());
             getGruposPosiblesGrupos();
             if(dto.getTipoAspirante().equals(AspiranteTipoIng.ASPIRANTE_ING)){
+                rol.getAspiranteSelect().getEstudianteIncrito().setMatricula(rol.getAspiranteSelect().getEstudianteCE().getMatricula());
                compruebaEstadia();
             }
         }catch (Exception e){mostrarExcepcion(e);}
