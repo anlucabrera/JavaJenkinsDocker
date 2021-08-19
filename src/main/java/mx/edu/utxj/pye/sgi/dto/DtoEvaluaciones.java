@@ -60,7 +60,7 @@ public class DtoEvaluaciones implements Serializable{
     @Getter @Setter public SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     @Getter @Setter public Boolean mostrarES, completo, testCompleto, cargada, finalizado, estSexto, estOnceavo ,
             esDeIyE,director, tutor, tutorCe,tutor2,esSecretario, planeacion,esPsicopedagogia,esRector,esFda, ESActiva, ESTsuActiva, ESIngActiva,
-            ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2, eCEActiva, encuestaTSUCompleto;
+            ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2, eCEActiva, encuestaTSUCompleto,evaluacionEstadiaCompleto;
     @Getter @Setter public Short grado;
     @Getter @Setter public String evaluador, valor, cveDirector, nombreCompletoTutor, fechaAplicacion;
     @Getter @Setter public Integer evaluadorr,cveTrabajador,usuarioNomina, periodo;
@@ -118,4 +118,4 @@ public class DtoEvaluaciones implements Serializable{
     @Getter @Setter public Comparador<EvaluacionesEstudioSocioeconomicoResultados> comparadorESR = new ComparadorEvaluacionEstudioSocioEconomico();
     @Getter @Setter public Comparador<EncuestaCondicionesEstudio> comparadorECE = new ComparadorCondicionesEstudio();
 
-}
+    }
