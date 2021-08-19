@@ -223,4 +223,8 @@ public interface EjbCarga extends Serializable {
     
     
     public String crearDirectorioPlantillaAlineacionEducativaCompleto(String area);
+    
+    public String crearDirectorioReportePOA();
+    
+    public String crearDirectorioReportePOACompleto(String area);
 }

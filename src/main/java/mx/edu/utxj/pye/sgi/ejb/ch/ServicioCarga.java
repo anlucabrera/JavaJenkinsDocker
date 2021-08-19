@@ -176,6 +176,7 @@ public class ServicioCarga implements EjbCarga {
     public static final String seguimientoEstadia = "seguimientoEstadia";
     public static final String reportesPlaneacion = "reportesPlaneacion";
     public static final String alineacionMaterias = "alineacionMaterias";
+    public static final String reportePOapre = "POA";
 
 //    Método que se encarga de crear la carpeta raíz en caso de que no exista para poder almacenar el archivo
     static {
@@ -626,6 +627,20 @@ public class ServicioCarga implements EjbCarga {
     @Override
     public String crearDirectorioPlantillaAlineacionEducativaCompleto(String area) {
         String rutaRelativa = genCarpetaRelativa(alineacionMaterias, plantillas, area, completo);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+    
+    @Override
+    public String crearDirectorioReportePOA() {
+        String rutaRelativa = genCarpetaRelativa(reportePOapre);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+    
+    @Override
+    public String crearDirectorioReportePOACompleto(String area) {
+        String rutaRelativa = genCarpetaRelativa(reportePOapre, plantillas, area, completo);
         addCarpetaRelativa(rutaRelativa);
         return rutaRelativa;
     }

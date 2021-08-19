@@ -1,6 +1,8 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -45,6 +47,7 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
 
@@ -784,6 +787,10 @@ public class AdministracionControl implements Serializable {
         }
     }
 
+    public void descargarPlantillaCatalogos() throws IOException, Throwable{
+        File f = new File(ejbPresupuestacion.getReportePresupuestoPOA(ejeFiscal));
+        Faces.sendFile(f, true);
+    }
 // -----------------------------------------------------------------------------Utilidades
     public void imprimirValores() {
     }

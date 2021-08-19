@@ -2,13 +2,26 @@ package mx.edu.utxj.pye.sgi.ejb.poa;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAlineacionAcedemica;
+import mx.edu.utxj.pye.sgi.dto.poa.DTOreportePoa;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio;
+import static mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.ALINEACION_ACTUALIZADO;
+import static mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.ALINEACION_PLANTILLA;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CapitulosTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
@@ -18,6 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Productos;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAreas;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.RecursosActividad;
+import net.sf.jxls.transformer.XLSTransformer;
 
 @Stateful
 public class ServiciosPresupuestacion implements EjbPresupuestacion {
@@ -25,6 +39,11 @@ public class ServiciosPresupuestacion implements EjbPresupuestacion {
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb-pye2_ejb_1.0PU")
     private EntityManager em;
 
+    @EJB EjbCarga ejbCarga;
+    
+    public static final String REPORTE_PLANTILLA = "presupuestos.xlsx";
+    public static final String REPORTE_ACTUALIZADO = "presupuestos.xlsx";
+    
     @EJB
     FacadePoa facadePoa;
 
@@ -284,6 +303,71 @@ public class ServiciosPresupuestacion implements EjbPresupuestacion {
         List<CapitulosTipos> nuevoProductos = facadePoa.findAll();
         return nuevoProductos;
     }
+    
+    @Override
+    public List<DTOreportePoa.General> getReportePOA(Short ejercicio, Short area) {
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.poa.ServiciosRegistroActividades.getReportePOA()"+ejercicio);
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.poa.ServiciosRegistroActividades.getReportePOA()"+area);
+        List<DTOreportePoa.General> poas = new ArrayList<>();
+
+        TypedQuery<RecursosActividad> q;
+        if (area == 0) {
+            q = em.createQuery("SELECT r FROM RecursosActividad r INNER JOIN r.actividadPoa a WHERE a.cuadroMandoInt.ejercicioFiscal.ejercicioFiscal=:ejercicioFiscal", RecursosActividad.class);
+            q.setParameter("ejercicioFiscal", ejercicio);
+        } else {
+            q = em.createQuery("SELECT r FROM RecursosActividad r INNER JOIN r.actividadPoa a WHERE a.area = :area AND a.cuadroMandoInt.ejercicioFiscal.ejercicioFiscal=:ejercicioFiscal", RecursosActividad.class);
+            q.setParameter("area", area);
+            q.setParameter("ejercicioFiscal", ejercicio);
+        }
+        List<RecursosActividad> pr = q.getResultList();
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.poa.ServiciosRegistroActividades.getReportePOA()"+pr.size());
+        if (!pr.isEmpty()) {
+            pr.forEach((r) -> {
+                AreasUniversidad au = mostrArarea(r.getActividadPoa().getArea());
+                Personal personal = mostrPersonal(au.getResponsable());
+                poas.add(new DTOreportePoa.General(au, personal, r.getActividadPoa().getCuadroMandoInt().getEje(), r.getActividadPoa().getCuadroMandoInt().getEstrategia(), r.getActividadPoa().getCuadroMandoInt().getLineaAccion(), r.getActividadPoa(), r.getActividadPoa().getUnidadMedida(), r, r.getProductoArea(), r.getProductoArea().getProductos(), r.getProductoArea().getPartida(), r.getProductoArea().getCapitulo()));
+            });
+        }
+        return poas;
+    }
+
+    @Override
+    public AreasUniversidad mostrArarea(Short clave) {
+        facadePoa.setEntityClass(AreasUniversidad.class);
+        AreasUniversidad pr = facadePoa.getEntityManager().find(AreasUniversidad.class, clave);
+        if (pr == null) {
+            return null;
+        } else {
+            return pr;
+        }
+    }
+
+    @Override
+    public Personal mostrPersonal(Integer clave) {
+        facadePoa.setEntityClass(Personal.class);
+        Personal pr = facadePoa.getEntityManager().find(Personal.class, clave);
+        if (pr == null) {
+            pr = new Personal();
+            pr.setClave(clave);
+            pr.setNombre("No encontrado");
+            return pr;
+        } else {
+            return pr;
+        }
+    }
 
 
+    public String getReportePresupuestoPOA(Short ejeFiscal) throws Throwable {
+        String rutaPlantilla = ejbCarga.crearDirectorioReportePOA();
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportePOACompleto(ejeFiscal.toString());
+        String plantilla = rutaPlantilla.concat(REPORTE_PLANTILLA);
+        String plantillaC = rutaPlantillaC.concat(REPORTE_ACTUALIZADO);
+        List<DTOreportePoa.General> generals=getReportePOA(ejeFiscal, Short.parseShort("0"));
+        Map beans = new HashMap();
+        beans.put("gen", generals);
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(plantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
 }

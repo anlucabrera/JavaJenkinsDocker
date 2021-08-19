@@ -3,6 +3,9 @@ package mx.edu.utxj.pye.sgi.ejb.poa;
 import java.sql.SQLException;
 import java.util.List;
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.dto.poa.DTOreportePoa;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CapitulosTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
@@ -79,5 +82,13 @@ public interface EjbPresupuestacion {
     public Productos eliminarProductos(Productos productos);
 //  ------------------------------------------------------------------------ Capitulo --------------------------------------------------
     public List<CapitulosTipos> mostrarCapitulosTiposes();
-
+    
+    public List<DTOreportePoa.General> getReportePOA(Short ejercicio, Short area);
+    
+    public AreasUniversidad mostrArarea(Short clave);
+    
+    public Personal mostrPersonal(Integer clave);
+    
+    public String getReportePresupuestoPOA(Short ejeFiscal) throws Throwable;
+    
 }
