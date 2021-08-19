@@ -88,6 +88,18 @@ public class EjbAdministracionEncuesta {
         q.setParameter("clave", clave);
         return q.getResultList();
     }
+    public List<Personal> esFda(Short areaOp, Integer clave){
+        TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.areaOperativa= :areaOp AND p.clave = :clave", Personal.class);
+        q.setParameter("areaOp", areaOp);
+        q.setParameter("clave", clave);
+        return q.getResultList();
+    }
+    public List<Personal> esRector(Short cat, Integer clave){
+        TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.categoriaOperativa.categoria=:cat AND p.clave = :clave", Personal.class);
+        q.setParameter("cat", cat);
+        q.setParameter("clave", clave);
+        return q.getResultList();
+    }
 
     public List<Grupos> estTutordeGrupo(Integer cvePersona){
         String periodoEncuesta = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
