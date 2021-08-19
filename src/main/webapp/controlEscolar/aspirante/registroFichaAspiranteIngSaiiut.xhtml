@@ -78,10 +78,10 @@
                                                 <div class="form-group">
                                                     <div class="col-sm-12 col-md-15 col-lg-12">
                                                         <p:outputLabel for="curpRegistrada" style="font-size: large" value="Ingresa tu CURP" />
-                                                        <p:inputText id="curpRegistrada" class="form-control" placeholder="CURP" size="45" value="#{registroFichaAdmisionAspirante.rol.personaD.persona.curp}" required="true" requiredMessage="Debe de Ingresar su CURP"/>
+                                                        <p:inputText id="curpRegistrada" class="form-control" placeholder="CURP" size="45" value="#{registroFichaAdmisionAspiranteIngSaiiut.rol.personaD.persona.curp}" required="true" requiredMessage="Debe de Ingresar su CURP"/>
                                                         <p:message for="curpRegistrada"/>
                                                         <p:outputLabel for="pwdPer" style="font-size: large" value="Contraseña:" />
-                                                        <p:inputText id="pwdPer" class="form-control" placeholder="Contraseña de registro" size="45" value="#{registroFichaAdmisionAspirante.rol.pwdPer}" required="true" requiredMessage="Debe de Ingresar la contraseña"/>
+                                                        <p:inputText id="pwdPer" class="form-control" placeholder="Contraseña de registro" size="45" value="#{registroFichaAdmisionAspiranteIngSaiiut.rol.pwdPer}" required="true" requiredMessage="Debe de Ingresar la contraseña"/>
 
                                                         <hr/>
                                                     </div>
@@ -93,7 +93,7 @@
                                                     <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                         <p:commandButton id="btnBuscaRegistro" value="Buscar Registro" icon="fa fa-search"
-                                                                         class="btn-primary btn-block col-md-3" process="@form" update="@form,:tbv,:frmStep " actionListener="#{registroFichaAdmisionAspirante.verificaRegistro}" onclick="PF('panel-solid').toggle()" ajax="false"/>
+                                                                         class="btn-primary btn-block col-md-3" process="@form" update="@form,:tbv,:frmStep " actionListener="#{registroFichaAdmisionAspiranteIngSaiiut.verificaRegistro}" onclick="PF('panel-solid').toggle()" ajax="false"/>
                                                     </div>
                                                 </div>
                                             </div>

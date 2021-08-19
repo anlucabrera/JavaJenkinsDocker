@@ -84,7 +84,7 @@
                 <p:sticky target="tb" />
             </div>
             <p:tabView id="tabView">
-                <c:if test="#{administracionEncuesta.dto.tutor2 or administracionEncuesta.dto.tutorCe  or administracionEncuesta.dto.tutor or administracionEvaluacionTutor.director or administracionEvaluacionTutor.sa or administracionEvaluacionTutor.psicopedagogia or administracionEvaluacionTutor.serEs }">
+                <c:if test="#{administracionEncuesta.dto.tutor2 or administracionEncuesta.dto.tutorCe  or administracionEncuesta.dto.tutor or administracionEvaluacionTutor.director or administracionEvaluacionTutor.sa or administracionEvaluacionTutor.psicopedagogia or administracionEvaluacionTutor.serEs or administracionEncuesta.dto.esRector }">
                     <p:tab id="completos" title="Estudiantes con evaluación completa">
                         <h:form id="fr1">
                             <p:outputPanel>
@@ -132,9 +132,9 @@
                                             <p:commandButton actionListener="#{administracionEvaluacionTutor.seguimientoTutor()}" value="Actualizar información" icon="fa fa-refresh"
                                                              class="btn btn-primary" update="tabView:fr1:tblEvaTutorTer tabView:fr2:tblResEvTutorIncom tabView:fr3:tblResEvTutorNoIngreso " process="@form"/>
                                         </c:if>
-                                        <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
+                                        <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.esSecretario or logonMB.personal.categoriaOperativa.categoria==33}">
                                             <p:commandButton actionListener="#{administracionEvaluacionTutor.seguimientoSE()}" value="Actualizar información" icon="fa fa-refresh"
-                                                             class="btn btn-primary" update="tabView:fr1:tblEvaTutorTer tabView:fr2:tblResEvTutorIncom tabView:fr3:tblResEvTutorNoIngreso tabView:fr45:avanceEvaTutor tabView:fr4:avanceEvTutorPE" process="@form"/>
+                                                             class="btn btn-primary" update="tabView:fr1:tblEvaTutorTer tabView:fr2:tblResEvTutorIncom tabView:fr3:tblResEvTutorNoIngreso tabView:fr45:avanceEvaTutor, tabView:fr4:avanceEvTutorPE" process="@form"/>
                                         </c:if>
                                     </f:facet>
                                 </p:dataTable>
@@ -233,7 +233,7 @@
 
                 </c:if>
 
-                <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.director or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
+                <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.director or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia or administracionEncuesta.dto.esRector}">
                     <p:tab title="Porcentaje de avance" >
                         <h:form id="fr45">
                             <p:outputPanel>
@@ -274,7 +274,7 @@
                     </p:tab>
                 </c:if>
 
-                <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia}">
+                <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esPsicopedagogia or administracionEncuesta.dto.esRector}">
                     <p:tab title="Porcentaje de avance por programa educativo">
                         <h:form id="fr4">
                             <p:outputPanel>

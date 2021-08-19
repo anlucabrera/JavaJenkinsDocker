@@ -94,6 +94,14 @@ private Boolean cargado = false;
                     dto.esPsicopedagogia = true;
                     aperturarEncuestas();
                 }
+                if(!ejbAdmEncuesta.esFda( Short.parseShort("12"),  Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
+                    dto.esFda = true;
+                    aperturarEncuestas();
+                }
+                if(!ejbAdmEncuesta.esRector( Short.parseShort("33"),  Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina())).isEmpty()){
+                    dto.esRector = true;
+                    aperturarEncuestas();
+                }
             }
         } catch (Throwable ex) {
             dto.director = false; dto.esDeIyE = false; dto.tutor = false; dto.esSecretario = false; dto.planeacion = false; dto.esPsicopedagogia= false;dto.ESTsuActiva = false; dto.ESActiva = false; dto.ESIngActiva = true;
