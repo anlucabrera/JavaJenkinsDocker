@@ -71,6 +71,7 @@ public class EjbAdministrador {
     }
     
     public Calendarioevaluacionpoa actualizarCalendarioPoa(Calendarioevaluacionpoa calendarioevaluacionpoa){
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.administrador.EjbAdministrador.actualizarCalendarioPoa()"+calendarioevaluacionpoa);
         facade.setEntityClass(Calendarioevaluacionpoa.class);
         facade.edit(calendarioevaluacionpoa);
         facade.flush();
@@ -86,25 +87,32 @@ public class EjbAdministrador {
     
     public Permisosevaluacionpoaex crearPermisosevaluacionpoaex(Permisosevaluacionpoaex p){
         facade.setEntityClass(Permisosevaluacionpoaex.class);
-        facade.create(p);
+        em.persist(p);
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.administrador.EjbAdministrador.crearPermisosevaluacionpoaex(A)");
         facade.flush();
         return p;
     }
     
     public Permisosevaluacionpoaex actualizarPermisosevaluacionpoaex(Permisosevaluacionpoaex p){
         facade.setEntityClass(Permisosevaluacionpoaex.class);
-        facade.edit(p);
+        em.merge(p);
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.administrador.EjbAdministrador.actualizarPermisosevaluacionpoaex(B)"+p);
         facade.flush();
         return p;
     }
      
-    public Permisosevaluacionpoaex eliminarPermisosevaluacionpoaex(Permisosevaluacionpoaex p){
+    public Permisosevaluacionpoaex eliminarPermisosevaluacionpoaex(Permisosevaluacionpoaex p) {
         facade.setEntityClass(Permisosevaluacionpoaex.class);
-        facade.remove(p);
-        facade.flush();
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.administrador.EjbAdministrador.eliminarPermisosevaluacionpoaex(C)" + p);
+        if (!em.contains(p)) {
+            p = em.merge(p);
+        }
+        em.remove(p);
+        em.flush();
+//        System.out.println("mx.edu.utxj.pye.sgi.ejb.administrador.EjbAdministrador.eliminarPermisosevaluacionpoaex(C)");
         return p;
     }
-    
+
     public EjerciciosFiscales crearEjerciciosFiscales(EjerciciosFiscales p){
         facade.setEntityClass(EjerciciosFiscales.class);
         facade.create(p);

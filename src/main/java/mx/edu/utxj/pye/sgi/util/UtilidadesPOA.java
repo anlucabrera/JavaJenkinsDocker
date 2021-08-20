@@ -418,27 +418,29 @@ public class UtilidadesPOA implements Serializable {
     
     public void actualizarAgregarPermisosExtPOA(String tpR) {
         try {
-            Boolean newReg = Boolean.FALSE;
+//            System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesPOA.actualizarAgregarPermisosExtPOA(A)"+tpR);
             List<Calendarioevaluacionpoa> calendarioevaluacionpoas = euch.mostrarCalendarioevaluacionpoas().stream().filter(t -> (t.getEjercicioFiscal() == procesopoa.getEjercicioFiscalEtapa1()) && (t.getEstapa().equals("Registro")) && (t.getMesEvaluacion().equals(tpR))).collect(Collectors.toList());
             List<Permisosevaluacionpoaex> permisosevaluacionpoaexs = procesopoa.getPermisosevaluacionpoaexList().stream().filter(t -> (t.getEvaluacionPOA().getEjercicioFiscal() == procesopoa.getEjercicioFiscalEtapa1()) && (t.getEvaluacionPOA().getEstapa().equals("Registro")) && (t.getEvaluacionPOA().getMesEvaluacion().equals(tpR))).collect(Collectors.toList());
+
+//            System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesPOA.actualizarAgregarPermisosExtPOA(1)"+calendarioevaluacionpoas.size());
+//            System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesPOA.actualizarAgregarPermisosExtPOA(2)"+permisosevaluacionpoaexs.size());
             
-            Calendarioevaluacionpoa calendarioRegistro= new Calendarioevaluacionpoa();
-            Permisosevaluacionpoaex permisosevaluacionpoaex= new Permisosevaluacionpoaex();
+            Calendarioevaluacionpoa calendarioRegistro = new Calendarioevaluacionpoa();
+            Permisosevaluacionpoaex permisosevaluacionpoaex = new Permisosevaluacionpoaex();
+
+            if (!calendarioevaluacionpoas.isEmpty()) {
+                calendarioRegistro = calendarioevaluacionpoas.get(0);
+            }
+//            System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesPOA.actualizarAgregarPermisosExtPOA(B)"+calendarioRegistro.getFechaInicio());
+            permisosevaluacionpoaex.setFechaApertura(new Date());
+            permisosevaluacionpoaex.setFechaCierre(calendarioRegistro.getFechaFin());
+            permisosevaluacionpoaex.setEvaluacionPOA(new Calendarioevaluacionpoa());
+            permisosevaluacionpoaex.setProcesoPOA(new Procesopoa());
+            permisosevaluacionpoaex.setEvaluacionPOA(calendarioRegistro);
+            permisosevaluacionpoaex.setProcesoPOA(procesopoa);
             
-            if(!calendarioevaluacionpoas.isEmpty()){
-                calendarioRegistro=calendarioevaluacionpoas.get(0);
-            }
-            if(!permisosevaluacionpoaexs.isEmpty()){
-                permisosevaluacionpoaex=permisosevaluacionpoaexs.get(0);
-            }else{
-                permisosevaluacionpoaex.setFechaApertura(new Date());
-                permisosevaluacionpoaex.setFechaCierre(calendarioRegistro.getFechaFin());
-                permisosevaluacionpoaex.setEvaluacionPOA(new Calendarioevaluacionpoa());
-                permisosevaluacionpoaex.setProcesoPOA(new Procesopoa());
-                permisosevaluacionpoaex.setEvaluacionPOA(calendarioRegistro);
-                permisosevaluacionpoaex.setProcesoPOA(procesopoa);
-                newReg = Boolean.TRUE;
-            }
+//            System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesPOA.actualizarAgregarPermisosExtPOA(C)"+permisosevaluacionpoaex);
+            
             LocalDateTime fechafCalendario = uch.castearDaLDT(permisosevaluacionpoaex.getFechaCierre());
             Integer dias = (int) ((uch.castearLDTaD(fechafCalendario).getTime() - uch.castearLDTaD(fechaActualHora).getTime()) / 86400000);
             if (dias <= 4) {
@@ -452,13 +454,17 @@ public class UtilidadesPOA implements Serializable {
                     case SUNDAY:    fechaActualHora = fechaActualHora.plusDays(4);                            break;
                 }
                 permisosevaluacionpoaex.setFechaCierre(uch.castearLDTaD(fechaActualHora));
-                if (newReg) {
-                    administrador.crearPermisosevaluacionpoaex(permisosevaluacionpoaex);
-                } else {
-                    administrador.actualizarPermisosevaluacionpoaex(permisosevaluacionpoaex);
+                
+                if (!permisosevaluacionpoaexs.isEmpty()) {
+//                    System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesPOA.actualizarAgregarPermisosExtPOA(D)");
+                    administrador.eliminarPermisosevaluacionpoaex(permisosevaluacionpoaexs.get(0));
                 }
+//                System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesPOA.actualizarAgregarPermisosExtPOA(E)");
+                permisosevaluacionpoaex=administrador.crearPermisosevaluacionpoaex(permisosevaluacionpoaex);
+//                System.out.println("mx.edu.utxj.pye.sgi.util.UtilidadesPOA.actualizarAgregarPermisosExtPOA(F)"+permisosevaluacionpoaex);
+
             }
-            ce.areaPoa();
+//            ce.areaPoa();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
