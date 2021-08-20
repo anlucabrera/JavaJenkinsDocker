@@ -334,8 +334,8 @@ public class UtilidadesPOA implements Serializable {
                                 cpoaArea.setComentarios("Se le informa que su área concluyó satisfactoriamente la etapa de la programacion de actividades para del ejercicio " + ef.getAnio() + " Gracias por su colaboración.");
                                 cpoaAFin.setComentarios("El área." + areaDestino.getNombre() + " ha concluido satisfactoriamente el proceso POA fase 1(Programación, presupuestación, Justificación)");
                                 cpoaApye.setComentarios("El área." + areaDestino.getNombre() + " ha concluido satisfactoriamente el proceso POA fase 1(Programación, presupuestación, Justificación)");
-                                procesopoa.setAsiganacionRFinalizado(Boolean.TRUE);
-                                procesopoa.setRegistroJustificacionFinalizado(Boolean.TRUE);
+                                procesopoa.setValidacionRFFinalizado(Boolean.TRUE);
+                                procesopoa.setValidacionJustificacion(Boolean.TRUE);
                                 pye = true;
                             } else {
                                 asunto = "Denegacion de Asignación de Recurso";
