@@ -19,6 +19,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoEstudianteProceso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -187,5 +188,86 @@ public class EjbRegistroDocumentosOficiales {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la generación del estudiantes. (EjbRegistroDocumentosOficiales.getGeneracionEstudiante)", e, null);
         }
     }
+    
+    /**
+     * Permite obtener el tipo de egresado dependiendo del proceso al que está relacionado sus documentos de inscripción
+     * @param estudiante 
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<String> obtenerTipoEgresado(Estudiante estudiante){
+        try{
+            DocumentoEstudianteProceso procesoActa = em.createQuery("select d from DocumentoEstudianteProceso d where d.estudiante.idEstudiante=:estudiante AND d.documento.documento.documento=:valor", DocumentoEstudianteProceso.class)
+                    .setParameter("estudiante", estudiante.getIdEstudiante())
+                    .setParameter("valor", (short)42)
+                    .getResultStream().findFirst().orElse(null);
+            
+            String tipoEgresado ="SinDocumento";
+            
+            if(procesoActa != null){
+                tipoEgresado = procesoActa.getDocumento().getProceso();
+            }
+            
+            return ResultadoEJB.crearCorrecto(tipoEgresado, "Tipo de egresado que es el estudiante");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el tipo de egresado del estudiantes. (EjbRegistroDocumentosOficiales.obtenerTipoEgresado)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de documentos de inscripción del estudiante de ingeniería y licenciatura 
+     * @param aspirante
+     * @param procesoEgresado
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoDocumentoAspirante>> getConsultaDocumentosInscripcionIngLic(Aspirante aspirante, String procesoEgresado){
+        try{
+            List<DtoDocumentoAspirante> listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso=:proceso AND d.documento.activo =:valor ORDER BY d.proceso, d.documentoProceso", DocumentoProceso.class)
+                    .setParameter("proceso", procesoEgresado)
+                    .setParameter("valor", true)
+                    .getResultStream()
+                    .map(doc -> packIngLic(doc, aspirante).getValor())
+                    .filter(dto -> dto != null)
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(listaDocumentos, "Lista de documentos de inscripción del estudiante de ingeniería y licenciatura.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de documentos de inscripción del estudiante de ingeniería y licenciatura. (EjbRegistroDocumentosOficiales.getConsultaDocumentosInscripcionIngLic)", e, null);
+        }
+    }
+    
+     /**
+     * Empaqueta un documento del proceso en su DTO Wrapper
+     * @param documentoProceso
+     * @param aspirante
+     * @return Dto del documento empaquetado
+     */
+    public ResultadoEJB<DtoDocumentoAspirante> packIngLic(DocumentoProceso documentoProceso, Aspirante aspirante){
+        try{
+            if(documentoProceso == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar un documento nulo.", DtoDocumentoAspirante.class);
+            if(documentoProceso.getDocumentoProceso()== null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar un documento con clave nula.", DtoDocumentoAspirante.class);
+
+            DocumentoProceso documentoProcesoBD = em.find(DocumentoProceso.class, documentoProceso.getDocumentoProceso());
+            if(documentoProcesoBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar un documento no registrado previamente en base de datos.", DtoDocumentoAspirante.class);
+
+            DocumentoAspiranteProceso documentoAspirante = em.createQuery("SELECT d FROM DocumentoAspiranteProceso d WHERE d.aspirante =:aspirante AND d.documento =:documento", DocumentoAspiranteProceso.class)
+                    .setParameter("aspirante", aspirante)
+                    .setParameter("documento", documentoProcesoBD.getDocumento())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(new DocumentoAspiranteProceso());
+            
+            PeriodosEscolares periodoEscolarBD = em.find(PeriodosEscolares.class, aspirante.getIdProcesoInscripcion().getIdPeriodo());
+            String anioInscripcion = Integer.toString(periodoEscolarBD.getAnio());
+            
+            DtoDocumentoAspirante dto = new DtoDocumentoAspirante();
+            dto.setDocumentoAspiranteProceso(documentoAspirante);
+            dto.setDocumentoProceso(documentoProcesoBD);
+            dto.setAnioInscripcion(anioInscripcion);
+            return ResultadoEJB.crearCorrecto(dto, "Documento empaquetado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el documento (EjbRegistroDocumentosOficiales. packIngLic).", e, DtoDocumentoAspirante.class);
+        }
+    }
+    
     
 }

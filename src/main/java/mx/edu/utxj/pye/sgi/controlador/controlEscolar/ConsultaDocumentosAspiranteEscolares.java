@@ -28,6 +28,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroDocumentosOficiales;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
@@ -49,12 +50,14 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
     private static final long serialVersionUID = 8523173138860959204L;
     
     @Getter @Setter private Aspirante aspiranteB;
+    @Getter @Setter private Estudiante estudianteIL;
     @Getter private DtoDocumentoAspirante dtoDocumentoAspirante;
     @Getter @Setter private List<DtoDocumentoAspirante> listaDocumentoAspirantes;
     @Getter @Setter private List<DtoDocumentoAspirante> listaDocumentosInscripcion;
     @EJB private EjbCargaDocumentosAspirante ejbCargaDocumentosAspirante;
     @EJB private EjbRegistroDocumentosOficiales ejbRegistroDocumentosOficiales;
     @Getter @Setter @NonNull private Boolean forzarAperturaDialogo;
+    @Getter @Setter private String procesoEgresado;
     @Getter @Setter private String observaciones;
     
     @Getter @Setter private Part file;
@@ -66,6 +69,20 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
        listaDocumentosInscripcion = ejbRegistroDocumentosOficiales.getConsultaDocumentosInscripcion(aspirante).getValor();
        setForzarAperturaDialogo(Boolean.FALSE); 
        Ajax.update("frmDocsAsp");
+        
+    }
+    
+    public void mostrarDocumentosIngLic(Estudiante estudiante){
+       estudianteIL = estudiante;
+       aspiranteB = estudiante.getAspirante();
+       procesoEgresado = ejbRegistroDocumentosOficiales.obtenerTipoEgresado(estudianteIL).getValor();
+       if(procesoEgresado.equals("SinDocumento")){
+            Messages.addGlobalInfo("No se puede identificar su tipo de egresado, ya que no ha entregado el documento obligatorio de copia del acta de nacimiento.");
+       }else{
+            listaDocumentosInscripcion = ejbRegistroDocumentosOficiales.getConsultaDocumentosInscripcionIngLic(aspiranteB, procesoEgresado).getValor();
+            setForzarAperturaDialogo(Boolean.FALSE); 
+            Ajax.update("frmDocsAsp");
+       }
         
     }
     
@@ -82,6 +99,14 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
         dtoDocumentoAspirante = registro;
     }
     
+    public void actualizarDocumentos(){
+        if (aspiranteB.getTipoAspirante().getIdTipoAspirante() == 3 || aspiranteB.getTipoAspirante().getIdTipoAspirante() == 4) {
+            mostrarDocumentosIngLic(estudianteIL);     
+        } else {
+            mostrarDocumentos(aspiranteB);
+        }
+    }
+    
     public void subirDocumento() {
         try {
             DocumentoAspiranteProceso nuevoDocumento = new DocumentoAspiranteProceso();
@@ -94,8 +119,7 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
             nuevoDocumento.setValidado(false);
             nuevoDocumento.setFechaValidacion(null);
             nuevoDocumento = ejbCargaDocumentosAspirante.guardarDocumentoAspirante(nuevoDocumento).getValor();
-            mostrarDocumentos(aspiranteB);
-            
+            actualizarDocumentos();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ConsultaDocumentosAspiranteEscolares.class.getName()).log(Level.SEVERE, null, ex);
@@ -106,7 +130,7 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
         ResultadoEJB<Integer> resEliminar =  ejbCargaDocumentosAspirante.eliminarDocumentoAspirante(docsExp.getDocumentoAspiranteProceso());
         if(resEliminar.getCorrecto()){
         if(resEliminar.getValor() == 1){ 
-            mostrarDocumentos(aspiranteB);
+            actualizarDocumentos();
             Ajax.update("frmDocsAsp");
             Messages.addGlobalInfo("El documento se eliminó correctamente.");
         }else Messages.addGlobalError("El documento no ha podido eliminarse.");
@@ -123,7 +147,7 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
     public void validarDocumento(DtoDocumentoAspirante docsExp) {
         ResultadoEJB<DocumentoAspiranteProceso> res =   ejbCargaDocumentosAspirante.validarDocumento(docsExp.getDocumentoAspiranteProceso());
         if(res.getCorrecto()){
-            mostrarDocumentos(aspiranteB);
+            actualizarDocumentos();
             Ajax.update("frmDocsAsp");
             Messages.addGlobalInfo("El documento se ha validado o invalidado correctamente.");
         }else Messages.addGlobalError("El documento no se pudo validar o invalidar.");
@@ -148,9 +172,9 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
     public void guardarObservaciones(){
         ResultadoEJB<DocumentoAspiranteProceso> res = ejbCargaDocumentosAspirante.actualizarObservaciones(dtoDocumentoAspirante, observaciones);
         if(res.getCorrecto()){
-             mostrarDocumentos(aspiranteB);
-             Ajax.update("frmDocsAsp");
-             Messages.addGlobalInfo("Las observaciones se han guardado correctamente.");
+            actualizarDocumentos();
+            Ajax.update("frmDocsAsp");
+            Messages.addGlobalInfo("Las observaciones se han guardado correctamente.");
         }else Messages.addGlobalError("No se registraron las observaciones.");
     } 
  
