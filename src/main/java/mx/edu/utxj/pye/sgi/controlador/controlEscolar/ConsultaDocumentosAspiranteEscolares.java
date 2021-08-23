@@ -28,6 +28,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroDocumentosOficiales;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoAspiranteProceso;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
@@ -55,6 +56,7 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
     @EJB private EjbCargaDocumentosAspirante ejbCargaDocumentosAspirante;
     @EJB private EjbRegistroDocumentosOficiales ejbRegistroDocumentosOficiales;
     @Getter @Setter @NonNull private Boolean forzarAperturaDialogo;
+    @Getter @Setter private String procesoEgresado;
     @Getter @Setter private String observaciones;
     
     @Getter @Setter private Part file;
@@ -66,6 +68,19 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
        listaDocumentosInscripcion = ejbRegistroDocumentosOficiales.getConsultaDocumentosInscripcion(aspirante).getValor();
        setForzarAperturaDialogo(Boolean.FALSE); 
        Ajax.update("frmDocsAsp");
+        
+    }
+    
+    public void mostrarDocumentosIngLic(Estudiante estudiante){
+       aspiranteB = estudiante.getAspirante();
+       procesoEgresado = ejbRegistroDocumentosOficiales.obtenerTipoEgresado(estudiante).getValor();
+       if(procesoEgresado.equals("SinDocumento")){
+            Messages.addGlobalInfo("No se puede identificar su tipo de egresado, ya que no ha entregado el documento obligatorio de copia del acta de nacimiento.");
+       }else{
+            listaDocumentosInscripcion = ejbRegistroDocumentosOficiales.getConsultaDocumentosInscripcionIngLic(aspiranteB, procesoEgresado).getValor();
+            setForzarAperturaDialogo(Boolean.FALSE); 
+            Ajax.update("frmDocsAsp");
+       }
         
     }
     

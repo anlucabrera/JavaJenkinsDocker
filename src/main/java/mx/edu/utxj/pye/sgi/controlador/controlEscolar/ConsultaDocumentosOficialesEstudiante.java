@@ -67,9 +67,10 @@ public class ConsultaDocumentosOficialesEstudiante extends ViewScopedRol impleme
             rol.setNivelRol(NivelRol.OPERATIVO);
             rol.setEstudiante(estudiante);
             
-            obtenerInformacionEstudiante();
-            
             rol.setPeriodoActivo(ejbIntegracionExpedienteTitulacion.getPeriodoActual().getPeriodo());
+            
+            obtenerInformacionEstudiante();
+            obtenerGeneracionEstudiante();
            
         }catch (Exception e){
             mostrarExcepcion(e);
@@ -90,8 +91,11 @@ public class ConsultaDocumentosOficialesEstudiante extends ViewScopedRol impleme
         ResultadoEJB<DtoEstudianteComplete> res = ejbRegistroDocumentosOficiales.getInformacionEstudiante(rol.getEstudiante());
         if(res.getCorrecto()){
             rol.setInformacionEstudiante(res.getValor());
-            consultaDocumentosAspiranteEscolares.mostrarDocumentos(rol.getEstudiante().getAspirante());
-            obtenerGeneracionEstudiante();
+            if(rol.getEstudiante().getAspirante().getTipoAspirante().getIdTipoAspirante()==3 || rol.getEstudiante().getAspirante().getTipoAspirante().getIdTipoAspirante()==4){
+                consultaDocumentosAspiranteEscolares.mostrarDocumentosIngLic(rol.getEstudiante());
+            }else{
+                consultaDocumentosAspiranteEscolares.mostrarDocumentos(rol.getEstudiante().getAspirante());
+            }
             Ajax.update("frmDatosEst");
         }else mostrarMensajeResultadoEJB(res);
     }
