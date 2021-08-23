@@ -904,98 +904,101 @@ public class EjbInscripcionIngenieria {
 
         }
     }
+    /**
+     * Genera comprobante de inscripción
+     * @param uso
+     * @throws IOException
+     * @throws DocumentException
+     */
+    public ResultadoEJB<Boolean> generaComprobante (@NonNull DtoAspiranteIng estudiante, @NonNull Login login, @NonNull MedioComunicacion mc, @NonNull String uso) throws IOException, DocumentException {
+        if(estudiante==null){return ResultadoEJB.crearErroneo(2,Boolean.FALSE,"La persona no debe ser nula");}
+        if(uso==null){return ResultadoEJB.crearErroneo(7,Boolean.FALSE,"El uso no debe ser nulo");}
+        String ruta = "C://archivos//plantillas//comprobanteInscripcion__ing.pdf";
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
 
-    public ResultadoEJB<Boolean> generaComprobante (@NonNull DtoAspiranteIng estudiante, @NonNull Login login, @NonNull MedioComunicacion mc) throws IOException, DocumentException{
-        try{
-            if(estudiante==null){return ResultadoEJB.crearErroneo(2,false,"El estudiante no debe ser nulo");}
-            if(login==null){return ResultadoEJB.crearErroneo(3,false,"El login no debe ser nulo");}
-            if(mc==null){return ResultadoEJB.crearErroneo(4,false,"Los medios de comunicación no deben ser nulos");}
-            String ruta = "C://archivos//plantillas//comprobanteInscripcion__ing.pdf";
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
+        InputStream is = new FileInputStream(ruta);
+        PdfReader pdfReader = new PdfReader(is,null);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfStamper pdfStamper = new PdfStamper(pdfReader, baos);
 
-            InputStream is = new FileInputStream(ruta);
-            PdfReader pdfReader = new PdfReader(is,null);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PdfStamper pdfStamper = new PdfStamper(pdfReader, baos);
+        BarcodePDF417 pdfcodigo = new BarcodePDF417();
+        pdfcodigo.setText(String.valueOf(estudiante.getEstudianteIncrito().getMatricula()));
+        Image img = pdfcodigo.getImage();
+        img.setAbsolutePosition(280f, 70f);
+        img.scalePercent(200, 100 * pdfcodigo.getYHeight());
+        PdfContentByte  content = pdfStamper.getOverContent(pdfReader.getNumberOfPages());
+        content.addImage(img);
 
-            BarcodePDF417 pdfcodigo = new BarcodePDF417();
-            pdfcodigo.setText(String.valueOf(estudiante.getEstudianteIncrito().getMatricula()));
-            Image img = pdfcodigo.getImage();
-            img.setAbsolutePosition(280f, 6f);
-            img.scalePercent(200, 100 * pdfcodigo.getYHeight());
-            PdfContentByte  content = pdfStamper.getOverContent(pdfReader.getNumberOfPages());
-            content.addImage(img);
-
-            AcroFields fields = pdfStamper.getAcroFields();
-
-            fields.setField("txtAP", estudiante.getAspirante().getIdPersona().getApellidoPaterno());
-            fields.setField("txtAM", estudiante.getAspirante().getIdPersona().getApellidoMaterno());
-            fields.setField("txtNombre", estudiante.getAspirante().getIdPersona().getNombre());
-            fields.setField("txtCarrera", estudiante.getPeIncrito().getNombre());
-            fields.setField("txtMatricula", String.valueOf(estudiante.getEstudianteIncrito().getMatricula()));
-            fields.setField("txtGrupo", String.valueOf(estudiante.getEstudianteIncrito().getGrupo().getGrado()).concat(" ").concat(estudiante.getEstudianteIncrito().getGrupo().getLiteral().toString()));
-            fields.setField("txtTurno", estudiante.getEstudianteIncrito().getGrupo().getIdSistema().getNombre());
+        AcroFields fields = pdfStamper.getAcroFields();
+        fields.setField("txtAP", estudiante.getAspirante().getIdPersona().getApellidoPaterno());
+        fields.setField("txtAM", estudiante.getAspirante().getIdPersona().getApellidoMaterno());
+        fields.setField("txtNombre", estudiante.getAspirante().getIdPersona().getNombre());
+        fields.setField("txtCarrera", estudiante.getPeIncrito().getNombre());
+        fields.setField("txtMatricula", String.valueOf(estudiante.getEstudianteIncrito().getMatricula()));
+        fields.setField("txtGrupo", String.valueOf(estudiante.getEstudianteIncrito().getGrupo().getGrado()).concat(" ").concat(estudiante.getEstudianteIncrito().getGrupo().getLiteral().toString()));
+        fields.setField("txtTurno", estudiante.getEstudianteIncrito().getGrupo().getIdSistema().getNombre());
+        try {
             fields.setField("txtPassword", desencriptaPassword(login.getPassword()));
-            fields.setField("txtCAbreviatura", estudiante.getPeIncrito().getSiglas());
-            fields.setField("txtFicha", String.valueOf(estudiante.getAspirante().getFolioAspirante()));
-            fields.setField("txtNombreEstudiante", estudiante.getAspirante().getIdPersona().getApellidoPaterno().concat(" ").concat(estudiante.getAspirante().getIdPersona().getApellidoMaterno().concat(" ").concat(estudiante.getAspirante().getIdPersona().getNombre())));
-            fields.setField("txtActaNac", compruebaDoc(42,estudiante.getDocumentos()) ==true ? "Entregado": "No entregado");
-            fields.setField("txtC", compruebaDoc(43,estudiante.getDocumentos()) == true ? "Entregado" : "No Entregado");
-            fields.setField("txtCURP", compruebaDoc(2,estudiante.getDocumentos()) == true ? "Entregado" : "No Entregado");
-            fields.setField("txtTitulo", compruebaDoc(31,estudiante.getDocumentos()) == true ? "Entregado" : "No Entregado");
-            fields.setField("txtHist", compruebaDoc(45,estudiante.getDocumentos()) == true ? "Entregado" : "No Entregado");
-            fields.setField("txtPago", compruebaDoc(11,estudiante.getDocumentos()) == true ? "Entregado" : "No Entregado");
-            fields.setField("txtTipo", compruebaDoc(13,estudiante.getDocumentos())== true ? "Entregado" : "No Entregado");
-
-            pdfStamper.close();
-
-            Object response = facesContext.getExternalContext().getResponse();
-            if (response instanceof HttpServletResponse) {
-                HttpServletResponse hsr = (HttpServletResponse) response;
-                hsr.setContentType("application/pdf");
-                hsr.setHeader("Content-disposition", "inline; filename=\""+ estudiante.getMatricula()+".pdf\"");
-                hsr.setContentLength(baos.size());
-                try {
-                    ServletOutputStream out = hsr.getOutputStream();
-                    baos.writeTo(out);
-                    out.flush();
-                    out.close();
-                } catch (IOException ex) {
-                    System.out.println("Error:  " + ex.getMessage());
-                }
-                facesContext.responseComplete();
-            }
-
-            if(estudiante.getAspirante().getIdPersona().getMedioComunicacion().getEmail()!=null){
-                String  mail= estudiante.getAspirante().getIdPersona().getMedioComunicacion().getEmail();
-                // El correo gmail de envío
-                String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-                String claveCorreo = "DServiciosEscolares21";
-                String mensaje = "Estimado(a)"+ estudiante.getAspirante().getIdPersona().getNombre() + ", se te notifica que se ha realizado con éxito tu inscripción."+
-                        "\n\n * Matricula : ." + estudiante.getEstudianteIncrito().getMatricula()+"\n\n"
-                        + "Grupo : "+estudiante.getEstudianteIncrito().getGrupo().getGrado() +"-"+estudiante.getEstudianteIncrito().getGrupo().getLiteral() + " de la carrera "+ estudiante.getPeIncrito().getNombre()+"\n"
-                        + "ATENTAMENTE \n" +
-                        "Departamento de Servicios Escolares";
-
-                String identificador = "Inscripciones UTXJ 2021";
-                String asunto = "Inscripción Ingeniería - Licenciatura";
-                if(mail != null){
-                    try {
-                        DataSource source = new ByteArrayDataSource(baos.toByteArray(), "application/pdf");
-                        EnvioCorreos.EnviarCorreoArchivos(correoEnvia, claveCorreo,identificador,asunto,mail,mensaje,source,String.valueOf(estudiante.getEstudianteIncrito().getMatricula()));
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return ResultadoEJB.crearCorrecto(true,"Se ha enviado el comprobante de inscripción al estudiante");
-
-        } catch (Exception e){
-            return ResultadoEJB.crearErroneo(3,false,"Error al generar el comprobante de inscripción");
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        fields.setField("txtCAbreviatura", estudiante.getPeIncrito().getSiglas());
+        fields.setField("txtFicha", String.valueOf(estudiante.getAspirante().getFolioAspirante()));
+        fields.setField("txtNombreEstudiante", estudiante.getAspirante().getIdPersona().getApellidoPaterno().concat(" ").concat(estudiante.getAspirante().getIdPersona().getApellidoMaterno().concat(" ").concat(estudiante.getAspirante().getIdPersona().getNombre())));
+        fields.setField("txtActaNac", compruebaDoc(42,estudiante.getDocumentos()) ==true ? "Entregado": "No entregado");
+        fields.setField("txtC", compruebaDoc(43,estudiante.getDocumentos()) == true ? "Entregado" : "No Entregado");
+        fields.setField("txtCURP", compruebaDoc(2,estudiante.getDocumentos()) == true ? "Entregado" : "No Entregado");
+        fields.setField("txtTitulo", compruebaDoc(31,estudiante.getDocumentos()) == true ? "Entregado" : "No Entregado");
+        fields.setField("txtHist", compruebaDoc(45,estudiante.getDocumentos()) == true ? "Entregado" : "No Entregado");
+        fields.setField("txtPago", compruebaDoc(11,estudiante.getDocumentos()) == true ? "Entregado" : "No Entregado");
+        fields.setField("txtTipo", compruebaDoc(13,estudiante.getDocumentos())== true ? "Entregado" : "No Entregado");
+
+        pdfStamper.close();
+        pdfStamper.close();
+
+        Object response = facesContext.getExternalContext().getResponse();
+        if (response instanceof HttpServletResponse) {
+            HttpServletResponse hsr = (HttpServletResponse) response;
+            hsr.setContentType("application/pdf");
+            hsr.setHeader("Content-disposition", "attachment; filename=\""+estudiante.getEstudianteIncrito().getMatricula()+".pdf\"");
+            hsr.setContentLength(baos.size());
+            try {
+                ServletOutputStream out = hsr.getOutputStream();
+                baos.writeTo(out);
+                out.flush();
+                out.close();
+            } catch (IOException ex) {
+                System.out.println("Error:  " + ex.getMessage());
+            }
+            facesContext.responseComplete();
+        }
+
+        if(uso.equals("Alumno")){
+            // El correo gmail de envío
+            String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
+            String claveCorreo = "DeptoEscolares21";
+            String mensaje = "Estimado(a)"+ estudiante.getAspirante().getIdPersona().getNombre() + ", se te notifica que se ha realizado con éxito tu inscripción."+
+                    "\n\n Matricula: " + estudiante.getEstudianteIncrito().getMatricula()+"\n"
+                    + "Grupo : "+estudiante.getEstudianteIncrito().getGrupo().getGrado() +"-"+estudiante.getEstudianteIncrito().getGrupo().getLiteral() + " de la carrera "+ estudiante.getPeIncrito().getNombre()+"\n\n"
+                    + "ATENTAMENTE \n" +
+                    "Departamento de Servicios Escolares";
+            String identificador = "Inscripciones UTXJ 2021";
+            String asunto = "Inscripción Ingeniería - Licenciatura";
+            // System.out.println(medioComunicacion.getEmail());
+            if(mc.getEmail() != null){
+                // System.out.println("Correo "+ medioComunicacion.getEmail());
+                try {
+                    DataSource source = new ByteArrayDataSource(baos.toByteArray(), "application/pdf");
+                    EnvioCorreos.EnviarCorreoArchivos(correoEnvia, claveCorreo,identificador,asunto,mc.getEmail(),mensaje,source,String.valueOf(estudiante.getEstudianteIncrito().getMatricula()));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        return ResultadoEJB.crearCorrecto(Boolean.TRUE,"Ficha de admisión creada correctamente");
     }
+
     public Boolean compruebaDoc(@NonNull Integer documento, @NonNull List<DocumentoEstudianteProceso> documentos){
         Boolean entregado= false;
         long d =0;

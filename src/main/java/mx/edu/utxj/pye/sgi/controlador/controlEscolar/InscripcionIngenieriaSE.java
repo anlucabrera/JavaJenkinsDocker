@@ -282,7 +282,7 @@ public class InscripcionIngenieriaSE extends ViewScopedRol implements Desarrolla
             ResultadoEJB<Login> resLog= ejbInscripcionIngenieria.getLogin(dto.getAspirante());
             ResultadoEJB<MedioComunicacion> resMC= ejbInscripcionIngenieria.getMedioComunicacionbyAspirante(dto.getAspirante());
             if(resLog.getCorrecto()){
-                ResultadoEJB<Boolean> resComprobante = ejbInscripcionIngenieria.generaComprobante(dto,resLog.getValor(),resMC.getValor());
+                ResultadoEJB<Boolean> resComprobante = ejbInscripcionIngenieria.generaComprobante(dto,resLog.getValor(),resMC.getValor(),"Alumno");
                 if(resComprobante.getCorrecto()){
                     mostrarMensajeResultadoEJB(resComprobante);
                 }else {mostrarMensajeResultadoEJB(resComprobante);}
