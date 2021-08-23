@@ -133,8 +133,12 @@ public class RegistroDocumentosOficialesEscolares extends ViewScopedRol implemen
             DtoEstudianteComplete estudiante = (DtoEstudianteComplete)e.getNewValue();
             rol.setEstudianteSeleccionado(estudiante);
             Ajax.update("frmDatosEst");
-            consultaDocumentosAspiranteEscolares.mostrarDocumentos(rol.getEstudianteSeleccionado().getEstudiantes().getAspirante());
             obtenerGeneracionEstudiante();
+            if(rol.getEstudianteSeleccionado().getEstudiantes().getAspirante().getTipoAspirante().getIdTipoAspirante()==3 || rol.getEstudianteSeleccionado().getEstudiantes().getAspirante().getTipoAspirante().getIdTipoAspirante()==4){
+                consultaDocumentosAspiranteEscolares.mostrarDocumentosIngLic(rol.getEstudianteSeleccionado().getEstudiantes());
+            }else{
+                consultaDocumentosAspiranteEscolares.mostrarDocumentos(rol.getEstudianteSeleccionado().getEstudiantes().getAspirante());
+            }
         }else mostrarMensaje("El valor seleccionado como estudiante no es del tipo necesario.");
     }
     
