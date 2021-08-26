@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -60,7 +61,8 @@ public class SesionesGrupalesTutorias implements Serializable {
     private short noSesion;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 6500)
+    @Lob
+    @Size(min = 1, max = 65535)
     @Column(name = "actividad_programada")
     private String actividadProgramada;
     @Basic(optional = false)
