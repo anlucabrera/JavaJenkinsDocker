@@ -86,6 +86,7 @@ public class ReinscripcionAutonomaEstudiante extends ViewScopedRol implements De
                 rol.setAprobo(compruebaAprobo());
                 if(rol.getAprobo()!=true){tieneAcceso=false;}
                 comprubaReinscrito();
+                if(rol.getCalificacionesFinales().isEmpty()||rol.getCalificacionesFinales().size()==0){tieneAcceso=false;}
                 rol.setDomicilio(rol.getEstudiante().getAspirante().getDomicilio());
                 rol.setDatosContacto(rol.getEstudiante().getAspirante().getIdPersona().getMedioComunicacion());
                 ResultadoEJB<List<Estado>> resEstados = ejbReinscripcionAutonoma.getEstados();
