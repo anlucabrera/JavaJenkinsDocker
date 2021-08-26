@@ -49,7 +49,11 @@ public class EjbReinscripcionAutonoma {
                     .setParameter("matricula", matricula)
                    // .setParameter("tipo",1)
                     .getResultStream().findFirst().orElse(new Estudiante());
-            return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante.");
+            if(e.getGrupo().getGrado()==6 || e.getGrupo().getGrado()==11){
+                return ResultadoEJB.crearErroneo(4,new Estudiante(),"Estudisnte de 6to o 11vo");
+            }else {
+                return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante.");
+            }
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El estudiante no se pudo validar. (EjbPerfilEstudiante.validadEstudiante)", e, null);
         }
