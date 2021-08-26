@@ -365,7 +365,7 @@
                                                              paginator="true" rows="15" paginatorPosition="top"
                                                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
                                                              rowsPerPageTemplate="15,30,45,65"
-                                                             emptyMessage="No hay aspirantes registrados para este proceso de inscripción" sortBy="#{inscripcionIngenieriaSE.rol.vacia}">
+                                                             emptyMessage="No hay aspirantes registrados para este proceso de inscripción" filteredValue="#{inscripcionIngenieriaSE.rol.vacia}">
 
                                                     <f:facet name="header">
                                                         <p:commandLink  ajax="false">
@@ -385,10 +385,10 @@
                                                     <p:column style="text-align: center; width: 45px" headerText="Ficha">
                                                         <p:commandButton id="btnFicha" icon="fa fa-download" alt="Descargar ficha" styleClass="btn-primary" style="width: 10%;"  actionListener="#{inscripcionIngenieriaSE.downloadFichaAdmin(estudiantes)}" ajax="false" />
                                                     </p:column>
-                                                    <p:column headerText="Folio" filterBy="#{estudiantes.aspirante.folioAspirante}" style="width: 80px">
+                                                    <p:column headerText="Folio" filterBy="#{estudiantes.aspirante.folioAspirante}" sortBy="#{estudiantes.aspirante.folioAspirante}" filterMatchMode="contains"  style="width: 80px">
                                                         <h:outputText value="#{estudiantes.aspirante.folioAspirante}"/>
                                                     </p:column>
-                                                    <p:column headerText="Matrícula" filterBy="#{estudiantes.matricula}" style="width: 100px">
+                                                    <p:column headerText="Matrícula" sortBy="#{estudiantes.matricula}" filterBy="#{estudiantes.matricula}" filterMatchMode="contains" style="width: 100px">
                                                         <h:outputText value="#{estudiantes.matricula}"/>
                                                     </p:column>
                                                     <p:column headerText="Sistema" style="text-align: center; width: 100px" >
@@ -425,17 +425,17 @@
                                                      paginator="true" rows="30" paginatorPosition="top"
                                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
                                                      rowsPerPageTemplate="10,20,30,40,50"
-                                                     emptyMessage="No hay estudiantes registrados para este proceso de inscripción" sortBy="#{inscripcionIngenieriaSE.rol.vacia}">
+                                                     emptyMessage="No hay estudiantes registrados para este proceso de inscripción" filteredValue="#{inscripcionIngenieriaSE.rol.vacia}">
                                             <p:headerRow>
                                                 <p:column colspan="10" style="background-color: #00b5ad;">
                                                     <h:outputText value="#{estudiantes.peIncrito.nombre}" />
                                                 </p:column>
                                             </p:headerRow>
 
-                                            <p:column headerText="Matrícula" filterBy="#{estudiantes.estudianteIncrito.matricula}">
+                                            <p:column headerText="Matrícula" filterBy="#{estudiantes.estudianteIncrito.matricula}" sortBy="#{estudiantes.estudianteIncrito.matricula}" filterMatchMode="contains">
                                                 <h:outputText value="#{estudiantes.estudianteIncrito.matricula}"/>
                                             </p:column>
-                                            <p:column headerText="Folio Ficha Admisión" filterBy="#{estudiantes.aspirante.folioAspirante}">
+                                            <p:column headerText="Folio Ficha Admisión" filterBy="#{estudiantes.aspirante.folioAspirante}" sortBy="#{estudiantes.aspirante.folioAspirante}" filterMatchMode="contains">
                                                 <h:outputText value="#{estudiantes.aspirante.folioAspirante}"/>
                                             </p:column>
                                             <p:column headerText="Tipo de registro" style="width: 250px">

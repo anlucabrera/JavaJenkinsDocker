@@ -37,6 +37,8 @@ public class ReinscripcionAutonomaRolEstudiante {
     @Getter List<Estado> estados;
     @Getter List<Municipio> municipios;
     @Getter List<Asentamiento> asentamientos;
+    //------------ Calificaciones
+    @Getter List<DtoMatariaPromedio> calificacionesFinales;
 
     //---
     @Getter @NonNull private List<DtoCalificacionEstudiante.MapUnidadesTematicas> mapUnidadesTematicas;
@@ -143,4 +145,6 @@ public class ReinscripcionAutonomaRolEstudiante {
     public void setTareaIntegradoraMap(Map<DtoCargaAcademica, TareaIntegradora> tareaIntegradoraMap) {
         this.tareaIntegradoraMap = tareaIntegradoraMap;
     }
+
+    public void setCalificacionesFinales(List<DtoMatariaPromedio> calificacionesFinales) { this.calificacionesFinales = calificacionesFinales; }
 }
