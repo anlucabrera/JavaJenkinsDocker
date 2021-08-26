@@ -96,11 +96,12 @@
                         <div class="row">
                             <div class="col-lg-12 col-md-12">
                                 <center>
+                                    <h:form id="formMuestraDatosActivos">
                                     <p:tabView>
                                         <c:if test="#{controladorArchivoPerCap.etapa eq etapa.MOSTRAR}">
                                             <p:tab id="twbPCAct" title="Personal Capacitado">
-                                                <h:form id="formMuestraDatosActivos">
-                                                    <p:remoteCommand name="actualizar" update="@form:dtbPerCap" />
+                                                
+                                                    <p:remoteCommand name="actualizar" update="dtbPerCap" />
                                                     <p:dataTable id="dtbPerCap" emptyMessage="Sin datos en el periodo seleccionado." value="#{personalCap.dto.lista}" var="perCap"
                                                                  paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                                  resizeMode="expand"
@@ -109,7 +110,7 @@
                                                         <p:columnGroup type="header">
                                                             <p:row>
                                                                 <p:column headerText="Opciones" style="width:150px; text-align: center;"/>
-                                                                <p:column headerText="Clave" style="width: 100px; text-align: center;"/>
+                                                                <p:column headerText="Clave" style="width: 120px; text-align: center;"/>
                                                                 <p:column headerText="Nombre del Curso" style="width: 500px; text-align: center;"/>
                                                                 <p:column headerText="Fecha Inicio" style="width: 80px; text-align: center;"/>
                                                                 <p:column headerText="Fecha Fin" style="width: 80px; text-align: center;"/>
@@ -161,12 +162,11 @@
                                                         <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
                                                         <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
                                                     </p:confirmDialog>
-                                                </h:form>
                                             </p:tab>
                                             <p:tab id="twbPPCAct" title="Participantes de Personal Capacitado">
                                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <h:form id="formMuestraDatosActivosPPC" prependId="false">
-                                                        <p:remoteCommand name="actualizar1" update="@form:dtbPartPerCap" />
+                                                    
+                                                        <p:remoteCommand name="actualizar1" update="dtbPartPerCap" />
                                                         <p:dataTable  id="dtbPartPerCap" emptyMessage="Sin datos en el periodo seleccionado." value="#{personalCap.dtopart.lista}" var="partPC"
                                                                       paginator="true" rows="10" rowsPerPageTemplate="5,10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
                                                                       resizeMode="expand"
@@ -215,11 +215,12 @@
                                                             <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
                                                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
                                                         </p:confirmDialog>
-                                                    </h:form>
+                                                    
                                                 </div>
                                             </p:tab>
                                         </c:if>
                                     </p:tabView>
+                                </h:form>    
                                 </center>
                             </div>
                         </div>

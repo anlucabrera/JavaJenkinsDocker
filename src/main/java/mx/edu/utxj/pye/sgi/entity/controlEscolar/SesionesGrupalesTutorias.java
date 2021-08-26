@@ -60,7 +60,7 @@ public class SesionesGrupalesTutorias implements Serializable {
     private short noSesion;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 5000)
+    @Size(min = 1, max = 6500)
     @Column(name = "actividad_programada")
     private String actividadProgramada;
     @Basic(optional = false)

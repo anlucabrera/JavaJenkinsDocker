@@ -324,7 +324,6 @@ public class ControladorPersonalCapacitado implements Serializable{
             try {
                 ejb.guardaPersonalCapacitado(dto.getLista(), dto.getRegistroTipo(), dto.getEje(), dto.getAreaPOA().getArea(), controladorModulosRegistro.getEventosRegistros());
                 Ajax.update("formMuestraDatosActivos");
-                Ajax.update("formMuestraDatosActivosPPC");
             } catch (Throwable ex) {
                 Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause()!=null?ex.getCause().getMessage():ex.getMessage());
                 Logger.getLogger(ControladorPersonalCapacitado.class.getName()).log(Level.SEVERE, null, ex);
@@ -368,7 +367,6 @@ public class ControladorPersonalCapacitado implements Serializable{
                    ejbModulos.eliminarRegistroParticipantes(registroParticipantes);
                    initFiltros();
                    Ajax.update("formMuestraDatosActivos");
-                   Ajax.update("formMuestraDatosActivosPPC");
                }
 
                if (registroEvidencias.size() > 0) {
@@ -400,13 +398,13 @@ public class ControladorPersonalCapacitado implements Serializable{
                 ejbModulos.eliminarRegistroEvidencias(registroEvidencias);
                 ejbModulos.eliminarRegistro(registro);
                 initFiltros();
-                Ajax.update("formMuestraDatosActivosPPC");
+                Ajax.update("formMuestraDatosActivos");
             }
             if(registroEvidencias.isEmpty()){
             
                 ejbModulos.eliminarRegistro(registro);
                 initFiltros();
-                Ajax.update("formMuestraDatosActivosPPC");
+                Ajax.update("formMuestraDatosActivos");
             }
             
         } catch (Throwable ex) {

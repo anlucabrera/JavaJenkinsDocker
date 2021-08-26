@@ -5,10 +5,10 @@
  */
 package mx.edu.utxj.pye.siip.controller.eb;
 
+import com.google.zxing.NotFoundException;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -23,9 +23,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -41,6 +38,7 @@ import mx.edu.utxj.pye.sgi.enums.CasoCriticoEstado;
 import mx.edu.utxj.pye.sgi.enums.RolNotificacion;
 import mx.edu.utxj.pye.siip.dto.eb.DTOArchivoRepositorio;
 import mx.edu.utxj.pye.siip.dto.eb.DTORepositorio;
+import nl.lcs.qrscan.core.QrPdf;
 
 /**
  *
@@ -60,8 +58,65 @@ public class Ejemplo {
                         .collect(Collectors.toList());
         System.err.println("estadosAbiertos: " + estadosAbiertos);
         
+        
         System.out.println("----------------------------------------------------------------------------------------------------------------");
         try {
+            List<String> archivosTarjetonesIMSS = new ArrayList<>();
+            if(Files.exists(Paths.get("C:\\archivos\\modulos_registro\\2018\\dpye\\calidad_academica\\diciembre\\actividades_varias\\"), LinkOption.NOFOLLOW_LINKS)){
+                System.err.println("Lectura de Codigo QR mediante tarjetón del IMSS");
+//                Lista de archivos, solo PDF
+                Files.list(Paths.get("C:\\archivos\\modulos_registro\\2018\\dpye\\calidad_academica\\diciembre\\actividades_varias\\")).forEach((e) -> {
+                    if(e.toString().endsWith(".pdf")){
+                        archivosTarjetonesIMSS.add(e.getParent().toString() + File.separator + e.getFileName());
+                    }
+                });
+                
+                System.out.println("Path y Uri");
+                archivosTarjetonesIMSS.forEach((f) -> {
+                    try {
+                        Path path = Paths.get(f);
+                        URI uri = path.toUri();
+                        System.err.println("");
+                        System.err.println("Nombre: " + path.getFileName());
+                        System.err.println("Path: " + path.toString());
+                        System.err.println("Uri: " + uri.toString());
+                        System.err.println("");
+                        
+                        QrPdf pdf = new QrPdf(Paths.get(uri));
+                        String qrCode = pdf.getQRCode(1, true, true);
+                        String[] parts = qrCode.split("\\|");
+                        
+                        Arrays.stream(parts).forEach(System.out::println);
+                        
+                        String num_seg_social = parts[2].replaceAll("[^-\\d]+","").trim();
+                        System.err.println("num_seg_social: " + num_seg_social);
+                        
+                        String nombre_validacion = parts[3].replaceAll("Nombre: ", "").trim();
+                        System.err.println("nombre_modificado_directamente: " + nombre_validacion);
+                        
+                        String curp_modificado = parts[4].replaceAll("CURP: ","").trim();
+                        System.err.println("curp_modificado_directamente: " + curp_modificado);
+                        
+                        System.out.println("");
+//                        [^-?0-9]+
+                        
+//                        String str = "Thére {}{}}{´p´p´ee|° 0 are 1 some -2-34 -numbers 567 here 890 .";
+//                        int[] ints = Arrays.stream(str.replaceAll("-", " -").split("[^-\\d]+"))
+//                                         .filter(s -> !s.matches("-?"))
+//                                         .mapToInt(Integer::parseInt).toArray();
+//                        System.out.println(Arrays.toString(ints));
+                        
+                    } catch (IOException ex) {
+                        Logger.getLogger(Ejemplo.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (NotFoundException ex) {
+                        Logger.getLogger(Ejemplo.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                });
+            }
+            
+            
+            System.out.println("----------------------------------------------------------------------------------------------------------------");
             List<String> listarArchivos = new ArrayList<>();
             if (Files.exists(Paths.get("C:\\archivos\\modulos_registro\\2018\\dpye\\calidad_academica\\diciembre\\actividades_varias\\"), LinkOption.NOFOLLOW_LINKS)) {
                 System.err.println("Archivos: ");
