@@ -131,10 +131,9 @@ public class EjbAsignacionAcademica {
             // buscar lista de programas educativos con plan de estudios vigentes y despues mapear cada programa con su lista de grupos
             Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
 //            System.out.println("programaEducativoCategoria = " + programaEducativoCategoria);
-            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' and a.nivelEducativo.nivel = :nivel order by a.nombre", AreasUniversidad.class)
+            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.areaSuperior=:areaPoa and a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
                     .setParameter("areaPoa", director.getAreaPOA().getArea())
                     .setParameter("categoria", programaEducativoCategoria)
-                    .setParameter("nivel", "TSU")
                     .getResultList();
 //            System.out.println("programas = " + programas);
             Map<AreasUniversidad, List<Grupo>> programasMap = programas.stream()
@@ -621,9 +620,8 @@ public class EjbAsignacionAcademica {
             // buscar lista de programas educativos con plan de estudios vigentes y despues mapear cada programa con su lista de grupos
             Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
 //            System.out.println("programaEducativoCategoria = " + programaEducativoCategoria);
-            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.categoria.categoria=:categoria and a.vigente = '1' and a.nivelEducativo.nivel = :nivel order by a.nombre", AreasUniversidad.class)
+            List<AreasUniversidad> programas = em.createQuery("select a from AreasUniversidad  a where a.categoria.categoria=:categoria and a.vigente = '1' order by a.nombre", AreasUniversidad.class)
                     .setParameter("categoria", programaEducativoCategoria)
-                    .setParameter("nivel", "TSU")
                     .getResultList();
 //            System.out.println("programas = " + programas);
             Map<AreasUniversidad, List<Grupo>> programasMap = programas.stream()
