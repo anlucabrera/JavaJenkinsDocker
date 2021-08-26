@@ -636,7 +636,7 @@
                                                             <f:selectItem itemValue="Ae" itemLabel="Atributo de Egreso"/>
                                                             <f:selectItem itemValue="In" itemLabel="Indicador" />
                                                             <f:selectItem itemValue="Cr" itemLabel="Criterio de Desempeño"/>
-                                                            <p:ajax listener="#{administracionPlanEstudioDirector.comprobarTipoRegistro()}" update="regstroC" process="@this"/>
+                                                            <p:ajax listener="#{administracionPlanEstudioDirector.comprobarTipoRegistro()}" update="regstroC tablasResultado" process="@this"/>
                                                         </p:selectOneMenu>
                                                         <p:outputLabel for="tipoRegistro" value="Tipo de Registro"/>
                                                         <p:message for="tipoRegistro"/>
@@ -695,7 +695,7 @@
                                                         <p:autoUpdate/>
                                                         <div class="ui-g-6 ui-sm-12">
                                                             <div class="ui-material">
-                                                                <p:inputNumber id="metaInd" value="#{administracionPlanEstudioDirector.rol.alineacionAcedemica.meta}"/>
+                                                                <p:inputText id="metaInd" placeholder="Meta del Indicador" value="#{administracionPlanEstudioDirector.rol.alineacionAcedemica.meta}"/>
                                                                 <p:outputLabel for="metaInd" value="Meta del Indicador"/>
                                                                 <p:message for="metaInd"/>
                                                                 <br/>
@@ -706,7 +706,7 @@
 
                                                 <div class="ui-g-12 ui-sm-12">
                                                     <div class="ui-material">
-                                                        <p:tabView>
+                                                        <p:tabView id="tablasResultado">
                                                             <p:tab title="Catalogs Para Alineacion" rendered="#{administracionPlanEstudioDirector.rol.listalineacionAcedemica.size() ne 0}">
                                                                 <p:dataTable id="ob" var="catalogo" value="#{administracionPlanEstudioDirector.rol.listalineacionAcedemica}" sortBy="#{catalogo.planEstudio.idPlanEstudio}">
                                                                     <p:columnGroup type="header">
