@@ -10,10 +10,7 @@ import mx.edu.utxj.pye.sgi.controladores.ch.PersonalAdmin;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.dto.dtoEstudianteMateria;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaTareaIntegradora;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbConsultaCalificacion;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReinscripcionAutonoma;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -46,6 +43,7 @@ public class ReinscripcionAutonomaEstudiante extends ViewScopedRol implements De
     @EJB EjbConsultaCalificacion ejbConsultaCalificacion;
     @EJB EjbCapturaCalificaciones ejbCapturaCalificaciones;
     @EJB EjbCapturaTareaIntegradora ejbCapturaTareaIntegradora;
+    @EJB EjbReinscripcionExtemporaneaSE ejbReinscripcionExtemporaneaSE;
     @Inject LogonMB logonMB;
     @Getter Boolean tieneAcceso = false;
     @Getter @Setter ReinscripcionAutonomaRolEstudiante rol = new ReinscripcionAutonomaRolEstudiante();
@@ -95,7 +93,7 @@ public class ReinscripcionAutonomaEstudiante extends ViewScopedRol implements De
                 getMunicipioByEstado();
                 getAsentamientoByMunicipioEstado();
                 rol.setNivelRol(NivelRol.OPERATIVO);
-                //TODO: Instrucciones
+                //Instrucciones
                 rol.getInstrucciones().add("Ingrese los datos que desea actualizar. Los campos marcados con * son obligatorios.");
                 rol.getInstrucciones().add("Verifique que los datos sean correctos");
                 rol.getInstrucciones().add("Presione el botón 'Actualizar datos'.");
@@ -186,30 +184,57 @@ public class ReinscripcionAutonomaEstudiante extends ViewScopedRol implements De
         }
     }
 
+    public void getPromediosMateriabyEstudiante(){
+        try{
+            ResultadoEJB<List<DtoMatariaPromedio>> resPromedios = ejbReinscripcionExtemporaneaSE.getCalilficacionesbyEstudiante(rol.getEstudiante());
+            if(resPromedios.getCorrecto()){
+                rol.setCalificacionesFinales(resPromedios.getValor());
+            }else {mostrarMensajeResultadoEJB(resPromedios);}
+
+        }catch (Exception e){mostrarExcepcion(e);}
+
+    }
+
     /**
      * Comprueba si el estudiante logueado aprobó sus materias
      */
     public boolean compruebaAprobo(){
         try{
+            getPromediosMateriabyEstudiante();
             List<Boolean> listAproboMateria = new ArrayList<>();
             List<Boolean> materiasReprobadas = new ArrayList<>();
-            Boolean aproboMateria;
-            BigDecimal promFinalMateria ;
+
             Boolean aprobo =false;
+            rol.getCalificacionesFinales().stream().forEach(c->{
+                Boolean aproboMateria=new Boolean(false);
+                //System.out.println("Promedio de la materia " +c.getPromedio());
+                if(c.getPromedio().compareTo(BigDecimal.valueOf(8)) >= 0){
+                    //Aprobo la materia
+                    aproboMateria=true;
+                    listAproboMateria.add(aproboMateria);
+                }else {
+                    //Reprobó la materia
+                    aproboMateria=false;
+                    materiasReprobadas.add(aproboMateria);
+                }
+            });
+            /*
            for (DtoCargaAcademica c: rol.getCargasEstudiante()){
+               System.out.println("ReinscripcionAutonomaEstudiante.compruebaAprobo "+c);
                 promFinalMateria=getPromedioFinal(c);
-                //System.out.println("Promedio de la materia " +promFinalMateria);
+                System.out.println("Promedio de la materia " +promFinalMateria);
                if(promFinalMateria.compareTo(BigDecimal.valueOf(8)) >= 0){
                   aproboMateria =true;
-                   //System.out.println("Aprobo la materiaa " +aproboMateria);
+                   System.out.println("Aprobo la materiaa " +aproboMateria);
                    listAproboMateria.add(aproboMateria);
                }else {
                    aproboMateria=false;
                    materiasReprobadas.add(aproboMateria);
                }
            }
+           */
            //System.out.println("Lista ---> "+listAproboMateria.size());
-           // System.out.println("Lista filtrada por materias que reprobo---> "+materiasReprobadas.size());
+            //System.out.println("Lista filtrada por materias que reprobo---> "+materiasReprobadas.size());
            if(materiasReprobadas.size()>0){
                aprobo =false;
            }else {aprobo= true;}
@@ -304,101 +329,6 @@ public class ReinscripcionAutonomaEstudiante extends ViewScopedRol implements De
             mostrarExcepcion(e);
         }
     }
-    //---------------------------------------- Calificaciones
-    public void obtenerUnidadesPorMateria() {
-        List<DtoCalificacionEstudiante.MapUnidadesTematicas> resMap = new ArrayList<>();
-        ResultadoEJB<List<DtoCalificacionEstudiante.UnidadesPorMateria>> resUnidadesPorMateria = ejbConsultaCalificacion.packUnidadesmateria(rol.getEstudiante());
-        rol.setUnidadesPorMateria(resUnidadesPorMateria.getValor());
-        rol.getUnidadesPorMateria().forEach(x -> {
-            x.getUnidadMaterias().forEach(y -> {
-                resMap.add(new DtoCalificacionEstudiante.MapUnidadesTematicas(y.getNoUnidad(), y.getNoUnidad()));
-            });
-        });
-        rol.setMapUnidadesTematicas(new ArrayList<>(new HashSet<>(resMap)));
-        rol.getMapUnidadesTematicas().sort(Comparator.comparingInt(DtoCalificacionEstudiante.MapUnidadesTematicas::getNoUnidad));
-    }
-    public List<DtoUnidadConfiguracion> getUnidades(@NonNull DtoCargaAcademica dtoCargaAcademica){
-        if(rol.getDtoUnidadConfiguracionesMap().containsKey(dtoCargaAcademica)) return  rol.getDtoUnidadConfiguracionesMap().get(dtoCargaAcademica);
-
-        ResultadoEJB<List<DtoUnidadConfiguracion>> resConfiguraciones = ejbCapturaCalificaciones.getConfiguraciones(dtoCargaAcademica);
-        if(!resConfiguraciones.getCorrecto()){
-            mostrarMensaje("No se detectaron configuraciones de unidades en la materia de la carga académica seleccionada. " + resConfiguraciones.getMensaje());
-            return Collections.EMPTY_LIST;
-        }
-        rol.getDtoUnidadConfiguracionesMap().put(dtoCargaAcademica, resConfiguraciones.getValor());
-
-        return  rol.getDtoUnidadConfiguracionesMap().get(dtoCargaAcademica);
-    }
-    public DtoUnidadesCalificacionEstudiante getContenedor(@NonNull DtoCargaAcademica dtoCargaAcademica){
-        if(rol.getDtoUnidadesCalificacionMap().containsKey(dtoCargaAcademica)) return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
-        ResultadoEJB<DtoUnidadesCalificacionEstudiante> resDtoUnidadesCalificacion = ejbConsultaCalificacion.packDtoUnidadesCalificacion(rol.getEstudiante(), dtoCargaAcademica, getUnidades(dtoCargaAcademica));
-        if(!resDtoUnidadesCalificacion.getCorrecto()){
-            mostrarMensaje("No se detectaron registros de calificaciones de la carga seleccionada. " + resDtoUnidadesCalificacion.getMensaje());
-            return null;
-        }
-
-        rol.getDtoUnidadesCalificacionMap().put(dtoCargaAcademica, resDtoUnidadesCalificacion.getValor());
-        return rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica);
-    }
-    public  Boolean tieneIntegradora(@NonNull DtoCargaAcademica dtoCargaAcademica){
-        if(rol.getTieneIntegradoraMap().containsKey(dtoCargaAcademica)) return rol.getTieneIntegradoraMap().get(dtoCargaAcademica);
-
-        ResultadoEJB<TareaIntegradora> tareaIntegradoraResultadoEJB = ejbCapturaTareaIntegradora.verificarTareaIntegradora(dtoCargaAcademica);
-        if(tareaIntegradoraResultadoEJB.getCorrecto()) {
-            rol.getTieneIntegradoraMap().put(dtoCargaAcademica, true);
-            rol.getTareaIntegradoraMap().put(dtoCargaAcademica, tareaIntegradoraResultadoEJB.getValor());
-            rol.setTieneIntegradora(Boolean.TRUE);
-
-            ResultadoEJB<Map<DtoCargaAcademica, TareaIntegradoraPromedio>> generarContenedorCalificaciones = ejbConsultaCalificacion.generarContenedorCalificaciones(getContenedor(dtoCargaAcademica).getDtoCargaAcademicas(), rol.getEstudiante(), tareaIntegradoraResultadoEJB.getValor());
-            if(!generarContenedorCalificaciones.getCorrecto()){
-                mostrarMensajeResultadoEJB(generarContenedorCalificaciones);
-            }
-            rol.getDtoUnidadesCalificacionMap().get(dtoCargaAcademica).setTareaIntegradoraPromedioMap(generarContenedorCalificaciones.getValor());
-        }
-        else{
-            rol.getTieneIntegradoraMap().put(dtoCargaAcademica, false);
-        }
-
-        return rol.getTieneIntegradoraMap().get(dtoCargaAcademica);
-    }
-    public DtoCalificacionNivelacion getNivelacion(@NonNull DtoCargaAcademica dtoCargaAcademica){
-        DtoUnidadesCalificacionEstudiante.DtoNivelacionPK pk = new DtoUnidadesCalificacionEstudiante.DtoNivelacionPK(dtoCargaAcademica, rol.getEstudiante());
-        if(getContenedor(dtoCargaAcademica).getNivelacionMap().containsKey(pk)) return getContenedor(dtoCargaAcademica).getNivelacionMap().get(pk);
-        ResultadoEJB<DtoCalificacionNivelacion> packDtoCalificacionNivelacion = ejbConsultaCalificacion.packDtoCalificacionNivelacion(dtoCargaAcademica, rol.getEstudiante());
-        if(packDtoCalificacionNivelacion.getCorrecto()){
-            @NonNull DtoCalificacionNivelacion dtoCalificacionNivelacion = packDtoCalificacionNivelacion.getValor();
-            getContenedor(dtoCargaAcademica).getNivelacionMap().put(pk, dtoCalificacionNivelacion);
-            return getContenedor(dtoCargaAcademica).getNivelacionMap().get(pk);
-        }else {
-            mostrarMensajeResultadoEJB(packDtoCalificacionNivelacion);
-            return null;
-        }
-    }
-    public BigDecimal getPromedioAsignaturaEstudiante(@NonNull DtoCargaAcademica dtoCargaAcademica){
-        ResultadoEJB<BigDecimal> res = ejbConsultaCalificacion.promediarAsignatura(getContenedor(dtoCargaAcademica), dtoCargaAcademica, rol.getEstudiante());
-        if(res.getCorrecto()){
-            return res.getValor();
-        }else{
-            mostrarMensaje(
-                    String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno(),
-                            rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno(),
-                            rol.getEstudiante().getAspirante().getIdPersona().getNombre(), rol.getEstudiante().getMatricula()));
-            return BigDecimal.ZERO;
-        }
-    }
-
-    public BigDecimal getPromedioFinal(@NonNull DtoCargaAcademica dtoCargaAcademica){
-        BigDecimal promedioOrdinario = getPromedioAsignaturaEstudiante(dtoCargaAcademica);
-        BigDecimal nivelacion = new BigDecimal(getNivelacion(dtoCargaAcademica).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal promedioFinal = BigDecimal.ZERO;
-        if(nivelacion.compareTo(BigDecimal.valueOf(0)) == 0){
-            promedioFinal = promedioFinal.add(promedioOrdinario);
-        }else {
-            promedioFinal = promedioFinal.add(nivelacion);
-        }
-        return promedioFinal;
-    }
-
 
 
     @Override
