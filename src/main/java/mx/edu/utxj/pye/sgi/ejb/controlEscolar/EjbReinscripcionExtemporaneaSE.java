@@ -120,12 +120,12 @@ public class EjbReinscripcionExtemporaneaSE {
     public ResultadoEJB<List<Estudiante>> getEstudiantesReinscritos(EventoEscolar eventoEscolar){
         try {
             List<Estudiante> listEstudiantesInscritos = new ArrayList<>();
-            listEstudiantesInscritos = em.createQuery("select e from Estudiante e where e.tipoEstudiante.idTipoEstudiante=:tipo and e.periodo=:periodo",Estudiante.class)
+            listEstudiantesInscritos = em.createQuery("select e from Estudiante e where e.tipoEstudiante.idTipoEstudiante=:tipo and e.periodo=:periodo and (e.tipoRegistro=:tipoR or e.tipoRegistro=:tipoR2)",Estudiante.class)
                 .setParameter("tipo",1)
                 .setParameter("periodo",eventoEscolar.getPeriodo())
-                    /*.setParameter("tipoR","Reinscripcion Autónoma")
+                    .setParameter("tipoR","Reinscripcion Autónoma")
                     .setParameter("tipoR2", "Reinscripcion")
-                    */
+
                 .getResultList()
             ;
             if(listEstudiantesInscritos==null || listEstudiantesInscritos.isEmpty()){return ResultadoEJB.crearErroneo(4,listEstudiantesInscritos,"No se encontraron estudiantes inscritos en el periodo programado.");}
@@ -149,8 +149,10 @@ public class EjbReinscripcionExtemporaneaSE {
             if(eventoEscolar==null){return ResultadoEJB.crearErroneo(2,listEstudiantes,"El evento no debe ser nulo");}
             Integer periodoAnterior = eventoEscolar.getPeriodo()-1;
             //Busca a los estudiantes regulares que estaban inscritos al periodo anterior al del periodo del evento programado
-            listEstudiantes = em.createQuery("select e from Estudiante e where e.tipoEstudiante.idTipoEstudiante=1 and e.periodo=:periodo",Estudiante.class)
-            .setParameter("periodo",periodoAnterior)
+            listEstudiantes = em.createQuery("select e from Estudiante e inner join e.tipoEstudiante te where (te.idTipoEstudiante=:tipo1 or te.idTipoEstudiante=:tipo2) and e.periodo=:periodo",Estudiante.class)
+                    .setParameter("tipo1",1)
+                    .setParameter("tipo2",5)
+                    .setParameter("periodo",periodoAnterior)
             .getResultList()
             ;
             if(listEstudiantes==null || listEstudiantes.isEmpty()){return  ResultadoEJB.crearErroneo(3,listEstudiantes,"No se encontraron estudiantes regulares inscritos al periodo anterior");}
@@ -214,16 +216,16 @@ public class EjbReinscripcionExtemporaneaSE {
                     //Verifica que el estudiante este inscrito en el periodo del evento programado, en caso de que no se agrega a la lista de estudiantes no reinscritoss
                 ResultadoEJB<Estudiante> resReinscrito = getEstudianteEvento(resEvento.getValor(),ei);
                 if(resReinscrito.getCorrecto()!=true){
+                    //System.out.println("EjbReinscripcionExtemporaneaSE.getEstudiantesNoReinscritos");
                     //El estudiante no ha realizado su inscripción en el periodo programado
                     listaEstudiantesNoReinscritos.add(ei);
                 }
                 else {reinscritos2.add(ei);}
                 });
-               // System.out.println("Estudiantes regulares Periodo Anterior ->"+listEstudiantesInscritosByPeriodoAnterior.size());
+               //System.out.println("Estudiantes regulares Periodo Anterior ->"+listEstudiantesInscritosByPeriodoAnterior.size());
                 //System.out.println("Estudiantes No reinscritos ->"+listaEstudiantesNoReinscritos.size());
                 //System.out.println("Estudiantes reinscritos 2  ->"+reinscritos2.size());
-                // TODO: Buscamos la carrera a la que pertenece
-                //TODO: Se busca su tutor de grupo
+
 
                 return ResultadoEJB.crearCorrecto(listaEstudiantesNoReinscritos,"Estudiantes no reinscritos");
 
@@ -428,7 +430,8 @@ public class EjbReinscripcionExtemporaneaSE {
                 //Obtenemos la carrera del estudiante
                 ResultadoEJB<AreasUniversidad> resCarrera = getCarreraEstudiante(e);
                 if(resCarrera.getCorrecto()==true){dto.setCarrera(resCarrera.getValor());}
-                else {//System.out.println("Error al obtener la carrera");return;
+                else {//System.out.println("Error al obtener la carrera");
+                return;
                 }
                 //Grupo actual
                 dto.setGrupoActual(e.getGrupo());
@@ -438,7 +441,7 @@ public class EjbReinscripcionExtemporaneaSE {
                 }else {
                     ResultadoEJB<Personal> resTutor =getTutorEstudiante(e);
                     if(resTutor.getCorrecto()==true){dto.setNombreTutor(resTutor.getValor().getNombre());}
-                    else {//System.out.println("Error al obtener al tutor");
+                    else {System.out.println("Error al obtener al tutor");
                     }
                 }
                 //Valida si el estudiante esta inscrito en el periodo del evento(En caso de que si, no existirá nuevo grupo)
@@ -447,7 +450,8 @@ public class EjbReinscripcionExtemporaneaSE {
                     //Se busca su nuevo grupo
                     ResultadoEJB<Grupo> resNuevoGrupo = getNuevoGrupo(e,eventoEscolar);
                     if(resNuevoGrupo.getCorrecto()==true){dto.setNuevoGrupo(resNuevoGrupo.getValor());}
-                    else {//System.out.println("Error al obtener grupo");return;
+                    else {//System.out.println("Error al obtener grupo");
+                    return;
                     }
                 }
                 //Personal que inscribió en caso que el tipo de registro sea "Reinscripción"
@@ -458,7 +462,8 @@ public class EjbReinscripcionExtemporaneaSE {
                 //Lista de promedio por materias
                 ResultadoEJB<List<DtoMatariaPromedio>> resPromedios = getCalilficacionesbyEstudiante(e);
                 if(resPromedios.getCorrecto()==true){dto.setPromedioMateria(resPromedios.getValor());}
-                else {//System.out.println("Error al obetener los promedios de la materia");return;
+                else {//System.out.println("Error al obetener los promedios de la materia");
+                return;
                 }
                 if(e.getPeriodo()==eventoEscolar.getPeriodo()-1){
                     //Cantidad de materias reprobadas

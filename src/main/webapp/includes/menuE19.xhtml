@@ -27,11 +27,11 @@
            <!-- <c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>-->
             <c:if test="#{evaluacionDocenteEstudiante.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/evaluacionDocente.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>
             <c:if test="#{evaluacionTutorEstudiante.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/nuevaTutor.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>
-
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Evaluaciones</li>
             <c:if test="#{encuestaServiciosEstudiante19.mostrarEnDesarrollo(request) and encuestaServiciosEstudiante19.tieneAcceso}">
                 <li><p:link href="#{request.contextPath}/encuestas/Estudiantes/servicios.xhtml"><i class="fa fa-check-square"></i><span>Servicios</span></p:link></li>
             </c:if>
+            <c:if test="#{estudioEgresados.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/estudioEgresados.xhtml"><i class="fa fa-graduation-cap"></i><span>Estudio egresado</span></p:link></li></c:if>
             <c:if test="#{encuestaCondicionesEstudio.cargada}"><li><p:link href="#{request.contextPath}/encuestas/Estudiantes/condiciones_estudio.xhtml"><i class="fa fa-check-square"></i><span>Condiciones de estudio</span></p:link></li></c:if>
             <c:if test="#{testDiagnosticoAprendizajeEstudiante.mostrarEnDesarrollo(request) and testDiagnosticoAprendizajeEstudiante.tieneAcceso}">
                 <li><p:link href="#{request.contextPath}/controlEscolar/estudiante/testAprendizaje.xhtml"><i class="fa fa-check-square"></i><span>Test de Diagnóstico de Aprendizaje</span></p:link></li>

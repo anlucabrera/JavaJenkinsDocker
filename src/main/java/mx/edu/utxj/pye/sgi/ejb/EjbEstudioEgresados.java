@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.Local;
 import javax.faces.model.SelectItem;
+
+import lombok.NonNull;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstudioEgresadosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.sescolares.Alumno;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
@@ -56,4 +60,6 @@ public interface EjbEstudioEgresados {
     public List<EvaluacionEstudioEgresadosResultados> getResultadosPorSilgas(String siglas);
 
     public Alumnos procedimiento(String matricula);
+
+    public Estudiante getEstudiante(@NonNull Integer generacion, @NonNull Integer grado,@NonNull Integer matricula);
 }

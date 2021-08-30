@@ -137,6 +137,26 @@
                                     </p:link>
                                 </div>
                             </div>
+                            <!-- Estudio de egresados -->
+                            <c:if test="#{estudioEgresados.cargada}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;" onclick="estudioEgresados();">
+                                            <h3>
+                                                <h:outputLabel value="#{estudioEgresados.finalizado?'Terminada':'Pendiente'}" style="cursor: pointer;" onclick="estudioEgresados();" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Evaluación de seguimiento a egresados de las universidades tecnológicas<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa  fa-graduation-cap "></i>
+                                        </div>
+                                        <p:link  outcome="evaluaciones/evaluacion/estudioEgresados" class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                    </div>
+                                </div>
+                            </c:if>
                             <c:if test="#{cuestionarioPsicopedagogicoEstudiante.tieneAcceso}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-yellow">

@@ -21,6 +21,7 @@ import mx.edu.utxj.pye.sgi.dto.ListaEstudiantesDtoTutor;
 import mx.edu.utxj.pye.sgi.ejb.EjbEstudioEgresados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstudioEgresadosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
@@ -43,7 +44,8 @@ public class EstudioEgresados implements Serializable {
     @Getter private Boolean cargada = false, sinRespuestas = false;
     @Getter private Boolean TSU, ING;
     
-    @Getter private Alumnos alumnos;
+    @Getter private Alumnos alumnos; //Estudiante SAIIUT
+    @Getter @Setter Estudiante estudiante;
     @Getter private Evaluaciones evaluacion;
     @Getter private Integer evaluador;
     
@@ -80,16 +82,21 @@ public class EstudioEgresados implements Serializable {
         cargada = false;
         selectItemCarreras = ejb.selectItemsProgramasEducativos();
         listaGeneraciones = ejb.getGeneraciones();
-        if (logonMB.getUsuarioTipo() == UsuarioTipo.ESTUDIANTE) {
-            alumnos = ejb.procedimiento(logonMB.getCurrentUser());
-            if(alumnos != null){
-                ING = true;
+        //System.out.println("EstudioEgresados.init 1");
+        if (logonMB.getUsuarioTipo() == UsuarioTipo.ESTUDIANTE || logonMB.getUsuarioTipo()==UsuarioTipo.ESTUDIANTE19) {
+            //System.out.println("EstudioEgresados.init 2");
+            //El procedimiento es para estudiantes de Egresados registrados en SAIIUT (Sólo agregar grado y periodo según lo requiera SE)
+            //alumnos = ejb.procedimiento(logonMB.getCurrentUser());
+            //En caso de estudiantes egresados de Control Escolar ->
+            estudiante = ejb.getEstudiante(30,6,Integer.parseInt(logonMB.getCurrentUser()));
+            //System.out.println("EstudioEgresados.init "+ estudiante);
+            if(alumnos != null || estudiante!=null){
+                TSU = true;
             }
-
             try {
                 // modificar para aperturar a onceavos o sextos
 //                if(alumnos.getGradoActual() == 11){ //estudiantes egresadod de 11 vo
-                if(ING){   //Estudiantes egresados de 6to grado
+                if(TSU){   //Estudiantes egresados de 6to grado
 //                if ( alumnos.getGradoActual() == 11 || alumnos.getGradoActual() >=6 &&alumnos.getGradoActual() <=7) { //Estudiantes egresados de 6to y 11vo grado
                     finalizado = false;
                     respuestas = new HashMap<>();
