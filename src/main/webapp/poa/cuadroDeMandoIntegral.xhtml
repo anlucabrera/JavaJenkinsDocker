@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:hf="http://highfaces.org"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+
+            .minimizados{
+                display: none;
+            }            
+
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+        <script type="text/javascript">
+            
+        </script>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="# {utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>        
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Programa Anual de Trabajo
+    </ui:define>
+
+    <ui:define name="description">
+        Cuadro de mando Integral
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{cuadroMandoIntegralConsulta.cargado}">
+        <adm:sidebar collapsed="true"/>
+        <c:if test="#{controladorEmpleado.tienePOA}">
+            <h:form id="frmGraficasCMI" prependId="false" class="form-inline">
+                <p:growl><p:autoUpdate/></p:growl>
+                <div class="box box-primary">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >                    
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-12">            
+                                <p:panel header="Cuadro de Mando Integral #{controladorEmpleado.nuevaAreasUniversidadPOA.nombre}">
+                                    <p:panelGrid style="margin-top:20px">
+                                        <p:row>
+                                            <!--p:column style="font-weight: bold;">Actividades Programadas</p:column>
+                                            <p:column style="font-weight: bold;"># {cuadroMandoIntegralConsulta.cmiGeneral.programadas}</p:column>
+                                            <p:column rowspan="4" style="font-weight: bold;"-->
+                                                <!--# {cuadroMandoIntegralConsulta.datosGraica(cuadroMandoIntegralConsulta.cmiEJe1.avanceGraf)}-->
+                                                <!--hf:chart type="line" height="400px" extender="# {cuadroMandoIntegralConsulta.cmiGeneral.extender}" render="true" updateMethod="true"
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="# {cuadroMandoIntegralConsulta.cmiGeneral.avanceGrafSP}" var="point" point="# {cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="# {point.mes}" dataLabel="# {point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="# {cuadroMandoIntegralConsulta.cmiGeneral.avanceGrafCP}" var="point" point="# {cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="# {point.mes}" dataLabel="# {point.valor}"  />
+                                                </hf:chart-->
+                                            <!--/p:column-->
+                                            <p:column rowspan="4" style="font-weight: bold;">
+                                                <!--p:barChart model="#{cuadroMandoIntegralConsulta.mixedModel}" style="width: 100%; height: 600px;" /-->
+                                                <!--p:chart type="metergauge" model="# {cuadroMandoIntegralConsulta.cmiGeneral.gaugeChartModel}" responsive="true" /-->                                      
+                                            </p:column>
+                                        </p:row>
+
+                                        <!--p:row>
+                                            <p:column style="font-weight: bold;">Actividades Realizadas</p:column>
+                                            <p:column style="font-weight: bold;"># {cuadroMandoIntegralConsulta.cmiGeneral.realizadas}</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Cumplimiento sin penalización</p:column>
+                                            <p:column style="font-weight: bold;"># {cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiGeneral.avanceSP)}%</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Cumplimiento con penalización </p:column>
+                                            <p:column style="font-weight: bold;"># {cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiGeneral.avance)}%</p:column>
+                                        </p:row-->
+                                    </p:panelGrid>
+                                    <br/>
+                                    <p:panelGrid style="margin-top:20px;">
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Grafica Lineal</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe1.renderizar}">
+                                                <!--hf:chart type="line" height="380px" extender="# {cuadroMandoIntegralConsulta.cmiEJe1.extender}" title="# {cuadroMandoIntegralConsulta.cmiEJe1.ejesRegistro}"
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="# {cuadroMandoIntegralConsulta.cmiEJe1.avanceGrafSP}" var="point" point="# {cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="# {point.mes}" dataLabel="# {point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="# {cuadroMandoIntegralConsulta.cmiEJe1.avanceGrafCP}" var="point" point="# {cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="# {point.mes}" dataLabel="# {point.valor}"  />
+                                                </hf:chart-->
+                                            </p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe2.renderizar}">
+                                                <!--hf:chart type="line" height="380px" extender="# {cuadroMandoIntegralConsulta.cmiEJe2.extender}" title="# {cuadroMandoIntegralConsulta.cmiEJe2.ejesRegistro}"
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="# {cuadroMandoIntegralConsulta.cmiEJe2.avanceGrafSP}" var="point" point="# {cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="# {point.mes}" dataLabel="# {point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="# {cuadroMandoIntegralConsulta.cmiEJe2.avanceGrafCP}" var="point" point="# {cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="# {point.mes}" dataLabel="# {point.valor}"  />
+                                                </hf:chart-->
+                                            </p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe3.renderizar}">
+                                                <!--hf:chart type="line" height="380px" extender="# {cuadroMandoIntegralConsulta.cmiEJe3.extender}" title="# {cuadroMandoIntegralConsulta.cmiEJe3.ejesRegistro}" 
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="# {cuadroMandoIntegralConsulta.cmiEJe3.avanceGrafSP}" var="point" point="# {cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="# {point.mes}" dataLabel="# {point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="# {cuadroMandoIntegralConsulta.cmiEJe3.avanceGrafCP}" var="point" point="# {cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="# {point.mes}" dataLabel="# {point.valor}"  />
+                                                </hf:chart-->
+                                            </p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe4.renderizar}">
+                                                <!--hf:chart type="line" height="380px" extender="# {cuadroMandoIntegralConsulta.cmiEJe4.extender}" title="# {cuadroMandoIntegralConsulta.cmiEJe4.ejesRegistro}" 
+                                                          xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
+                                                    <hf:chartSerie name="Avance Sin penalización" value="# {cuadroMandoIntegralConsulta.cmiEJe4.avanceGrafSP}" var="point" point="# {cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="# {point.mes}" dataLabel="# {point.avanceOF}"  />
+                                                    <hf:chartSerie name="Avance Con penalización" value="# {cuadroMandoIntegralConsulta.cmiEJe4.avanceGrafCP}" var="point" point="# {cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="# {point.mes}" dataLabel="# {point.valor}"  />
+                                                </hf:chart-->
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Grafica 2</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe1.renderizar}"><!--p:chart type="metergauge" model="# {cuadroMandoIntegralConsulta.cmiEJe1.gaugeChartModel}" responsive="true" style="width: 380px"/--> </p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe2.renderizar}"><!--p:chart type="metergauge" model="# {cuadroMandoIntegralConsulta.cmiEJe2.gaugeChartModel}" responsive="true" style="width: 380px"/--> </p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe3.renderizar}"><!--p:chart type="metergauge" model="# {cuadroMandoIntegralConsulta.cmiEJe3.gaugeChartModel}" responsive="true" style="width: 380px"/--> </p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe4.renderizar}"><!--p:chart type="metergauge" model="# {cuadroMandoIntegralConsulta.cmiEJe4.gaugeChartModel}" responsive="true" style="width: 380px"/--> </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Actividades Programadas</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe1.renderizar}"># {cuadroMandoIntegralConsulta.cmiEJe1.programadas eq 0 ?'No aplica al mes':cuadroMandoIntegralConsulta.cmiEJe1.programadas}</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe2.renderizar}"># {cuadroMandoIntegralConsulta.cmiEJe2.programadas eq 0 ?'No aplica al mes':cuadroMandoIntegralConsulta.cmiEJe2.programadas}</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe3.renderizar}"># {cuadroMandoIntegralConsulta.cmiEJe3.programadas eq 0 ?'No aplica al mes':cuadroMandoIntegralConsulta.cmiEJe3.programadas}</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe4.renderizar}"># {cuadroMandoIntegralConsulta.cmiEJe4.programadas eq 0 ?'No aplica al mes':cuadroMandoIntegralConsulta.cmiEJe4.programadas}</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Actividades Realizadas</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe1.renderizar}"># {cuadroMandoIntegralConsulta.cmiEJe1.realizadas}</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe2.renderizar}"># {cuadroMandoIntegralConsulta.cmiEJe2.realizadas}</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe3.renderizar}"># {cuadroMandoIntegralConsulta.cmiEJe3.realizadas}</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe4.renderizar}"># {cuadroMandoIntegralConsulta.cmiEJe4.realizadas}</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Cumplimiento sin penalización</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe1.renderizar}"># {cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiEJe1.avanceSP)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe2.renderizar}"># {cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiEJe2.avanceSP)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe3.renderizar}"># {cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiEJe3.avanceSP)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe4.renderizar}"># {cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiEJe4.avanceSP)}%</p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="font-weight: bold;">Cumplimiento con penalización </p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe1.renderizar}"># {cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiEJe1.avance)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe2.renderizar}"># {cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiEJe2.avance)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe3.renderizar}"># {cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiEJe3.avance)}%</p:column>
+                                            <p:column style="font-weight: bold;" rendered="# {cuadroMandoIntegralConsulta.cmiEJe4.renderizar}"># {cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiEJe4.avance)}%</p:column>
+                                        </p:row>
+                                    </p:panelGrid> 
+                                </p:panel>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </c:if>
+        <c:if test="# {!controladorEmpleado.tienePOA}">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <p:panel style="text-align: center">
+                            <h1>
+                                El área a la que pertenece no tiene permisos de acceso a POA 
+                            </h1>
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+        </c:if>
+        </c:if>
+    </ui:define>
+</ui:composition>

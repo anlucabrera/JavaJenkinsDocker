@@ -817,7 +817,7 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
                             });
                         }
                         break;
-                    case "Cd":
+                    case "Cr":
                         if (!t.getCriterioDesempenioList().isEmpty()) {
                             t.getCriterioDesempenioList().forEach((ob) -> {
                                 daas.add(new DtoAlineacionAcedemica.Presentacion(ob.getCriteriDesempenio(), ob.getClave(), ob.getDescripcion(), "", 0D, ob.getPlanEstudio(), t,auv,tipo));
@@ -1255,7 +1255,7 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
                         f.setEntityClass(IndicadorAlineacion.class);
                         indicadorAlineacion = new IndicadorAlineacion();
                         indicadorAlineacion = em.find(IndicadorAlineacion.class, daa.getIde());
-                        egreso.setDescripcion(daa.getDescripcion());
+                        indicadorAlineacion.setDescripcion(daa.getDescripcion());
                         em.persist(indicadorAlineacion);
                         f.flush();
                         f.setEntityClass(IndicadorAlineacion.class);
@@ -1273,7 +1273,7 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
                         f.setEntityClass(CriterioDesempenio.class);
                         desempenio = new CriterioDesempenio();
                         desempenio = em.find(CriterioDesempenio.class, daa.getIde());
-                        egreso.setDescripcion(daa.getDescripcion());
+                        desempenio.setDescripcion(daa.getDescripcion());
                         em.persist(desempenio);
                         f.flush();
                         break;
