@@ -246,7 +246,6 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
         DtoCalendarioEventosEscolares evento = (DtoCalendarioEventosEscolares) dataTable.getRowData();
         ResultadoEJB<EventoEscolar> resAct = ejb.actualizarEventoRegistrado(evento);
         mostrarMensajeResultadoEJB(resAct);
-        listaEventosEscolaresRegistrados();
     }
     
      /**

@@ -444,8 +444,8 @@ public class EjbReportesAcademicos {
                     evidenciasSer = (int)evidenciasRegistradas.stream().filter(p->p.getEvidencia().getCriterio().getTipo().equals("Ser")).count();
                     evidenciasSaber = (int)evidenciasRegistradas.stream().filter(p->p.getEvidencia().getCriterio().getTipo().equals("Saber")).count();
                     evidenciasSaberHacer = (int)evidenciasRegistradas.stream().filter(p->p.getEvidencia().getCriterio().getTipo().equals("Saber hacer")).count();
-                }
-                
+                    }
+                    
                 
                 Double porcentajeAsignacion = 0.0;
                 List<Integer> listaEvidencias = new ArrayList<>(); listaEvidencias.add(evidenciasSer); listaEvidencias.add(evidenciasSaber); listaEvidencias.add(evidenciasSaberHacer);
@@ -458,11 +458,21 @@ public class EjbReportesAcademicos {
                     porcentajeAsignacion= 33.3;
                 }else if(cantidadCeros==2){
                     porcentajeAsignacion= 66.6;
+                }else if(cantidadCeros==0){
+                    porcentajeAsignacion= 0.0;
                 }
                 
-                Double porcentajeConfiguracion = (double)(unidadesConfiguradas.size()/unidadesMaterias.size())*100;
-                Double porcentajeValidacion = (double)(unidadesValidadas/unidadesConfiguradas.size())*100;
-                Double porcentajePlaneacion = (double)((porcentajeConfiguracion + porcentajeAsignacion + porcentajeValidacion)/3);
+                Double porcentajeConfiguracion=0.0, porcentajeValidacion = 0.0, porcentajePlaneacion = 0.0;
+                
+                if(!unidadesConfiguradas.isEmpty()){
+                    porcentajeConfiguracion = (double)(unidadesConfiguradas.size()/unidadesMaterias.size())*100;
+                    porcentajeValidacion = (double)(unidadesValidadas/unidadesConfiguradas.size())*100;
+                }
+                
+                
+                if(porcentajeAsignacion>0){
+                    porcentajePlaneacion = (double)((porcentajeConfiguracion + porcentajeAsignacion + porcentajeValidacion)/3);
+                }
                 
                 DtoReportePlaneacionDocente dtoReportePlaneacionDocente = new DtoReportePlaneacionDocente(carga, periodo, planEstudioMateria, programa, docente, unidadesMaterias.size(), unidadesConfiguradas.size(), unidadesValidadas, evidenciasSer, evidenciasSaber, evidenciasSaberHacer, asignacionCompleta, String.format("%.2f",porcentajeConfiguracion), String.format("%.2f",porcentajeAsignacion), String.format("%.2f",porcentajeValidacion), String.format("%.2f",porcentajePlaneacion));
                 listaPlaneaciones.add(dtoReportePlaneacionDocente);
@@ -551,11 +561,21 @@ public class EjbReportesAcademicos {
                     porcentajeAsignacion= 33.3;
                 }else if(cantidadCeros==2){
                     porcentajeAsignacion= 66.6;
+                }else if(cantidadCeros==0){
+                    porcentajeAsignacion= 0.0;
                 }
                 
-                Double porcentajeConfiguracion = (double)(unidadesConfiguradas.size()/unidadesMaterias.size())*100;
-                Double porcentajeValidacion = (double)(unidadesValidadas/unidadesConfiguradas.size())*100;
-                Double porcentajePlaneacion = (double)((porcentajeConfiguracion + porcentajeAsignacion + porcentajeValidacion)/3);
+                Double porcentajeConfiguracion=0.0, porcentajeValidacion = 0.0, porcentajePlaneacion = 0.0;
+                
+                if(!unidadesConfiguradas.isEmpty()){
+                    porcentajeConfiguracion = (double)(unidadesConfiguradas.size()/unidadesMaterias.size())*100;
+                    porcentajeValidacion = (double)(unidadesValidadas/unidadesConfiguradas.size())*100;
+                }
+                
+                
+                if(porcentajeAsignacion>0){
+                    porcentajePlaneacion = (double)((porcentajeConfiguracion + porcentajeAsignacion + porcentajeValidacion)/3);
+                }
                 
                 DtoReportePlaneacionDocente dtoReportePlaneacionDocente = new DtoReportePlaneacionDocente(carga, periodo, planEstudioMateria, programa, docente, unidadesMaterias.size(), unidadesConfiguradas.size(), unidadesValidadas, evidenciasSer, evidenciasSaber, evidenciasSaberHacer, asignacionCompleta, String.format("%.2f",porcentajeConfiguracion), String.format("%.2f",porcentajeAsignacion), String.format("%.2f",porcentajeValidacion), String.format("%.2f",porcentajePlaneacion));
                 listaPlaneaciones.add(dtoReportePlaneacionDocente);
