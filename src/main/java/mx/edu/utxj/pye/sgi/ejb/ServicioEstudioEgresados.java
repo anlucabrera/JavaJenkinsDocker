@@ -13,9 +13,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import lombok.NonNull;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstudioEgresadosResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionEstudioEgresadosResultadosPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.entity.sescolares.Alumno;
@@ -598,6 +600,31 @@ public class ServicioEstudioEgresados implements EjbEstudioEgresados {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Obtiene al estudiante de Control Escolar según la generación y el grado
+     * @param generacion Generacion
+     * @param grado Grados
+     * @return Estudiante CE
+     */
+    @Override
+    public Estudiante getEstudiante(@NonNull Integer generacion, @NonNull Integer grado, @NonNull Integer matricula) {
+        if(generacion==0){return null;}
+        if(grado==0){return null;}
+
+        Estudiante e=em.createQuery("select e from Estudiante  e inner join e.grupo g where e.matricula=:matricula and g.generacion=:generacion and g.grado=:grado and (e.tipoEstudiante.idTipoEstudiante=:tipo or e.tipoEstudiante.idTipoEstudiante=:tipo2)",Estudiante.class)
+                .setParameter("grado",grado)
+                .setParameter("generacion",generacion)
+                .setParameter("tipo",1)
+                .setParameter("tipo2",4)
+                .setParameter("matricula",matricula)
+                .getResultStream()
+                .findFirst()
+                .orElse(null)
+                ;
+        if(e!=null){return e;}
+        else {return null;}
     }
 
 }

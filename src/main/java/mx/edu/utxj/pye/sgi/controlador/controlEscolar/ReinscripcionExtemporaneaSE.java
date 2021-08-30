@@ -151,7 +151,6 @@ public class ReinscripcionExtemporaneaSE extends ViewScopedRol implements Desarr
             ResultadoEJB<List<Estudiante>> resEstudiByPeriodoAnte = ejbReinscripcionExtemporaneaSE.getEstudiantesActivosbyPeriodoAnterior(rol.getEventoEscolar());
             if(resEstudiByPeriodoAnte.getCorrecto()==true){
                 rol.setListEstudiantesPeriodoAnterior(resEstudiByPeriodoAnte.getValor());
-
             }else {mostrarMensajeResultadoEJB(resEstudiByPeriodoAnte);}
 
         }catch (Exception e){
