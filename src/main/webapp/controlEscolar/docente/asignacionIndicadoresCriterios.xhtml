@@ -352,8 +352,8 @@
                                                            <p:autoUpdate />
                                                        </p:inputSwitch>
                                                        <p:message for="agregarEvidencia" display="tooltip" />-->
-                                                       <p:outputLabel for="agregarEvidencia" style="font-size: large" value="#{asignacionIndicadoresCriteriosDocente.rol.agregarEvidencia?'No agregará más evidencias':'Agregar más evidencias'}"/>
-                                                       <p:selectOneRadio id="agregarEvidencia" value="#{asignacionIndicadoresCriteriosDocente.rol.valorAgregarEvid}" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarValorAgregEvid}">
+                                                       <p:outputLabel for="agregarEvidencia" style="font-size: large" value="#{asignacionIndicadoresCriteriosDocente.rol.agregarEvidencia?'No agregará más evidencias':'Agregar más evidencias'}" rendered="#{asignacionIndicadoresCriteriosDocente.rol.listaEvidenciasSugeridas.size()>0}"/>
+                                                       <p:selectOneRadio id="agregarEvidencia" value="#{asignacionIndicadoresCriteriosDocente.rol.valorAgregarEvid}" valueChangeListener="#{asignacionIndicadoresCriteriosDocente.cambiarValorAgregEvid}" rendered="#{asignacionIndicadoresCriteriosDocente.rol.listaEvidenciasSugeridas.size()>0}">
                                                            <f:selectItem itemLabel="Sí" itemValue="Si" />
                                                            <f:selectItem itemLabel="No" itemValue="No" />
                                                            <p:ajax update="tbAgregarEvid" process="@this"/>
@@ -436,7 +436,7 @@
                                                        <br />
                                                        <br />
                                                        <p:dataTable id="tbEvidInstSug" var="evidInstSug" value="#{asignacionIndicadoresCriteriosDocente.rol.listaEvidenciasSugeridas}"
-                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive">
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive" emptyMessage="No hay registros, debe esperar a que dirección de carrera cargue la información correspondiente">
                                                         <f:facet name="header">
                                                             #{asignacionIndicadoresCriteriosDocente.rol.carga.materia.nombre}
                                                         </f:facet>
