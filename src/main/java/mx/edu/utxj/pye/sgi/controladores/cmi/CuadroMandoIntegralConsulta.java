@@ -110,7 +110,11 @@ public class CuadroMandoIntegralConsulta implements Serializable {
     public void asignarEjeEvaluado(ValueChangeEvent event) {
         reseteador();
         claveEjeR = Integer.parseInt(event.getNewValue().toString());
-        ejeSeleccionado();
+        if (claveEjeR == 0) {
+            generaCmiGeneral();
+        } else {
+            ejeSeleccionado();
+        }
     }
     
     public void consultaejes() {
@@ -166,7 +170,7 @@ public class CuadroMandoIntegralConsulta implements Serializable {
     public DtoCmi.ResultadosCMI generaCmiPorEje(EjesRegistro eje) {
         actividadesPoas = new ArrayList<>();
         actividadesPoas.clear();
-        if(claveEjeR != 0){
+        if(claveArea != 0){
             actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasEje(claveArea, ejercicioFiscal.getEjercicioFiscal(),eje).stream().filter(t -> t.getBandera().equals("y")).collect(Collectors.toList());
         }else{
             actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasUniversidadaEjeyEjercicioFiscal(ejercicioFiscal.getEjercicioFiscal(),eje).stream().filter(t -> t.getBandera().equals("y")).collect(Collectors.toList());
@@ -430,32 +434,52 @@ public class CuadroMandoIntegralConsulta implements Serializable {
         resumenCpromedioSp = 0D;
         if (numeroMes >= 0 && numeroMes <= 3) {
             if (Objects.equals(m, numeroMes)) {
-                resumenCpromedioSp = (resumenCalcanzadas * 100D) / resumenCprogramadas;
+                if (resumenCprogramadas == 0) {
+                    resumenCpromedioSp = (resumenCalcanzadas * 100D);
+                } else {
+                    resumenCpromedioSp = (resumenCalcanzadas * 100D) / resumenCprogramadas;
+                }
                 resumenCpromedioCP = promedioPenalizado(resumenCpromedioSp);
-                resumen.add(new DtoCmi.ConcentradoDatos("Cuatrimestre Enero-Abril", resumenCprogramadas, resumenCalcanzadas, resumenCnoalcanzadas, resumenCpromedioSp, resumenCpromedioCP, poau.obtenerSemaforo(resumenCpromedioSp), poau.obtenerSemaforo(resumenCpromedioCP),Boolean.TRUE));
+                resumen.add(new DtoCmi.ConcentradoDatos("Cuatrimestre Enero-Abril", resumenCprogramadas, resumenCalcanzadas, resumenCnoalcanzadas, resumenCpromedioSp, resumenCpromedioCP, poau.obtenerSemaforo(resumenCpromedioSp), poau.obtenerSemaforo(resumenCpromedioCP), Boolean.TRUE));
                 reseteaConteoCuatrimestral();
             }
         } else if (m == 3) {
-            resumenCpromedioSp = (resumenCalcanzadas * 100D) / resumenCprogramadas;
+            if (resumenCprogramadas == 0) {
+                resumenCpromedioSp = (resumenCalcanzadas * 100D);
+            } else {
+                resumenCpromedioSp = (resumenCalcanzadas * 100D) / resumenCprogramadas;
+            }
             resumenCpromedioCP = promedioPenalizado(resumenCpromedioSp);
-            resumen.add(new DtoCmi.ConcentradoDatos("Cuatrimestre Enero-Abril", resumenCprogramadas, resumenCalcanzadas, resumenCnoalcanzadas, resumenCpromedioSp, resumenCpromedioCP, poau.obtenerSemaforo(resumenCpromedioSp), poau.obtenerSemaforo(resumenCpromedioCP),Boolean.TRUE));
+            resumen.add(new DtoCmi.ConcentradoDatos("Cuatrimestre Enero-Abril", resumenCprogramadas, resumenCalcanzadas, resumenCnoalcanzadas, resumenCpromedioSp, resumenCpromedioCP, poau.obtenerSemaforo(resumenCpromedioSp), poau.obtenerSemaforo(resumenCpromedioCP), Boolean.TRUE));
             reseteaConteoCuatrimestral();
         } else if (numeroMes >= 4 && numeroMes <= 7) {
             if (Objects.equals(m, numeroMes)) {
-                resumenCpromedioSp = (resumenCalcanzadas * 100D) / resumenCprogramadas;
+                if (resumenCprogramadas == 0) {
+                    resumenCpromedioSp = (resumenCalcanzadas * 100D);
+                } else {
+                    resumenCpromedioSp = (resumenCalcanzadas * 100D) / resumenCprogramadas;
+                }
                 resumenCpromedioCP = promedioPenalizado(resumenCpromedioSp);
-                resumen.add(new DtoCmi.ConcentradoDatos("Cuatrimestre Mayo-Agosto", resumenCprogramadas, resumenCalcanzadas, resumenCnoalcanzadas, resumenCpromedioSp, resumenCpromedioCP, poau.obtenerSemaforo(resumenCpromedioSp), poau.obtenerSemaforo(resumenCpromedioCP),Boolean.TRUE));
+                resumen.add(new DtoCmi.ConcentradoDatos("Cuatrimestre Mayo-Agosto", resumenCprogramadas, resumenCalcanzadas, resumenCnoalcanzadas, resumenCpromedioSp, resumenCpromedioCP, poau.obtenerSemaforo(resumenCpromedioSp), poau.obtenerSemaforo(resumenCpromedioCP), Boolean.TRUE));
                 reseteaConteoCuatrimestral();
             }
         } else if (m == 7) {
-            resumenCpromedioSp = (resumenCalcanzadas * 100D) / resumenCprogramadas;
+            if (resumenCprogramadas == 0) {
+                resumenCpromedioSp = (resumenCalcanzadas * 100D);
+            } else {
+                resumenCpromedioSp = (resumenCalcanzadas * 100D) / resumenCprogramadas;
+            }
             resumenCpromedioCP = promedioPenalizado(resumenCpromedioSp);
-            resumen.add(new DtoCmi.ConcentradoDatos("Cuatrimestre Mayo-Agosto", resumenCprogramadas, resumenCalcanzadas, resumenCnoalcanzadas, resumenCpromedioSp, resumenCpromedioCP, poau.obtenerSemaforo(resumenCpromedioSp), poau.obtenerSemaforo(resumenCpromedioCP),Boolean.TRUE));
+            resumen.add(new DtoCmi.ConcentradoDatos("Cuatrimestre Mayo-Agosto", resumenCprogramadas, resumenCalcanzadas, resumenCnoalcanzadas, resumenCpromedioSp, resumenCpromedioCP, poau.obtenerSemaforo(resumenCpromedioSp), poau.obtenerSemaforo(resumenCpromedioCP), Boolean.TRUE));
             reseteaConteoCuatrimestral();
         } else if (numeroMes >= 8 && numeroMes <= 11) {
-            resumenCpromedioSp = (resumenCalcanzadas * 100D) / resumenCprogramadas;
+            if (resumenCprogramadas == 0) {
+                resumenCpromedioSp = (resumenCalcanzadas * 100D);
+            } else {
+                resumenCpromedioSp = (resumenCalcanzadas * 100D) / resumenCprogramadas;
+            }
             resumenCpromedioCP = promedioPenalizado(resumenCpromedioSp);
-            resumen.add(new DtoCmi.ConcentradoDatos("Cuatrimestre Septiembre-Diciembre", resumenCprogramadas, resumenCalcanzadas, resumenCnoalcanzadas, resumenCpromedioSp, resumenCpromedioCP, poau.obtenerSemaforo(resumenCpromedioSp), poau.obtenerSemaforo(resumenCpromedioCP),Boolean.TRUE));
+            resumen.add(new DtoCmi.ConcentradoDatos("Cuatrimestre Septiembre-Diciembre", resumenCprogramadas, resumenCalcanzadas, resumenCnoalcanzadas, resumenCpromedioSp, resumenCpromedioCP, poau.obtenerSemaforo(resumenCpromedioSp), poau.obtenerSemaforo(resumenCpromedioCP), Boolean.TRUE));
             reseteaConteoCuatrimestral();
         }
     }
