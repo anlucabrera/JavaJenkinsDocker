@@ -61,7 +61,7 @@ public class ControladorEstudianteRegistro implements Serializable{
     @Getter private String matricula;
     @Getter @Setter private Integer pestaniaActiva;
     
-    @Getter @Setter private Alumnos estudiante;
+    @Getter @Setter private Alumnos estudiante, estudianteIngLic;
    
     @EJB private EjbEstudianteRegistro ejbEstudianteRegistro;
     
@@ -111,7 +111,6 @@ public class ControladorEstudianteRegistro implements Serializable{
         try {
             matricula = logonMB.getCurrentUser();
             estudiante = ejbEstudianteRegistro.obtenerInformacionAlumno(matricula);
-            System.err.println("estudiante - grado: " + estudiante.getGradoActual() + " periodo: "+ estudiante.getGrupos().getGruposPK().getCvePeriodo());
             selectGeneros();
 //            if (estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11) {
 //                procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
@@ -156,7 +155,6 @@ public class ControladorEstudianteRegistro implements Serializable{
                 }
             } else if (estudiante.getGradoActual() == 7 || estudiante.getGradoActual() == 8 || estudiante.getGradoActual() == 9) {
                 estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
-                System.err.println("obtenerInformacionTSUAlumno " + estudiante.getAlumnosPK().getCveAlumno());
                 if (estudiante == null) {
                     cargada = false;
                 } else {
@@ -275,6 +273,109 @@ public class ControladorEstudianteRegistro implements Serializable{
 //                                listaEstadosIEMS = eJBSelectItems.itemEstados();    
 //                                selectMunicipio();
 //                                selectAsentamiento();
+                                    
+                            }
+
+                        }
+                    }
+                
+                }
+                
+            } 
+            /* Apartado para integración estudiantes generación 2019 - 2021 Ing. y Lic.*/
+            else if (estudiante.getGradoActual() == 10 && estudiante.getGrupos().getGruposPK().getCvePeriodo() == 58) {
+                estudianteIngLic = estudiante;
+                expedienteRegistrado = ejbEstudianteRegistro.buscarExpedienteTSU1820(estudiante);
+                if(expedienteRegistrado == null) {
+                    estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
+                    if (estudiante == null) {
+                        cargada = false;
+                    } else {
+                        if(ejbEstudianteRegistro.existeRegistroProcesoIntExp(estudiante) != null){
+                            procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
+                            if (procesosIntexp == null) {
+                            cargada = false;
+                            } else {
+                            cargada = true;
+
+                            progresoExpediente = 0;
+                            datosPerVal();
+                            datosContVal();
+                            datosAntAcad();
+                            consultarStatusExpediente();
+                            listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+                            listaEstadosIEMS = eJBSelectItems.itemEstados();
+
+                            }
+                        }else{
+                            estudiante = estudianteIngLic;
+                            procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
+
+                            if (procesosIntexp == null) {
+                                cargada = false;
+                            } else {
+                                cargada = true;
+
+                                progresoExpediente = 0;
+                                datosPerVal();
+                                datosContVal();
+                                datosAntAcad();
+                                consultarStatusExpediente();
+                                listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+                                listaEstadosIEMS = eJBSelectItems.itemEstados();
+
+                            }
+                        }
+                    }
+                
+                }else {
+                    fotografiaCargada = ejbEstudianteRegistro.buscarFotografiaExpedienteTSU(expedienteRegistrado);
+                    if (fotografiaCargada == null) {
+                        estudiante = ejbEstudianteRegistro.obtenerInformacionTSUAlumno(matricula);
+
+                        if (estudiante == null) {
+                            cargada = false;
+                        } else {
+                            procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
+
+                            if (procesosIntexp == null) {
+                                cargada = false;
+                            } else {
+                                cargada = true;
+
+                                progresoExpediente = 0;
+                                datosPerVal();
+                                datosContVal();
+                                datosAntAcad();
+                                consultarStatusExpediente();
+                                listaEstadosDomicilioRadica = eJBSelectItems.itemEstados();
+                                listaEstadosIEMS = eJBSelectItems.itemEstados();
+
+                            }
+                        }
+
+                    } else {
+                        estudiante = ejbEstudianteRegistro.obtenerInformacionAlumno(matricula);
+                        procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
+
+                        if (procesosIntexp == null) {
+                            cargada = false;
+                        } else {
+                            cargada = true;
+                            expedienteRegContinuacion = ejbEstudianteRegistro.buscarExpedienteContinuacion(estudiante, procesosIntexp.getProceso());
+                            if(expedienteRegContinuacion==null){
+                                nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(matricula);
+                                guardarExpedienteContinuacion(nuevoOBJegresado,procesosIntexp,estudiante,expedienteRegistrado);
+                                progresoExpediente = 80;
+                                consultarExpedienteContinuacion();
+                            }else{
+                                if(ejbEstudianteRegistro.buscarFotografiaExpedienteContinuidad(expedienteRegContinuacion)== null){
+                                    progresoExpediente = 80;
+                                }else{
+                                    progresoExpediente = 100;
+                                }
+                                nuevoOBJegresado = ejbEstudianteRegistro.mostrarDatosPersonales(matricula);
+                                consultarExpedienteContinuacion();
                                     
                             }
 
@@ -687,6 +788,9 @@ public class ControladorEstudianteRegistro implements Serializable{
             expedienteRegContinuacion = ejbEstudianteRegistro.buscarExpedienteContinuacion(estudiante, procesosIntexp.getProceso());
             consultarStatusExpedienteContinuacion();
             consultarRegistroDatosPer(matricula);
+            datosPerVal();
+            datosContVal();
+            datosAntAcad();
             nuevoOBJexpediente = expedienteRegContinuacion;
             nuevoOBJdomicilio = ejbEstudianteRegistro.buscarDomicilioExpediente(expedienteRegContinuacion);
             nuevoOBJdatosCont = ejbEstudianteRegistro.buscarDatosContactoExpediente(expedienteRegContinuacion);

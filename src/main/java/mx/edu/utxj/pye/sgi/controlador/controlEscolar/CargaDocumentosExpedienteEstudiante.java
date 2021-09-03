@@ -76,17 +76,20 @@ public class CargaDocumentosExpedienteEstudiante implements Serializable{
             String generacion = dtoExpedienteTitulacion.getGeneracion().getInicio() + "-" + dtoExpedienteTitulacion.getGeneracion().getFin();
 
             Documento documentoTitulacion = ejbIntegracionExpedienteTitulacion.obtenerInformacionDocumento(claveDoc);
+            
+            DocumentoExpedienteTitulacion nuevoDocExp = new DocumentoExpedienteTitulacion();
            
-            documentoExpedienteTitulacion.setExpediente(dtoExpedienteTitulacion.getExpediente());
-            documentoExpedienteTitulacion.setDocumento(documentoTitulacion);
+            nuevoDocExp.setExpediente(dtoExpedienteTitulacion.getExpediente());
+            nuevoDocExp.setDocumento(documentoTitulacion);
 
             String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
-            documentoExpedienteTitulacion.setRuta(utilidadesCH.agregarDocExpTit(fileFotoIL, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
-            documentoExpedienteTitulacion.setFechaCarga(new Date());
-            documentoExpedienteTitulacion.setObservaciones("Sin revisar");
-            documentoExpedienteTitulacion.setValidado(false);
-            documentoExpedienteTitulacion.setFechaValidacion(null);
-            documentoExpedienteTitulacion = ejbIntegracionExpedienteTitulacion.guardarDocumentoExpediente(documentoExpedienteTitulacion);
+            nuevoDocExp.setRuta(utilidadesCH.agregarDocExpTit(fileFotoIL, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
+            nuevoDocExp.setFechaCarga(new Date());
+            nuevoDocExp.setObservaciones("Sin revisar");
+            nuevoDocExp.setValidado(false);
+            nuevoDocExp.setFechaValidacion(null);
+            nuevoDocExp = ejbIntegracionExpedienteTitulacion.guardarDocumentoExpediente(nuevoDocExp);
+            integracionExpedienteTitulacionEstudiante.existeExpedienteTitulacion();
             Ajax.update("frmDocsExp");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());

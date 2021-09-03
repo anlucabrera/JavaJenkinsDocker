@@ -115,7 +115,7 @@ public class ServicioArchivos implements Serializable{
             Logger.getLogger(ServicioArchivos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-           
+    
     
     /**
      * Genera la carpeta relativa, la cual se compone de la carpeta raíz y los

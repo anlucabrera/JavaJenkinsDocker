@@ -741,6 +741,28 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
         }
         return exp;
     }
+    
+    @Override
+    public ExpedientesTitulacion buscarExpedienteTSU1820(Alumnos estudiante) {
+        //verificar que el parametro no sea nulo
+        if (estudiante == null) {
+            return null;
+        }
+        List<Integer> procesosTSU = new ArrayList<>(); procesosTSU.add(2); procesosTSU.add(4);
+        
+        ExpedientesTitulacion exp = new  ExpedientesTitulacion();
+        
+        TypedQuery<ExpedientesTitulacion> expTit = facade.getEntityManager().createQuery("SELECT e FROM ExpedientesTitulacion e WHERE e.matricula.matricula =:matricula AND e.proceso.proceso IN :proceso", ExpedientesTitulacion.class);
+        expTit.setParameter("matricula", estudiante.getMatricula());
+        expTit.setParameter("proceso", procesosTSU);
+        
+        try {
+            exp = expTit.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            exp = null;
+        }
+        return exp;
+    }
         
     @Override
     public DocumentosExpediente buscarFotografiaExpedienteTSU(ExpedientesTitulacion expedientesTitulacion) {
@@ -844,5 +866,22 @@ public class ServiceEstudianteRegistro implements EjbEstudianteRegistro{
             docExp = null;
         }
         return docExp;
+    }
+
+    @Override
+    public ProcesosGeneraciones existeRegistroProcesoIntExp(Alumnos estudiante) {
+        ProcesosGeneraciones proceso = new ProcesosGeneraciones();
+        
+        TypedQuery<ProcesosGeneraciones> query = facade.getEntityManager().createQuery("SELECT p FROM ProcesosGeneraciones p WHERE p.procesosGeneracionesPK.grado = :grado AND p.procesosGeneracionesPK.periodo = :periodo", ProcesosGeneraciones.class);
+        query.setParameter("grado", estudiante.getGradoActual());
+        query.setParameter("periodo", estudiante.getGrupos().getGruposPK().getCvePeriodo());
+        
+        try {
+            proceso = query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            proceso = null;
+        }
+        return proceso;
+        
     }
 }

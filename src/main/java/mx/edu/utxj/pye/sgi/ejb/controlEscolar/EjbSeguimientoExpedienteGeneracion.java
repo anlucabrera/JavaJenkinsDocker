@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,7 @@ import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoExpedienteTitulacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoTitulacion;
 import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Viewregalumnosnoadeudo;
@@ -34,6 +36,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 
 /**
  *
@@ -196,7 +199,14 @@ public class EjbSeguimientoExpedienteGeneracion {
                     .getResultList();
           
             programasEventos.forEach(programaEvento -> {
-                AreasUniversidad programa = em.find(AreasUniversidad.class, programaEvento.getMatricula().getCarrera());
+                Estudiante ultRegEstudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.periodo DESC", Estudiante.class)
+                    .setParameter("matricula",  programaEvento.getMatricula().getMatricula())
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+                  
+                AreasUniversidad programa = em.find(AreasUniversidad.class, ultRegEstudiante.getCarrera());
                 listaProgramas.add(programa);
             });
             
@@ -324,6 +334,10 @@ public class EjbSeguimientoExpedienteGeneracion {
                 ruta = "C:\\archivos\\formatosTitulacion\\sinFotografia.png";
             } else {
                 ruta = docExp.getRuta();
+                File f = new File(ruta);
+                if (!f.exists()) {
+                    ruta = "C:\\archivos\\formatosTitulacion\\sinFotografia.png";
+                }
             }
         return ResultadoEJB.crearCorrecto(ruta, "Se realizó la búsqueda de la fotografía correctamente.");
         }catch (Exception e){

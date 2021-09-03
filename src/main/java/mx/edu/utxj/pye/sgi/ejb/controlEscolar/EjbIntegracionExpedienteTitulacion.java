@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,6 +85,7 @@ public class EjbIntegracionExpedienteTitulacion {
     
     /**
      * Permite validar usuario de estudiante con situación regular o egresado
+     * @param matricula
      * @return Resultado del proceso
      */
     public ResultadoEJB<Estudiante> validaEstudiante(Integer matricula){
@@ -92,14 +94,28 @@ public class EjbIntegracionExpedienteTitulacion {
             listaTipos.add((short)1);
             listaTipos.add((short)4);
             
-            PeriodosEscolares periodo = getPeriodoActual();
             
-            Estudiante e = em.createQuery("SELECT e FROM Estudiante as e WHERE e.matricula = :matricula AND e.tipoEstudiante.idTipoEstudiante IN :listaTipos AND e.periodo =:periodo", Estudiante.class)
+            Estudiante e = em.createQuery("SELECT e FROM Estudiante as e WHERE e.matricula = :matricula ORDER BY e.periodo DESC", Estudiante.class)
                     .setParameter("matricula", matricula)
-                    .setParameter("listaTipos", listaTipos)
-                    .setParameter("periodo", periodo.getPeriodo())
                     .getResultStream().findFirst().orElse(null);
             
+                Estudiante estudianteTSU = new Estudiante();
+             
+                if(e.getGrupo().getGrado()>6){
+            
+                    estudianteTSU = em.createQuery("SELECT e FROM Estudiante as e WHERE e.matricula = :matricula AND e.tipoEstudiante.idTipoEstudiante IN :listaTipos AND e.grupo.grado=:grado", Estudiante.class)
+                        .setParameter("matricula", e.getMatricula())
+                        .setParameter("listaTipos", listaTipos)
+                        .setParameter("grado", 6)
+                        .getResultStream().findFirst().orElse(null);
+                
+                    if(estudianteTSU != null){
+                        ExpedienteTitulacion expedienteTitulacionTSU = buscarExpedienteRegistrado(estudianteTSU).getValor();
+                        if(!expedienteTitulacionTSU.getPasoRegistro().equals("Fin Integración")){
+                            e = estudianteTSU;
+                        }
+                    }
+                }
             return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El estudiante no se pudo validar. (EjbIntegracionExpedienteTitulacion.validadEstudiante)", e, null);
@@ -113,14 +129,18 @@ public class EjbIntegracionExpedienteTitulacion {
      */
     public ResultadoEJB<EventoTitulacion> verificarEvento(Estudiante estudiante){
          try{
-            AreasUniversidad programa = em.find(AreasUniversidad.class, estudiante.getCarrera());
-            //verificar apertura del evento
-            EventoTitulacion evento = em.createQuery("select e from EventoTitulacion e where e.generacion =:generacion and e.nivel =:nivel and current_timestamp between e.fechaInicio and e.fechaFin", EventoTitulacion.class)
-                    .setParameter("generacion", estudiante.getGrupo().getGeneracion())
-                    .setParameter("nivel", programa.getNivelEducativo().getNivel())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
+            EventoTitulacion evento = null;
+            
+            if(estudiante.getTipoEstudiante().getIdTipoEstudiante()==1 || estudiante.getTipoEstudiante().getIdTipoEstudiante()==4){
+                AreasUniversidad programa = em.find(AreasUniversidad.class, estudiante.getCarrera());
+                //verificar apertura del evento
+                evento = em.createQuery("select e from EventoTitulacion e where e.generacion =:generacion and e.nivel =:nivel and current_timestamp between e.fechaInicio and e.fechaFin", EventoTitulacion.class)
+                        .setParameter("generacion", estudiante.getGrupo().getGeneracion())
+                        .setParameter("nivel", programa.getNivelEducativo().getNivel())
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
+            }
             
             if(evento == null){
                 return ResultadoEJB.crearErroneo(2,evento, "No existe evento aperturado actualmente.");// .crearCorrecto(map.entrySet().iterator().next(), "Evento aperturado.");
@@ -224,9 +244,11 @@ public class EjbIntegracionExpedienteTitulacion {
 
             ExpedienteTitulacion expedienteBD = em.find(ExpedienteTitulacion.class, expediente.getExpediente());
             if(expedienteBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar un expediente de titulación no registrado previamente en base de datos.", DtoExpedienteTitulacion.class);
-                       
-            Estudiante ultRegEstudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula ORDER BY e.idEstudiante DESC", Estudiante.class)
+            
+            
+            Estudiante ultRegEstudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.periodo DESC", Estudiante.class)
                     .setParameter("matricula", expediente.getMatricula().getMatricula())
+                    .setParameter("generacion", expediente.getEvento().getGeneracion())
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
@@ -242,7 +264,7 @@ public class EjbIntegracionExpedienteTitulacion {
             String fechaIntExp = sm.format(expedienteBD.getFechaRegistro());
             String fechaNacimiento = sm.format(expedienteBD.getMatricula().getAspirante().getIdPersona().getFechaNacimiento());
             
-            AreasUniversidad progEdu = em.find(AreasUniversidad.class, expedienteBD.getMatricula().getCarrera());
+            AreasUniversidad progEdu = em.find(AreasUniversidad.class, ultRegEstudiante.getCarrera());
             
             List<DtoPagosEstudianteFinanzas> listaPagos = getListaDtoPagosEstudianteFinanzas(expedienteBD.getMatricula().getMatricula()).getValor();
             
@@ -277,9 +299,18 @@ public class EjbIntegracionExpedienteTitulacion {
             DatosAcademicos datosAcademicos = em.find(DatosAcademicos.class, expedienteBD.getMatricula().getAspirante().getIdAspirante());
             Iems iems = em.find(Iems.class, datosAcademicos.getInstitucionAcademica());
             Localidad locIems = em.find(Localidad.class, iems.getLocalidad().getLocalidadPK());
-            List<DocumentoProceso> numTotal = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso =:proceso", DocumentoProceso.class)
+            
+            List<DocumentoProceso> numTotal = new ArrayList<>();
+            
+            if(expedienteBD.getEvento().getNivel().equals("TSU")){
+                numTotal = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso =:proceso", DocumentoProceso.class)
                     .setParameter("proceso", "TitulacionTSU")
                     .getResultList();
+            }else{
+                numTotal = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso =:proceso", DocumentoProceso.class)
+                    .setParameter("proceso", "TitulacionIngLic")
+                    .getResultList();
+            }
             
             FechaTerminacionTitulacion fechaTerminacionTitulacion = em.createQuery("SELECT f FROM FechaTerminacionTitulacion f WHERE f.generacion =:generacion AND f.nivel =:nivel", FechaTerminacionTitulacion.class)
                     .setParameter("generacion", expedienteBD.getEvento().getGeneracion())
@@ -304,6 +335,8 @@ public class EjbIntegracionExpedienteTitulacion {
             List<DocumentoExpedienteTitulacion> documentosExpediente = em.createQuery("SELECT d FROM DocumentoExpedienteTitulacion d WHERE d.expediente.expediente =:expediente", DocumentoExpedienteTitulacion.class)
                 .setParameter("expediente", expediente.getExpediente())
                 .getResultList();
+            
+            documentosExpediente = buscarDocumentosExpedienteFísico(documentosExpediente).getValor();
             
             return ResultadoEJB.crearCorrecto(documentosExpediente, "La búsqueda de documentos se ha realizado correctamente.");
         }catch (Throwable e){
@@ -732,6 +765,33 @@ public class EjbIntegracionExpedienteTitulacion {
             return ResultadoEJB.crearCorrecto(expedienteTitulacion, "Los datos de promedio y servicio social se han actualizado correctamente.");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo actualizar los datos de promedio y servicio social. (EjbIntegracionExpedienteTitulacion.actualizarDatosTitulacion)", e, null);
+        }
+    }
+    
+     /**
+     * Permite consultar documentos que tiene registrado el expediente de titulación
+     * @param documentosExpedienteTitulacion
+     * @return Lista de documentos registrados
+     */
+    public ResultadoEJB<List<DocumentoExpedienteTitulacion>> buscarDocumentosExpedienteFísico(List<DocumentoExpedienteTitulacion> documentosExpedienteTitulacion) {
+        try{
+            
+            List<DocumentoExpedienteTitulacion> documentosExpedienteExisten = new ArrayList<>();
+            documentosExpedienteTitulacion.forEach((documento) -> {
+                File f = new File(documento.getRuta());
+                if (!f.exists()) {
+                      System.err.println("No existe el siguiente documento " + documento.getRuta());
+//                    em.remove(documento);
+//                    em.flush();
+                }else{
+                    documentosExpedienteExisten.add(documento);
+                }
+            });
+            
+            
+            return ResultadoEJB.crearCorrecto(documentosExpedienteExisten, "La búsqueda de documentos se ha realizado correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de documentos. (EjbIntegracionExpedienteTitulacion.buscarDocumentosExpedienteFísico)", e, null);
         }
     }
 }
