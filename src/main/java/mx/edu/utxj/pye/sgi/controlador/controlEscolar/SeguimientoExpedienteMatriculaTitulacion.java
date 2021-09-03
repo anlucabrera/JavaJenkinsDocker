@@ -20,6 +20,7 @@ import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoExpedienteTitulacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoTitulacionEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.SeguimientoExpedienteMatriculaRolTitulacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbIntegracionExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoExpedienteGeneracion;
@@ -55,7 +56,7 @@ public class SeguimientoExpedienteMatriculaTitulacion extends ViewScopedRol impl
     @Getter @Setter private ExpedienteTitulacion expedienteTit;
     @Getter @Setter private DtoExpedienteTitulacion nuevoDtoExpMat;
     
-    @Getter @Setter private List<DocumentoExpedienteTitulacion> listaDocsExp;
+    @Getter @Setter private List<DtoDocumentoTitulacionEstudiante> listaDocsExp;
     
     @Inject MostrarFotoExpSegMatriculaTitulacion mostrarFotoExpSegMatriculaTitulacion;
     
@@ -165,7 +166,7 @@ public class SeguimientoExpedienteMatriculaTitulacion extends ViewScopedRol impl
     }
     
      public void obtenerListaDocumentosExpediente() {
-        ResultadoEJB<List<DocumentoExpedienteTitulacion>> res = ejb.obtenerListaDocumentosExpediente(rol.getDtoExpedienteTitulacion().getExpediente());
+        ResultadoEJB<List<DtoDocumentoTitulacionEstudiante>> res = ejb.obtenerListaDocumentosExpediente(rol.getDtoExpedienteTitulacion().getExpediente());
         if(res.getCorrecto()){
             setListaDocsExp(res.getValor());
             Ajax.update("frmDocsExp");

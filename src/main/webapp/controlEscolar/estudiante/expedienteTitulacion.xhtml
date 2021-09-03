@@ -543,10 +543,7 @@
                                                                                         <p:column style="text-align: center;"><h:outputText value="#{!empty status?'Si':'No'}"/></p:column>
                                                                                         <p:column style="text-align: justify;"><h:outputText value="#{docsExp.observaciones}" /></p:column>
                                                                                         <p:column style="text-align: center;"><h:outputText value="#{docsExp.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
-                                                                                        <f:facet name="footer">
-                                                                                            <span style="font-size: smaller; font-weight: bold;">Total de Archivos cargados: #{integracionExpedienteTitulacionEstudiante.rol.dtoExpedienteTitulacion.docsExp} de #{integracionExpedienteTitulacionEstudiante.rol.dtoExpedienteTitulacion.docsTotalExp} .</span>
-                                                                                        </f:facet>
-                                                                                    </p:dataTable>
+                                                                                     </p:dataTable>
                                                                                 </h:form>
                                                                             </div>
                                                                         </div>                                                                        

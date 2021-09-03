@@ -307,9 +307,16 @@ public class EjbIntegracionExpedienteTitulacion {
                     .setParameter("proceso", "TitulacionTSU")
                     .getResultList();
             }else{
-                numTotal = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso =:proceso", DocumentoProceso.class)
-                    .setParameter("proceso", "TitulacionIngLic")
-                    .getResultList();
+                if(ultRegEstudiante.getGrupo().getIdPe()==50){
+                    numTotal = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso =:proceso", DocumentoProceso.class)
+                     .setParameter("proceso", "TitulacionIngLic")
+                     .getResultList();
+                }else{
+                    numTotal = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso =:proceso AND d.documento.documento<>:documento", DocumentoProceso.class)
+                     .setParameter("proceso", "TitulacionIngLic")
+                     .setParameter("documento",32)
+                     .getResultList();
+                }
             }
             
             FechaTerminacionTitulacion fechaTerminacionTitulacion = em.createQuery("SELECT f FROM FechaTerminacionTitulacion f WHERE f.generacion =:generacion AND f.nivel =:nivel", FechaTerminacionTitulacion.class)
@@ -793,5 +800,18 @@ public class EjbIntegracionExpedienteTitulacion {
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de documentos. (EjbIntegracionExpedienteTitulacion.buscarDocumentosExpedienteFísico)", e, null);
         }
+    }
+    
+     /**
+     * Permite actualizar validación y observaciones de un documento en el expediente
+     * @param documentoExpedienteTitulacion
+     * @return Resultado del proceso
+     */
+    public DocumentoExpedienteTitulacion actualizarDocumentoExpediente(DocumentoExpedienteTitulacion documentoExpedienteTitulacion){
+        em.merge(documentoExpedienteTitulacion);
+        em.flush();
+        Messages.addGlobalInfo("<b>Se actualizó la validación y observaciones del documento correctamente </b>");
+            
+        return documentoExpedienteTitulacion;
     }
 }
