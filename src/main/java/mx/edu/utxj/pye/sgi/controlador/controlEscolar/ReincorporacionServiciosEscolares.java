@@ -375,17 +375,18 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         } else {
             carrera = rol.getDacademicos().getAcademicos().getSegundaOpcion();
         }
-        
+
         if (!rol.getEstudianteR().isEmpty()) {
             rol.getEstudianteR().forEach((t) -> {
                 if (t.getTipoEstudiante().getIdTipoEstudiante() != 2 && t.getTipoEstudiante().getIdTipoEstudiante() != 3) {
                     rol.setUltimoGrupoActivo(t.getGrupo());
                 }
             });
-        }
-        
-        if (rol.getUltimoGrupoActivo().getIdPe() == carrera) {
-            optenerGrupos(carrera, rol.getUltimoGrupoActivo().getGrado());
+            if (rol.getUltimoGrupoActivo().getIdPe() == carrera) {
+                optenerGrupos(carrera, rol.getUltimoGrupoActivo().getGrado());
+            } else {
+                optenerGrupos(carrera, 0);
+            }
         } else {
             optenerGrupos(carrera, 0);
         }

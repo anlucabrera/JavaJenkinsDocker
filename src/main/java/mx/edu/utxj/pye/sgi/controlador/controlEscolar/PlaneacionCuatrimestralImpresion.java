@@ -135,6 +135,11 @@ public class PlaneacionCuatrimestralImpresion extends ViewScopedRol implements D
                 rol.setCargas(resCarga2.getValor());
                 rol.setCarga(resCarga2.getValor().get(0));
             }
+            if (rol.getPeriodoActivo() <= 56) {
+                rol.setRender(Boolean.FALSE);
+            } else {
+                rol.setRender(Boolean.TRUE);
+            }
             existeAsignacion();
             rol.setFechaInpresion(new Date());
 //            existeConfiguracion();
