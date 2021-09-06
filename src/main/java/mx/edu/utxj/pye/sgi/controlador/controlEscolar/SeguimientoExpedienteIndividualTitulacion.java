@@ -24,6 +24,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoExpedienteTitulacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoTitulacionEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbIntegracionExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoExpedienteGeneracion;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
@@ -52,7 +53,7 @@ public class SeguimientoExpedienteIndividualTitulacion implements Serializable{
     @Getter @Setter private StreamedContent graphicImage;
     @Getter @Setter private String rutaFotografia;
     
-    @Getter @Setter private List<DocumentoExpedienteTitulacion> listaDocsExp;
+    @Getter @Setter private List<DtoDocumentoTitulacionEstudiante> listaDocsExp;
     
     @Inject LogonMB logonMB;
     @Inject CargaDocumentosExpSegGeneracionTitulacion cargaDocumentosExpedienteTitulacion;
@@ -131,7 +132,7 @@ public class SeguimientoExpedienteIndividualTitulacion implements Serializable{
     }
     
      public void obtenerListaDocumentosExpediente() {
-        ResultadoEJB<List<DocumentoExpedienteTitulacion>> res = ejbSeguimientoExpedienteGeneracion.obtenerListaDocumentosExpediente(dtoExpedienteTitulacion.getExpediente());
+        ResultadoEJB<List<DtoDocumentoTitulacionEstudiante>> res = ejbSeguimientoExpedienteGeneracion.obtenerListaDocumentosExpediente(dtoExpedienteTitulacion.getExpediente());
         if(res.getCorrecto()){
             setListaDocsExp(res.getValor());
             Ajax.update("tblDocsExp");

@@ -126,14 +126,14 @@
                                         </div>
                                         <div class="col-sm-12 col-md-12 col-lg-2">
                                             <div class="ui-material">
-                                                <p:calendar id="fechaInicio" locale="es" value="#{aperturaEventosEscolares.rol.fechaInicio}" mindate="#{aperturaEventosEscolares.rol.rangoFechaInicial}" pattern="dd-MM-yyyy" mask="true" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
+                                                <p:calendar id="fechaInicio" locale="es" value="#{aperturaEventosEscolares.rol.fechaInicio}" mindate="#{aperturaEventosEscolares.rol.evento.inicio}" pattern="dd-MM-yyyy" mask="true" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
                                                 <p:outputLabel value="Fecha Inicio" for="fechaInicio" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
                                                 <p:message for="fechaInicio" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
                                             </div>
                                         </div>
                                         <div class="col-sm-12 col-md-12 col-lg-2">
                                             <div class="ui-material">
-                                                <p:calendar id="fechaFin" locale="es" value="#{aperturaEventosEscolares.rol.fechaFin}" mindate="#{aperturaEventosEscolares.rol.rangoFechaInicial}" pattern="dd-MM-yyyy" mask="true" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
+                                                <p:calendar id="fechaFin" locale="es" value="#{aperturaEventosEscolares.rol.fechaFin}" mindate="#{aperturaEventosEscolares.rol.evento.fin}" pattern="dd-MM-yyyy" mask="true" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
                                                 <p:outputLabel value="Fecha Fin" for="fechaFin" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
                                                 <p:message for="fechaFin" rendered="#{aperturaEventosEscolares.rol.agregarApertura}"/>
                                             </div>

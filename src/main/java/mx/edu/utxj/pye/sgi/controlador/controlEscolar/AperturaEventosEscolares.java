@@ -206,6 +206,7 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
             PeriodosEscolares periodo = (PeriodosEscolares)e.getNewValue();
             rol.setPeriodoEscolar(periodo);
             listaAperturasEventosEscolaresRegistrados();
+            listaEventos();
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
@@ -254,6 +255,8 @@ public class AperturaEventosEscolares extends ViewScopedRol implements Desarroll
         if(e.getNewValue() instanceof EventoEscolar){
             EventoEscolar evento = (EventoEscolar)e.getNewValue();
             rol.setEvento(evento);
+            rol.setFechaInicio(null);
+            rol.setFechaFin(null);
             fechaMinimaApertura();
             Ajax.update("frm");
         }else mostrarMensaje("");

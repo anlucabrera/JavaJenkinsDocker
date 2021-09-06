@@ -264,6 +264,13 @@ public interface EjbEstudianteRegistro {
      * @return entity ExpedientesTitulacion
      */
     public ExpedientesTitulacion consultarStatusExpediente(String matricula);
+    
+     /**
+     * Verifica si existe registre de proceso de integración de expediente
+     * @param estudiante
+     * @return entity ProcesosIntexp
+     */
+    public ProcesosGeneraciones existeRegistroProcesoIntExp(Alumnos estudiante);
 
      /**
      * Obtiene clave del proceso de integración de expediente
@@ -330,6 +337,13 @@ public interface EjbEstudianteRegistro {
      * @return entity ExpedientesTitulacion
      */
     public ExpedientesTitulacion buscarExpedienteTSU (Alumnos estudiante);
+    
+     /**
+     * Busca si el estudiante integró expediente de TSU
+     * @param estudiante
+     * @return entity ExpedientesTitulacion
+     */
+    public ExpedientesTitulacion buscarExpedienteTSU1820 (Alumnos estudiante);
     
      /**
      * Buscar si el estudiante subió fotogafía en su expediente de TSU

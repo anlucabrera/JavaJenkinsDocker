@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,12 +19,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoTitulacionEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPagosEstudianteFinanzas;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoExpedienteTitulacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoTitulacion;
 import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Viewregalumnosnoadeudo;
@@ -34,6 +38,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 
 /**
  *
@@ -196,7 +201,14 @@ public class EjbSeguimientoExpedienteGeneracion {
                     .getResultList();
           
             programasEventos.forEach(programaEvento -> {
-                AreasUniversidad programa = em.find(AreasUniversidad.class, programaEvento.getMatricula().getCarrera());
+                Estudiante ultRegEstudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.periodo DESC", Estudiante.class)
+                    .setParameter("matricula",  programaEvento.getMatricula().getMatricula())
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+                  
+                AreasUniversidad programa = em.find(AreasUniversidad.class, ultRegEstudiante.getCarrera());
                 listaProgramas.add(programa);
             });
             
@@ -324,6 +336,10 @@ public class EjbSeguimientoExpedienteGeneracion {
                 ruta = "C:\\archivos\\formatosTitulacion\\sinFotografia.png";
             } else {
                 ruta = docExp.getRuta();
+                File f = new File(ruta);
+                if (!f.exists()) {
+                    ruta = "C:\\archivos\\formatosTitulacion\\sinFotografia.png";
+                }
             }
         return ResultadoEJB.crearCorrecto(ruta, "Se realizó la búsqueda de la fotografía correctamente.");
         }catch (Exception e){
@@ -347,18 +363,61 @@ public class EjbSeguimientoExpedienteGeneracion {
         
     }
         
-    public ResultadoEJB<List<DocumentoExpedienteTitulacion>> obtenerListaDocumentosExpediente(ExpedienteTitulacion expediente){
+    public ResultadoEJB<List<DtoDocumentoTitulacionEstudiante>> obtenerListaDocumentosExpediente(ExpedienteTitulacion expediente){
         try{
+            String proceso = "TitulacionTSU";
             
-            List<DocumentoExpedienteTitulacion> listaDocExp = em.createQuery("SELECT d FROM DocumentoExpedienteTitulacion d WHERE d.expediente.expediente =:expediente", DocumentoExpedienteTitulacion.class)
-                    .setParameter("expediente", expediente.getExpediente())
-                    .getResultList();
-           
+            if(!expediente.getEvento().getNivel().equals("TSU")){
+                proceso = "TitulacionIngLic";
+            }
             
-        return ResultadoEJB.crearCorrecto(listaDocExp, "Se realizó la búsqueda de la lista de documentos del expediente correctamente.");
+            List<DtoDocumentoTitulacionEstudiante> listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso = :proceso AND d.obligatorio = :valor", DocumentoProceso.class)
+                    .setParameter("proceso", proceso)
+                    .setParameter("valor", true)
+                    .getResultStream()
+                    .map(doc -> packDocumento(doc, expediente).getValor())
+                    .filter(dto -> dto != null)
+                    .collect(Collectors.toList());
+            
+            if(proceso.equals("TitulacionIngLic")){
+                
+                Estudiante e = em.createQuery("SELECT e FROM Estudiante as e WHERE e.matricula = :matricula AND e.grupo.generacion=:generacion AND e.grupo.idPe=:programa ORDER BY e.periodo DESC", Estudiante.class)
+                    .setParameter("matricula", expediente.getMatricula().getMatricula())
+                    .setParameter("generacion", expediente.getEvento().getGeneracion())
+                    .setParameter("programa", (short)50)
+                    .getResultStream().findFirst().orElse(null);
+                
+                if(e == null){
+                      listaDocumentos = listaDocumentos.stream().filter(p-> p.getDocumentoProceso().getDocumento().getDocumento() != 32).collect(Collectors.toList());
+                }
+            }
+               
+        return ResultadoEJB.crearCorrecto(listaDocumentos, "Se realizó la búsqueda de la lista de documentos del expediente correctamente.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda de la lista de documentos. (EjbSeguimientoExpedienteGeneracion.obtenerListaDocumentosExpediente)", e, null);
         }
         
+    }
+    
+    public ResultadoEJB<DtoDocumentoTitulacionEstudiante> packDocumento(DocumentoProceso documentoProceso, ExpedienteTitulacion expedienteTitulacion){
+        try{
+            if(documentoProceso == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar un documento nulo.", DtoDocumentoTitulacionEstudiante.class);
+            if(documentoProceso.getDocumentoProceso()== null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar un documento con clave nula.", DtoDocumentoTitulacionEstudiante.class);
+
+            DocumentoProceso documentoProcesoBD = em.find(DocumentoProceso.class, documentoProceso.getDocumentoProceso());
+            if(documentoProcesoBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar un documento no registrado previamente en base de datos.", DtoDocumentoTitulacionEstudiante.class);
+
+            DocumentoExpedienteTitulacion documentoExpedienteTitulacion = em.createQuery("SELECT d FROM DocumentoExpedienteTitulacion d WHERE d.expediente.expediente=:expediente AND d.documento =:documento", DocumentoExpedienteTitulacion.class)
+                    .setParameter("expediente", expedienteTitulacion.getExpediente())
+                    .setParameter("documento", documentoProcesoBD.getDocumento())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(new DocumentoExpedienteTitulacion());
+            
+            DtoDocumentoTitulacionEstudiante dto = new DtoDocumentoTitulacionEstudiante(documentoProcesoBD, documentoExpedienteTitulacion);
+            return ResultadoEJB.crearCorrecto(dto, "Documento empaquetado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el documento (EjbSeguimientoExpedienteGeneracion.packDocumento).", e, DtoDocumentoTitulacionEstudiante.class);
+        }
     }
 }

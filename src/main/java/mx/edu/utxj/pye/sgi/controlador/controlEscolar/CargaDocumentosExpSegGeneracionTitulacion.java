@@ -19,6 +19,7 @@ import javax.inject.Named;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoTitulacionEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbIntegracionExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoExpedienteGeneracion;
@@ -42,8 +43,10 @@ public class CargaDocumentosExpSegGeneracionTitulacion implements Serializable{
     
     // Variable para documentos  
     @Getter @Setter private Integer claveDocumento;
-    @Getter @Setter private Part fileCURP, fileAN, fileCB, fileAEET, fileCSST, fileCET, fileAET, fileFotoT, fileAEEIL, fileCSSIL, fileCEIL, fileAEIL, fileFotoIL, fileCTT;  
+    @Getter @Setter private Part file, fileCURP, fileAN, fileCB, fileAEET, fileCSST, fileCET, fileAET, fileFotoT, fileAEEIL, fileCSSIL, fileCEIL, fileAEIL, fileFotoIL, fileCTT;  
     @Getter @Setter private DtoExpedienteTitulacion dtoExpedienteTitulacion;
+    @Getter @Setter private DtoDocumentoTitulacionEstudiante dtoDocumentoTitulacionEstudiante;
+    @Getter @Setter private Boolean aperturaDialogo, valorValidacion = false;
     
     @EJB private EjbIntegracionExpedienteTitulacion ejbIntegracionExpedienteTitulacion;
     @EJB private EjbSeguimientoExpedienteGeneracion ejbSeguimientoExpedienteGeneracion;
@@ -56,10 +59,15 @@ public class CargaDocumentosExpSegGeneracionTitulacion implements Serializable{
     public void init() {
         try{
             dtoExpedienteTitulacion = seguimientoExpedienteIndividualTitulacion.getDtoExpedienteTitulacion();
+            setAperturaDialogo(Boolean.FALSE);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(CargaDocumentosExpSegGeneracionTitulacion.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void seleccionarDocumento(DtoDocumentoTitulacionEstudiante registro) {
+        dtoDocumentoTitulacionEstudiante = registro;
     }
     
      public Boolean docExiste(Integer claveDoc) {
@@ -592,9 +600,11 @@ public class CargaDocumentosExpSegGeneracionTitulacion implements Serializable{
      public void eliminarDocumento(DocumentoExpedienteTitulacion docsExp){
          try {
             Boolean eliminado = ejbIntegracionExpedienteTitulacion.eliminarDocumentosEnExpediente(docsExp);
-            Ajax.update("frmDocsExp");
-            seguimientoExpedienteIndividualTitulacion.consultarExpediente(dtoExpedienteTitulacion);
-//             seguimientoExpedienteIndividualTitulacion.consultarExpediente(dtoExpedienteTitulacion);
+            if(!eliminado){ 
+                Ajax.update("frmDocsExp");
+                seguimientoExpedienteIndividualTitulacion.consultarExpediente(dtoExpedienteTitulacion);
+                Messages.addGlobalInfo("El documento se eliminó correctamente.");
+            }else Messages.addGlobalError("El documento no ha podido eliminarse.");
             
          } catch (Throwable ex) {
              Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
@@ -605,6 +615,76 @@ public class CargaDocumentosExpSegGeneracionTitulacion implements Serializable{
     public void descargarDocumento(DocumentoExpedienteTitulacion docsExp) throws IOException{
         File f = new File(docsExp.getRuta());
         Faces.sendFile(f, false);
+    }
+    
+    public void subirDocumento() {
+        try {
+            String nivel = "";
+            if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
+                nivel = "ING";
+            } else if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals( "TSU")) {
+                nivel = "TSU";
+            }
+            if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5B")) {
+                nivel = "LIC";
+            }
+            
+            String generacion = dtoExpedienteTitulacion.getGeneracion().getInicio() + "-" + dtoExpedienteTitulacion.getGeneracion().getFin();
+            
+            DocumentoExpedienteTitulacion nuevoDocumento = new DocumentoExpedienteTitulacion();
+
+            nuevoDocumento.setExpediente(dtoExpedienteTitulacion.getExpediente());
+            nuevoDocumento.setDocumento(dtoDocumentoTitulacionEstudiante.getDocumentoProceso().getDocumento());
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + String.valueOf(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula());
+            nuevoDocumento.setRuta(utilidadesCH.agregarDocExpTit(file, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, dtoDocumentoTitulacionEstudiante.getDocumentoProceso().getDocumento().getNomenclatura(), String.valueOf(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula())));
+            nuevoDocumento.setFechaCarga(new Date());
+            nuevoDocumento.setObservaciones("Sin revisar");
+            nuevoDocumento.setValidado(false);
+            nuevoDocumento.setFechaValidacion(null);
+            nuevoDocumento = ejbIntegracionExpedienteTitulacion.guardarDocumentoExpediente(nuevoDocumento);
+            Ajax.update("frmDocsExp");
+            seguimientoExpedienteIndividualTitulacion.consultarExpediente(dtoExpedienteTitulacion);
+            
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(CargaDocumentosExpSegGeneracionTitulacion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void editarRegistro(DtoDocumentoTitulacionEstudiante registro){
+        dtoDocumentoTitulacionEstudiante = registro;
+        valorValidacion = dtoDocumentoTitulacionEstudiante.getDocumentoExpedienteTitulacion().getValidado();
+        Ajax.update("frmModalEdicion");
+        Ajax.oncomplete("skin();");
+        aperturaDialogo = Boolean.TRUE;
+        forzarAperturaEdicionDialogo();
+    }
+    
+     public void forzarAperturaEdicionDialogo(){
+        if(getAperturaDialogo()){
+            Ajax.oncomplete("PF('modalEdicion').show();");
+            aperturaDialogo = Boolean.FALSE;
+        }
+    }
+     
+     public void guardarEdicion() {
+        try {
+            if(dtoDocumentoTitulacionEstudiante.getDocumentoExpedienteTitulacion().getValidado()== true && "Sin revisar".equals(dtoDocumentoTitulacionEstudiante.getDocumentoExpedienteTitulacion().getObservaciones())){
+                dtoDocumentoTitulacionEstudiante.getDocumentoExpedienteTitulacion().setObservaciones("Listo");
+            }
+            if(dtoDocumentoTitulacionEstudiante.getDocumentoExpedienteTitulacion().getValidado() == false && "Sin revisar".equals(dtoDocumentoTitulacionEstudiante.getDocumentoExpedienteTitulacion().getObservaciones())){
+                dtoDocumentoTitulacionEstudiante.getDocumentoExpedienteTitulacion().setObservaciones("No válido");
+            }
+            dtoDocumentoTitulacionEstudiante.getDocumentoExpedienteTitulacion().setFechaValidacion(new Date());
+            dtoDocumentoTitulacionEstudiante.setDocumentoExpedienteTitulacion(ejbIntegracionExpedienteTitulacion.actualizarDocumentoExpediente(dtoDocumentoTitulacionEstudiante.getDocumentoExpedienteTitulacion()));
+            seguimientoExpedienteIndividualTitulacion.consultarExpediente(dtoExpedienteTitulacion);
+            Ajax.update("frmDocsExp");
+            
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(CargaDocumentosExpSegGeneracionTitulacion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
     
     
