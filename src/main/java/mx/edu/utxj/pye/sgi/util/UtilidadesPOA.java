@@ -189,7 +189,7 @@ public class UtilidadesPOA implements Serializable {
         } else if (porcentaje >= 95D && porcentaje <= 115.99) {
             semaforo = "semaforoVerde";
         } else if (porcentaje >= 116D) {
-            semaforo = "semaforoRojo";
+            semaforo = "semaforoNaranja";
         }
         return semaforo;
     }
