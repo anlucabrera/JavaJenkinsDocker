@@ -22,13 +22,13 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.LetreroFotografiasRolEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbLetreroFotografias;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionRolesEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
@@ -74,16 +74,16 @@ public class LetreroFotografiasEstudiante extends ViewScopedRol implements Desar
             if(logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19)){
                 cargado = true;
                 setVistaControlador(ControlEscolarVistaControlador.LETRERO_FOTOGRAFIAS);
-                ResultadoEJB<DtoEstudiante> resAcceso = ejb.validarEstudianteFotografias(Integer.parseInt(logonMB.getCurrentUser()));
+                ResultadoEJB<Estudiante> resAcceso = ejb.validarEstudianteFotografias(Integer.parseInt(logonMB.getCurrentUser()));
                 if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
-                ResultadoEJB<DtoEstudiante> resValidacion = ejb.validarEstudianteFotografias(Integer.parseInt(logonMB.getCurrentUser()));
+                ResultadoEJB<Estudiante> resValidacion = ejb.validarEstudianteFotografias(Integer.parseInt(logonMB.getCurrentUser()));
                 if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
                 
-                DtoEstudiante estudiante = resValidacion.getValor();
+                Estudiante estudiante = resValidacion.getValor();
                 tieneAcceso = rol.tieneAcceso(estudiante, UsuarioTipo.ESTUDIANTE19);
                 if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
 
-                rol.setDtoEstudiante(estudiante);
+                rol.setEstudiante(estudiante);
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////
                 if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
                 if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
@@ -119,7 +119,7 @@ public class LetreroFotografiasEstudiante extends ViewScopedRol implements Desar
      * Permite obtener la lista de generaciones en los que existen eventos de estadía registrados
      */
     public void listaGeneracionesEventosRegistrados(){
-        ResultadoEJB<List<Generaciones>> res = ejb.listaGeneracionesFotografias(rol.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula(), rol.getEventosEstadia());
+        ResultadoEJB<List<Generaciones>> res = ejb.listaGeneracionesFotografias(rol.getEstudiante().getMatricula(), rol.getEventosEstadia());
         if(res.getCorrecto()){
             if (res.getValor().size() != 0) {
                 rol.setGeneraciones(res.getValor());
@@ -134,7 +134,7 @@ public class LetreroFotografiasEstudiante extends ViewScopedRol implements Desar
      */
     public void listaNivelesGeneracionEventosRegistrados(){
         if(rol.getGeneracion()== null) return;
-        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejb.listaNivelesGeneracionesFotografias(rol.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula(),rol.getGeneracion(), rol.getEventosEstadia());
+        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejb.listaNivelesGeneracionesFotografias(rol.getEstudiante().getMatricula(),rol.getGeneracion(), rol.getEventosEstadia());
         if(res.getCorrecto()){
             rol.setNivelesEducativos(res.getValor());
             rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
@@ -147,12 +147,12 @@ public class LetreroFotografiasEstudiante extends ViewScopedRol implements Desar
      * Permite obtener la lista de estudiantes asignados al asesor academico y evento seleccionado
      */
     public void informacionEstudiante(){
-        ResultadoEJB<DtoDatosEstudiante> res = ejb.getInformacionEstudiante(rol.getGeneracion(), rol.getNivelEducativo(), rol.getDtoEstudiante());
+        ResultadoEJB<DtoDatosEstudiante> res = ejb.getInformacionEstudiante(rol.getGeneracion(), rol.getNivelEducativo(), rol.getEstudiante());
         if(res.getCorrecto()){
             rol.setDtoDatosEstudiante(res.getValor());
             rol.setEventoEstadia(ejbAsignacionRolesEstadia.buscarEventoSeleccionado(rol.getGeneracion(), rol.getNivelEducativo(), "Entrega de fotografías").getValor());
             rol.setEventoActivo(ejb.buscarEventoActivo(rol.getEventoEstadia()).getValor());
-            rol.setCodigoQr(String.valueOf(rol.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula()));
+            rol.setCodigoQr(String.valueOf(rol.getEstudiante().getMatricula()));
             rol.setGeneracionTexto(Short.toString(rol.getGeneracion().getInicio()).concat("-").concat(Short.toString(rol.getGeneracion().getFin())));
             convertirFechasTexto();
             Ajax.update("frm");

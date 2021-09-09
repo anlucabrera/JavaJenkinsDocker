@@ -21,7 +21,6 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoEstadiaEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import org.omnifaces.cdi.ViewScoped;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;

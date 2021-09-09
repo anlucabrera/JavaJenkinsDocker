@@ -98,6 +98,7 @@
                                                         <p:row class="success">
                                                             <p:column rowspan="2" headerText="Matricula" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains"/>
                                                             <p:column rowspan="2" headerText="Estudiante" style="width: 180px;" sortBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Situación académica" style="width: 100px;" sortBy="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" filterBy="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
                                                             <p:column rowspan="2" headerText="Grupo" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
                                                             <p:column rowspan="2" headerText="Programa educativo" style="width: 200px;" sortBy="#{segEst.dtoEstudiante.programaEducativo.nombre}" filterBy="#{segEst.dtoEstudiante.programaEducativo.nombre}" filterMatchMode="contains"/>
                                                             <p:column rowspan="2" headerText="* Editar información" style="width: 100px;"/>
@@ -149,6 +150,9 @@
                                                     </p:column>
                                                     <p:column style="text-align: justify;">
                                                         <h:outputText value="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>

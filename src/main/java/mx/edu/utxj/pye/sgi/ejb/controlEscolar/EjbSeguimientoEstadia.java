@@ -18,7 +18,6 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEmpresaComplete;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -85,14 +84,19 @@ public class EjbSeguimientoEstadia {
      * @param matricula
      * @return Regresa la instancia del estudiante si este cumple con lo mencionado
      */
-    public ResultadoEJB<DtoEstudiante> validarEstudianteAsignado(Integer matricula){
+    public ResultadoEJB<Estudiante> validarEstudianteAsignado(Integer matricula){
         try{
-            DtoEstudiante e = ejbPacker.packEstudiante(matricula).getValor();
+            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
+            Estudiante e = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.grupo.grado IN :grados ORDER BY e.periodo DESC",  Estudiante.class)
+                    .setParameter("matricula", matricula)
+                    .setParameter("grados", grados)
+                    .getResultStream().findFirst().orElse(null);
+            
             List<SeguimientoEstadiaEstudiante> listaSeguimiento = asignacionesEstudianteEstadia(matricula).getValor();
-            if((e.getInscripcionActiva().getInscripcion().getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("1"))) && !listaSeguimiento.isEmpty()){
+            if((e.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("1"))) && !listaSeguimiento.isEmpty()){
                 return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante y con seguimiento de estadía registrado.");
             }else {
-                return ResultadoEJB.crearErroneo(2, "El estudiante encontrado no tiene una inscripcion activa o no tiene registro de seguimiento de estadía.", DtoEstudiante.class);
+                return ResultadoEJB.crearErroneo(2, "El estudiante encontrado no tiene una inscripcion activa o no tiene registro de seguimiento de estadía.", Estudiante.class);
             }
 
         }catch (Exception e){
@@ -499,26 +503,26 @@ public class EjbSeguimientoEstadia {
 
             DtoDatosEstudiante dtoDatosEstudiante = packEstudiante(seguimientoEstadiaEstudiante, eventoSeleccionado).getValor();
             
-            Personal asesorEstadia = em.find(Personal.class, seguimientoEstadiaEstudiante.getAsesor().getPersonal());
-            
-            AreasUniversidad area = em.find(AreasUniversidad.class, dtoDatosEstudiante.getProgramaEducativo().getAreaSuperior());
-            
-            Personal director = em.find(Personal.class, area.getResponsable());
-            
-            OrganismosVinculados empresa = new OrganismosVinculados();
-            
+                Personal asesorEstadia = em.find(Personal.class, seguimientoEstadiaEstudiante.getAsesor().getPersonal());
+
+                AreasUniversidad area = em.find(AreasUniversidad.class, dtoDatosEstudiante.getProgramaEducativo().getAreaSuperior());
+
+                Personal director = em.find(Personal.class, area.getResponsable());
+
+                OrganismosVinculados empresa = new OrganismosVinculados();
+
             if(seguimientoEstadiaEstudiante.getEmpresa() == null){
-              empresa = null;
+                    empresa = null;
             }else{
               empresa = em.createQuery("SELECT o FROM OrganismosVinculados o WHERE o.empresa=:clave",  OrganismosVinculados.class)
                     .setParameter("clave",  seguimientoEstadiaEstudiante.getEmpresa())
-                    .getResultStream().findFirst().orElse(null);
-            }
-            
-            Double semanas = null;
+                            .getResultStream().findFirst().orElse(null);
+                }
+
+                Double semanas = null;
             if(seguimientoEstadiaEstudiante.getFechaInicio() != null && seguimientoEstadiaEstudiante.getFechaFin() != null){
-             semanas = calcularSemanasEstadia(seguimientoEstadiaEstudiante.getFechaInicio(), seguimientoEstadiaEstudiante.getFechaFin()).getValor();
-            }
+                    semanas = calcularSemanasEstadia(seguimientoEstadiaEstudiante.getFechaInicio(), seguimientoEstadiaEstudiante.getFechaFin()).getValor();
+                }
 
             DtoSeguimientoEstadia dtoSeguimientoEstadia = new DtoSeguimientoEstadia(seguimientoEstadiaEstudiante, dtoDatosEstudiante, asesorEstadia, area, director, empresa, semanas);
             

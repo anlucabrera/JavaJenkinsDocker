@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import java.util.*;
 import lombok.Setter;
-
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -24,7 +24,7 @@ public class SeguimientoEstadiaRolEstudiante{
     /**
      * Representa la referencia hacia al estudiante con seguimiento de estadía
      */
-    @Getter @NonNull private DtoEstudiante  dtoEstudiante;
+    @Getter @NonNull private Estudiante  estudiante;
   
     /**
      * Lista generaciones
@@ -62,14 +62,14 @@ public class SeguimientoEstadiaRolEstudiante{
      */
     @Getter private List<String> instrucciones = new ArrayList<>();
     
-    public Boolean tieneAcceso(DtoEstudiante estudiante, UsuarioTipo usuarioTipo){
+    public Boolean tieneAcceso(Estudiante estudiante, UsuarioTipo usuarioTipo){
         if(estudiante == null) return false;
         if(!usuarioTipo.equals(UsuarioTipo.ESTUDIANTE19)) return false;
         return true;
     }
 
-    public void setDtoEstudiante(DtoEstudiante dtoEstudiante) {
-        this.dtoEstudiante = dtoEstudiante;
+    public void setEstudiante(Estudiante estudiante) {
+        this.estudiante = estudiante;
     }
     
     public void setGeneraciones(List<Generaciones> generaciones) {

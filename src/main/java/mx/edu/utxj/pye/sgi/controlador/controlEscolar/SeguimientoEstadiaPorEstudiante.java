@@ -29,10 +29,10 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import javax.servlet.http.HttpServletRequest;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoEstadiaEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.SeguimientoEstadiaRolEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -71,16 +71,16 @@ public class SeguimientoEstadiaPorEstudiante extends ViewScopedRol implements De
             if(logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19)){
                 cargado = true;
                 setVistaControlador(ControlEscolarVistaControlador.SEGUIMIENTO_ESTADIA_ESTUDIANTE);
-                ResultadoEJB<DtoEstudiante> resAcceso = ejb.validarEstudianteAsignado(Integer.parseInt(logonMB.getCurrentUser()));
+                ResultadoEJB<Estudiante> resAcceso = ejb.validarEstudianteAsignado(Integer.parseInt(logonMB.getCurrentUser()));
                 if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
-                ResultadoEJB<DtoEstudiante> resValidacion = ejb.validarEstudianteAsignado(Integer.parseInt(logonMB.getCurrentUser()));
+                ResultadoEJB<Estudiante> resValidacion = ejb.validarEstudianteAsignado(Integer.parseInt(logonMB.getCurrentUser()));
                 if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
                 
-                DtoEstudiante estudiante = resValidacion.getValor();
+                Estudiante estudiante = resValidacion.getValor();
                 tieneAcceso = rol.tieneAcceso(estudiante, UsuarioTipo.ESTUDIANTE19);
                 if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
 
-                rol.setDtoEstudiante(estudiante);
+                rol.setEstudiante(estudiante);
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////
                 if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
                 if(!validarIdentificacion()) return;//detener el flujo si la invocación es de otra vista a través del maquetado del menu
@@ -116,7 +116,7 @@ public class SeguimientoEstadiaPorEstudiante extends ViewScopedRol implements De
      * Permite obtener la lista de generaciones en los que existen eventos de estadía registrados
      */
     public void generacionesSeguimientosRegistrados(){
-        ResultadoEJB<List<Generaciones>> res = ejb.getGeneracionesSeguimientoEstudiante(rol.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
+        ResultadoEJB<List<Generaciones>> res = ejb.getGeneracionesSeguimientoEstudiante(rol.getEstudiante().getMatricula());
         if(res.getCorrecto()){
             if (res.getValor().size() != 0) {
                 rol.setGeneraciones(res.getValor());
@@ -144,7 +144,7 @@ public class SeguimientoEstadiaPorEstudiante extends ViewScopedRol implements De
      * Permite obtener la lista de estudiantes asignados al asesor academico y evento seleccionado
      */
     public void seguimientoEstudiante(){
-        ResultadoEJB<DtoSeguimientoEstadiaEstudiante> res = ejb.getSeguimientoEstudiante(rol.getGeneracion(), rol.getNivelEducativo(), rol.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
+        ResultadoEJB<DtoSeguimientoEstadiaEstudiante> res = ejb.getSeguimientoEstudiante(rol.getGeneracion(), rol.getNivelEducativo(), rol.getEstudiante().getMatricula());
         if(res.getCorrecto()){
             rol.setDtoSeguimientoEstadiaEstudiante(res.getValor());
             Ajax.update("tbSeguimientoEstadia");

@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -15,7 +14,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -45,14 +43,19 @@ public class EjbLetreroFotografias {
      * @param matricula
      * @return Regresa la instancia del estudiante si este cumple con lo mencionado
      */
-    public ResultadoEJB<DtoEstudiante> validarEstudianteFotografias(Integer matricula){
+    public ResultadoEJB<Estudiante> validarEstudianteFotografias(Integer matricula){
         try{
-            DtoEstudiante e = ejbPacker.packEstudiante(matricula).getValor();
+            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
+            Estudiante e = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.grupo.grado IN :grados ORDER BY e.periodo DESC",  Estudiante.class)
+                    .setParameter("matricula", matricula)
+                    .setParameter("grados", grados)
+                    .getResultStream().findFirst().orElse(null);
+                    
             List<Generaciones> listaGeneraciones = listaGeneracionesFotografias(matricula, listaEventosEntregaFotografias().getValor()).getValor();
-            if((e.getInscripcionActiva().getInscripcion().getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("1"))) && !listaGeneraciones.isEmpty()){
+            if((e.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("1"))) && !listaGeneraciones.isEmpty()){
                 return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante y con seguimiento de estadía registrado.");
             }else {
-                return ResultadoEJB.crearErroneo(2, "El estudiante encontrado no tiene una inscripcion activa o no tiene registro de seguimiento de estadía.", DtoEstudiante.class);
+                return ResultadoEJB.crearErroneo(2, "El estudiante encontrado no tiene una inscripcion activa o no tiene registro de seguimiento de estadía.", Estudiante.class);
             }
 
         }catch (Exception e){
@@ -146,14 +149,14 @@ public class EjbLetreroFotografias {
      * Permite obtener la información del estudiante
      * @param generacion
      * @param nivelEducativo
-     * @param dtoEstudiante
+     * @param estudiante
      * @return Resultado del proceso
      */
-    public ResultadoEJB<DtoDatosEstudiante> getInformacionEstudiante(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo, DtoEstudiante dtoEstudiante){
+    public ResultadoEJB<DtoDatosEstudiante> getInformacionEstudiante(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo, Estudiante estudiante){
         try{
-            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, dtoEstudiante.getInscripcionActiva().getInscripcion().getCarrera());
-            PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, dtoEstudiante.getInscripcionActiva().getInscripcion().getPeriodo());
-            DtoDatosEstudiante dtoDatosEstudiante = new DtoDatosEstudiante(dtoEstudiante.getInscripcionActiva().getInscripcion(), programaEducativo, periodoEscolar);
+            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
+            PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
+            DtoDatosEstudiante dtoDatosEstudiante = new DtoDatosEstudiante(estudiante, programaEducativo, periodoEscolar);
             
             return ResultadoEJB.crearCorrecto(dtoDatosEstudiante, "Información del estudiante.");
         }catch (Exception e){
