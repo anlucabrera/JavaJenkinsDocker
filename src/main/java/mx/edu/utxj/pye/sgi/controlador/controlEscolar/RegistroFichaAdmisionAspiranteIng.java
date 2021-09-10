@@ -70,12 +70,12 @@ public class RegistroFichaAdmisionAspiranteIng extends ViewScopedRol implements 
         if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
         ResultadoEJB<EventoEscolar> resEvento = ejbRegistroIng.verficarEventoRegistro();
         mostrarMensajeResultadoEJB(resAcceso);
-        if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
+        if(!resEvento.getCorrecto()) {tieneAcceso = false;return;}//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
         rol.setEventoEscolar(resEvento.getValor());
         // Se busca un proceso de inscripción activo
         ResultadoEJB<ProcesosInscripcion> resProcesoI = ejbRegistroIng.getProcesosInscripcionActivo();
         if(resProcesoI.getCorrecto()==true){rol.setProcesosInscripcion(resProcesoI.getValor());}
-        else {tieneAcceso=false;}
+        else {tieneAcceso=false; return;}
         // ----------------------------------------------------------------------------------------------------------------------------------------------------------
         //if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
         if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
