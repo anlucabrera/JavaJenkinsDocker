@@ -238,7 +238,7 @@ public class EjbRegistroFichaIngenieria {
         }
     }
 
-    public ResultadoEJB<EventoEscolar> getUltimoEventoValidacionFicha (@NonNull EventoEscolar eventoRegistro){
+    public ResultadoEJB<EventoEscolar> getUltimoEventoValidacionFicha (EventoEscolar eventoRegistro){
         try{
             //verificar apertura del evento
             EventoEscolar eventoEscolar = em.createQuery("select e from EventoEscolar e where e.tipo=:tipo and e.periodo=:periodo", EventoEscolar.class)
@@ -280,7 +280,7 @@ public class EjbRegistroFichaIngenieria {
      * @param procesosInscripcion Proceso de inscripción activo
      * @return Resultados del proceso (C-> Dto Aspirante)
      */
-    public ResultadoEJB<DtoAspirante.AspiranteR> getAspirantebyPersona(@NonNull Persona persona, @NonNull ProcesosInscripcion procesosInscripcion){
+    public ResultadoEJB<DtoAspirante.AspiranteR> getAspirantebyPersona(@NonNull Persona persona, ProcesosInscripcion procesosInscripcion){
         try{
             DtoAspirante.AspiranteR ar = new DtoAspirante.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE);
             if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(3,ar,"El proceso de inscripción no debe ser nulo");}
