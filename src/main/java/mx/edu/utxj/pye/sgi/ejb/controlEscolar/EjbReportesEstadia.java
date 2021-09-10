@@ -551,7 +551,7 @@ public class EjbReportesEstadia {
      */
     public ResultadoEJB<List<DtoZonaInfluenciaEstIns>> getListaZonaInfluenciaInstitucional(List<DtoSeguimientoEstadia> listadoEstudiantes){
         try{
-            List<MunicipioPK> listaMunicipios = listadoEstudiantes.stream().map(p-> p.getEmpresa().getLocalidad().getMunicipio().getMunicipioPK()).collect(Collectors.toList());
+            List<MunicipioPK> listaMunicipios = listadoEstudiantes.stream().filter(p->p.getEmpresa() != null).map(p-> p.getEmpresa().getLocalidad().getMunicipio().getMunicipioPK()).distinct().collect(Collectors.toList());
             
             List<DtoZonaInfluenciaEstIns> listaZonaInfluenciaIns = new ArrayList<>();
             
@@ -561,10 +561,10 @@ public class EjbReportesEstadia {
                     .setParameter("municipio", mun.getClaveMunicipio())
                     .getResultStream().findFirst().orElse(null);
                 
-                Long estudiantesMunicipio = listadoEstudiantes.stream().filter(p -> p.getEmpresa().getLocalidad().getMunicipio().getMunicipioPK()== mun).count();
+                Long estudiantesMunicipio = listadoEstudiantes.stream().filter(p -> p.getEmpresa() != null && p.getEmpresa().getLocalidad().getMunicipio().getMunicipioPK()== mun).count();
 
                 Integer estudiantesColocados = (int) (long) estudiantesMunicipio;
-
+               
                 Double division = (double) estudiantesColocados / listadoEstudiantes.size();
                 Double porcentajeEstudiantes = division * 100;
 
@@ -595,7 +595,7 @@ public class EjbReportesEstadia {
                 
             AreasUniversidad programaBD = em.find(AreasUniversidad.class, programa.getArea());
             
-            List<MunicipioPK> listaMunicipios = listadoEstudiantes.stream().filter(p->p.getDtoEstudiante().getProgramaEducativo()==programa).map(p-> p.getEmpresa().getLocalidad().getMunicipio().getMunicipioPK()).collect(Collectors.toList());
+            List<MunicipioPK> listaMunicipios = listadoEstudiantes.stream().filter(p->p.getDtoEstudiante().getProgramaEducativo()==programa && p.getEmpresa() != null).map(p-> p.getEmpresa().getLocalidad().getMunicipio().getMunicipioPK()).distinct().collect(Collectors.toList());
             
             listaMunicipios.forEach(mun -> {
                 Municipio municipioBD = em.createQuery("SELECT m FROM Municipio m WHERE m.municipioPK.claveEstado=:estado AND m.municipioPK.claveMunicipio=:municipio", Municipio.class)
@@ -603,7 +603,7 @@ public class EjbReportesEstadia {
                     .setParameter("municipio", mun.getClaveMunicipio())
                     .getResultStream().findFirst().orElse(null);
                 
-                Long estudiantesMunicipio = listadoEstudiantes.stream().filter(p -> p.getEmpresa().getLocalidad().getMunicipio().getMunicipioPK()== mun).count();
+                Long estudiantesMunicipio = listadoEstudiantes.stream().filter(p -> p.getSeguimientoEstadiaEstudiante().getMatricula().getGrupo().getIdPe() == programaBD.getArea() && p.getEmpresa() != null && p.getEmpresa().getLocalidad().getMunicipio().getMunicipioPK()== mun).count();
 
                 Integer estudiantesColocados = (int) (long) estudiantesMunicipio;
 

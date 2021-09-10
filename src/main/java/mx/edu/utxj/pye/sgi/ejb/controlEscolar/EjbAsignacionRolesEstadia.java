@@ -483,12 +483,14 @@ public class EjbAsignacionRolesEstadia {
      */
     public ResultadoEJB<List<DtoEstudianteComplete>> buscarEstudiante(Generaciones generacion, List<Short> programasEducativos, String pista){
         try{
+            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
              //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
-            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p INNER JOIN e.grupo g WHERE g.generacion=:generacion AND e.carrera IN :programas AND e.tipoEstudiante.idTipoEstudiante=:tipo AND e.periodo=:periodo AND concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo DESC", Estudiante.class)
+            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p INNER JOIN e.grupo g WHERE g.generacion=:generacion AND e.carrera IN :programas AND e.tipoEstudiante.idTipoEstudiante=:tipo AND g.grado IN :grados AND e.periodo=:periodo AND concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo DESC", Estudiante.class)
                     .setParameter("generacion", generacion.getGeneracion())
                     .setParameter("programas", programasEducativos)
                     .setParameter("tipo", (short)1)
                     .setParameter("periodo", getPeriodoActual().getPeriodo())
+                    .setParameter("grados", grados)
                     .setParameter("pista", pista)
                     .getResultList();
             

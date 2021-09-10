@@ -99,7 +99,7 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
      /**
      * Total de procentaje de colocación
      */
-    @Getter @NonNull private Double totalPorcentajeEstColocados;
+    @Getter @NonNull private String totalPorcentajeEstColocados;
     
       /**
      * Reporte de listado de zona influencia por programa educativo
@@ -241,7 +241,7 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
         this.totalEstSeguimientoEstadia = totalEstSeguimientoEstadia;
     }
     
-    public void setTotalPorcentajeEstColocados(Double totalPorcentajeEstColocados) {
+    public void setTotalPorcentajeEstColocados(String totalPorcentajeEstColocados) {
         this.totalPorcentajeEstColocados = totalPorcentajeEstColocados;
     }
     

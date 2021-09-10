@@ -886,7 +886,7 @@ public class EjbReportesAcademicos {
             
             List<String> tiposRegistro = new ArrayList<>(); tiposRegistro.add("Regularización de calificaciones por reincoporación");
             
-            List<Integer> tiposEstudiante = new ArrayList<>(); tiposEstudiante.add(2); tiposEstudiante.add(3); tiposEstudiante.add(4);
+            List<Integer> tiposEstudiante = new ArrayList<>(); tiposEstudiante.add(2); tiposEstudiante.add(3); tiposEstudiante.add(4); tiposEstudiante.add(5);
             
             List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
             
@@ -924,7 +924,7 @@ public class EjbReportesAcademicos {
      public ResultadoEJB<Double> getObtenerPromedioEstudiante(Estudiante estudiante){
         try{
             
-           Double promedio=0.0;
+            Double promedio=0.0;
             
             List<Double> listaCalificaciones = new ArrayList<>();
             
