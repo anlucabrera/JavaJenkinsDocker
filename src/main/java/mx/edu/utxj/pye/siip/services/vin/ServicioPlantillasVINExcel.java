@@ -351,7 +351,7 @@ public class ServicioPlantillasVINExcel implements EjbPlantillasVINExcel {
         Map beans = new HashMap();
         beans.put("periodosEscolares", ejbCatalogos.getPeriodosEscolaresAct());
         beans.put("organismosVinculados", ejbOrganismosVinculados.getOrganismosVinculadoVigentes());
-        beans.put("programasEducativos", ejbCatalogos.getProgramasEducativos());
+        beans.put("programasEducativos", ejbCatalogos.getProgramasEducativosGeneral());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
 

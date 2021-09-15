@@ -479,6 +479,13 @@
                                                     <p:column style="text-align: center;">
                                                        <h:outputText value="#{zonaInfProg.porcentajeEstudiantes}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
                                                     </p:column>
+                                                    <p:columnGroup type="footer">
+                                                        <p:row>
+                                                            <p:column colspan="3" style="text-align:center;font-weight: bold;" footerText="Totales:"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalEstColocados} de #{reportesEstadia.rol.totalEstSeguimientoEstadia}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalPorcentajeEstColocados}"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
                                                 </p:dataTable>
                                                 </div>
                                             </center>

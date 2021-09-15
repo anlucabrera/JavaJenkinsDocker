@@ -161,14 +161,25 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             rol.setReportes(listaReportes);
             rol.setReporte(rol.getReportes().get(0));
             generarReportes();
-        }
-        else if(rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){
+        }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){
             listaReportes.add("Seguimiento actividades de estadía");
             listaReportes.add("Asignación de asesor académico por programa educativo");
             listaReportes.add("Cumplimiento estudiante documentos");
             listaReportes.add("Eficiencia estadía técnica");
             listaReportes.add("Listado estudiantes con promedios");
             listaReportes.add("Consulta memorias de estadía");
+            rol.setReportes(listaReportes);
+            rol.setReporte(rol.getReportes().get(0));
+            generarReportes();
+        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){
+            listaReportes.add("Seguimiento actividades de estadía");
+            listaReportes.add("Asignación de asesor académico por programa educativo");
+            listaReportes.add("Cumplimiento estudiante documentos");
+            listaReportes.add("Eficiencia estadía técnica");
+            listaReportes.add("Listado estudiantes con promedios");
+            listaReportes.add("Consulta memorias de estadía");
+            listaReportes.add("Zona influencia institucional");
+            listaReportes.add("Zona influencia programa educativo");
             rol.setReportes(listaReportes);
             rol.setReporte(rol.getReportes().get(0));
             generarReportes();
@@ -315,7 +326,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
               rol.setListaZonaInfluenciaIns(resZI.getValor());
               rol.setTotalEstColocados(rol.getListaZonaInfluenciaIns().stream().mapToInt(p->p.getEstudiantesColocados()).sum());
               rol.setTotalEstSeguimientoEstadia(rol.getListadoEstudiantesPromedio().stream().count());
-              rol.setTotalPorcentajeEstColocados(rol.getListaZonaInfluenciaIns().stream().mapToDouble(p->p.getPorcentajeEstudiantes()).sum());
+              rol.setTotalPorcentajeEstColocados(String.format("%.2f",rol.getListaZonaInfluenciaIns().stream().mapToDouble(p->p.getPorcentajeEstudiantes()).sum()));
               Ajax.update("tbZonaInfluenciaInstitucional");
           }else mostrarMensajeResultadoEJB(res);
     }
@@ -329,6 +340,9 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
               rol.setListadoEstudiantesPromedio(res.getValor());
               ResultadoEJB<List<DtoZonaInfluenciaEstPrograma>> resZI = ejb.getListaZonaInfluenciaProgramaEducativo(rol.getListadoEstudiantesPromedio());
               rol.setListaZonaInfluenciaPrograma(resZI.getValor());
+              rol.setTotalEstColocados(rol.getListaZonaInfluenciaPrograma().stream().mapToInt(p->p.getEstudiantesColocados()).sum());
+              rol.setTotalEstSeguimientoEstadia(rol.getListadoEstudiantesPromedio().stream().count());
+              rol.setTotalPorcentajeEstColocados(String.format("%.2f",rol.getListaZonaInfluenciaPrograma().stream().mapToDouble(p->p.getPorcentajeEstudiantes()).sum()));
               Ajax.update("tbZonaInfluenciaPrograma");
           }else mostrarMensajeResultadoEJB(res);
     }
