@@ -108,23 +108,23 @@ public class DtoCmi {
         @Getter        @Setter        private Integer eje1P;
         @Getter        @Setter        private Integer eje1A;
         @Getter        @Setter        private Double eje1PC;
-        @Getter        @Setter        private Boolean renderEje1;
+        @Getter        @Setter        private String renderEje1;
         @Getter        @Setter        private Integer eje2P;
         @Getter        @Setter        private Integer eje2A;
         @Getter        @Setter        private Double eje2PC;
-        @Getter        @Setter        private Boolean renderEje2;
+        @Getter        @Setter        private String renderEje2;
         @Getter        @Setter        private Integer eje3P;
         @Getter        @Setter        private Integer eje3A;
         @Getter        @Setter        private Double eje3PC;
-        @Getter        @Setter        private Boolean renderEje3;
+        @Getter        @Setter        private String renderEje3;
         @Getter        @Setter        private Integer eje4P;
         @Getter        @Setter        private Integer eje4A;
         @Getter        @Setter        private Double eje4PC;
-        @Getter        @Setter        private Boolean renderEje4;
+        @Getter        @Setter        private String renderEje4;
         @Getter        @Setter        private Double porcentajeFSP;
         @Getter        @Setter        private Double porcentajeFCP;
 
-        public ReporteCuatrimestralAreas(String area, Integer eje1P, Integer eje1A, Double eje1PC, Boolean renderEje1, Integer eje2P, Integer eje2A, Double eje2PC, Boolean renderEje2, Integer eje3P, Integer eje3A, Double eje3PC, Boolean renderEje3, Integer eje4P, Integer eje4A, Double eje4PC, Boolean renderEje4, Double porcentajeFSP, Double porcentajeFCP) {
+        public ReporteCuatrimestralAreas(String area, Integer eje1P, Integer eje1A, Double eje1PC, String renderEje1, Integer eje2P, Integer eje2A, Double eje2PC, String renderEje2, Integer eje3P, Integer eje3A, Double eje3PC, String renderEje3, Integer eje4P, Integer eje4A, Double eje4PC, String renderEje4, Double porcentajeFSP, Double porcentajeFCP) {
             this.area = area;
             this.eje1P = eje1P;
             this.eje1A = eje1A;

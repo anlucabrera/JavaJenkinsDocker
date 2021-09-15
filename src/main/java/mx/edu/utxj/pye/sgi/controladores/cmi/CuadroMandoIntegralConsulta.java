@@ -18,6 +18,8 @@ import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Objects;
@@ -29,6 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.model.chart.MeterGaugeChartModel;
 
@@ -57,7 +60,7 @@ public class CuadroMandoIntegralConsulta implements Serializable {
     @Getter    @Setter    private Double alcEje1=0D,alcEje2=0D,alcEje3=0D,alcEje4=0D;
     @Getter    @Setter    private Double cumEje1=0D,cumEje2=0D,cumEje3=0D,cumEje4=0D;
     @Getter    @Setter    private Double ct=0D;
-    @Getter    @Setter    private Boolean eje1=Boolean.TRUE,eje2=Boolean.TRUE,eje3=Boolean.TRUE,eje4=Boolean.TRUE;
+    @Getter    @Setter    private String eje1="S",eje2="S",eje3="S",eje4="S";
     
     @Getter    @Setter    private Double programadas,alcanzadas,noalcanzadas,promedioSp,promedioCP;
     @Getter    @Setter    private Double programadasAcumuladas,alcanzadasAcumuladas;
@@ -67,7 +70,7 @@ public class CuadroMandoIntegralConsulta implements Serializable {
     @Getter    @Setter    private Short claveArea=0;
     @Getter    @Setter    private String mes = "",extender="myconfig";
     
-    @Getter    @Setter    private Boolean mostrar=Boolean.TRUE,mostrarConcnetrado=Boolean.FALSE;
+    @Getter    @Setter    private Boolean mostrar=Boolean.TRUE,mostrarConcnetrado=Boolean.FALSE,imprimir=Boolean.FALSE;
     
     @EJB    EjbRegistroActividades ejbRegistroActividades;
     @EJB    EjbAreasLogeo areasLogeo;
@@ -172,6 +175,10 @@ public class CuadroMandoIntegralConsulta implements Serializable {
         return areasConsulta.stream().filter(t -> t.getArea()==claveArea).collect(Collectors.toList()).get(0).getNombre();
     }
     
+    public void descargarPlantillaCatalogos() throws IOException, Throwable{
+        File f = new File(ejbCatalogosPoa.getReporteCuadroMandoPOA(ejercicioFiscal.getEjercicioFiscal(),reporte));
+        Faces.sendFile(f, true);
+    }
 // Inicializadores
     public void reseteador() {
         cmiGeneral = new DtoCmi.ResultadosCMI("", 0, 0, 0, 0D, 0D, extender, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new MeterGaugeChartModel(), Boolean.FALSE);
@@ -219,7 +226,7 @@ public class CuadroMandoIntegralConsulta implements Serializable {
     
     public void consultrAreasEvaluacion() {
         areasConsulta = new ArrayList<>();
-        if (claveArea == 1 || claveArea == 2 || claveArea == 6 || claveArea == 9) {
+        if (controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 148 || controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 30 || controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 284 || controladorEmpleado.getNuevoOBJListaPersonal().getClave() == 613) {
             try {
                 areasConsulta.add(new AreasUniversidad(Short.parseShort("0"), "Institucional", mes, extender, true));
                 areasConsulta.addAll(areasLogeo.getAreasUniversidadConPoa());
@@ -227,6 +234,7 @@ public class CuadroMandoIntegralConsulta implements Serializable {
                 Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
                 Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
             }
+            imprimir=Boolean.TRUE;
         } else {
             areasConsulta.add(new AreasUniversidad(Short.parseShort("0"), "Institucional", mes, extender, true));
             controladorEmpleado.getProcesopoas().forEach((t) -> {
@@ -577,7 +585,7 @@ public class CuadroMandoIntegralConsulta implements Serializable {
             
             cumEje1 = 0D;cumEje2 = 0D;cumEje3 = 0D;cumEje4 = 0D;
             
-            eje1=Boolean.TRUE;eje2=Boolean.TRUE;eje3=Boolean.TRUE;eje4=Boolean.TRUE;
+            eje1="S";eje2="S";eje3="S";eje4="S";
             
             ct=0D;
             if(a.getArea()!=0){
@@ -585,20 +593,20 @@ public class CuadroMandoIntegralConsulta implements Serializable {
                 actividadesPoas = new ArrayList<>();
                 actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasEje(a.getArea(), ejercicioFiscal.getEjercicioFiscal(), e).stream().filter(t -> t.getBandera().equals("y")).collect(Collectors.toList());
                 switch (e.getEje()) {
-                    case 1:if (actividadesPoas.isEmpty()) {eje1 = Boolean.FALSE;proEje1 = 0D;alcEje1 = 0D;} else {eje1 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje1 = programadasAcumuladas;alcEje1 = alcanzadasAcumuladas;}break;
-                    case 2:if (actividadesPoas.isEmpty()) {eje2 = Boolean.FALSE;proEje2 = 0D;alcEje2 = 0D;} else {eje2 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje2 = programadasAcumuladas;alcEje2 = alcanzadasAcumuladas;}break;
-                    case 3:if (actividadesPoas.isEmpty()) {eje3 = Boolean.FALSE;proEje3 = 0D;alcEje3 = 0D;} else {eje3 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje3 = programadasAcumuladas;alcEje3 = alcanzadasAcumuladas;}break;
-                    case 4:if (actividadesPoas.isEmpty()) {eje4 = Boolean.FALSE;proEje4 = 0D;alcEje4 = 0D;} else {eje4 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje4 = programadasAcumuladas;alcEje4 = alcanzadasAcumuladas;}break;
+                    case 1:if (actividadesPoas.isEmpty()) {eje1 = "N";proEje1 = 0D;alcEje1 = 0D;} else {eje1 = "S";if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje1 = programadasAcumuladas;alcEje1 = alcanzadasAcumuladas;}break;
+                    case 2:if (actividadesPoas.isEmpty()) {eje2 = "N";proEje2 = 0D;alcEje2 = 0D;} else {eje2 = "S";if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje2 = programadasAcumuladas;alcEje2 = alcanzadasAcumuladas;}break;
+                    case 3:if (actividadesPoas.isEmpty()) {eje3 = "N";proEje3 = 0D;alcEje3 = 0D;} else {eje3 = "S";if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje3 = programadasAcumuladas;alcEje3 = alcanzadasAcumuladas;}break;
+                    case 4:if (actividadesPoas.isEmpty()) {eje4 = "N";proEje4 = 0D;alcEje4 = 0D;} else {eje4 = "S";if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje4 = programadasAcumuladas;alcEje4 = alcanzadasAcumuladas;}break;
                 }
             });
             
-                if (eje1) {if (proEje1 == 0) {cumEje1 = (alcEje1 * 100D);} else {cumEje1 = (alcEje1 * 100D) / proEje1;}}
-                if (eje2) {if (proEje2 == 0) {cumEje2 = (alcEje2 * 100D);} else {cumEje2 = (alcEje2 * 100D) / proEje2;}}
-                if (eje3) {if (proEje3 == 0) {cumEje3 = (alcEje3 * 100D);} else {cumEje3 = (alcEje3 * 100D) / proEje3;}}
-                if (eje4) {if (proEje4 == 0) {cumEje4 = (alcEje4 * 100D);} else {cumEje4 = (alcEje4 * 100D) / proEje4;}}
+                if (eje1.equals("S")) {if (proEje1 == 0) {cumEje1 = (alcEje1 * 100D);} else {cumEje1 = (alcEje1 * 100D) / proEje1;}}
+                if (eje2.equals("S")) {if (proEje2 == 0) {cumEje2 = (alcEje2 * 100D);} else {cumEje2 = (alcEje2 * 100D) / proEje2;}}
+                if (eje3.equals("S")) {if (proEje3 == 0) {cumEje3 = (alcEje3 * 100D);} else {cumEje3 = (alcEje3 * 100D) / proEje3;}}
+                if (eje4.equals("S")) {if (proEje4 == 0) {cumEje4 = (alcEje4 * 100D);} else {cumEje4 = (alcEje4 * 100D) / proEje4;}}
                 Double al = alcEje1 + alcEje2 + alcEje3 + alcEje4;
                 Double pr = proEje1 + proEje2 + proEje3 + proEje4;
-                if (eje1 || eje2 || eje3 || eje4) {
+                if (eje1.equals("S") || eje2.equals("S") || eje3.equals("S") || eje4.equals("S")) {
                     ct = (al * 100D) / (pr);
                     reporte.add(new DtoCmi.ReporteCuatrimestralAreas(a.getNombre(), proEje1.intValue(), alcEje1.intValue(), cumEje1, eje1, proEje2.intValue(), alcEje2.intValue(), cumEje2, eje2, proEje3.intValue(), alcEje3.intValue(), cumEje3, eje3, proEje4.intValue(), alcEje4.intValue(), cumEje4, eje4, ct, promedioPenalizado(ct)));
                 }
@@ -609,16 +617,16 @@ public class CuadroMandoIntegralConsulta implements Serializable {
                 actividadesPoas = new ArrayList<>();
                 actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasUniversidadaEjeyEjercicioFiscal(ejercicioFiscal.getEjercicioFiscal(), e).stream().filter(t -> t.getBandera().equals("y")).collect(Collectors.toList());
                 switch (e.getEje()) {
-                    case 1:if (actividadesPoas.isEmpty()) {eje1 = Boolean.FALSE;proEje1 = 0D;alcEje1 = 0D;} else {eje1 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje1 = programadasAcumuladas;alcEje1 = alcanzadasAcumuladas;}break;
-                    case 2:if (actividadesPoas.isEmpty()) {eje2 = Boolean.FALSE;proEje2 = 0D;alcEje2 = 0D;} else {eje2 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje2 = programadasAcumuladas;alcEje2 = alcanzadasAcumuladas;}break;
-                    case 3:if (actividadesPoas.isEmpty()) {eje3 = Boolean.FALSE;proEje3 = 0D;alcEje3 = 0D;} else {eje3 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje3 = programadasAcumuladas;alcEje3 = alcanzadasAcumuladas;}break;
-                    case 4:if (actividadesPoas.isEmpty()) {eje4 = Boolean.FALSE;proEje4 = 0D;alcEje4 = 0D;} else {eje4 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje4 = programadasAcumuladas;alcEje4 = alcanzadasAcumuladas;}break;
+                    case 1:if (actividadesPoas.isEmpty()) {eje1 = "N";proEje1 = 0D;alcEje1 = 0D;} else {eje1 = "S";if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje1 = programadasAcumuladas;alcEje1 = alcanzadasAcumuladas;}break;
+                    case 2:if (actividadesPoas.isEmpty()) {eje2 = "N";proEje2 = 0D;alcEje2 = 0D;} else {eje2 = "S";if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje2 = programadasAcumuladas;alcEje2 = alcanzadasAcumuladas;}break;
+                    case 3:if (actividadesPoas.isEmpty()) {eje3 = "N";proEje3 = 0D;alcEje3 = 0D;} else {eje3 = "S";if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje3 = programadasAcumuladas;alcEje3 = alcanzadasAcumuladas;}break;
+                    case 4:if (actividadesPoas.isEmpty()) {eje4 = "N";proEje4 = 0D;alcEje4 = 0D;} else {eje4 = "S";if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje4 = programadasAcumuladas;alcEje4 = alcanzadasAcumuladas;}break;
                 }
             });
-            if (eje1) {if (proEje1 == 0) {cumEje1 = (alcEje1 * 100D);} else {cumEje1 = (alcEje1 * 100D) / proEje1;}}
-            if (eje2) {if (proEje2 == 0) {cumEje2 = (alcEje2 * 100D);} else {cumEje2 = (alcEje2 * 100D) / proEje2;}}
-            if (eje3) {if (proEje3 == 0) {cumEje3 = (alcEje3 * 100D);} else {cumEje3 = (alcEje3 * 100D) / proEje3;}}
-            if (eje4) {if (proEje4 == 0) {cumEje4 = (alcEje4 * 100D);} else {cumEje4 = (alcEje4 * 100D) / proEje4;}}
+            if (eje1.equals("S")) {if (proEje1 == 0) {cumEje1 = (alcEje1 * 100D);} else {cumEje1 = (alcEje1 * 100D) / proEje1;}}
+            if (eje2.equals("S")) {if (proEje2 == 0) {cumEje2 = (alcEje2 * 100D);} else {cumEje2 = (alcEje2 * 100D) / proEje2;}}
+            if (eje3.equals("S")) {if (proEje3 == 0) {cumEje3 = (alcEje3 * 100D);} else {cumEje3 = (alcEje3 * 100D) / proEje3;}}
+            if (eje4.equals("S")) {if (proEje4 == 0) {cumEje4 = (alcEje4 * 100D);} else {cumEje4 = (alcEje4 * 100D) / proEje4;}}
             
             Double al = alcEje1 + alcEje2 + alcEje3 + alcEje4;
                 Double pr = proEje1 + proEje2 + proEje3 + proEje4;

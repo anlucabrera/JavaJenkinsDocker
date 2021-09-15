@@ -1,12 +1,16 @@
 package mx.edu.utxj.pye.sgi.ejb.poa;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.controladores.cmi.DtoCmi;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
@@ -16,6 +20,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.Proyectos;
 import mx.edu.utxj.pye.sgi.entity.pye2.Registros;
 import mx.edu.utxj.pye.sgi.entity.pye2.UnidadMedidas;
+import net.sf.jxls.transformer.XLSTransformer;
 
 @Stateful
 public class ServiciosCatalogosPOA implements EjbCatalogosPoa {
@@ -23,6 +28,11 @@ public class ServiciosCatalogosPOA implements EjbCatalogosPoa {
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb-pye2_ejb_1.0PU")
     private EntityManager em;
 
+    @EJB EjbCarga ejbCarga;
+    
+    public static final String REPORTE_PLANTILLA = "Concentrado.xlsx";
+    public static final String REPORTE_ACTUALIZADO = "Concentrado.xlsx";
+    
     @EJB
     FacadePoa facadePoa;
 
@@ -249,6 +259,18 @@ public class ServiciosCatalogosPOA implements EjbCatalogosPoa {
         TypedQuery<EjerciciosFiscales> q = em.createQuery("SELECT e FROM EjerciciosFiscales e", EjerciciosFiscales.class);
         List<EjerciciosFiscales> pr = q.getResultList();
         return pr;
+    }
+    
+    public String getReporteCuadroMandoPOA(Short ejeFiscal,List<DtoCmi.ReporteCuatrimestralAreas> reporte) throws Throwable{
+        String rutaPlantilla = ejbCarga.crearDirectorioReportePOA();
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportePOACompleto(ejeFiscal.toString());
+        String plantilla = rutaPlantilla.concat(REPORTE_PLANTILLA);
+        String plantillaC = rutaPlantillaC.concat(REPORTE_ACTUALIZADO);
+        Map beans = new HashMap();
+        beans.put("resumen", reporte);
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(plantilla, beans, plantillaC);
+        return plantillaC;
     }
 
 }

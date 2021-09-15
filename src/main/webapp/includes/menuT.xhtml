@@ -651,6 +651,11 @@
                                             <span>Evaluación</span>
                                         </p:link>
                                     </li>
+                                    <li>
+                                    <p:link href="#{request.contextPath}/poa/cuadroDeMandoIntegral.xhtml"><i class="fa fa-bar-chart"></i>
+                                        <span>Cuadro de Manndo Integral</span>
+                                    </p:link>
+                                </li>
                                 </c:if>
                             </c:if>
                             <li>
@@ -658,13 +663,6 @@
                                     <span>Consulta</span>
                                 </p:link>
                             </li>
-                            <c:if test="#{controladorEmpleado.procesopoa.activaEtapa2}">
-                                <li>
-                                    <p:link href="#{request.contextPath}/poa/cuadroDeMandoIntegral.xhtml"><i class="fa fa-bar-chart"></i>
-                                        <span>CUadro de Manndo Integral</span>
-                                    </p:link>
-                                </li>
-                            </c:if>
                             <li>
                                 <p:link href="#{request.contextPath}/poa/estatusProceso.xhtml"><i class="fa fa-wechat"></i>
                                     <span>Estatus</span>
