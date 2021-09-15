@@ -94,6 +94,7 @@
                                         <p:autoUpdate/>
                                         <p:outputLabel rendered="#{cuadroMandoIntegralConsulta.mostrarConcnetrado}" for="cuatri" value="Cuatrimestre" />
                                         <p:selectOneMenu rendered="#{cuadroMandoIntegralConsulta.mostrarConcnetrado}" filter="true" filterMatchMode="contains" id="cuatri" value="#{cuadroMandoIntegralConsulta.numeroCuatrimestre}" valueChangeListener="#{cuadroMandoIntegralConsulta.asignarCuatrimestre}">
+                                            <f:selectItem itemValue="#{0}" itemLabel="Anual" />
                                             <f:selectItem itemValue="#{1}" itemLabel="Enero - Abril" />
                                             <f:selectItem itemValue="#{2}" itemLabel="Mayo - Agosto" />
                                             <f:selectItem itemValue="#{3}" itemLabel="Septiembre - Diciembre" />
@@ -179,7 +180,7 @@
                                                                         <p:column colspan="3" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiGeneral.avanceCP)}%</p:column>
                                                                     </p:row>
                                                                     <p:row>
-                                                                        <p:column colspan="8" style="font-weight: bold;">
+                                                                        <p:column colspan="8" style="font-weight: bold;" styleClass="noprint">
                                                                             <hf:chart type="line" height="400px" extender="#{cuadroMandoIntegralConsulta.cmiGeneral.extender}" render="true" updateMethod="true"
                                                                                       xaxisLabel="Mes" yaxisLabel="% avance" colors="gray,mediumspringgreen,gray,mediumspringgreen">
                                                                                 <hf:chartSerie type="column" name="Avance Mensual Sin Penalización" value="#{cuadroMandoIntegralConsulta.cmiGeneral.cumplimientoMensualSp}" var="point" point="#{cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />

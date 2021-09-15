@@ -31,7 +31,6 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Messages;
 import org.primefaces.model.chart.MeterGaugeChartModel;
-import org.primefaces.model.charts.bar.BarChartModel;
 
 @Named
 @ViewScoped
@@ -51,7 +50,7 @@ public class CuadroMandoIntegralConsulta implements Serializable {
     
     @Getter    @Setter    private DecimalFormat df = new DecimalFormat("#.00");
     
-    @Getter    @Setter    private Integer numeroMes=0,claveEjeR,numeroCuatrimestre=1;
+    @Getter    @Setter    private Integer numeroMes=0,claveEjeR,numeroCuatrimestre=0;
     @Getter    @Setter    private Integer programadoA=0,cumplidoA=0,noCumplidoA=0;
     
     @Getter    @Setter    private Double proEje1=0D,proEje2=0D,proEje3=0D,proEje4=0D;
@@ -125,6 +124,8 @@ public class CuadroMandoIntegralConsulta implements Serializable {
 
     public void asignarAreaEvaluada(ValueChangeEvent event) {
         reseteador();
+        mostrarConcnetrado=Boolean.FALSE;
+        numeroCuatrimestre=0;
         claveEjeR = 0;
         claveArea = Short.parseShort(event.getNewValue().toString());
         consultaejes();
@@ -252,7 +253,7 @@ public class CuadroMandoIntegralConsulta implements Serializable {
         cmiGeneral = new DtoCmi.ResultadosCMI(poau.obtenerAreaNombre(controladorEmpleado.getProcesopoa().getArea()), 0, 0, 0, 0D, 0D, extender, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new MeterGaugeChartModel(), Boolean.FALSE);
         if (!actividadesPoas.isEmpty()) {
             mostrar = Boolean.TRUE;
-            if (numeroCuatrimestre == 1) {
+            if (numeroCuatrimestre == 1 || numeroCuatrimestre == 0) {
                 cumplimientoMensual = promediosMensuales(0);
             cumplimientoAcumuladol = promediosAcumulados(0);
             } else if (numeroCuatrimestre == 2) {
@@ -279,7 +280,7 @@ public class CuadroMandoIntegralConsulta implements Serializable {
         DtoCmi.ResultadosCMI cmiEje = new DtoCmi.ResultadosCMI(eje.getNombre(), 0, 0, 0, 0D, 0D, extender, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new MeterGaugeChartModel(), Boolean.FALSE);
         if (!actividadesPoas.isEmpty()) {
             mostrar = Boolean.TRUE;
-            if (numeroCuatrimestre == 1) {
+            if (numeroCuatrimestre == 1 || numeroCuatrimestre == 0) {
                 cumplimientoMensual = promediosMensuales(0);
             cumplimientoAcumuladol = promediosAcumulados(0);
             } else if (numeroCuatrimestre == 2) {
@@ -425,6 +426,43 @@ public class CuadroMandoIntegralConsulta implements Serializable {
         });
     }
     
+    public void promediosAcumuladosResumenGeneral(Integer mesC) {
+        programadasAcumuladas = 0D;
+        alcanzadasAcumuladas = 0D;
+        actividadesPoas.forEach((t) -> {
+            programadoA = 0;
+            cumplidoA = 0;
+            switch (mesC) {
+                case 11:programadoA = programadoA + t.getNPDiciembre();cumplidoA = cumplidoA + t.getNADiciembre();
+                case 10:programadoA = programadoA + t.getNPNoviembre();cumplidoA = cumplidoA + t.getNANoviembre();
+                case 9:programadoA = programadoA + t.getNPOctubre();cumplidoA = cumplidoA + t.getNAOctubre();
+                case 8:programadoA = programadoA + t.getNPSeptiembre();cumplidoA = cumplidoA + t.getNASeptiembre();
+                case 7:programadoA = programadoA + t.getNPAgosto();cumplidoA = cumplidoA + t.getNAAgosto();
+                case 6:programadoA = programadoA + t.getNPJulio();cumplidoA = cumplidoA + t.getNAJulio();
+                case 5:programadoA = programadoA + t.getNPJunio();cumplidoA = cumplidoA + t.getNAJunio();
+                case 4:programadoA = programadoA + t.getNPMayo();cumplidoA = cumplidoA + t.getNAMayo();
+                case 3:programadoA = programadoA + t.getNPAbril();cumplidoA = cumplidoA + t.getNAAbril();
+                case 2:programadoA = programadoA + t.getNPMarzo();cumplidoA = cumplidoA + t.getNAMarzo();
+                case 1:programadoA = programadoA + t.getNPFebrero();cumplidoA = cumplidoA + t.getNAFebrero();
+                case 0:programadoA = programadoA + t.getNPEnero();cumplidoA = cumplidoA + t.getNAEnero();
+            }
+            if (programadoA != 0) {
+                programadasAcumuladas = programadasAcumuladas + 1D;
+                if (cumplidoA == 0) {
+                    resumenCnoalcanzadas=resumenCnoalcanzadas + 1D;
+                }
+                        
+            }
+            if (cumplidoA != 0) {
+                if (cumplidoA >= programadoA) {
+                    alcanzadasAcumuladas = alcanzadasAcumuladas + 1D;
+                }else{
+                    resumenCnoalcanzadas=resumenCnoalcanzadas + 1D;
+                }
+            }
+        });
+    }
+    
     public List<List<DtoCmi.Grafica>> promediosAcumulados(Integer mesInicio) {
         List<List<DtoCmi.Grafica>> cumplimiento = new ArrayList<>();
         List<DtoCmi.Grafica> sp = new ArrayList<>();
@@ -519,6 +557,9 @@ public class CuadroMandoIntegralConsulta implements Serializable {
     public void creaReporteCuatrimestralAcumulaado() {
         reporte=new ArrayList<>();
         switch (numeroCuatrimestre) {
+            case 0:
+                numeroMes = poau.obtenerMesNumero(controladorEmpleado.getCalendarioevaluacionpoa().getMesEvaluacion()); 
+                break;
             case 1:
                 numeroMes = 3;
                 break;
@@ -544,10 +585,10 @@ public class CuadroMandoIntegralConsulta implements Serializable {
                 actividadesPoas = new ArrayList<>();
                 actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasEje(a.getArea(), ejercicioFiscal.getEjercicioFiscal(), e).stream().filter(t -> t.getBandera().equals("y")).collect(Collectors.toList());
                 switch (e.getEje()) {
-                    case 1:if (actividadesPoas.isEmpty()) {eje1 = Boolean.FALSE;proEje1 = 0D;alcEje1 = 0D;} else {eje1 = Boolean.TRUE;promediosAcumuladosRCuatrimestral(numeroMes);proEje1 = programadasAcumuladas;alcEje1 = alcanzadasAcumuladas;}break;
-                    case 2:if (actividadesPoas.isEmpty()) {eje2 = Boolean.FALSE;proEje2 = 0D;alcEje2 = 0D;} else {eje2 = Boolean.TRUE;promediosAcumuladosRCuatrimestral(numeroMes);proEje2 = programadasAcumuladas;alcEje2 = alcanzadasAcumuladas;}break;
-                    case 3:if (actividadesPoas.isEmpty()) {eje3 = Boolean.FALSE;proEje3 = 0D;alcEje3 = 0D;} else {eje3 = Boolean.TRUE;promediosAcumuladosRCuatrimestral(numeroMes);proEje3 = programadasAcumuladas;alcEje3 = alcanzadasAcumuladas;}break;
-                    case 4:if (actividadesPoas.isEmpty()) {eje4 = Boolean.FALSE;proEje4 = 0D;alcEje4 = 0D;} else {eje4 = Boolean.TRUE;promediosAcumuladosRCuatrimestral(numeroMes);proEje4 = programadasAcumuladas;alcEje4 = alcanzadasAcumuladas;}break;
+                    case 1:if (actividadesPoas.isEmpty()) {eje1 = Boolean.FALSE;proEje1 = 0D;alcEje1 = 0D;} else {eje1 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje1 = programadasAcumuladas;alcEje1 = alcanzadasAcumuladas;}break;
+                    case 2:if (actividadesPoas.isEmpty()) {eje2 = Boolean.FALSE;proEje2 = 0D;alcEje2 = 0D;} else {eje2 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje2 = programadasAcumuladas;alcEje2 = alcanzadasAcumuladas;}break;
+                    case 3:if (actividadesPoas.isEmpty()) {eje3 = Boolean.FALSE;proEje3 = 0D;alcEje3 = 0D;} else {eje3 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje3 = programadasAcumuladas;alcEje3 = alcanzadasAcumuladas;}break;
+                    case 4:if (actividadesPoas.isEmpty()) {eje4 = Boolean.FALSE;proEje4 = 0D;alcEje4 = 0D;} else {eje4 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje4 = programadasAcumuladas;alcEje4 = alcanzadasAcumuladas;}break;
                 }
             });
             
@@ -568,10 +609,10 @@ public class CuadroMandoIntegralConsulta implements Serializable {
                 actividadesPoas = new ArrayList<>();
                 actividadesPoas = ejbRegistroActividades.mostrarActividadesPoasUniversidadaEjeyEjercicioFiscal(ejercicioFiscal.getEjercicioFiscal(), e).stream().filter(t -> t.getBandera().equals("y")).collect(Collectors.toList());
                 switch (e.getEje()) {
-                    case 1:if (actividadesPoas.isEmpty()) {eje1 = Boolean.FALSE;proEje1 = 0D;alcEje1 = 0D;} else {eje1 = Boolean.TRUE;promediosAcumuladosRCuatrimestral(numeroMes);proEje1 = programadasAcumuladas;alcEje1 = alcanzadasAcumuladas;}break;
-                    case 2:if (actividadesPoas.isEmpty()) {eje2 = Boolean.FALSE;proEje2 = 0D;alcEje2 = 0D;} else {eje2 = Boolean.TRUE;promediosAcumuladosRCuatrimestral(numeroMes);proEje2 = programadasAcumuladas;alcEje2 = alcanzadasAcumuladas;}break;
-                    case 3:if (actividadesPoas.isEmpty()) {eje3 = Boolean.FALSE;proEje3 = 0D;alcEje3 = 0D;} else {eje3 = Boolean.TRUE;promediosAcumuladosRCuatrimestral(numeroMes);proEje3 = programadasAcumuladas;alcEje3 = alcanzadasAcumuladas;}break;
-                    case 4:if (actividadesPoas.isEmpty()) {eje4 = Boolean.FALSE;proEje4 = 0D;alcEje4 = 0D;} else {eje4 = Boolean.TRUE;promediosAcumuladosRCuatrimestral(numeroMes);proEje4 = programadasAcumuladas;alcEje4 = alcanzadasAcumuladas;}break;
+                    case 1:if (actividadesPoas.isEmpty()) {eje1 = Boolean.FALSE;proEje1 = 0D;alcEje1 = 0D;} else {eje1 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje1 = programadasAcumuladas;alcEje1 = alcanzadasAcumuladas;}break;
+                    case 2:if (actividadesPoas.isEmpty()) {eje2 = Boolean.FALSE;proEje2 = 0D;alcEje2 = 0D;} else {eje2 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje2 = programadasAcumuladas;alcEje2 = alcanzadasAcumuladas;}break;
+                    case 3:if (actividadesPoas.isEmpty()) {eje3 = Boolean.FALSE;proEje3 = 0D;alcEje3 = 0D;} else {eje3 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje3 = programadasAcumuladas;alcEje3 = alcanzadasAcumuladas;}break;
+                    case 4:if (actividadesPoas.isEmpty()) {eje4 = Boolean.FALSE;proEje4 = 0D;alcEje4 = 0D;} else {eje4 = Boolean.TRUE;if(numeroCuatrimestre == 0){promediosAcumuladosResumenGeneral(numeroMes);} else {promediosAcumuladosRm(numeroMes);}proEje4 = programadasAcumuladas;alcEje4 = alcanzadasAcumuladas;}break;
                 }
             });
             if (eje1) {if (proEje1 == 0) {cumEje1 = (alcEje1 * 100D);} else {cumEje1 = (alcEje1 * 100D) / proEje1;}}

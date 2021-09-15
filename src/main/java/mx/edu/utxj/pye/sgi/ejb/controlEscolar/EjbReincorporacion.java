@@ -1205,12 +1205,7 @@ public class EjbReincorporacion {
                     Operacion operacion;
                     List<Estudiante> es = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN e.grupo g WHERE a.idAspirante=:idAspirante AND e.periodo=:periodo", Estudiante.class).setParameter("idAspirante", a.getIdAspirante()).setParameter("periodo", t.getPeriodo()).getResultList();
                     Estudiante e = new Estudiante();
-                    if (!es.isEmpty()) {
-                        e=es.get(0);
-                        e.setGrupo(new Grupo());
-                        e.setGrupo(t);
-                        operacion=Operacion.ACTUALIZAR;
-                    } else {
+                    if (es.isEmpty()) {
                         e.setAspirante(new Aspirante());
                         e.setTipoEstudiante(new TipoEstudiante());
                         e.setGrupo(new Grupo());
@@ -1223,30 +1218,30 @@ public class EjbReincorporacion {
                         e.setGrupo(t);
                         e.setFechaAlta(new Date());
                         operacion = Operacion.PERSISTIR;
+                        if (escolar.getPeriodo() == t.getPeriodo()) {
+                            e.setTipoRegistro(rr.getTipoRegistro());
+                        } else {
+                            e.setTipoRegistro("Regularización de calificaciones por reincoporación");
+                        }
+                        e.setPeriodo(t.getPeriodo());
+                        e.setCarrera(t.getIdPe());
+                        e.setTrabajadorInscribe(rr.getTrabajadorInscribe());
+                        e.setMatricula(rr.getMatricula());
+                        e.setOpcionIncripcion(rr.getOpcionIncripcion());
+
+                        switch (operacion) {
+                            case PERSISTIR:
+                                em.persist(e);
+                                f.setEntityClass(Estudiante.class);
+                                f.flush();
+                                break;
+                            case ACTUALIZAR:
+                                em.merge(e);
+                                f.setEntityClass(Estudiante.class);
+                                f.flush();
+                                break;
+                        }
                     }
-                    if (escolar.getPeriodo() == t.getPeriodo()) {
-                        e.setTipoRegistro(rr.getTipoRegistro());
-                    } else {
-                        e.setTipoRegistro("Regularización de calificaciones por reincoporación");
-                    }
-                    e.setPeriodo(t.getPeriodo());
-                    e.setCarrera(t.getIdPe());
-                    e.setTrabajadorInscribe(rr.getTrabajadorInscribe());
-                    e.setMatricula(rr.getMatricula());                    
-                    e.setOpcionIncripcion(rr.getOpcionIncripcion());
-                    
-                    switch (operacion) {
-                        case PERSISTIR:
-                            em.persist(e);
-                            f.setEntityClass(Estudiante.class);
-                            f.flush();
-                            break;
-                        case ACTUALIZAR:
-                            em.merge(e);
-                            f.setEntityClass(Estudiante.class);
-                            f.flush();
-                            break;
-                    } 
                 });
                 List<Estudiante> es = em.createQuery("select e from Estudiante e WHERE e.matricula=:matricula ORDER BY e.periodo", Estudiante.class).setParameter("matricula", rr.getMatricula()).getResultList();
                 Estudiante e = new Estudiante();
@@ -1305,7 +1300,7 @@ public class EjbReincorporacion {
             if (!estudiante.isEmpty()) {
                 estudiante.forEach((t) -> {
                     if (t.getGrupo().getPeriodo() != escolar.getPeriodo()) {
-                        if (t.getGrupo().getCargaAcademicaList().isEmpty()) {
+                        if (!t.getGrupo().getCargaAcademicaList().isEmpty()) {
                             t.getGrupo().getCargaAcademicaList().forEach((c) -> {
                                 if (!c.getUnidadMateriaConfiguracionList().isEmpty()) {
                                     c.getUnidadMateriaConfiguracionList().forEach((um) -> {

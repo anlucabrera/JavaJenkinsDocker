@@ -17,65 +17,25 @@
                 background:#374850 !important;
             }
         </style>
-        
+
         <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         <!-- Fin de estilos para campañas electorales-->
     </c:if>
 
     <script type="text/javascript">
-        function myconfig1() {
-            console.log("myconfig1");
+        function myconfig() {
             this.yAxis = {
                 type: 'double',
                 min: 0,
-                max: 150,
+                max: 115,
                 tickAmount: 7,
-                plotBands: [{from: 0.0, to: 89.99, color: '#FF0000'}, {from: 90.0, to: 94.99, color: '#ffff00'}, {from: 95.0, to: 200.99, color: '#66ff33'}]
-            };
-        }
-        function myconfig2() {
-            console.log("myconfig2");
-            this.yAxis = {
-                type: 'double',
-                min: 0,
-                max: 250,
-                tickAmount: 7,
-                plotBands: [{from: 0.0, to: 89.99, color: '#FF0000'}, {from: 90.0, to: 94.99, color: '#ffff00'}, {from: 95.0, to: 300.99, color: '#66ff33'}]
-            };
-        }
-        function myconfig3() {
-            console.log("myconfig3");
-            this.yAxis = {
-                type: 'double',
-                min: 0,
-                max: 350,
-                tickAmount: 7,
-                plotBands: [{from: 0.0, to: 89.99, color: '#FF0000'}, {from: 90.0, to: 94.99, color: '#ffff00'}, {from: 95.0, to: 400.99, color: '#66ff33'}]
-            };
-        }
-        function myconfig4() {
-            console.log("myconfig4");
-            this.yAxis = {
-                type: 'double',
-                min: 0,
-                max: 450,
-                tickAmount: 7,
-                plotBands: [{from: 0.0, to: 89.99, color: '#FF0000'}, {from: 90.0, to: 94.99, color: '#ffff00'}, {from: 95.0, to: 500.99, color: '#66ff33'}]
-            };
-        }
-        function myconfig5() {
-            console.log("myconfig5");
-            this.yAxis = {
-                type: 'double',
-                min: 0,
-                max: 550,
-                tickAmount: 7,
-                plotBands: [{from: 0.0, to: 89.99, color: '#FF0000'}, {from: 90.0, to: 94.99, color: '#ffff00'}, {from: 95.0, to: 600.99, color: '#66ff33'}]
+                plotBands: [{from: 0.0, to: 89.99, color: '#A40000'}, {from: 90.0, to: 94.99, color: '#FFFF00'}, {from: 95.0, to: 200.99, color: '#00B050'}]
             };
         }
     </script>
 
 
+    <link rel="stylesheet" type="text/css" href="../resources/css/estilosGeneralesPrint.css" media="screen" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"/>
 
 
@@ -96,37 +56,40 @@
                             <div class="box-body">  
                                 <div class="row">                                
                                     <div class="col-lg-12 col-md-12 col-xs-12">
-                                        <p:panelGrid style="margin-top:20px">
+                                        <p:panelGrid style="margin-top:20px; width: 80% !important;" rendered="#{cuadroMandoIntegralConsulta.mostrar}">
                                             <p:row>
-                                                <p:column style="font-weight: bold;">Actividades Programadas</p:column>
-                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.programadas}</p:column>
-                                                <p:column rowspan="4" style="font-weight: bold;">
-                                                    <!--# {cuadroMandoIntegralArea.datosGraica(cuadroMandoIntegralArea.cmiEJe1.avanceGraf)}-->
-                                                    <hf:chart type="line" height="400px" extender="myconfig3" render="true" updateMethod="true"
-                                                              xaxisLabel="Mes" yaxisLabel="% avance" colors="black,white">
-                                                        <hf:chartSerie name="Avance Sin penalización" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGrafSP}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
-                                                        <hf:chartSerie name="Avance Con penalización" value="#{cuadroMandoIntegralArea.cmiGeneral.avanceGrafCP}" var="point" point="#{cuadroMandoIntegralArea.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                <p:column colspan="15" style="font-weight: bold; text-align: center !important;" styleClass="eje">#{cuadroMandoIntegralConsulta.mes}</p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="3" styleClass="lac" style="font-weight: bold !important;">Actividades Programadas</p:column>
+                                                <p:column colspan="3" styleClass="lac" style="font-weight: bold !important;">Actividades Alcanzadas</p:column>
+                                                <p:column colspan="3" styleClass="lac" style="font-weight: bold !important;">Actividades No Alcanzadas</p:column>
+                                                <p:column colspan="3" styleClass="lac" style="font-weight: bold !important;">Cumplimiento Sin Penalización </p:column>
+                                                <p:column colspan="3" styleClass="lac" style="font-weight: bold !important;">Cumplimiento con Penalización </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="3" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.cmiGeneral.programadas}</p:column>
+                                                <p:column colspan="3" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.cmiGeneral.alcanzadas}</p:column>
+                                                <p:column colspan="3" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.cmiGeneral.noAlcanzadas}</p:column>
+                                                <p:column colspan="3" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiGeneral.avanceSP)}%</p:column>
+                                                <p:column colspan="3" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiGeneral.avanceCP)}%</p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column colspan="8" style="font-weight: bold;" styleClass="noprint">
+                                                    <hf:chart type="line" height="400px" extender="#{cuadroMandoIntegralConsulta.cmiGeneral.extender}" render="true" updateMethod="true"
+                                                              xaxisLabel="Mes" yaxisLabel="% avance" colors="gray,mediumspringgreen,gray,mediumspringgreen">
+                                                        <hf:chartSerie type="column" name="Avance Mensual Sin Penalización" value="#{cuadroMandoIntegralConsulta.cmiGeneral.cumplimientoMensualSp}" var="point" point="#{cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                        <hf:chartSerie type="column" name="Avance Mensual Con Penalización" value="#{cuadroMandoIntegralConsulta.cmiGeneral.cumplimientoMensualCp}" var="point" point="#{cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                        <hf:chartSerie type="line" name="Avance Acumulado Sin Penalización" value="#{cuadroMandoIntegralConsulta.cmiGeneral.cumplimientoAcumuladoSp}" var="point" point="#{cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                        <hf:chartSerie type="line" name="Avance Acumulado Con Penalización" value="#{cuadroMandoIntegralConsulta.cmiGeneral.cumplimientoAcumuladoCp}" var="point" point="#{cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
                                                     </hf:chart>
                                                 </p:column>
-                                                <p:column rowspan="4" style="font-weight: bold;">
-                                                    <p:chart type="metergauge" model="#{cuadroMandoIntegralArea.cmiGeneral.gaugeChartModel}" responsive="true" />                                            
+                                                <p:column colspan="7" style="font-weight: bold;" styleClass="noprint">
+                                                    <p:chart type="metergauge"  model="#{cuadroMandoIntegralConsulta.cmiGeneral.gaugeChartModel}" responsive="true" />                                      
                                                 </p:column>
                                             </p:row>
-
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Actividades Realizadas</p:column>
-                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.cmiGeneral.realizadas}</p:column>
-                                            </p:row>
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Cumplimiento sin penalización</p:column>
-                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiGeneral.avanceSP)}%</p:column>
-                                            </p:row>
-                                            <p:row>
-                                                <p:column style="font-weight: bold;">Cumplimiento con penalización </p:column>
-                                                <p:column style="font-weight: bold;">#{cuadroMandoIntegralArea.df.format(cuadroMandoIntegralArea.cmiGeneral.avance)}%</p:column>
-                                            </p:row>
                                         </p:panelGrid>
-                                        <a href="poa/areas/areaCMI.xhtml" class="small-box-footer" style="font-size: x-large">Ver más</a>
+                                        <a href="poa/cuadroDeMandoIntegral.xhtml" class="small-box-footer" style="font-size: x-large">Ver más</a>
                                     </div>       
                                 </div>
                             </div>
@@ -136,7 +99,7 @@
             </c:if>
 
             <c:if test="#{controladorEmpleado.fechaLimiteCV}">
-                 <c:if test="#{controladorEmpleado.mandos eq 'X'}">
+                <c:if test="#{controladorEmpleado.mandos eq 'X'}">
                     <div class="box box-primary">
                         <div class="box box-solid">
                             <div class="box-header with-border">
@@ -430,31 +393,31 @@
                             <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor}">
                                 <c:if test="#{administracionEncuesta.dto.ESIngActiva}">
                                     <div class="col-lg-3 col-md-6 col-xs-12">
-                                    <div class="small-box bg-blue">
-                                        <div class="inner">
-                                            <h3>Seguimiento</h3>
-                                            <p>Encuesta de Satisfacción de Egresados (ING)</p>
+                                        <div class="small-box bg-blue">
+                                            <div class="inner">
+                                                <h3>Seguimiento</h3>
+                                                <p>Encuesta de Satisfacción de Egresados (ING)</p>
+                                            </div>
+                                            <div class="icon">
+                                                <i class="fa fa-file-pdf"/>
+                                            </div>
+                                            <a href="#{request.contextPath}/encuestas/seguimiento/administracionEncuestaING.xhtml" class="small-box-footer">Consultar</a>
                                         </div>
-                                        <div class="icon">
-                                            <i class="fa fa-file-pdf"/>
-                                        </div>
-                                        <a href="#{request.contextPath}/encuestas/seguimiento/administracionEncuestaING.xhtml" class="small-box-footer">Consultar</a>
                                     </div>
-                                </div>
                                 </c:if>
                                 <c:if test="#{administracionEncuesta.dto.ESActiva}">
                                     <div class="col-lg-3 col-md-6 col-xs-12">
-                                    <div class="small-box bg-blue">
-                                        <div class="inner">
-                                            <h3>Seguimiento</h3>
-                                            <p>Encuesta de Satisfacción de Servicios</p>
+                                        <div class="small-box bg-blue">
+                                            <div class="inner">
+                                                <h3>Seguimiento</h3>
+                                                <p>Encuesta de Satisfacción de Servicios</p>
+                                            </div>
+                                            <div class="icon">
+                                                <i class="fa fa-file-pdf"/>
+                                            </div>
+                                            <a href="#{request.contextPath}/encuestas/seguimiento/administracionEncuestaServicios.xhtml" class="small-box-footer">Consultar</a>
                                         </div>
-                                        <div class="icon">
-                                            <i class="fa fa-file-pdf"/>
-                                        </div>
-                                        <a href="#{request.contextPath}/encuestas/seguimiento/administracionEncuestaServicios.xhtml" class="small-box-footer">Consultar</a>
                                     </div>
-                                </div>
                                 </c:if>
                             </c:if>
                         </div>
