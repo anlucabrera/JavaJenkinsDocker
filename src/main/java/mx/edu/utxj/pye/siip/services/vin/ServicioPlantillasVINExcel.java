@@ -36,12 +36,15 @@ import mx.edu.utxj.pye.sgi.entity.pye2.NivelOcupacionTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.pye2.SectoresTipo;
+import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTecnologicosAnioMes;
 import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTipos;
+import mx.edu.utxj.pye.siip.dto.vin.DTOEvaluacionSatEduContAnioMes;
 import mx.edu.utxj.pye.siip.dto.vin.DtoEventoRegistro;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbCatalogoIemsRecurrentes;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbEgresados;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbIems;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbPlantillasVINExcel;
+import mx.edu.utxj.pye.siip.interfaces.vin.EjbSatisfaccionServTecEduContAnioMes;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbServiciosTecnologicosAnioMes;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.ss.usermodel.CellType;
@@ -68,6 +71,7 @@ public class ServicioPlantillasVINExcel implements EjbPlantillasVINExcel {
     @EJB    EjbEgresados    ejbEgresados;
     @EJB    EjbCatalogos    ejbCatalogos;
     @EJB    EjbIems  ejbIems;
+    @EJB    EjbSatisfaccionServTecEduContAnioMes ejbSatisfaccionServTecEduContAnioMes;
 
     public static final String CONVENIOS_PLANTILLA = "convenios.xlsx";
     public static final String CONVENIOS_ACTUALIZADO = "convenios_actualizado.xlsx";
@@ -102,6 +106,13 @@ public class ServicioPlantillasVINExcel implements EjbPlantillasVINExcel {
     
     public static final String IEMS_PLANTILLA = "IEMS.xlsx";
     public static final String IEMS_ACTUALIZADO = "IEMS_actualizado.xlsx";
+    
+    public static final String SATISFACCION_SERVTECEDUCONT_PLANTILLA = "satisfaccion_sertec_educont.xlsx";
+    public static final String SATISFACCION_SERVTECEDUCONT_ACTUALIZADO = "satisfaccion_sertec_educont_actualizado.xlsx";
+    
+    public static final String EVALSAT_SERVTECEDUCONT_PLANTILLA = "evaluacion_satisfaccion_educont.xlsx";
+    public static final String EVALSAT_SERVTECEDUCONT_COPIA = "evaluacion_satisfaccion_educont_copia.xlsx";
+    public static final String EVALSAT_SERVTECEDUCONT_ACTUALIZADO = "evaluacion_satisfaccion_educont_actualizado.xlsx";
     
     @Getter
     private final String[] ejes = ServicioArchivos.EJES;
@@ -793,6 +804,119 @@ public class ServicioPlantillasVINExcel implements EjbPlantillasVINExcel {
         transformer.transformXLS(plantilla, beans, plantillaC);
         
         return plantillaC;
+    }
+    
+    @Override
+    public String getPlantillaSatisfaccionServTecEduCont() throws Throwable {
+        String rutaPlantilla = ejbCarga.crearDirectorioPlantilla(ejes[2]);
+        String rutaPlantillaC = ejbCarga.crearDirectorioPlantillaCompleto(ejes[2]);
+        String plantilla = rutaPlantilla.concat(SATISFACCION_SERVTECEDUCONT_PLANTILLA);
+        String plantillaC = rutaPlantillaC.concat(SATISFACCION_SERVTECEDUCONT_ACTUALIZADO);
+        Map beans = new HashMap();
+        beans.put("serviciosTecnologicos", ejbSatisfaccionServTecEduContAnioMes.getListaServicios().getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(plantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+
+    @Override
+    public String getPlantillaEvaluacionSatisfaccionServTecEduCont() throws Throwable {
+        
+        String plantilla = crearDirectorioPlantilla(ejes[2]).concat(EVALSAT_SERVTECEDUCONT_PLANTILLA);
+        String plantillaCopia = crearDirectorioPlantillaCompleto(ejes[2]).concat(EVALSAT_SERVTECEDUCONT_COPIA);
+        String plantillaCompleto = crearDirectorioPlantillaCompleto(ejes[2]).concat(EVALSAT_SERVTECEDUCONT_ACTUALIZADO);
+        
+        try {
+            Files.copy(FileSystems.getDefault().getPath(plantilla), FileSystems.getDefault().getPath(plantillaCopia), StandardCopyOption.REPLACE_EXISTING);
+            File archivoCopia = FileSystems.getDefault().getPath(plantillaCopia).toFile();
+
+            XSSFWorkbook libroEvaluaciones = new XSSFWorkbook();
+            libroEvaluaciones = (XSSFWorkbook) WorkbookFactory.create(archivoCopia);
+
+            XSSFSheet catalogos = libroEvaluaciones.getSheetAt(1);
+            
+            List<ServiciosTecnologicosAnioMes> serviciosTecnologicos = ejbSatisfaccionServTecEduContAnioMes.getListaServicios().getValor();
+            List<DTOEvaluacionSatEduContAnioMes.CatalogoPlantilla> preguntasEvaluaciones = ejbSatisfaccionServTecEduContAnioMes.getListaPreguntasEvaluacion().getValor();
+            
+            XSSFRow fila;
+            XSSFCell celda;
+            
+//            Generaciones  
+            for (Integer st = 0; st < serviciosTecnologicos.size(); st++) {
+//                Indica a partir de que posición empezar a llenar los datos en las celdas correspondientes - El cual se obtiene haciendo la suma de la iteración ligada a la lista y el numero de fila inicial
+                Integer ubicacion = st + 1;
+
+//                Declarar getRow en caso de usar tabla o bien existan datos posteriores al llenado de los datos, usar create unicamente cuando la plantilla no contenga ningun formato o no existan datos a la izquierda del archivo.
+                fila = (XSSFRow) (Row) catalogos.getRow(ubicacion);
+                if (null == fila) {
+                    fila = catalogos.createRow(ubicacion);
+                }
+
+//                Inicia el vaciado de los catalogos en las celdas indicadas
+//                Servicios Tecnológicos
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.STRING);
+                }
+                String servicioCompuesto = serviciosTecnologicos.get(st).getServicio() + "-" + serviciosTecnologicos.get(st).getNombre();
+                fila.getCell(0).setCellValue(servicioCompuesto);
+                
+//                Clave
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.STRING);
+                }
+                fila.getCell(1).setCellValue(serviciosTecnologicos.get(st).getServicio());
+            }
+            
+//            Preguntación de la evaluación
+            for (Integer pre = 0; pre < preguntasEvaluaciones.size(); pre++) {
+//                Indica a partir de que posición empezar a llenar los datos en las celdas correspondientes - El cual se obtiene haciendo la suma de la iteración ligada a la lista y el numero de fila inicial
+                Integer ubicacion = pre + 1;
+
+//                Declarar getRow en caso de usar tabla o bien existan datos posteriores al llenado de los datos, usar create unicamente cuando la plantilla no contenga ningun formato o no existan datos a la izquierda del archivo.
+                fila = (XSSFRow) (Row) catalogos.getRow(ubicacion);
+                if (null == fila) {
+                    fila = catalogos.createRow(ubicacion);
+                }
+
+//                Inicia el vaciado de los catalogos en las celdas indicadas
+//                Pregunta
+                celda = fila.getCell(3);
+                if (null == celda) {
+                    fila.createCell(3, CellType.STRING);
+                }
+                fila.getCell(3).setCellValue(preguntasEvaluaciones.get(pre).getNumeroPregunta().concat(". ").concat(preguntasEvaluaciones.get(pre).getPregunta()));
+                
+//                Clave de la evaluación
+                celda = fila.getCell(4);
+                if (null == celda) {
+                    fila.createCell(4, CellType.NUMERIC);
+                }
+                fila.getCell(4).setCellValue(preguntasEvaluaciones.get(pre).getEvaluacionesServtecEducont().getEvaluacion());
+                
+//                Clave pregunta
+                celda = fila.getCell(5);
+                if (null == celda) {
+                    fila.createCell(5, CellType.STRING);
+                }
+                fila.getCell(5).setCellValue(preguntasEvaluaciones.get(pre).getNumeroPregunta());
+            }
+            
+            File archivoFinal = FileSystems.getDefault().getPath(plantillaCompleto).toFile();
+            FileOutputStream archivoSalida = new FileOutputStream(archivoFinal);
+            libroEvaluaciones.write(archivoSalida);
+            libroEvaluaciones.close();
+            archivoSalida.flush();
+            archivoSalida.close();
+            Files.deleteIfExists(FileSystems.getDefault().getPath(plantillaCopia));
+        } catch (FileNotFoundException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioPlantillasVINExcel.getPlantillaEvaluacionSatisfaccionServTecEduCont() Archivo no encontrado");
+        } catch (IOException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioPlantillasVINExcel.getPlantillaEvaluacionSatisfaccionServTecEduCont() Error de lectura y escritura (i/o");
+        }
+        return plantillaCompleto;
     }
 
 }

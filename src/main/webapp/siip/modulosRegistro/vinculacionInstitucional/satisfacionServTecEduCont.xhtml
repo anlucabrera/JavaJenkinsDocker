@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pr="http://xmlns.jcp.org/jsp/jstl/functions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="true"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <h:outputScript library="js" name="dialogs.js" />
+        <h:outputScript library="js" name="calendario.js"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <h:outputStylesheet library="css" name="procesoElectoral.css" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+    <ui:define name="title">
+        Satisfacción de Servicios Tecnológicos y Educación Continua
+    </ui:define>
+
+    <ui:define name="description">
+        Vinculación Institucional
+    </ui:define>
+
+    <ui:define name="body"> 
+        <adm:breadcrumb title="Vinculación Institucional - Satisfacción Servicios Tecnológicos"/>
+        <adm:sidebar collapsed="true"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+
+                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                    <p:outputPanel >
+                        <p:autoUpdate/>
+                        <p:toolbar id="tb"> 
+                            <f:facet name="left">
+                                <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                                    <p:spacer width="10" />
+                                    <c:if test="#{controladorArchivoSatisfaccionServTecEduContAnioMes.etapa eq etapa.MOSTRAR}">
+                                        <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                        <p:outputLabel value="Ejercicio: " for="anioConsulta" />
+                                        <p:spacer width="5" />
+                                        <p:selectOneMenu id="anioConsulta"
+                                                         value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.anioConsulta}"
+                                                         valueChangeListener="#{controladorSatisfaccionServTecEduContAnioMes.actualizarMeses}"
+                                                         class="form-control"
+                                                         style="padding-top: 0px">
+                                            <f:selectItems value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.aniosConsulta}" 
+                                                           var="anio" 
+                                                           itemValue="#{anio}" 
+                                                           itemLabel="#{anio}" />
+                                            <p:ajax process="@this" listener="#{controladorSatisfaccionServTecEduContAnioMes.buscaSatisfaccionSerTecEduCont()}" update="@(form)" />
+                                        </p:selectOneMenu>
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Mes: " for="mesConsulta" />
+                                        <p:spacer width="5" />
+                                        <p:selectOneMenu id="mesConsulta"
+                                                         value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.mesConsulta}"
+                                                         class="form-control"
+                                                         style="padding-top:  0px">
+                                            <f:selectItems value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.mesesConsulta}" 
+                                                           var="mes" 
+                                                           itemValue="#{mes}" 
+                                                           itemLabel="#{mes}" />
+                                            <p:ajax process="@this" listener="#{controladorSatisfaccionServTecEduContAnioMes.buscaSatisfaccionSerTecEduCont()}" update="@(form)" />
+                                        </p:selectOneMenu>
+                                    </c:if>
+                                </h:form>
+                            </f:facet>
+                            <f:facet name="right">
+                                <h:form id="frmReporte">
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <div class="btn-group">
+                                        <p:commandButton value="Cargar Archivo de Excel" 
+                                                         icon="fa fa-file-excel-o" 
+                                                         onclick="PF('modalCargaArchivo').show()" 
+                                                         class="btn btn-primary btn-sm"/>
+                                    </div>
+                                    <c:if test="#{controladorArchivoSatisfaccionServTecEduContAnioMes.etapa eq etapa.CARGAR}">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="satisfacionServTecEduCont?faces-redirect=true" title="Consultar registros."><i class="fa fa-list"></i></p:commandLink>
+                                    </c:if>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarPlantillaSatisfaccionServTecEduCont()}" target="_blank" title="Descargar Plantilla de Satisfacción Servicios Tecnológicos y Educación Continua"><i class="fa fa-download" /></p:commandLink>
+                                    <c:if test="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.anioConsulta ne null}">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasVIN.descargarReporteSatisfaccionServTecEduCont(controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.anioConsulta)}" target="_blank" title="Descargar Reporte de Satisfacción Servicios Tecnológicos y Educación Continua"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                    </c:if>
+                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                    <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+                                </h:form>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:sticky target="tb" />
+                    </p:outputPanel>
+                </div>
+                <p:separator/>
+
+                <div class="box-body">
+
+                    <!-- Sección de visualización y eliminación -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formMuestraDatosActivos">
+                                <c:if test="#{controladorArchivoSatisfaccionServTecEduContAnioMes.etapa eq etapa.MOSTRAR}">
+                                    <center>
+                                        <p:remoteCommand name="actualizar" update="@form:formMuestraDatosActivos" />
+                                                <p:dataTable emptyMessage="No se encuentran registros correspondientes a los parametros seleccionados: Ejercicio: #{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.anioConsulta} y Mes: #{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.mesConsulta}" 
+                                                             paginator="true" 
+                                                             rows="10" editable="true" editMode="cell" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             resizeMode="expand" 
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             id="dtbConsultaEliminacionServTec"
+                                                             var="satServTecEduCont" value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.lstDtoSatisfaccionServtecEducontAnioMes}"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                        <p:column rowspan="3" headerText="Opciones" style="width: 120px;"/>
+                                                        <p:column rowspan="3" headerText="Tipo de Servicio" style="width: 200px;" sortBy="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.servicio.servicioTipo.descripcion}" filterBy="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.servicio.servicioTipo.descripcion}"/>
+                                                        <p:column rowspan="3" headerText="Servicio Tecnológico" style="width: 350px;" sortBy="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.servicio.servicio}" filterBy="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.servicio.servicio}"/>
+                                                        <p:column rowspan="3" headerText="Nombre del Servicio" style="width: 350px;" sortBy="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.servicio.nombre}" filterBy="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.servicio.nombre}"/>
+                                                        <p:column rowspan="3" headerText="Total Encuestadas o Encuestados" style="width: 200px;" sortBy="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.totalEncuestados}"/>
+                                                        <p:column colspan="10" headerText="Grado de satisfacción" style="width: 1000px;"/>
+                                                        <p:column rowspan="2" colspan="2" headerText="No Aplica" style="width: 200px;"/>
+                                                        <p:column rowspan="3" headerText="Total Evaluables" style="width: 200px;" sortBy="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.totalEvaluables}"/>
+                                                        <p:column rowspan="3" headerText="Satisfacción Base 5" style="width: 200px;" sortBy="#{satServTecEduCont.satisBase5}"/>
+                                                        <p:column rowspan="3" headerText="Satisfacción Base 10" style="width: 200px;" sortBy="#{satServTecEduCont.satisBase10}"/>
+                                                        <p:column rowspan="2" colspan="2" headerText="Satisfacción" style="width: 200px;"/>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="2" headerText="Muy Satisfechas o Satisfechos (5)" style="width: 200px;"/>
+                                                        <p:column colspan="2" headerText="Satisfechas o Satisfechos (4)" style="width: 200px;"/>
+                                                        <p:column colspan="2" headerText="Regularmente Satisfechas o Satisfechos (3)" style="width: 200px;"/>
+                                                        <p:column colspan="2" headerText="Poco Satisfechas o Satisfechos (2)" style="width: 200px;"/>
+                                                        <p:column colspan="2" headerText="No Satisfechas o Satisfechos (1)" style="width: 200px;"/>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column headerText="No." style="width: 100px;"/>
+                                                        <p:column headerText="%" style="width: 100px;"/>
+                                                        <p:column headerText="No." style="width: 100px;"/>
+                                                        <p:column headerText="%" style="width: 100px;"/>
+                                                        <p:column headerText="No." style="width: 100px;"/>
+                                                        <p:column headerText="%" style="width: 100px;"/>
+                                                        <p:column headerText="No." style="width: 100px;"/>
+                                                        <p:column headerText="%" style="width: 100px;"/>
+                                                        <p:column headerText="No." style="width: 100px;"/>
+                                                        <p:column headerText="%" style="width: 100px;"/>
+                                                        <p:column headerText="No." style="width: 100px;"/>
+                                                        <p:column headerText="%" style="width: 100px;"/>
+                                                        <p:column headerText="No." style="width: 100px;" sortBy="#{satServTecEduCont.numSatisfaccion}"/>
+                                                        <p:column headerText="%" style="width: 100px;" sortBy="#{satServTecEduCont.satisfaccion}"/>
+                                                    </p:row>
+                                                    </p:columnGroup>
+                                                    <p:ajax event="cellEdit" listener="#{controladorSatisfaccionServTecEduContAnioMes.onCellEdit}"/>
+                                                    <c:set var="satServTecEduContEliminado" value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.registro}"/>
+                                                    <p:column style="text-align: center;">
+                                                        <div class="btn-group">
+                                                            <p:commandButton class="btn btn-info btn-sm" 
+                                                                             icon="fa fa-trash"
+                                                                             actionListener="#{controladorSatisfaccionServTecEduContAnioMes.eliminarRegistro(satServTecEduContEliminado)}"
+                                                                             onsuccess="actualizar();" 
+                                                                             title="Eliminar registro."
+                                                                             rendered="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                                <p:confirm header="Eliminar registro"
+                                                                           message="¿Está seguro de eliminar el registro de #{satServTecEduCont.satisfaccionServtecEducontAnioMes.servicio.servicio}?"
+                                                                           icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                            <p:spacer width="3" />
+                                                            <c:set var="evidencias" value="#{controladorSatisfaccionServTecEduContAnioMes.consultarEvidencias(satServTecEduCont.satisfaccionServtecEducontAnioMes.registro)}" />
+                                                            <p:commandButton actionListener="#{controladorSatisfaccionServTecEduContAnioMes.seleccionarRegistro(satServTecEduCont)}" 
+                                                                             class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                             icon="fa fa-image"
+                                                                             title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                            <p:spacer width="3" />
+                                                            <p:commandButton actionListener="#{controladorSatisfaccionServTecEduContAnioMes.abrirAlineacionPOA(satServTecEduCont.satisfaccionServtecEducontAnioMes)}"
+                                                                             class="btn btn-sm #{controladorSatisfaccionServTecEduContAnioMes.verificaAlineacion(satServTecEduCont.satisfaccionServtecEducontAnioMes.registro)?'btn-info':'btn-warning'}"
+                                                                             icon="fa fa-cog"
+                                                                             title="Alineación a POA."/>
+                                                        </div>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.servicio.servicioTipo.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.servicio.servicio}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.servicio.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.totalEncuestados}"/></f:facet>
+                                                             <f:facet name="input"><p:inputNumber value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.totalEncuestados}" decimalPlaces="0" size="15"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.numMuySatisfechos}"/></f:facet>
+                                                             <f:facet name="input"><p:inputNumber value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.numMuySatisfechos}" decimalPlaces="0" size="15"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduCont.porcentajeMuySatisf}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="3"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.numSatisfechos}"/></f:facet>
+                                                             <f:facet name="input"><p:inputNumber value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.numSatisfechos}" decimalPlaces="0" size="15"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduCont.porcentajeSatisf}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="3"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.numRegSatisfechos}"/></f:facet>
+                                                             <f:facet name="input"><p:inputNumber value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.numRegSatisfechos}" decimalPlaces="0" size="15"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduCont.porcentajeRegSatisf}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="3"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.numPocoSatisfechos}"/></f:facet>
+                                                             <f:facet name="input"><p:inputNumber value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.numPocoSatisfechos}" decimalPlaces="0" size="15"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduCont.porcentajePocSatisf}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="3"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.numNoSatisfechos}"/></f:facet>
+                                                             <f:facet name="input"><p:inputNumber value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.numNoSatisfechos}" decimalPlaces="0" size="15"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduCont.porcentajeNoSatisf}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="3"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.numNoAplica}"/></f:facet>
+                                                             <f:facet name="input"><p:inputNumber value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.numNoAplica}" decimalPlaces="0" size="15"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduCont.porcentajeNoAplica}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="3"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.totalEvaluables}"/></f:facet>
+                                                             <f:facet name="input"><p:inputNumber value="#{satServTecEduCont.satisfaccionServtecEducontAnioMes.totalEvaluables}" decimalPlaces="0" size="15"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduCont.satisBase5}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="3"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduCont.satisBase10}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="3"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduCont.numSatisfaccion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduCont.satisfaccion}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="3"/></h:outputText>
+                                                    </p:column>
+                                                    <f:facet name="footer">
+                                                        En el mes de: #{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.mesConsulta} hay un total de: #{fn:length(controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.lstDtoSatisfaccionServtecEducontAnioMes)} registros de Satisfacción de Servicios Tecnológicos y Educación Continua.
+                                                    </f:facet>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true"
+                                                                 showEffect="fade"
+                                                                 hideEffect="fade"
+                                                                 styleClass="panel panel-primary"
+                                                                 width="500"
+                                                                 closeOnEscape="true">
+                                                    <p:commandButton value="Si"
+                                                                     type="button"
+                                                                     styleClass="ui-confirmdialog-yes btn btn-primary" 
+                                                                     icon="ui-icon-check" />
+                                                    <p:commandButton value="No" 
+                                                                     type="button" 
+                                                                     styleClass="ui-confirmdialog-no btn btn-primary" 
+                                                                     icon="ui-icon-close" />
+                                                </p:confirmDialog>
+                                    </center>
+                                </c:if>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <!-- Sección de evidencias -->
+                    <p:dialog id="modalCargaEvidencia" 
+                              widgetVar="modalCargaEvidencia" 
+                              width="700" 
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.forzarAperturaDialogo}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              modal="true"
+                              draggable="true"
+                              header="Carga de evidencias"
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:toolbar>
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                        <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px" />
+                                        <p:spacer width="10" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <o:form id="formularioEvidencia" 
+                                                enctype="multipart/form-data"
+                                                class="form-inline">
+                                            <o:inputFile id="files"
+                                                         value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.archivos}"
+                                                         multiple="true"
+                                                         class="form-control"
+                                                         accept="image/png,image/jpg,image/jpeg,application/pdf"     
+                                                         acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                         maxsize="#{caster.evidenciasTamanioLimite}"
+                                                         maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                         required="true"
+                                                         requiredMessage="Debe elegir al menos un archivo" 
+                                                         >
+                                            </o:inputFile>
+                                            <h:commandButton id="btnuploadFiles" value="Subir Archivos" class="btn btn-primary" actionListener="#{controladorSatisfaccionServTecEduContAnioMes.subirEvidencias()}"
+                                                             />
+                                        </o:form>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </div>
+                        <h:form id="frmEvidencias">
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Satisfacción de Servicio Tecnológico: #{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.registro.satisfaccionServtecEducontAnioMes.servicio.servicio}" /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px" />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
+                                    <p:dataTable id="tblEvidencias"
+                                                 value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.listaEvidencias}"
+                                                 var="evidencia"
+                                                 emptyMessage="No se han registrado evidencias de este registro." 
+                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                 paginator="true" 
+                                                 rows="10"
+                                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" 
+                                                 paginatorAlwaysVisible="false" 
+                                                 paginatorPosition="bottom"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Opciones" width="80"/>
+                                                <p:column headerText="Archivo" />
+                                                <p:column headerText="Tipo"     width="80" />
+                                                <p:column headerText="Tamanio"  width="80" />
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column style="text-align: center;">
+                                            <div class="btn-group">
+                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{controladorSatisfaccionServTecEduContAnioMes.eliminarEvidencia(evidencia)}" onsuccess="actualizar2();" title="Eliminar evidencia."
+                                                                 rendered="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.mesConsulta eq controladorModulosRegistro.eventosRegistros.mes and controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.anioConsulta eq controladorModulosRegistro.eventosRegistros.ejercicioFiscal.anio}">
+                                                    <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:spacer width="5" />
+                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorSatisfaccionServTecEduContAnioMes.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                        <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                        <f:facet name="footer">
+                                            <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.listaEvidencias)}.</span>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    <!-- Sección de alineación a POA -->
+                    <p:dialog id="modalAlineacion"
+                              widgetVar="modalAlineacion"
+                              width="900"
+                              height="auto"  
+                              closeOnEscape="true"
+                              showEffect="fade" 
+                              hideEffect="fade" 
+                              modal="true" 
+                              draggable="true" 
+                              header="Alineación a POA." 
+                              onHide="actualizar();"
+                              styleClass="panel panel-primary" 
+                              responsive="true" 
+                              resizable="false" 
+                              maximizable="false">
+                        <h:form id="frmAlineacion">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar>
+                                        <f:facet name="left">
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{controladorSatisfaccionServTecEduContAnioMes.eliminarAlineacion()}" rendered="#{controladorSatisfaccionServTecEduContAnioMes.verificaAlineacion(controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.registro.satisfaccionServtecEducontAnioMes.registro)}" >
+                                                <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de ésta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{controladorSatisfaccionServTecEduContAnioMes.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-12"><p:outputLabel value="Servicio Tecnológico: #{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.registro.satisfaccionServtecEducontAnioMes.servicio.servicio} " /></div>
+                            </div>
+                            <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                            <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                            <c:set var="col1" value="#{'col-md-2'}" />
+                            <c:set var="col2" value="#{'col-md-10'}" />
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="eje" value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.alineacionEje}" valueChangeListener="#{controladorSatisfaccionServTecEduContAnioMes.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                        <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="eje"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="estrategia" value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.alineacionEstrategia}" valueChangeListener="#{controladorSatisfaccionServTecEduContAnioMes.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                        <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="lineaAccion" value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.alineacionLinea}" valueChangeListener="#{controladorSatisfaccionServTecEduContAnioMes.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                        <p:ajax process="lineaAccion" update="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                            <div class="row" style="#{fila}">
+                                <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                <div class="#{col2}">
+                                    <p:selectOneMenu id="actividad" value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.alineacionActividad}" required="true" converter="entidadConverter2">
+                                        <p:autoUpdate />
+                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                        <f:selectItems value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                        <p:ajax process="actividad" />
+                                    </p:selectOneMenu>
+                                    <p:message for="actividad"><p:autoUpdate /></p:message>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                     <!-- Sección de subida -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <h:form id="formPrevisualizacionDatos" prependId="false">
+                                <c:if test="#{controladorArchivoSatisfaccionServTecEduContAnioMes.etapa eq etapa.CARGAR}">
+                                    <center>
+                                                <p:dataTable emptyMessage="Ha subido un archivo que no contiene datos o bien los datos fueron ingresados de manera incorrecta, se recomienda volver a descargar la plantilla correspondiente" 
+                                                             paginator="true"
+                                                             rows="10" 
+                                                             rowsPerPageTemplate="5,10,20,30,40,50"
+                                                             resizeMode="expand"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                             id="dtbServiciosTecnologicos"
+                                                             var="satServTecEduContPrevia" value="#{controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.lstSatisfaccionServtecEducontAnioMes}"
+                                                             tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                    <f:facet name="header">
+                                                        Previsualización de datos
+                                                    </f:facet>
+                                                   <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column rowspan="2" headerText="Tipo de Servicio" style="width: 200px;"/>
+                                                        <p:column rowspan="2" headerText="Servicio Tecnológico" style="width: 350px;"/>
+                                                        <p:column rowspan="2" headerText="Nombre del Servicio" style="width: 350px;"/>
+                                                        <p:column rowspan="2" headerText="Total Encuestadas o Encuestados" style="width: 200px;"/>
+                                                        <p:column colspan="5" headerText="Grado de satisfacción" style="width: 1000px;"/>
+                                                        <p:column rowspan="2" headerText="No Aplica" style="width: 200px;"/>
+                                                        <p:column rowspan="2" headerText="Total Evaluables" style="width: 200px;"/>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column headerText="Muy Satisfechas o Satisfechos (5)" style="width: 200px;"/>
+                                                        <p:column headerText="Satisfechas o Satisfechos (4)" style="width: 200px;"/>
+                                                        <p:column headerText="Regularmente Satisfechas o Satisfechos (3)" style="width: 200px;"/>
+                                                        <p:column headerText="Poco Satisfechas o Satisfechos (2)" style="width: 200px;"/>
+                                                        <p:column headerText="No Satisfechas o Satisfechos (1)" style="width: 200px;"/>
+                                                    </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column>
+                                                        <h:outputText value="#{satServTecEduContPrevia.servicio.servicioTipo.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{satServTecEduContPrevia.servicio.servicio}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{satServTecEduContPrevia.servicio.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduContPrevia.totalEncuestados}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduContPrevia.numMuySatisfechos}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduContPrevia.numSatisfechos}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduContPrevia.numRegSatisfechos}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduContPrevia.numPocoSatisfechos}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduContPrevia.numNoSatisfechos}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduContPrevia.numNoAplica}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align:  center;">
+                                                        <h:outputText value="#{satServTecEduContPrevia.totalEvaluables}"/>
+                                                    </p:column>
+
+                                                    <f:facet name="footer">
+                                                        Su archivo de excel contiene un total de: #{fn:length(controladorSatisfaccionServTecEduContAnioMes.dtoSatisfaccionServTecEduCont.lstSatisfaccionServtecEducontAnioMes)} registros de Satisfacción de Servicios Tecnológicos y Educación Continua.
+                                                    </f:facet>
+                                                </p:dataTable>
+                                        <p></p>
+                                        <p:commandButton id="btnGuardar" value="Guardar Datos" actionListener="#{controladorSatisfaccionServTecEduContAnioMes.guardaSatisfaccionServTecEduCont()}" icon="fa fa-pencil-square-o" class="btn-primary" update="formPrevisualizacionDatos"/>
+                                        <p:spacer width="5" />
+                                        <p:commandButton id="btnCancelar" value="Cancelar" actionListener="#{controladorSatisfaccionServTecEduContAnioMes.cancelarArchivo()}" icon="fa fa-times-circle" class="btn-danger" update=":formPrevisualizacionDatos,:formMuestraDatosActivos"/>
+                                    </center>
+                                </c:if>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+
+                <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                    <center>
+                        <h:form id="formularioContenedor" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <o:inputFile id="file" 
+                                                 value="#{controladorArchivoSatisfaccionServTecEduContAnioMes.file}" 
+                                                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+                                                 acceptMessage="Solo se permiten archivos XLSX." 
+                                                 maxsize="#{100*1024*1024}" 
+                                                 maxsizeMessage="El tamaño máximo permitido son 100MB." 
+                                                 required="true" 
+                                                 requiredMessage="Debe elegir un archivo." >
+                                    </o:inputFile>
+                                    <p:messages for="file" ><p:autoUpdate/></p:messages>
+                                </div>
+                                <p:separator />
+                                <div class="col-md-12">
+                                    <h:commandButton id="btnuploadFile"
+                                                     value="Subir archivo" 
+                                                     class="btn btn-primary" 
+                                                     action="#{controladorArchivoSatisfaccionServTecEduContAnioMes.subirExcelSatisfaccionServTecEduCont()}" />
+                                </div>
+                            </div>
+                        </h:form>
+                        <p:blockUI block="formularioContenedor" widgetVar="bloqueoCargaFile" trigger="formularioContenedor:btnuploadFile">
+                            Cargando archivo espere por favor.<br />
+                        </p:blockUI>
+                    </center>
+                </p:dialog>
+
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -182,6 +182,10 @@ public class Registros implements Serializable {
     private AsesoriasTutoriasCuatrimestrales asesoriasTutoriasCuatrimestrales;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
     private ActividadesFormacionIntegral actividadesFormacionIntegral;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
+    private EvaluacionSatisfaccionResultados evaluacionSatisfaccionResultados;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "registros", fetch = FetchType.LAZY)
+    private SatisfaccionServtecEducontAnioMes satisfaccionServtecEducontAnioMes;
 
     public Registros() {
     }
@@ -693,6 +697,22 @@ public class Registros implements Serializable {
 
     public void setActividadesFormacionIntegral(ActividadesFormacionIntegral actividadesFormacionIntegral) {
         this.actividadesFormacionIntegral = actividadesFormacionIntegral;
+    }
+    
+    public EvaluacionSatisfaccionResultados getEvaluacionSatisfaccionResultados() {
+        return evaluacionSatisfaccionResultados;
+    }
+
+    public void setEvaluacionSatisfaccionResultados(EvaluacionSatisfaccionResultados evaluacionSatisfaccionResultados) {
+        this.evaluacionSatisfaccionResultados = evaluacionSatisfaccionResultados;
+    }
+
+    public SatisfaccionServtecEducontAnioMes getSatisfaccionServtecEducontAnioMes() {
+        return satisfaccionServtecEducontAnioMes;
+    }
+
+    public void setSatisfaccionServtecEducontAnioMes(SatisfaccionServtecEducontAnioMes satisfaccionServtecEducontAnioMes) {
+        this.satisfaccionServtecEducontAnioMes = satisfaccionServtecEducontAnioMes;
     }
 
     @Override

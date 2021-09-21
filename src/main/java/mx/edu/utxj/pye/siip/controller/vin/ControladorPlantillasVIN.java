@@ -50,6 +50,16 @@ public class ControladorPlantillasVIN implements Serializable {
         Faces.sendFile(f, true);
     }
     
+    public void descargarPlantillaSatisfaccionServTecEduCont() throws IOException, Throwable {
+        File f = new File(ejbPlantillasVINExcel.getPlantillaSatisfaccionServTecEduCont());
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarPlantillaEvaluacionSatisfaccionServTecEduCont() throws IOException, Throwable {
+        File f = new File(ejbPlantillasVINExcel.getPlantillaEvaluacionSatisfaccionServTecEduCont());
+        Faces.sendFile(f, true);
+    }
+    
     public void descargarReporteConvenios(Short ejercicioFiscal) throws IOException, Throwable{
         File f = new File(ejbReportesVINExcel.getReporteConvenios(ejercicioFiscal));
         Faces.sendFile(f, true);
@@ -67,6 +77,16 @@ public class ControladorPlantillasVIN implements Serializable {
     
     public void descargarReporteOrganismosVinculados(Short ejercicio) throws Throwable{
         File f = new File(ejbReportesVINExcel.getReporteOrganismosVinculados(ejercicio));
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarReporteSatisfaccionServTecEduCont(Short ejercicio) throws IOException, Throwable{
+        File f = new File(ejbReportesVINExcel.getReporteSatisfaccionServTecEduCont(ejercicio));
+        Faces.sendFile(f, true);
+    }
+    
+    public void descargarReporteEvaluacionSatisfaccionEduCont(Short ejercicio) throws IOException, Throwable{
+        File f = new File(ejbReportesVINExcel.getReporteEvaluacionSatisfaccionEduCont(ejercicio));
         Faces.sendFile(f, true);
     }
     

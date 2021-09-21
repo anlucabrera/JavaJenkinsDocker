@@ -41,11 +41,14 @@ import mx.edu.utxj.pye.sgi.entity.pye2.TelefonosEmpresa;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.dto.vin.DTOActividadesVinculacion;
+import mx.edu.utxj.pye.siip.dto.vin.DTOEvaluacionSatEduContAnioMes;
 import mx.edu.utxj.pye.siip.dto.vin.DTOProgramasBeneficiadosVinculacion;
+import mx.edu.utxj.pye.siip.dto.vin.DTOSatisfaccionServTecEduContAnioMes;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbConvenios;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbEgresados;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbOrganismosVinculados;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbReportesVINExcel;
+import mx.edu.utxj.pye.siip.interfaces.vin.EjbSatisfaccionServTecEduContAnioMes;
 import mx.edu.utxj.pye.siip.interfaces.vin.EjbServiciosTecnologicosAnioMes;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -71,6 +74,7 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
     @EJB    EjbOrganismosVinculados             ejbOrganismosVinculados;
     @EJB    EjbServiciosTecnologicosAnioMes     ejbServiciosTecnologicosAnioMes;
     @EJB    EjbEgresados                        ejbEgresados;
+    @EJB    EjbSatisfaccionServTecEduContAnioMes  ejbSatisfaccionServTecEduContAnioMes;
     
     public static final String REPORTE_CONVENIOS_PLANTILLA = "reporte_convenios_plantilla.xlsx";
     public static final String REPORTE_CONVENIOS_COPIA = "reporte_convenios_copia.xlsx";
@@ -87,6 +91,14 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
     public static final String REPORTE_ORGANISMOS_VINCULADOS_PLANTILLA = "reporte_organismos_vinculados_plantilla.xlsx";
     public static final String REPORTE_ORGANISMOS_VINCULADOS_COPIA = "reporte_organismos_vinculados_copia.xlsx";
     public static final String REPORTE_ORGANISMOS_VINCULADOS_ACTUALIZADO = "reporte_organismos_vinculados_actualizado.xlsx";
+    
+    public static final String REPORTE_SATISFACCION_SERVTECEDUCONT_PLANTILLA_PLANTILLA = "reporte_satisfaccion_sertec_educont_plantilla.xlsx";
+    public static final String REPORTE_SATISFACCION_SERVTECEDUCONT_PLANTILLA_COPIA = "reporte_satisfaccion_sertec_educont_copia.xlsx";
+    public static final String REPORTE_SATISFACCION_SERVTECEDUCONT_PLANTILLA_ACTUALIZADO = "reporte_satisfaccion_sertec_educont_actualizado.xlsx";
+    
+    public static final String REPORTE_EVALUACION_SATISFACCION_SERVTECEDUCONT_PLANTILLA_PLANTILLA = "reporte_evaluacion_satisfaccion_educont_plantilla.xlsx";
+    public static final String REPORTE_EVALUACION_SATISFACCION_SERVTECEDUCONT_PLANTILLA_COPIA = "reporte_evaluacion_satisfaccion_educont_copia.xlsx";
+    public static final String REPORTE_EVALUACION_SATISFACCION_SERVTECEDUCONT_PLANTILLA_ACTUALIZADO = "reporte_evaluacion_satisfaccion_educont_actualizado.xlsx";
     
     @Getter private final String[] ejes = ServicioArchivos.EJES;
 
@@ -1307,6 +1319,397 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
             System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioReporteVINExcel.getReporteOrganismosVinculados() - Archivo no escontrado");
         } catch (IOException ex) {
             System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioReporteVINExcel.getReporteOrganismosVinculados() - Error de lectura o escritura (i/o)");
+        }
+        return plantillaCompleto;
+    }
+    
+    @Override
+    public String getReporteSatisfaccionServTecEduCont(Short ejercicio) throws Throwable {
+        
+        String plantilla = crearDirectorioReporte(ejes[2]).concat(REPORTE_SATISFACCION_SERVTECEDUCONT_PLANTILLA_PLANTILLA );
+        String plantillaCopia = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_SATISFACCION_SERVTECEDUCONT_PLANTILLA_COPIA);
+        String plantillaCompleto = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_SATISFACCION_SERVTECEDUCONT_PLANTILLA_ACTUALIZADO);
+        
+        try {
+            Files.copy(FileSystems.getDefault().getPath(plantilla), FileSystems.getDefault().getPath(plantillaCopia), StandardCopyOption.REPLACE_EXISTING);
+            File archivoCopia = FileSystems.getDefault().getPath(plantillaCopia).toFile();
+            XSSFWorkbook reporteSatisfaccionSatisServTec = new XSSFWorkbook();
+            reporteSatisfaccionSatisServTec = (XSSFWorkbook) WorkbookFactory.create(archivoCopia);
+            XSSFSheet hojaSatisfaccionSatisServTec = reporteSatisfaccionSatisServTec.getSheetAt(0);
+            
+            XSSFRow fila;
+            XSSFCell celda;
+            
+            List<DTOSatisfaccionServTecEduContAnioMes> satisfaccionServTec = ejbSatisfaccionServTecEduContAnioMes.getReporteGeneralSatisfaccionSerTecEduCont(ejercicio).getValor();
+            
+//            Organismos Vinculados
+            for (Integer listaSat = 0; listaSat < satisfaccionServTec.size(); listaSat++) {
+                Integer ubicacion = listaSat + 3;
+
+                fila = (XSSFRow) (Row) hojaSatisfaccionSatisServTec.getRow(ubicacion);
+                if (null == fila) {
+                    fila = hojaSatisfaccionSatisServTec.createRow(ubicacion);
+                }
+
+//                Ejercicio
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.NUMERIC);
+                }
+                fila.getCell(0).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccionServtecEducontAnioMes().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                
+//                Mes
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.STRING);
+                }
+                fila.getCell(1).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccionServtecEducontAnioMes().getRegistros().getEventoRegistro().getMes());
+                
+//               Tipo de servicio
+                celda = fila.getCell(2);
+                if (null == celda) {
+                    fila.createCell(2, CellType.STRING);
+                }
+                fila.getCell(2).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccionServtecEducontAnioMes().getServicio().getServicioTipo().getDescripcion());
+                
+//                Clave del servicio tecnológico
+                celda = fila.getCell(3);
+                if (null == celda) {
+                    fila.createCell(3, CellType.STRING);
+                }
+                fila.getCell(3).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccionServtecEducontAnioMes().getServicio().getServicio());
+                
+//                Nombre del servicio tecnológico
+                celda = fila.getCell(4);
+                if (null == celda) {
+                    fila.createCell(4, CellType.STRING);
+                }
+                fila.getCell(4).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccionServtecEducontAnioMes().getServicio().getNombre());
+                
+//                Total de encuestadas y encuestados
+                celda = fila.getCell(5);
+                if (null == celda) {
+                    fila.createCell(5, CellType.NUMERIC);
+                }
+                fila.getCell(5).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccionServtecEducontAnioMes().getTotalEncuestados());
+                
+//                Indicaron estar muy satisfechas y muy satisfechos
+                celda = fila.getCell(6);
+                if (null == celda) {
+                    fila.createCell(6, CellType.NUMERIC);
+                }
+                fila.getCell(6).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccionServtecEducontAnioMes().getNumMuySatisfechos());
+                
+//                Porcentaje de muy satisfechas y muy satisfechos
+                celda = fila.getCell(7);
+                if (null == celda) {
+                    fila.createCell(7, CellType.NUMERIC);
+                }
+                fila.getCell(7).setCellValue(satisfaccionServTec.get(listaSat).getPorcentajeMuySatisf());
+                
+//                Indicaron estar satisfechas y muy satisfechos
+                celda = fila.getCell(8);
+                if (null == celda) {
+                    fila.createCell(8, CellType.NUMERIC);
+                }
+                fila.getCell(8).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccionServtecEducontAnioMes().getNumSatisfechos());
+                
+//                Porcentaje de satisfechas y muy satisfechos
+                celda = fila.getCell(9);
+                if (null == celda) {
+                    fila.createCell(9, CellType.NUMERIC);
+                }
+                fila.getCell(9).setCellValue(satisfaccionServTec.get(listaSat).getPorcentajeSatisf());
+                
+//                Indicaron estar regularmente satisfechas y muy satisfechos
+                celda = fila.getCell(10);
+                if (null == celda) {
+                    fila.createCell(10, CellType.NUMERIC);
+                }
+                fila.getCell(10).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccionServtecEducontAnioMes().getNumRegSatisfechos());
+                
+//                Porcentaje de regularmente satisfechas y muy satisfechos
+                celda = fila.getCell(11);
+                if (null == celda) {
+                    fila.createCell(11, CellType.NUMERIC);
+                }
+                fila.getCell(11).setCellValue(satisfaccionServTec.get(listaSat).getPorcentajeRegSatisf());
+                
+//                Indicaron estar poco satisfechas y muy satisfechos
+                celda = fila.getCell(12);
+                if (null == celda) {
+                    fila.createCell(12, CellType.NUMERIC);
+                }
+                fila.getCell(12).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccionServtecEducontAnioMes().getNumPocoSatisfechos());
+                
+//                Porcentaje de poco satisfechas y muy satisfechos
+                celda = fila.getCell(13);
+                if (null == celda) {
+                    fila.createCell(13, CellType.NUMERIC);
+                }
+                fila.getCell(13).setCellValue(satisfaccionServTec.get(listaSat).getPorcentajePocSatisf());
+                
+//                Indicaron estar no satisfechas y muy satisfechos
+                celda = fila.getCell(14);
+                if (null == celda) {
+                    fila.createCell(14, CellType.NUMERIC);
+                }
+                fila.getCell(14).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccionServtecEducontAnioMes().getNumNoSatisfechos());
+                
+//               Porcentaje de no satisfechas y muy satisfechos
+                celda = fila.getCell(15);
+                if (null == celda) {
+                    fila.createCell(15, CellType.NUMERIC);
+                }
+                fila.getCell(15).setCellValue(satisfaccionServTec.get(listaSat).getPorcentajeNoSatisf());
+                
+//                Indicaron no aplica
+                celda = fila.getCell(16);
+                if (null == celda) {
+                    fila.createCell(16, CellType.NUMERIC);
+                }
+                fila.getCell(16).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccionServtecEducontAnioMes().getNumNoAplica());
+                
+//                 Porcentaje no aplica
+                celda = fila.getCell(17);
+                if (null == celda) {
+                    fila.createCell(17, CellType.NUMERIC);
+                }
+                fila.getCell(17).setCellValue(satisfaccionServTec.get(listaSat).getPorcentajeNoAplica());
+                
+//                Total evaluables
+                celda = fila.getCell(18);
+                if (null == celda) {
+                    fila.createCell(18, CellType.NUMERIC);
+                }
+                fila.getCell(18).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccionServtecEducontAnioMes().getTotalEvaluables());
+                
+//                Satisfacción base 5
+                celda = fila.getCell(19);
+                if (null == celda) {
+                    fila.createCell(19, CellType.NUMERIC);
+                }
+                fila.getCell(19).setCellValue(satisfaccionServTec.get(listaSat).getSatisBase5());
+                
+//                Satisfacción base 10
+                celda = fila.getCell(20);
+                if (null == celda) {
+                    fila.createCell(20, CellType.NUMERIC);
+                }
+                fila.getCell(20).setCellValue(satisfaccionServTec.get(listaSat).getSatisBase10());
+                
+//                Número de Satisfacción 
+                celda = fila.getCell(21);
+                if (null == celda) {
+                    fila.createCell(21, CellType.NUMERIC);
+                }
+                fila.getCell(21).setCellValue(satisfaccionServTec.get(listaSat).getNumSatisfaccion());
+                
+//                Porcentaje de satisfacción 
+                celda = fila.getCell(22);
+                if (null == celda) {
+                    fila.createCell(22, CellType.NUMERIC);
+                }
+                fila.getCell(22).setCellValue(satisfaccionServTec.get(listaSat).getSatisfaccion());
+                
+            }
+              
+            File archivoFinal = FileSystems.getDefault().getPath(plantillaCompleto).toFile();
+            FileOutputStream archivoSalida = new FileOutputStream(archivoFinal);
+            reporteSatisfaccionSatisServTec.write(archivoSalida);
+            reporteSatisfaccionSatisServTec.close();
+            archivoSalida.flush();
+            archivoSalida.close();
+            Files.deleteIfExists(FileSystems.getDefault().getPath(plantillaCopia));
+        } catch (FileNotFoundException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioReporteVINExcel.getReporteSatisfaccionServTecEduCont() - Archivo no escontrado");
+        } catch (IOException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioReporteVINExcel.getReporteSatisfaccionServTecEduCont() - Error de lectura o escritura (i/o)");
+        }
+        return plantillaCompleto;
+    }
+
+    @Override
+    public String getReporteEvaluacionSatisfaccionEduCont(Short ejercicio) throws Throwable {
+        
+        String plantilla = crearDirectorioReporte(ejes[2]).concat(REPORTE_EVALUACION_SATISFACCION_SERVTECEDUCONT_PLANTILLA_PLANTILLA);
+        String plantillaCopia = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_EVALUACION_SATISFACCION_SERVTECEDUCONT_PLANTILLA_COPIA);
+        String plantillaCompleto = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_EVALUACION_SATISFACCION_SERVTECEDUCONT_PLANTILLA_PLANTILLA);
+        
+        try {
+            Files.copy(FileSystems.getDefault().getPath(plantilla), FileSystems.getDefault().getPath(plantillaCopia), StandardCopyOption.REPLACE_EXISTING);
+            File archivoCopia = FileSystems.getDefault().getPath(plantillaCopia).toFile();
+            XSSFWorkbook reporteEvaluacionSatisfaccionEduCont = new XSSFWorkbook();
+            reporteEvaluacionSatisfaccionEduCont = (XSSFWorkbook) WorkbookFactory.create(archivoCopia);
+            XSSFSheet hojaEvaluacionSatisfaccionEduCont = reporteEvaluacionSatisfaccionEduCont.getSheetAt(0);
+            
+            XSSFRow fila;
+            XSSFCell celda;
+            
+            List<DTOEvaluacionSatEduContAnioMes.ConsultaRegistros> evaluacionEduCont = ejbSatisfaccionServTecEduContAnioMes.getReporteGeneralEvaluacionSatEduCont(ejercicio).getValor();
+            
+//            Organismos Vinculados
+            for (Integer listaEvalSat = 0; listaEvalSat < evaluacionEduCont.size(); listaEvalSat++) {
+                Integer ubicacion = listaEvalSat + 4;
+
+                fila = (XSSFRow) (Row) hojaEvaluacionSatisfaccionEduCont.getRow(ubicacion);
+                if (null == fila) {
+                    fila = hojaEvaluacionSatisfaccionEduCont.createRow(ubicacion);
+                }
+
+//                Ejercicio
+                celda = fila.getCell(0);
+                if (null == celda) {
+                    fila.createCell(0, CellType.NUMERIC);
+                }
+                fila.getCell(0).setCellValue(evaluacionEduCont.get(listaEvalSat).getEvaluacionSatisfaccionResultados().getRegistros().getEventoRegistro().getEjercicioFiscal().getAnio());
+                
+//                Mes
+                celda = fila.getCell(1);
+                if (null == celda) {
+                    fila.createCell(1, CellType.STRING);
+                }
+                fila.getCell(1).setCellValue(evaluacionEduCont.get(listaEvalSat).getEvaluacionSatisfaccionResultados().getRegistros().getEventoRegistro().getMes());
+                
+//                Clave del servicio tecnológico
+                celda = fila.getCell(2);
+                if (null == celda) {
+                    fila.createCell(2, CellType.STRING);
+                }
+                fila.getCell(2).setCellValue(evaluacionEduCont.get(listaEvalSat).getEvaluacionSatisfaccionResultados().getServicioTecnologico().getServicio());
+                
+//                Nombre del servicio tecnológico
+                celda = fila.getCell(3);
+                if (null == celda) {
+                    fila.createCell(3, CellType.STRING);
+                }
+                fila.getCell(3).setCellValue(evaluacionEduCont.get(listaEvalSat).getEvaluacionSatisfaccionResultados().getServicioTecnologico().getNombre());
+                
+//                Número de pregunta
+                celda = fila.getCell(4);
+                if (null == celda) {
+                    fila.createCell(4, CellType.NUMERIC);
+                }
+                fila.getCell(4).setCellValue(evaluacionEduCont.get(listaEvalSat).getNumeroPregunta());
+                
+//               Descripción de la pregunta
+                celda = fila.getCell(5);
+                if (null == celda) {
+                    fila.createCell(5, CellType.STRING);
+                }
+                fila.getCell(5).setCellValue(evaluacionEduCont.get(listaEvalSat).getPregunta());
+                
+//                Respuestas A
+                celda = fila.getCell(6);
+                if (null == celda) {
+                    fila.createCell(6, CellType.NUMERIC);
+                }
+                fila.getCell(6).setCellValue(evaluacionEduCont.get(listaEvalSat).getEvaluacionSatisfaccionResultados().getRespuestasA());
+                
+//                Respuestas B
+                celda = fila.getCell(7);
+                if (null == celda) {
+                    fila.createCell(7, CellType.NUMERIC);
+                }
+                fila.getCell(7).setCellValue(evaluacionEduCont.get(listaEvalSat).getEvaluacionSatisfaccionResultados().getRespuestasB());
+                
+//                Respuestas C
+                celda = fila.getCell(8);
+                if (null == celda) {
+                    fila.createCell(8, CellType.NUMERIC);
+                }
+                fila.getCell(8).setCellValue(evaluacionEduCont.get(listaEvalSat).getEvaluacionSatisfaccionResultados().getRespuestasC());
+                
+//                Respuestas D
+                celda = fila.getCell(9);
+                if (null == celda) {
+                    fila.createCell(9, CellType.NUMERIC);
+                }
+                fila.getCell(9).setCellValue(evaluacionEduCont.get(listaEvalSat).getEvaluacionSatisfaccionResultados().getRespuestasD());
+                
+//                Respuestas E
+                celda = fila.getCell(10);
+                if (null == celda) {
+                    fila.createCell(10, CellType.NUMERIC);
+                }
+                fila.getCell(10).setCellValue(evaluacionEduCont.get(listaEvalSat).getEvaluacionSatisfaccionResultados().getRespuestasE());
+                
+//                Respuestas F
+                celda = fila.getCell(11);
+                if (null == celda) {
+                    fila.createCell(11, CellType.NUMERIC);
+                }
+                fila.getCell(11).setCellValue(evaluacionEduCont.get(listaEvalSat).getEvaluacionSatisfaccionResultados().getRespuestasF());
+                
+//                Respuestas G
+                celda = fila.getCell(12);
+                if (null == celda) {
+                    fila.createCell(12, CellType.NUMERIC);
+                }
+                fila.getCell(12).setCellValue(evaluacionEduCont.get(listaEvalSat).getEvaluacionSatisfaccionResultados().getRespuestasG());
+                
+//                Total H
+                celda = fila.getCell(13);
+                if (null == celda) {
+                    fila.createCell(13, CellType.NUMERIC);
+                }
+                fila.getCell(13).setCellValue(evaluacionEduCont.get(listaEvalSat).getTotalH());
+                
+//                Total I
+                celda = fila.getCell(14);
+                if (null == celda) {
+                    fila.createCell(14, CellType.NUMERIC);
+                }
+                fila.getCell(14).setCellValue(evaluacionEduCont.get(listaEvalSat).getTotalI());
+                
+//               Total I
+                celda = fila.getCell(15);
+                if (null == celda) {
+                    fila.createCell(15, CellType.NUMERIC);
+                }
+                fila.getCell(15).setCellValue(evaluacionEduCont.get(listaEvalSat).getTotalJ());
+                
+//                Total K, base 5
+                celda = fila.getCell(16);
+                if (null == celda) {
+                    fila.createCell(16, CellType.NUMERIC);
+                }
+                fila.getCell(16).setCellValue(evaluacionEduCont.get(listaEvalSat).getSatisBase5());
+                
+//                  Total K, base 10
+                celda = fila.getCell(17);
+                if (null == celda) {
+                    fila.createCell(17, CellType.NUMERIC);
+                }
+                fila.getCell(17).setCellValue(evaluacionEduCont.get(listaEvalSat).getSatisBase10());
+                
+//                Número de Satisfacción 
+                celda = fila.getCell(18);
+                if (null == celda) {
+                    fila.createCell(18, CellType.NUMERIC);
+                }
+                fila.getCell(18).setCellValue(evaluacionEduCont.get(listaEvalSat).getNumSatisfaccion());
+                
+//                 Porcentaje de satisfacción
+                celda = fila.getCell(19);
+                if (null == celda) {
+                    fila.createCell(19, CellType.NUMERIC);
+                }
+                fila.getCell(19).setCellValue(evaluacionEduCont.get(listaEvalSat).getSatisfaccion());
+                
+            }
+              
+            File archivoFinal = FileSystems.getDefault().getPath(plantillaCompleto).toFile();
+            FileOutputStream archivoSalida = new FileOutputStream(archivoFinal);
+            reporteEvaluacionSatisfaccionEduCont.write(archivoSalida);
+            reporteEvaluacionSatisfaccionEduCont.close();
+            archivoSalida.flush();
+            archivoSalida.close();
+            Files.deleteIfExists(FileSystems.getDefault().getPath(plantillaCopia));
+        } catch (FileNotFoundException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioReporteVINExcel.getReporteEvaluacionSatisfaccionEduCont() - Archivo no escontrado");
+        } catch (IOException ex) {
+            System.out.println("mx.edu.utxj.pye.siip.services.vin.ServicioReporteVINExcel.getReporteEvaluacionSatisfaccionEduCont() - Error de lectura o escritura (i/o)");
         }
         return plantillaCompleto;
     }
