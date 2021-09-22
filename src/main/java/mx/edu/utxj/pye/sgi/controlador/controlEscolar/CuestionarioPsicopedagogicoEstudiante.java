@@ -19,6 +19,8 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Comparador;
 import mx.edu.utxj.pye.sgi.funcional.ComparadorCuestionarioPsicopedagogicoEstudiante;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
+import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -69,7 +71,7 @@ public class CuestionarioPsicopedagogicoEstudiante extends ViewScopedRol  implem
                 if(resEvaluacion.getCorrecto()==true){
                     rol.setEvaluacion(resEvaluacion.getValor());
                     rol.setCargada(true);
-                    //TODO: Instrucciones
+                    //Instrucciones
                     rol.getInstrucciones().add("Lee con atención las preguntas y responde con sinceridad.");
                     rol.getInstrucciones().add("En caso de ser una pregunta abierta, debes cumplir con el número de caracteres mínimo que te pide al costado de la pregunta.");
                     rol.getInstrucciones().add("En las preguntas de opción múltiple, sólo debes seleccionar una de las posibles respuestas de tu preferencia.");
@@ -77,20 +79,20 @@ public class CuestionarioPsicopedagogicoEstudiante extends ViewScopedRol  implem
                     rol.getInstrucciones().add("En la parte superior derecha, el sistema te indicará si haz terminado el cuestionario, caso contrario te lo mostrará como pendiente.");
                     rol.getInstrucciones().add("Una vez terminado el cuestionario, toma evidencia.");
                     rol.getInstrucciones().add("Cualquier error o duda, hazlo saber a tu tutor/a de grupo para que él o ella la canalice a la Coordinación de Sistemas. En caso de ser error del sistema, adjunta evidencia.");
-                    //TODO: Carga los apartados y las posibles respuestas
+                    //Carga los apartados y las posibles respuestas
 
-                    rol.setApartados(ejbCuestionario.getApartados());
+                    rol.setApartados(ejbCuestionario.getApartados2());
                     rol.setSino(ejbCuestionario.getSiNo());
                     rol.setGruposVunerabilidad(ejbCuestionario.getGruposVunerabilidad());
                     rol.setTecnicasEstudio(ejbCuestionario.getTecnicasEstudio());
                     rol.setTipoProblemaFam(ejbCuestionario.getTipoProblemaFam());
                     rol.setEstadoCivilPadres(ejbCuestionario.getEstadoCivilPadres());
                     rol.setFamFinado(ejbCuestionario.getFamFinado());
-                    //TODO:Busca los resultados del estudiante
+                    //Busca los resultados del estudiante
                     getResultadosEstudiante();
-                    //TODO: Comprueba si el cuestionario ya esta terminado
+                    //Comprueba si el cuestionario ya esta terminado
                     comprobar();
-                   // System.out.println("1 --"+ finalizo);
+                    // System.out.println("1 --"+ finalizo);
 
                 }
 
@@ -128,7 +130,7 @@ public class CuestionarioPsicopedagogicoEstudiante extends ViewScopedRol  implem
         }else{
             valor = e.getOldValue().toString();
         }
-       // System.out.println("id " + id.getId());
+        // System.out.println("id " + id.getId());
         //System.out.println("valor " + valor);
         ResultadoEJB<CuestionarioPsicopedagogicoResultados> refrescar=ejbCuestionario.cargaResultadosCuestionarioPsicopedagogico(id.getId(), valor, rol.getResultados(), Operacion.REFRESCAR);
         ResultadoEJB<CuestionarioPsicopedagogicoResultados> save=ejbCuestionario.cargaResultadosCuestionarioPsicopedagogico(id.getId(), valor, rol.getResultados(), Operacion.PERSISTIR);
@@ -149,7 +151,10 @@ public class CuestionarioPsicopedagogicoEstudiante extends ViewScopedRol  implem
             if(resActualiza.getCorrecto()==true){rol.setResultados(resActualiza.getValor());tieneAcceso=false;}
             else {mostrarMensajeResultadoEJB(resActualiza);}
         }
-        //System.out.println(comparador.isCompleto(rol.getResultados()));
+        //Ajax.update("tb2");
+
+       // System.out.println(comparador.isCompleto(rol.getResultados()));
+        //System.out.println("CuestionarioPsicopedagogicoEstudiante.comprobar"+ rol.isFinalizado() );
     }
 }
 
