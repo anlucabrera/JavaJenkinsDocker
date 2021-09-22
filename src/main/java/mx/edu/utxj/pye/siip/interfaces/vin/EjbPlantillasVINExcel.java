@@ -31,4 +31,8 @@ public interface EjbPlantillasVINExcel {
     public String getPlantillaFeriasProfesiograficas() throws Throwable;
     
     public String getPlantillaIEMS() throws Throwable;
+    
+    public String getPlantillaSatisfaccionServTecEduCont() throws Throwable;
+    
+    public String getPlantillaEvaluacionSatisfaccionServTecEduCont() throws Throwable;
 }
