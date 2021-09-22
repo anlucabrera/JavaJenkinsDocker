@@ -57,7 +57,7 @@ public class EjbCuestionarioPsicopedagogico {
      */
     public ResultadoEJB<Evaluaciones> getcuestionarioActiva(){
         try {
-           // System.out.println("Entro a cuestionario activo");
+            // System.out.println("Entro a cuestionario activo");
             Evaluaciones encuestaActiva = new Evaluaciones();
             encuestaActiva = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.tipo=:tipo AND :fecha BETWEEN e.fechaInicio AND e.fechaFin ORDER BY e.evaluacion desc", Evaluaciones.class)
             .setParameter("tipo","Cuestionario Psicopedagógico")
@@ -88,10 +88,10 @@ public class EjbCuestionarioPsicopedagogico {
             if(evaluacion==null){return ResultadoEJB.crearErroneo(3,resultados,"La evaluación no debe ser nula");}
             // Busca resultados por el id del estudiante
             resultados = em.createQuery("select c from CuestionarioPsicopedagogicoResultados c where c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante=:idEstudiante order by c.cuestionarioPsicopedagogicoResultadosPK.evaluacion ",CuestionarioPsicopedagogicoResultados.class)
-            .setParameter("idEstudiante",estudiante.getIdEstudiante())
-            .getResultStream()
-            .findFirst()
-            .orElse(null)
+                    .setParameter("idEstudiante",estudiante.getIdEstudiante())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
             ;
             //System.out.println("Resultados" + resultados);
             //TODO: Comprueba si hay resultados, si no los crea
@@ -190,35 +190,35 @@ public class EjbCuestionarioPsicopedagogico {
             if(rol.getEstudiante()!=null){
                 List<DtoAlerta> alertas = new ArrayList<>();
                 //Buscar los resultados por estudiante
-               if(rol.getResultados().getEstudiante()==null ){
-                   //Se envia mensaje de alerta que el estudiante no ha respondido el cuestionario
-                   alertas.add(new DtoAlerta("El estudiante " + rol.getEstudiante().getAspirante().getIdPersona().getNombre()+" "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()+" no ha contestado el cuestionario", AlertaTipo.ERROR));
-               }else {
-                   //Comprueba que el estudiante ya lo haya terminado el cuestionario
-                   if(rol.getResultados().getCompleto()==true){
-                       //Lo termino
-                       alertas.add(new DtoAlerta("El estudiante " + rol.getEstudiante().getAspirante().getIdPersona().getNombre()+" "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()+" ha completado el cuestionario", AlertaTipo.CORRECTO));
-                   }
-                   else {
-                       //No lo ha terminado
-                       alertas.add(new DtoAlerta("El estudiante " + rol.getEstudiante().getAspirante().getIdPersona().getNombre()+" "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()+" no ha completado el cuestionario", AlertaTipo.INFORMATIVO));
-                   }
-                   //Comprueba que ya cuente con un personal examinador
-                   if(rol.getResultados().getClave()==null){
-                       //Se envia alerta de que el cuestionario no cuenta con personal examinador
-                       alertas.add(new DtoAlerta("Los resultados del cuestionario no han sido examinados.", AlertaTipo.INFORMATIVO));
-                   }else {
-                       //Revisa si el personal examinador  ya termino de revisar las respuestas
-                       if(rol.getResultados().getReviso()==true){
-                           //Envia mesaje de aviso que ya se ha terminado de revisar el cuestuinario
-                           alertas.add(new DtoAlerta("Los resultados del cuestionario han sido revisados", AlertaTipo.CORRECTO));
-                       }else {
-                           //Mensaje de alerta que no se ha terminado de revisar el cuestionario
-                           alertas.add(new DtoAlerta("Los resultados del cuestionario no se han terminado de examinar.", AlertaTipo.INFORMATIVO));
-                       }
-                   }
+                if(rol.getResultados().getEstudiante()==null ){
+                    //Se envia mensaje de alerta que el estudiante no ha respondido el cuestionario
+                    alertas.add(new DtoAlerta("El estudiante " + rol.getEstudiante().getAspirante().getIdPersona().getNombre()+" "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()+" no ha contestado el cuestionario", AlertaTipo.ERROR));
+                }else {
+                    //Comprueba que el estudiante ya lo haya terminado el cuestionario
+                    if(rol.getResultados().getCompleto()==true){
+                        //Lo termino
+                        alertas.add(new DtoAlerta("El estudiante " + rol.getEstudiante().getAspirante().getIdPersona().getNombre()+" "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()+" ha completado el cuestionario", AlertaTipo.CORRECTO));
+                    }
+                    else {
+                        //No lo ha terminado
+                        alertas.add(new DtoAlerta("El estudiante " + rol.getEstudiante().getAspirante().getIdPersona().getNombre()+" "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno() + " "+rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()+" no ha completado el cuestionario", AlertaTipo.INFORMATIVO));
+                    }
+                    //Comprueba que ya cuente con un personal examinador
+                    if(rol.getResultados().getClave()==null){
+                        //Se envia alerta de que el cuestionario no cuenta con personal examinador
+                        alertas.add(new DtoAlerta("Los resultados del cuestionario no han sido examinados.", AlertaTipo.INFORMATIVO));
+                    }else {
+                        //Revisa si el personal examinador  ya termino de revisar las respuestas
+                        if(rol.getResultados().getReviso()==true){
+                            //Envia mesaje de aviso que ya se ha terminado de revisar el cuestuinario
+                            alertas.add(new DtoAlerta("Los resultados del cuestionario han sido revisados", AlertaTipo.CORRECTO));
+                        }else {
+                            //Mensaje de alerta que no se ha terminado de revisar el cuestionario
+                            alertas.add(new DtoAlerta("Los resultados del cuestionario no se han terminado de examinar.", AlertaTipo.INFORMATIVO));
+                        }
+                    }
 
-               }
+                }
                 return ResultadoEJB.crearCorrecto(alertas, "Lista de mensajes");
             }
             return ResultadoEJB.crearCorrecto(Collections.EMPTY_LIST, "Sin mensajes");
@@ -259,16 +259,34 @@ public class EjbCuestionarioPsicopedagogico {
                         case "r13": resultado.setR13(valor); break;
                         case "r14": resultado.setR14(valor); break;
                         case "r15": resultado.setR15(valor); break;
-                        case "r16": resultado.setR16(valor); break;
+                        case "r16": resultado.setR16(valor); if(!resultado.getR16().equals("Finados")){resultado.setR17(null); }break ;
                         case "r17": resultado.setR17(valor); break;
                         case "r18": resultado.setR18(valor); break;
-                        case "r19": resultado.setR19(valor); break;
+                        case "r19": resultado.setR19(valor); if(resultado.getR19().equals("No")){resultado.setR20(null);}break ;
                         case "r20": resultado.setR20(valor); break;
-                        case "r21": resultado.setR21(valor); break;
+                        case "r21": resultado.setR21(valor); if(resultado.getR21().equals("No")){resultado.setR59(null);}break ;
                         case "r22": resultado.setR22(valor); break;
                         case "r23": resultado.setR23(valor); break;
                         case "r24": resultado.setR24(valor); break;
-                        case "r25": resultado.setR25(valor); break;
+                        case "r25": resultado.setR25(valor); if(resultado.getR25().equals("No")){
+                            resultado.setR26(null);
+                            resultado.setR27(null);
+                            resultado.setR28(null);
+                            resultado.setR29(null);
+                            resultado.setR30(null);
+                            resultado.setR31(null);
+                            resultado.setR32(null);
+                            resultado.setR33(null);
+                            resultado.setR34(null);
+                            resultado.setR35(null);
+                            resultado.setR36(null);
+                            resultado.setR37(null);
+                            resultado.setR38(null);
+                            resultado.setR39(null);
+                            resultado.setR40(null);
+                            resultado.setR41(null);
+                            resultado.setR42(null);
+                        }break ;
                         case "r26": resultado.setR26(valor); break;
                         case "r27": resultado.setR27(valor); break;
                         case "r28": resultado.setR28(valor); break;
@@ -286,8 +304,14 @@ public class EjbCuestionarioPsicopedagogico {
                         case "r40": resultado.setR40(valor); break;
                         case "r41": resultado.setR41(valor); break;
                         case "r42": resultado.setR42(valor); break;
-                        case "r43": resultado.setR43(valor); break;
+                        case "r43": resultado.setR43(valor); if(resultado.getR43().equals("No")){resultado.setR44(null);}break ;
                         case "r44": resultado.setR44(valor); break;
+                        case "r54": resultado.setR54(valor);if(resultado.getR54().equals("No")){resultado.setR55(null);}break ;
+                        case "r55": resultado.setR55(valor); break;
+                        case "r56": resultado.setR56(valor); break;
+                        case "r57": resultado.setR57(valor); if(resultado.getR57().equals("No")){resultado.setR58(null);}break ;
+                        case "r58": resultado.setR58(valor); break;
+                        case "r59": resultado.setR59(valor); break;
                     }return ResultadoEJB.crearCorrecto(resultado,"Se actualizaron las respuestas por pregunta");
                 default:
                     return ResultadoEJB.crearErroneo(2, "No se pudo actualizar", CuestionarioPsicopedagogicoResultados.class);
@@ -374,6 +398,7 @@ public class EjbCuestionarioPsicopedagogico {
     //---------------------------------------------SECCIÓN DE APARTADOS Y POSIBLES RESPUESTAS--------------------------------------//
     /**
      * Genera los apartados con sus preguntas del cuestionario psicopedagógico
+     * Se modificaron las pregunas (Apartado 2) Se queda como respaldo 20/09/2021
      * @return Apartados
      */
     public List<Apartado> getApartados(){
@@ -438,6 +463,83 @@ public class EjbCuestionarioPsicopedagogico {
         a4.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 4f, 45f, "Con base en la información proporcionada ¿se considera al estudiante como elemento de uno o más grupos altamente vulnerables?",""));
         a4.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 4f, 46f, "Marque los grupos en los que considera al estudiante como altamente vulnerable",""));
         a4.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 4f, 47f, "Observaciones generales por parte de la examinadora o examinador",""));
+        l.add(a4);
+        return l;
+    }
+
+    /**
+     * Actualización de apartados del cuestionario psicopedagogico
+     * Se cometo el número con el que se guardan en la bd por la actualización
+     * @return
+     */
+    public List<Apartado> getApartados2(){
+        List<Apartado> l = new ArrayList<>();
+
+        Apartado a1 = new Apartado(1f);
+        a1.setContenido("");
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 1f, "¿Te gusta cómo eres?",""));//1
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 2f, "¿Por qué?",""));//2
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 3f, "¿Cuáles son tus principales cualidades?",""));//3
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 4f, "¿Cuáles son tus principales defectos?",""));//4
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 5f, "¿Qué valores aprecias más de la gente?",""));//5
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 6f, "¿Qué es lo que más te disgusta de la gente?",""));//6
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 7f, "Señala tres situaciones o aspectos que te provocan temor",""));//7
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 8f, "¿Actualmente tienes novio(a)?",""));//8
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 9f, "¿Tienes planes de matrimonio a corto plazo?",""));//9
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 10f, "¿Qué planes tienes para tu futuro personal?",""));//10
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 11f, "¿Qué planes tienes para tu futuro académico?",""));//11
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 12f, "¿Qué planes tienes para tu futuro profesional?",""));//12
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 13f, "¿Qué actividades o pasatiempos disfrutas realizar?",""));//13
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 14f, "¿A qué te dedicas en tu tiempo libre?",""));//14
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 15f, "¿Estás en tratamiento médico?",""));//54
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 16f, "¿Por qué?",""));//55
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 17f, "Si pudieras cambiar algo de tu vida ¿qué sería?",""));//15
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 18f, "Tus padres se encuentran:",""));//16
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 19f, "¿Quién?",""));//17
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 20f, "En estos momentos de mi vida ¿cuáles son mis principales preocupaciones?",""));//18
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 21f, "¿Con qué frecuencia consumes alcohol o fumas tabaco?",""));//56
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 22f, "¿Has consumido alguna otra sustancia adictiva?",""));//57
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 23f, "¿Cuál?",""));//58
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 24f, "¿En este momento existe algún problemas en tu Familia?",""));//19
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 25f, "¿De qué tipo?",""));//20
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 26f, "¿Te gustaría hablar con la psicóloga para recibir orientación, sobre alguna situación que te esté causando problemas?",""));//21
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 26f, "¿Por qué?",""));//59
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 27f, "¿Qué materias se te dificultan más?",""));//22
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 28f, "¿Has reprobado alguna materia o presentado examen extraordinario?",""));//23
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 29f, "¿Qué materias?",""));//24
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 1f, 30f, "¿Utilizas alguna técnica de estudio?",""));//25
+        //25 a la 53 corrido
+        l.add(a1);
+        Apartado a2 = new Apartado(2f);
+        a2.setContenido("Técnicas de estudio");
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 31f, "Buscas información adicional a la que te proporcionaban tus profesores",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 32f, "Relacionas los nuevos conocimientos con tus experiencias previas",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 33f, "Organizas distintos materiales para integrar tus trabajos",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 34f, "Solicitas que los maestros te aclararan tus dudas antes de realizar algún trabajo",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 35f, "Realizas ejercicios para reafirmar tu conocimiento",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 36f, "Te planteas preguntas a partir de la información que analizabas",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 36f, "Discutes tus puntos de vista con maestros y compañeros",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 37f, "Elaboras esquemas, cuadros sinópticos, mapas conceptuales u otras estrategias para sintetizar la información",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 38f, "Analizas la eficacia de tus estrategias de estudio",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 39f, "Buscas nuevas formas de estudiar cuando alguna no te daba el resultado que esperabas",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 40f, "Tomar apuntes en clase",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 41f, "Colaboras con tus compañeros de equipo para cumplir tareas",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 42f, "Diriges a tu equipo para el logro de las actividades académicas",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 43f, "Tomas decisiones en busca de mejores resultados en tus actividades académicas",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 44f, "Negocias acuerdos con tus compañeros de grupo",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 45f, "Utilizas equipo de cómputo para la elaboración de tus tareas",""));
+        a2.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 2f, 46f, "Consultas textos en inglés para apoyarte en la realización de tus tareas",""));
+        l.add(a2);
+        Apartado a3 = new Apartado(3f);
+        a3.setContenido("Ultimo");
+        a3.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 3f, 47f, "¿Cuentas en casa con algunos libros que apoyan tus estudios?",""));
+        a3.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 3f, 48f, "¿Cuáles? ",""));
+        l.add(a3);
+        Apartado a4 = new Apartado(4f);
+        a4.setContenido("Conclusiones del la eximinadora o examinador");
+        a4.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 4f, 49f, "Con base en la información proporcionada ¿se considera al estudiante como elemento de uno o más grupos altamente vulnerables?",""));
+        a4.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 4f, 50f, "Marque los grupos en los que considera al estudiante como altamente vulnerable",""));
+        a4.getPreguntas().add(new Opciones(EvaluacionesTipo.CUESTIONARIO_PSICOPEDAGOGICO.getNumero() , 4f, 51f, "Observaciones generales por parte de la examinadora o examinador",""));
         l.add(a4);
         return l;
     }

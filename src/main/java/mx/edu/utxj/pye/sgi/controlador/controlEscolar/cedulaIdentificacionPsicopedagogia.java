@@ -93,12 +93,14 @@ public class cedulaIdentificacionPsicopedagogia extends ViewScopedRol implements
             if(resEstudiantes.getCorrecto()==true){rol.setEstudiantes(resEstudiantes.getValor());}
             else {mostrarMensajeResultadoEJB(resEstudiantes);}
             //Apartados para cuestionario
-            rol.setApartadoCuestionario(ejbCuestionarioPsicopedagogico.getApartados());
+            rol.setApartadoCuestionario(ejbCuestionarioPsicopedagogico.getApartados2());
             //Respuestas posibles
             rol.setSino(ejbCuestionarioPsicopedagogico.getSiNo());
             rol.setGruposVunerabilidad(ejbCuestionarioPsicopedagogico.getGruposVunerabilidad());
-            rol.setEstadoCivilPadres(ejbCuestionarioPsicopedagogico.getEstadoCivilPadres());
             rol.setTecnicasEstudio(ejbCuestionarioPsicopedagogico.getTecnicasEstudio());
+            rol.setTipoProblemaFam(ejbCuestionarioPsicopedagogico.getTipoProblemaFam());
+            rol.setEstadoCivilPadres(ejbCuestionarioPsicopedagogico.getEstadoCivilPadres());
+            rol.setFamFinado(ejbCuestionarioPsicopedagogico.getFamFinado());
             //Instrucciones
             rol.getInstrucciones().add("Ingrese el nombre o la matricula del estudiante que desea buscar");
             rol.getInstrucciones().add("Los datos del estudiante se cargarán automaticamente.");

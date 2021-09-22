@@ -26,65 +26,65 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "cuestionario_psicopedagogico_resultados", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findAll", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByEvaluacion", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.cuestionarioPsicopedagogicoResultadosPK.evaluacion = :evaluacion")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByIdEstudiante", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante = :idEstudiante")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByClave", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.clave = :clave")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR1", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r1 = :r1")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR2", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r2 = :r2")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR3", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r3 = :r3")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR4", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r4 = :r4")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR5", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r5 = :r5")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR6", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r6 = :r6")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR7", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r7 = :r7")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR8", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r8 = :r8")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR9", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r9 = :r9")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR10", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r10 = :r10")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR11", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r11 = :r11")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR12", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r12 = :r12")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR13", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r13 = :r13")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR14", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r14 = :r14")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR15", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r15 = :r15")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR16", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r16 = :r16")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR17", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r17 = :r17")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR18", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r18 = :r18")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR19", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r19 = :r19")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR20", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r20 = :r20")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR21", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r21 = :r21")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR22", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r22 = :r22")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR23", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r23 = :r23")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR24", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r24 = :r24")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR25", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r25 = :r25")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR26", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r26 = :r26")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR27", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r27 = :r27")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR28", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r28 = :r28")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR29", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r29 = :r29")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR30", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r30 = :r30")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR31", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r31 = :r31")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR32", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r32 = :r32")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR33", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r33 = :r33")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR34", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r34 = :r34")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR35", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r35 = :r35")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR36", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r36 = :r36")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR37", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r37 = :r37")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR38", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r38 = :r38")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR39", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r39 = :r39")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR40", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r40 = :r40")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR41", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r41 = :r41")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR42", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r42 = :r42")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR43", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r43 = :r43")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR44", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r44 = :r44")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR45", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r45 = :r45")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR46", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r46 = :r46")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR47", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r47 = :r47")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR48", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r48 = :r48")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR49", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r49 = :r49")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR50", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r50 = :r50")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR51", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r51 = :r51")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR52", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r52 = :r52")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR53", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r53 = :r53")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByCompleto", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.completo = :completo")
-    , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByReviso", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.reviso = :reviso")})
+        @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findAll", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByEvaluacion", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.cuestionarioPsicopedagogicoResultadosPK.evaluacion = :evaluacion")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByIdEstudiante", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante = :idEstudiante")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByClave", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.clave = :clave")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR1", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r1 = :r1")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR2", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r2 = :r2")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR3", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r3 = :r3")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR4", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r4 = :r4")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR5", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r5 = :r5")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR6", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r6 = :r6")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR7", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r7 = :r7")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR8", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r8 = :r8")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR9", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r9 = :r9")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR10", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r10 = :r10")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR11", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r11 = :r11")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR12", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r12 = :r12")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR13", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r13 = :r13")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR14", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r14 = :r14")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR15", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r15 = :r15")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR16", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r16 = :r16")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR17", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r17 = :r17")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR18", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r18 = :r18")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR19", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r19 = :r19")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR20", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r20 = :r20")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR21", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r21 = :r21")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR22", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r22 = :r22")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR23", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r23 = :r23")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR24", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r24 = :r24")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR25", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r25 = :r25")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR26", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r26 = :r26")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR27", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r27 = :r27")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR28", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r28 = :r28")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR29", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r29 = :r29")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR30", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r30 = :r30")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR31", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r31 = :r31")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR32", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r32 = :r32")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR33", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r33 = :r33")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR34", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r34 = :r34")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR35", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r35 = :r35")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR36", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r36 = :r36")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR37", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r37 = :r37")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR38", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r38 = :r38")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR39", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r39 = :r39")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR40", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r40 = :r40")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR41", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r41 = :r41")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR42", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r42 = :r42")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR43", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r43 = :r43")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR44", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r44 = :r44")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR45", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r45 = :r45")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR46", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r46 = :r46")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR47", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r47 = :r47")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR48", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r48 = :r48")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR49", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r49 = :r49")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR50", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r50 = :r50")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR51", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r51 = :r51")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR52", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r52 = :r52")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByR53", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.r53 = :r53")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByCompleto", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.completo = :completo")
+        , @NamedQuery(name = "CuestionarioPsicopedagogicoResultados.findByReviso", query = "SELECT c FROM CuestionarioPsicopedagogicoResultados c WHERE c.reviso = :reviso")})
 public class CuestionarioPsicopedagogicoResultados implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -251,6 +251,24 @@ public class CuestionarioPsicopedagogicoResultados implements Serializable {
     @Size(max = 500)
     @Column(name = "r53")
     private String r53;
+    @Size(max = 5)
+    @Column(name = "r54")
+    private String r54;
+    @Size(max = 500)
+    @Column(name = "r55")
+    private String r55;
+    @Size(max = 500)
+    @Column(name = "r56")
+    private String r56;
+    @Size(max = 5)
+    @Column(name = "r57")
+    private String r57;
+    @Size(max = 500)
+    @Column(name = "r58")
+    private String r58;
+    @Size(max = 500)
+    @Column(name = "r59")
+    private String r59;
     @Column(name = "completo")
     private Boolean completo;
     @Column(name = "reviso")
@@ -709,6 +727,53 @@ public class CuestionarioPsicopedagogicoResultados implements Serializable {
     public void setR53(String r53) {
         this.r53 = r53;
     }
+    public String getR54() {
+        return r54;
+    }
+
+    public void setR54(String r54) {
+        this.r54 = r54;
+    }
+
+    public String getR55() {
+        return r55;
+    }
+
+    public void setR55(String r55) {
+        this.r55 = r55;
+    }
+
+    public String getR56() {
+        return r56;
+    }
+
+    public void setR56(String r56) {
+        this.r56 = r56;
+    }
+
+    public String getR57() {
+        return r57;
+    }
+
+    public void setR57(String r57) {
+        this.r57 = r57;
+    }
+
+    public String getR58() {
+        return r58;
+    }
+
+    public void setR58(String r58) {
+        this.r58 = r58;
+    }
+
+    public String getR59() {
+        return r59;
+    }
+
+    public void setR59(String r59) {
+        this.r59 = r59;
+    }
 
     public Boolean getCompleto() {
         return completo;
@@ -758,5 +823,5 @@ public class CuestionarioPsicopedagogicoResultados implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CuestionarioPsicopedagogicoResultados[ cuestionarioPsicopedagogicoResultadosPK=" + cuestionarioPsicopedagogicoResultadosPK + " ]";
     }
-    
+
 }
