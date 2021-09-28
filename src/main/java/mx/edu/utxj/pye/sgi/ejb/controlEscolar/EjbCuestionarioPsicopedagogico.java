@@ -1,6 +1,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
@@ -41,10 +42,12 @@ public class EjbCuestionarioPsicopedagogico {
      */
     public ResultadoEJB<Estudiante> validaEstudiante(Integer matricula){
         try{
-            Estudiante e = em.createQuery("select e from Estudiante as e where e.matricula = :matricula and e.tipoEstudiante.idTipoEstudiante=:tipo and e.grupo.grado=:grado", Estudiante.class).setParameter("matricula", matricula)
+            Estudiante e = em.createQuery("select e from Estudiante as e where e.matricula = :matricula and (e.tipoEstudiante.idTipoEstudiante=:tipo or e.tipoEstudiante.idTipoEstudiante=:tipo2 or e.tipoEstudiante.idTipoEstudiante=:tipo3) order by  e.periodo desc", Estudiante.class).setParameter("matricula", matricula)
                     .setParameter("tipo",1)
-                    .setParameter("grado",1)
+                    .setParameter("tipo2",5)
+                    .setParameter("tipo3",6)
                     .getResultStream().findFirst().orElse(new Estudiante());
+            //System.out.println("EjbCuestionarioPsicopedagogico.validaEstudiante "+ e);
             return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El estudiante docente no se pudo validar. (EjbConsultaCalificacion.validadEstudiante)", e, null);
@@ -86,15 +89,25 @@ public class EjbCuestionarioPsicopedagogico {
             CuestionarioPsicopedagogicoResultados resultados = new CuestionarioPsicopedagogicoResultados();
             if(estudiante==null){return ResultadoEJB.crearErroneo(2,resultados,"El estudiante no debe ser nulo");}
             if(evaluacion==null){return ResultadoEJB.crearErroneo(3,resultados,"La evaluación no debe ser nula");}
+            // Busca el primer registro del estudiante
+
+            Estudiante e = em.createQuery("select e from Estudiante as e where e.matricula = :matricula and (e.tipoEstudiante.idTipoEstudiante=:tipo or e.tipoEstudiante.idTipoEstudiante=:tipo2 or e.tipoEstudiante.idTipoEstudiante=:tipo3) order by  e.periodo asc", Estudiante.class)
+                    .setParameter("matricula", estudiante.getMatricula())
+                    .setParameter("tipo",1)
+                    .setParameter("tipo2",5)
+                    .setParameter("tipo3",6)
+                    .getResultStream().findFirst().orElse(new Estudiante());
+
+            //System.out.println("EjbCuestionarioPsicopedagogico.validaEstudiante "+ e);
             // Busca resultados por el id del estudiante
             resultados = em.createQuery("select c from CuestionarioPsicopedagogicoResultados c where c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante=:idEstudiante order by c.cuestionarioPsicopedagogicoResultadosPK.evaluacion ",CuestionarioPsicopedagogicoResultados.class)
-                    .setParameter("idEstudiante",estudiante.getIdEstudiante())
+                    .setParameter("idEstudiante",e.getIdEstudiante())
                     .getResultStream()
                     .findFirst()
                     .orElse(null)
             ;
             //System.out.println("Resultados" + resultados);
-            //TODO: Comprueba si hay resultados, si no los crea
+            //Comprueba si hay resultados, si no los crea
             if(resultados==null){
                 CuestionarioPsicopedagogicoResultados resultados2 = new CuestionarioPsicopedagogicoResultados();
                 CuestionarioPsicopedagogicoResultadosPK pk = new CuestionarioPsicopedagogicoResultadosPK();
