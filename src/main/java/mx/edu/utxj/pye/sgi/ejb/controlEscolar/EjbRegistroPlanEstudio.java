@@ -259,12 +259,13 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
         }
     }
     
-    public ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> getProgramasEducativosTutorados(Integer cvTutor) {
+    public ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> getProgramasEducativosTutorados(Integer cvTutor, Integer periodo) {
         try {
             Integer programaEducativoCategoria = ep.leerPropiedadEntera("programaEducativoCategoria").orElse(9);
 
-            List<Short> gs = em.createQuery("SELECT g FROM Grupo g WHERE g.tutor=:tutor", Grupo.class)
+            List<Short> gs = em.createQuery("SELECT g FROM Grupo g WHERE g.tutor=:tutor AND g.periodo = :periodo", Grupo.class)
                     .setParameter("tutor", cvTutor)
+                    .setParameter("periodo", periodo)
                     .getResultStream()
                     .map(a -> a.getIdPe())
                     .collect(Collectors.toList());

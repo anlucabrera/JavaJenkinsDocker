@@ -50,7 +50,6 @@ import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCapturaCalificacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCapturaCalificacionAlineacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInscripcion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPresentacionCalificacionesReporte;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracionAlineacion;
@@ -63,20 +62,14 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaTareaIntegradora;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPacker;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbResultadosConfiguraciones;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.AccionesDeMejora;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionEvidenciaInstrumento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.MetasPropuestas;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.Listaalumnosca;
-import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
-import mx.edu.utxj.pye.sgi.enums.EventoEscolarTipo;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Faces;
 import org.primefaces.model.charts.bar.BarChartModel;
@@ -217,7 +210,7 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
             rol.setPeriodoActivo(rol.getPeriodo().getPeriodo());
             ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan;            
             if (rol.getTipoUser().equals(3)) {
-                resProgramaPlan= erpe.getProgramasEducativosTutorados(rol.getDocente().getPersonal().getClave());
+                resProgramaPlan= erpe.getProgramasEducativosTutorados(rol.getDocente().getPersonal().getClave(),rol.getPeriodoActivo());
                 if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
                 rol.setAreaPlanEstudioMap(resProgramaPlan.getValor());
             } else {
@@ -240,7 +233,7 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
                 resgrupos = erpe.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
             }
             if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);            
-            rol.setGrupos(resgrupos.getValor()); 
+            rol.setGrupos(resgrupos.getValor());
             gruposeleccionado();
                  
             rol.setEventoActivo(new EventoEscolar(0, rol.getPeriodoActivo(), new Date(), "Captura_tarea_integradora", 0));
@@ -328,7 +321,7 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
         ResultadoEJB<Map<AreasUniversidad, List<PlanEstudio>>> resProgramaPlan;
         
         if (rol.getTipoUser().equals(3)) {
-                resProgramaPlan= erpe.getProgramasEducativosTutorados(rol.getDocente().getPersonal().getClave());
+                resProgramaPlan= erpe.getProgramasEducativosTutorados(rol.getDocente().getPersonal().getClave(),rol.getPeriodoActivo());
                 if(!resProgramaPlan.getCorrecto()) mostrarMensajeResultadoEJB(resProgramaPlan);
                 rol.setAreaPlanEstudioMap(resProgramaPlan.getValor());
             } else {

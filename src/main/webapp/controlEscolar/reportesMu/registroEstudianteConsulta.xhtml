@@ -114,7 +114,7 @@
                                                     <p:selectOneMenu id="carga" value="#{registroDeEstudianteConsulta.rol.estudiante}" converter="entityConverter" 
                                                                      valueChangeListener="#{registroDeEstudianteConsulta.cambiarEstudiante}" filter="true" filterMatchMode="contains">
                                                         <f:selectItems value="#{registroDeEstudianteConsulta.rol.estudiantes}" var="estu"
-                                                                       itemValue="#{estu}" itemLabel="#{estu.matricula} -- #{estu.aspirante.idPersona.nombre} #{estu.aspirante.idPersona.nombre} #{estu.aspirante.idPersona.nombre}"/>
+                                                                       itemValue="#{estu}" itemLabel="#{estu.matricula} -- #{estu.aspirante.idPersona.apellidoPaterno} #{estu.aspirante.idPersona.apellidoMaterno} #{estu.aspirante.idPersona.nombre}"/>
                                                         <p:ajax update="@this,:CV" process="@this"/>
                                                         <p:autoUpdate />
                                                     </p:selectOneMenu>
