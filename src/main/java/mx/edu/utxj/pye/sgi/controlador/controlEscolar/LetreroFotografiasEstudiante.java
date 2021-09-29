@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -22,14 +23,12 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.LetreroFotografiasRolEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbLetreroFotografias;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionRolesEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -124,7 +123,7 @@ public class LetreroFotografiasEstudiante extends ViewScopedRol implements Desar
             if (res.getValor().size() != 0) {
                 rol.setGeneraciones(res.getValor());
                 rol.setGeneracion(rol.getGeneraciones().get(0));
-                listaNivelesGeneracionEventosRegistrados();
+                obtenerNivelGeneracionEventoRegistrado();
             }
         }else mostrarMensajeResultadoEJB(res);
     }
@@ -132,12 +131,14 @@ public class LetreroFotografiasEstudiante extends ViewScopedRol implements Desar
     /**
      * Permite obtener la lista de bajas registradas en el periodo seleccionado
      */
-    public void listaNivelesGeneracionEventosRegistrados(){
+    public void obtenerNivelGeneracionEventoRegistrado(){
         if(rol.getGeneracion()== null) return;
-        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejb.listaNivelesGeneracionesFotografias(rol.getEstudiante().getMatricula(),rol.getGeneracion(), rol.getEventosEstadia());
+        ResultadoEJB<ProgramasEducativosNiveles> res = ejb.getNivelGeneracionesFotografias(rol.getEstudiante().getMatricula(),rol.getGeneracion(), rol.getEventosEstadia());
         if(res.getCorrecto()){
-            rol.setNivelesEducativos(res.getValor());
-            rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
+            rol.setNivelEducativo(res.getValor());
+            List<ProgramasEducativosNiveles> listaNiveles = new ArrayList<>();
+            listaNiveles.add(rol.getNivelEducativo());
+            rol.setNivelesEducativos(listaNiveles);
             informacionEstudiante();
         }else mostrarMensajeResultadoEJB(res);
     
@@ -168,24 +169,11 @@ public class LetreroFotografiasEstudiante extends ViewScopedRol implements Desar
         if(e.getNewValue() instanceof Generaciones){
             Generaciones generacion = (Generaciones)e.getNewValue();
             rol.setGeneracion(generacion);
-            listaNivelesGeneracionEventosRegistrados();
+            obtenerNivelGeneracionEventoRegistrado();
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
-    
-    /**
-     * Permite que al cambiar o seleccionar un programa educativo se pueda actualizar la lista de bajas por programa educativo
-     * @param e Evento del cambio de valor
-     */
-    public void cambiarNivelEducativo(ValueChangeEvent e){
-        if(e.getNewValue() instanceof  ProgramasEducativosNiveles){
-            ProgramasEducativosNiveles nivel = (ProgramasEducativosNiveles)e.getNewValue();
-            rol.setNivelEducativo(nivel);
-            informacionEstudiante();
-            Ajax.update("frm");
-        }else mostrarMensaje("");
-    }
-    
+   
       /**
      * Permite convertir la fecha de emisión del documento en texto
      */

@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -45,7 +44,6 @@ public class CargaArchivosSeguimientoEstadia implements Serializable{
     private static final long serialVersionUID = 370815015509105840L;
     
     // Variable para documentos  
-    @Getter private SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante;
     @Getter private DtoDocumentoEstadiaEstudiante dtoDocumentoEstadiaEstudiante;
     @Getter private List<DtoDocumentoEstadiaEstudiante> lista;
     @Getter @Setter private Part file;
@@ -56,11 +54,7 @@ public class CargaArchivosSeguimientoEstadia implements Serializable{
     @Getter private EventoEstadia eventoEstadia;
     
     @EJB private EjbSeguimientoEstadia ejbSeguimientoEstadia;
-    
-    @PostConstruct
-    public void init() {
-        seguimientoEstadiaEstudiante = seguimientoEstadiaPorEstudiante.getRol().getDtoSeguimientoEstadiaEstudiante().getSeguimientoEstadiaEstudiante();
-    }
+   
    
     public void editarDocumento(DtoDocumentoEstadiaEstudiante registro, EventoEstadia evento) {
         dtoDocumentoEstadiaEstudiante = registro;
@@ -73,13 +67,12 @@ public class CargaArchivosSeguimientoEstadia implements Serializable{
     
     public void subirDocumento() {
         try {
-            
             DocumentoSeguimientoEstadia nuevoDocumento = new DocumentoSeguimientoEstadia();
 
-            nuevoDocumento.setSeguimientoEstadia(seguimientoEstadiaEstudiante);
+            nuevoDocumento.setSeguimientoEstadia(seguimientoEstadiaPorEstudiante.getRol().getDtoSeguimientoEstadiaEstudiante().getSeguimientoEstadiaEstudiante());
             nuevoDocumento.setEvento(eventoEstadia);
             nuevoDocumento.setDocumento(dtoDocumentoEstadiaEstudiante.getDocumentoProceso().getDocumento());
-            nuevoDocumento.setRuta(utilidadesCH.agregarDocumentoEstadia(file, seguimientoEstadiaEstudiante, dtoDocumentoEstadiaEstudiante));
+            nuevoDocumento.setRuta(utilidadesCH.agregarDocumentoEstadia(file, seguimientoEstadiaPorEstudiante.getRol().getDtoSeguimientoEstadiaEstudiante().getSeguimientoEstadiaEstudiante(), dtoDocumentoEstadiaEstudiante));
             nuevoDocumento.setFechaCarga(new Date());
             nuevoDocumento.setObservaciones("Sin observaciones");
             nuevoDocumento.setValidado(false);
@@ -110,7 +103,7 @@ public class CargaArchivosSeguimientoEstadia implements Serializable{
     }
     
     public Boolean consultarExisteDocumento(Documento documento){
-        return ejbSeguimientoEstadia.consultarDocumento(documento, seguimientoEstadiaEstudiante).getValor();
+        return ejbSeguimientoEstadia.consultarDocumento(documento, seguimientoEstadiaPorEstudiante.getRol().getDtoSeguimientoEstadiaEstudiante().getSeguimientoEstadiaEstudiante()).getValor();
     }
     
 //    public void subirDocumentoPendiente() {

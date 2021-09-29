@@ -33,10 +33,13 @@ import org.omnifaces.util.Ajax;
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.Collections;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorAcademicoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorEmpresarialEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Messages;
 
 
 
@@ -89,7 +92,8 @@ public class AsignacionEstudiantesEstadiaDocente extends ViewScopedRol implement
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
            
             rol.setNivelRol(NivelRol.OPERATIVO);
-            rol.setDeshabilitarAsignacion(Boolean.FALSE);
+            rol.setDeshabilitarAsignacion(Boolean.TRUE);
+            rol.setRolAsesorActivo(Boolean.FALSE);
 //            rol.setSoloLectura(true);
             rol.setEventoActivo(ejb.buscarEventoActivoAsigEstudiantes().getValor());
             rol.setGeneracionEventoActivo(ejb.buscarGeneracionEventoActivo(rol.getEventoActivo()).getValor());
@@ -103,7 +107,6 @@ public class AsignacionEstudiantesEstadiaDocente extends ViewScopedRol implement
             rol.getInstrucciones().add("En caso de error, puede dar clic en el icono ELIMINAR, para quitar la asignación correspondiente.");
            
             rol.setAreaSuperior(rol.getDocente().getAreaSuperior());
-            rol.setProgramasEducativos(ejb.getProgramasEducativosArea(rol.getAreaSuperior()).getValor());
             
             generacionesEventosRegistrados();
             
@@ -141,9 +144,19 @@ public class AsignacionEstudiantesEstadiaDocente extends ViewScopedRol implement
             rol.setNivelesEducativos(res.getValor());
             rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
             rol.setEventoSeleccionado(ejb.buscarEventoSeleccionado(rol.getGeneracion(), rol.getNivelEducativo(), "Asignacion estudiantes").getValor());
+            rol.setProgramasEducativos(ejb.getProgramasEducativosArea(rol.getAreaSuperior(), rol.getNivelEducativo()).getValor());
             listaEstudiantesEstadiaAsignados();
         }else mostrarMensajeResultadoEJB(res);
     
+    }
+    
+    /**
+     * Permite inicializar los valores de la lista de estudiantes asignados y el de deshabilitar la asignación
+     */
+    public void inicializarValores(){
+        rol.setEstudiantesRegistrados(Collections.EMPTY_LIST);
+        rol.setDeshabilitarAsignacion(Boolean.TRUE);
+        rol.setRolAsesorActivo(Boolean.FALSE);
     }
     
      /**
@@ -187,19 +200,49 @@ public class AsignacionEstudiantesEstadiaDocente extends ViewScopedRol implement
      * Permite obtener la lista de estudiantes asignados al asesor academico y evento seleccionado
      */
     public void listaEstudiantesEstadiaAsignados(){
+        inicializarValores();
+        comprobarRolAsesorEvento();
+        comprobarEventos();
         ResultadoEJB<List<DtoDatosEstudiante>> res = ejb.getListaEstudiantesEstadiaAsignados(rol.getGeneracion(), rol.getNivelEducativo(), rol.getDocente().getPersonal(), rol.getEventoSeleccionado());
         if(res.getCorrecto()){
-            rol.setEstudiantesRegistrados(res.getValor());
-            if(rol.getEventoActivo() == null){
-                rol.setDeshabilitarAsignacion(Boolean.TRUE);
-            }else{
-                if(rol.getEventoSeleccionado() == rol.getEventoActivo()){
-                    rol.setDeshabilitarAsignacion(Boolean.FALSE);
-                }
+            if(!res.getValor().isEmpty()){
+                rol.setEstudiantesRegistrados(res.getValor());
             }
-            Ajax.update("tbListaRolesEstadia");
         }else mostrarMensajeResultadoEJB(res);
+        Ajax.update("frm");
+        Ajax.update("tbListaRolesEstadia");
+    }
     
+    /**
+     * Permite verificar si se habilita el botón de asignar estudiante
+     */
+    public void comprobarEventos(){
+        if(rol.getEventoActivo() != null){
+            if (rol.getEventoSeleccionado().getEvento() == rol.getEventoActivo().getEvento() && rol.getRolAsesorActivo()) {
+                rol.setDeshabilitarAsignacion(Boolean.FALSE);
+            } else {
+                rol.setDeshabilitarAsignacion(Boolean.TRUE);
+            }
+        }else{
+            rol.setDeshabilitarAsignacion(Boolean.TRUE);
+        }
+        Ajax.update("frm");
+    }
+    
+    /**
+     * Permite comprobar si el personal docente tiene rol de asesor académico para el evento seleccionado (generación y nivel educativo)
+     */
+    public void comprobarRolAsesorEvento(){
+        ResultadoEJB<EventoEstadia> resEvento = ejb.buscarEventoSeleccionado(rol.getGeneracion(), rol.getNivelEducativo(), "Asignacion coordinador asesor estadia");
+        if(resEvento.getCorrecto() && resEvento.getValor() != null){
+            ResultadoEJB<AsesorAcademicoEstadia> resAsesor = ejb.buscarAsesorAcademico(rol.getDocente().getPersonal(), resEvento.getValor());
+            if(resAsesor.getCorrecto() && resAsesor.getValor() != null){
+                rol.setRolAsesorActivo(Boolean.TRUE);
+            }else{
+                mostrarMensajeResultadoEJB(resAsesor);
+                Messages.addGlobalWarn("No tiene rol de asesor académico para el evento seleccionado");
+            } 
+        }else mostrarMensajeResultadoEJB(resEvento);
     }
     
     /**
@@ -233,9 +276,10 @@ public class AsignacionEstudiantesEstadiaDocente extends ViewScopedRol implement
      */
     public void asignarEstudiante(){
         ResultadoEJB<SeguimientoEstadiaEstudiante> resAsignar = ejb.asignarEstudiante(rol.getGeneracion(), rol.getNivelEducativo(), rol.getDocente().getPersonal(), rol.getEventoActivo(), rol.getEstudianteRegistrado());
-        mostrarMensajeResultadoEJB(resAsignar);
+        Messages.addGlobalWarn(resAsignar.getMensaje());
         crearRegistroAsesorEmpresarial(resAsignar.getValor());
         listaEstudiantesEstadiaAsignados();
+        rol.setEstudianteRegistrado(null);
         Ajax.update("frm");
     }
     

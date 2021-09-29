@@ -322,10 +322,12 @@ public class EjbEstadiasServiciosEscolares {
                     .orElse(null);
             
 
+            List<Short> listaTipos = new ArrayList<>(); listaTipos.add((short)1); listaTipos.add((short)4);
+            
             //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
-            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p INNER JOIN e.grupo g WHERE g.generacion=:generacion AND e.tipoEstudiante.idTipoEstudiante=:tipo AND e.periodo=:periodo AND concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo DESC", Estudiante.class)
+            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p INNER JOIN e.grupo g WHERE g.generacion=:generacion AND e.tipoEstudiante.idTipoEstudiante IN :tipos AND e.periodo=:periodo AND concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo DESC", Estudiante.class)
                     .setParameter("generacion", generacion.getGeneracion())
-                    .setParameter("tipo", (short)1)
+                    .setParameter("tipos", listaTipos)
                     .setParameter("periodo", ultimoPeriodo)
                     .setParameter("pista", pista)
                     .getResultList();
@@ -336,7 +338,7 @@ public class EjbEstadiasServiciosEscolares {
                 String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+ estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+ estudiante.getAspirante().getIdPersona().getNombre()+ " - " + estudiante.getMatricula();
                 PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
                 String periodoEscolar = periodo.getMesInicio().getAbreviacion()+" - "+periodo.getMesFin().getAbreviacion()+" "+periodo.getAnio();
-                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
+                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
                 DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar, programaEducativo);
                 listaDtoEstudiantes.add(dtoEstudianteComplete);
             });
@@ -384,13 +386,13 @@ public class EjbEstadiasServiciosEscolares {
             if(entregaFotografiasBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar entrega de fotografías no registrado previamente en base de datos.", DtoEntregaFotografiasEstadia.class);
           
             Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.periodo DESC", Estudiante.class)
-                    .setParameter("matricula", entregaFotografiasBD.getMatricula().getMatricula())
+                    .setParameter("matricula", entregaFotografiasBD.getEstudiante().getMatricula())
                     .setParameter("generacion", entregaFotografiasBD.getEvento().getGeneracion())
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
             
-            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
+            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
             Personal personal = em.find(Personal.class, entregaFotografiasBD.getPersonalRecibio());
             
             DtoEntregaFotografiasEstadia dtoEntregaFotografiasEstadia = new DtoEntregaFotografiasEstadia(entregaFotografiasBD, estudiante, programaEducativo, personal);
@@ -415,7 +417,7 @@ public class EjbEstadiasServiciosEscolares {
             
             EntregaFotografiasEstudiante entregaFotografiasEstudiante = new EntregaFotografiasEstudiante();
                 entregaFotografiasEstudiante.setEvento(eventoEntrega);
-                entregaFotografiasEstudiante.setMatricula(estudiante.getEstudiante());
+                entregaFotografiasEstudiante.setEstudiante(estudiante.getEstudiante());
                 entregaFotografiasEstudiante.setFechaEntrega(new Date());
                 entregaFotografiasEstudiante.setPersonalRecibio(personal.getClave());
                 em.persist(entregaFotografiasEstudiante);
@@ -456,7 +458,7 @@ public class EjbEstadiasServiciosEscolares {
         try{
             EventoEstadia eventoEntrega = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivel, "Entrega de fotografías").getValor();
             
-            EntregaFotografiasEstudiante entregaFotografiasEstudiante = em.createQuery("SELECT e FROM EntregaFotografiasEstudiante e WHERE e.evento.evento = :evento AND e.matricula.matricula=:matricula", EntregaFotografiasEstudiante.class)
+            EntregaFotografiasEstudiante entregaFotografiasEstudiante = em.createQuery("SELECT e FROM EntregaFotografiasEstudiante e WHERE e.evento.evento = :evento AND e.estudiante.matricula=:matricula", EntregaFotografiasEstudiante.class)
                     .setParameter("evento", eventoEntrega.getEvento())
                     .setParameter("matricula", estudiante.getEstudiante().getMatricula())
                     .getResultStream().findFirst().orElse(null);

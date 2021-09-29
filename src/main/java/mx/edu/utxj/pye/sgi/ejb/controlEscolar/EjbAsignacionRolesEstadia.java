@@ -174,12 +174,12 @@ public class EjbAsignacionRolesEstadia {
             List<ProgramasEducativosNiveles> listaNiveles = new ArrayList<>();
             
              List<EventoEstadia> listaEventos = em.createQuery("SELECT e FROM EventoEstadia e WHERE e.generacion=:generacion ORDER BY e.nivel DESC",  EventoEstadia.class)
-                    .setParameter("generacion", generacion.getGeneracion())
+                        .setParameter("generacion", generacion.getGeneracion())
                     .getResultList();
-          
+                
             listaEventos.forEach(evento -> {
                 ProgramasEducativosNiveles nivel = em.find(ProgramasEducativosNiveles.class, evento.getNivel());
-                listaNiveles.add(nivel);
+                     listaNiveles.add(nivel);
             });
             
             List<ProgramasEducativosNiveles> listaNivelesDistintos = listaNiveles.stream()
@@ -190,6 +190,41 @@ public class EjbAsignacionRolesEstadia {
             return ResultadoEJB.crearCorrecto(listaNivelesDistintos, "Lista de niveles educativos de la generación seleccionada en que existen eventos de estadía registrados.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de niveles educativos de la generación seleccionada en los que existen eventos de estadía registrados. (EjbAsignacionRolesEstadia.getNivelesGeneracionEventosRegistrados)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de niveles educativo en la que existen eventos de estadía registrados de la generación seleccionada del área académica correspondiente
+     * @param generacion
+     * @param area
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<ProgramasEducativosNiveles>> getNivelesGeneracionAreaEventosRegistrados(Generaciones generacion, AreasUniversidad area){
+        try{
+            List<ProgramasEducativosNiveles> listaNiveles = new ArrayList<>();
+            
+            List<String> listaNivelesArea = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior=:area",  AreasUniversidad.class)
+                    .setParameter("area", area.getArea())
+                    .getResultStream()
+                    .map(p->p.getNivelEducativo().getNivel())
+                    .distinct()
+                    .collect(Collectors.toList());
+            
+            List<EventoEstadia> listaEventos = em.createQuery("SELECT e FROM EventoEstadia e WHERE e.generacion=:generacion AND e.nivel IN :niveles AND e.actividad=:actividad ORDER BY e.evento ASC",  EventoEstadia.class)
+                        .setParameter("generacion", generacion.getGeneracion())
+                        .setParameter("niveles", listaNivelesArea)
+                        .setParameter("actividad", "Asignacion coordinador asesor estadia")
+                        .getResultStream().collect(Collectors.toList());
+            
+            
+            listaEventos.forEach(evento -> {
+               ProgramasEducativosNiveles nivel = em.find(ProgramasEducativosNiveles.class, evento.getNivel());
+               listaNiveles.add(nivel);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaNiveles.stream().sorted(Comparator.comparing(ProgramasEducativosNiveles::getNombre)).collect(Collectors.toList()), "Lista de niveles educativos de la generación seleccionada en que existen eventos de estadía registrados del área académica correspondiente.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de niveles educativos de la generación seleccionada en los que existen eventos de estadía registrados del área académica correspondiente. (EjbAsignacionRolesEstadia.getNivelesGeneracionAreaEventosRegistrados)", e, null);
         }
     }
     
@@ -210,7 +245,7 @@ public class EjbAsignacionRolesEstadia {
                     .getResultList();
           
             listaSeguimientos.forEach(seguimiento -> {
-                AreasUniversidad programa = em.find(AreasUniversidad.class, seguimiento.getMatricula().getCarrera());
+                AreasUniversidad programa = em.find(AreasUniversidad.class, seguimiento.getEstudiante().getGrupo().getIdPe());
                 listaProgramas.add(programa);
             });
             
@@ -452,12 +487,14 @@ public class EjbAsignacionRolesEstadia {
     /**
      * Permite obtener la lista de programas educativos que pertenecen al área académica del docente
      * @param areaSuperior
+     * @param nivel
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Short>> getProgramasEducativosArea(AreasUniversidad areaSuperior){
+    public ResultadoEJB<List<Short>> getProgramasEducativosArea(AreasUniversidad areaSuperior, ProgramasEducativosNiveles nivel){
         try{
-            List<AreasUniversidad> listaProgramas = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior=:area AND a.vigente=:vigente ORDER BY a.nombre DESC",  AreasUniversidad.class)
+            List<AreasUniversidad> listaProgramas = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior=:area AND a.nivelEducativo.nivel=:nivel AND a.vigente=:vigente ORDER BY a.nombre DESC",  AreasUniversidad.class)
                     .setParameter("area", areaSuperior.getArea())
+                    .setParameter("nivel", nivel.getNivel())
                     .setParameter("vigente", "1")
                     .getResultList();
             
@@ -500,7 +537,7 @@ public class EjbAsignacionRolesEstadia {
                 String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+ estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+ estudiante.getAspirante().getIdPersona().getNombre()+ " - " + estudiante.getMatricula();
                 PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
                 String periodoEscolar = periodo.getMesInicio().getAbreviacion()+" - "+periodo.getMesFin().getAbreviacion()+" "+periodo.getAnio();
-                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
+                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
                 DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar, programaEducativo);
                 listaDtoEstudiantes.add(dtoEstudianteComplete);
             });
@@ -540,7 +577,7 @@ public class EjbAsignacionRolesEstadia {
      */
     public ResultadoEJB<SeguimientoEstadiaEstudiante> buscarEstudianteAsignado(EventoEstadia eventoSeleccionado, DtoDatosEstudiante estudiante){
         try{
-            SeguimientoEstadiaEstudiante seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.matricula.matricula=:matricula", SeguimientoEstadiaEstudiante.class)
+            SeguimientoEstadiaEstudiante seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.estudiante.matricula=:matricula", SeguimientoEstadiaEstudiante.class)
                     .setParameter("evento", eventoSeleccionado.getEvento())
                     .setParameter("matricula", estudiante.getEstudiante().getMatricula())
                     .getResultStream().findFirst().orElse(null);
@@ -611,7 +648,7 @@ public class EjbAsignacionRolesEstadia {
             SeguimientoEstadiaEstudiante seguimientoEstadia = new SeguimientoEstadiaEstudiante();
             if (seguimientoEstadiaBD == null) {
                 seguimientoEstadia.setEvento(eventoActivo);
-                seguimientoEstadia.setMatricula(estudiante.getEstudiante());
+                seguimientoEstadia.setEstudiante(estudiante.getEstudiante());
                 seguimientoEstadia.setAsesor(asesorAcademico);
                 seguimientoEstadia.setFechaRegistro(new Date());
                 seguimientoEstadia.setEmpresa(null);
@@ -714,15 +751,11 @@ public class EjbAsignacionRolesEstadia {
             SeguimientoEstadiaEstudiante segEstBD = em.find(SeguimientoEstadiaEstudiante.class, seguimientoEstadiaEstudiante.getSeguimiento());
             if(segEstBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar seguimiento no registrado previamente en base de datos.", DtoDatosEstudiante.class);
 
-           Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula ORDER BY e.periodo DESC", Estudiante.class)
-                    .setParameter("matricula", seguimientoEstadiaEstudiante.getMatricula().getMatricula())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
+            Estudiante estudianteBD = em.find(Estudiante.class, seguimientoEstadiaEstudiante.getEstudiante().getIdEstudiante());
             
-            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
-            PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
-            DtoDatosEstudiante dtoDatosEstudiante = new DtoDatosEstudiante(estudiante, programaEducativo,periodoEscolar);
+            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudianteBD.getGrupo().getIdPe());
+            PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, estudianteBD.getPeriodo());
+            DtoDatosEstudiante dtoDatosEstudiante = new DtoDatosEstudiante(estudianteBD, programaEducativo,periodoEscolar);
             
             return ResultadoEJB.crearCorrecto(dtoDatosEstudiante, "Seguimiento de estadía empaquetado.");
         }catch (Exception e){

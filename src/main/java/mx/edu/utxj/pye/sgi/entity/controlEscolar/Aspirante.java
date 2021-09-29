@@ -47,6 +47,14 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Aspirante.findByFechaValidacion", query = "SELECT a FROM Aspirante a WHERE a.fechaValidacion = :fechaValidacion")})
 public class Aspirante implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "estatus")
+    private boolean estatus;
+    @Size(max = 15)
+    @Column(name = "folioCeneval")
+    private String folioCeneval;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,13 +63,6 @@ public class Aspirante implements Serializable {
     private Integer idAspirante;
     @Column(name = "folio_aspirante")
     private Integer folioAspirante;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "estatus")
-    private boolean estatus;
-    @Size(max = 15)
-    @Column(name = "folioCeneval")
-    private String folioCeneval;
     @Column(name = "fechaRegistro")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRegistro;
@@ -134,21 +135,6 @@ public class Aspirante implements Serializable {
         this.folioAspirante = folioAspirante;
     }
 
-    public boolean getEstatus() {
-        return estatus;
-    }
-
-    public void setEstatus(boolean estatus) {
-        this.estatus = estatus;
-    }
-
-    public String getFolioCeneval() {
-        return folioCeneval;
-    }
-
-    public void setFolioCeneval(String folioCeneval) {
-        this.folioCeneval = folioCeneval;
-    }
 
     public Date getFechaRegistro() {
         return fechaRegistro;
@@ -332,6 +318,22 @@ public class Aspirante implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante[ idAspirante=" + idAspirante + " ]";
+    }
+
+    public boolean getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(boolean estatus) {
+        this.estatus = estatus;
+    }
+
+    public String getFolioCeneval() {
+        return folioCeneval;
+    }
+
+    public void setFolioCeneval(String folioCeneval) {
+        this.folioCeneval = folioCeneval;
     }
     
 }

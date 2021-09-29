@@ -148,11 +148,15 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
      */
     public void listaNivelesGeneracion(){
         if(rol.getGeneracion()== null) return;
-        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionEventosRegistrados(rol.getGeneracion());
+        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionAreaEventosRegistrados(rol.getGeneracion(), rol.getDocente().getAreaSuperior());
         if(res.getCorrecto()){
-            rol.setNivelesEducativos(res.getValor());
-            rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
-            listaEstudiantesSeguimiento();
+            if(!res.getValor().isEmpty()){
+                rol.setNivelesEducativos(res.getValor());
+                rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
+                listaEstudiantesSeguimiento();
+            }else{
+                rol.setNivelesEducativos(Collections.EMPTY_LIST);
+            }
         }else mostrarMensajeResultadoEJB(res);
     
     }
@@ -161,6 +165,7 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
      * Permite obtener la lista de estudiantes asignados al asesor academico y evento seleccionado
      */
     public void listaEstudiantesSeguimiento(){
+        rol.setEstudiantesSeguimiento(Collections.EMPTY_LIST);
         ResultadoEJB<List<DtoSeguimientoEstadia>> res = ejb.getListaEstudiantesSeguimiento(rol.getGeneracion(), rol.getNivelEducativo(), rol.getDocente().getPersonal());
         if(res.getCorrecto()){
             rol.setEstudiantesSeguimiento(res.getValor());

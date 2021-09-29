@@ -116,7 +116,7 @@
                                                     <p:remoteCommand name="actualizar1" update="@form:tbListaPorcentajeEntregaFotografias" />
                                                     <p:dataTable id="tbListaPorcentajeEntregaFotografias" var="porcentEntrega" value="#{entregaFotografiasEscolares.rol.porcentajesEntrega}"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
-                                                             tableStyle="vertical-align: middle;" emptyMessage="Sin información">
+                                                             tableStyle="vertical-align: middle;" emptyMessage="No se han registrado entrega de fotografías">
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
                                                             <p:column headerText="Programa educativo" style="width: 400px;"/>
@@ -166,6 +166,7 @@
                                                             <p:column headerText="Grupo" style="width: 150px;" sortBy="#{entregaFotografia.estudiante.grupo.grado}° '#{entregaFotografia.estudiante.grupo.literal}' #{entregaFotografia.estudiante.grupo.idSistema.nombre}" filterBy="#{entregaFotografia.estudiante.grupo.grado}° '#{entregaFotografia.estudiante.grupo.literal}' #{entregaFotografia.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Matricula" style="width: 100px;" sortBy="#{entregaFotografia.estudiante.matricula}" filterBy="#{entregaFotografia.estudiante.matricula}" filterMatchMode="contains"/>
                                                             <p:column headerText="Nombre del estudiante" style="width: 300px;" sortBy="#{entregaFotografia.estudiante.aspirante.idPersona.apellidoPaterno} #{entregaFotografia.estudiante.aspirante.idPersona.apellidoMaterno} #{entregaFotografia.estudiante.aspirante.idPersona.nombre}" filterBy="#{entregaFotografia.estudiante.aspirante.idPersona.apellidoPaterno} #{entregaFotografia.estudiante.aspirante.idPersona.apellidoMaterno} #{entregaFotografia.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Situación académica" style="width: 100px;" sortBy="#{entregaFotografia.estudiante.tipoEstudiante.descripcion}" filterBy="#{entregaFotografia.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
                                                             <p:column headerText="Fecha de entrega" style="width: 150px;" sortBy="#{entregaFotografia.entregaFotografiasEstudiante.fechaEntrega}" filterBy="#{entregaFotografia.entregaFotografiasEstudiante.fechaEntrega}" filterMatchMode="contains"/>
                                                             <p:column headerText="Personal recibió" style="width: 250px;" sortBy="#{entregaFotografia.personalRecibio.nombre}" filterBy="#{entregaFotografia.personalRecibio.nombre}" filterMatchMode="contains"/>
                                                         </p:row>
@@ -186,6 +187,9 @@
                                                     </p:column>
                                                     <p:column style="text-align: justify;">
                                                         <h:outputText value="#{entregaFotografia.estudiante.aspirante.idPersona.apellidoPaterno} #{entregaFotografia.estudiante.aspirante.idPersona.apellidoMaterno} #{entregaFotografia.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{entregaFotografia.estudiante.tipoEstudiante.descripcion}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{entregaFotografia.entregaFotografiasEstudiante.fechaEntrega}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>

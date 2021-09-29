@@ -26,6 +26,7 @@ import org.omnifaces.util.Ajax;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoEstadiaEstudiante;
@@ -34,6 +35,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.SeguimientoEstadiaRolEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.AperturaExtemporaneaEventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
@@ -131,10 +133,12 @@ public class SeguimientoEstadiaPorEstudiante extends ViewScopedRol implements De
      */
     public void listaNivelesGeneracion(){
         if(rol.getGeneracion()== null) return;
-        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionEventosRegistrados(rol.getGeneracion());
+        ResultadoEJB<ProgramasEducativosNiveles> res = ejb.getNivelEducativoSeguimientoEstudiante(rol.getEstudiante().getMatricula(),rol.getGeneracion());
         if(res.getCorrecto()){
-            rol.setNivelesEducativos(res.getValor());
-            rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
+            rol.setNivelEducativo(res.getValor());
+            List<ProgramasEducativosNiveles> listaNiveles = new ArrayList<>();
+            listaNiveles.add(rol.getNivelEducativo());
+            rol.setNivelesEducativos(listaNiveles);
             seguimientoEstudiante();
         }else mostrarMensajeResultadoEJB(res);
     
@@ -147,7 +151,8 @@ public class SeguimientoEstadiaPorEstudiante extends ViewScopedRol implements De
         ResultadoEJB<DtoSeguimientoEstadiaEstudiante> res = ejb.getSeguimientoEstudiante(rol.getGeneracion(), rol.getNivelEducativo(), rol.getEstudiante().getMatricula());
         if(res.getCorrecto()){
             rol.setDtoSeguimientoEstadiaEstudiante(res.getValor());
-            Ajax.update("tbSeguimientoEstadia");
+            Ajax.update("frmSeguimientoEstadia");
+            Ajax.update("frmDocsSegEst");
         }else mostrarMensajeResultadoEJB(res);
     
     }
@@ -161,7 +166,6 @@ public class SeguimientoEstadiaPorEstudiante extends ViewScopedRol implements De
             Generaciones generacion = (Generaciones)e.getNewValue();
             rol.setGeneracion(generacion);
             listaNivelesGeneracion();
-            Ajax.update("frm");
         }else mostrarMensaje("");
     }
     
@@ -214,5 +218,13 @@ public class SeguimientoEstadiaPorEstudiante extends ViewScopedRol implements De
         return eventoEstadia;
     }
     
-  
+    public AperturaExtemporaneaEventoEstadia aperturaEventoDocumento(@NonNull DtoDocumentoEstadiaEstudiante dtoDocumentoEstadiaEstudiante){
+        AperturaExtemporaneaEventoEstadia aperturaExtemporaneaEventoEstadia =  new AperturaExtemporaneaEventoEstadia();
+        ResultadoEJB<AperturaExtemporaneaEventoEstadia> res = ejb.aperturaExtemporaneaDocumento(rol.getDtoSeguimientoEstadiaEstudiante(),dtoDocumentoEstadiaEstudiante, "Estudiante");
+        if(res.getCorrecto()){
+            aperturaExtemporaneaEventoEstadia=res.getValor();
+        }
+        return aperturaExtemporaneaEventoEstadia;
+    }
+    
 }

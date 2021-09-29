@@ -126,9 +126,9 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
     @JoinColumn(name = "evento", referencedColumnName = "evento")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EventoEstadia evento;
-    @JoinColumn(name = "matricula", referencedColumnName = "matricula")
+    @JoinColumn(name = "estudiante", referencedColumnName = "id_estudiante")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Estudiante matricula;
+    private Estudiante estudiante;
 
     public SeguimientoEstadiaEstudiante() {
     }
@@ -250,7 +250,7 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
     public void setPromedioAsesorInterno(double promedioAsesorInterno) {
         this.promedioAsesorInterno = promedioAsesorInterno;
     }
-    
+
     public boolean getValidacionVinculacion() {
         return validacionVinculacion;
     }
@@ -327,12 +327,12 @@ public class SeguimientoEstadiaEstudiante implements Serializable {
         this.evento = evento;
     }
 
-    public Estudiante getMatricula() {
-        return matricula;
+    public Estudiante getEstudiante() {
+        return estudiante;
     }
 
-    public void setMatricula(Estudiante matricula) {
-        this.matricula = matricula;
+    public void setEstudiante(Estudiante estudiante) {
+        this.estudiante = estudiante;
     }
 
     @Override

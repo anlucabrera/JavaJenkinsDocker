@@ -90,6 +90,7 @@
                                     <div class="row">
                                         <p:outputPanel>
                                             <section class="content">
+                                            <h:form id="frmSeguimientoEstadia">  
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <div class="col-md-12">
                                                     <div class="box box-widget widget-user-2">
@@ -161,6 +162,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            </h:form>     
                                             </section>
                                         </p:outputPanel>
                                             <center>
@@ -175,8 +177,8 @@
                                                                 <p:column rowspan="2" headerText="Responsable carga de documento" width="120"/>
                                                                 <p:column rowspan="2" headerText="Opciones" width="150"/>
                                                                 <p:column rowspan="2" headerText="Documento" width="200" />
-                                                                <p:column colspan="2" headerText="Periodo de carga" width="400" />
-                                                                <p:column rowspan="2" headerText="Obligatorio" width="100" />
+                                                                <p:column colspan="2" headerText="Periodo de carga" width="500" />
+<!--                                                                <p:column rowspan="2" headerText="Obligatorio" width="100" />-->
                                                                 <p:column rowspan="2" headerText="Fecha Carga" width="120" />
                                                                 <p:column rowspan="2" headerText="Observaciones" width="350" />
                                                                 <p:column rowspan="2" headerText="Validado" width="100" />
@@ -184,13 +186,14 @@
                                                             </p:row>
                                                             <p:row>
                                                                 <p:column rowspan="2" headerText="Fecha Inicio" width="200"/>
-                                                                <p:column rowspan="2" headerText="Fecha Fin" width="200"/>
+                                                                <p:column rowspan="2" headerText="Fecha Fin" width="300"/>
                                                             </p:row>
                                                         </p:columnGroup>
                                                         <c:set var="existeDoc" value="#{cargaArchivosSeguimientoEstadia.consultarExisteDocumento(docsSeg.documentoProceso.documento)}" />
                                                         <c:set var="eventoActDoc" value="#{seguimientoEstadiaPorEstudiante.eventoActivoDocumento(docsSeg)}" />
                                                         <c:set var="eventoDoc" value="#{seguimientoEstadiaPorEstudiante.eventoDocumento(docsSeg)}" />
                                                         <c:set var="permisoCap" value="#{seguimientoEstadiaPorEstudiante.deshabilitarCarga(docsSeg)}" />
+                                                        <c:set var="aperturaExt" value="#{seguimientoEstadiaPorEstudiante.aperturaEventoDocumento(docsSeg)}" />
                                                         <p:column style="text-align: center;" groupRow="true"><h:outputText value="#{eventoDoc.usuario}" /></p:column>
                                                         <p:column style="text-align: center;">
                                                             <div class="btn-group">
@@ -206,9 +209,15 @@
                                                             </div>
                                                         </p:column>
                                                         <p:column style="text-align: justify;"><h:outputText value="#{docsSeg.documentoProceso.documento.descripcion}" /></p:column>
-                                                        <p:column style="text-align: center;"><h:outputText value="#{eventoDoc.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
-                                                        <p:column style="text-align: center;"><h:outputText value="#{eventoDoc.fechaFin}"><f:convertDateTime dateStyle="long" timeZone="America/Mexico_City" type="both"/></h:outputText></p:column>
-                                                        <p:column style="text-align: center;"><h:outputText value="#{docsSeg.documentoProceso.obligatorio?'Si':'No'}" /></p:column>
+                                                        <p:column style="text-align: center;">
+                                                            <h:outputText value="#{eventoDoc.fechaInicio}" rendered="#{aperturaExt eq null || docsSeg.documentoProceso.documento.documento eq 41}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                            <h:outputText style="color: red;" value="#{aperturaExt.fechaInicio}" rendered="#{aperturaExt ne null}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                        </p:column>
+                                                        <p:column style="text-align: center;">
+                                                            <h:outputText value="#{eventoDoc.fechaFin}" rendered="#{aperturaExt eq null || docsSeg.documentoProceso.documento.documento eq 41}"><f:convertDateTime dateStyle="long" timeZone="America/Mexico_City" type="both"/></h:outputText>
+                                                            <h:outputText style="color: red;" value="#{aperturaExt.fechaFin}" rendered="#{aperturaExt ne null}"><f:convertDateTime dateStyle="long" timeZone="America/Mexico_City" type="both"/></h:outputText>
+                                                        </p:column>
+<!--                                                        <p:column style="text-align: center;"><h:outputText value="# {docsSeg.documentoProceso.obligatorio?'Si':'No'}" /></p:column>-->
                                                         <p:column style="text-align: center;"><h:outputText value="#{docsSeg.documentoSeguimientoEstadia.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
                                                         <p:column style="text-align: justify;"><h:outputText value="#{docsSeg.documentoSeguimientoEstadia.observaciones}" /></p:column>
                                                         <p:column style="text-align: center;"><h:outputText value="#{docsSeg.documentoSeguimientoEstadia.validado?'Si':'No'}" /></p:column>

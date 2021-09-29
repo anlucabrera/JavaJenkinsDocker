@@ -75,7 +75,7 @@
                                         </div>
                                         <div class="#{casilla2}">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="nivel" value="#{letreroFotografiasEstudiante.rol.nivelEducativo}" converter="entityConverter" valueChangeListener="#{letreroFotografiasEstudiante.cambiarNivelEducativo}">
+                                                <p:selectOneMenu id="nivel" value="#{letreroFotografiasEstudiante.rol.nivelEducativo}" converter="entityConverter">
                                                     <f:selectItems value="#{letreroFotografiasEstudiante.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
                                                     <p:ajax update="@this" process="@this" />
                                                     <p:autoUpdate />

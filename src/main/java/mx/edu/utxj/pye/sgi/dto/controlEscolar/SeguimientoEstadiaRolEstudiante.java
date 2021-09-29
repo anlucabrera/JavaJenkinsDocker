@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import java.util.*;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.AperturaExtemporaneaEventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
@@ -51,7 +52,7 @@ public class SeguimientoEstadiaRolEstudiante{
      * Representa los datos de seguimiento de estadía del estudiante
      */
     @Getter @NonNull private DtoSeguimientoEstadiaEstudiante  dtoSeguimientoEstadiaEstudiante;
-    
+   
      /**
      * Representa el nivel del rol
      */
@@ -91,7 +92,7 @@ public class SeguimientoEstadiaRolEstudiante{
     public void setDtoSeguimientoEstadiaEstudiante(DtoSeguimientoEstadiaEstudiante dtoSeguimientoEstadiaEstudiante) {
         this.dtoSeguimientoEstadiaEstudiante = dtoSeguimientoEstadiaEstudiante;
     }
-
+    
     public void setInstrucciones(List<String> instrucciones) {
         this.instrucciones = instrucciones;
     }

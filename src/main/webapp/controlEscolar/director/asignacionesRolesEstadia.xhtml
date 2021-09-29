@@ -40,10 +40,10 @@
                             <div id="main-buttons" class="hidden-sm hidden-xs">
                                 <p:toolbar id="tb">
                                     <f:facet name="left">
-                                        <c:if test="#{asignacionRolesEstadiaDirector.rol.generacionEventoActivo ne null}">
+                                        <c:if test="#{asignacionRolesEstadiaDirector.rol.generacionEventoActivo.generacion ne null}">
                                         <p:outputLabel value="Generación activa para asignación: #{caster.generacionToString(asignacionRolesEstadiaDirector.rol.generacionEventoActivo)}" />
                                         </c:if>
-                                        <c:if test="#{asignacionRolesEstadiaDirector.rol.generacionEventoActivo eq null}">
+                                        <c:if test="#{asignacionRolesEstadiaDirector.rol.generacionEventoActivo.generacion eq null}">
                                         <p:outputLabel value="No existe evento activo" />
                                         </c:if>
                                         <p:spacer width="5" />
@@ -93,7 +93,7 @@
                                             <center>
                                                 <p:remoteCommand name="actualizar" update="@form:tbListaRolesEstadia" />
                                                 <p:dataTable id="tbListaRolesEstadia" var="rol" value="#{asignacionRolesEstadiaDirector.rol.rolesEstadia}"
-                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="Sin información porque no existe evento relacionado con la generación y nivel educativo seleccionado"
                                                              tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50,60" resizeMode="expand"
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                                     <p:columnGroup type="header">

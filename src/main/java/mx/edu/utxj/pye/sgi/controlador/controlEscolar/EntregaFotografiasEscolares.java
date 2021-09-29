@@ -189,8 +189,12 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
     public void listaEstudiantesEntregaronFotografias(){
         ResultadoEJB<List<DtoEntregaFotografiasEstadia>> res = ejb.getListaEstudiantesEntregaronFotografias(rol.getGeneracion(), rol.getNivelEducativo());
         if(res.getCorrecto()){
-            rol.setEstudiantesFotografias(res.getValor());
-            Ajax.update("tbListaEntregaFotografias");
+            if(res.getValor().isEmpty()){
+                rol.setEstudiantesFotografias(Collections.EMPTY_LIST);
+            }else{
+                rol.setEstudiantesFotografias(res.getValor());
+            }
+                Ajax.update("tbListaEntregaFotografias");
         }else mostrarMensajeResultadoEJB(res);
     
     }
@@ -202,12 +206,21 @@ public class EntregaFotografiasEscolares extends ViewScopedRol implements Desarr
     public void listaPorcentajeEntregaFotografias(){
         ResultadoEJB<List<DtoPorcentajeEntregaFotografias>> res = ejb.getListaPorcentajeEntregaFotografias(rol.getGeneracion(), rol.getNivelEducativo(), rol.getEstudiantesFotografias());
         if(res.getCorrecto()){
-            rol.setPorcentajesEntrega(res.getValor());
-            rol.setTotalEstudiantes(rol.getPorcentajesEntrega().stream().mapToInt(p->p.getTotalEstudiantes()).sum());
-            rol.setTotalEntregaronFotografias(rol.getPorcentajesEntrega().stream().mapToInt(p->p.getTotalEntrega()).sum());
-            rol.setTotalPendienteEntrega(rol.getPorcentajesEntrega().stream().mapToInt(p->p.getTotalPendientes()).sum());
-            rol.setTotalPorcentajeEntrega(String.format("%.2f",rol.getPorcentajesEntrega().stream().mapToDouble(p->p.getPorcentajeEntrega()).average().getAsDouble()));
-            Ajax.update("tbListaPorcentajeEntregaFotografias");
+            if(res.getValor().isEmpty()){
+                rol.setPorcentajesEntrega(Collections.EMPTY_LIST);
+                rol.setTotalEstudiantes(0);
+                rol.setTotalEntregaronFotografias(0);
+                rol.setTotalPendienteEntrega(0);
+                rol.setTotalPorcentajeEntrega("0");
+            
+            }else{
+                rol.setPorcentajesEntrega(res.getValor());
+                rol.setTotalEstudiantes(rol.getPorcentajesEntrega().stream().mapToInt(p->p.getTotalEstudiantes()).sum());
+                rol.setTotalEntregaronFotografias(rol.getPorcentajesEntrega().stream().mapToInt(p->p.getTotalEntrega()).sum());
+                rol.setTotalPendienteEntrega(rol.getPorcentajesEntrega().stream().mapToInt(p->p.getTotalPendientes()).sum());
+                rol.setTotalPorcentajeEntrega(String.format("%.2f",rol.getPorcentajesEntrega().stream().mapToDouble(p->p.getPorcentajeEntrega()).average().getAsDouble()));
+            }
+                Ajax.update("tbListaPorcentajeEntregaFotografias");
         }else mostrarMensajeResultadoEJB(res);
     
     }

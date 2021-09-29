@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -105,6 +106,7 @@ public class EjbLetreroFotografias {
             
              List<Generaciones> listaGeneracionesDistintas = listaGeneraciones.stream()
                     .distinct()
+                    .sorted(Comparator.comparing(Generaciones::getGeneracion).reversed()) 
                     .collect(Collectors.toList());
             
             return ResultadoEJB.crearCorrecto(listaGeneracionesDistintas, "Lista de generaciones con evento de estadía para entrega de fotografías para el estudiante.");
@@ -114,34 +116,27 @@ public class EjbLetreroFotografias {
     }
     
      /**
-     * Permite verificar las niveles educativos de la generación seleccionada con entrega de fotografías que apliquen para el estudiante
+     * Permite verificar el nivel educativo de la generación seleccionada con entrega de fotografías que apliquen para el estudiante
      * @param matricula
      * @param generacion
      * @param listaEventosFotografias
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<ProgramasEducativosNiveles>> listaNivelesGeneracionesFotografias(Integer matricula, Generaciones generacion, List<EventoEstadia> listaEventosFotografias){
+    public ResultadoEJB<ProgramasEducativosNiveles> getNivelGeneracionesFotografias(Integer matricula, Generaciones generacion, List<EventoEstadia> listaEventosFotografias){
         try{
-            List<ProgramasEducativosNiveles> listaNiveles = new ArrayList<>();
-             
-            List<Estudiante> listaEstudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.grupo.generacion=:generacion", Estudiante.class)
+            
+           Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.grupo.generacion=:generacion", Estudiante.class)
                     .setParameter("matricula", matricula)
                     .setParameter("generacion", generacion.getGeneracion())
-                    .getResultList();
+                    .getResultStream().findFirst().orElse(null);
 
-            listaEstudiante.forEach(estudiante -> {
-                AreasUniversidad carrera = em.find(AreasUniversidad.class, estudiante.getCarrera());
+                AreasUniversidad carrera = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
                 ProgramasEducativosNiveles nivel = em.find(ProgramasEducativosNiveles.class, carrera.getNivelEducativo().getNivel());
-                listaNiveles.add(nivel);
-            });
             
-             List<ProgramasEducativosNiveles> listaNivelesDistintos = listaNiveles.stream()
-                    .distinct()
-                    .collect(Collectors.toList());
-            
-            return ResultadoEJB.crearCorrecto(listaNivelesDistintos, "Lista de niveles educativos con evento de estadía para entrega de fotografías para el estudiante.");
+             
+            return ResultadoEJB.crearCorrecto(nivel, "Nivel educativo con evento de estadía para entrega de fotografías para el estudiante.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de niveles educativos con evento de estadía para entrega de fotografías para el estudiante. (EjbLetreroFotografias.listaNivelesGeneracionesFotografias)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el nivel educativo con evento de estadía para entrega de fotografías para el estudiante. (EjbLetreroFotografias.getNivelGeneracionesFotografias)", e, null);
         }
     }
     
@@ -154,9 +149,14 @@ public class EjbLetreroFotografias {
      */
     public ResultadoEJB<DtoDatosEstudiante> getInformacionEstudiante(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo, Estudiante estudiante){
         try{
-            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
-            PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
-            DtoDatosEstudiante dtoDatosEstudiante = new DtoDatosEstudiante(estudiante, programaEducativo, periodoEscolar);
+            Estudiante estudianteGeneracion = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.grupo.generacion=:generacion ORDER BY e.periodo ASC", Estudiante.class)
+                    .setParameter("matricula", estudiante.getMatricula())
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .getResultStream().findFirst().orElse(null);
+            
+            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudianteGeneracion.getGrupo().getIdPe());
+            PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, estudianteGeneracion.getPeriodo());
+            DtoDatosEstudiante dtoDatosEstudiante = new DtoDatosEstudiante(estudianteGeneracion, programaEducativo, periodoEscolar);
             
             return ResultadoEJB.crearCorrecto(dtoDatosEstudiante, "Información del estudiante.");
         }catch (Exception e){

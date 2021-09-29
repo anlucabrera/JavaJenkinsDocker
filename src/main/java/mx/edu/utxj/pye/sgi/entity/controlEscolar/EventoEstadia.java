@@ -255,5 +255,5 @@ public class EventoEstadia implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia[ evento=" + evento + " ]";
     }
-    
+
 }

@@ -168,11 +168,12 @@ public class EjbReportesEstadia {
                     .setParameter("grados", grados)
                     .setParameter("generacion", eventoSeleccionado.getGeneracion())
                     .getResultStream()
+
                     .collect(Collectors.toList());
             
             List<Estudiante> listaActivos = listaEstudiantes.stream().filter(p-> p.getTipoEstudiante().getIdTipoEstudiante()!=2 && p.getTipoEstudiante().getIdTipoEstudiante()!=3).collect(Collectors.toList());
 
-            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s INNER JOIN s.matricula e INNER JOIN e.grupo g WHERE s.evento=:evento AND g.idPe=:programaEducativo AND g.grado IN :grados", SeguimientoEstadiaEstudiante.class)
+            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s INNER JOIN s.estudiante e INNER JOIN e.grupo g WHERE s.evento=:evento AND g.idPe=:programaEducativo AND g.grado IN :grados", SeguimientoEstadiaEstudiante.class)
                     .setParameter("programaEducativo", programaBD.getArea())   
                     .setParameter("grados", grados)
                     .setParameter("evento", eventoSeleccionado)
@@ -255,7 +256,7 @@ public class EjbReportesEstadia {
                         grados.add(6);
                         grados.add(11);
                         
-                        List<SeguimientoEstadiaEstudiante> listaSeguimientosPE = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.matricula.carrera=:programa AND s.matricula.grupo.grado IN :grados", SeguimientoEstadiaEstudiante.class)
+                        List<SeguimientoEstadiaEstudiante> listaSeguimientosPE = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.estudiante.grupo.idPe=:programa AND s.estudiante.grupo.grado IN :grados", SeguimientoEstadiaEstudiante.class)
                                 .setParameter("evento", eventoSeleccionado.getEvento())
                                 .setParameter("programa", programaEducativo.getArea())
                                 .setParameter("grados", grados)
@@ -344,7 +345,7 @@ public class EjbReportesEstadia {
                    
                     List<Estudiante> listaActivos = listaEstudiantes.stream().filter(p -> p.getTipoEstudiante().getIdTipoEstudiante() != 2 && p.getTipoEstudiante().getIdTipoEstudiante() != 3).collect(Collectors.toList());
                     
-                        List<SeguimientoEstadiaEstudiante> listaSeguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.matricula.carrera=:programa", SeguimientoEstadiaEstudiante.class)
+                        List<SeguimientoEstadiaEstudiante> listaSeguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.estudiante.grupo.idPe=:programa", SeguimientoEstadiaEstudiante.class)
                                 .setParameter("evento", eventoSeleccionado.getEvento())
                                 .setParameter("programa", programa)
                                 .getResultStream()
@@ -481,7 +482,7 @@ public class EjbReportesEstadia {
            
 //            List<Integer> listaMatriculas = listaEstudiantes.stream().map(p -> p.getMatricula()).collect(Collectors.toList());
             
-            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s INNER JOIN s.matricula e INNER JOIN e.grupo g WHERE s.evento=:evento AND g.idPe=:programaEducativo AND g.grado IN :grados", SeguimientoEstadiaEstudiante.class)
+            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s INNER JOIN s.estudiante e INNER JOIN e.grupo g WHERE s.evento=:evento AND g.idPe=:programaEducativo AND g.grado IN :grados", SeguimientoEstadiaEstudiante.class)
                     .setParameter("programaEducativo", programaBD.getArea())   
                     .setParameter("grados", grados)
                     .setParameter("evento", eventoSeleccionado)
@@ -529,7 +530,7 @@ public class EjbReportesEstadia {
                     .setParameter("grado",  grado)
                     .getResultStream().findFirst().orElse(null);
            
-            List<DtoSeguimientoEstadia> seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.matricula.periodo=:periodo", SeguimientoEstadiaEstudiante.class)
+            List<DtoSeguimientoEstadia> seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.estudiante.periodo=:periodo", SeguimientoEstadiaEstudiante.class)
                     .setParameter("evento", eventoSeleccionado.getEvento())
                     .setParameter("periodo", grupo.getPeriodo())
                     .getResultStream()
@@ -603,7 +604,7 @@ public class EjbReportesEstadia {
                     .setParameter("municipio", mun.getClaveMunicipio())
                     .getResultStream().findFirst().orElse(null);
                 
-                Long estudiantesMunicipio = listadoEstudiantes.stream().filter(p -> p.getSeguimientoEstadiaEstudiante().getMatricula().getGrupo().getIdPe() == programaBD.getArea() && p.getEmpresa() != null && p.getEmpresa().getLocalidad().getMunicipio().getMunicipioPK()== mun).count();
+                Long estudiantesMunicipio = listadoEstudiantes.stream().filter(p -> p.getSeguimientoEstadiaEstudiante().getEstudiante().getGrupo().getIdPe() == programaBD.getArea() && p.getEmpresa() != null && p.getEmpresa().getLocalidad().getMunicipio().getMunicipioPK()== mun).count();
 
                 Integer estudiantesColocados = (int) (long) estudiantesMunicipio;
 

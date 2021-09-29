@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AperturaExtemporaneaEventoEstadia;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 
 /**
@@ -21,6 +22,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 @RequiredArgsConstructor @ToString
 public class DtoAperturaExtemporaneaEstadia implements Serializable{
     @Getter @Setter @NonNull AperturaExtemporaneaEventoEstadia aperturaExtemporanea;
+    @Getter @Setter @NonNull AreasUniversidad programaEducativo;
     @Getter @Setter @NonNull Personal personalSolicita;
     @Getter @Setter Personal personalValido;
 
