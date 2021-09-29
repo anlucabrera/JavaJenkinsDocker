@@ -112,7 +112,7 @@ public class EjbCuestionarioPsicopedagogico {
                 CuestionarioPsicopedagogicoResultados resultados2 = new CuestionarioPsicopedagogicoResultados();
                 CuestionarioPsicopedagogicoResultadosPK pk = new CuestionarioPsicopedagogicoResultadosPK();
                 pk.setEvaluacion(evaluacion.getEvaluacion());
-                pk.setIdEstudiante(estudiante.getIdEstudiante());
+                pk.setIdEstudiante(e.getIdEstudiante());
                 resultados2.setCuestionarioPsicopedagogicoResultadosPK(pk);
                 em.persist(resultados2);
                 em.flush();
