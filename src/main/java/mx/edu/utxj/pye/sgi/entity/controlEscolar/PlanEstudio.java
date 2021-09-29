@@ -220,5 +220,5 @@ public class PlanEstudio implements Serializable {
     public void setAtributoEgresoList(List<AtributoEgreso> atributoEgresoList) {
         this.atributoEgresoList = atributoEgresoList;
     }
-    
-}
+
+    }

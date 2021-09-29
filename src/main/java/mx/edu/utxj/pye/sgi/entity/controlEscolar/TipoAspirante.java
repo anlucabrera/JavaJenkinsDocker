@@ -113,4 +113,4 @@ public class TipoAspirante implements Serializable {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoAspirante[ idTipoAspirante=" + idTipoAspirante + " ]";
     }
     
-}
+    }

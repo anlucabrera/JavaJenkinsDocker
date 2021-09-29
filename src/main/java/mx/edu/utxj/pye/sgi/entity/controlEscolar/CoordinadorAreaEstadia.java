@@ -136,5 +136,5 @@ public class CoordinadorAreaEstadia implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.CoordinadorAreaEstadia[ coordinadorEstadia=" + coordinadorEstadia + " ]";
     }
-    
+
 }

@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -154,11 +155,15 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
      */
     public void listaNivelesGeneracion(){
         if(rol.getGeneracion()== null) return;
-        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionEventosRegistrados(rol.getGeneracion());
+        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionAreaEventosRegistrados(rol.getGeneracion(), rol.getDirectorCarrera().getAreaOficial());
         if(res.getCorrecto()){
-            rol.setNivelesEducativos(res.getValor());
-            rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
-            listaProgramasNivelGeneracion();
+            if(!res.getValor().isEmpty()){
+                rol.setNivelesEducativos(res.getValor());
+                rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
+                listaProgramasNivelGeneracion();
+            }else{
+                 rol.setNivelesEducativos(Collections.EMPTY_LIST);    
+            }
         }else mostrarMensajeResultadoEJB(res);
     
     }
@@ -168,7 +173,7 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
      */
     public void listaProgramasNivelGeneracion(){
         if(rol.getNivelEducativo()== null) return;
-        ResultadoEJB<List<AreasUniversidad>> res = ejbAsignacionRolesEstadia.getProgramasNivelesGeneracionEventosRegistrados(rol.getGeneracion(), rol.getNivelEducativo(), rol.getDirectorCarrera().getAreaOperativa().getArea());
+        ResultadoEJB<List<AreasUniversidad>> res = ejbAsignacionRolesEstadia.getProgramasNivelesGeneracionEventosRegistrados(rol.getGeneracion(), rol.getNivelEducativo(), rol.getDirectorCarrera().getAreaOficial().getArea());
         if(res.getCorrecto()){
             rol.setProgramasEducativos(res.getValor());
             rol.setProgramaEducativo(rol.getProgramasEducativos().get(0));
@@ -274,7 +279,7 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
         try {
             
             EventoEstadia eventoEstadia = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(rol.getGeneracion(), rol.getNivelEducativo(), "Registro cedula evaluacion y acreditacion estadia").getValor();
-            Documento documento = ejb.getDocumentoEstadia("Carta de Acreditación T.S.U.").getValor();
+            Documento documento = ejb.getDocumentoEstadia("Carta de Acreditación").getValor();
             DocumentoProceso documentoProceso = ejb.getDocumentoProcesoEstadia(documento).getValor();
             DtoDocumentoEstadiaEstudiante dtoDocumentoEstadiaEstudiante = ejb.packDocumento(documentoProceso, seguimientoEstadiaEstudiante).getValor();
             

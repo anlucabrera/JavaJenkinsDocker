@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoEstadia;
@@ -134,11 +135,15 @@ public class SeguimientoEstadiaCoordinador extends ViewScopedRol implements Desa
      */
     public void listaNivelesGeneracion(){
         if(rol.getGeneracion()== null) return;
-        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionEventosRegistrados(rol.getGeneracion());
+        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionAreaEventosRegistrados(rol.getGeneracion(), rol.getDocente().getAreaSuperior());
         if(res.getCorrecto()){
-            rol.setNivelesEducativos(res.getValor());
-            rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
-            listaProgramasNivelGeneracion();
+            if(!res.getValor().isEmpty()){
+                rol.setNivelesEducativos(res.getValor());
+                rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
+                listaProgramasNivelGeneracion();
+            }else{
+                rol.setNivelesEducativos(Collections.EMPTY_LIST);
+            }
         }else mostrarMensajeResultadoEJB(res);
     
     }

@@ -139,14 +139,28 @@ public class AperturaExtemporaneaEstadia extends ViewScopedRol implements Desarr
      */
     public void listaNivelesGeneracion(){
         if(rol.getGeneracion()== null) return;
-        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionEventosRegistrados(rol.getGeneracion());
-        if(res.getCorrecto()){
-            rol.setNivelesEducativos(res.getValor());
-            rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
-            listaActividadesApertura();
-            listaAperturasExtemporaneas();
-        }else mostrarMensajeResultadoEJB(res);
-    
+        if(rol.getUsuario().getAreaOperativa().getArea()==10){
+            ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionEventosRegistrados(rol.getGeneracion());
+            if(res.getCorrecto()){
+                rol.setNivelesEducativos(res.getValor());
+                rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
+                listaActividadesApertura();
+                listaAperturasExtemporaneas();
+            }else mostrarMensajeResultadoEJB(res);
+        }else{
+            ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionAreaEventosRegistrados(rol.getGeneracion(), rol.getUsuario().getAreaOficial());
+            if(res.getCorrecto()){
+                if(!res.getValor().isEmpty()){
+                    rol.setNivelesEducativos(res.getValor());
+                    rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
+                    listaActividadesApertura();
+                    listaAperturasExtemporaneas();
+                }else{
+                    rol.setNivelesEducativos(Collections.EMPTY_LIST);
+                }
+            }else mostrarMensajeResultadoEJB(res);
+        }
+        
     }
     
     /**
@@ -213,6 +227,7 @@ public class AperturaExtemporaneaEstadia extends ViewScopedRol implements Desarr
      * Permite obtener la lista de estudiantes asignados al asesor academico y evento seleccionado
      */
     public void listaAperturasExtemporaneas(){
+        if(rol.getNivelEducativo()== null) return;
         if(rol.getUsuario().getAreaOperativa().getArea()==10){
             ResultadoEJB<List<DtoAperturaExtemporaneaEstadia>> res = ejb.getListaAperturasExtemporaneas(rol.getGeneracion(), rol.getNivelEducativo());
             if(res.getCorrecto()){

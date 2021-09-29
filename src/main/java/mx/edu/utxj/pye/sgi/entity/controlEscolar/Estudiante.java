@@ -129,11 +129,11 @@ public class Estudiante implements Serializable {
     private List<CuestionarioPsicopedagogicoResultados> cuestionarioPsicopedagogicoResultadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<DocumentoEstudiante> documentoEstudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matricula", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<EntregaFotografiasEstudiante> entregaFotografiasEstudianteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jefeGrupo", fetch = FetchType.LAZY)
     private List<TutoriasGrupales> tutoriasGrupalesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matricula", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<SeguimientoEstadiaEstudiante> seguimientoEstadiaEstudianteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante", fetch = FetchType.LAZY)
     private List<CalificacionEvidenciaInstrumento> calificacionEvidenciaInstrumentoList;

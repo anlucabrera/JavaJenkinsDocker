@@ -31,8 +31,11 @@ import org.omnifaces.util.Ajax;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.ArrayList;
+import java.util.Collections;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorAcademicoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CoordinadorAreaEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
@@ -93,10 +96,17 @@ public class AsignacionRolesEstadiaDirector extends ViewScopedRol implements Des
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
            
             rol.setNivelRol(NivelRol.OPERATIVO);
-            rol.setDeshabilitarAsignacion(Boolean.FALSE);
+            rol.setDeshabilitarAsignacion(Boolean.TRUE);
+            
 //            rol.setSoloLectura(true);
             rol.setEventoActivo(ejb.buscarEventoActivo().getValor());
-            rol.setGeneracionEventoActivo(ejb.buscarGeneracionEventoActivo(rol.getEventoActivo()).getValor());
+            
+            if(rol.getEventoActivo()!= null){
+                rol.setGeneracionEventoActivo(ejb.buscarGeneracionEventoActivo(rol.getEventoActivo()).getValor());
+            }else{
+                rol.setEventoActivo(new EventoEstadia());
+                rol.setGeneracionEventoActivo(new Generaciones());
+            }
             
             rol.getInstrucciones().add("Seleccione generación.");
             rol.getInstrucciones().add("Seleccione nivel educativo.");
@@ -137,14 +147,18 @@ public class AsignacionRolesEstadiaDirector extends ViewScopedRol implements Des
      */
     public void listaNivelesGeneracion(){
         if(rol.getGeneracion()== null) return;
-        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejb.getNivelesGeneracionEventosRegistrados(rol.getGeneracion());
+        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejb.getNivelesGeneracionAreaEventosRegistrados(rol.getGeneracion(), rol.getAreaSuperior());
         if(res.getCorrecto()){
-            rol.setNivelesEducativos(res.getValor());
-            rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
-            rol.setEventoSeleccionado(ejb.buscarEventoSeleccionado(rol.getGeneracion(), rol.getNivelEducativo(), "Asignacion coordinador asesor estadia").getValor());
-            listaPersonalRolesEstadiaAsignados();
+            if(!res.getValor().isEmpty()){
+                rol.setNivelesEducativos(res.getValor());
+                rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
+                rol.setEventoSeleccionado(ejb.buscarEventoSeleccionado(rol.getGeneracion(), rol.getNivelEducativo(), "Asignacion coordinador asesor estadia").getValor());
+                listaPersonalRolesEstadiaAsignados();
+            }else{
+                rol.setNivelesEducativos(Collections.EMPTY_LIST);
+            }
+            
         }else mostrarMensajeResultadoEJB(res);
-    
     }
     
     /**
@@ -154,12 +168,10 @@ public class AsignacionRolesEstadiaDirector extends ViewScopedRol implements Des
         ResultadoEJB<List<DtoRolEstadia>> res = ejb.getDocentesPorAreaRolesEstadia(rol.getAreaSuperior(), rol.getGeneracion(), rol.getNivelEducativo());
         if(res.getCorrecto()){
             rol.setRolesEstadia(res.getValor());
-            if(rol.getEventoActivo() == null){
-                rol.setDeshabilitarAsignacion(Boolean.TRUE);
+            if(rol.getEventoSeleccionado().getEvento() == rol.getEventoActivo().getEvento()){
+                rol.setDeshabilitarAsignacion(Boolean.FALSE);
             }else{
-                if(rol.getEventoSeleccionado() == rol.getEventoActivo()){
-                    rol.setDeshabilitarAsignacion(Boolean.FALSE);
-                }
+                rol.setDeshabilitarAsignacion(Boolean.TRUE);
             }
             Ajax.update("tbListaRolesEstadia");
         }else mostrarMensajeResultadoEJB(res);

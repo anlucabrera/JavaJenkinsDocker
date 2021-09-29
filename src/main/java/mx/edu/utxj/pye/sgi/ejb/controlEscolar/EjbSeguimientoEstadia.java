@@ -111,13 +111,13 @@ public class EjbSeguimientoEstadia {
      */
     public ResultadoEJB<List<SeguimientoEstadiaEstudiante>> asignacionesEstudianteEstadia(Integer matricula){
         try{
-            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.matricula.matricula=:matricula ORDER BY s.evento.evento DESC",  SeguimientoEstadiaEstudiante.class)
+            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula ORDER BY s.evento.evento DESC",  SeguimientoEstadiaEstudiante.class)
                     .setParameter("matricula", matricula)
                     .getResultList();
             
-            return ResultadoEJB.crearCorrecto(listaSeguimiento, "Lista de seguimiento de estadái registrados del estudiante.");
+            return ResultadoEJB.crearCorrecto(listaSeguimiento, "Lista de seguimiento de estadía registrados del estudiante.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de seguimiento de estadái registrados del estudiante. (EjbSeguimientoEstadia.asignacionesEstudianteEstadia)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de seguimiento de estadía registrados del estudiante. (EjbSeguimientoEstadia.asignacionesEstudianteEstadia)", e, null);
         }
     }
     
@@ -130,7 +130,7 @@ public class EjbSeguimientoEstadia {
         try{
             List<Generaciones> listaGeneraciones = new ArrayList<>();
             
-            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.matricula.matricula=:matricula ORDER BY s.evento.generacion DESC",  SeguimientoEstadiaEstudiante.class)
+            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula ORDER BY s.evento.generacion DESC",  SeguimientoEstadiaEstudiante.class)
                     .setParameter("matricula", matricula)
                     .getResultList();
             
@@ -150,6 +150,29 @@ public class EjbSeguimientoEstadia {
     }
     
     /**
+     * Permite obtener el nivel educativo de la generación seleccionada del seguimiento de estadía del estudiante
+     * @param matricula
+     * @param generacion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<ProgramasEducativosNiveles> getNivelEducativoSeguimientoEstudiante(Integer matricula, Generaciones generacion){
+        try{
+            
+            SeguimientoEstadiaEstudiante seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula AND s.evento.generacion=:generacion",  SeguimientoEstadiaEstudiante.class)
+                    .setParameter("matricula", matricula)
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .getResultStream().findFirst().orElse(null);
+            
+            ProgramasEducativosNiveles nivelEducativo = em.find(ProgramasEducativosNiveles.class, seguimientoEstadia.getEvento().getNivel());
+            
+            
+            return ResultadoEJB.crearCorrecto(nivelEducativo, "Nivel de educativo de la generación del seguimiento de estadía registrado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el nivel de educativo de la generación del seguimiento de estadía registrado. (EjbSeguimientoEstadia.getNivelEducativoSeguimientoEstudiante)", e, null);
+        }
+    }
+    
+    /**
      * Permite obtener la información del seguimiento de estadía del estudiante
      * @param generacion
      * @param nivelEducativo
@@ -160,7 +183,7 @@ public class EjbSeguimientoEstadia {
         try{
             EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
          
-            DtoSeguimientoEstadiaEstudiante seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.matricula.matricula=:matricula", SeguimientoEstadiaEstudiante.class)
+            DtoSeguimientoEstadiaEstudiante seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.estudiante.matricula=:matricula", SeguimientoEstadiaEstudiante.class)
                     .setParameter("evento", eventoSeleccionado.getEvento())
                     .setParameter("matricula", matricula)
                     .getResultStream()
@@ -209,8 +232,14 @@ public class EjbSeguimientoEstadia {
      */
     public ResultadoEJB<List<DtoDocumentoEstadiaEstudiante>> getDocumentosEstadia(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante){
         try{
+            String proceso = "EstadiaTSU";
+            
+            if(!seguimientoEstadiaEstudiante.getEvento().getNivel().equals("TSU")){
+                proceso= "EstadiaIngLic";
+            }
+            
             List<DtoDocumentoEstadiaEstudiante> listaDocumentos = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso = :proceso AND d.obligatorio = :valor", DocumentoProceso.class)
-                    .setParameter("proceso", "EstadiaTSU")
+                    .setParameter("proceso", proceso)
                     .setParameter("valor", true)
                     .getResultStream()
                     .map(doc -> packDocumento(doc, seguimientoEstadiaEstudiante).getValor())
@@ -333,7 +362,7 @@ public class EjbSeguimientoEstadia {
                     .setParameter("usuario", usuario)
                     .getResultStream().findFirst().orElse(null);
             
-            if(relDocEvento == null) return ResultadoEJB.crearErroneo(2, "No se encontró relación del documento en la base de datos.", EventoEstadia.class);
+            if(relDocEvento == null) return ResultadoEJB.crearErroneo(2, "buscarEventoActivoDocumento: No se encontró relación del documento en la base de datos.", EventoEstadia.class);
             
             EventoEstadia eventoReg = em.createQuery("SELECT e FROM EventoEstadia e WHERE e.generacion=:generacion AND e.nivel=:nivel AND e.actividad=:actividad AND e.usuario=:usuario AND current_date between  e.fechaInicio and e.fechaFin", EventoEstadia.class)
                 .setParameter("generacion", dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getEvento().getGeneracion())
@@ -381,6 +410,38 @@ public class EjbSeguimientoEstadia {
         }
     }
     
+     /**
+     * Permite verificar apertura extemporánea activa y valdiada de la actividad y usuario seleccionado
+     * @param dtoSeguimientoEstadiaEstudiante
+     * @param dtoDocumentoEstadiaEstudiante
+     * @param usuario
+     * @return Devueleve el seguimiento de estadía del estudiante, código de error 2 si no la tiene y código de error 1 para un error desconocido.
+     */
+    public ResultadoEJB<AperturaExtemporaneaEventoEstadia> aperturaExtemporaneaDocumento(DtoSeguimientoEstadiaEstudiante dtoSeguimientoEstadiaEstudiante, DtoDocumentoEstadiaEstudiante dtoDocumentoEstadiaEstudiante, String usuario){
+        try{
+            RelacionDocumentoEstadiaEvento relDocEvento = em.createQuery("SELECT r FROM RelacionDocumentoEstadiaEvento r WHERE r.documentoEstadia=:documento AND r.usuario=:usuario", RelacionDocumentoEstadiaEvento.class)
+                    .setParameter("documento", dtoDocumentoEstadiaEstudiante.getDocumentoProceso().getDocumento().getDocumento())
+                    .setParameter("usuario", usuario)
+                    .getResultStream().findFirst().orElse(null);
+            
+            if(relDocEvento == null) return ResultadoEJB.crearErroneo(2, "aperturaExtemporaneaDocumento: No se encontró relación del documento en la base de datos.", AperturaExtemporaneaEventoEstadia.class);
+            
+            AperturaExtemporaneaEventoEstadia aperturaExtemporanea = em.createQuery("SELECT a FROM AperturaExtemporaneaEventoEstadia a WHERE a.evento.generacion=:generacion AND a.evento.nivel=:nivel AND a.evento.actividad=:actividad AND a.evento.usuario=:usuario AND a.seguimiento.seguimiento=:seguimiento AND a.validada=:valor AND current_date between a.fechaInicio and a.fechaFin", AperturaExtemporaneaEventoEstadia.class)
+                .setParameter("generacion", dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getEvento().getGeneracion())
+                .setParameter("nivel", dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getEvento().getNivel())
+                .setParameter("actividad", relDocEvento.getActividad())
+                .setParameter("usuario", relDocEvento.getUsuario())
+                .setParameter("seguimiento", dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getSeguimiento())
+                .setParameter("valor", Boolean.TRUE)
+                .getResultStream()
+                .findFirst().orElse(null);
+            
+           return ResultadoEJB.crearCorrecto(aperturaExtemporanea, "Apertura extemporánea del evento y estudiante seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la apertura extemporánea del evento y estudiante seleccionado (EjbSeguimientoEstadia.AperturaExtemporaneaEventoEstadia).", e, AperturaExtemporaneaEventoEstadia.class);
+        }
+    }
+    
     /**
      * Permite verificar evento registrado de la actividad y usuario seleccionado
      * @param dtoSeguimientoEstadiaEstudiante
@@ -393,7 +454,7 @@ public class EjbSeguimientoEstadia {
                     .setParameter("documento", dtoDocumentoEstadiaEstudiante.getDocumentoProceso().getDocumento().getDocumento())
                     .getResultStream().findFirst().orElse(null);
             
-            if(relDocEvento == null) return ResultadoEJB.crearErroneo(1, "No se encontró relación del documento en la base de datos.", EventoEstadia.class);
+            if(relDocEvento == null) return ResultadoEJB.crearErroneo(1, "buscarEventoDocumento: No se encontró relación del documento en la base de datos.", EventoEstadia.class);
             
             EventoEstadia eventoReg = em.createQuery("SELECT e FROM EventoEstadia e WHERE e.generacion=:generacion AND e.nivel=:nivel AND e.actividad=:actividad AND e.usuario=:usuario", EventoEstadia.class)
                 .setParameter("generacion", dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getEvento().getGeneracion())
@@ -413,24 +474,24 @@ public class EjbSeguimientoEstadia {
      * @param seguimientoEstadiaEstudiante
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Documentosentregadosestudiante> buscarDocumentosEntregados(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante){
-        try{
-            Grupo grupo = em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion AND g.idPe=:programa ORDER BY g.periodo ASC",  Grupo.class)
-                    .setParameter("generacion",  seguimientoEstadiaEstudiante.getEvento().getGeneracion())
-                    .setParameter("programa",  seguimientoEstadiaEstudiante.getMatricula().getCarrera())
-                    .getResultStream().findFirst().orElse(null);
-            
-            
-            Documentosentregadosestudiante documentosEntregados = em.createQuery("SELECT d FROM Documentosentregadosestudiante d WHERE d.estudiante1.matricula=:matricula AND d.estudiante1.periodo=:periodo", Documentosentregadosestudiante.class)
-                    .setParameter("matricula",  seguimientoEstadiaEstudiante.getMatricula().getMatricula())
-                    .setParameter("periodo", grupo.getPeriodo())
-                    .getResultStream().findFirst().orElse(null);
-            
-            return ResultadoEJB.crearCorrecto(documentosEntregados, "Documentos entregados por el estudiante");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo verificar si existen documentos entregados por el estudiante (EjbSeguimientoEstadia.buscarDocumentosEntregados).", e, Documentosentregadosestudiante.class);
-        }
-    }
+//    public ResultadoEJB<Documentosentregadosestudiante> buscarDocumentosEntregados(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante){
+//        try{
+//            Grupo grupo = em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion AND g.idPe=:programa ORDER BY g.periodo ASC",  Grupo.class)
+//                    .setParameter("generacion",  seguimientoEstadiaEstudiante.getEvento().getGeneracion())
+//                    .setParameter("programa",  seguimientoEstadiaEstudiante.getEstudiante().getGrupo().getIdPe())
+//                    .getResultStream().findFirst().orElse(null);
+//            
+//            
+//            Documentosentregadosestudiante documentosEntregados = em.createQuery("SELECT d FROM Documentosentregadosestudiante d WHERE d.estudiante1.matricula=:matricula AND d.estudiante1.periodo=:periodo", Documentosentregadosestudiante.class)
+//                    .setParameter("matricula",  seguimientoEstadiaEstudiante.getEstudiante().getMatricula())
+//                    .setParameter("periodo", grupo.getPeriodo())
+//                    .getResultStream().findFirst().orElse(null);
+//            
+//            return ResultadoEJB.crearCorrecto(documentosEntregados, "Documentos entregados por el estudiante");
+//        }catch (Exception e){
+//            return ResultadoEJB.crearErroneo(1, "No se pudo verificar si existen documentos entregados por el estudiante (EjbSeguimientoEstadia.buscarDocumentosEntregados).", e, Documentosentregadosestudiante.class);
+//        }
+//    }
     
     /* MÓDULO DE SEGUIMIENTO DE ESTADÍA POR ASESOR ACADÉMICO */
     
@@ -540,14 +601,9 @@ public class EjbSeguimientoEstadia {
      */
     public ResultadoEJB<DtoDatosEstudiante> packEstudiante(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante, EventoEstadia eventoSeleccionado){
         try{
-           Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.periodo DESC", Estudiante.class)
-                    .setParameter("matricula", seguimientoEstadiaEstudiante.getMatricula().getMatricula())
-                    .setParameter("generacion", eventoSeleccionado.getGeneracion())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
+            Estudiante estudiante = em.find(Estudiante.class, seguimientoEstadiaEstudiante.getEstudiante().getIdEstudiante());
             
-            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
+            AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
             PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
             DtoDatosEstudiante dtoDatosEstudiante = new DtoDatosEstudiante(estudiante, programaEducativo,periodoEscolar);
             
@@ -1093,8 +1149,8 @@ public class EjbSeguimientoEstadia {
      */
     public ResultadoEJB<Integer> buscarUltimoFolioAsignado(SeguimientoEstadiaEstudiante  seguimientoEstadiaEstudiante){
         try{
-             List<FolioAcreditacionEstadia> listaFolios = em.createQuery("SELECT f FROM FolioAcreditacionEstadia f WHERE f.seguimiento.matricula.carrera=:programa AND f.seguimiento.evento.evento=:evento", FolioAcreditacionEstadia.class)
-                     .setParameter("programa", seguimientoEstadiaEstudiante.getMatricula().getCarrera())
+             List<FolioAcreditacionEstadia> listaFolios = em.createQuery("SELECT f FROM FolioAcreditacionEstadia f WHERE f.seguimiento.estudiante.grupo.idPe=:programa AND f.seguimiento.evento.evento=:evento", FolioAcreditacionEstadia.class)
+                     .setParameter("programa", seguimientoEstadiaEstudiante.getEstudiante().getGrupo().getIdPe())
                      .setParameter("evento", seguimientoEstadiaEstudiante.getEvento().getEvento())
                      .getResultStream()
                      .sorted(Comparator.comparingInt(FolioAcreditacionEstadia::getNumero).reversed())
@@ -1228,18 +1284,12 @@ public class EjbSeguimientoEstadia {
             EventoEstadia eventoCoordinador = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion coordinador asesor estadia").getValor();
             List<AsesorAcademicoEstadia> listaAsesores = getListaAsesoresEstadiaArea(eventoCoordinador, personal.getAreaSuperior()).getValor();
             
-            Grupo grupo = em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion AND g.idPe=:programa ORDER BY g.periodo DESC",  Grupo.class)
-                    .setParameter("generacion",  generacion.getGeneracion())
-                    .setParameter("programa",  programaEducativo.getArea())
-                    .getResultStream().findFirst().orElse(null);
-           
             List<DtoSeguimientoEstadia> seguimientoEstadia = new ArrayList();
             
             if(listaAsesores != null && !listaAsesores.isEmpty()){
-                seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.matricula.carrera=:programa AND s.matricula.periodo=:periodo AND s.asesor IN :lista", SeguimientoEstadiaEstudiante.class)
+                seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.estudiante.grupo.idPe=:programa AND s.asesor IN :lista", SeguimientoEstadiaEstudiante.class)
                     .setParameter("evento", eventoSeleccionado.getEvento())
                     .setParameter("programa", programaEducativo.getArea())
-                    .setParameter("periodo", grupo.getPeriodo())
                     .setParameter("lista", listaAsesores)
                     .getResultStream()
                     .map(seg -> packSeguimiento(seg, eventoSeleccionado).getValor())
@@ -1300,19 +1350,13 @@ public class EjbSeguimientoEstadia {
             EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
             EventoEstadia eventoRoles = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion coordinador asesor estadia").getValor();
             List<AsesorAcademicoEstadia> listaAsesores = getListaAsesoresEstadiaArea(eventoRoles, personal.getAreaOperativa()).getValor();
-            
-            Grupo grupo = em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion AND g.idPe=:programa ORDER BY g.periodo DESC",  Grupo.class)
-                    .setParameter("generacion",  generacion.getGeneracion())
-                    .setParameter("programa",  programaEducativo.getArea())
-                    .getResultStream().findFirst().orElse(null);
-            
+           
             List<DtoSeguimientoEstadia> seguimientoEstadia = new ArrayList();
             
             if(listaAsesores != null && !listaAsesores.isEmpty()){
-                seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.matricula.carrera=:programa AND s.matricula.periodo=:periodo AND s.asesor IN :lista", SeguimientoEstadiaEstudiante.class)
+                seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.estudiante.grupo.idPe=:programa AND s.asesor IN :lista", SeguimientoEstadiaEstudiante.class)
                     .setParameter("evento", eventoSeleccionado.getEvento())
                     .setParameter("programa", programaEducativo.getArea())
-                    .setParameter("periodo", grupo.getPeriodo())
                     .setParameter("lista", listaAsesores)
                     .getResultStream()
                     .map(seg -> packSeguimiento(seg, eventoSeleccionado).getValor())
@@ -1558,15 +1602,9 @@ public class EjbSeguimientoEstadia {
         try{
             EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
             
-            Grupo grupo = em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion AND g.idPe=:programa ORDER BY g.periodo DESC",  Grupo.class)
-                    .setParameter("generacion",  generacion.getGeneracion())
-                    .setParameter("programa",  programaEducativo.getArea())
-                    .getResultStream().findFirst().orElse(null);
-           
-            List<DtoSeguimientoEstadia> seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.matricula.carrera=:programa AND s.matricula.periodo=:periodo", SeguimientoEstadiaEstudiante.class)
+            List<DtoSeguimientoEstadia> seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.estudiante.grupo.idPe=:programa", SeguimientoEstadiaEstudiante.class)
                     .setParameter("evento", eventoSeleccionado.getEvento())
                     .setParameter("programa", programaEducativo.getArea())
-                    .setParameter("periodo", grupo.getPeriodo())
                     .getResultStream()
                     .map(seg -> packSeguimiento(seg, eventoSeleccionado).getValor())
                     .filter(dto -> dto != null)
@@ -1586,17 +1624,8 @@ public class EjbSeguimientoEstadia {
      */
     public ResultadoEJB<Estudiante> cambiarSituacionAcademicaEstudiante(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante){
         try{
-            List<Integer> grados = new ArrayList<>();
-            grados.add(6);
-            grados.add(11);
             
-            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion AND e.grupo.grado IN :grados", Estudiante.class)
-                    .setParameter("matricula", seguimientoEstadiaEstudiante.getMatricula().getMatricula())
-                    .setParameter("generacion", seguimientoEstadiaEstudiante.getEvento().getGeneracion())
-                    .setParameter("grados", grados)
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
+            Estudiante estudiante = em.find(Estudiante.class, seguimientoEstadiaEstudiante.getEstudiante().getIdEstudiante());
             
             if(estudiante == null) return ResultadoEJB.crearErroneo(2, "El estudiante no puede ser nulo.", Estudiante.class);
                 

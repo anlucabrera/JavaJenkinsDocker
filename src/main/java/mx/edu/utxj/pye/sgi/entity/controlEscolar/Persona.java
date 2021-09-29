@@ -290,5 +290,5 @@ public class Persona implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona[ idpersona=" + idpersona + " ]";
     }
-    
+
 }

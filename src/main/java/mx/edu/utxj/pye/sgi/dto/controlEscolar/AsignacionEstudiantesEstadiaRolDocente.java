@@ -99,9 +99,14 @@ public class AsignacionEstudiantesEstadiaRolDocente extends AbstractRol{
     @Getter @NonNull private AsesorAcademicoEstadia asesorAcademicoEstadia;
     
      /**
-     * Asesor académico registrado
+     * Valor que determina si se habilita o no la asignación
      */
     @Getter @NonNull private Boolean deshabilitarAsignacion;
+    
+     /**
+     * Valor que determina si el personal tiene rol de asesor para el evento activo
+     */
+    @Getter @NonNull private Boolean rolAsesorActivo;
     
     
     public AsignacionEstudiantesEstadiaRolDocente(Filter<PersonalActivo> filtro, PersonalActivo docente) {
@@ -173,5 +178,8 @@ public class AsignacionEstudiantesEstadiaRolDocente extends AbstractRol{
         this.deshabilitarAsignacion = deshabilitarAsignacion;
     }
 
-   
+    public void setRolAsesorActivo(Boolean rolAsesorActivo) {
+        this.rolAsesorActivo = rolAsesorActivo;
+    }
+
 }

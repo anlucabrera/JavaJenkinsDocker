@@ -39,6 +39,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEmpresaComplete;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEvaluacionEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorAcademicoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorEmpresarialEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoEstadia;
@@ -148,11 +149,15 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
      */
     public void listaNivelesGeneracion(){
         if(rol.getGeneracion()== null) return;
-        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionEventosRegistrados(rol.getGeneracion());
+        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionAreaEventosRegistrados(rol.getGeneracion(), rol.getDocente().getAreaSuperior());
         if(res.getCorrecto()){
-            rol.setNivelesEducativos(res.getValor());
-            rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
-            listaEstudiantesSeguimiento();
+            if(!res.getValor().isEmpty()){
+                rol.setNivelesEducativos(res.getValor());
+                rol.setNivelEducativo(rol.getNivelesEducativos().get(0));
+                listaEstudiantesSeguimiento();
+            }else{
+                rol.setNivelesEducativos(Collections.EMPTY_LIST);
+            }
         }else mostrarMensajeResultadoEJB(res);
     
     }
@@ -161,6 +166,8 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
      * Permite obtener la lista de estudiantes asignados al asesor academico y evento seleccionado
      */
     public void listaEstudiantesSeguimiento(){
+        rol.setEstudiantesSeguimiento(Collections.EMPTY_LIST);
+        comprobarRolAsesorEvento();
         ResultadoEJB<List<DtoSeguimientoEstadia>> res = ejb.getListaEstudiantesSeguimiento(rol.getGeneracion(), rol.getNivelEducativo(), rol.getDocente().getPersonal());
         if(res.getCorrecto()){
             rol.setEstudiantesSeguimiento(res.getValor());
@@ -208,6 +215,21 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
             permiso=res.getValor();
         }else mostrarMensajeResultadoEJB(res);
         return permiso;
+    }
+    
+     /**
+     * Permite comprobar si el personal docente tiene rol de asesor académico para el evento seleccionado (generación y nivel educativo)
+     */
+    public void comprobarRolAsesorEvento(){
+        ResultadoEJB<EventoEstadia> resEvento = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(rol.getGeneracion(), rol.getNivelEducativo(), "Asignacion coordinador asesor estadia");
+        if(resEvento.getCorrecto() && resEvento.getValor() != null){
+            ResultadoEJB<AsesorAcademicoEstadia> resAsesor = ejbAsignacionRolesEstadia.buscarAsesorAcademico(rol.getDocente().getPersonal(), resEvento.getValor());
+            if(resAsesor.getCorrecto() && resAsesor.getValor() != null){
+                rol.setRolAsesorActivo(Boolean.TRUE);
+            }else{
+                mostrarMensajeResultadoEJB(resAsesor);
+            } 
+        }else mostrarMensajeResultadoEJB(resEvento);
     }
    
      /**

@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -163,7 +164,7 @@ public class EjbAperturaExtemporaneaEstadia {
      */
     public ResultadoEJB<List<DtoAperturaExtemporaneaEstadia>> getListaAperturasExtemporaneas(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo){
         try{
-            List<AperturaExtemporaneaEventoEstadia> listaAperturas = em.createQuery("SELECT a FROM AperturaExtemporaneaEventoEstadia a WHERE a.evento.generacion=:generacion AND a.evento.nivel=:nivel", AperturaExtemporaneaEventoEstadia.class)
+            List<AperturaExtemporaneaEventoEstadia> listaAperturas = em.createQuery("SELECT a FROM AperturaExtemporaneaEventoEstadia a WHERE a.evento.generacion=:generacion AND a.evento.nivel=:nivel ORDER BY a.evento.evento, a.fechaInicio ASC", AperturaExtemporaneaEventoEstadia.class)
                     .setParameter("generacion", generacion.getGeneracion())
                     .setParameter("nivel", nivelEducativo.getNivel())
                     .getResultStream()
@@ -173,8 +174,11 @@ public class EjbAperturaExtemporaneaEstadia {
             
             listaAperturas.forEach(apertura -> {
                 Personal personalSolicito = em.find(Personal.class, apertura.getGrabaApertura());
+                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, apertura.getSeguimiento().getEstudiante().getGrupo().getIdPe());
+                
                 DtoAperturaExtemporaneaEstadia dtoAperturaExtemporaneaEstadia = new DtoAperturaExtemporaneaEstadia();
                 dtoAperturaExtemporaneaEstadia.setAperturaExtemporanea(apertura);
+                dtoAperturaExtemporaneaEstadia.setProgramaEducativo(programaEducativo);
                 dtoAperturaExtemporaneaEstadia.setPersonalSolicita(personalSolicito);
                 
                 if(apertura.getPersonalValida()!= null){
@@ -194,19 +198,19 @@ public class EjbAperturaExtemporaneaEstadia {
      * Permite obtener la lista de aperturas extemporáneas de eventos de estadía registradas
      * @param generacion
      * @param nivelEducativo
+     * @param areaAcademica
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<DtoAperturaExtemporaneaEstadia>> getListaAperturasExtemporaneasAreaAcademica(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo, AreasUniversidad areaAcademica){
         try{
-             List<Short> programas = em.createQuery("select a from AreasUniversidad a WHERE a.areaSuperior=:area AND a.nivelEducativo.nivel=:nivel AND a.vigente=:valor", AreasUniversidad.class)
+             List<Short> programas = em.createQuery("select a from AreasUniversidad a WHERE a.areaSuperior=:area AND a.nivelEducativo.nivel=:nivel", AreasUniversidad.class)
                     .setParameter("area", areaAcademica.getArea())
                     .setParameter("nivel", nivelEducativo.getNivel())
-                    .setParameter("valor", "1")
                     .getResultStream()
                     .map(p-> p.getArea())
                     .collect(Collectors.toList());
             
-            List<AperturaExtemporaneaEventoEstadia> listaAperturas = em.createQuery("SELECT a FROM AperturaExtemporaneaEventoEstadia a WHERE a.evento.generacion=:generacion AND a.evento.nivel=:nivel AND a.seguimiento.matricula.carrera IN :programas", AperturaExtemporaneaEventoEstadia.class)
+            List<AperturaExtemporaneaEventoEstadia> listaAperturas = em.createQuery("SELECT a FROM AperturaExtemporaneaEventoEstadia a WHERE a.evento.generacion=:generacion AND a.evento.nivel=:nivel AND a.seguimiento.estudiante.grupo.idPe IN :programas ORDER BY a.fechaInicio ASC", AperturaExtemporaneaEventoEstadia.class)
                     .setParameter("generacion", generacion.getGeneracion())
                     .setParameter("nivel", nivelEducativo.getNivel())
                     .setParameter("programas", programas)
@@ -218,8 +222,11 @@ public class EjbAperturaExtemporaneaEstadia {
             
             listaAperturas.forEach(apertura -> {
                 Personal personalSolicito = em.find(Personal.class, apertura.getGrabaApertura());
+                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, apertura.getSeguimiento().getEstudiante().getGrupo().getIdPe());
+                              
                 DtoAperturaExtemporaneaEstadia dtoAperturaExtemporaneaEstadia = new DtoAperturaExtemporaneaEstadia();
                 dtoAperturaExtemporaneaEstadia.setAperturaExtemporanea(apertura);
+                dtoAperturaExtemporaneaEstadia.setProgramaEducativo(programaEducativo);
                 dtoAperturaExtemporaneaEstadia.setPersonalSolicita(personalSolicito);
                 
                 if(apertura.getPersonalValida()!= null){
@@ -264,7 +271,7 @@ public class EjbAperturaExtemporaneaEstadia {
      */
     public ResultadoEJB<AperturaExtemporaneaEventoEstadia> guardarAperturaExtemporanea(EventoEstadia actividad, DtoDatosEstudiante estudiante, Date fechaInicio, Date fechaFin, Personal personal){
         try{
-            SeguimientoEstadiaEstudiante seguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.matricula.matricula=:matricula AND s.evento.generacion=:generacion AND s.evento.nivel=:nivel", SeguimientoEstadiaEstudiante.class)
+            SeguimientoEstadiaEstudiante seguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula AND s.evento.generacion=:generacion AND s.evento.nivel=:nivel", SeguimientoEstadiaEstudiante.class)
                     .setParameter("matricula", estudiante.getEstudiante().getMatricula())
                     .setParameter("generacion", actividad.getGeneracion())
                     .setParameter("nivel", actividad.getNivel())
@@ -350,7 +357,7 @@ public class EjbAperturaExtemporaneaEstadia {
      */
     public ResultadoEJB<Integer> buscarAperturasRegistradasEvento(EventoEstadia actividad, DtoDatosEstudiante estudiante){
         try{
-            List<AperturaExtemporaneaEventoEstadia> listaAperturaExtemporaneaEventoEstadia = em.createQuery("SELECT a FROM AperturaExtemporaneaEventoEstadia a WHERE a.seguimiento.matricula.matricula=:matricula AND a.evento.evento=:evento", AperturaExtemporaneaEventoEstadia.class)
+            List<AperturaExtemporaneaEventoEstadia> listaAperturaExtemporaneaEventoEstadia = em.createQuery("SELECT a FROM AperturaExtemporaneaEventoEstadia a WHERE a.seguimiento.estudiante.matricula=:matricula AND a.evento.evento=:evento", AperturaExtemporaneaEventoEstadia.class)
                     .setParameter("matricula", estudiante.getEstudiante().getMatricula())
                     .setParameter("evento", actividad.getEvento())
                     .getResultStream()
