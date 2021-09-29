@@ -240,7 +240,6 @@ public class AsignacionEstudiantesEstadiaDocente extends ViewScopedRol implement
                 rol.setRolAsesorActivo(Boolean.TRUE);
             }else{
                 mostrarMensajeResultadoEJB(resAsesor);
-                Messages.addGlobalWarn("No tiene rol de asesor académico para el evento seleccionado");
             } 
         }else mostrarMensajeResultadoEJB(resEvento);
     }

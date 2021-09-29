@@ -54,6 +54,11 @@ public class SeguimientoEstadiaRolAsesor extends AbstractRol{
     @Getter @NonNull private List<DtoSeguimientoEstadia> estudiantesSeguimiento;
     
      /**
+     * Valor que determina si el personal tiene rol de asesor para el evento activo
+     */
+    @Getter @NonNull private Boolean rolAsesorActivo;
+    
+     /**
      * Seguimiento de un estudiante
      */
     @Getter @NonNull private DtoSeguimientoEstadia estudianteSeguimiento;
@@ -157,6 +162,10 @@ public class SeguimientoEstadiaRolAsesor extends AbstractRol{
         this.estudiantesSeguimiento = estudiantesSeguimiento;
     }
 
+    public void setRolAsesorActivo(Boolean rolAsesorActivo) {
+        this.rolAsesorActivo = rolAsesorActivo;
+    }
+    
     public void setEstudianteSeguimiento(DtoSeguimientoEstadia estudianteSeguimiento) {
         this.estudianteSeguimiento = estudianteSeguimiento;
     }
