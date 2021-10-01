@@ -472,7 +472,7 @@ public class EjbReincorporacion {
             List<Aspirante> aspirantes = em.createQuery("select a from Aspirante a INNER JOIN a.idPersona p WHERE p.idpersona=:idpersona", Aspirante.class).setParameter("idpersona", p.getIdpersona()).getResultList();
             DtoReincorporacion.AspiranteR rr = new DtoReincorporacion.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE);
             if (!aspirantes.isEmpty()) {
-                Aspirante aspirante = aspirantes.get(0);
+                Aspirante aspirante = aspirantes.get(aspirantes.size()-1);
                 rr.setAspirante(aspirante);
                 rr.setTipo(aspirante.getTipoAspirante());
                 rr.setProcesosInscripcion(aspirante.getIdProcesoInscripcion());

@@ -358,17 +358,17 @@
                                                                         <div class="form-group">
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="telFijo" style="font-size: large" value="Teléfono fijo procedencia"/>
-                                                                                <p:inputMask mask="(99)(999)999-9999" id="telFijo" class="form-control" placeholder="(99)(999)-999-9999" value="#{registrolDelEstudiante.rol.comunicacion.telefonoFijo}"/>
+                                                                                <p:inputMask mask="(999)999-9999" id="telFijo" class="form-control" placeholder="(999)-999-9999" value="#{registrolDelEstudiante.rol.comunicacion.telefonoFijo}"/>
                                                                                 <p:message for="telFijo"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="telRenta" style="font-size: large" value="Teléfono fijo residencia"/>
-                                                                                <p:inputMask mask="(99)(999)999-9999" id="telRenta" class="form-control" placeholder="(99)(999)-999-9999" value="#{registrolDelEstudiante.rol.comunicacion.telefonoRenta}"/>
+                                                                                <p:inputMask mask="(999)999-9999" id="telRenta" class="form-control" placeholder="(999)-999-9999" value="#{registrolDelEstudiante.rol.comunicacion.telefonoRenta}"/>
                                                                                 <p:message for="telRenta"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="telMovil" style="font-size: large" value="Teléfono Móvil"/>
-                                                                                <p:inputMask mask="(999)999-9999" id="telMovil" class="form-control" placeholder="(999)(999)-999-9999" value="#{registrolDelEstudiante.rol.comunicacion.telefonoMovil}"/>
+                                                                                <p:inputMask mask="(999)999-9999" id="telMovil" class="form-control" placeholder="(999)-999-9999" value="#{registrolDelEstudiante.rol.comunicacion.telefonoMovil}"/>
                                                                                 <p:message for="telMovil"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
@@ -539,7 +539,7 @@
                                                                         <div class="form-group">
                                                                             <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                             <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                <p:commandButton id="btnDomCom" value="Actualizar información" icon="fa fa-pencil-square-o"
+                                                                                <p:commandButton id="btnDomCom" value="Actualizar información" disabled="#{registrolDelEstudiante.rol.ddomicilios.domicilio.croquisParticular eq null?(registrolDelEstudiante.rol.ddomicilios.domicilio.croquisRenta eq null?true:false):false}" icon="fa fa-pencil-square-o"
                                                                                                  class="btn-primary btn-block col-md-3" update="@form,:tabw1" process="@form" actionListener="#{registrolDelEstudiante.guardaDomicilio()}"/>
                                                                             </div>
                                                                         </div>
