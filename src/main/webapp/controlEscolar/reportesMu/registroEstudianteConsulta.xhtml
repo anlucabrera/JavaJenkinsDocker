@@ -32,7 +32,7 @@
         </c:if>
         <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />
-        </c:if>      
+        </c:if>
         <!-- Fin estilos par proceso electoral -->
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
         <h:outputScript library="js" name="dialogs.js"/>
@@ -111,7 +111,7 @@
                                             </div>
                                             <div class="#{casilla2}">
                                                 <div class="ui-material">
-                                                    <p:selectOneMenu id="carga" value="#{registroDeEstudianteConsulta.rol.estudiante}" converter="entityConverter" 
+                                                    <p:selectOneMenu id="carga" value="#{registroDeEstudianteConsulta.rol.estudiante}" converter="entityConverter"
                                                                      valueChangeListener="#{registroDeEstudianteConsulta.cambiarEstudiante}" filter="true" filterMatchMode="contains">
                                                         <f:selectItems value="#{registroDeEstudianteConsulta.rol.estudiantes}" var="estu"
                                                                        itemValue="#{estu}" itemLabel="#{estu.matricula} -- #{estu.aspirante.idPersona.apellidoPaterno} #{estu.aspirante.idPersona.apellidoMaterno} #{estu.aspirante.idPersona.nombre}"/>
@@ -125,27 +125,27 @@
                                         </div>
                                         <div class="row">
                                             <center>
-                                                <p:commandButton value="Imprimir Formato" icon="fa fa-print" class="btn-success">                                        
+                                                <p:commandButton value="Imprimir Formato" icon="fa fa-print" class="btn-success">
                                                     <p:printer target="CV" />
                                                 </p:commandButton>
                                                 <p:panel id="CV" style="overflow: hidden">
                                                     <p:panelGrid>
                                                         <!--f:facet name="header"-->
                                                         <p:row>
-                                                            <p:column colspan="5">   
+                                                            <p:column colspan="5">
                                                                 <img src="../../resources/img/utxj.png" alt="" height="100px"/>
                                                             </p:column>
                                                             <p:column colspan="10" style="font-weight: bold; text-align: center; font-size: x-large;">
                                                                 <h3><strong>Universidad Tecnológica De</strong></h3>
                                                                 <h3><strong>Xicotepec de Juárez</strong></h3>
-                                                                <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>       
+                                                                <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>
                                                                 <h4 style="color: #ffffff;"><strong>REGISTRO GENERAL DEL ESTUDIANTE</strong></h4>
                                                             </p:column>
                                                         </p:row>
                                                         <!--/f:facet-->
 
                                                         <p:row>
-                                                            <p:column colspan="2" rowspan="4" style="font-weight: bold;">    
+                                                            <p:column colspan="2" rowspan="4" style="font-weight: bold;">
                                                                 <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{registroDeEstudianteConsulta.rol.estudiante.matricula}.jpg"  style="width: 100px; height: 100px;" class="img-circle"/>
                                                             </p:column>
                                                             <p:column colspan="13" styleClass="actividad" style="font-weight: bold; text-align: center;">PROGRAMA EDUCATIVO</p:column>
@@ -248,7 +248,7 @@
                                                             <p:column colspan="2" styleClass="actividad" style="font-weight: bold; text-align: center;">C. P.</p:column>
                                                             <p:column colspan="3" styleClass="actividad" style="font-weight: bold; text-align: center;">PAÍS</p:column>
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">TELÉFONO</p:column>
-                                                        </p:row> 
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="3">#{registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.ddomicilios.domicilio.idAsentamiento,3,'a')}</p:column>
                                                             <p:column colspan="3">#{registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.ddomicilios.domicilio.idAsentamiento,2,'a')}</p:column>
@@ -277,7 +277,7 @@
                                                             <p:column colspan="2" styleClass="actividad" style="font-weight: bold; text-align: center;">C. P.</p:column>
                                                             <p:column colspan="3" styleClass="actividad" style="font-weight: bold; text-align: center;">PAÍS</p:column>
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">TELÉFONO</p:column>
-                                                        </p:row> 
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="3">#{registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.ddomicilios.domicilio.asentamientoProcedencia,3,'a')}</p:column>
                                                             <p:column colspan="3">#{registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.ddomicilios.domicilio.asentamientoProcedencia,2,'a')}</p:column>
@@ -299,7 +299,7 @@
                                                             <p:column colspan="3" styleClass="actividad" style="font-weight: bold; text-align: center;">OCUPACIÓN</p:column>
                                                             <p:column colspan="2" styleClass="actividad" style="font-weight: bold; text-align: center;">TELÉFONO</p:column>
                                                             <p:column colspan="3" styleClass="actividad" style="font-weight: bold; text-align: center;">DOMICILIO</p:column>
-                                                        </p:row> 
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="2" styleClass="actividad">Tutor</p:column>
                                                             <p:column colspan="3">#{registroDeEstudianteConsulta.rol.tutor.tutorFamiliar.apellidoPaterno}
@@ -307,10 +307,10 @@
                                                                 #{registroDeEstudianteConsulta.rol.tutor.tutorFamiliar.nombre}</p:column>
                                                             <p:column colspan="2">#{registroDeEstudianteConsulta.rol.tutor.escolaridad.descripcion}</p:column>
                                                             <p:column colspan="3">#{registroDeEstudianteConsulta.rol.tutor.ocupacion.descripcion}</p:column>
-                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.tutor.tutorFamiliar.noTelefono}</p:column>                                                                
+                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.tutor.tutorFamiliar.noTelefono}</p:column>
                                                             <p:column colspan="3">
-                                                                #{registroDeEstudianteConsulta.rol.tutor.tutorFamiliar.calle} - 
-                                                                #{registroDeEstudianteConsulta.rol.tutor.tutorFamiliar.numero} - 
+                                                                #{registroDeEstudianteConsulta.rol.tutor.tutorFamiliar.calle} -
+                                                                #{registroDeEstudianteConsulta.rol.tutor.tutorFamiliar.numero} -
                                                                 #{registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.tutor.tutorFamiliar.asentamiento,3,'a')}
                                                                 #{registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.tutor.tutorFamiliar.asentamiento,2,'a')}
                                                                 #{registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.tutor.tutorFamiliar.asentamiento,1,'a')}
@@ -321,10 +321,10 @@
                                                             <p:column colspan="3">#{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.nombrePadre}</p:column>
                                                             <p:column colspan="2">#{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.escolaridadPadre.descripcion}</p:column>
                                                             <p:column colspan="3">#{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.ocupacionPadre.descripcion}</p:column>
-                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.telefonoPadre}</p:column>                                                                
+                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.telefonoPadre}</p:column>
                                                             <p:column colspan="3">
-                                                                #{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.callePadre} - 
-                                                                #{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.numeroPadre} - 
+                                                                #{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.callePadre} -
+                                                                #{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.numeroPadre} -
                                                                 #{registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.asentamientoPadre,3,'a')}
                                                                 #{registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.asentamientoPadre,2,'a')}
                                                                 #{registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.asentamientoPadre,1,'a')}
@@ -335,10 +335,10 @@
                                                             <p:column colspan="3">#{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.nombreMadre}</p:column>
                                                             <p:column colspan="2">#{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.escolaridadMadre.descripcion}</p:column>
                                                             <p:column colspan="3">#{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.ocupacionMadre.descripcion}</p:column>
-                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.telefonoPadre}</p:column>                                                                
+                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.telefonoPadre}</p:column>
                                                             <p:column colspan="3">
-                                                                #{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.calleMadre} - 
-                                                                #{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.numeroMadre} - 
+                                                                #{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.calleMadre} -
+                                                                #{registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.numeroMadre} -
                                                                 #{registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.asentamientoMadre,3,'a')}
                                                                 #{registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.asentamientoMadre,2,'a')}
                                                                 #{registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.dfamiliares.datosFamiliares.asentamientoMadre,1,'a')}
@@ -352,16 +352,16 @@
                                                                     <p:column colspan="3">#{t.familia.nombre} #{t.familia.apellidoPaterno} #{t.familia.apellidoMaterno}</p:column>
                                                                     <p:column colspan="2">#{t.familia.escolaridad.descripcion}</p:column>
                                                                     <p:column colspan="3">#{t.familia.ocupacion.descripcion}</p:column>
-                                                                    <p:column colspan="2">#{t.familia.telefono}</p:column>                                                                
+                                                                    <p:column colspan="2">#{t.familia.telefono}</p:column>
                                                                     <p:column colspan="3">
-                                                                        #{t.familia.calle} - 
-                                                                        #{t.familia.numero} - 
+                                                                        #{t.familia.calle} -
+                                                                        #{t.familia.numero} -
                                                                         #{registroDeEstudianteConsulta.direccion(t.familia.asentamiento,3,'a')}
                                                                         #{registroDeEstudianteConsulta.direccion(t.familia.asentamiento,2,'a')}
                                                                         #{registroDeEstudianteConsulta.direccion(t.familia.asentamiento,1,'a')}
                                                                     </p:column>
                                                                 </p:row>
-                                                            </c:forEach> 
+                                                            </c:forEach>
                                                         </c:if>
                                                         <p:row>
                                                             <p:column colspan="15" styleClass="ui-widget-header est" style="text-align: center!important;">
@@ -373,24 +373,24 @@
                                                             <p:column colspan="5" styleClass="actividad" style="font-weight: bold; text-align: center;">NOMBRE COMPLETO</p:column>
                                                             <p:column colspan="5" styleClass="actividad" style="font-weight: bold; text-align: center;">DOMICILIO</p:column>
                                                             <p:column colspan="3" styleClass="actividad" style="font-weight: bold; text-align: center;">TELÉFONO</p:column>
-                                                        </p:row> 
+                                                        </p:row>
                                                         <c:if test="#{registroDeEstudianteConsulta.rol.emergencias.size() ne 0}">
                                                             <c:forEach var="i" begin="0" end="#{registroDeEstudianteConsulta.rol.emergencias.size()-1}">
                                                                 <c:set var="t" value="#{registroDeEstudianteConsulta.rol.emergencias.get(i)}"/>
                                                                 <p:row>
                                                                     <p:column colspan="2">#{t.emergenciasEstudiante.parentesco}</p:column>
-                                                                    <p:column colspan="5">#{t.emergenciasEstudiante.nombre} #{t.emergenciasEstudiante.apellidoPaterno} #{t.emergenciasEstudiante.apellidoMaterno}</p:column>                                              
+                                                                    <p:column colspan="5">#{t.emergenciasEstudiante.nombre} #{t.emergenciasEstudiante.apellidoPaterno} #{t.emergenciasEstudiante.apellidoMaterno}</p:column>
                                                                     <p:column colspan="5">
-                                                                        #{t.emergenciasEstudiante.calle} - 
-                                                                        #{t.emergenciasEstudiante.numero} - 
+                                                                        #{t.emergenciasEstudiante.calle} -
+                                                                        #{t.emergenciasEstudiante.numero} -
                                                                         #{registroDeEstudianteConsulta.direccion(t.emergenciasEstudiante.asentamiento,3,'a')}
                                                                         #{registroDeEstudianteConsulta.direccion(t.emergenciasEstudiante.asentamiento,2,'a')}
                                                                         #{registroDeEstudianteConsulta.direccion(t.emergenciasEstudiante.asentamiento,1,'a')}
                                                                     </p:column>
-                                                                    <p:column colspan="3">#{t.emergenciasEstudiante.telefono}</p:column>                  
+                                                                    <p:column colspan="3">#{t.emergenciasEstudiante.telefono}</p:column>
                                                                 </p:row>
-                                                            </c:forEach> 
-                                                        </c:if>           
+                                                            </c:forEach>
+                                                        </c:if>
                                                         <p:row>
                                                             <p:column colspan="15" styleClass="ui-widget-header eje" style="font-weight: bold; text-align: center!important;">
                                                                 <h4 style="color: #ffffff;"><strong>DATOS LABORALES</strong></h4>
@@ -402,29 +402,29 @@
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">NOMBRE DE LA EMPRESA</p:column>
                                                             <p:column colspan="3" styleClass="actividad" style="font-weight: bold; text-align: center;">PUESTO</p:column>
                                                             <p:column colspan="5" styleClass="actividad" style="font-weight: bold; text-align: center;">DOMICILIO DE LA EMPRESA</p:column>
-                                                        </p:row> 
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="1">#{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?'SI':'NO'}</p:column>
-                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.ingresoMensual:'No aplica'}</p:column>  
-                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.nombreEmpresa:'No aplica'}</p:column>     
-                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.puesto:'No aplica'}</p:column>                                                
+                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.ingresoMensual:'No aplica'}</p:column>
+                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.nombreEmpresa:'No aplica'}</p:column>
+                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.puesto:'No aplica'}</p:column>
                                                             <p:column colspan="5">
-                                                                #{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.calle:''} - 
-                                                                #{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.numero:'No aplica'} - 
+                                                                #{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.calle:''} -
+                                                                #{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.numero:'No aplica'} -
                                                                 #{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.asentamiento,3,'a'):''}
                                                                 #{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.asentamiento,2,'a'):''}
                                                                 #{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.direccion(registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.asentamiento,1,'a'):''}
-                                                            </p:column>               
+                                                            </p:column>
                                                         </p:row>
                                                         <p:row>
                                                             <p:column colspan="3" styleClass="actividad" style="font-weight: bold; text-align: center;">TELÉFONO LABORAL</p:column>
                                                             <p:column colspan="9" styleClass="actividad" style="font-weight: bold; text-align: center;">RAZÓN POR LA QUE TRABAJA</p:column>
                                                             <p:column colspan="3" styleClass="actividad" style="font-weight: bold; text-align: center;">EL TRABAJO TIENE RELACIÓN CON LA CARRERA QUE CURSA</p:column>
-                                                        </p:row>    
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="3">#{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.telefonoEmpresa:'No aplica'}</p:column>
-                                                            <p:column colspan="9">#{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.razonDeTrabajo:'No aplica'}</p:column>                                              
-                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?(registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.relacionTrabajoCarrera ?'SI':'NO'):'No aplica'}</p:column>                  
+                                                            <p:column colspan="9">#{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.razonDeTrabajo:'No aplica'}</p:column>
+                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.trabajoActual?(registroDeEstudianteConsulta.rol.regDatosLaborales.datosLaborales.relacionTrabajoCarrera ?'SI':'NO'):'No aplica'}</p:column>
                                                         </p:row>
                                                         <p:row>
                                                             <p:column colspan="15" styleClass="ui-widget-header eje" style="font-weight: bold; text-align: center!important;">
@@ -435,52 +435,52 @@
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">VIVES CON</p:column>
                                                             <p:column colspan="5" styleClass="actividad" style="font-weight: bold; text-align: center;">VIVIENDA</p:column>
                                                             <p:column colspan="6" styleClass="actividad" style="font-weight: bold; text-align: center;">TRANSPORTE</p:column>
-                                                        </p:row> 
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="4">#{registroDeEstudianteConsulta.rol.ddomicilios.domicilio.vivesCon}</p:column>
-                                                            <p:column colspan="5">#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.vivienda}</p:column>                                              
-                                                            <p:column colspan="6">#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.transporte}</p:column>                  
+                                                            <p:column colspan="5">#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.vivienda}</p:column>
+                                                            <p:column colspan="6">#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.transporte}</p:column>
                                                         </p:row>
                                                         <p:row>
                                                             <p:column colspan="#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.rentaViviendaActual?'5':'10'}" styleClass="actividad" style="font-weight: bold; text-align: center;">PAGA RENTA EN EL LUGAR DONDE ESTA VIVIENDO ACTUALMENTE</p:column>
-                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.rentaViviendaActual?'2':'5'}">#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.rentaViviendaActual?'SI':'NO'}</p:column>     
+                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.rentaViviendaActual?'2':'5'}">#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.rentaViviendaActual?'SI':'NO'}</p:column>
                                                             <p:column colspan="5" style="font-weight: bold; text-align: center;" styleClass="actividad" rendered="#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.rentaViviendaActual}">¿CUÁNTO PAGA MENSUALMENTE?</p:column>
-                                                            <p:column colspan="3" rendered="#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.rentaViviendaActual}">#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.costoRenta}</p:column>     
-                                                        </p:row> 
+                                                            <p:column colspan="3" rendered="#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.rentaViviendaActual}">#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.costoRenta}</p:column>
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="3" styleClass="actividad" style="font-weight: bold; text-align: center;">¿DE QUIEN DEPENDE ECONOMICAMENTE?</p:column>
-                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r6dependesEconomicamnete}</p:column>    
+                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r6dependesEconomicamnete}</p:column>
                                                             <p:column colspan="1" styleClass="actividad" style="font-weight: bold; text-align: center;">INGRESO FAMILIAR MENSUAL</p:column>
-                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r7ingresoFamiliar}</p:column> 
+                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r7ingresoFamiliar}</p:column>
                                                             <p:column colspan="2" styleClass="actividad" style="font-weight: bold; text-align: center;">INGRESO PERSONAL MENSUAL </p:column>
-                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r5ingresoMensual}</p:column> 
-                                                        </p:row> 
+                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r5ingresoMensual}</p:column>
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="5" styleClass="actividad" style="font-weight: bold; text-align: center;">DEPENDIENTES ECONÓMICOS</p:column>
-                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r10numeroDependientes}</p:column>     
+                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r10numeroDependientes}</p:column>
                                                             <p:column colspan="5" styleClass="actividad" style="font-weight: bold; text-align: center;">PRIMERO EN LA FAMILIA EN ACCEDER A LA EDUCACIÓN SUPERIOR</p:column>
-                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r8primerEstudiar}</p:column>     
-                                                        </p:row> 
+                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r8primerEstudiar}</p:column>
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r1Lenguaindigena eq 'No'?'5':'3'}" styleClass="actividad" style="font-weight: bold; text-align: center;">RECURSOS ECONÓMICOS PARA ESTUDIAR</p:column>
-                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.reParaEstudiar}</p:column> 
+                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.sosioeconomicosR.socioeconomicos.reParaEstudiar}</p:column>
                                                             <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r1Lenguaindigena eq 'No'?'6':'3'}" styleClass="actividad" style="font-weight: bold; text-align: center;">HABLAS ALGUNA LENGUA INDIGENA</p:column>
-                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r1Lenguaindigena}</p:column>     
+                                                            <p:column colspan="2">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r1Lenguaindigena}</p:column>
                                                             <p:column colspan="3" style="font-weight: bold; text-align: center;" styleClass="actividad" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r1Lenguaindigena eq 'No'?false:true}"> ¿CUÁL? ESPECIFIQUE</p:column>
-                                                            <p:column colspan="2" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r1Lenguaindigena eq 'No'?false:true}">#{registroDeEstudianteConsulta.rol.encuesta.lenguaIndigena.nombre}</p:column>     
-                                                        </p:row> 
+                                                            <p:column colspan="2" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r1Lenguaindigena eq 'No'?false:true}">#{registroDeEstudianteConsulta.rol.encuesta.lenguaIndigena.nombre}</p:column>
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r3comunidadIndigena eq 'No'?'10':'5'}" styleClass="actividad" style="font-weight: bold; text-align: center;">PROVIENE DE ALGUNA COMUNIDAD INDÍGENA</p:column>
-                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r3comunidadIndigena eq 'No'?'5':'2'}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r3comunidadIndigena}</p:column>     
+                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r3comunidadIndigena eq 'No'?'5':'2'}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r3comunidadIndigena}</p:column>
                                                             <p:column colspan="5" style="font-weight: bold; text-align: center;" styleClass="actividad" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r3comunidadIndigena eq 'No'?false:true}">¿CUÁL? ESPECIFIQUE</p:column>
-                                                            <p:column colspan="3" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r3comunidadIndigena eq 'No'?false:true}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r22comunidadCual}</p:column>     
-                                                        </p:row> 
+                                                            <p:column colspan="3" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r3comunidadIndigena eq 'No'?false:true}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r22comunidadCual}</p:column>
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r4programaBienestar eq 'Otro'?'5':'10'}" styleClass="actividad" style="font-weight: bold; text-align: center;">CUENTA CON ALGUN PROGRAMA GUBERNAMENTAL COMO BIENESTAR (ANTES PROSPERA)</p:column>
-                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r4programaBienestar eq 'Otro'?'2':'5'}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r4programaBienestar}</p:column>     
+                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r4programaBienestar eq 'Otro'?'2':'5'}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r4programaBienestar}</p:column>
                                                             <p:column colspan="5" style="font-weight: bold; text-align: center;" styleClass="actividad" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r4programaBienestar eq 'Otro'?true:false}">OTRO ESPECIFIQUE</p:column>
-                                                            <p:column colspan="3" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r4programaBienestar eq 'Otro'?true:false}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r23programaCual}</p:column>     
-                                                        </p:row> 
+                                                            <p:column colspan="3" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r4programaBienestar eq 'Otro'?true:false}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r23programaCual}</p:column>
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="15" styleClass="ui-widget-header eje" style="font-weight: bold; text-align: center!important;">
                                                                 <h4 style="color: #ffffff;"><strong>DATOS ACADÉMICOS</strong></h4>
@@ -488,42 +488,42 @@
                                                         </p:row>
                                                         <p:row>
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">BACHILLERATO DE PROCEDENCIA</p:column>
-                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.dacademicos.iems.nombre}</p:column>     
+                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.dacademicos.iems.nombre}</p:column>
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">PROMEDIO CON EL QUE EGRESO DEL BACHILLERATO</p:column>
-                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.dacademicos.academicos.promedio}</p:column>     
-                                                        </p:row> 
+                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.dacademicos.academicos.promedio}</p:column>
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">NIVEL MÁXIMO DE ESTUDIOS AL QUE ASPIRA</p:column>
-                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r9nivelMaximoEstudios}</p:column>     
+                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r9nivelMaximoEstudios}</p:column>
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">PRIORIDAD QUE LE DAS A LOS ESTUDIOS</p:column>
-                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.academicosCR.complementarios.prioridadEstudio}</p:column>     
-                                                        </p:row> 
+                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.academicosCR.complementarios.prioridadEstudio}</p:column>
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">ESTA UNIVERSIDAD FUE SU PRIMERA OPCIÓN:</p:column>
-                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r13utxjPrimeraOpcion}</p:column>     
+                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r13utxjPrimeraOpcion}</p:column>
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">LA CARRERA QUE ELIGIÓ ERA SU PRIMERA OPCIÓN</p:column>
-                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.RVocacional.encuestaAspirante.r5}</p:column>     
-                                                        </p:row> 
+                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.RVocacional.encuestaAspirante.r5}</p:column>
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="6" styleClass="actividad" style="font-weight: bold; text-align: center;">QUÉ DESEABA ESTUDIAR</p:column>
-                                                            <p:column colspan="9">#{registroDeEstudianteConsulta.rol.RVocacional.encuestaAspirante.r5 eq 'No'?(registroDeEstudianteConsulta.rol.academicosCR.complementarios.otraAcrrera):'No aplica'}</p:column>     
-                                                        </p:row> 
+                                                            <p:column colspan="9">#{registroDeEstudianteConsulta.rol.RVocacional.encuestaAspirante.r5 eq 'No'?(registroDeEstudianteConsulta.rol.academicosCR.complementarios.otraAcrrera):'No aplica'}</p:column>
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="6" styleClass="actividad" style="font-weight: bold; text-align: center;">¿POR QUÉ ELIGIO ESTUDIAR EN LA UNIVERSIDAD TECNOLÓGICA DE XICOTEPEC DE JUÁREZ?:</p:column>
-                                                            <p:column colspan="9">#{registroDeEstudianteConsulta.rol.RVocacional.encuestaAspirante.r1 eq 'Otros motivos'?(registroDeEstudianteConsulta.rol.RVocacional.encuestaAspirante.r2):(registroDeEstudianteConsulta.rol.RVocacional.encuestaAspirante.r1)}</p:column>     
+                                                            <p:column colspan="9">#{registroDeEstudianteConsulta.rol.RVocacional.encuestaAspirante.r1 eq 'Otros motivos'?(registroDeEstudianteConsulta.rol.RVocacional.encuestaAspirante.r2):(registroDeEstudianteConsulta.rol.RVocacional.encuestaAspirante.r1)}</p:column>
                                                         </p:row>
                                                         <p:row>
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">¿CUENTA CON ESPACIO  PRIVADO PARA ESTUDIAR?</p:column>
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">¿CUÉNTA CON COMPUTADORA O LAPTOP EN CASA PARA REALIZAR SUS ACTIVIDADES ESCOLARES?</p:column>
                                                             <p:column colspan="3" styleClass="actividad" style="font-weight: bold; text-align: center;">TIENE ACCESO A INTERNET EN CASA (FAMILIA)</p:column>
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">TIENE ACCESO A INTERNET DONDE RENTA O VIVE ACTUALMENTE </p:column>
-                                                        </p:row> 
+                                                        </p:row>
                                                         <p:row>
-                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.academicosCR.complementarios.espacioEstudio ?'SI':'NO'}</p:column>     
-                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.academicosCR.complementarios.equipoComputo ?'SI':'NO'}</p:column>     
-                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.academicosCR.complementarios.internetCasa ?'SI':'NO'}</p:column>     
-                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.academicosCR.complementarios.internetRenta ?'SI':'NO'}</p:column>     
-                                                        </p:row> 
+                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.academicosCR.complementarios.espacioEstudio ?'SI':'NO'}</p:column>
+                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.academicosCR.complementarios.equipoComputo ?'SI':'NO'}</p:column>
+                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.academicosCR.complementarios.internetCasa ?'SI':'NO'}</p:column>
+                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.academicosCR.complementarios.internetRenta ?'SI':'NO'}</p:column>
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="15" styleClass="ui-widget-header eje" style="font-weight: bold; text-align: center!important;">
                                                                 <h4 style="color: #ffffff;"><strong>DESEMPEÑO ACADÉMICO</strong></h4>
@@ -555,7 +555,7 @@
                                                             <p:column colspan="4">#{registroDeEstudianteConsulta.obtenerPromedios(8)}</p:column>
                                                             <p:column colspan="4">#{registroDeEstudianteConsulta.obtenerPromedios(9)}</p:column>
                                                             <p:column colspan="4">#{registroDeEstudianteConsulta.obtenerPromedios(10)}</p:column>
-                                                        </p:row>                                                            
+                                                        </p:row>
                                                         <p:row>
                                                             <p:column colspan="15" styleClass="ui-widget-header eje" style="font-weight: bold; text-align: center!important;">
                                                                 <h4 style="color: #ffffff;"><strong>DATOS SALUD</strong></h4>
@@ -569,11 +569,11 @@
                                                             <p:column colspan="3" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r17Alergia eq 'SI'?true:false}" styleClass="actividad" style="font-weight: bold; text-align: center;">¿CUÁL?</p:column>
                                                         </p:row>
                                                         <p:row>
-                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r17Alergia eq 'SI'?'3':'4'}">#{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.estatura}</p:column> 
-                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r17Alergia eq 'SI'?'3':'4'}">#{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.peso}</p:column> 
-                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.dmedico.sangre.nombre}</p:column> 
-                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r17Alergia eq 'SI'?'3':'4'}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r17Alergia}</p:column> 
-                                                            <p:column colspan="3" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r17Alergia eq 'SI'?true:false}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r24alergiaCual}</p:column>     
+                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r17Alergia eq 'SI'?'3':'4'}">#{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.estatura}</p:column>
+                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r17Alergia eq 'SI'?'3':'4'}">#{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.peso}</p:column>
+                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.dmedico.sangre.nombre}</p:column>
+                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r17Alergia eq 'SI'?'3':'4'}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r17Alergia}</p:column>
+                                                            <p:column colspan="3" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r17Alergia eq 'SI'?true:false}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r24alergiaCual}</p:column>
                                                         </p:row>
                                                         <p:row>
                                                             <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r18padecesEnfermedad eq 'SI'?'4':'5'}" styleClass="actividad" style="font-weight: bold; text-align: center;">PADECE ALGUNA ENFERMEDAD</p:column>
@@ -582,10 +582,10 @@
                                                             <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r18padecesEnfermedad eq 'SI' ?'3':'5'}" styleClass="actividad" style="font-weight: bold; text-align: center;">ZURDO O DIESTRO</p:column>
                                                         </p:row>
                                                         <p:row>
-                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r18padecesEnfermedad eq 'SI'?'4':'5'}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r18padecesEnfermedad}</p:column> 
-                                                            <p:column colspan="4" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r18padecesEnfermedad eq 'SI'?true:false}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r25enfermedadCual}</p:column> 
-                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r18padecesEnfermedad eq 'SI' ?'4':'5'}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r19tratamientoMedico}</p:column> 
-                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r18padecesEnfermedad eq 'SI' ?'3':'5'}">#{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.lateralidad}</p:column>   
+                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r18padecesEnfermedad eq 'SI'?'4':'5'}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r18padecesEnfermedad}</p:column>
+                                                            <p:column colspan="4" rendered="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r18padecesEnfermedad eq 'SI'?true:false}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r25enfermedadCual}</p:column>
+                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r18padecesEnfermedad eq 'SI' ?'4':'5'}">#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r19tratamientoMedico}</p:column>
+                                                            <p:column colspan="#{registroDeEstudianteConsulta.rol.encuesta.encuestaAspirante.r18padecesEnfermedad eq 'SI' ?'3':'5'}">#{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.lateralidad}</p:column>
                                                         </p:row>
                                                         <p:row>
                                                             <p:column colspan="4" styleClass="actividad" style="font-weight: bold; text-align: center;">ANTECEDENTES MEDICOS FAMILIARES</p:column>
@@ -595,58 +595,178 @@
                                                         </p:row>
                                                         <p:row>
                                                             <p:column colspan="4">
-                                                                #{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.FCancer ?'Cancer':''} -- 
-                                                                #{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.FCardiaco ?'Cardiaco':''} -- 
-                                                                #{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.FDiabetes ?'Diabetico':''} -- 
+                                                                #{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.FCancer ?'Cancer':''} --
+                                                                #{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.FCardiaco ?'Cardiaco':''} --
+                                                                #{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.FDiabetes ?'Diabetico':''} --
                                                                 #{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.FHipertenso ?'Hipertenso':''}
-                                                            </p:column> 
-                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.nssVigente ?'SI':'NO'}</p:column> 
-                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.nssVigente ?(registroDeEstudianteConsulta.rol.dmedico.datosMedicos.nss):'No aplica'}</p:column>   
-                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.dmedico.discapacidad.nombre}</p:column>   
-                                                        </p:row>                                                            
-                                                        <p:row>
-                                                            <p:column colspan="15" styleClass="ui-widget-header eje" style="font-weight: bold; text-align: center!important;">
-                                                                <h4 style="color: #ffffff;"><strong>LOCALIZACIÓN</strong></h4>
                                                             </p:column>
+                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.nssVigente ?'SI':'NO'}</p:column>
+                                                            <p:column colspan="4">#{registroDeEstudianteConsulta.rol.dmedico.datosMedicos.nssVigente ?(registroDeEstudianteConsulta.rol.dmedico.datosMedicos.nss):'No aplica'}</p:column>
+                                                            <p:column colspan="3">#{registroDeEstudianteConsulta.rol.dmedico.discapacidad.nombre}</p:column>
                                                         </p:row>
-                                                        <p:row>
-                                                            <p:column colspan="15" styleClass="ui-widget-header est" style="text-align: center!important;">
-                                                                CROQUIS DE DIRECCIÓN PARTICULAR (FAMILIA)
-                                                            </p:column>
-                                                        </p:row>
-                                                        <p:row>
-                                                            <p:column colspan="15" style="text-align: center;">    
-                                                                <img src="http://siip.utxicotepec.edu.mx/archivos/#{registroDeEstudianteConsulta.convertirRutaVistaEvidencia(registroDeEstudianteConsulta.rol.ddomicilios.domicilio.croquisParticular)}"  style="width: 500px; height: 500px;"/>
-                                                            </p:column>                                                                
-                                                        </p:row>
-                                                        <p:row>
-                                                            <p:column colspan="15" styleClass="ui-widget-header est" style="text-align: center!important;">
-                                                                CROQUIS DE DIRECCIÓN DONDE RENTA
-                                                            </p:column>
-                                                        </p:row>
-                                                        <p:row>
-                                                            <p:column colspan="15" style="text-align: center;">    
-                                                                <img src="http://siip.utxicotepec.edu.mx/archivos/#{registroDeEstudianteConsulta.convertirRutaVistaEvidencia(registroDeEstudianteConsulta.rol.ddomicilios.domicilio.croquisRenta)}"  style="width: 500px; height: 500px;"/>
-                                                            </p:column>                                                                
-                                                        </p:row>
-                                                        <p:row>
-                                                            <p:column colspan="8" style="font-weight: bold; text-align: center;">
-                                                                <br/>
-                                                                <br/>
-                                                                #{registroDeEstudianteConsulta.buscarPersonal(registroDeEstudianteConsulta.rol.registrDelEstudianteR.grupo.tutor)}
-                                                                <hr/>                                                                    
-                                                                <br/>
-                                                                Nombre del tutor
-                                                            </p:column>
-                                                            <p:column colspan="7" style="font-weight: bold; text-align: center;">
-                                                                <br/>
-                                                                <br/>
-                                                                <br/>
-                                                                <hr/>
-                                                                <br/>
-                                                                Firma del tutor
-                                                            </p:column>
-                                                        </p:row>
+                                                        <c:if test="#{registroDeEstudianteConsulta.rol.psicopedadogico!=null}">
+                                                            <c:set var="cuestionario" value="#{registroDeEstudianteConsulta.rol.registroEstudiante.cp}"/>
+                                                            <p:row>
+                                                                <p:column colspan="15" styleClass="ui-widget-header eje" style="font-weight: bold; text-align: center!important;">
+                                                                    <h4 style="color: #ffffff;"><strong>CUESTIONARIO  PSICOPEDAGÓGICO</strong></h4>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="15" styleClass="ui-widget-header est" style="text-align: center!important;">ASPECTOS PERSONALES</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="2" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿TE GUSTA CÓMO ERES?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r1}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="2" styleClass="actividad" style="font-weight: bold; text-align: center">¿POR QUÉ?</p:column>
+                                                                <p:column colspan="13" style="text-align: justify">#{cuestionario.r2}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿CUÁLES SON TUS PRINCIPALES CUALIDADES?</p:column>
+                                                                <p:column colspan="12" style="text-align: justify">#{cuestionario.r3}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿CUÁLES SON TUS PRINCIPALES DEFECTOS?</p:column>
+                                                                <p:column colspan="12" style="text-align: justify">#{cuestionario.r4}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿QUÉ VALORES APRECIAS MÁS DE LA GENTE?</p:column>
+                                                                <p:column colspan="12" style="text-align: justify">#{cuestionario.r5}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿QUÉ ES LO QUE MÁS TE DISGUSTA DE LA GENTE?</p:column>
+                                                                <p:column colspan="12" style="text-align: justify">#{cuestionario.r6}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">SEÑALA TRES SITUACIONES O ASPECTOS QUE TE PROVOCAN TEMOR</p:column>
+                                                                <p:column colspan="12" style="text-align: justify">#{cuestionario.r7}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿ACTUALMENTE TIENES NOVIO(A)?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r8}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿TIENES PLANES DE MATRIMONIO A CORTO PLAZO?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r9}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿QUÉ PLANES TIENES PARA TU FUTURO PERSONAL?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r10}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿QUÉ PLANES TIENES PARA TU FUTURO ACADÉMICO?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r11}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿QUÉ PLANES TIENES PARA TU FUTURO PROFESIONAL?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r12}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿QUÉ ACTIVIDADES O PASATIEMPOS DISFRUTAS REALIZAR?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r13}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿A QUÉ TE DEDICAS EN TU TIEMPO LIBRE?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r14}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="2" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿ESTÁS EN TRATAMIENTO MÉDICO?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r54}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="2" styleClass="actividad" style="font-weight: bold; text-align: center">¿POR QUÉ?</p:column>
+                                                                <p:column colspan="13" style="text-align: justify">#{cuestionario.r55}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">SI PUDIERAS CAMBIAR ALGO DE TU VIDA ¿QUÉ SERÍA?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r15}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="15" styleClass="ui-widget-header est" style="text-align: center!important;">TUS PADRES SE ENCUENTRAN:</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="13" style="text-align: center">#{cuestionario.r16}</p:column>
+                                                                <p:column colspan="2" style="text-align: left">#{cuestionario.r17}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">EN ESTOS MOMENTOS DE MI VIDA ¿CUÁLES SON MIS PRINCIPALES PREOCUPACIONES?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r18}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿CON QUÉ FRECUENCIA CONSUMES ALCOHOL O FUMAS TABACO?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r56}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="2" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿HAS CONSUMIDO ALGUNA OTRA SUSTANCIA ADICTIVA?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r57}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="2" styleClass="actividad" style="font-weight: bold; text-align: center">¿CUÁL?</p:column>
+                                                                <p:column colspan="13" style="text-align: justify">#{cuestionario.r58}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="1" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿EN ESTE MOMENTO EXISTE ALGÚN PROBLEMA AS EN TU FAMILIA?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r19}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="15" style="text-align: center">#{cuestionario.r20}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column rowspan="2" styleClass="actividad" colspan="4" style="font-weight: bold; text-align: center">¿TE GUSTARÍA HABLAR CON LA PSICÓLOGA PARA RECIBIR ORIENTACIÓN, SOBRE ALGUNA SITUACIÓN QUE TE ESTÉ CAUSANDO PROBLEMAS?</p:column>
+                                                                <p:column colspan="12" style="text-align: center">#{cuestionario.r21}</p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="2" styleClass="actividad" style="font-weight: bold; text-align: center">¿POR QUÉ?</p:column>
+                                                                <p:column colspan="13" style="text-align: justify">#{cuestionario.r59}</p:column>
+                                                            </p:row>
+
+                                                        </c:if>
+                                                        <c:if test="#{registroDeEstudianteConsulta.rol.psicopedadogico==null}">
+                                                            <p:row>
+                                                                <p:column colspan="15" styleClass="ui-widget-header eje" style="font-weight: bold; text-align: center!important;">
+                                                                    <h4 style="color: #ffffff;"><strong>LOCALIZACIÓN</strong></h4>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="15" styleClass="ui-widget-header est" style="text-align: center!important;">
+                                                                    CROQUIS DE DIRECCIÓN PARTICULAR (FAMILIA)
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="15" style="text-align: center;">
+                                                                    <img src="http://siip.utxicotepec.edu.mx/archivos/#{registroDeEstudianteConsulta.convertirRutaVistaEvidencia(registroDeEstudianteConsulta.rol.ddomicilios.domicilio.croquisParticular)}"  style="width: 500px; height: 500px;"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="15" styleClass="ui-widget-header est" style="text-align: center!important;">
+                                                                    CROQUIS DE DIRECCIÓN DONDE RENTA
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="15" style="text-align: center;">
+                                                                    <img src="http://siip.utxicotepec.edu.mx/archivos/#{registroDeEstudianteConsulta.convertirRutaVistaEvidencia(registroDeEstudianteConsulta.rol.ddomicilios.domicilio.croquisRenta)}"  style="width: 500px; height: 500px;"/>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="8" style="font-weight: bold; text-align: center;">
+                                                                    <br/>
+                                                                    <br/>
+                                                                    #{registroDeEstudianteConsulta.buscarPersonal(registroDeEstudianteConsulta.rol.registrDelEstudianteR.grupo.tutor)}
+                                                                    <hr/>
+                                                                    <br/>
+                                                                    Nombre del tutor
+                                                                </p:column>
+                                                                <p:column colspan="7" style="font-weight: bold; text-align: center;">
+                                                                    <br/>
+                                                                    <br/>
+                                                                    <br/>
+                                                                    <hr/>
+                                                                    <br/>
+                                                                    Firma del tutor
+                                                                </p:column>
+                                                            </p:row>
+                                                        </c:if>
                                                     </p:panelGrid>
 
                                                 </p:panel>

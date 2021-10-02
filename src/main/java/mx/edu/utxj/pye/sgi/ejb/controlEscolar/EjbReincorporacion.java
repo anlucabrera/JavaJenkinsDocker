@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -34,54 +35,6 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReincorporacion;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistencias;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionEvidenciaInstrumento;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionNivelacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedio;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionPromedioPK;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.ContactoEmergenciasEstudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosAcademicos;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosAcademicosComplementarios;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosFamiliares;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosLaborales;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosMedicos;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosSocioeconomicos;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Domicilio;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaAspirante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaVocacional;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.IntegrantesFamilia;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.LenguaIndigena;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Login;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Materia;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioComunicacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioDifusion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Sistema;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedioPK;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoAspirante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.TutorFamiliar;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionDetalle;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionEvidenciaInstrumento;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
@@ -1624,7 +1577,9 @@ public class EjbReincorporacion {
             DtoReincorporacion.VocacionalR vr = new DtoReincorporacion.VocacionalR(new EncuestaVocacional(),new AreasUniversidad(),Operacion.PERSISTIR, Boolean.FALSE);
             List<DtoReincorporacion.RcontactoEmergencia> rem = new ArrayList<>();
             List<DtoReincorporacion.Familia> fam = new ArrayList<>();
-            
+            CuestionarioPsicopedagogicoResultados cr= new CuestionarioPsicopedagogicoResultados();
+
+
             ResultadoEJB<DtoReincorporacion.RegDatosLaborales> resRdl = getRegDatosLaborales(a);
             ResultadoEJB<DtoReincorporacion.EstudianteR> resEsr = getEstudianteRRes(a);
             ResultadoEJB<DtoReincorporacion.AcademicosCR> resDac = getRegDatosAcademicosC(a);
@@ -1632,20 +1587,23 @@ public class EjbReincorporacion {
             ResultadoEJB<List<DtoReincorporacion.RcontactoEmergencia>> resRce = getRegContactoEm(a);
             ResultadoEJB<List<DtoReincorporacion.Familia>> resFam = getRegFamiliares(a);
             ResultadoEJB<DtoReincorporacion.VocacionalR> resVoc = getRegVocacional(p);
-            
+            ResultadoEJB<CuestionarioPsicopedagogicoResultados> resCues= getCuestionarioPsico(a);
+
+
             if (resEsr.getCorrecto()) {er = resEsr.getValor();}
             if (resRdl.getCorrecto()) {rdl = resRdl.getValor();}
             if (resDac.getCorrecto()) {dac = resDac.getValor();}
             if (resDso.getCorrecto()) {ds = resDso.getValor();}
             if (resRce.getCorrecto()) {rem = resRce.getValor();}
             if (resFam.getCorrecto()) {fam = resFam.getValor();}
-            if (resVoc.getCorrecto()) {vr = resVoc.getValor();}   
+            if (resVoc.getCorrecto()) {vr = resVoc.getValor();}
+            if (resCues.getCorrecto()) {cr = resCues.getValor();}
             
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getDtoRegistroEstudiante()");
-            
-            
-            
-            DtoReincorporacion.RegistroEstudiante rr=new DtoReincorporacion.RegistroEstudiante(er, rem, dac, rdl, ds, vr, fam, Boolean.TRUE);
+
+
+
+            DtoReincorporacion.RegistroEstudiante rr=new DtoReincorporacion.RegistroEstudiante(er, rem, dac, rdl, ds, vr, fam,cr, Boolean.TRUE);
             return ResultadoEJB.crearCorrecto(rr, "RegistroEstudiante Encontrados");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar RegistroEstudiante (EjbReincorporacion.getDtoRegistroEstudiante).", e, null);
@@ -1795,7 +1753,42 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar VocacionalR (EjbReincorporacion.getRegVocacional).", e, null);
         }
     }
-    
+    public  ResultadoEJB<CuestionarioPsicopedagogicoResultados> getCuestionarioPsico(Aspirante a){
+        try{
+            //Obtiene el primero registro del estudiante
+            Estudiante e = em.createQuery("select e from Estudiante  e where e.aspirante.idAspirante=:a",Estudiante.class)
+                    .setParameter("a",a.getIdAspirante())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(new Estudiante())
+                    ;
+            //System.out.println("EjbReincorporacion.getCuestionarioPsico e"+e);
+            Estudiante est2= em.createQuery("select e from Estudiante  e where  e.matricula=:matricula order by  e.periodo asc ",Estudiante.class)
+                    .setParameter("matricula",e.getMatricula())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null)
+                    ;
+            //System.out.println("EjbReincorporacion.getCuestionarioPsico e2" +est2);
+            // Obtiene los resultados
+            CuestionarioPsicopedagogicoResultados c = em.createQuery("select c from CuestionarioPsicopedagogicoResultados c where  c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante=:id",CuestionarioPsicopedagogicoResultados.class)
+                    .setParameter("id",est2.getIdEstudiante())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(new CuestionarioPsicopedagogicoResultados())
+                    ;
+            //System.out.println("EjbReincorporacion.getCuestionarioPsico "+ c);
+            if(c!=null){
+                return ResultadoEJB.crearCorrecto(c,"Resultados encontrados");
+            }else {return ResultadoEJB.crearErroneo(2,c,"El estudiante aun no cuenta con resultados");}
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar Cuestionario Psicopedagogico(EjbReincorporacion.getCuestionarioPsico).", e, null);
+
+        }
+    }
+
+
     public ResultadoEJB<Asentamiento> getAsentamiento(Integer ase) {
         try {
             List<Asentamiento> das = em.createQuery("select e from Asentamiento e WHERE e.asentamientoPK.asentamiento=:asentamiento", Asentamiento.class).setParameter("asentamiento", ase).getResultList();
